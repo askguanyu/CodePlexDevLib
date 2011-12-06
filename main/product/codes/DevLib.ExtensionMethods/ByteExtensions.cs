@@ -16,16 +16,16 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert bytes to Hex string
         /// </summary>
-        /// <param name="data">bytes</param>
+        /// <param name="value">bytes</param>
         /// <param name="addSpace">Whether add space between Hex</param>
         /// <returns>Hex string</returns>
-        public static string ToHexString(this byte[] data, bool addSpace = true)
+        public static string ToHexString(this byte[] value, bool addSpace = true)
         {
-            StringBuilder result = new StringBuilder(data.Length * 2);
+            StringBuilder result = new StringBuilder(value.Length * 2);
 
             if (addSpace)
             {
-                foreach (byte hex in data)
+                foreach (byte hex in value)
                 {
                     result.AppendFormat("{0:X2}", hex);
                     result.Append(" ");
@@ -33,7 +33,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                foreach (byte hex in data)
+                foreach (byte hex in value)
                 {
                     result.AppendFormat("{0:X2}", hex);
                 }
@@ -45,11 +45,11 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert byte to Hex char
         /// </summary>
-        /// <param name="data">byte</param>
+        /// <param name="value">byte</param>
         /// <returns>Hex char</returns>
-        public static string ToHexString(this byte data)
+        public static string ToHexString(this byte value)
         {
-            return Convert.ToString(data, 16).PadLeft(2, '0');
+            return Convert.ToString(value, 16).PadLeft(2, '0');
         }
     }
 }

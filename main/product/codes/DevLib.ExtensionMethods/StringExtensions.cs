@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="StringExtensions.cs" company="Contoso Corporation">
-//     Copyright (c) Contoso Corporation. All rights reserved.
+// <copyright file="StringExtensions.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods

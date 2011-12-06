@@ -49,6 +49,7 @@
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ByteExtensions.cs" />
+    <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="ListViewExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>

@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Net", "DevLib.Net\DevLib.Net.csproj", "{CF145C2E-642F-4EFA-A03D-96B5082E6650}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Main", "DevLib.Main\DevLib.Main.csproj", "{56028A80-F71B-4C0A-9B8B-0FDC6630E570}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = DevLib.Net\\DevLib.Net.csproj
+		SccProjectName1 = DevLib.Net
+		SccLocalPath1 = DevLib.Net
+		SccProjectUniqueName2 = DevLib.Main\\DevLib.Main.csproj
+		SccProjectName2 = DevLib.Main
+		SccLocalPath2 = DevLib.Main
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF145C2E-642F-4EFA-A03D-96B5082E6650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF145C2E-642F-4EFA-A03D-96B5082E6650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF145C2E-642F-4EFA-A03D-96B5082E6650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF145C2E-642F-4EFA-A03D-96B5082E6650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56028A80-F71B-4C0A-9B8B-0FDC6630E570}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56028A80-F71B-4C0A-9B8B-0FDC6630E570}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56028A80-F71B-4C0A-9B8B-0FDC6630E570}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56028A80-F71B-4C0A-9B8B-0FDC6630E570}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

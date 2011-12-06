@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="AsyncSocket\AsyncSocketClient.cs" />
     <Compile Include="AsyncSocket\AsyncSocketClientConstants.cs" />
     <Compile Include="AsyncSocket\AsyncSocketErrorCodeEnum.cs" />
@@ -54,9 +57,7 @@
     <Compile Include="AsyncSocket\AsyncSocketServerEventArgsPool.cs" />
     <Compile Include="AsyncSocket\AsyncSocketUserTokenEventArgs.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

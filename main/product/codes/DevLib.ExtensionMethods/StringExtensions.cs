@@ -16,17 +16,17 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert Hex string to bytes
         /// </summary>
-        /// <param name="data">Hex string</param>
+        /// <param name="value">Hex string</param>
         /// <returns>bytes</returns>
-        public static byte[] ToHexByte(this string data)
+        public static byte[] ToHexByte(this string value)
         {
             string hexPattern = "^[0-9a-fA-F]+$";
 
-            string temp = data.Trim(new char[] { ' ', '\n', '\r' });
+            string temp = value.Trim(new char[] { ' ', '\n', '\r' });
 
             if (Regex.IsMatch(temp, hexPattern))
             {
-                if (data.Length % 2 == 1)
+                if (value.Length % 2 == 1)
                 {
                     temp = "0" + temp;
                 }
@@ -43,8 +43,24 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                throw new ArgumentException(string.Format("\"{0}\" is not a Hex String.", data));
+                throw new ArgumentException(string.Format("\"{0}\" is not a Hex String.", value));
             }
+        }
+
+        /// <summary>
+        /// Formats the value with the parameters using string.Format.
+        /// </summary>
+        /// <param name = "value">The input string.</param>
+        /// <param name = "parameters">The parameters.</param>
+        /// <returns></returns>
+        public static string FormatWith(this string value, params object[] parameters)
+        {
+            return string.Format(value, parameters);
+        }
+
+        public static bool IsNullOrEmpty(this string value)
+        {
+            return string.IsNullOrEmpty(value);
         }
     }
 }

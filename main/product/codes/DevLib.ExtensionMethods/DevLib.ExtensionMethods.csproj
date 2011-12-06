@@ -51,6 +51,7 @@
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="ListViewExtensions.cs" />
+    <Compile Include="ObjectExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

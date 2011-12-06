@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="AsyncSocketServerConstants.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace DevLib.Net.AsyncSocket
 {
     /// <summary>

@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Diagnostics;
-using System.Threading;
-using System.Net;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="AsyncSocketClient.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace DevLib.Net.AsyncSocket
 {
+    using System;
+    using System.Diagnostics;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Text;
+    using System.Threading;
+
     /// <summary>
     /// AsyncSocket Client
     /// </summary>

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Net.Sockets;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="AsyncSocketUserTokenEventArgs.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace DevLib.Net.AsyncSocket
 {
+    using System;
+    using System.Net;
+    using System.Net.Sockets;
+
     /// <summary>
     /// This class is designed for use as the object to be assigned to the SocketAsyncEventArgs.UserToken property.
     /// </summary>

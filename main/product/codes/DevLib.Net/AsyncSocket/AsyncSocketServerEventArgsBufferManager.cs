@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="AsyncSocketServerEventArgsBufferManager.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace DevLib.Net.AsyncSocket
 {
+    using System.Collections.Generic;
+    using System.Net.Sockets;
+
     /// <summary>
     /// This class creates a single large buffer which can be divided up and assigned to SocketAsyncEventArgs objects for use with each socket I/O operation.
     /// This enables bufffers to be easily reused and gaurds against fragmenting heap memory.

@@ -7,9 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Main", "DevLib.Main\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.ExtensionMethods", "DevLib.ExtensionMethods\DevLib.ExtensionMethods.csproj", "{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.WinForms", "DevLib.WinForms\DevLib.WinForms.csproj", "{73AF4976-0D28-4EB8-852E-2B375B6EBC33}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -22,6 +24,9 @@ Global
 		SccProjectUniqueName3 = DevLib.ExtensionMethods\\DevLib.ExtensionMethods.csproj
 		SccProjectName3 = DevLib.ExtensionMethods
 		SccLocalPath3 = DevLib.ExtensionMethods
+		SccProjectUniqueName4 = DevLib.WinForms\\DevLib.WinForms.csproj
+		SccProjectName4 = DevLib.WinForms
+		SccLocalPath4 = DevLib.WinForms
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +45,10 @@ Global
 		{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73AF4976-0D28-4EB8-852E-2B375B6EBC33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73AF4976-0D28-4EB8-852E-2B375B6EBC33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73AF4976-0D28-4EB8-852E-2B375B6EBC33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73AF4976-0D28-4EB8-852E-2B375B6EBC33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

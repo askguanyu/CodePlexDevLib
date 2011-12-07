@@ -84,6 +84,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DevLib.Diagnostics\DevLib.Diagnostics.csproj">
+      <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
+      <Name>DevLib.Diagnostics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ExtensionMethods\DevLib.ExtensionMethods.csproj">
       <Project>{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}</Project>
       <Name>DevLib.ExtensionMethods</Name>

@@ -11,6 +11,7 @@ namespace DevLib.Samples
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Forms;
+    using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
     using DevLib.Net;
     using DevLib.WinForms;
@@ -30,7 +31,6 @@ namespace DevLib.Samples
             #endregion
 
 
-
             string a = "123";
             a.ConsoleWriteLine().ConsoleWriteLine();
             Console.WriteLine(a.ConvertTo<int>());
@@ -39,6 +39,21 @@ namespace DevLib.Samples
             ConcurrentDictionary<int, string> safeDict = new ConcurrentDictionary<int, string>();
             //safeDict.AddOrUpdate
 
+            //System.Diagnostics.Stopwatch;
+            CodeTimer.Initialize();
+
+            CodeTimer.Time("Hello", 100, () =>
+            {
+                foreach (var item in safeDict)
+                {
+                    item.Key.ConsoleWriteLine();
+                    item.Value.ConsoleWriteLine();
+                }
+            });
+            CodeTimer.Time("AAA", 100, () => { a += "aaa"; });
+            CodeTimer.Time("bbb", 100, () => { a += "aaa"; });
+
+            CodeTimer.Restore();
 
             Console.ReadKey();
         }

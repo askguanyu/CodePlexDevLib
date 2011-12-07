@@ -17,6 +17,15 @@ namespace DevLib.ExtensionMethods
     public static class ObjectExtensions
     {
         /// <summary>
+        /// Invoke Console.WriteLine
+        /// </summary>
+        /// <param name="value">The input object</param>
+        public static void ConsoleWriteLine(this object value)
+        {
+            Console.WriteLine(value);
+        }
+
+        /// <summary>
         /// Perform a deep Copy of the object.
         /// </summary>
         /// <typeparam name="T">The type of object being copied.</typeparam>

@@ -50,17 +50,33 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Formats the value with the parameters using string.Format.
         /// </summary>
-        /// <param name = "value">The input string.</param>
-        /// <param name = "parameters">The parameters.</param>
-        /// <returns></returns>
+        /// <param name = "value">The input string</param>
+        /// <param name = "parameters">The parameters</param>
+        /// <returns>The formated string</returns>
         public static string FormatWith(this string value, params object[] parameters)
         {
             return string.Format(value, parameters);
         }
 
+        /// <summary>
+        /// String is null or empty
+        /// </summary>
+        /// <param name="value">The input string</param>
+        /// <returns>True if string is null or empty</returns>
         public static bool IsNullOrEmpty(this string value)
         {
             return string.IsNullOrEmpty(value);
+        }
+
+        /// <summary>
+        /// Invoke Console.WriteLine
+        /// </summary>
+        /// <param name="value">The input string</param>
+        /// <returns>The input string</returns>
+        public static string ConsoleWriteLine(this string value)
+        {
+            Console.WriteLine(value);
+            return value;
         }
     }
 }

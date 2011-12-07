@@ -1,14 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using System.Runtime.Serialization;
-using System.ComponentModel;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="ObjectExtensions.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
+    using System;
+    using System.ComponentModel;
+    using System.IO;
+    using System.Runtime.Serialization;
+    using System.Runtime.Serialization.Formatters.Binary;
+
+    /// <summary>
+    /// Object Extensions
+    /// </summary>
     public static class ObjectExtensions
     {
         /// <summary>
@@ -45,7 +50,7 @@ namespace DevLib.ExtensionMethods
         /// those 2 types are not convertible.
         /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
         /// <para>
-        /// If the exceptions are not ignored and the <paramref name="value"/> can't be convert even if 
+        /// If the exceptions are not ignored and the <paramref name="value"/> can't be convert even if
         /// the types are convertible with each other, an exception is thrown.</para>
         /// </summary>
         /// <typeparam name = "T"></typeparam>
@@ -66,6 +71,7 @@ namespace DevLib.ExtensionMethods
                     return defaultValue;
                 }
             }
+
             return value.ConvertTo<T>(defaultValue);
         }
 
@@ -91,6 +97,7 @@ namespace DevLib.ExtensionMethods
                         return (T)converter.ConvertFrom(value);
                 }
             }
+
             return defaultValue;
         }
     }

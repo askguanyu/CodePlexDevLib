@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Net.AsyncSocket
 {
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Net.Sockets;
 
     /// <summary>
@@ -29,7 +29,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        private Stack<int> _freeIndexPool;
+        private ConcurrentStack<int> _freeIndexPool;
 
         /// <summary>
         ///
@@ -51,7 +51,7 @@ namespace DevLib.Net.AsyncSocket
             this._numBytes = totalBytes;
             this._currentIndex = 0;
             this._bufferSize = bufferSize;
-            this._freeIndexPool = new Stack<int>();
+            this._freeIndexPool = new ConcurrentStack<int>();
         }
 
         /// <summary>
@@ -71,7 +71,11 @@ namespace DevLib.Net.AsyncSocket
         {
             if (this._freeIndexPool.Count > 0)
             {
-                args.SetBuffer(this._buffer, this._freeIndexPool.Pop(), this._bufferSize);
+                int offset;
+                if (this._freeIndexPool.TryPop(out offset))
+                {
+                    args.SetBuffer(this._buffer, offset, this._bufferSize);
+                }
             }
             else
             {

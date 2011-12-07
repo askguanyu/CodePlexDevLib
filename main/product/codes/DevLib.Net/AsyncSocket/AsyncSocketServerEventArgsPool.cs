@@ -6,7 +6,7 @@
 namespace DevLib.Net.AsyncSocket
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Net.Sockets;
 
     /// <summary>
@@ -17,15 +17,14 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// The SocketAsyncEventArgs object pool
         /// </summary>
-        private Stack<SocketAsyncEventArgs> _pool;
+        private ConcurrentStack<SocketAsyncEventArgs> _pool;
 
         /// <summary>
         /// Initializes the object pool to the specified size
         /// </summary>
-        /// <param name="capacity">The maximum number of SocketAsyncEventArgs objects the pool can hold</param>
-        public AsyncSocketServerEventArgsPool(int capacity)
+        public AsyncSocketServerEventArgsPool()
         {
-            this._pool = new Stack<SocketAsyncEventArgs>(capacity);
+            this._pool = new ConcurrentStack<SocketAsyncEventArgs>();
         }
 
         /// <summary>
@@ -42,15 +41,7 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="item">The SocketAsyncEventArgs instance to add to the pool</param>
         public void Push(SocketAsyncEventArgs item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(AsyncSocketServerConstants.SocketAsyncEventArgsPoolArgumentNullException);
-            }
-
-            lock (this._pool)
-            {
-                this._pool.Push(item);
-            }
+            this._pool.Push(item);
         }
 
         /// <summary>
@@ -59,9 +50,14 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>The object removed from the pool</returns>
         public SocketAsyncEventArgs Pop()
         {
-            lock (this._pool)
+            SocketAsyncEventArgs outPop;
+            if (this._pool.TryPop(out outPop))
             {
-                return this._pool.Pop();
+                return outPop;
+            }
+            else
+            {
+                return null;
             }
         }
     }

@@ -14,7 +14,10 @@ namespace DevLib.Samples
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
     using DevLib.Net;
+    using DevLib.Net.AsyncSocket;
     using DevLib.WinForms;
+    using System.Net;
+    using System.Text;
 
     static class Program
     {
@@ -37,25 +40,56 @@ namespace DevLib.Samples
 
 
             ConcurrentDictionary<int, string> safeDict = new ConcurrentDictionary<int, string>();
-            //safeDict.AddOrUpdate
+            Dictionary<int, string> dict = new Dictionary<int, string>();
 
-            //System.Diagnostics.Stopwatch;
-            CodeTimer.Initialize();
+            //CodeTimer.Initialize();
 
-            CodeTimer.Time("Hello", 100, () =>
+            int times = 100 * 1000;
+
+            //CodeTimer.Time("ConcurrentDictionary1", times, () =>
+            //{
+            //    safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
+            //});
+
+            //CodeTimer.Time("Dictionary1", times, () => 
+            //{ 
+            //    dict.Update(1, "hello"); 
+            //});
+
+            //CodeTimer.Time("ConcurrentDictionary2", times, () =>
+            //{
+            //    safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
+            //});
+
+            //CodeTimer.Time("Dictionary2", times, () =>
+            //{
+            //    dict.Update(2, "hello");
+            //});
+
+
+            //CodeTimer.Restore();
+
+
+
+            AsyncSocketServer svr = new AsyncSocketServer(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9999));
+            svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
+            svr.Start();
+
+            AsyncSocketClient client = new AsyncSocketClient();
+            client.SendOnce("127.0.0.1", 9999, "hello", Encoding.UTF8);
+
+            while (true)
             {
-                foreach (var item in safeDict)
-                {
-                    item.Key.ConsoleWriteLine();
-                    item.Value.ConsoleWriteLine();
-                }
-            });
-            CodeTimer.Time("AAA", 100, () => { a += "aaa"; });
-            CodeTimer.Time("bbb", 100, () => { a += "aaa"; });
 
-            CodeTimer.Restore();
+            }
+
 
             Console.ReadKey();
+        }
+
+        static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
+        {
+            e.ReceivedRawData.ToHexString().ConsoleWriteLine();
         }
     }
 }

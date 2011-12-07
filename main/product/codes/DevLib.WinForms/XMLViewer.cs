@@ -18,7 +18,7 @@ namespace DevLib.WinForms
         /// <summary>
         ///
         /// </summary>
-        private XMLViewerSettings settings;
+        private XMLViewerSettings _settings;
 
         /// <summary>
         ///Gets or sets a value indicating whether
@@ -45,9 +45,9 @@ namespace DevLib.WinForms
         {
             get
             {
-                if (settings == null)
+                if (this._settings == null)
                 {
-                    settings = new XMLViewerSettings
+                    this._settings = new XMLViewerSettings
                     {
                         AttributeKey = Color.Red,
                         AttributeValue = Color.Blue,
@@ -57,12 +57,12 @@ namespace DevLib.WinForms
                     };
                 }
 
-                return settings;
+                return this._settings;
             }
 
             set
             {
-                settings = value;
+                this._settings = value;
             }
         }
 

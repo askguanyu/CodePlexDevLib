@@ -6,6 +6,8 @@
 namespace DevLib.Samples
 {
     using System;
+    using System.Collections;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Forms;
@@ -34,6 +36,8 @@ namespace DevLib.Samples
             Console.WriteLine(a.ConvertTo<int>());
 
 
+            ConcurrentDictionary<int, string> safeDict = new ConcurrentDictionary<int, string>();
+            //safeDict.AddOrUpdate
 
 
             Console.ReadKey();

@@ -6,8 +6,7 @@
 namespace DevLib.Net.AsyncSocket
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Net;
     using System.Net.Sockets;
@@ -21,22 +20,9 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        private Object _bufferLock = new Object();
+        private ConcurrentDictionary<Guid, AsyncSocketUserTokenEventArgs> _tokens;
 
-        /// <summary>
-        ///
-        /// </summary>
-        private Object _readPoolLock = new Object();
-
-        /// <summary>
-        ///
-        /// </summary>
-        private Object _writePoolLock = new Object();
-
-        /// <summary>
-        ///
-        /// </summary>
-        private Dictionary<Guid, AsyncSocketUserTokenEventArgs> _tokens;
+        private ConcurrentDictionary<IPAddress, AsyncSocketUserTokenEventArgs> _singleIPTokens;
 
         /// <summary>
         /// the maximum number of connections the class is designed to handle simultaneously
@@ -178,10 +164,17 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>true if online, else false</returns>
         public bool IsOnline(Guid connectionId)
         {
-            lock (((ICollection)this._tokens).SyncRoot)
-            {
-                return this._tokens.ContainsKey(connectionId);
-            }
+            return this._tokens.ContainsKey(connectionId);
+        }
+
+        /// <summary>
+        /// Whether connected client is online or not
+        /// </summary>
+        /// <param name="connectionIP">Connection IP</param>
+        /// <returns>true if online, else false</returns>
+        public bool IsOnline(IPAddress connectionIP)
+        {
+            return this._singleIPTokens.ContainsKey(connectionIP);
         }
 
         /// <summary>
@@ -248,39 +241,31 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         /// <param name="connectionId">Client connection Id</param>
         /// <param name="buffer">Data to send</param>
-        public void Send(Guid connectionId, byte[] buffer)
+        /// <param name="operation">user defined operation</param>
+        public void Send(Guid connectionId, byte[] buffer, object operation = null)
         {
             AsyncSocketUserTokenEventArgs token;
 
-            lock (((ICollection)this._tokens).SyncRoot)
+            if (!this._tokens.TryGetValue(connectionId, out token))
             {
-                if (!this._tokens.TryGetValue(connectionId, out token))
-                {
-                    this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
-                    throw new Exception();
-                }
+                this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
+                throw new Exception();
             }
 
             SocketAsyncEventArgs writeEventArgs;
 
-            lock (_writePool)
-            {
-                writeEventArgs = _writePool.Pop();
-            }
+            writeEventArgs = _writePool.Pop();
 
             writeEventArgs.UserToken = token;
+            token.Operation = operation;
 
             if (buffer.Length <= _bufferSize)
             {
                 Array.Copy(buffer, 0, writeEventArgs.Buffer, writeEventArgs.Offset, buffer.Length);
-                writeEventArgs.SetBuffer(writeEventArgs.Buffer, writeEventArgs.Offset, buffer.Length);
             }
             else
             {
-                lock (_bufferLock)
-                {
-                    _bufferManager.FreeBuffer(writeEventArgs);
-                }
+                _bufferManager.FreeBuffer(writeEventArgs);
 
                 writeEventArgs.SetBuffer(buffer, 0, buffer.Length);
             }
@@ -318,28 +303,21 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Send the data back to the client
         /// </summary>
-        /// <param name="connectionId">Client connection Id</param>
+        /// <param name="connectionIP">Client connection IP</param>
         /// <param name="buffer">Data to send</param>
-        /// <param name="operation">user defined operation</param>
-        public void Send(Guid connectionId, byte[] buffer, object operation)
+        public void Send(IPAddress connectionIP, byte[] buffer, object operation = null)
         {
             AsyncSocketUserTokenEventArgs token;
 
-            lock (((ICollection)this._tokens).SyncRoot)
+            if (!this._singleIPTokens.TryGetValue(connectionIP, out token))
             {
-                if (!this._tokens.TryGetValue(connectionId, out token))
-                {
-                    this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
-                    throw new Exception();
-                }
+                this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionIP), null, AsyncSocketErrorCodeEnum.SocketNoExist));
+                throw new Exception();
             }
 
             SocketAsyncEventArgs writeEventArgs;
 
-            lock (_writePool)
-            {
-                writeEventArgs = _writePool.Pop();
-            }
+            writeEventArgs = _writePool.Pop();
 
             writeEventArgs.UserToken = token;
             token.Operation = operation;
@@ -350,10 +328,7 @@ namespace DevLib.Net.AsyncSocket
             }
             else
             {
-                lock (_bufferLock)
-                {
-                    _bufferManager.FreeBuffer(writeEventArgs);
-                }
+                _bufferManager.FreeBuffer(writeEventArgs);
 
                 writeEventArgs.SetBuffer(buffer, 0, buffer.Length);
             }
@@ -396,13 +371,10 @@ namespace DevLib.Net.AsyncSocket
         {
             AsyncSocketUserTokenEventArgs token;
 
-            lock (((ICollection)this._tokens).SyncRoot)
+            if (!this._tokens.TryGetValue(connectionId, out token))
             {
-                if (!this._tokens.TryGetValue(connectionId, out token))
-                {
-                    this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
-                    throw new Exception();
-                }
+                this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
+                throw new Exception();
             }
 
             this.RaiseDisconnectedEvent(token);
@@ -426,28 +398,25 @@ namespace DevLib.Net.AsyncSocket
                 }
                 finally
                 {
-                    lock (((ICollection)this._tokens).SyncRoot)
+                    foreach (AsyncSocketUserTokenEventArgs token in this._tokens.Values)
                     {
-                        foreach (AsyncSocketUserTokenEventArgs token in this._tokens.Values)
+                        try
                         {
-                            try
-                            {
-                                this.CloseClientSocket(token);
+                            this.CloseClientSocket(token);
 
-                                if (null != token)
-                                {
-                                    this.OnDisconnected(token);
-                                }
-                            }
-                            catch (Exception ex)
+                            if (null != token)
                             {
-                                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, ex.Message));
-                                throw;
+                                this.OnDisconnected(token);
                             }
                         }
-
-                        this._tokens.Clear();
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, ex.Message));
+                            throw;
+                        }
                     }
+                    this._tokens.Clear();
+                    this._singleIPTokens.Clear();
                 }
 
                 this.IsListening = false;
@@ -567,9 +536,10 @@ namespace DevLib.Net.AsyncSocket
         private void InitializePool()
         {
             this._bufferManager = new AsyncSocketServerEventArgsBufferManager(_bufferSize * _numConnections * AsyncSocketServerConstants.OpsToPreAlloc, _bufferSize);
-            this._readPool = new AsyncSocketServerEventArgsPool(_numConnections);
-            this._writePool = new AsyncSocketServerEventArgsPool(_numConnections);
-            this._tokens = new Dictionary<Guid, AsyncSocketUserTokenEventArgs>();
+            this._readPool = new AsyncSocketServerEventArgsPool();
+            this._writePool = new AsyncSocketServerEventArgsPool();
+            this._tokens = new ConcurrentDictionary<Guid, AsyncSocketUserTokenEventArgs>();
+            this._singleIPTokens = new ConcurrentDictionary<IPAddress, AsyncSocketUserTokenEventArgs>();
             this._maxNumberAcceptedClients = new Semaphore(_numConnections, _numConnections);
 
             this._bufferManager.InitBuffer();
@@ -660,10 +630,7 @@ namespace DevLib.Net.AsyncSocket
             Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, _numConnectedSockets.ToString()));
             SocketAsyncEventArgs readEventArg;
 
-            lock (_readPool)
-            {
-                readEventArg = _readPool.Pop();
-            }
+            readEventArg = _readPool.Pop();
 
             token = (AsyncSocketUserTokenEventArgs)readEventArg.UserToken;
 
@@ -671,10 +638,8 @@ namespace DevLib.Net.AsyncSocket
 
             token.ConnectionId = Guid.NewGuid();
 
-            lock (((ICollection)this._tokens).SyncRoot)
-            {
-                this._tokens.Add(token.ConnectionId, token);
-            }
+            this._tokens.GetOrAdd(token.ConnectionId, token);
+            this._singleIPTokens.AddOrUpdate(token.EndPoint.Address, token, (key, oldValue) => oldValue);
 
             this.OnConnected(token);
 
@@ -795,16 +760,10 @@ namespace DevLib.Net.AsyncSocket
 
             if (e.Count > _bufferSize)
             {
-                lock (_bufferLock)
-                {
-                    _bufferManager.SetBuffer(e);
-                }
+                _bufferManager.SetBuffer(e);
             }
 
-            lock (_writePool)
-            {
-                _writePool.Push(e);
-            }
+            _writePool.Push(e);
 
             e.UserToken = null;
 
@@ -828,17 +787,16 @@ namespace DevLib.Net.AsyncSocket
         {
             if (null != token)
             {
-                lock (((ICollection)this._tokens).SyncRoot)
-                {
-                    if (this._tokens.ContainsValue(token))
-                    {
-                        this._tokens.Remove(token.ConnectionId);
-                        this.CloseClientSocket(token);
+                this._singleIPTokens.Keys.Remove(token.EndPoint.Address);
 
-                        if (null != token)
-                        {
-                            this.OnDisconnected(token);
-                        }
+                AsyncSocketUserTokenEventArgs outToken;
+                if (this._tokens.TryRemove(token.ConnectionId, out outToken))
+                {
+                    this.CloseClientSocket(token);
+
+                    if (null != token)
+                    {
+                        this.OnDisconnected(token);
                     }
                 }
             }
@@ -875,10 +833,7 @@ namespace DevLib.Net.AsyncSocket
 
                 Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, _numConnectedSockets.ToString()));
 
-                lock (_readPool)
-                {
-                    _readPool.Push(token.ReadEventArgs);
-                }
+                _readPool.Push(token.ReadEventArgs);
             }
         }
     }

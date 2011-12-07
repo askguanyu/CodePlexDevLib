@@ -19,7 +19,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="dict">The source dictionary</param>
         /// <param name="key">The key of interest</param>
         /// <param name="value">The value to update</param>
-        public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+        public static void Update<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
         {
             lock (((ICollection)dict).SyncRoot)
             {

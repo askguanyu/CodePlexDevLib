@@ -84,7 +84,8 @@ namespace DevLib.Samples
             client.Send("hello4  你好 end", Encoding.ASCII);
             client.Send("hello5  你好 end", Encoding.Unicode);
 
-
+            "123".CreateTextFile(@".\out\out.txt");
+            "456".CreateTextFile(@".\out\out.txt");
 
             Console.ReadKey();
         }

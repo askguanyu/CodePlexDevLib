@@ -27,7 +27,7 @@ namespace DevLib.ExtensionMethods
             string fullName = Path.GetFullPath(fileName);
             string fullPath = Path.GetDirectoryName(fullName);
 
-            StreamWriter sw;
+            StreamWriter streamWriter;
 
             if (!Directory.Exists(fullPath))
             {
@@ -43,16 +43,42 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                sw = File.CreateText(Path.GetFullPath(fileName));
-                sw.Write(text);
-                sw.Flush();
-                sw.Close();
-                sw.Dispose();
+                streamWriter = File.CreateText(Path.GetFullPath(fileName));
+                streamWriter.Write(text);
+                streamWriter.Flush();
+                streamWriter.Close();
+                streamWriter.Dispose();
                 return true;
             }
             catch
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Read text file to string
+        /// </summary>
+        /// <param name="fileName">Text file to be read</param>
+        /// <returns>Text file string</returns>
+        public static string ReadTextFile(this string fileName)
+        {
+            string fullName = Path.GetFullPath(fileName);
+
+            if (File.Exists(Path.GetFullPath(fileName)))
+            {
+                try
+                {
+                    return File.ReadAllText(fullName);
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+            else
+            {
+                return string.Empty;
             }
         }
     }

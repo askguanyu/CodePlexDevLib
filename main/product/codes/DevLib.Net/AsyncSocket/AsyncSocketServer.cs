@@ -18,10 +18,13 @@ namespace DevLib.Net.AsyncSocket
     public class AsyncSocketServer : IDisposable
     {
         /// <summary>
-        ///
+        /// Thread-safe dictionary of connected socket tokens
         /// </summary>
         private ConcurrentDictionary<Guid, AsyncSocketUserTokenEventArgs> _tokens;
 
+        /// <summary>
+        /// Thread-safe dictionary of connected socket tokens with IP as primary key
+        /// </summary>
         private ConcurrentDictionary<IPAddress, AsyncSocketUserTokenEventArgs> _singleIPTokens;
 
         /// <summary>
@@ -91,6 +94,22 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
+        /// Constructor of AsyncSocketServer
+        /// </summary>
+        /// <param name="localPort">local port to listen</param>
+        /// <param name="numConnections">the maximum number of connections the class is designed to handle simultaneously</param>
+        /// <param name="bufferSize">buffer size to use for each socket I/O operation</param>
+        public AsyncSocketServer(int localPort, int numConnections = AsyncSocketServerConstants.NumConnections, int bufferSize = AsyncSocketServerConstants.BufferSize)
+        {
+            this._totalBytesRead = 0;
+            this._totalBytesWrite = 0;
+            this._numConnectedSockets = 0;
+            this._numConnections = numConnections;
+            this._bufferSize = bufferSize;
+            this.LocalEndPoint = new IPEndPoint(IPAddress.Any, localPort);
+        }
+
+        /// <summary>
         /// Client Connected Event
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> Connected;
@@ -139,6 +158,14 @@ namespace DevLib.Net.AsyncSocket
         public long NumConnectedSockets
         {
             get { return _numConnectedSockets; }
+        }
+
+        /// <summary>
+        /// Gets numbers of connected clients
+        /// </summary>
+        public int NumConnectedClients
+        {
+            get { return this._singleIPTokens.Count; }
         }
 
         /// <summary>
@@ -415,6 +442,7 @@ namespace DevLib.Net.AsyncSocket
                             throw;
                         }
                     }
+
                     this._tokens.Clear();
                     this._singleIPTokens.Clear();
                 }
@@ -787,7 +815,8 @@ namespace DevLib.Net.AsyncSocket
         {
             if (null != token)
             {
-                this._singleIPTokens.Keys.Remove(token.EndPoint.Address);
+                AsyncSocketUserTokenEventArgs outSingleIPToken;
+                this._singleIPTokens.TryRemove(token.EndPoint.Address, out outSingleIPToken);
 
                 AsyncSocketUserTokenEventArgs outToken;
                 if (this._tokens.TryRemove(token.ConnectionId, out outToken))

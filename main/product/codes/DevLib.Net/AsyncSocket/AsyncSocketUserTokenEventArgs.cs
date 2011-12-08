@@ -75,9 +75,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets received raw Data
+        /// Gets transferred raw data
         /// </summary>
-        public byte[] ReceivedRawData
+        public byte[] TransferredRawData
         {
             get
             {

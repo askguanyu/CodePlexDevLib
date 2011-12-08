@@ -43,13 +43,24 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert byte to Hex char
+        /// Convert byte to Hex string
         /// </summary>
         /// <param name="value">byte</param>
-        /// <returns>Hex char</returns>
+        /// <returns>Hex string</returns>
         public static string ToHexString(this byte value)
         {
             return Convert.ToString(value, 16).PadLeft(2, '0');
+        }
+
+        /// <summary>
+        /// Convert bytes to Encoding string
+        /// </summary>
+        /// <param name="value">bytes</param>
+        /// <param name="encoding">Encoding</param>
+        /// <returns>Encoding string</returns>
+        public static string ToEncodingString(this byte[] value, Encoding encoding)
+        {
+            return encoding.GetString(value);
         }
     }
 }

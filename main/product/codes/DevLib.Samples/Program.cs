@@ -10,14 +10,14 @@ namespace DevLib.Samples
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
+    using System.Text;
     using System.Windows.Forms;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
     using DevLib.WinForms;
-    using System.Net;
-    using System.Text;
 
     static class Program
     {
@@ -71,25 +71,34 @@ namespace DevLib.Samples
 
 
 
-            AsyncSocketServer svr = new AsyncSocketServer(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9999));
+            AsyncSocketServer svr = new AsyncSocketServer(9999);
             svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
             svr.Start();
 
             AsyncSocketClient client = new AsyncSocketClient();
-            client.SendOnce("127.0.0.1", 9999, "hello", Encoding.UTF8);
+            client.DataSent += new EventHandler<AsyncSocketUserTokenEventArgs>(client_DataSent);
+            client.Connect("127.0.0.1", 9999);
+            client.Send("hello1  你好 end", Encoding.UTF8);
+            client.Send("hello2  你好 end", Encoding.UTF32);
+            client.Send("hello3  你好 end", Encoding.BigEndianUnicode);
+            client.Send("hello4  你好 end", Encoding.ASCII);
+            client.Send("hello5  你好 end", Encoding.Unicode);
 
-            while (true)
-            {
-
-            }
 
 
             Console.ReadKey();
         }
 
+        static void client_DataSent(object sender, AsyncSocketUserTokenEventArgs e)
+        {
+            e.TransferredRawData.ToHexString().ConsoleWriteLine();
+            Console.WriteLine();
+        }
+
         static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
         {
-            e.ReceivedRawData.ToHexString().ConsoleWriteLine();
+            e.TransferredRawData.ToEncodingString(Encoding.Default).ConsoleWriteLine();
+            Console.WriteLine();
         }
     }
 }

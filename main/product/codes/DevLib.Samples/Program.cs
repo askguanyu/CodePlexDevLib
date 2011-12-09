@@ -19,6 +19,7 @@ namespace DevLib.Samples
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
     using DevLib.WinForms;
+    using System.Net.NetworkInformation;
 
     static class Program
     {
@@ -28,7 +29,7 @@ namespace DevLib.Samples
         [STAThread]
         static void Main()
         {
-            //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke(null, null);
+            //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
             //TestDevLibWinForms();
 
@@ -36,9 +37,18 @@ namespace DevLib.Samples
 
             //TestDevLibNet();
 
-            TestDevLibExtensionMethods();
+            //TestDevLibExtensionMethods();
 
+            TestSnippet();
+
+            Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
+        }
+
+        private static void TestSnippet()
+        {
+            Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
+            NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
         }
 
         private static void TestDevLibWinForms()
@@ -69,12 +79,12 @@ namespace DevLib.Samples
         {
             ConcurrentDictionary<int, string> safeDict = new ConcurrentDictionary<int, string>();
             Dictionary<int, string> dict = new Dictionary<int, string>();
+            List<int> list = new List<int>();
+            ConcurrentBag<string> safeBag = new ConcurrentBag<string>();
 
             CodeTimer.Initialize();
 
             int times = 100 * 1000;
-
-            times.ConsoleWriteLine().ConsoleWriteLine();
 
             CodeTimer.Time("ConcurrentDictionary1", times, () =>
             {

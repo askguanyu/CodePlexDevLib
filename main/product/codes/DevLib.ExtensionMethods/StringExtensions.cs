@@ -67,16 +67,5 @@ namespace DevLib.ExtensionMethods
         {
             return string.IsNullOrEmpty(value);
         }
-
-        /// <summary>
-        /// Invoke Console.WriteLine
-        /// </summary>
-        /// <param name="value">The input string</param>
-        /// <returns>The input string</returns>
-        public static string ConsoleWriteLine(this string value)
-        {
-            Console.WriteLine(value);
-            return value;
-        }
     }
 }

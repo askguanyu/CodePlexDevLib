@@ -17,12 +17,14 @@ namespace DevLib.ExtensionMethods
     public static class ObjectExtensions
     {
         /// <summary>
-        /// Invoke Console.WriteLine
+        /// Invoke System.Console.WriteLine()
         /// </summary>
         /// <param name="value">The input object</param>
-        public static void ConsoleWriteLine(this object value)
+        /// <returns>The input object</returns>
+        public static T ConsoleWriteLine<T>(this T value)
         {
             Console.WriteLine(value);
+            return value;
         }
 
         /// <summary>
@@ -84,6 +86,18 @@ namespace DevLib.ExtensionMethods
             return value.ConvertTo<T>(defaultValue);
         }
 
+        /// <summary>
+        /// Converts an object to the specified target type or returns the default value if
+        /// those 2 types are not convertible.
+        /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
+        /// <para>
+        /// If the exceptions are not ignored and the <paramref name="value"/> can't be convert even if
+        /// the types are convertible with each other, an exception is thrown.</para>
+        /// </summary>
+        /// <typeparam name = "T"></typeparam>
+        /// <param name = "value">The value.</param>
+        /// <param name = "defaultValue">The default value.</param>
+        /// <returns>The target type</returns>
         private static T ConvertTo<T>(this object value, T defaultValue)
         {
             if (value != null)

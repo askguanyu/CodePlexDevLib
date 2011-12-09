@@ -46,6 +46,8 @@ namespace DevLib.Samples
 
             int times = 100 * 1000;
 
+            times.ConsoleWriteLine().ConsoleWriteLine();
+
             //CodeTimer.Time("ConcurrentDictionary1", times, () =>
             //{
             //    safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
@@ -86,6 +88,7 @@ namespace DevLib.Samples
 
             "123".CreateTextFile(@".\out\out.txt");
             "456".CreateTextFile(@".\out\out.txt");
+            @".\out\out.txt".ReadTextFile().ConsoleWriteLine();
 
             Console.ReadKey();
         }
@@ -98,7 +101,7 @@ namespace DevLib.Samples
 
         static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
         {
-            e.TransferredRawData.ToEncodingString(Encoding.Default).ConsoleWriteLine();
+            e.TransferredRawData.ToEncodingString(Encoding.Unicode).ConsoleWriteLine();
             Console.WriteLine();
         }
     }

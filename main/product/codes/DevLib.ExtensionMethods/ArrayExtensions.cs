@@ -19,7 +19,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="action">Method for element</param>
         public static void ForEach<T>(this T[] value, Action<T> action)
         {
-            if (action == null)
+            if ((value == null) || (value.Length == 0) || (action == null))
             {
                 return;
             }

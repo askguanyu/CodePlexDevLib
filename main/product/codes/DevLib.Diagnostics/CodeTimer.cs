@@ -11,30 +11,13 @@ namespace DevLib.Diagnostics
     using System.Threading;
 
     /// <summary>
-    ///
+    /// Code performence timer
     /// </summary>
     public static class CodeTimer
     {
-        private static ProcessPriorityClass _originalPriorityClass;
-        private static ThreadPriority _originalThreadPriority;
-
-        static CodeTimer()
-        {
-            _originalPriorityClass = Process.GetCurrentProcess().PriorityClass;
-            _originalThreadPriority = Thread.CurrentThread.Priority;
-        }
-
         public static void Initialize()
         {
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            Time("Initialize CodeTimer", 1, () => { });
-        }
-
-        public static void Restore()
-        {
-            Process.GetCurrentProcess().PriorityClass = _originalPriorityClass;
-            Thread.CurrentThread.Priority = _originalThreadPriority;
+            Time("Initialize CodeTimer...", 1, () => { });
         }
 
         /// <summary>
@@ -47,12 +30,18 @@ namespace DevLib.Diagnostics
         {
             if (String.IsNullOrEmpty(name) || action == null) return;
 
-            // 1. Format console color, print name
-            ConsoleColor currentForeColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(name);
+            // Backup current thread priority
+            var originalPriorityClass = Process.GetCurrentProcess().PriorityClass;
+            var originalThreadPriority = Thread.CurrentThread.Priority;
 
-            // 2. Record the latest GC counts
+            // Format console color, print name
+            ConsoleColor originalForeColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(name);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("{0,-17}{1,-18}{2,-17}{3,-2}/{4,-2}/{5,-2}", "Stopwatch", "ThreadTime", "CpuCycles", "G0", "G1", "G2");
+
+            // Record the latest GC counts
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
             int[] gcCounts = new int[GC.MaxGeneration + 1];
             for (int i = 0; i <= GC.MaxGeneration; i++)
@@ -60,28 +49,50 @@ namespace DevLib.Diagnostics
                 gcCounts[i] = GC.CollectionCount(i);
             }
 
-            // 3. Run action, record timespan
+            // Run action, record timespan
             Stopwatch watch = new Stopwatch();
             watch.Start();
+
             ulong cycleCount = GetCycleCount();
+            long threadTimeCount = GetCurrentThreadTimes();
+
             for (int i = 0; i < iteration; i++) action();
+
             ulong cpuCycles = GetCycleCount() - cycleCount;
+            long threadTime = GetCurrentThreadTimes() - threadTimeCount;
+
             watch.Stop();
 
-            // 4. Console output recorded timespan
-            Console.ForegroundColor = currentForeColor;
-            Console.WriteLine("\tTime Elapsed:\t" + watch.ElapsedMilliseconds.ToString("N0") + "ms");
-            Console.WriteLine("\tCPU Cycles:\t" + cpuCycles.ToString("N0"));
-
-            // 5. Console output GC Gen
+            int[] gen = new int[GC.MaxGeneration + 1];
             for (int i = 0; i <= GC.MaxGeneration; i++)
             {
-                int count = GC.CollectionCount(i) - gcCounts[i];
-                Console.WriteLine("\tGen " + i + ": \t\t" + count);
+                gen[i] = GC.CollectionCount(i) - gcCounts[i];
             }
+
+            // Console output recorded times
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gen[0], gen[1], gen[2]);
+
+            // Restore console color
+            Console.ForegroundColor = originalForeColor;
+
+            // Restore thread priority
+            Process.GetCurrentProcess().PriorityClass = originalPriorityClass;
+            Thread.CurrentThread.Priority = originalThreadPriority;
 
             Console.WriteLine();
         }
+
+        #region NativeMethods
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool QueryThreadCycleTime(IntPtr threadHandle, ref ulong cycleTime);
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetCurrentThread();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool GetThreadTimes(IntPtr threadHandle, out long creationTime, out long exitTime, out long kernelTime, out long userTime);
 
         private static ulong GetCycleCount()
         {
@@ -90,11 +101,13 @@ namespace DevLib.Diagnostics
             return cycleCount;
         }
 
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool QueryThreadCycleTime(IntPtr threadHandle, ref ulong cycleTime);
-
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetCurrentThread();
+        private static long GetCurrentThreadTimes()
+        {
+            long temp;
+            long kernelTime, userTimer;
+            GetThreadTimes(GetCurrentThread(), out temp, out temp, out kernelTime, out userTimer);
+            return kernelTime + userTimer;
+        } 
+        #endregion
     }
 }

@@ -39,7 +39,7 @@ namespace DevLib.Samples
 
             //TestDevLibExtensionMethods();
 
-            TestSnippet();
+            //TestSnippet();
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
@@ -84,7 +84,9 @@ namespace DevLib.Samples
 
             CodeTimer.Initialize();
 
-            int times = 100 * 1000;
+            int times = 1000 * 500;
+
+            CodeTimer.Time("No action", times, () => { });
 
             CodeTimer.Time("ConcurrentDictionary1", times, () =>
             {
@@ -106,8 +108,11 @@ namespace DevLib.Samples
                 dict.Update(2, "hello");
             });
 
+            CodeTimer.Time("ConcurrentBag1", times, () =>
+            {
+                safeBag.Add("hello");
+            });
 
-            CodeTimer.Restore();
         }
 
         private static void TestDevLibNet()

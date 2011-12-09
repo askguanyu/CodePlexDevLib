@@ -49,6 +49,7 @@
     <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ArrayExtensions.cs" />
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="IOExtensions.cs" />

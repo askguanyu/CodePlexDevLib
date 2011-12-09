@@ -33,7 +33,7 @@ namespace DevLib.Samples
 
             //TestDevLibWinForms();
 
-            //TestDevLibDiagnostics();
+            TestDevLibDiagnostics();
 
             //TestDevLibNet();
 

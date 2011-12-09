@@ -15,18 +15,33 @@ namespace DevLib.Diagnostics
     /// </summary>
     public static class CodeTimer
     {
+        /// <summary>
+        ///
+        /// </summary>
         public static void Initialize()
         {
             Time("Initialize CodeTimer...", 1, () => { });
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="iteration"></param>
         /// <param name="action">E.g. () => { Console.WriteLine("Hello"); }</param>
         public static void Time(string name, int iteration, Action action)
+        {
+            DevLib.Diagnostics.CodeTimer.Time(name, iteration, action, Console.WriteLine);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="iteration"></param>
+        /// <param name="action">E.g. () => { Console.WriteLine("Hello"); }</param>
+        /// <param name="outputAction"></param>
+        public static void Time(string name, int iteration, Action action, Action<string> outputAction)
         {
             if (String.IsNullOrEmpty(name) || action == null) return;
 
@@ -37,9 +52,9 @@ namespace DevLib.Diagnostics
             // Format console color, print name
             ConsoleColor originalForeColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(name);
+            outputAction(name);
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("{0,-17}{1,-18}{2,-17}{3,-2}/{4,-2}/{5,-2}", "Stopwatch", "ThreadTime", "CpuCycles", "G0", "G1", "G2");
+            outputAction(string.Format("{0,-17}{1,-18}{2,-17}{3,-2}/{4,-2}/{5,-2}", "Stopwatch", "ThreadTime", "CpuCycles", "G0", "G1", "G2"));
 
             // Record the latest GC counts
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -71,7 +86,7 @@ namespace DevLib.Diagnostics
 
             // Console output recorded times
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gen[0], gen[1], gen[2]);
+            outputAction(string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gen[0], gen[1], gen[2]));
 
             // Restore console color
             Console.ForegroundColor = originalForeColor;
@@ -94,6 +109,10 @@ namespace DevLib.Diagnostics
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool GetThreadTimes(IntPtr threadHandle, out long creationTime, out long exitTime, out long kernelTime, out long userTime);
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         private static ulong GetCycleCount()
         {
             ulong cycleCount = 0;
@@ -101,13 +120,17 @@ namespace DevLib.Diagnostics
             return cycleCount;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
         private static long GetCurrentThreadTimes()
         {
             long temp;
             long kernelTime, userTimer;
             GetThreadTimes(GetCurrentThread(), out temp, out temp, out kernelTime, out userTimer);
             return kernelTime + userTimer;
-        } 
+        }
         #endregion
     }
 }

@@ -6,6 +6,10 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Drawing;
+    using System.IO;
+    using System.Runtime.Serialization;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
 
     /// <summary>
@@ -16,7 +20,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert bytes to Hex string
         /// </summary>
-        /// <param name="value">bytes</param>
+        /// <param name="value">Byte array</param>
         /// <param name="addSpace">Whether add space between Hex</param>
         /// <returns>Hex string</returns>
         public static string ToHexString(this byte[] value, bool addSpace = true)
@@ -45,7 +49,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert byte to Hex string
         /// </summary>
-        /// <param name="value">byte</param>
+        /// <param name="value">Byte</param>
         /// <returns>Hex string</returns>
         public static string ToHexString(this byte value)
         {
@@ -55,12 +59,33 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert bytes to Encoding string
         /// </summary>
-        /// <param name="value">bytes</param>
+        /// <param name="value">Byte array</param>
         /// <param name="encoding">Encoding</param>
         /// <returns>Encoding string</returns>
         public static string ToEncodingString(this byte[] value, Encoding encoding)
         {
             return encoding.GetString(value);
+        }
+
+        /// <summary>
+        /// Convert bytes to Image
+        /// </summary>
+        /// <param name="value">Byte array</param>
+        /// <returns>Image object</returns>
+        public static Image ToImage(this byte[] value)
+        {
+            try
+            {
+                using (MemoryStream memoryStream = new MemoryStream(value))
+                {
+                    IFormatter formatter = new BinaryFormatter();
+                    return (Image)formatter.Deserialize(memoryStream);
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

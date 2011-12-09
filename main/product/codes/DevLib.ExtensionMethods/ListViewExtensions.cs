@@ -17,9 +17,9 @@ namespace DevLib.ExtensionMethods
     public static class ListViewExtensions
     {
         /// <summary>
-        ///
+        /// Resizes the width of the columns
         /// </summary>
-        /// <param name="listView"></param>
+        /// <param name="listView">ListView object</param>
         public static void AutoResizeColumns(this ListView listView)
         {
             listView.BeginUpdate();

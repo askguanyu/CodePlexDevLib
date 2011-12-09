@@ -12,6 +12,7 @@ namespace DevLib.Samples
     using System.Linq;
     using System.Net;
     using System.Text;
+    using System.Threading;
     using System.Windows.Forms;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
@@ -27,52 +28,78 @@ namespace DevLib.Samples
         [STAThread]
         static void Main()
         {
-            #region WinForm
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
-            #endregion
+            //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke(null, null);
 
+            //TestDevLibWinForms();
 
+            //TestDevLibDiagnostics();
+
+            //TestDevLibNet();
+
+            TestDevLibExtensionMethods();
+
+            Console.ReadKey();
+        }
+
+        private static void TestDevLibWinForms()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new WinFormRibbon());
+        }
+
+        private static void TestDevLibExtensionMethods()
+        {
             string a = "123";
             a.ConsoleWriteLine().ConsoleWriteLine();
             Console.WriteLine(a.ConvertTo<int>());
+            "123".CreateTextFile(@".\out\out.txt");
+            "456".CreateTextFile(@".\out\out.txt");
+            @".\out\out.txt".ReadTextFile().ConsoleWriteLine();
 
+            DateTime date = DateTime.Now;
+            date.CreateBinaryFile(@".\out\out.bin");
+            @".\out\out.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
 
+        }
+
+        private static void TestDevLibDiagnostics()
+        {
             ConcurrentDictionary<int, string> safeDict = new ConcurrentDictionary<int, string>();
             Dictionary<int, string> dict = new Dictionary<int, string>();
 
-            //CodeTimer.Initialize();
+            CodeTimer.Initialize();
 
             int times = 100 * 1000;
 
             times.ConsoleWriteLine().ConsoleWriteLine();
 
-            //CodeTimer.Time("ConcurrentDictionary1", times, () =>
-            //{
-            //    safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
-            //});
+            CodeTimer.Time("ConcurrentDictionary1", times, () =>
+            {
+                safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
+            });
 
-            //CodeTimer.Time("Dictionary1", times, () => 
-            //{ 
-            //    dict.Update(1, "hello"); 
-            //});
+            CodeTimer.Time("Dictionary1", times, () =>
+            {
+                dict.Update(1, "hello");
+            });
 
-            //CodeTimer.Time("ConcurrentDictionary2", times, () =>
-            //{
-            //    safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
-            //});
+            CodeTimer.Time("ConcurrentDictionary2", times, () =>
+            {
+                safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
+            });
 
-            //CodeTimer.Time("Dictionary2", times, () =>
-            //{
-            //    dict.Update(2, "hello");
-            //});
-
-
-            //CodeTimer.Restore();
+            CodeTimer.Time("Dictionary2", times, () =>
+            {
+                dict.Update(2, "hello");
+            });
 
 
+            CodeTimer.Restore();
+        }
 
+        private static void TestDevLibNet()
+        {
             AsyncSocketServer svr = new AsyncSocketServer(9999);
             svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
             svr.Start();
@@ -85,12 +112,6 @@ namespace DevLib.Samples
             client.Send("hello3  你好 end", Encoding.BigEndianUnicode);
             client.Send("hello4  你好 end", Encoding.ASCII);
             client.Send("hello5  你好 end", Encoding.Unicode);
-
-            "123".CreateTextFile(@".\out\out.txt");
-            "456".CreateTextFile(@".\out\out.txt");
-            @".\out\out.txt".ReadTextFile().ConsoleWriteLine();
-
-            Console.ReadKey();
         }
 
         static void client_DataSent(object sender, AsyncSocketUserTokenEventArgs e)

@@ -53,12 +53,14 @@ namespace DevLib.Samples
             string a = "123";
             a.ConsoleWriteLine().ConsoleWriteLine();
             Console.WriteLine(a.ConvertTo<int>());
-            "123".CreateTextFile(@".\out\out.txt");
-            "456".CreateTextFile(@".\out\out.txt");
+
+            "123".CreateBinaryFile(@".\out\123.bin");
+
+            "你好".CreateTextFile(@".\out\456.txt");
             @".\out\out.txt".ReadTextFile().ConsoleWriteLine();
 
             DateTime date = DateTime.Now;
-            date.CreateBinaryFile(@".\out\out.bin");
+            date.CreateBinaryFile(@".\out\date.bin");
             @".\out\out.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
 
         }

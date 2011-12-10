@@ -28,7 +28,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        internal const int BufferSize = 0x10240;
+        internal const int BufferSize = 10240;
 
         /// <summary>
         ///

@@ -9,6 +9,7 @@ namespace DevLib.Samples
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.NetworkInformation;
@@ -19,6 +20,7 @@ namespace DevLib.Samples
     using DevLib.ExtensionMethods;
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
+    using DevLib.Utilities;
     using DevLib.WinForms;
 
     public class Program
@@ -31,11 +33,11 @@ namespace DevLib.Samples
         {
             //TestCodeSnippet();
 
-            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
             //TestDevLibExtensionMethods();
 
-            //TestDevLibNet();
+            TestDevLibNet();
 
             //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
@@ -114,9 +116,9 @@ namespace DevLib.Samples
             #endregion
 
             #region IO
-            //"hello".CreateTextFile(@".\out\hello.txt").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
-            //DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
-            //@".\out\list.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
+            "hello".CreateTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
+            DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
+            @".\out\list.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
             #endregion
 
             #region Object
@@ -131,18 +133,24 @@ namespace DevLib.Samples
 
         private static void TestDevLibNet()
         {
-            AsyncSocketServer svr = new AsyncSocketServer(9999);
-            svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
-            svr.Start();
+            #region AsyncSocket
+            //AsyncSocketServer svr = new AsyncSocketServer(9999);
+            //svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
+            //svr.Start();
 
-            AsyncSocketClient client = new AsyncSocketClient();
-            client.DataSent += new EventHandler<AsyncSocketUserTokenEventArgs>(client_DataSent);
-            client.Connect("127.0.0.1", 9999);
-            client.Send("hello1  你好 end", Encoding.UTF8);
-            client.Send("hello2  你好 end", Encoding.UTF32);
-            client.Send("hello3  你好 end", Encoding.BigEndianUnicode);
-            client.Send("hello4  你好 end", Encoding.ASCII);
-            client.Send("hello5  你好 end", Encoding.Unicode);
+            //AsyncSocketClient client = new AsyncSocketClient();
+            //client.DataSent += new EventHandler<AsyncSocketUserTokenEventArgs>(client_DataSent);
+            //client.Connect("127.0.0.1", 9999);
+            //client.Send("hello1  你好 end", Encoding.UTF8);
+            //client.Send("hello2  你好 end", Encoding.UTF32);
+            //client.Send("hello3  你好 end", Encoding.BigEndianUnicode);
+            //client.Send("hello4  你好 end", Encoding.ASCII);
+            //client.Send("hello5  你好 end", Encoding.Unicode);
+            #endregion
+
+            NetUtilities.GetLocalIPArray().ForEach((p) => { p.ConsoleWriteLine(); });
+            NetUtilities.GetRandomPortNumber().ConsoleWriteLine();
+
         }
 
         private static void TestDevLibWinForms()

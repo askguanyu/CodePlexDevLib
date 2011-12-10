@@ -51,6 +51,7 @@
     <Compile Include="ArrayExtensions.cs" />
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="DictionaryExtensions.cs" />
+    <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="IOExtensions.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="StringExtensions.cs" />

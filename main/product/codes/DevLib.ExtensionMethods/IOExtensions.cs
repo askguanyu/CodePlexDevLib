@@ -19,13 +19,16 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="text">Text to write to the file</param>
         /// <param name="fileName">Full path of the file</param>
-        /// <returns>True if write file successfully</returns>
-        public static bool CreateTextFile(this string text, string fileName)
+        /// <returns>Full path of the file name if write file successfully, string.Empty if failed</returns>
+        public static string CreateTextFile(this string text, string fileName, bool overwritten = true)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return string.Empty;
+            }
+
             string fullName = Path.GetFullPath(fileName);
             string fullPath = Path.GetDirectoryName(fullName);
-
-            StreamWriter streamWriter;
 
             if (!Directory.Exists(fullPath))
             {
@@ -35,23 +38,39 @@ namespace DevLib.ExtensionMethods
                 }
                 catch
                 {
-                    return false;
+                    return string.Empty;
                 }
             }
 
+            Stream stream = null;
+            bool result = false;
+
             try
             {
-                streamWriter = File.CreateText(Path.GetFullPath(fileName));
-                streamWriter.Write(text);
-                streamWriter.Flush();
-                streamWriter.Close();
-                streamWriter.Dispose();
-                return true;
+                stream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
+
+                using (StreamWriter writer = new StreamWriter(stream))
+                {
+                    stream = null;
+                    writer.Write(text);
+                    writer.Flush();
+                }
+
+                result = true;
             }
             catch
             {
-                return false;
+                result = false;
             }
+            finally
+            {
+                if (stream != null)
+                {
+                    stream.Dispose();
+                }
+            }
+
+            return result ? fullName : string.Empty;
         }
 
         /// <summary>
@@ -61,9 +80,14 @@ namespace DevLib.ExtensionMethods
         /// <returns>Text file string</returns>
         public static string ReadTextFile(this string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return string.Empty;
+            }
+
             string fullName = Path.GetFullPath(fileName);
 
-            if (File.Exists(Path.GetFullPath(fileName)))
+            if (File.Exists(fullName))
             {
                 try
                 {
@@ -85,25 +109,53 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="binary">Binary to write to the file</param>
         /// <param name="fileName">Full path of the file</param>
-        /// <returns>True if write file successfully</returns>
-        public static bool CreateBinaryFile(this object binary, string fileName)
+        /// <returns>Full path of the file name if write file successfully, string.Empty if failed</returns>
+        public static string CreateBinaryFile(this object binary, string fileName, bool overwritten = true)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return string.Empty;
+            }
+
             string fullName = Path.GetFullPath(fileName);
+            string fullPath = Path.GetDirectoryName(fullName);
+
+            if (!Directory.Exists(fullPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+
+            Stream stream = null;
+            bool result = false;
 
             try
             {
+                stream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
                 IFormatter formatter = new BinaryFormatter();
-                Stream stream = new FileStream(fullName, FileMode.Create, FileAccess.Write, FileShare.None);
                 formatter.Serialize(stream, binary);
-                stream.Flush();
-                stream.Close();
-                stream.Dispose();
-                return true;
+
+                result = true;
             }
             catch
             {
-                return false;
+                result = false;
             }
+            finally
+            {
+                if (stream != null)
+                {
+                    stream.Dispose();
+                }
+            }
+
+            return result ? fullName : string.Empty;
         }
 
         /// <summary>
@@ -113,29 +165,41 @@ namespace DevLib.ExtensionMethods
         /// <returns>Object</returns>
         public static T ReadBinaryFile<T>(this string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return default(T);
+            }
+
             string fullName = Path.GetFullPath(fileName);
+            Stream stream = null;
+            T result = default(T);
 
             if (File.Exists(fullName))
             {
                 try
                 {
+                    stream = new FileStream(fullName, FileMode.Open, FileAccess.Read, FileShare.Read);
                     IFormatter formatter = new BinaryFormatter();
-                    Stream stream = new FileStream(fullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    T obj = (T)formatter.Deserialize(stream);
-                    stream.Flush();
-                    stream.Close();
-                    stream.Dispose();
-                    return obj;
+                    result = (T)formatter.Deserialize(stream);
                 }
                 catch
                 {
-                    return default(T);
+                    result = default(T);
+                }
+                finally
+                {
+                    if (stream != null)
+                    {
+                        stream.Dispose();
+                    }
                 }
             }
             else
             {
-                return default(T);
+                result = default(T);
             }
+
+            return result;
         }
     }
 }

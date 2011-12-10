@@ -46,14 +46,25 @@ namespace DevLib.ExtensionMethods
                 return default(T);
             }
 
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new MemoryStream();
-            using (stream)
+            T result;
+
+            try
             {
+                Stream stream = new MemoryStream();
+                IFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(stream, source);
                 stream.Seek(0, SeekOrigin.Begin);
-                return (T)formatter.Deserialize(stream);
+                result = (T)formatter.Deserialize(stream);
+                stream.Flush();
+                stream.Close();
+                stream.Dispose();
             }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return result;
         }
 
         /// <summary>

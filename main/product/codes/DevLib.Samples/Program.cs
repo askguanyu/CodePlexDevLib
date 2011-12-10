@@ -11,6 +11,7 @@ namespace DevLib.Samples
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Net.NetworkInformation;
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
@@ -19,7 +20,6 @@ namespace DevLib.Samples
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
     using DevLib.WinForms;
-    using System.Net.NetworkInformation;
 
     static class Program
     {

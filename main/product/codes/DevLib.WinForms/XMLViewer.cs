@@ -173,6 +173,7 @@ namespace DevLib.WinForms
         /// <param name="element"></param>
         /// <param name="level"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2241:Provide correct arguments to formatting methods")]
         private string ProcessElement(XElement element, int level)
         {
             // This viewer does not support the Xml file that has Namespace.

@@ -21,63 +21,35 @@ namespace DevLib.Samples
     using DevLib.Net.AsyncSocket;
     using DevLib.WinForms;
 
-    static class Program
+    public class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
+            //TestCodeSnippet();
 
-            //TestDevLibWinForms();
+            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
-            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            //TestDevLibExtensionMethods();
 
             //TestDevLibNet();
 
-            TestDevLibExtensionMethods();
+            //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
-            //TestSnippet();
 
+
+            // Exit infomation
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
 
-        private static void TestSnippet()
+        private static void TestCodeSnippet()
         {
             Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
             NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
-        }
-
-        private static void TestDevLibWinForms()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new WinFormRibbon());
-        }
-
-        private static void TestDevLibExtensionMethods()
-        {
-            //string a = "123";
-            //a.ConsoleWriteLine().ConsoleWriteLine();
-            //Console.WriteLine(a.ConvertTo<int>());
-
-            //"123".CreateBinaryFile(@".\out\123.bin");
-
-            //"你好".CreateTextFile(@".\out\456.txt");
-            //@".\out\out.txt".ReadTextFile().ConsoleWriteLine();
-
-            //DateTime date = DateTime.Now;
-            //date.CreateBinaryFile(@".\out\date.bin");
-            //@".\out\out.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
-
-            DateTime date = DateTime.Now;
-            DateTime dateclone = date.Clone();
-            object.ReferenceEquals(date, dateclone).ConsoleWriteLine();
-            dateclone.ConsoleWriteLine();
-
         }
 
         private static void TestDevLibDiagnostics()
@@ -89,37 +61,71 @@ namespace DevLib.Samples
 
             CodeTimer.Initialize();
 
-            int times = 1000 * 500;
+            int times = 1000 * 200;
 
             CodeTimer.Time(1, "No action", () => { });
 
             new Action(() => { }).CodeTime(times);
 
+            CodeTimer.Time(times, "ConcurrentDictionary1", () =>
+            {
+                safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
+            }, null);
 
-            //CodeTimer.Time(times, "ConcurrentDictionary1", () =>
-            //{
-            //    safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
-            //}, null);
+            CodeTimer.Time(times, "Dictionary1", () =>
+            {
+                dict.Update(1, "hello");
+            });
 
-            //CodeTimer.Time(times, "Dictionary1", () =>
-            //{
-            //    dict.Update(1, "hello");
-            //});
+            CodeTimer.Time(times, "ConcurrentDictionary2", () =>
+            {
+                safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
+            });
 
-            //CodeTimer.Time(times, "ConcurrentDictionary2", () =>
-            //{
-            //    safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
-            //});
+            CodeTimer.Time(times, "Dictionary2", () =>
+            {
+                dict.Update(2, "hello");
+            });
 
-            //CodeTimer.Time(times, "Dictionary2", () =>
-            //{
-            //    dict.Update(2, "hello");
-            //});
+            CodeTimer.Time(times, "ConcurrentBag1", () =>
+            {
+                safeBag.Add("hello");
+            });
+        }
 
-            //CodeTimer.Time(times, "ConcurrentBag1", () =>
-            //{
-            //    safeBag.Add("hello");
-            //});
+        private static void TestDevLibExtensionMethods()
+        {
+            #region Array
+
+            #endregion
+
+            #region Byte
+
+            #endregion
+
+            #region Dictionary
+
+            #endregion
+
+            #region EventHandler
+            //TestEventClass testEventClassObject = new TestEventClass() { MyName = "testEventClassObject" };
+            //testEventClassObject.OnTestMe += new EventHandler<EventArgs>(testEventClassObject_OnTestMe);
+            //testEventClassObject.TestMe();
+            #endregion
+
+            #region IO
+            //"hello".CreateTextFile(@".\out\hello.txt").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
+            //DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
+            //@".\out\list.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
+            #endregion
+
+            #region Object
+
+            #endregion
+
+            #region String
+
+            #endregion
 
         }
 
@@ -139,6 +145,13 @@ namespace DevLib.Samples
             client.Send("hello5  你好 end", Encoding.Unicode);
         }
 
+        private static void TestDevLibWinForms()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new WinFormRibbon());
+        }
+
         static void client_DataSent(object sender, AsyncSocketUserTokenEventArgs e)
         {
             e.TransferredRawData.ToHexString().ConsoleWriteLine();
@@ -149,6 +162,28 @@ namespace DevLib.Samples
         {
             e.TransferredRawData.ToEncodingString(Encoding.Unicode).ConsoleWriteLine();
             Console.WriteLine();
+        }
+
+        static void testEventClassObject_OnTestMe(object sender, EventArgs e)
+        {
+            (sender as TestEventClass).MyName.ConsoleWriteLine();
+        }
+    }
+
+    public class TestEventClass
+    {
+        public event EventHandler<EventArgs> OnTestMe;
+
+        public string MyName
+        {
+            get;
+            set;
+        }
+
+        public void TestMe()
+        {
+            Console.WriteLine("TestEventClass.TestMe() done!");
+            OnTestMe.RaiseEvent(this, new EventArgs());
         }
     }
 }

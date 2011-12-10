@@ -8,11 +8,13 @@ namespace DevLib.Diagnostics
     using System;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
+    using System.Security.Permissions;
     using System.Threading;
 
     /// <summary>
     /// Code performence timer
     /// </summary>
+    [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public static class CodeTimer
     {
         /// <summary>
@@ -157,14 +159,14 @@ namespace DevLib.Diagnostics
         }
 
         #region NativeMethods
-        [DllImport("kernel32.dll")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool QueryThreadCycleTime(IntPtr threadHandle, ref ulong cycleTime);
 
-        [DllImport("kernel32.dll")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("kernel32.dll")]
         static extern IntPtr GetCurrentThread();
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("kernel32.dll", SetLastError = true)]
         static extern bool GetThreadTimes(IntPtr threadHandle, out long creationTime, out long exitTime, out long kernelTime, out long userTime);
 
         /// <summary>

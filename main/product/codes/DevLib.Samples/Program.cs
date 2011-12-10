@@ -86,35 +86,35 @@ namespace DevLib.Samples
 
             int times = 1000 * 500;
 
-            CodeTimer.Time(times, () => { });
+            CodeTimer.Time(1, "No action", () => { });
 
             new Action(() => { }).CodeTime(times);
 
 
-            CodeTimer.Time(times, "ConcurrentDictionary1", () =>
-            {
-                safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
-            }, null);
+            //CodeTimer.Time(times, "ConcurrentDictionary1", () =>
+            //{
+            //    safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
+            //}, null);
 
-            CodeTimer.Time(times, "Dictionary1", () =>
-            {
-                dict.Update(1, "hello");
-            });
+            //CodeTimer.Time(times, "Dictionary1", () =>
+            //{
+            //    dict.Update(1, "hello");
+            //});
 
-            CodeTimer.Time(times, "ConcurrentDictionary2", () =>
-            {
-                safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
-            });
+            //CodeTimer.Time(times, "ConcurrentDictionary2", () =>
+            //{
+            //    safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
+            //});
 
-            CodeTimer.Time(times, "Dictionary2", () =>
-            {
-                dict.Update(2, "hello");
-            });
+            //CodeTimer.Time(times, "Dictionary2", () =>
+            //{
+            //    dict.Update(2, "hello");
+            //});
 
-            CodeTimer.Time(times, "ConcurrentBag1", () =>
-            {
-                safeBag.Add("hello");
-            });
+            //CodeTimer.Time(times, "ConcurrentBag1", () =>
+            //{
+            //    safeBag.Add("hello");
+            //});
 
         }
 

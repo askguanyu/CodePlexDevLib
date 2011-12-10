@@ -49,6 +49,7 @@
     <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ListViewExtensions.cs" />
     <Compile Include="WinFormRibbon.cs">
       <SubType>Form</SubType>
     </Compile>

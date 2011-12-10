@@ -86,7 +86,7 @@ namespace DevLib.Diagnostics
         /// <param name="outputAction"></param>
         public static void Time(int iteration, string name, Action action, Action<string> outputAction)
         {
-            if (String.IsNullOrEmpty(name) || action == null)
+            if ((iteration < 1) || String.IsNullOrEmpty(name) || (action == null))
             {
                 return;
             }

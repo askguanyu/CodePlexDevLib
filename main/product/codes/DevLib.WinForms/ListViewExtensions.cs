@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ExtensionMethods
+namespace DevLib.WinForms
 {
     using System;
     using System.Windows.Forms;

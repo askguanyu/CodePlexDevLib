@@ -33,11 +33,11 @@ namespace DevLib.Samples
 
             //TestDevLibWinForms();
 
-            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
             //TestDevLibNet();
 
-            //TestDevLibExtensionMethods();
+            TestDevLibExtensionMethods();
 
             //TestSnippet();
 
@@ -60,18 +60,23 @@ namespace DevLib.Samples
 
         private static void TestDevLibExtensionMethods()
         {
-            string a = "123";
-            a.ConsoleWriteLine().ConsoleWriteLine();
-            Console.WriteLine(a.ConvertTo<int>());
+            //string a = "123";
+            //a.ConsoleWriteLine().ConsoleWriteLine();
+            //Console.WriteLine(a.ConvertTo<int>());
 
-            "123".CreateBinaryFile(@".\out\123.bin");
+            //"123".CreateBinaryFile(@".\out\123.bin");
 
-            "你好".CreateTextFile(@".\out\456.txt");
-            @".\out\out.txt".ReadTextFile().ConsoleWriteLine();
+            //"你好".CreateTextFile(@".\out\456.txt");
+            //@".\out\out.txt".ReadTextFile().ConsoleWriteLine();
+
+            //DateTime date = DateTime.Now;
+            //date.CreateBinaryFile(@".\out\date.bin");
+            //@".\out\out.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
 
             DateTime date = DateTime.Now;
-            date.CreateBinaryFile(@".\out\date.bin");
-            @".\out\out.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
+            DateTime dateclone = date.Clone();
+            object.ReferenceEquals(date, dateclone).ConsoleWriteLine();
+            dateclone.ConsoleWriteLine();
 
         }
 

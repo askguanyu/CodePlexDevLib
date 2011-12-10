@@ -2,25 +2,22 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{62AAD564-CA47-4847-BE14-5D8BD6633792}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DevLib.Samples</RootNamespace>
-    <AssemblyName>DevLib.Samples</AssemblyName>
+    <RootNamespace>DevLib.Utilities</RootNamespace>
+    <AssemblyName>DevLib.Utilities</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -29,17 +26,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,38 +41,13 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Program.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DevLib.Diagnostics\DevLib.Diagnostics.csproj">
-      <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
-      <Name>DevLib.Diagnostics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevLib.ExtensionMethods\DevLib.ExtensionMethods.csproj">
-      <Project>{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}</Project>
-      <Name>DevLib.ExtensionMethods</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevLib.Net\DevLib.Net.csproj">
-      <Project>{CF145C2E-642F-4EFA-A03D-96B5082E6650}</Project>
-      <Name>DevLib.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevLib.Utilities\DevLib.Utilities.csproj">
-      <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>
-      <Name>DevLib.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevLib.WinForms\DevLib.WinForms.csproj">
-      <Project>{73AF4976-0D28-4EB8-852E-2B375B6EBC33}</Project>
-      <Name>DevLib.WinForms</Name>
-    </ProjectReference>
+    <Compile Include="NetUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

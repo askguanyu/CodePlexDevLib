@@ -8,6 +8,7 @@ namespace DevLib.ExtensionMethods
     using System.IO;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
+    using System.Security.Permissions;
 
     /// <summary>
     /// IO Extensions
@@ -200,6 +201,79 @@ namespace DevLib.ExtensionMethods
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Open containing folder with Windows Explorer
+        /// </summary>
+        /// <param name="fileName">Path or File name</param>
+        /// <returns>True if open successfully</returns>
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        public static bool OpenContainingFolder(this string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            string fullName = Path.GetFullPath(fileName);
+            string fullPath = Path.GetDirectoryName(fullName);
+
+            try
+            {
+                System.Diagnostics.Process.Start("explorer.exe", fullPath);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns the directory information for the specified path string
+        /// </summary>
+        /// <param name="value">The path of a file or directory</param>
+        /// <returns>A System.String containing directory information for path, or null if path
+        /// denotes a root directory, is the empty string (""), or is null. Returns System.String.Empty
+        /// if path does not contain directory information</returns>
+        public static string GetDirectoryName(this string value)
+        {
+            return Path.GetDirectoryName(value);
+        }
+
+        /// <summary>
+        /// Returns the absolute path for the specified path string
+        /// </summary>
+        /// <param name="value">The file or directory for which to obtain absolute path information</param>
+        /// <returns>A string containing the fully qualified location of path, such as "C:\MyFile.txt"</returns>
+        public static string GetFullPath(this string value)
+        {
+            return Path.GetFullPath(value);
+        }
+
+        /// <summary>
+        /// Determines whether the specified file exists
+        /// </summary>
+        /// <param name="value">The file to check</param>
+        /// <returns>true if the caller has the required permissions and path contains the name
+        /// of an existing file; otherwise, false. This method also returns false if
+        /// path is null, an invalid path, or a zero-length string. If the caller does
+        /// not have sufficient permissions to read the specified file, no exception
+        /// is thrown and the method returns false regardless of the existence of path.</returns>
+        public static bool ExistsFile(this string value)
+        {
+            return File.Exists(value);
+        }
+
+        /// <summary>
+        /// Determines whether the given path refers to an existing directory on disk
+        /// </summary>
+        /// <param name="value">The path to test</param>
+        /// <returns>true if path refers to an existing directory; otherwise, false</returns>
+        public static bool ExistsDirectory(this string value)
+        {
+            return Directory.Exists(value);
         }
     }
 }

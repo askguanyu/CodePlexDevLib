@@ -33,7 +33,7 @@ namespace DevLib.Samples
 
             //TestDevLibWinForms();
 
-            TestDevLibDiagnostics();
+            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
             //TestDevLibNet();
 
@@ -86,29 +86,32 @@ namespace DevLib.Samples
 
             int times = 1000 * 500;
 
-            CodeTimer.Time("No action", times, () => { });
+            CodeTimer.Time(times, () => { });
 
-            CodeTimer.Time("ConcurrentDictionary1", times, () =>
+            new Action(() => { }).CodeTime(times);
+
+
+            CodeTimer.Time(times, "ConcurrentDictionary1", () =>
             {
                 safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
-            });
+            }, null);
 
-            CodeTimer.Time("Dictionary1", times, () =>
+            CodeTimer.Time(times, "Dictionary1", () =>
             {
                 dict.Update(1, "hello");
             });
 
-            CodeTimer.Time("ConcurrentDictionary2", times, () =>
+            CodeTimer.Time(times, "ConcurrentDictionary2", () =>
             {
                 safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
             });
 
-            CodeTimer.Time("Dictionary2", times, () =>
+            CodeTimer.Time(times, "Dictionary2", () =>
             {
                 dict.Update(2, "hello");
             });
 
-            CodeTimer.Time("ConcurrentBag1", times, () =>
+            CodeTimer.Time(times, "ConcurrentBag1", () =>
             {
                 safeBag.Add("hello");
             });

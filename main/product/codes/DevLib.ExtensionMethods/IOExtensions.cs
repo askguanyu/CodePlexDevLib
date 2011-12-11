@@ -43,18 +43,18 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            Stream stream = null;
+            FileStream fileStream = null;
             bool result = false;
 
             try
             {
-                stream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
+                fileStream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
 
-                using (StreamWriter writer = new StreamWriter(stream))
+                using (StreamWriter streamWriter = new StreamWriter(fileStream))
                 {
-                    stream = null;
-                    writer.Write(text);
-                    writer.Flush();
+                    fileStream = null;
+                    streamWriter.Write(text);
+                    streamWriter.Flush();
                 }
 
                 result = true;
@@ -65,9 +65,9 @@ namespace DevLib.ExtensionMethods
             }
             finally
             {
-                if (stream != null)
+                if (fileStream != null)
                 {
-                    stream.Dispose();
+                    fileStream.Dispose();
                 }
             }
 
@@ -133,14 +133,14 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            Stream stream = null;
+            FileStream fileStream = null;
             bool result = false;
 
             try
             {
-                stream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
-                IFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, binary);
+                fileStream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(fileStream, binary);
 
                 result = true;
             }
@@ -150,9 +150,9 @@ namespace DevLib.ExtensionMethods
             }
             finally
             {
-                if (stream != null)
+                if (fileStream != null)
                 {
-                    stream.Dispose();
+                    fileStream.Dispose();
                 }
             }
 
@@ -172,16 +172,17 @@ namespace DevLib.ExtensionMethods
             }
 
             string fullName = Path.GetFullPath(fileName);
-            Stream stream = null;
+
+            FileStream fileStream = null;
             T result = default(T);
 
             if (File.Exists(fullName))
             {
                 try
                 {
-                    stream = new FileStream(fullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    IFormatter formatter = new BinaryFormatter();
-                    result = (T)formatter.Deserialize(stream);
+                    fileStream = new FileStream(fullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    BinaryFormatter binaryFormatter = new BinaryFormatter();
+                    result = (T)binaryFormatter.Deserialize(fileStream);
                 }
                 catch
                 {
@@ -189,9 +190,9 @@ namespace DevLib.ExtensionMethods
                 }
                 finally
                 {
-                    if (stream != null)
+                    if (fileStream != null)
                     {
-                        stream.Dispose();
+                        fileStream.Dispose();
                     }
                 }
             }
@@ -233,47 +234,47 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Returns the directory information for the specified path string
         /// </summary>
-        /// <param name="value">The path of a file or directory</param>
+        /// <param name="source">The path of a file or directory</param>
         /// <returns>A System.String containing directory information for path, or null if path
         /// denotes a root directory, is the empty string (""), or is null. Returns System.String.Empty
         /// if path does not contain directory information</returns>
-        public static string GetDirectoryName(this string value)
+        public static string GetDirectoryName(this string source)
         {
-            return Path.GetDirectoryName(value);
+            return Path.GetDirectoryName(source);
         }
 
         /// <summary>
         /// Returns the absolute path for the specified path string
         /// </summary>
-        /// <param name="value">The file or directory for which to obtain absolute path information</param>
+        /// <param name="source">The file or directory for which to obtain absolute path information</param>
         /// <returns>A string containing the fully qualified location of path, such as "C:\MyFile.txt"</returns>
-        public static string GetFullPath(this string value)
+        public static string GetFullPath(this string source)
         {
-            return Path.GetFullPath(value);
+            return Path.GetFullPath(source);
         }
 
         /// <summary>
         /// Determines whether the specified file exists
         /// </summary>
-        /// <param name="value">The file to check</param>
+        /// <param name="source">The file to check</param>
         /// <returns>true if the caller has the required permissions and path contains the name
         /// of an existing file; otherwise, false. This method also returns false if
         /// path is null, an invalid path, or a zero-length string. If the caller does
         /// not have sufficient permissions to read the specified file, no exception
         /// is thrown and the method returns false regardless of the existence of path.</returns>
-        public static bool ExistsFile(this string value)
+        public static bool ExistsFile(this string source)
         {
-            return File.Exists(value);
+            return File.Exists(source);
         }
 
         /// <summary>
         /// Determines whether the given path refers to an existing directory on disk
         /// </summary>
-        /// <param name="value">The path to test</param>
+        /// <param name="source">The path to test</param>
         /// <returns>true if path refers to an existing directory; otherwise, false</returns>
-        public static bool ExistsDirectory(this string value)
+        public static bool ExistsDirectory(this string source)
         {
-            return Directory.Exists(value);
+            return Directory.Exists(source);
         }
     }
 }

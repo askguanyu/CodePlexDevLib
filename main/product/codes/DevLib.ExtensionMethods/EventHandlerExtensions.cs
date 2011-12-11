@@ -16,13 +16,13 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Thread safety raise event
         /// </summary>
-        /// <param name="handler"></param>
+        /// <param name="source"></param>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public static void RaiseEvent<T>(this EventHandler<T> handler, object sender, T e) where T : EventArgs
+        public static void RaiseEvent<T>(this EventHandler<T> source, object sender, T e) where T : EventArgs
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<T> safeHandler = Interlocked.CompareExchange(ref handler, null, null);
+            EventHandler<T> safeHandler = Interlocked.CompareExchange(ref source, null, null);
 
             if (safeHandler != null)
             {

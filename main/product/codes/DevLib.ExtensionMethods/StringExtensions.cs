@@ -19,33 +19,31 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="value">Hex string</param>
         /// <returns>bytes</returns>
-        public static byte[] ToHexByte(this string value)
+        public static byte[] ToHexByteArray(this string value)
         {
             string hexPattern = "^[0-9a-fA-F]+$";
 
             string temp = value.Trim(new char[] { ' ', '\n', '\r' });
 
-            if (Regex.IsMatch(temp, hexPattern))
-            {
-                if (value.Length % 2 == 1)
-                {
-                    temp = "0" + temp;
-                }
-
-                int length = temp.Length / 2;
-                byte[] result = new byte[length];
-
-                for (int i = 0; i < length; i++)
-                {
-                    result[i] = Convert.ToByte(temp.Substring(i * 2, 2), 16);
-                }
-
-                return result;
-            }
-            else
+            if (!Regex.IsMatch(temp, hexPattern))
             {
                 throw new ArgumentException(string.Format("\"{0}\" is not a Hex String.", value));
             }
+
+            if (value.Length % 2 == 1)
+            {
+                temp = "0" + temp;
+            }
+
+            int resultLength = temp.Length / 2;
+            byte[] result = new byte[resultLength];
+
+            for (int i = 0; i < resultLength; i++)
+            {
+                result[i] = Convert.ToByte(temp.Substring(i * 2, 2), 16);
+            }
+
+            return result;
         }
 
         /// <summary>

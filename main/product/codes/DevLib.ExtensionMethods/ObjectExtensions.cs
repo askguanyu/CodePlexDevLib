@@ -6,10 +6,14 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
+    using System.Runtime.Serialization.Json;
+    using System.Text;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Object Extensions
@@ -19,12 +23,12 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Invoke System.Console.WriteLine()
         /// </summary>
-        /// <param name="value">The input object</param>
+        /// <param name="source">The input object</param>
         /// <returns>The input object</returns>
-        public static T ConsoleWriteLine<T>(this T value)
+        public static T ConsoleWriteLine<T>(this T source)
         {
-            Console.WriteLine(value);
-            return value;
+            Console.WriteLine(source);
+            return source;
         }
 
         /// <summary>
@@ -33,7 +37,7 @@ namespace DevLib.ExtensionMethods
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>
         /// <returns>The copied object.</returns>
-        public static T Clone<T>(this T source)
+        public static T CloneDeep<T>(this T source)
         {
             if (!typeof(T).IsSerializable)
             {
@@ -46,30 +50,142 @@ namespace DevLib.ExtensionMethods
                 return default(T);
             }
 
-            T result = default(T);
-            Stream stream = null;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(memoryStream, source);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                return (T)binaryFormatter.Deserialize(memoryStream);
+            }
+        }
 
-            try
+        /// <summary>
+        /// Convert object to bytes
+        /// </summary>
+        /// <param name="source">Object</param>
+        /// <returns>Byte array</returns>
+        public static byte[] ToByteArray<T>(this T source)
+        {
+            if (!typeof(T).IsSerializable)
             {
-                stream = new MemoryStream();
-                IFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, source);
-                stream.Seek(0, SeekOrigin.Begin);
-                result = (T)formatter.Deserialize(stream);
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Dispose();
-                }
+                throw new ArgumentException("The type must be serializable.", "source");
             }
 
-            return result;
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
+            {
+                return null;
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(memoryStream, source);
+                return memoryStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Serializes an object to a JSON string
+        /// </summary>
+        /// <param name="source">Object to serialize</param>
+        /// <returns>JSON string</returns>
+        public static string ToJson(this object source)
+        {
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
+            {
+                return string.Empty;
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                var serializer = new DataContractJsonSerializer(source.GetType());
+                serializer.WriteObject(memoryStream, source);
+                return Encoding.Default.GetString(memoryStream.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Serializes an object to a JSON string
+        /// </summary>
+        /// <param name="source">Object to serialize</param>
+        /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects</param>
+        /// <returns>JSON string</returns>
+        public static string ToJson(this object source, IEnumerable<Type> knownTypes)
+        {
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
+            {
+                return string.Empty;
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                var serializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
+                serializer.WriteObject(memoryStream, source);
+                return Encoding.Default.GetString(memoryStream.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Serializes a JSON object to an object
+        /// </summary>
+        /// <param name="source">JSON string object</param>
+        /// <returns>The result object</returns>
+        public static T FromJson<T>(this object source)
+        {
+            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source.ToString())))
+            {
+                var serializer = new DataContractJsonSerializer(typeof(T));
+                return (T)serializer.ReadObject(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Serializes a JSON object to an object
+        /// </summary>
+        /// <param name="source">JSON string object</param>
+        /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects.</param>
+        /// <returns>The result object</returns>
+        public static T FromJson<T>(this object source, IEnumerable<Type> knownTypes)
+        {
+            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source.ToString())))
+            {
+                var serializer = new DataContractJsonSerializer(typeof(T), knownTypes);
+                return (T)serializer.ReadObject(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Serializes the object into an XML string
+        /// </summary>
+        /// <remarks>
+        /// The object to be serialized should be decorated with the
+        /// <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
+        /// </remarks>
+        /// <param name="source">The object to serialize</param>
+        /// <param name="encoding">The Encoding scheme to use when serializing the data to XML</param>
+        /// <returns>An XML encoded string representation of the source object</returns>
+        public static string ToXml(this object source, Encoding encoding)
+        {
+            if (source == null)
+            {
+                throw new ArgumentException("The source object cannot be null.");
+            }
+
+            if (encoding == null)
+            {
+                throw new Exception("You must specify an encoder to use for serialization.");
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
+                xmlSerializer.Serialize(memoryStream, source);
+                memoryStream.Position = 0;
+                return encoding.GetString(memoryStream.ToArray());
+            }
         }
 
         /// <summary>
@@ -77,21 +193,21 @@ namespace DevLib.ExtensionMethods
         /// those 2 types are not convertible.
         /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
         /// <para>
-        /// If the exceptions are not ignored and the <paramref name="value"/> can't be convert even if
+        /// If the exceptions are not ignored and the <paramref name="source"/> can't be convert even if
         /// the types are convertible with each other, an exception is thrown.</para>
         /// </summary>
         /// <typeparam name = "T"></typeparam>
-        /// <param name = "value">The value.</param>
+        /// <param name = "source">The value.</param>
         /// <param name = "defaultValue">The default value.</param>
         /// <param name = "ignoreException">if set to <c>true</c> ignore any exception.</param>
         /// <returns>The target type</returns>
-        public static T ConvertTo<T>(this object value, T defaultValue = default(T), bool ignoreException = true)
+        public static T ConvertTo<T>(this object source, T defaultValue = default(T), bool ignoreException = true)
         {
             if (ignoreException)
             {
                 try
                 {
-                    return value.ConvertTo<T>(defaultValue);
+                    return source.ConvertTo<T>(defaultValue);
                 }
                 catch
                 {
@@ -99,7 +215,7 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            return value.ConvertTo<T>(defaultValue);
+            return source.ConvertTo<T>(defaultValue);
         }
 
         /// <summary>
@@ -107,33 +223,40 @@ namespace DevLib.ExtensionMethods
         /// those 2 types are not convertible.
         /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
         /// <para>
-        /// If the exceptions are not ignored and the <paramref name="value"/> can't be convert even if
+        /// If the exceptions are not ignored and the <paramref name="source"/> can't be convert even if
         /// the types are convertible with each other, an exception is thrown.</para>
         /// </summary>
         /// <typeparam name = "T"></typeparam>
-        /// <param name = "value">The value.</param>
+        /// <param name = "source">The value.</param>
         /// <param name = "defaultValue">The default value.</param>
         /// <returns>The target type</returns>
-        private static T ConvertTo<T>(this object value, T defaultValue)
+        private static T ConvertTo<T>(this object source, T defaultValue)
         {
-            if (value != null)
+            if (source != null)
             {
                 var targetType = typeof(T);
 
-                if (value.GetType() == targetType) return (T)value;
+                if (source.GetType() == targetType)
+                {
+                    return (T)source;
+                }
 
-                var converter = TypeDescriptor.GetConverter(value);
+                var converter = TypeDescriptor.GetConverter(source);
                 if (converter != null)
                 {
                     if (converter.CanConvertTo(targetType))
-                        return (T)converter.ConvertTo(value, targetType);
+                    {
+                        return (T)converter.ConvertTo(source, targetType);
+                    }
                 }
 
                 converter = TypeDescriptor.GetConverter(targetType);
                 if (converter != null)
                 {
-                    if (converter.CanConvertFrom(value.GetType()))
-                        return (T)converter.ConvertFrom(value);
+                    if (converter.CanConvertFrom(source.GetType()))
+                    {
+                        return (T)converter.ConvertFrom(source);
+                    }
                 }
             }
 

@@ -35,11 +35,11 @@ namespace DevLib.Samples
 
             //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
-            //TestDevLibExtensionMethods();
+            TestDevLibExtensionMethods();
 
             //TestDevLibNet();
 
-            TestDevLibUtilities();
+            //TestDevLibUtilities();
 
             //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
@@ -138,10 +138,11 @@ namespace DevLib.Samples
 
             //sourceArray = null;
             appendArray.AddRangeTo(ref sourceArray, true);
+
             sourceArray[1].MyName = "change1";
             appendArray[1].MyName = "change2";
             sourceArray.ForEach((p) => { p.MyName.ConsoleWriteLine(); });
-
+            "End: ArrayExtensions".ConsoleWriteLine();
             #endregion
 
             #region Byte

@@ -48,6 +48,7 @@
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="NetUtilities.cs" />
+    <Compile Include="RegexPatternUtilities.cs" />
     <Compile Include="StringUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

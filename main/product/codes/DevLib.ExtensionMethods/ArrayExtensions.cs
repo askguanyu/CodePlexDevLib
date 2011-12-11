@@ -75,27 +75,19 @@ namespace DevLib.ExtensionMethods
             {
                 int sourceArrayLength = sourceArray.Length;
                 int suffixArrayLength = suffixArray.Length;
-                T[] result = new T[sourceArrayLength + suffixArrayLength];
+                Array.Resize(ref sourceArray, sourceArrayLength + suffixArrayLength);
 
                 if (useDeepClone)
                 {
-                    for (int i = 0; i < sourceArrayLength; i++)
-                    {
-                        result[i] = sourceArray[i].CloneDeep();
-                    }
-
                     for (int i = 0; i < suffixArrayLength; i++)
                     {
-                        result[i + sourceArrayLength] = suffixArray[i].CloneDeep();
+                        sourceArray[i + sourceArrayLength] = suffixArray[i].CloneDeep();
                     }
-                    sourceArray = result;
                     return;
                 }
                 else
                 {
-                    sourceArray.CopyTo(result, 0);
-                    suffixArray.CopyTo(result, sourceArrayLength);
-                    sourceArray = result;
+                    suffixArray.CopyTo(sourceArray, sourceArrayLength);
                     return;
                 }
             }

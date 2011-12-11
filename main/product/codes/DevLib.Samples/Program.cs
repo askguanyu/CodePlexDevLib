@@ -29,7 +29,7 @@ namespace DevLib.Samples
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             //TestCodeSnippet();
 
@@ -37,7 +37,9 @@ namespace DevLib.Samples
 
             //TestDevLibExtensionMethods();
 
-            TestDevLibNet();
+            //TestDevLibNet();
+
+            TestDevLibUtilities();
 
             //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
@@ -50,12 +52,16 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippet()
         {
+            PrintMethodName("TestCodeSnippet");
+
             Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
             NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
         }
 
         private static void TestDevLibDiagnostics()
         {
+            PrintMethodName("Test Dev.Lib.Diagnostics");
+
             ConcurrentDictionary<int, string> safeDict = new ConcurrentDictionary<int, string>();
             Dictionary<int, string> dict = new Dictionary<int, string>();
             List<int> list = new List<int>();
@@ -97,15 +103,63 @@ namespace DevLib.Samples
 
         private static void TestDevLibExtensionMethods()
         {
+            PrintMethodName("Test Dev.Lib.ExtensionMethods");
+
             #region Array
+            TestEventClass[] sourceArray
+                = new TestEventClass[]
+            {
+                new TestEventClass(){ MyName="a"},
+                new TestEventClass(){ MyName="b"},
+                new TestEventClass(){ MyName="c"},
+            };
+
+            TestEventClass[] appendArray = new TestEventClass[]
+            {
+                new TestEventClass(){ MyName="d"},
+                new TestEventClass(){ MyName="e"},
+                new TestEventClass(){ MyName="f"},
+            };
+
+            //int[] sourceArray
+            //    = new int[]
+            //{
+            //    1,
+            //    2,
+            //    3,
+            //};
+
+            //int[] appendArray = new int[]
+            //{
+            //    4,
+            //    5,
+            //    6,
+            //};
+
+            //sourceArray = null;
+            appendArray.AddRangeTo(ref sourceArray, true);
+            sourceArray[1].MyName = "change1";
+            appendArray[1].MyName = "change2";
+            sourceArray.ForEach((p) => { p.MyName.ConsoleWriteLine(); });
 
             #endregion
 
             #region Byte
+            byte[] bytes = new byte[] { 1, 2, 3, 4, 5,6,7,8,9,10 };
+            //var obj = bytes.ToObject<int>();
 
+            TestEventClass aobject = new TestEventClass() { MyName = "object to []" };
+            aobject.ToByteArray().ToObject<TestEventClass>().MyName.ConsoleWriteLine();
+            int i = 123;
+            i.ToByteArray().ToObject().ConsoleWriteLine();
+
+            "compress".ConsoleWriteLine();
+            sourceArray.ToByteArray().Length.ConsoleWriteLine();
+            sourceArray.ToByteArray().Compress().Length.ConsoleWriteLine();
+            sourceArray.ToByteArray().Compress().Decompress().Length.ConsoleWriteLine();
             #endregion
 
-            #region Dictionary
+            #region Collection
 
             #endregion
 
@@ -116,13 +170,14 @@ namespace DevLib.Samples
             #endregion
 
             #region IO
-            "hello".CreateTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
-            DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
-            @".\out\list.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
+            //"hello".CreateTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
+            //DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
+            //@".\out\list.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
             #endregion
 
             #region Object
-
+            sourceArray.ToJson().FromJson<TestEventClass[]>().ForEach((p) => { p.MyName.ConsoleWriteLine(); });
+            sourceArray.ToXml(Encoding.UTF8).ConsoleWriteLine();
             #endregion
 
             #region String
@@ -133,6 +188,8 @@ namespace DevLib.Samples
 
         private static void TestDevLibNet()
         {
+            PrintMethodName("Test Dev.Lib.Net");
+
             #region AsyncSocket
             //AsyncSocketServer svr = new AsyncSocketServer(9999);
             //svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
@@ -155,29 +212,48 @@ namespace DevLib.Samples
 
         private static void TestDevLibWinForms()
         {
+            PrintMethodName("Test Dev.Lib.WinForms");
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new WinFormRibbon());
         }
 
-        static void client_DataSent(object sender, AsyncSocketUserTokenEventArgs e)
+        private static void TestDevLibUtilities()
+        {
+            PrintMethodName("Test Dev.Lib.Utilities");
+
+            NetUtilities.GetRandomPortNumber().ConsoleWriteLine();
+            StringUtilities.GetRandomString(32).ConsoleWriteLine();
+        }
+
+        private static void PrintMethodName(string name)
+        {
+            ConsoleColor originalForeColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("{0} is running...", name);
+            Console.ForegroundColor = originalForeColor;
+        }
+
+        private static void client_DataSent(object sender, AsyncSocketUserTokenEventArgs e)
         {
             e.TransferredRawData.ToHexString().ConsoleWriteLine();
             Console.WriteLine();
         }
 
-        static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
+        private static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
         {
             e.TransferredRawData.ToEncodingString(Encoding.Unicode).ConsoleWriteLine();
             Console.WriteLine();
         }
 
-        static void testEventClassObject_OnTestMe(object sender, EventArgs e)
+        private static void testEventClassObject_OnTestMe(object sender, EventArgs e)
         {
             (sender as TestEventClass).MyName.ConsoleWriteLine();
         }
     }
 
+    [Serializable]
     public class TestEventClass
     {
         public event EventHandler<EventArgs> OnTestMe;

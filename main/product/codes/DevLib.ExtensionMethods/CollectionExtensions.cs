@@ -7,6 +7,7 @@ namespace DevLib.ExtensionMethods
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// Collection Extensions
@@ -32,6 +33,26 @@ namespace DevLib.ExtensionMethods
                     source.Add(sourceKey, sourceValue);
                 }
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static bool IsEmpty<T>(this IEnumerable<T> source)
+        {
+            return !source.Any();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static bool IsNotEmpty<T>(this IEnumerable<T> source)
+        {
+            return source.Any();
         }
     }
 }

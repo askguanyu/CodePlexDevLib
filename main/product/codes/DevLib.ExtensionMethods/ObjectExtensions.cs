@@ -9,6 +9,7 @@ namespace DevLib.ExtensionMethods
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.IO;
+    using System.Reflection;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Runtime.Serialization.Json;
@@ -21,22 +22,90 @@ namespace DevLib.ExtensionMethods
     public static class ObjectExtensions
     {
         /// <summary>
-        /// Invoke System.Console.WriteLine()
+        /// Invoke System.Console.WriteLine() or System.Console.Write()
         /// </summary>
+        /// <typeparam name="T">The type of input object</typeparam>
         /// <param name="source">The input object</param>
+        /// <param name="withNewLine">Whether followed by the current line terminator</param>
         /// <returns>The input object</returns>
-        public static T ConsoleWriteLine<T>(this T source)
+        public static T ConsoleOutput<T>(this T source, bool withNewLine = true)
         {
-            Console.WriteLine(source);
+            if (withNewLine)
+            {
+                Console.WriteLine(source);
+            }
+            else
+            {
+                Console.Write(source);
+            }
+
             return source;
         }
 
         /// <summary>
-        /// Perform a deep Copy of the object.
+        /// Invoke System.Console.WriteLine() or System.Console.Write()
         /// </summary>
-        /// <typeparam name="T">The type of object being copied.</typeparam>
-        /// <param name="source">The object instance to copy.</param>
-        /// <returns>The copied object.</returns>
+        /// <typeparam name="T">The type of input object</typeparam>
+        /// <param name="source">The input object</param>
+        /// <param name="obj">Append object to display</param>
+        /// <param name="withNewLine">Whether followed by the current line terminator</param>
+        /// <returns>The input object</returns>
+        public static T ConsoleOutput<T>(this T source, object obj, bool withNewLine = true)
+        {
+            if (withNewLine)
+            {
+                Console.WriteLine("{0}{1}", source, obj);
+            }
+            else
+            {
+                Console.Write("{0}{1}", source, obj);
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Invoke System.Console.WriteLine() or System.Console.Write()
+        /// </summary>
+        /// <typeparam name="T">The type of input object</typeparam>
+        /// <param name="source">The input object</param>
+        /// <param name="format">A composite format string</param>
+        /// <param name="withNewLine">Whether followed by the current line terminator</param>
+        /// <returns>The input object</returns>
+        public static T ConsoleOutput<T>(this T source, string format, bool withNewLine = true)
+        {
+            if (format.Contains("{0}"))
+            {
+                if (withNewLine)
+                {
+                    Console.WriteLine(format, source);
+                }
+                else
+                {
+                    Console.Write(format, source);
+                }
+            }
+            else
+            {
+                if (withNewLine)
+                {
+                    Console.WriteLine("{0}{1}", source, format);
+                }
+                else
+                {
+                    Console.Write("{0}{1}", source, format);
+                }
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Perform a deep Copy of the object
+        /// </summary>
+        /// <typeparam name="T">The type of object being copied</typeparam>
+        /// <param name="source">The object instance to copy</param>
+        /// <returns>The copied object</returns>
         public static T CloneDeep<T>(this T source)
         {
             if (!typeof(T).IsSerializable)
@@ -216,6 +285,68 @@ namespace DevLib.ExtensionMethods
             }
 
             return source.ConvertTo<T>(defaultValue);
+        }
+
+        /// <summary>
+        /// Copies the readable and writable public property values from the target object to the source
+        /// </summary>
+        /// <remarks>The source and target objects must be of the same type</remarks>
+        /// <param name="source">The source object</param>
+        /// <param name="target">The target object</param>
+        public static void CopyPropertiesFrom(this object source, object target)
+        {
+            source.CopyPropertiesFrom(target, string.Empty);
+        }
+
+        /// <summary>
+        /// Copies the readable and writable public property values from the target object to the source and
+        /// optionally allows for the ignoring of any number of properties
+        /// </summary>
+        /// <remarks>The source and target objects must be of the same type</remarks>
+        /// <param name="source">The source object</param>
+        /// <param name="target">The target object</param>
+        /// <param name="ignoreProperty">A single property name to ignore</param>
+        public static void CopyPropertiesFrom(this object source, object target, string ignoreProperty)
+        {
+            source.CopyPropertiesFrom(target, new string[] { ignoreProperty });
+        }
+
+        /// <summary>
+        /// Copies the readable and writable public property values from the target object to the source and
+        /// optionally allows for the ignoring of any number of properties
+        /// </summary>
+        /// <remarks>The source and target objects must be of the same type</remarks>
+        /// <param name="source">The source object</param>
+        /// <param name="target">The target object</param>
+        /// <param name="ignoreProperties">An array of property names to ignore</param>
+        public static void CopyPropertiesFrom(this object source, object target, string[] ignoreProperties)
+        {
+            // Get and check the object types
+            Type type = target.GetType();
+            if (source.GetType() != type)
+            {
+                throw new ArgumentException("The target type must be the same as the source");
+            }
+
+            // Build a clean list of property names to ignore
+            List<string> ignoreList = new List<string>();
+            foreach (string item in ignoreProperties)
+            {
+                if (!string.IsNullOrEmpty(item) && !ignoreList.Contains(item))
+                {
+                    ignoreList.Add(item);
+                }
+            }
+
+            // Copy the properties
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                if (property.CanWrite && property.CanRead && !ignoreList.Contains(property.Name))
+                {
+                    object val = property.GetValue(target, null);
+                    property.SetValue(source, val, null);
+                }
+            }
         }
 
         /// <summary>

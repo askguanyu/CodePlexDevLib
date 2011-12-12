@@ -31,7 +31,7 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            //TestCodeSnippet();
+            TestCodeSnippet();
 
             //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
@@ -54,8 +54,10 @@ namespace DevLib.Samples
         {
             PrintMethodName("TestCodeSnippet");
 
-            Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
-            NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
+            //Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
+            //NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
+
+            "Hello".ConsoleOutput(" MD5 of {0} is ", false).ToMD5().ConsoleOutput();
         }
 
         private static void TestDevLibDiagnostics()
@@ -121,43 +123,50 @@ namespace DevLib.Samples
                 new TestEventClass(){ MyName="f"},
             };
 
-            //int[] sourceArray
-            //    = new int[]
-            //{
-            //    1,
-            //    2,
-            //    3,
-            //};
+            int[] sourceValueTypeArray
+                = new int[]
+            {
+                1,
+                2,
+                3,
+            };
 
-            //int[] appendArray = new int[]
-            //{
-            //    4,
-            //    5,
-            //    6,
-            //};
+            int[] appendValueTypeArray = new int[]
+            {
+                4,
+                5,
+                6,
+            };
 
             //sourceArray = null;
             appendArray.AddRangeTo(ref sourceArray, true);
 
             sourceArray[1].MyName = "change1";
             appendArray[1].MyName = "change2";
-            sourceArray.ForEach((p) => { p.MyName.ConsoleWriteLine(); });
-            "End: ArrayExtensions".ConsoleWriteLine();
+            sourceArray.ForEach((p) => { p.MyName.ConsoleOutput(); });
+
+            sourceValueTypeArray.AddRangeTo(ref appendValueTypeArray);
+            appendValueTypeArray.ForEach((p) => { p.ConsoleOutput(); });
+            "".ConsoleOutput();
+            sourceValueTypeArray[1] = 3;
+            appendValueTypeArray.FindArray(sourceValueTypeArray).ConsoleOutput();
+
+            "End: ArrayExtensions".ConsoleOutput();
             #endregion
 
             #region Byte
-            byte[] bytes = new byte[] { 1, 2, 3, 4, 5,6,7,8,9,10 };
-            //var obj = bytes.ToObject<int>();
+            //byte[] bytes = new byte[] { 1, 2, 3, 4, 5,6,7,8,9,10 };
+            ////var obj = bytes.ToObject<int>();
 
-            TestEventClass aobject = new TestEventClass() { MyName = "object to []" };
-            aobject.ToByteArray().ToObject<TestEventClass>().MyName.ConsoleWriteLine();
-            int i = 123;
-            i.ToByteArray().ToObject().ConsoleWriteLine();
+            //TestEventClass aobject = new TestEventClass() { MyName = "object to []" };
+            //aobject.ToByteArray().ToObject<TestEventClass>().MyName.ConsoleWriteLine();
+            //int i = 123;
+            //i.ToByteArray().ToObject().ConsoleWriteLine();
 
-            "compress".ConsoleWriteLine();
-            sourceArray.ToByteArray().Length.ConsoleWriteLine();
-            sourceArray.ToByteArray().Compress().Length.ConsoleWriteLine();
-            sourceArray.ToByteArray().Compress().Decompress().Length.ConsoleWriteLine();
+            //"compress".ConsoleWriteLine();
+            //sourceArray.ToByteArray().Length.ConsoleWriteLine();
+            //sourceArray.ToByteArray().Compress().Length.ConsoleWriteLine();
+            //sourceArray.ToByteArray().Compress().Decompress().Length.ConsoleWriteLine();
             #endregion
 
             #region Collection
@@ -177,8 +186,12 @@ namespace DevLib.Samples
             #endregion
 
             #region Object
-            sourceArray.ToJson().FromJson<TestEventClass[]>().ForEach((p) => { p.MyName.ConsoleWriteLine(); });
-            sourceArray.ToXml(Encoding.UTF8).ConsoleWriteLine();
+            //sourceArray.ToJson().FromJson<TestEventClass[]>().ForEach((p) => { p.MyName.ConsoleWriteLine(); });
+            //sourceArray.ToXml(Encoding.UTF8).ConsoleWriteLine();
+
+            sourceArray.ForEach((p) => { p.CopyPropertiesFrom(appendArray[1]); });
+            sourceArray.ForEach((p) => { p.MyName.ConsoleOutput(); });
+            "End: Object".ConsoleOutput();
             #endregion
 
             #region String
@@ -206,8 +219,8 @@ namespace DevLib.Samples
             //client.Send("hello5  你好 end", Encoding.Unicode);
             #endregion
 
-            NetUtilities.GetLocalIPArray().ForEach((p) => { p.ConsoleWriteLine(); });
-            NetUtilities.GetRandomPortNumber().ConsoleWriteLine();
+            NetUtilities.GetLocalIPArray().ForEach((p) => { p.ConsoleOutput(); });
+            NetUtilities.GetRandomPortNumber().ConsoleOutput();
 
         }
 
@@ -224,8 +237,8 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.Utilities");
 
-            NetUtilities.GetRandomPortNumber().ConsoleWriteLine();
-            StringUtilities.GetRandomString(32).ConsoleWriteLine();
+            NetUtilities.GetRandomPortNumber().ConsoleOutput();
+            StringUtilities.GetRandomString(32).ConsoleOutput();
         }
 
         private static void PrintMethodName(string name)
@@ -238,19 +251,19 @@ namespace DevLib.Samples
 
         private static void client_DataSent(object sender, AsyncSocketUserTokenEventArgs e)
         {
-            e.TransferredRawData.ToHexString().ConsoleWriteLine();
+            e.TransferredRawData.ToHexString().ConsoleOutput();
             Console.WriteLine();
         }
 
         private static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
         {
-            e.TransferredRawData.ToEncodingString(Encoding.Unicode).ConsoleWriteLine();
+            e.TransferredRawData.ToEncodingString(Encoding.Unicode).ConsoleOutput();
             Console.WriteLine();
         }
 
         private static void testEventClassObject_OnTestMe(object sender, EventArgs e)
         {
-            (sender as TestEventClass).MyName.ConsoleWriteLine();
+            (sender as TestEventClass).MyName.ConsoleOutput();
         }
     }
 

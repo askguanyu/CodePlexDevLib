@@ -26,27 +26,6 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of input object</typeparam>
         /// <param name="source">The input object</param>
-        /// <param name="withNewLine">Whether followed by the current line terminator</param>
-        /// <returns>The input object</returns>
-        public static T ConsoleOutput<T>(this T source, bool withNewLine = true)
-        {
-            if (withNewLine)
-            {
-                Console.WriteLine(source);
-            }
-            else
-            {
-                Console.Write(source);
-            }
-
-            return source;
-        }
-
-        /// <summary>
-        /// Invoke System.Console.WriteLine() or System.Console.Write()
-        /// </summary>
-        /// <typeparam name="T">The type of input object</typeparam>
-        /// <param name="source">The input object</param>
         /// <param name="obj">Append object to display</param>
         /// <param name="withNewLine">Whether followed by the current line terminator</param>
         /// <returns>The input object</returns>
@@ -72,7 +51,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="format">A composite format string</param>
         /// <param name="withNewLine">Whether followed by the current line terminator</param>
         /// <returns>The input object</returns>
-        public static T ConsoleOutput<T>(this T source, string format, bool withNewLine = true)
+        public static T ConsoleOutput<T>(this T source, string format = "", bool withNewLine = true)
         {
             if (format.Contains("{0}"))
             {

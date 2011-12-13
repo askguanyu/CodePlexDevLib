@@ -56,7 +56,7 @@ namespace DevLib.Samples
 
             //Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
             //NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
-
+            "hello".ConsoleOutput();
             "Hello".ConsoleOutput(" MD5 of {0} is ", false).ToMD5().ConsoleOutput();
             StringUtilities.GetRandomAlphaNumericString(16).ConsoleOutput();
         }

@@ -58,6 +58,7 @@ namespace DevLib.Samples
             //NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
 
             "Hello".ConsoleOutput(" MD5 of {0} is ", false).ToMD5().ConsoleOutput();
+            StringUtilities.GetRandomAlphaNumericString(16).ConsoleOutput();
         }
 
         private static void TestDevLibDiagnostics()
@@ -238,7 +239,7 @@ namespace DevLib.Samples
             PrintMethodName("Test Dev.Lib.Utilities");
 
             NetUtilities.GetRandomPortNumber().ConsoleOutput();
-            StringUtilities.GetRandomString(32).ConsoleOutput();
+            StringUtilities.GetRandomAlphabetString(32).ConsoleOutput();
         }
 
         private static void PrintMethodName(string name)

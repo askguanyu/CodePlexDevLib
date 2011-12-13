@@ -9,7 +9,7 @@ namespace DevLib.Utilities
     using System.Net;
 
     /// <summary>
-    /// DevLib.Net.NetUtilities class
+    /// Net Utilities
     /// </summary>
     public static class NetUtilities
     {

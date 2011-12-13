@@ -58,7 +58,9 @@ namespace DevLib.Samples
             //NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
             "hello".ConsoleOutput();
             "Hello".ConsoleOutput(" MD5 of {0} is ", false).ToMD5().ConsoleOutput();
-            StringUtilities.GetRandomAlphaNumericString(16).ConsoleOutput();
+            TestEventClass obj = null;
+            "Hello".ConsoleOutput(obj);
+            "hello".ConsoleOutput("  ");
         }
 
         private static void TestDevLibDiagnostics()

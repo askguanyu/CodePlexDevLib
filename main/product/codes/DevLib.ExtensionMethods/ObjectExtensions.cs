@@ -51,28 +51,42 @@ namespace DevLib.ExtensionMethods
         /// <param name="format">A composite format string</param>
         /// <param name="withNewLine">Whether followed by the current line terminator</param>
         /// <returns>The input object</returns>
-        public static T ConsoleOutput<T>(this T source, string format = "", bool withNewLine = true)
+        public static T ConsoleOutput<T>(this T source, string format = null, bool withNewLine = true)
         {
-            if (format.Contains("{0}"))
+            if (string.IsNullOrEmpty(format))
             {
                 if (withNewLine)
                 {
-                    Console.WriteLine(format, source);
+                    Console.WriteLine(source);
                 }
                 else
                 {
-                    Console.Write(format, source);
+                    Console.Write(source);
                 }
             }
             else
             {
-                if (withNewLine)
+                if (format.Contains("{0}"))
                 {
-                    Console.WriteLine("{0}{1}", source, format);
+                    if (withNewLine)
+                    {
+                        Console.WriteLine(format, source);
+                    }
+                    else
+                    {
+                        Console.Write(format, source);
+                    }
                 }
                 else
                 {
-                    Console.Write("{0}{1}", source, format);
+                    if (withNewLine)
+                    {
+                        Console.WriteLine("{0}{1}", source, format);
+                    }
+                    else
+                    {
+                        Console.Write("{0}{1}", source, format);
+                    }
                 }
             }
 

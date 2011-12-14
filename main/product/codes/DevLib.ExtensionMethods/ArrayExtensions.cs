@@ -6,8 +6,6 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Array Extensions
@@ -83,6 +81,7 @@ namespace DevLib.ExtensionMethods
                     {
                         sourceArray[i + sourceArrayLength] = suffixArray[i].CloneDeep();
                     }
+
                     return;
                 }
                 else
@@ -99,16 +98,16 @@ namespace DevLib.ExtensionMethods
         /// <param name = "source">The array to search in</param>
         /// <param name = "pattern">The array to find</param>
         /// <returns>The first position of the found array or -1 if not found</returns>
-        public static int FindArray<T>(this T[] source, T[] pattern) where T: struct
+        public static int FindArray<T>(this T[] source, T[] pattern) where T : struct
         {
-            if (pattern == null)
-            {
-                throw new ArgumentNullException("pattern");
-            }
-
             if (source == null)
             {
                 throw new ArgumentNullException("source");
+            }
+
+            if (pattern == null)
+            {
+                throw new ArgumentNullException("pattern");
             }
 
             if (pattern.Length == 0)
@@ -118,15 +117,18 @@ namespace DevLib.ExtensionMethods
 
             int j = -1;
             int end = source.Length - pattern.Length;
-            while ((j = Array.IndexOf(source, pattern[0], j + 1)) <= end && j != -1)
+            while (((j = Array.IndexOf(source, pattern[0], j + 1)) <= end) && (j != -1))
             {
                 int i = 1;
                 while (source[j + i].Equals(pattern[i]))
                 {
                     if (++i == pattern.Length)
+                    {
                         return j;
+                    }
                 }
             }
+
             return -1;
         }
     }

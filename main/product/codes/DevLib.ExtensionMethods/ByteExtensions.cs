@@ -25,6 +25,16 @@ namespace DevLib.ExtensionMethods
         /// <returns>Hex string</returns>
         public static string ToHexString(this byte[] source, bool addSpace = true)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (source.Length == 0)
+            {
+                return string.Empty;
+            }
+
             StringBuilder result = new StringBuilder(source.Length * 2);
 
             if (addSpace)
@@ -64,6 +74,16 @@ namespace DevLib.ExtensionMethods
         /// <returns>Encoding string</returns>
         public static string ToEncodingString(this byte[] source, Encoding encoding)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (source.Length == 0)
+            {
+                return string.Empty;
+            }
+
             return encoding.GetString(source);
         }
 
@@ -76,7 +96,7 @@ namespace DevLib.ExtensionMethods
         {
             if (source == null)
             {
-                return null;
+                throw new ArgumentNullException("source");
             }
 
             try
@@ -100,7 +120,12 @@ namespace DevLib.ExtensionMethods
         /// <returns>Object</returns>
         public static T ToObject<T>(this byte[] source)
         {
-            if ((source == null) || (source.Length == 0))
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (source.Length == 0)
             {
                 return default(T);
             }
@@ -120,7 +145,12 @@ namespace DevLib.ExtensionMethods
         /// <returns>Object</returns>
         public static object ToObject(this byte[] source)
         {
-            if ((source == null) || (source.Length == 0))
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (source.Length == 0)
             {
                 return null;
             }

@@ -83,6 +83,9 @@ namespace DevLib.Samples
             //string.Empty.ToHexByteArray().ForEach((p) => { p.ConsoleOutput(); });
             "monday".IsItemInEnum<DayOfWeek>().ConsoleOutput();
             "asd".ToEnum<DayOfWeek>().ConsoleOutput();
+            decimal? de = null;
+            long? lo = (long?)de;
+            lo.ConsoleOutput();
 
         }
 

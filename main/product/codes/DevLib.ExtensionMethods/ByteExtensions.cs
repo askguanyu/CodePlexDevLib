@@ -200,7 +200,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (memoryStream != null)
                 {
-                    memoryStream.Dispose();
+                    memoryStream.Close();
                 }
             }
 
@@ -242,7 +242,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (memoryStream != null)
                 {
-                    memoryStream.Dispose();
+                    memoryStream.Close();
                 }
             }
 

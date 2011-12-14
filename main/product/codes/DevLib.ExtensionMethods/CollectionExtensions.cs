@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -22,6 +23,21 @@ namespace DevLib.ExtensionMethods
         /// <param name="sourceValue">The value to update</param>
         public static void Update<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey sourceKey, TValue sourceValue)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (sourceKey == null)
+            {
+                throw new ArgumentNullException("sourceKey");
+            }
+
+            if (sourceValue == null)
+            {
+                throw new ArgumentNullException("sourceValue");
+            }
+
             lock (((ICollection)source).SyncRoot)
             {
                 if (source.ContainsKey(sourceKey))
@@ -42,6 +58,11 @@ namespace DevLib.ExtensionMethods
         /// <returns></returns>
         public static bool IsEmpty<T>(this IEnumerable<T> source)
         {
+            if (source == null)
+            {
+                return true;
+            }
+
             return !source.Any();
         }
 
@@ -52,6 +73,11 @@ namespace DevLib.ExtensionMethods
         /// <returns></returns>
         public static bool IsNotEmpty<T>(this IEnumerable<T> source)
         {
+            if (source == null)
+            {
+                return false;
+            }
+
             return source.Any();
         }
     }

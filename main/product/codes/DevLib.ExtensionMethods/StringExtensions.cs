@@ -110,9 +110,33 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">String</param>
         /// <param name="ignoreCase">Whether ignore case</param>
         /// <returns>Enum</returns>
-        public static TEnum ToEnum<TEnum>(this string source, bool ignoreCase = false) where TEnum : struct
+        public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool ignoreException = true) where TEnum : struct
         {
-            return source.IsItemInEnum<TEnum>()() ? default(TEnum) : (TEnum)Enum.Parse(typeof(TEnum), source, ignoreCase);
+            TEnum result;
+
+            if (ignoreException)
+            {
+                if (Enum.TryParse<TEnum>(source, ignoreCase, out result))
+                {
+                    return result;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            else
+            {
+                if (Enum.TryParse<TEnum>(source, ignoreCase, out result))
+                {
+                    return result;
+                }
+                else
+                {
+                    throw new ArgumentException("The source is not a item of Enum");
+                }
+            }
+
         }
 
         /// <summary>
@@ -120,9 +144,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">String</param>
         /// <returns>True if string in enum</returns>
-        public static Func<bool> IsItemInEnum<TEnum>(this string source) where TEnum : struct
+        public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct
         {
-            return () => { return string.IsNullOrEmpty(source) || !Enum.IsDefined(typeof(TEnum), source); };
+            return Enum.IsDefined(typeof(TEnum), source);
         }
     }
 }

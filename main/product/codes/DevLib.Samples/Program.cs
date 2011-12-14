@@ -57,14 +57,32 @@ namespace DevLib.Samples
 
             //Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
             //NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
-            "hello".ConsoleOutput();
-            "Hello".ConsoleOutput(" MD5 of {0} is ", false).ToMD5().ConsoleOutput();
-            TestEventClass obj = null;
-            "Hello".ConsoleOutput(obj);
-            "hello".ConsoleOutput("  ");
+            //"hello".ConsoleOutput();
+            //"Hello".ConsoleOutput(" MD5 of {0} is ", false).ToMD5().ConsoleOutput();
+            //TestEventClass obj = null;
+            //"Hello".ConsoleOutput(obj);
+            //"hello".ConsoleOutput("  ");
 
-            AssemblyAccessor.AssemblyVersion().ConsoleOutput();
-            AssemblyAccessor.AssemblyDescription().ConsoleOutput();
+            //int[] a = null;
+            //a.IsEmpty().ConsoleOutput();
+            
+
+            //AssemblyAccessor.AssemblyVersion().ConsoleOutput();
+            //AssemblyAccessor.AssemblyDescription().ConsoleOutput();
+
+            Dictionary<int, string> dict = new Dictionary<int, string>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                dict.Add(i, i.ToString() + "Hello");
+            }
+
+            byte[] bys = new byte[] { 1, 2, 3, 4, 5 };
+            bys.ToHexString();
+            string.Empty.ToMD5().ConsoleOutput();
+            //string.Empty.ToHexByteArray().ForEach((p) => { p.ConsoleOutput(); });
+            "monday".IsItemInEnum<DayOfWeek>().ConsoleOutput();
+            "asd".ToEnum<DayOfWeek>().ConsoleOutput();
 
         }
 
@@ -77,38 +95,38 @@ namespace DevLib.Samples
             List<int> list = new List<int>();
             ConcurrentBag<string> safeBag = new ConcurrentBag<string>();
 
-            CodeTimer.Initialize();
+            //CodeTimer.Initialize();
 
-            int times = 1000 * 200;
+            //int times = 1000 * 200;
 
-            CodeTimer.Time(1, "No action", () => { });
+            //CodeTimer.Time(1, "No action", () => { });
 
-            new Action(() => { }).CodeTime(times);
+            //new Action(() => { }).CodeTime(times);
 
-            CodeTimer.Time(times, "ConcurrentDictionary1", () =>
-            {
-                safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
-            }, null);
+            //CodeTimer.Time(times, "ConcurrentDictionary1", () =>
+            //{
+            //    safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
+            //}, null);
 
-            CodeTimer.Time(times, "Dictionary1", () =>
-            {
-                dict.Update(1, "hello");
-            });
+            //CodeTimer.Time(times, "Dictionary1", () =>
+            //{
+            //    dict.Update(1, "hello");
+            //});
 
-            CodeTimer.Time(times, "ConcurrentDictionary2", () =>
-            {
-                safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
-            });
+            //CodeTimer.Time(times, "ConcurrentDictionary2", () =>
+            //{
+            //    safeDict.AddOrUpdate(2, "hello", (key, oldValue) => oldValue);
+            //});
 
-            CodeTimer.Time(times, "Dictionary2", () =>
-            {
-                dict.Update(2, "hello");
-            });
+            //CodeTimer.Time(times, "Dictionary2", () =>
+            //{
+            //    dict.Update(2, "hello");
+            //});
 
-            CodeTimer.Time(times, "ConcurrentBag1", () =>
-            {
-                safeBag.Add("hello");
-            });
+            //CodeTimer.Time(times, "ConcurrentBag1", () =>
+            //{
+            //    safeBag.Add("hello");
+            //});
         }
 
         private static void TestDevLibExtensionMethods()

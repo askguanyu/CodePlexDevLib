@@ -121,9 +121,9 @@ namespace DevLib.ExtensionMethods
             }
 
             // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
+            if (source == null)
             {
-                return default(T);
+                throw new ArgumentNullException("source");
             }
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -148,9 +148,9 @@ namespace DevLib.ExtensionMethods
             }
 
             // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
+            if (source == null)
             {
-                return null;
+                throw new ArgumentNullException("source");
             }
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -169,9 +169,9 @@ namespace DevLib.ExtensionMethods
         public static string ToJson(this object source)
         {
             // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
+            if (source == null)
             {
-                return string.Empty;
+                throw new ArgumentNullException("source");
             }
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -191,9 +191,9 @@ namespace DevLib.ExtensionMethods
         public static string ToJson(this object source, IEnumerable<Type> knownTypes)
         {
             // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
+            if (source == null)
             {
-                return string.Empty;
+                throw new ArgumentNullException("source");
             }
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -209,9 +209,14 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">JSON string object</param>
         /// <returns>The result object</returns>
-        public static T FromJson<T>(this object source)
+        public static T FromJson<T>(this string source)
         {
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source.ToString())))
+            if (string.IsNullOrEmpty(source))
+            {
+                return default(T);
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source)))
             {
                 var serializer = new DataContractJsonSerializer(typeof(T));
                 return (T)serializer.ReadObject(memoryStream);
@@ -224,9 +229,14 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">JSON string object</param>
         /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects.</param>
         /// <returns>The result object</returns>
-        public static T FromJson<T>(this object source, IEnumerable<Type> knownTypes)
+        public static T FromJson<T>(this string source, IEnumerable<Type> knownTypes)
         {
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source.ToString())))
+            if (string.IsNullOrEmpty(source))
+            {
+                return default(T);
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source)))
             {
                 var serializer = new DataContractJsonSerializer(typeof(T), knownTypes);
                 return (T)serializer.ReadObject(memoryStream);
@@ -247,12 +257,12 @@ namespace DevLib.ExtensionMethods
         {
             if (source == null)
             {
-                throw new ArgumentException("The source object cannot be null.");
+                throw new ArgumentNullException("source");
             }
 
             if (encoding == null)
             {
-                throw new Exception("You must specify an encoder to use for serialization.");
+                throw new ArgumentNullException("encoding");
             }
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -328,6 +338,16 @@ namespace DevLib.ExtensionMethods
         /// <param name="ignoreProperties">An array of property names to ignore</param>
         public static void CopyPropertiesFrom(this object source, object target, string[] ignoreProperties)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
+
             // Get and check the object types
             Type type = target.GetType();
             if (source.GetType() != type)

@@ -35,9 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AssemblyAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DevLib.Diagnostics\DevLib.Diagnostics.csproj">
+      <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
+      <Name>DevLib.Diagnostics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ExtensionMethods\DevLib.ExtensionMethods.csproj">
       <Project>{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}</Project>
       <Name>DevLib.ExtensionMethods</Name>
@@ -46,6 +51,10 @@
       <Project>{CF145C2E-642F-4EFA-A03D-96B5082E6650}</Project>
       <Name>DevLib.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Utilities\DevLib.Utilities.csproj">
+      <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>
+      <Name>DevLib.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.WinForms\DevLib.WinForms.csproj">
       <Project>{73AF4976-0D28-4EB8-852E-2B375B6EBC33}</Project>
       <Name>DevLib.WinForms</Name>
@@ -53,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="License .txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

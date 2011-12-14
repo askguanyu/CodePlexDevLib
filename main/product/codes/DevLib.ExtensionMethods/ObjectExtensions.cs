@@ -31,13 +31,27 @@ namespace DevLib.ExtensionMethods
         /// <returns>The input object</returns>
         public static T ConsoleOutput<T>(this T source, object obj, bool withNewLine = true)
         {
-            if (withNewLine)
+            if (Object.ReferenceEquals(obj, null))
             {
-                Console.WriteLine("{0}{1}", source, obj);
+                if (withNewLine)
+                {
+                    Console.WriteLine(source);
+                }
+                else
+                {
+                    Console.Write(source);
+                }
             }
             else
             {
-                Console.Write("{0}{1}", source, obj);
+                if (withNewLine)
+                {
+                    Console.WriteLine("{0}{1}", source, obj);
+                }
+                else
+                {
+                    Console.Write("{0}{1}", source, obj);
+                }
             }
 
             return source;

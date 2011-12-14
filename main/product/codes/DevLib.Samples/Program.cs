@@ -18,6 +18,7 @@ namespace DevLib.Samples
     using System.Windows.Forms;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
+    using DevLib.Main;
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
     using DevLib.Utilities;
@@ -35,7 +36,7 @@ namespace DevLib.Samples
 
             //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
-            TestDevLibExtensionMethods();
+            //TestDevLibExtensionMethods();
 
             //TestDevLibNet();
 
@@ -61,6 +62,10 @@ namespace DevLib.Samples
             TestEventClass obj = null;
             "Hello".ConsoleOutput(obj);
             "hello".ConsoleOutput("  ");
+
+            AssemblyAccessor.AssemblyVersion().ConsoleOutput();
+            AssemblyAccessor.AssemblyDescription().ConsoleOutput();
+
         }
 
         private static void TestDevLibDiagnostics()

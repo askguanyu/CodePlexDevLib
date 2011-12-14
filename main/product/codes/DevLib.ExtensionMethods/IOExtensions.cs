@@ -66,7 +66,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (fileStream != null)
                 {
-                    fileStream.Dispose();
+                    fileStream.Close();
                 }
             }
 
@@ -151,7 +151,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (fileStream != null)
                 {
-                    fileStream.Dispose();
+                    fileStream.Close();
                 }
             }
 
@@ -191,7 +191,7 @@ namespace DevLib.ExtensionMethods
                 {
                     if (fileStream != null)
                     {
-                        fileStream.Dispose();
+                        fileStream.Close();
                     }
                 }
             }

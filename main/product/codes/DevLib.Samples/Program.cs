@@ -32,6 +32,9 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
+            PrintStartInfo();
+
+
             TestCodeSnippet();
 
             //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
@@ -46,7 +49,22 @@ namespace DevLib.Samples
 
 
 
-            // Exit infomation
+            PrintExitInfo();
+        }
+
+        private static void PrintStartInfo()
+        {
+            ConsoleColor originalForeColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Start DevLib.Samples ...");
+            Console.ForegroundColor = originalForeColor;
+            Console.WriteLine();
+        }
+
+        private static void PrintExitInfo()
+        {
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
@@ -84,6 +102,7 @@ namespace DevLib.Samples
             "monday".IsItemInEnum<DayOfWeek>().ConsoleOutput();
             "asd".ToEnum<DayOfWeek>().ConsoleOutput();
             decimal? de = null;
+            de.HasValue.ConsoleOutput("has value {0}");
             long? lo = (long?)de;
             lo.ConsoleOutput();
 

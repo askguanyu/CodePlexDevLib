@@ -116,6 +116,8 @@ namespace DevLib.Samples
             node.CreateChildNode("CreateChildNode");
             b.AppendChild(node);
 
+            "hello".Base64Encode().ConsoleOutput().Base64Decode().ConsoleOutput();
+
 
 
         }

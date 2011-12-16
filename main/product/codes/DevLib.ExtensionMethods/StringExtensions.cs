@@ -7,6 +7,7 @@ namespace DevLib.ExtensionMethods
 {
     using System;
     using System.Linq;
+    using System.Security.Cryptography;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -136,7 +137,6 @@ namespace DevLib.ExtensionMethods
                     throw new ArgumentException("The source is not a item of Enum");
                 }
             }
-
         }
 
         /// <summary>
@@ -147,6 +147,95 @@ namespace DevLib.ExtensionMethods
         public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct
         {
             return Enum.IsDefined(typeof(TEnum), source);
+        }
+
+        /// <summary>
+        /// Base64 decodes a string
+        /// </summary>
+        /// <param name="source">A base64 encoded string</param>
+        /// <returns>Decoded string</returns>
+        public static string Base64Decode(this string source)
+        {
+            byte[] buffer = Convert.FromBase64String(source);
+
+            return System.Text.Encoding.UTF8.GetString(buffer);
+        }
+
+        /// <summary>
+        /// Base64 encodes a string
+        /// </summary>
+        /// <param name="source">String to encode</param>
+        /// <returns>A base64 encoded string</returns>
+        public static string Base64Encode(this string source)
+        {
+            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(source);
+
+            return Convert.ToBase64String(buffer);
+        }
+
+        /// <summary>
+        /// Decryptes a string using the supplied key. Decoding is done using RSA encryption.
+        /// </summary>
+        /// <param name="source">String to decrypt</param>
+        /// <param name="key">Decryption key</param>
+        /// <returns>The decrypted string or string.Empty if decryption failed</returns>
+        public static string Decrypt(this string source, string key)
+        {
+            string result = string.Empty;
+
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentException("An empty string value cannot be encrypted.");
+            }
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
+            }
+
+            CspParameters cspParameters = new CspParameters();
+            cspParameters.KeyContainerName = key;
+
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cspParameters);
+            rsa.PersistKeyInCsp = true;
+
+            string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
+            byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, (a => Convert.ToByte(byte.Parse(a, System.Globalization.NumberStyles.HexNumber))));
+
+            byte[] bytes = rsa.Decrypt(decryptByteArray, true);
+
+            result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Encryptes a string using the supplied key. Encoding is done using RSA encryption.
+        /// </summary>
+        /// <param name="source">String to encrypt</param>
+        /// <param name="key">Encryption key</param>
+        /// <returns>A string representing a byte array separated by a minus sign</returns>
+        public static string Encrypt(this string source, string key)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentException("An empty string value cannot be encrypted.");
+            }
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException("Cannot encrypt using an empty key. Please supply an encryption key.");
+            }
+
+            CspParameters cspParameters = new CspParameters();
+            cspParameters.KeyContainerName = key;
+
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cspParameters);
+            rsa.PersistKeyInCsp = true;
+
+            byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(source), true);
+
+            return BitConverter.ToString(bytes);
         }
     }
 }

@@ -15,9 +15,62 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Appends a child to a XML node
         /// </summary>
+        /// <param name="source">The parent node</param>
+        /// <param name="childNode">The name of the child node</param>
+        /// <returns>The newly created XML node</returns>
+        public static XmlNode CreateChildNode(this XmlNode source, string childNode)
+        {
+            XmlDocument document = source is XmlDocument ? (XmlDocument)source : source.OwnerDocument;
+            XmlNode node = document.CreateElement(childNode);
+            source.AppendChild(node);
+            return node;
+        }
+
+        /// <summary>
+        /// Appends a child to a XML node
+        /// </summary>
+        /// <param name="source">The parent node</param>
+        /// <param name="childNode">The name of the child node</param>
+        /// <param name="namespaceUri">The node namespace</param>
+        /// <returns>The newly cerated XML node</returns>
+        public static XmlNode CreateChildNode(this XmlNode source, string childNode, string namespaceUri)
+        {
+            XmlDocument document = source is XmlDocument ? (XmlDocument)source : source.OwnerDocument;
+            XmlNode node = document.CreateElement(childNode, namespaceUri);
+            source.AppendChild(node);
+            return node;
+        }
+
+        /// <summary>
+        /// Appends a CData section to a XML node
+        /// </summary>
+        /// <param name="source">The parent node</param>
+        /// <returns>The created CData Section</returns>
+        public static XmlCDataSection CreateCDataSection(this XmlNode source)
+        {
+            return source.CreateCDataSection(string.Empty);
+        }
+
+        /// <summary>
+        /// Appends a CData section to a XML node and prefills the provided data
+        /// </summary>
+        /// <param name="source">The parent node</param>
+        /// <param name="cData">The CData section value</param>
+        /// <returns>The created CData Section</returns>
+        public static XmlCDataSection CreateCDataSection(this XmlNode source, string cData)
+        {
+            XmlDocument document = source is XmlDocument ? (XmlDocument)source : source.OwnerDocument;
+            XmlCDataSection node = document.CreateCDataSection(cData);
+            source.AppendChild(node);
+            return node;
+        }
+
+        /// <summary>
+        /// Appends a child to a XML node
+        /// </summary>
         /// <param name="childNode">The name of the child node</param>
         /// <param name="sourceNode">The parent node</param>
-        public static void AppendChildNodeTo(this string childNode, ref XmlNode sourceNode)
+        public static void AppendChildNodeTo(this string childNode, XmlNode sourceNode)
         {
             XmlDocument document = sourceNode is XmlDocument ? (XmlDocument)sourceNode : sourceNode.OwnerDocument;
             XmlNode node = document.CreateElement(childNode);
@@ -30,7 +83,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="childNode">The name of the child node</param>
         /// <param name="sourceNode">The parent node</param>
         /// <param name="namespaceUri">The node namespace</param>
-        public static void AppendChildNodeTo(this string childNode, ref XmlNode sourceNode, string namespaceUri)
+        public static void AppendChildNodeTo(this string childNode, XmlNode sourceNode, string namespaceUri)
         {
             XmlDocument document = sourceNode is XmlDocument ? (XmlDocument)sourceNode : sourceNode.OwnerDocument;
             XmlNode node = document.CreateElement(childNode, namespaceUri);

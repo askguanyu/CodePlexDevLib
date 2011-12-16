@@ -23,6 +23,8 @@ namespace DevLib.Samples
     using DevLib.Net.AsyncSocket;
     using DevLib.Utilities;
     using DevLib.WinForms;
+    using System.Xml;
+    using System.Xml.Linq;
 
     public class Program
     {
@@ -105,6 +107,16 @@ namespace DevLib.Samples
             de.HasValue.ConsoleOutput("has value {0}");
             long? lo = (long?)de;
             lo.ConsoleOutput();
+
+            TestEventClass testclass = new TestEventClass() { MyName = "a" };
+            var a = XDocument.Parse(testclass.ToXml(Encoding.UTF8));
+            XmlDocument b = new XmlDocument();
+            XmlNode node = b.CreateElement("Hello");
+            "AppendChildNodeTo".AppendChildNodeTo(node);
+            node.CreateChildNode("CreateChildNode");
+            b.AppendChild(node);
+
+
 
         }
 

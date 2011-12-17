@@ -16,6 +16,8 @@ namespace DevLib.Samples
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
+    using System.Xml;
+    using System.Xml.Linq;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
     using DevLib.Main;
@@ -23,8 +25,8 @@ namespace DevLib.Samples
     using DevLib.Net.AsyncSocket;
     using DevLib.Utilities;
     using DevLib.WinForms;
-    using System.Xml;
-    using System.Xml.Linq;
+    using System.Diagnostics;
+    using System.Dynamic;
 
     public class Program
     {
@@ -85,41 +87,95 @@ namespace DevLib.Samples
 
             //int[] a = null;
             //a.IsEmpty().ConsoleOutput();
-            
+
 
             //AssemblyAccessor.AssemblyVersion().ConsoleOutput();
             //AssemblyAccessor.AssemblyDescription().ConsoleOutput();
 
-            Dictionary<int, string> dict = new Dictionary<int, string>();
+            //Dictionary<int, string> dict = new Dictionary<int, string>();
 
-            for (int i = 0; i < 10; i++)
-            {
-                dict.Add(i, i.ToString() + "Hello");
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    dict.Add(i, i.ToString() + "Hello");
+            //}
 
-            byte[] bys = new byte[] { 1, 2, 3, 4, 5 };
-            bys.ToHexString();
-            string.Empty.ToMD5().ConsoleOutput();
+            //byte[] bys = new byte[] { 1, 2, 3, 4, 5 };
+            //bys.ToHexString();
+            //string.Empty.ToMD5().ConsoleOutput();
             //string.Empty.ToHexByteArray().ForEach((p) => { p.ConsoleOutput(); });
-            "monday".IsItemInEnum<DayOfWeek>().ConsoleOutput();
-            "asd".ToEnum<DayOfWeek>().ConsoleOutput();
-            decimal? de = null;
-            de.HasValue.ConsoleOutput("has value {0}");
-            long? lo = (long?)de;
-            lo.ConsoleOutput();
+            //"monday".IsItemInEnum<DayOfWeek>().ConsoleOutput();
+            //"asd".ToEnum<DayOfWeek>().ConsoleOutput();
+            //decimal? de = null;
+            //de.HasValue.ConsoleOutput("has value {0}");
+            //long? lo = (long?)de;
+            //lo.ConsoleOutput();
 
-            TestEventClass testclass = new TestEventClass() { MyName = "a" };
-            var a = XDocument.Parse(testclass.ToXml(Encoding.UTF8));
-            XmlDocument b = new XmlDocument();
-            XmlNode node = b.CreateElement("Hello");
-            "AppendChildNodeTo".AppendChildNodeTo(node);
-            node.CreateChildNode("CreateChildNode");
-            b.AppendChild(node);
+            //TestEventClass testclass = new TestEventClass() { MyName = "a" };
+            //var a = XDocument.Parse(testclass.ToXml(Encoding.UTF8));
+            //XmlDocument b = new XmlDocument();
+            //XmlNode node = b.CreateElement("Hello");
+            //"AppendChildNodeTo".AppendChildNodeTo(node);
+            //node.CreateChildNode("CreateChildNode");
+            //b.AppendChild(node);
 
-            "hello".Base64Encode().ConsoleOutput().Base64Decode().ConsoleOutput();
+            //"hello".Base64Encode().ConsoleOutput().Base64Decode().ConsoleOutput();
+
+            //Trace.Listeners.Add(new ConsoleTraceListener());
+            //Trace.Listeners.Add(new TextWriterTraceListener("trace.log"));
+            //Trace.AutoFlush = false;
+            //Trace.WriteLine("Entering Main");
+            //Trace.TraceError("hello error");
+            //Trace.TraceError("hello error");
+            //Console.WriteLine("Hello World.");
+            //Trace.WriteLine("Exiting Main");
+            //Trace.Unindent();
+
+            TraceSource ts = new TraceSource("TraceTest");
+            SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");
+            ts.Switch = sourceSwitch;
+            int idxConsole = ts.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
+            ts.Listeners[idxConsole].Name = "console";
+
+            //ts.Listeners["console"].TraceOutputOptions |= TraceOptions.Callstack;
+            //ts.TraceEvent(TraceEventType.Warning, 1);
+            //ts.Listeners["console"].TraceOutputOptions = TraceOptions.DateTime;
+            //// Issue file not found message as a warning.
+            //ts.TraceEvent(TraceEventType.Warning, 2, "File Test not found");
+
+            //// Issue file not found message as a verbose event using a formatted string.
+            //ts.TraceEvent(TraceEventType.Verbose, 3, "File {0} not found.", "test");
+            //// Issue file not found message as information.
+            //ts.TraceInformation("File {0} not found.", "test");
 
 
+            //ts.Listeners["console"].TraceOutputOptions |= TraceOptions.LogicalOperationStack;
+            //// Issue file not found message as an error event.
+            //ts.TraceEvent(TraceEventType.Error, 4, "File {0} not found.", "test");
 
+
+            //// Test the filter on the ConsoleTraceListener.
+            //ts.Listeners["console"].Filter = new SourceFilter("No match");
+            //ts.TraceData(TraceEventType.Error, 5,
+            //    "SourceFilter should reject this message for the console trace listener.");
+            //ts.Listeners["console"].Filter = new SourceFilter("TraceTest");
+            //ts.TraceData(TraceEventType.Error, 6,
+            //    "SourceFilter should let this message through on the console trace listener.");
+            //ts.Listeners["console"].Filter = null;
+
+
+            //// Use the TraceData method. 
+            //ts.TraceData(TraceEventType.Warning, 7, "hello");
+            //ts.TraceData(TraceEventType.Warning, 8, new object[] { "Message 1", "Message 2" });
+
+
+            // Activity tests.
+            ts.TraceEvent(TraceEventType.Start, 9, "Will not appear until the switch is changed.");
+            ts.Switch.Level = SourceLevels.ActivityTracing | SourceLevels.Critical;
+            ts.TraceEvent(TraceEventType.Suspend, 10, "Switch includes ActivityTracing, this should appear");
+            ts.TraceEvent(TraceEventType.Critical, 11, "Switch includes Critical, this should appear");
+            
+            ts.Flush();
+            ts.Close();
         }
 
         private static void TestDevLibDiagnostics()

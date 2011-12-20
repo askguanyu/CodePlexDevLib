@@ -25,7 +25,7 @@ namespace DevLib.ExtensionMethods
         {
             string hexPattern = "^[0-9a-fA-F]+$";
 
-            string temp = source.Trim(new char[] { ' ', '\n', '\r' });
+            string temp = source.Remove(' ', '\n', '\r');
 
             if (!Regex.IsMatch(temp, hexPattern))
             {
@@ -60,6 +60,35 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Remove any instance of the given character from the current string
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="removeChar"></param>
+        /// <returns></returns>
+        public static string Remove(this string source, params char[] removeChar)
+        {
+            var result = source;
+
+            if (!string.IsNullOrEmpty(result) && removeChar != null)
+            {
+                Array.ForEach(removeChar, c => result = result.Remove(c.ToString()));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Remove any instance of the given string from the current string
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="removeString"></param>
+        /// <returns></returns>
+        public static string Remove(this string source, params string[] removeString)
+        {
+            return removeString.Aggregate(source, (current, c) => current.Replace(c, string.Empty));
+        }
+
+        /// <summary>
         /// String is null or empty
         /// </summary>
         /// <param name="source">The input string</param>
@@ -85,10 +114,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert string to byte array
+        /// Convert string to byte array by using Encoding.Default
         /// </summary>
         /// <param name="source">String</param>
-        /// <returns>Byte array</returns>
+        /// <returns>Byte array by using Encoding.Default</returns>
         public static byte[] ToByteArray(this string source)
         {
             return Encoding.Default.GetBytes(source);
@@ -181,8 +210,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>The decrypted string or string.Empty if decryption failed</returns>
         public static string Decrypt(this string source, string key)
         {
-            string result = string.Empty;
-
             if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentException("An empty string value cannot be encrypted.");
@@ -193,18 +220,34 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
             }
 
-            CspParameters cspParameters = new CspParameters();
-            cspParameters.KeyContainerName = key;
+            string result = string.Empty;
+            RSACryptoServiceProvider rsa = null;
 
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cspParameters);
-            rsa.PersistKeyInCsp = true;
+            try
+            {
+                CspParameters cspParameters = new CspParameters();
+                cspParameters.KeyContainerName = key;
 
-            string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
-            byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, (a => Convert.ToByte(byte.Parse(a, System.Globalization.NumberStyles.HexNumber))));
+                rsa = new RSACryptoServiceProvider(cspParameters);
+                rsa.PersistKeyInCsp = true;
 
-            byte[] bytes = rsa.Decrypt(decryptByteArray, true);
+                string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
+                byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, (a => Convert.ToByte(byte.Parse(a, System.Globalization.NumberStyles.HexNumber))));
 
-            result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
+                byte[] bytes = rsa.Decrypt(decryptByteArray, true);
+                result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (rsa != null)
+                {
+                    rsa.Dispose();
+                }
+            }
 
             return result;
         }
@@ -227,15 +270,33 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentException("Cannot encrypt using an empty key. Please supply an encryption key.");
             }
 
-            CspParameters cspParameters = new CspParameters();
-            cspParameters.KeyContainerName = key;
+            string result = string.Empty;
+            RSACryptoServiceProvider rsa = null;
 
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(cspParameters);
-            rsa.PersistKeyInCsp = true;
+            try
+            {
+                CspParameters cspParameters = new CspParameters();
+                cspParameters.KeyContainerName = key;
 
-            byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(source), true);
+                rsa = new RSACryptoServiceProvider(cspParameters);
+                rsa.PersistKeyInCsp = true;
 
-            return BitConverter.ToString(bytes);
+                byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(source), true);
+                result = BitConverter.ToString(bytes);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (rsa != null)
+                {
+                    rsa.Dispose();
+                }
+            }
+
+            return result;
         }
     }
 }

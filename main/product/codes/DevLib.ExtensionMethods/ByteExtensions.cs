@@ -13,6 +13,15 @@ namespace DevLib.ExtensionMethods
     using System.Text;
 
     /// <summary>
+    /// Defines the various compression types that are available
+    /// </summary>
+    public enum CompressionType
+    {
+        GZip = 0,
+        Deflate = 1
+    }
+
+    /// <summary>
     /// Byte Extensions
     /// </summary>
     public static class ByteExtensions
@@ -64,6 +73,16 @@ namespace DevLib.ExtensionMethods
         public static string ToHexString(this byte source)
         {
             return Convert.ToString(source, 16).PadLeft(2, '0');
+        }
+
+        /// <summary>
+        /// Convert bytes to Encoding string by using Encoding.Default
+        /// </summary>
+        /// <param name="source">Byte array</param>
+        /// <returns>Encoding string by using Encoding.Default</returns>
+        public static string ToEncodingString(this byte[] source)
+        {
+            return source.ToEncodingString(Encoding.Default);
         }
 
         /// <summary>
@@ -164,33 +183,28 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Compresses byte array using gzip compression
+        /// Compresses byte array using CompressionType
         /// </summary>
         /// <param name="source">Byte array to compress</param>
+        /// <param name="compressionType">Compression Type</param>
         /// <returns>A compressed byte array</returns>
-        public static byte[] Compress(this byte[] source)
+        public static byte[] Compress(this byte[] source, CompressionType compressionType = CompressionType.GZip)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            MemoryStream memoryStream = null;
+            MemoryStream outputStream = null;
             byte[] result = null;
 
             try
             {
-                memoryStream = new MemoryStream();
-                GZipStream zipStream = new GZipStream(memoryStream, CompressionMode.Compress);
+                outputStream = new MemoryStream();
+                Stream zipStream = GetZipStream(outputStream, CompressionMode.Compress, compressionType);
                 zipStream.Write(source, 0, source.Length);
-                memoryStream.Position = 0;
-
-                byte[] compressed = new byte[memoryStream.Length];
-                memoryStream.Read(compressed, 0, compressed.Length);
-
-                result = new byte[compressed.Length + 4];
-                Buffer.BlockCopy(compressed, 0, result, 4, compressed.Length);
-                Buffer.BlockCopy(BitConverter.GetBytes(source.Length), 0, result, 0, 4);
+                zipStream.Close();
+                result = outputStream.ToArray();
             }
             catch
             {
@@ -198,9 +212,9 @@ namespace DevLib.ExtensionMethods
             }
             finally
             {
-                if (memoryStream != null)
+                if (outputStream != null)
                 {
-                    memoryStream.Close();
+                    outputStream.Close();
                 }
             }
 
@@ -208,31 +222,30 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Decompresses byte array using gzip compression
+        /// Decompresses byte array using CompressionType
         /// </summary>
         /// <param name="source">Byte array to decompress</param>
+        /// <param name="compressionType">Compression Type</param>
         /// <returns>A decompressed byte array</returns>
-        public static byte[] Decompress(this byte[] source)
+        public static byte[] Decompress(this byte[] source, CompressionType compressionType = CompressionType.GZip)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            MemoryStream memoryStream = null;
+            MemoryStream outputStream = null;
+            MemoryStream inputStream = null;
             byte[] result = null;
 
             try
             {
-                memoryStream = new MemoryStream();
-                int resultLength = BitConverter.ToInt32(source, 0);
-                memoryStream.Write(source, 4, source.Length - 4);
-
-                result = new byte[resultLength];
-
-                memoryStream.Position = 0;
-                GZipStream zipStream = new GZipStream(memoryStream, CompressionMode.Decompress);
-                zipStream.Read(result, 0, result.Length);
+                outputStream = new MemoryStream();
+                inputStream = new MemoryStream(source);
+                Stream zipStream = GetZipStream(inputStream, CompressionMode.Decompress, compressionType);
+                zipStream.CopyTo(outputStream);
+                zipStream.Close();
+                result = outputStream.ToArray();
             }
             catch
             {
@@ -240,13 +253,37 @@ namespace DevLib.ExtensionMethods
             }
             finally
             {
-                if (memoryStream != null)
+                if (inputStream != null)
                 {
-                    memoryStream.Close();
+                    inputStream.Close();
+                }
+
+                if (outputStream != null)
+                {
+                    outputStream.Close();
                 }
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Get Zip Stream by type
+        /// </summary>
+        /// <param name="memoryStream"></param>
+        /// <param name="compressionMode"></param>
+        /// <param name="CompressionType"></param>
+        /// <returns></returns>
+        private static Stream GetZipStream(MemoryStream memoryStream, CompressionMode compressionMode, CompressionType CompressionType)
+        {
+            if (CompressionType == CompressionType.GZip)
+            {
+                return new GZipStream(memoryStream, compressionMode);
+            }
+            else
+            {
+                return new DeflateStream(memoryStream, compressionMode);
+            }
         }
     }
 }

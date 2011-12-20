@@ -244,6 +244,20 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Serializes the object into an XML string using Encoding.Default
+        /// </summary>
+        /// <remarks>
+        /// The object to be serialized should be decorated with the
+        /// <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
+        /// </remarks>
+        /// <param name="source">The object to serialize</param>
+        /// <returns>An XML encoded string representation of the source object</returns>
+        public static string ToXml(this object source)
+        {
+            return source.ToXml(Encoding.Default);
+        }
+
+        /// <summary>
         /// Serializes the object into an XML string
         /// </summary>
         /// <remarks>
@@ -271,6 +285,26 @@ namespace DevLib.ExtensionMethods
                 xmlSerializer.Serialize(memoryStream, source);
                 memoryStream.Position = 0;
                 return encoding.GetString(memoryStream.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the XML string object into object
+        /// </summary>
+        /// <typeparam name="T">Type of object</typeparam>
+        /// <param name="source">The XML string to deserialize</param>
+        /// <returns>Object</returns>
+        public static T FromXml<T>(this string source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            using (TextReader inputStream = new StringReader(source))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                return (T)xmlSerializer.Deserialize(inputStream);
             }
         }
 

@@ -9,6 +9,8 @@ namespace DevLib.Samples
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Dynamic;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -25,8 +27,6 @@ namespace DevLib.Samples
     using DevLib.Net.AsyncSocket;
     using DevLib.Utilities;
     using DevLib.WinForms;
-    using System.Diagnostics;
-    using System.Dynamic;
 
     public class Program
     {
@@ -119,7 +119,8 @@ namespace DevLib.Samples
             //b.AppendChild(node);
 
             //"hello".Base64Encode().ConsoleOutput().Base64Decode().ConsoleOutput();
-
+            //"Hello".ToByteArray().Compress(CompressionType.Deflate).Decompress(CompressionType.Deflate).ToEncodingString().ConsoleOutput();
+            //"DevLib.ExtensionMethods.dll".ReadBinaryFile().ConsoleOutput().Compress().CreateBinaryFile("demo.bin").OpenContainingFolder();
             //Trace.Listeners.Add(new ConsoleTraceListener());
             //Trace.Listeners.Add(new TextWriterTraceListener("trace.log"));
             //Trace.AutoFlush = false;
@@ -129,6 +130,10 @@ namespace DevLib.Samples
             //Console.WriteLine("Hello World.");
             //Trace.WriteLine("Exiting Main");
             //Trace.Unindent();
+
+            TestEventClass aclass = new TestEventClass() { MyName = "aaa" };
+            //aclass.ToByteArray().Compress().WriteBinaryFile("test.bin").ReadBinaryFile().Decompress().ToObject<TestEventClass>().MyName.ConsoleOutput();
+            aclass.ToXml().ToByteArray(Encoding.UTF8).Compress().Decompress().ToEncodingString(Encoding.UTF8).FromXml<TestEventClass>().MyName.ConsoleOutput();
 
             TraceSource ts = new TraceSource("TraceTest");
             SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");

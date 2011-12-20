@@ -6,7 +6,6 @@
 namespace DevLib.ExtensionMethods
 {
     using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Security.Permissions;
 
     /// <summary>
@@ -20,7 +19,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="text">Text to write to the file</param>
         /// <param name="fileName">Full path of the file</param>
         /// <returns>Full path of the file name if write file successfully, string.Empty if failed</returns>
-        public static string CreateTextFile(this string text, string fileName, bool overwritten = true)
+        public static string WriteTextFile(this string text, string fileName, bool overwritten = true)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -105,12 +104,13 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Creates a new binary file from an object, this method will overwrite exists file
+        /// Creates a new binary file from an byte array
         /// </summary>
         /// <param name="binary">Binary to write to the file</param>
         /// <param name="fileName">Full path of the file</param>
+        /// <param name="overwritten">Whether overwrite exists file</param>
         /// <returns>Full path of the file name if write file successfully, string.Empty if failed</returns>
-        public static string CreateBinaryFile(this object binary, string fileName, bool overwritten = true)
+        public static string WriteBinaryFile(this byte[] binary, string fileName, bool overwritten = true)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -138,9 +138,7 @@ namespace DevLib.ExtensionMethods
             try
             {
                 fileStream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
-                binaryFormatter.Serialize(fileStream, binary);
-
+                fileStream.Write(binary, 0, binary.Length);
                 result = true;
             }
             catch
@@ -159,36 +157,43 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Read binary file to object
+        /// Read binary file to byte array
         /// </summary>
         /// <param name="fileName">Binary file to be read</param>
-        /// <returns>Object</returns>
-        public static T ReadBinaryFile<T>(this string fileName)
+        /// <returns>Byte array</returns>
+        public static byte[] ReadBinaryFile(this string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                return default(T);
+                return null;
             }
 
             string fullName = Path.GetFullPath(fileName);
 
             FileStream fileStream = null;
-            T result = default(T);
+            byte[] result = null;
+            MemoryStream outputStream = null;
 
             if (File.Exists(fullName))
             {
                 try
                 {
+                    outputStream = new MemoryStream();
                     fileStream = new FileStream(fullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    BinaryFormatter binaryFormatter = new BinaryFormatter();
-                    result = (T)binaryFormatter.Deserialize(fileStream);
+                    fileStream.CopyTo(outputStream);
+                    result = outputStream.ToArray();
                 }
                 catch
                 {
-                    result = default(T);
+                    result = null;
                 }
                 finally
                 {
+                    if (outputStream != null)
+                    {
+                        outputStream.Close();
+                    }
+
                     if (fileStream != null)
                     {
                         fileStream.Close();
@@ -197,7 +202,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                result = default(T);
+                result = null;
             }
 
             return result;

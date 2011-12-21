@@ -107,6 +107,7 @@ namespace DevLib.Diagnostics
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             outputAction(string.Format("Begin:  {0}", name));
+            Debug.WriteLine(string.Format("Begin:  {0}", name));
 
             // Record the latest GC counts
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -141,12 +142,17 @@ namespace DevLib.Diagnostics
             // Console output recorded times
             Console.ForegroundColor = ConsoleColor.Yellow;
             outputAction(string.Format("End:    {0}", name));
+            Debug.WriteLine(string.Format("End:    {0}", name));
 
             Console.ForegroundColor = ConsoleColor.Gray;
-            outputAction(string.Format("{0,-17}{1,-18}{2,-17}{3,-2}/{4,-2}/{5,-2}", "Stopwatch", "ThreadTime", "CpuCycles", "G0", "G1", "G2"));
+            string resultTitle = string.Format("{0,-17}{1,-18}{2,-17}{3,-2}/{4,-2}/{5,-2}", "Stopwatch", "ThreadTime", "CpuCycles", "G0", "G1", "G2");
+            outputAction(resultTitle);
+            Debug.WriteLine(resultTitle);
 
             Console.ForegroundColor = ConsoleColor.Green;
-            outputAction(string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcCounts[0], gcCounts[1], gcCounts[2]));
+            string resultTime = string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcCounts[0], gcCounts[1], gcCounts[2]);
+            outputAction(resultTime);
+            Debug.WriteLine(resultTime);
 
             // Restore console color
             Console.ForegroundColor = originalForeColor;

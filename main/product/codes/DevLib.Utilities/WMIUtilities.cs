@@ -40,7 +40,10 @@ namespace DevLib.Utilities
                 ManagementObjectCollection managementObjectCollection = managementObjectSearcher.Get();
                 foreach (ManagementObject managementObject in managementObjectCollection)
                 {
-                    if (managementObject.Properties[ClassProperty].Value != null)
+                    if (managementObject != null &&
+                        managementObject.Properties != null &&
+                        managementObject.Properties[ClassProperty] != null &&
+                        managementObject.Properties[ClassProperty].Value != null)
                     {
                         result.Add(managementObject.Properties[ClassProperty].Value.ToString());
                     }

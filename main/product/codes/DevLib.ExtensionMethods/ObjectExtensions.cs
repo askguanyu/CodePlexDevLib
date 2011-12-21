@@ -22,6 +22,35 @@ namespace DevLib.ExtensionMethods
     public static class ObjectExtensions
     {
         /// <summary>
+        /// If object is not null, invoke method
+        /// </summary>
+        /// <param name="source">Object to check</param>
+        /// <param name="action">Delegate method, E.g. source => DoSomething(source);</param>
+        /// <returns>Source object</returns>
+        public static object IfNotNull(this object source, Action<object> action)
+        {
+            if (source != null)
+            {
+                action(source);
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// If object is null, invoke method
+        /// </summary>
+        /// <param name="source">Object to check</param>
+        /// <param name="action">Delegate method, E.g. source => DoSomething(source);</param>
+        public static void IfNull(this object source, Action<object> action)
+        {
+            if (source == null)
+            {
+                action(source);
+            }
+        }
+
+        /// <summary>
         /// Invoke System.Console.WriteLine() or System.Console.Write()
         /// </summary>
         /// <typeparam name="T">The type of input object</typeparam>

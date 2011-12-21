@@ -5,8 +5,10 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
+    using System;
     using System.IO;
     using System.Security.Permissions;
+    using System.Text;
 
     /// <summary>
     /// IO Extensions
@@ -14,20 +16,26 @@ namespace DevLib.ExtensionMethods
     public static class IOExtensions
     {
         /// <summary>
-        /// Creates a new text file from a string, this method will overwrite exists file
+        /// Creates a new file, writes the specified string to the file, and then closes the file.
         /// </summary>
-        /// <param name="text">Text to write to the file</param>
-        /// <param name="fileName">Full path of the file</param>
-        /// <returns>Full path of the file name if write file successfully, string.Empty if failed</returns>
-        public static string WriteTextFile(this string text, string fileName, bool overwritten = true)
+        /// <param name="contents">The string to write to the file</param>
+        /// <param name="fileName">The file to write to</param>
+        /// <param name="overwritten">Whether overwrite exists file</param>
+        /// <returns>Full path of the file name if write file successfully</returns>
+        public static string WriteTextFile(this string contents, string fileName, bool overwritten = true)
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                return string.Empty;
+                throw new ArgumentNullException("fileName");
             }
 
             string fullName = Path.GetFullPath(fileName);
             string fullPath = Path.GetDirectoryName(fullName);
+
+            if (!overwritten && fullName.ExistsFile())
+            {
+                throw new ArgumentException("The file exists.", fullName);
+            }
 
             if (!Directory.Exists(fullPath))
             {
@@ -37,51 +45,82 @@ namespace DevLib.ExtensionMethods
                 }
                 catch
                 {
-                    return string.Empty;
+                    throw;
                 }
             }
-
-            FileStream fileStream = null;
-            bool result = false;
 
             try
             {
-                fileStream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
-
-                using (StreamWriter streamWriter = new StreamWriter(fileStream))
-                {
-                    fileStream = null;
-                    streamWriter.Write(text);
-                    streamWriter.Flush();
-                }
-
-                result = true;
+                File.WriteAllText(fullName, contents);
+                return fullName;
             }
             catch
             {
-                result = false;
+                throw;
             }
-            finally
-            {
-                if (fileStream != null)
-                {
-                    fileStream.Close();
-                }
-            }
-
-            return result ? fullName : string.Empty;
         }
 
         /// <summary>
-        /// Read text file to string
+        /// Creates a new file, writes the specified string to the file using the specified encoding, and then closes the file.
         /// </summary>
-        /// <param name="fileName">Text file to be read</param>
-        /// <returns>Text file string</returns>
+        /// <param name="contents">The string to write to the file</param>
+        /// <param name="fileName">The file to write to</param>
+        /// <param name="encoding">The encoding to apply to the string</param>
+        /// <param name="overwritten">Whether overwrite exists file</param>
+        /// <returns>Full path of the file name if write file successfully</returns>
+        public static string WriteTextFile(this string contents, string fileName, Encoding encoding, bool overwritten = true)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            if (encoding == null)
+            {
+                throw new ArgumentNullException("encoding");
+            }
+
+            string fullName = Path.GetFullPath(fileName);
+            string fullPath = Path.GetDirectoryName(fullName);
+
+            if (!overwritten && fullName.ExistsFile())
+            {
+                throw new ArgumentException("The file exists.", fullName);
+            }
+
+            if (!Directory.Exists(fullPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            try
+            {
+                File.WriteAllText(fullName, contents, encoding);
+                return fullName;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Opens a text file, reads all lines of the file, and then closes the file.
+        /// </summary>
+        /// <param name="fileName">The file to open for reading</param>
+        /// <returns>A string containing all lines of the file</returns>
         public static string ReadTextFile(this string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                return string.Empty;
+                throw new ArgumentNullException("fileName");
             }
 
             string fullName = Path.GetFullPath(fileName);
@@ -94,31 +133,78 @@ namespace DevLib.ExtensionMethods
                 }
                 catch
                 {
-                    return string.Empty;
+                    throw;
                 }
             }
             else
             {
-                return string.Empty;
+                throw new FileNotFoundException(fullName);
             }
         }
 
         /// <summary>
-        /// Creates a new binary file from an byte array
+        /// Opens a file, reads all lines of the file with the specified encoding, and then closes the file.
         /// </summary>
-        /// <param name="binary">Binary to write to the file</param>
-        /// <param name="fileName">Full path of the file</param>
-        /// <param name="overwritten">Whether overwrite exists file</param>
-        /// <returns>Full path of the file name if write file successfully, string.Empty if failed</returns>
-        public static string WriteBinaryFile(this byte[] binary, string fileName, bool overwritten = true)
+        /// <param name="fileName">The file to open for reading</param>
+        /// <param name="encoding">The encoding applied to the contents of the file</param>
+        /// <returns>A string containing all lines of the file</returns>
+        public static string ReadTextFile(this string fileName, Encoding encoding)
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                return string.Empty;
+                throw new ArgumentNullException("fileName");
+            }
+
+            if (encoding == null)
+            {
+                throw new ArgumentNullException("encoding");
+            }
+
+            string fullName = Path.GetFullPath(fileName);
+
+            if (File.Exists(fullName))
+            {
+                try
+                {
+                    return File.ReadAllText(fullName);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException(fullName);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new file, writes the specified byte array to the file, and then closes the file.
+        /// </summary>
+        /// <param name="bytes">The bytes to write to the file</param>
+        /// <param name="fileName">The file to write to</param>
+        /// <param name="overwritten">Whether overwrite exists file</param>
+        /// <returns>Full path of the file name if write file successfully</returns>
+        public static string WriteBinaryFile(this byte[] bytes, string fileName, bool overwritten = true)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            if (bytes == null)
+            {
+                throw new ArgumentNullException("binary");
             }
 
             string fullName = Path.GetFullPath(fileName);
             string fullPath = Path.GetDirectoryName(fullName);
+
+            if (!overwritten && fullName.ExistsFile())
+            {
+                throw new ArgumentException("The file exists.", fullName);
+            }
 
             if (!Directory.Exists(fullPath))
             {
@@ -128,97 +214,63 @@ namespace DevLib.ExtensionMethods
                 }
                 catch
                 {
-                    return string.Empty;
+                    throw;
                 }
             }
-
-            FileStream fileStream = null;
-            bool result = false;
 
             try
             {
-                fileStream = new FileStream(fullName, overwritten ? FileMode.Create : FileMode.CreateNew);
-                fileStream.Write(binary, 0, binary.Length);
-                result = true;
+                File.WriteAllBytes(fullName, bytes);
+                return fullName;
             }
             catch
             {
-                result = false;
+                throw;
             }
-            finally
-            {
-                if (fileStream != null)
-                {
-                    fileStream.Close();
-                }
-            }
-
-            return result ? fullName : string.Empty;
         }
 
         /// <summary>
-        /// Read binary file to byte array
+        /// Opens a binary file, reads the contents of the file into a byte array, and then closes the file.
         /// </summary>
-        /// <param name="fileName">Binary file to be read</param>
-        /// <returns>Byte array</returns>
+        /// <param name="fileName">The file to open for reading</param>
+        /// <returns>A byte array containing the contents of the file</returns>
         public static byte[] ReadBinaryFile(this string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                return null;
+                throw new ArgumentNullException("fileName");
             }
 
             string fullName = Path.GetFullPath(fileName);
-
-            FileStream fileStream = null;
-            byte[] result = null;
-            MemoryStream outputStream = null;
 
             if (File.Exists(fullName))
             {
                 try
                 {
-                    outputStream = new MemoryStream();
-                    fileStream = new FileStream(fullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    fileStream.CopyTo(outputStream);
-                    result = outputStream.ToArray();
+                    return File.ReadAllBytes(fullName);
                 }
                 catch
                 {
-                    result = null;
-                }
-                finally
-                {
-                    if (outputStream != null)
-                    {
-                        outputStream.Close();
-                    }
-
-                    if (fileStream != null)
-                    {
-                        fileStream.Close();
-                    }
+                    throw;
                 }
             }
             else
             {
-                result = null;
+                throw new FileNotFoundException(fullName);
             }
-
-            return result;
         }
 
         /// <summary>
         /// Open containing folder with Windows Explorer
         /// </summary>
         /// <param name="fileName">Path or File name</param>
-        /// <returns>True if open successfully</returns>
+        /// <returns>Full path or the file name if open folder successfully</returns>
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
-        public static bool OpenContainingFolder(this string fileName)
+        public static string OpenContainingFolder(this string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                return false;
+                throw new ArgumentNullException("fileName");
             }
 
             string fullName = Path.GetFullPath(fileName);
@@ -227,11 +279,11 @@ namespace DevLib.ExtensionMethods
             try
             {
                 System.Diagnostics.Process.Start("explorer.exe", fullPath);
-                return true;
+                return fullName;
             }
             catch
             {
-                return false;
+                throw;
             }
         }
 

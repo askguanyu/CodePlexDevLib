@@ -296,7 +296,14 @@ namespace DevLib.ExtensionMethods
         /// if path does not contain directory information</returns>
         public static string GetDirectoryName(this string source)
         {
-            return Path.GetDirectoryName(source);
+            try
+            {
+                return Path.GetDirectoryName(source);
+            }
+            catch
+            {
+                return Path.GetDirectoryName(source.Remove("\""));
+            }
         }
 
         /// <summary>
@@ -306,7 +313,14 @@ namespace DevLib.ExtensionMethods
         /// <returns>A string containing the fully qualified location of path, such as "C:\MyFile.txt"</returns>
         public static string GetFullPath(this string source)
         {
-            return Path.GetFullPath(source);
+            try
+            {
+                return Path.GetFullPath(source);
+            }
+            catch
+            {
+                return Path.GetFullPath(source.Remove("\""));
+            }
         }
 
         /// <summary>

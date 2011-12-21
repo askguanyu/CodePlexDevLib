@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
@@ -45,6 +46,7 @@
     <Compile Include="NetUtilities.cs" />
     <Compile Include="RegexPatternUtilities.cs" />
     <Compile Include="StringUtilities.cs" />
+    <Compile Include="WMIUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

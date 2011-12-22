@@ -45,6 +45,7 @@ namespace DevLib.Utilities
                         managementObject.Properties[ClassProperty] != null &&
                         managementObject.Properties[ClassProperty].Value != null)
                     {
+                        //// Note: Also can use managementObject.GetPropertyValue(ClassProperty)
                         result.Add(managementObject.Properties[ClassProperty].Value.ToString());
                     }
                 }

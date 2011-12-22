@@ -56,6 +56,10 @@ namespace DevLib.Utilities
                 {
                     classProperty = WQLString.Split(' ')[1];
                 }
+                else
+                {
+                    throw new ArgumentNullException("ClassProperty");
+                }
             }
             else
             {

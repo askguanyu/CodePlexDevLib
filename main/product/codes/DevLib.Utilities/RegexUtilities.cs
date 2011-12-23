@@ -1,14 +1,14 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="RegexPatternUtilities.cs" company="YuGuan Corporation">
+// <copyright file="RegexUtilities.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 namespace DevLib.Utilities
 {
     /// <summary>
-    /// RegexPattern Utilities
+    /// Regex Utilities
     /// </summary>
-    public class RegexPatternUtilities
+    public class RegexUtilities
     {
         public const string Alpha = @"^[a-zA-Z]*$";
         public const string AlphaUpperCase = @"^[A-Z]*$";

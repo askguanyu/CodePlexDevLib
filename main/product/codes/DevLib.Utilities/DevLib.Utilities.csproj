@@ -44,7 +44,7 @@
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="NetUtilities.cs" />
-    <Compile Include="RegexPatternUtilities.cs" />
+    <Compile Include="RegexUtilities.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="WMIUtilities.cs" />
   </ItemGroup>

@@ -134,15 +134,16 @@ namespace DevLib.Samples
 
             TestEventClass aclass = new TestEventClass() { MyName = "aaa" };
             //aclass.ToByteArray().Compress().WriteBinaryFile("test.bin").ReadBinaryFile().Decompress().ToObject<TestEventClass>().MyName.ConsoleOutput();
-            //aclass.ToXml().ToByteArray(Encoding.Unicode).Compress().WriteBinaryFile("test1.bin").ReadBinaryFile().Decompress().ToEncodingString(Encoding.Unicode).FromXml<TestEventClass>().MyName.ConsoleOutput();
+            //aclass.ToXml().ToByteArray(Encoding.Unicode).Compress().Decompress().ToEncodingString(Encoding.Unicode).FromXml<TestEventClass>().MyName.ConsoleOutput();
 
             Environment.GetLogicalDrives().ForEach(p => p.ConsoleOutput());
             Environment.MachineName.ConsoleOutput();
             Environment.OSVersion.Platform.ConsoleOutput();
+            Environment.WorkingSet.ConsoleOutput();
             //Path.GetDirectoryName(@"""""""").ConsoleOutput();
             //@"""""""".GetFullPath().ConsoleOutput();
 
-            WMIUtilities.QueryWQL("SELECT MACAddress FROM Win32_NetworkAdapter WHERE ((MACAddress Is Not NULL) AND (Manufacturer <> 'Microsoft')) ", "MACAddress").ForEach(p => p.ConsoleOutput());
+            WMIUtilities.QueryWQL("SELECT MACAddress FROM Win32_NetworkAdapter WHERE ((MACAddress Is Not NULL) AND (Manufacturer <> 'Microsoft')) ").ForEach(p => p.ConsoleOutput());
 
             TraceSource ts = new TraceSource("TraceTest");
             SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");

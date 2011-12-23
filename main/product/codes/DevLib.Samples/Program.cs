@@ -143,12 +143,16 @@ namespace DevLib.Samples
             //Path.GetDirectoryName(@"""""""").ConsoleOutput();
             //@"""""""".GetFullPath().ConsoleOutput();
 
+            @"hello".Base64Encode().ConsoleOutput();
+
+
             WMIUtilities.QueryWQL("SELECT MACAddress FROM Win32_NetworkAdapter WHERE ((MACAddress Is Not NULL) AND (Manufacturer <> 'Microsoft')) ").ForEach(p => p.ConsoleOutput());
 
             TraceSource ts = new TraceSource("TraceTest");
             SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");
             ts.Switch = sourceSwitch;
             int idxConsole = ts.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
+            ts.Listeners.Add(new TextWriterTraceListener("test.log"));
             ts.Listeners[idxConsole].Name = "console";
 
             //ts.Listeners["console"].TraceOutputOptions |= TraceOptions.Callstack;
@@ -184,6 +188,7 @@ namespace DevLib.Samples
 
 
             // Activity tests.
+            
             ts.TraceEvent(TraceEventType.Start, 9, "Will not appear until the switch is changed.");
             ts.Switch.Level = SourceLevels.ActivityTracing | SourceLevels.Critical;
             ts.TraceEvent(TraceEventType.Suspend, 10, "Switch includes ActivityTracing, this should appear");

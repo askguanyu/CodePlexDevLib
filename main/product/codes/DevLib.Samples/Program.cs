@@ -13,6 +13,7 @@ namespace DevLib.Samples
     using System.Dynamic;
     using System.IO;
     using System.Linq;
+    using System.Management;
     using System.Net;
     using System.Net.NetworkInformation;
     using System.Text;
@@ -27,7 +28,6 @@ namespace DevLib.Samples
     using DevLib.Net.AsyncSocket;
     using DevLib.Utilities;
     using DevLib.WinForms;
-    using System.Management;
 
     public class Program
     {
@@ -136,17 +136,17 @@ namespace DevLib.Samples
             //aclass.ToByteArray().Compress().WriteBinaryFile("test.bin").ReadBinaryFile().Decompress().ToObject<TestEventClass>().MyName.ConsoleOutput();
             //aclass.ToXml().ToByteArray(Encoding.Unicode).Compress().Decompress().ToEncodingString(Encoding.Unicode).FromXml<TestEventClass>().MyName.ConsoleOutput();
 
-            Environment.GetLogicalDrives().ForEach(p => p.ConsoleOutput());
-            Environment.MachineName.ConsoleOutput();
-            Environment.OSVersion.Platform.ConsoleOutput();
-            Environment.WorkingSet.ConsoleOutput();
+            //Environment.GetLogicalDrives().ForEach(p => p.ConsoleOutput());
+            //Environment.MachineName.ConsoleOutput();
+            //Environment.OSVersion.Platform.ConsoleOutput();
+            //Environment.WorkingSet.ConsoleOutput();
             //Path.GetDirectoryName(@"""""""").ConsoleOutput();
             //@"""""""".GetFullPath().ConsoleOutput();
 
-            @"hello".Base64Encode().ConsoleOutput();
+            //@"hello".Base64Encode().ConsoleOutput();
 
 
-            WMIUtilities.QueryWQL("SELECT MACAddress FROM Win32_NetworkAdapter WHERE ((MACAddress Is Not NULL) AND (Manufacturer <> 'Microsoft')) ").ForEach(p => p.ConsoleOutput());
+            WMIUtilities.QueryWQL(WMIUtilities.GPU).ForEach(p => p.ConsoleOutput());
 
             TraceSource ts = new TraceSource("TraceTest");
             SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");

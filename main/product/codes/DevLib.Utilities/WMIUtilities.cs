@@ -15,6 +15,76 @@ namespace DevLib.Utilities
     public static class WMIUtilities
     {
         /// <summary>
+        ///
+        /// </summary>
+        public const string Win32Account = @"SELECT Caption FROM Win32_Account";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string MainboardSN = @"SELECT SerialNumber FROM Win32_BaseBoard";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string BiosSN = @"SELECT SerialNumber FROM Win32_BIOS";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string HardDiskModel = @"SELECT Model FROM Win32_DiskDrive";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string HardDiskSN = @"SELECT SerialNumber FROM Win32_DiskDrive";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string HardDiskSize = @"SELECT Size FROM Win32_DiskDrive";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string MACAddress = @"SELECT MACAddress FROM Win32_NetworkAdapter";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string PhysicalMemorySN = @"SELECT SerialNumber FROM Win32_PhysicalMemory";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string PhysicalMemorySize = @"SELECT Capacity FROM Win32_PhysicalMemory";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string CPUId = @"SELECT ProcessorId FROM Win32_Processor";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string VolumeSN = @"SELECT SerialNumber FROM Win32_Volume";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string LogicalDiskSN = @"SELECT VolumeSerialNumber FROM Win32_LogicalDisk";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string PCModel = @"SELECT Model FROM Win32_ComputerSystem";
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const string GPU = @"SELECT VideoProcessor FROM Win32_VideoController";
+
+        /// <summary>
         /// Query a WMI class and associated property
         /// </summary>
         /// <param name="WMIClass">WMI class, ingnore case</param>

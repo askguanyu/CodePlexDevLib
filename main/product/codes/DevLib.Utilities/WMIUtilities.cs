@@ -17,67 +17,67 @@ namespace DevLib.Utilities
         /// <summary>
         ///
         /// </summary>
-        public const string Win32Account = @"SELECT Caption FROM Win32_Account";
+        public const string WIN32_ACCOUNT = @"SELECT Caption FROM Win32_Account";
 
         /// <summary>
         ///
         /// </summary>
-        public const string MainboardSN = @"SELECT SerialNumber FROM Win32_BaseBoard";
+        public const string MAINBOARD_SN = @"SELECT SerialNumber FROM Win32_BaseBoard";
 
         /// <summary>
         ///
         /// </summary>
-        public const string BiosSN = @"SELECT SerialNumber FROM Win32_BIOS";
+        public const string BIOS_SN = @"SELECT SerialNumber FROM Win32_BIOS";
 
         /// <summary>
         ///
         /// </summary>
-        public const string HardDiskModel = @"SELECT Model FROM Win32_DiskDrive";
+        public const string HARDDISK_MODEL = @"SELECT Model FROM Win32_DiskDrive";
 
         /// <summary>
         ///
         /// </summary>
-        public const string HardDiskSN = @"SELECT SerialNumber FROM Win32_DiskDrive";
+        public const string HARDDISK_SN = @"SELECT SerialNumber FROM Win32_DiskDrive";
 
         /// <summary>
         ///
         /// </summary>
-        public const string HardDiskSize = @"SELECT Size FROM Win32_DiskDrive";
+        public const string HARDDISK_SIZE = @"SELECT Size FROM Win32_DiskDrive";
 
         /// <summary>
         ///
         /// </summary>
-        public const string MACAddress = @"SELECT MACAddress FROM Win32_NetworkAdapter";
+        public const string MACADDRESS = @"SELECT MACAddress FROM Win32_NetworkAdapter";
 
         /// <summary>
         ///
         /// </summary>
-        public const string PhysicalMemorySN = @"SELECT SerialNumber FROM Win32_PhysicalMemory";
+        public const string PHYSICALMEMORY_SN = @"SELECT SerialNumber FROM Win32_PhysicalMemory";
 
         /// <summary>
         ///
         /// </summary>
-        public const string PhysicalMemorySize = @"SELECT Capacity FROM Win32_PhysicalMemory";
+        public const string PHYSICALMEMORY_SIZE = @"SELECT Capacity FROM Win32_PhysicalMemory";
 
         /// <summary>
         ///
         /// </summary>
-        public const string CPUId = @"SELECT ProcessorId FROM Win32_Processor";
+        public const string CPU_ID = @"SELECT ProcessorId FROM Win32_Processor";
 
         /// <summary>
         ///
         /// </summary>
-        public const string VolumeSN = @"SELECT SerialNumber FROM Win32_Volume";
+        public const string VOLUME_SN = @"SELECT SerialNumber FROM Win32_Volume";
 
         /// <summary>
         ///
         /// </summary>
-        public const string LogicalDiskSN = @"SELECT VolumeSerialNumber FROM Win32_LogicalDisk";
+        public const string LOGICALDISK_SN = @"SELECT VolumeSerialNumber FROM Win32_LogicalDisk";
 
         /// <summary>
         ///
         /// </summary>
-        public const string PCModel = @"SELECT Model FROM Win32_ComputerSystem";
+        public const string PC_MODEL = @"SELECT Model FROM Win32_ComputerSystem";
 
         /// <summary>
         ///

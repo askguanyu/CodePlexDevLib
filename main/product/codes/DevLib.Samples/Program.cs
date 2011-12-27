@@ -145,15 +145,15 @@ namespace DevLib.Samples
 
             //@"hello".Base64Encode().ConsoleOutput();
 
-            CodeTimer.Time(1, () => { WMIUtilities.QueryWQL(WMIUtilities.PC_MODEL).ForEach(p => p.ConsoleOutput()); });
+            //WMIUtilities.QueryWQL(WMIUtilities.MACADDRESS).ForEach(p => p.ConsoleOutput());
             
 
-            TraceSource ts = new TraceSource("TraceTest");
-            SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");
-            ts.Switch = sourceSwitch;
-            int idxConsole = ts.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
-            ts.Listeners.Add(new TextWriterTraceListener("test.log"));
-            ts.Listeners[idxConsole].Name = "console";
+            //TraceSource ts = new TraceSource("TraceTest");
+            //SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");
+            //ts.Switch = sourceSwitch;
+            //int idxConsole = ts.Listeners.Add(new System.Diagnostics.ConsoleTraceListener());
+            //ts.Listeners.Add(new TextWriterTraceListener("test.log"));
+            //ts.Listeners[idxConsole].Name = "console";
 
             //ts.Listeners["console"].TraceOutputOptions |= TraceOptions.Callstack;
             //ts.TraceEvent(TraceEventType.Warning, 1);
@@ -189,13 +189,15 @@ namespace DevLib.Samples
 
             // Activity tests.
             
-            ts.TraceEvent(TraceEventType.Start, 9, "Will not appear until the switch is changed.");
-            ts.Switch.Level = SourceLevels.ActivityTracing | SourceLevels.Critical;
-            ts.TraceEvent(TraceEventType.Suspend, 10, "Switch includes ActivityTracing, this should appear");
-            ts.TraceEvent(TraceEventType.Critical, 11, "Switch includes Critical, this should appear");
+            //ts.TraceEvent(TraceEventType.Start, 9, "Will not appear until the switch is changed.");
+            //ts.Switch.Level = SourceLevels.ActivityTracing | SourceLevels.Critical;
+            //ts.TraceEvent(TraceEventType.Suspend, 10, "Switch includes ActivityTracing, this should appear");
+            //ts.TraceEvent(TraceEventType.Critical, 11, "Switch includes Critical, this should appear");
             
-            ts.Flush();
-            ts.Close();
+            //ts.Flush();
+            //ts.Close();
+
+            CodeTimer.Initialize();
         }
 
         private static void TestDevLibDiagnostics()
@@ -207,7 +209,7 @@ namespace DevLib.Samples
             List<int> list = new List<int>();
             ConcurrentBag<string> safeBag = new ConcurrentBag<string>();
 
-            //CodeTimer.Initialize();
+            CodeTimer.Initialize();
 
             int times = 1000 * 200;
 
@@ -220,10 +222,10 @@ namespace DevLib.Samples
                 safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
             }, null);
 
-            //CodeTimer.Time(times, "Dictionary1", () =>
-            //{
-            //    dict.Update(1, "hello");
-            //});
+            CodeTimer.Time(times, "Dictionary1", () =>
+            {
+                dict.Update(1, "hello");
+            });
 
             //CodeTimer.Time(times, "ConcurrentDictionary2", () =>
             //{

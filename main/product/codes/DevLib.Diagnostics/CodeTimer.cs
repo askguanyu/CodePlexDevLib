@@ -150,7 +150,21 @@ namespace DevLib.Diagnostics
             Debug.WriteLine(resultTitle);
 
             Console.ForegroundColor = ConsoleColor.Green;
-            string resultTime = string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcCounts[0], gcCounts[1], gcCounts[2]);
+
+            string gcCount0 = "NA";
+            string gcCount1 = "NA";
+            string gcCount2 = "NA";
+            try
+            {
+                gcCount0 = gcCounts[0].ToString();
+                gcCount1 = gcCounts[1].ToString();
+                gcCount2 = gcCounts[2].ToString();
+            }
+            catch
+            {
+            }
+
+            string resultTime = string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcCount0, gcCount1, gcCount2);
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 
@@ -186,7 +200,14 @@ namespace DevLib.Diagnostics
         private static ulong GetCycleCount()
         {
             ulong cycleCount = 0;
-            QueryThreadCycleTime(GetCurrentThread(), ref cycleCount);
+            try
+            {
+                QueryThreadCycleTime(GetCurrentThread(), ref cycleCount);
+            }
+            catch
+            {
+            }
+
             return cycleCount;
         }
 
@@ -196,9 +217,17 @@ namespace DevLib.Diagnostics
         /// <returns></returns>
         private static long GetCurrentThreadTimes()
         {
-            long temp;
-            long kernelTime, userTimer;
-            GetThreadTimes(GetCurrentThread(), out temp, out temp, out kernelTime, out userTimer);
+            long temp = 0;
+            long kernelTime = 0;
+            long userTimer = 0;
+            try
+            {
+                GetThreadTimes(GetCurrentThread(), out temp, out temp, out kernelTime, out userTimer);
+            }
+            catch
+            {
+            }
+
             return kernelTime + userTimer;
         }
         #endregion

@@ -104,10 +104,11 @@ namespace DevLib.Diagnostics
 
             // Backup current console color
             ConsoleColor originalForeColor = Console.ForegroundColor;
+            ConsoleColor consoleRandomColor = (ConsoleColor)new Random().Next(9, 15);
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            outputAction(string.Format("Begin:->  {0}", name));
-            Debug.WriteLine(string.Format("Begin:->:  {0}", name));
+            Console.ForegroundColor = consoleRandomColor;
+            outputAction(string.Format("Begin:-> {0}", name));
+            Debug.WriteLine(string.Format("Begin:-> {0}", name));
             Console.WriteLine();
             Console.ForegroundColor = originalForeColor;
 
@@ -153,9 +154,9 @@ namespace DevLib.Diagnostics
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            outputAction(string.Format("End:  ->  {0}", name));
-            Debug.WriteLine(string.Format("End:  ->  {0}", name));
+            Console.ForegroundColor = consoleRandomColor;
+            outputAction(string.Format("End:  -> {0}", name));
+            Debug.WriteLine(string.Format("End:  -> {0}", name));
 
             // Restore console color
             Console.ForegroundColor = originalForeColor;

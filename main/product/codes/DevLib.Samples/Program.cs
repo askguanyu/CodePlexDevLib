@@ -42,7 +42,7 @@ namespace DevLib.Samples
 
             TestCodeSnippet();
 
-            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
             //TestDevLibExtensionMethods();
 
@@ -145,8 +145,8 @@ namespace DevLib.Samples
 
             //@"hello".Base64Encode().ConsoleOutput();
 
-
-            WMIUtilities.QueryWQL(WMIUtilities.GPU).ForEach(p => p.ConsoleOutput());
+            CodeTimer.Time(1, () => { WMIUtilities.QueryWQL(WMIUtilities.PC_MODEL).ForEach(p => p.ConsoleOutput()); });
+            
 
             TraceSource ts = new TraceSource("TraceTest");
             SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");

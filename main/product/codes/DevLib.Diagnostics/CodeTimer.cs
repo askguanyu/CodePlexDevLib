@@ -107,8 +107,9 @@ namespace DevLib.Diagnostics
             ConsoleColor consoleRandomColor = (ConsoleColor)new Random().Next(9, 15);
 
             Console.ForegroundColor = consoleRandomColor;
-            outputAction(string.Format("┌── Time Begin--> {0} ──┐", name));
-            Debug.WriteLine(string.Format("┌── Time Begin--> {0} ──┐", name));
+            string beginTitle = string.Format("┌── Time Begin--> {0} ──┐", name);
+            outputAction(beginTitle);
+            Debug.WriteLine(beginTitle);
             Console.WriteLine();
             Console.ForegroundColor = originalForeColor;
 
@@ -169,8 +170,9 @@ namespace DevLib.Diagnostics
             Debug.WriteLine(resultTime);
 
             Console.ForegroundColor = consoleRandomColor;
-            outputAction(string.Format("└── Time End----> {0} ──┘", name));
-            Debug.WriteLine(string.Format("└── Time End----> {0} ──┘", name));
+            string endTitle = string.Format("└── Time End----> {0} ──┘", name);
+            outputAction(endTitle);
+            Debug.WriteLine(endTitle);
 
             // Restore console color
             Console.ForegroundColor = originalForeColor;

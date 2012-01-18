@@ -44,6 +44,7 @@
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="NetUtilities.cs" />
+    <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="RegexUtilities.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="WMIUtilities.cs" />

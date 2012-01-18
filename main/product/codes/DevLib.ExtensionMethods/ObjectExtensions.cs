@@ -22,6 +22,19 @@ namespace DevLib.ExtensionMethods
     public static class ObjectExtensions
     {
         /// <summary>
+        /// Invokes the method by the current instance, using the specified parameters
+        /// </summary>
+        /// <param name="source">The instance of the invoked method</param>
+        /// <param name="method">The name of the invoked method</param>
+        /// <param name="parameters">The parameters of the invoked method</param>
+        /// <returns>The return value of the invoked method</returns>
+        public static object InvokeMethod(this object source, string method, object[] parameters)
+        {
+            MethodInfo methodInfo = source.GetType().GetMethod(method);
+            return methodInfo.Invoke(source, parameters);
+        }
+
+        /// <summary>
         /// If object is not null, invoke method
         /// </summary>
         /// <param name="source">Object to check</param>

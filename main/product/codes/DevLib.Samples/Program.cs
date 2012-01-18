@@ -28,6 +28,7 @@ namespace DevLib.Samples
     using DevLib.Net.AsyncSocket;
     using DevLib.Utilities;
     using DevLib.WinForms;
+    using System.Reflection;
 
     public class Program
     {
@@ -40,7 +41,7 @@ namespace DevLib.Samples
             PrintStartInfo();
 
 
-            TestCodeSnippet();
+            //TestCodeSnippet();
 
             new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
@@ -132,7 +133,7 @@ namespace DevLib.Samples
             //Trace.WriteLine("Exiting Main");
             //Trace.Unindent();
 
-            TestEventClass aclass = new TestEventClass() { MyName = "aaa" };
+            TestClass aclass = new TestClass() { MyName = "aaa" };
             //aclass.ToByteArray().Compress().WriteBinaryFile("test.bin").ReadBinaryFile().Decompress().ToObject<TestEventClass>().MyName.ConsoleOutput();
             //aclass.ToXml().ToByteArray(Encoding.Unicode).Compress().Decompress().ToEncodingString(Encoding.Unicode).FromXml<TestEventClass>().MyName.ConsoleOutput();
 
@@ -211,21 +212,55 @@ namespace DevLib.Samples
 
             CodeTimer.Initialize();
 
-            int times = 1000 * 200;
+            int times = 1000 * 10;
+
+            TestClass testClass = new TestClass { MyName = "Bill" };
+            object[] parameters = new object[] { 1, 2 };
+            MethodInfo methodInfo = typeof(TestClass).GetMethod("TestAdd");
+
+            CodeTimer.Time(times, "Directly invoke", () =>
+            {
+                testClass.TestAdd(1, 2);
+            });
+
+            methodInfo.Invoke(testClass, parameters).ConsoleOutput();
+            CodeTimer.Time(times, "Reflection invoke1", () =>
+            {
+                methodInfo.Invoke(testClass, parameters);
+            });
+
+            testClass.InvokeMethod("TestAdd", parameters).ConsoleOutput();
+            CodeTimer.Time(times, "Reflection invoke3", () =>
+            {
+                testClass.InvokeMethod("TestAdd", parameters);
+            });
+
+            //ReflectionUtilities.DynamicMethodExecute(methodInfo, testClass, parameters).ConsoleOutput();
+            //CodeTimer.Time(times, "DynamicMethodExecute", () =>
+            //{
+            //    ReflectionUtilities.DynamicMethodExecute(methodInfo, testClass, parameters);
+            //});
+
+            //ReflectionUtilities.FastInvokeExecute(methodInfo, testClass, parameters).ConsoleOutput();
+            //CodeTimer.Time(times, "FastInvokeExecute", () =>
+            //{
+            //    ReflectionUtilities.FastInvokeExecute(methodInfo, testClass, parameters);
+            //});
+
 
             //CodeTimer.Time(1, "No action", () => { });
 
             //new Action(() => { }).CodeTime(times);
 
-            CodeTimer.Time(times, "ConcurrentDictionary1", () =>
-            {
-                safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
-            }, null);
+            //CodeTimer.Time(times, "ConcurrentDictionary1", () =>
+            //{
+            //    safeDict.AddOrUpdate(1, "hello", (key, oldValue) => oldValue);
+            //}, null);
 
-            CodeTimer.Time(times, "Dictionary1", () =>
-            {
-                dict.Update(1, "hello");
-            });
+            //CodeTimer.Time(times, "Dictionary1", () =>
+            //{
+            //    dict.Update(1, "hello");
+            //});
 
             //CodeTimer.Time(times, "ConcurrentDictionary2", () =>
             //{
@@ -248,19 +283,19 @@ namespace DevLib.Samples
             PrintMethodName("Test Dev.Lib.ExtensionMethods");
 
             #region Array
-            TestEventClass[] sourceArray
-                = new TestEventClass[]
+            TestClass[] sourceArray
+                = new TestClass[]
             {
-                new TestEventClass(){ MyName="a"},
-                new TestEventClass(){ MyName="b"},
-                new TestEventClass(){ MyName="c"},
+                new TestClass(){ MyName="a"},
+                new TestClass(){ MyName="b"},
+                new TestClass(){ MyName="c"},
             };
 
-            TestEventClass[] appendArray = new TestEventClass[]
+            TestClass[] appendArray = new TestClass[]
             {
-                new TestEventClass(){ MyName="d"},
-                new TestEventClass(){ MyName="e"},
-                new TestEventClass(){ MyName="f"},
+                new TestClass(){ MyName="d"},
+                new TestClass(){ MyName="e"},
+                new TestClass(){ MyName="f"},
             };
 
             int[] sourceValueTypeArray
@@ -403,12 +438,12 @@ namespace DevLib.Samples
 
         private static void testEventClassObject_OnTestMe(object sender, EventArgs e)
         {
-            (sender as TestEventClass).MyName.ConsoleOutput();
+            (sender as TestClass).MyName.ConsoleOutput();
         }
     }
 
     [Serializable]
-    public class TestEventClass
+    public class TestClass
     {
         public event EventHandler<EventArgs> OnTestMe;
 
@@ -420,8 +455,13 @@ namespace DevLib.Samples
 
         public void TestMe()
         {
-            Console.WriteLine("TestEventClass.TestMe() done!");
+            Console.WriteLine("TestClass.TestMe() done!");
             OnTestMe.RaiseEvent(this, new EventArgs());
+        }
+
+        public int TestAdd(int a, int b)
+        {
+            return a + b;
         }
     }
 }

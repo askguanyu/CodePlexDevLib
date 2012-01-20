@@ -110,7 +110,6 @@ namespace DevLib.Diagnostics
             string beginTitle = string.Format("┌── Time Begin--> {0} ──┐", name);
             outputAction(beginTitle);
             Debug.WriteLine(beginTitle);
-            Console.WriteLine();
             Console.ForegroundColor = originalForeColor;
 
             // Record the latest GC counts

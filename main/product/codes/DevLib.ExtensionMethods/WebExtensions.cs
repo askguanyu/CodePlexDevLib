@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.IO;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="WebExtensions.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
+    using System.IO;
+    using System.Net;
+
+    /// <summary>
+    /// Web Extensions
+    /// </summary>
     public static class WebExtensions
     {
         /// <summary>

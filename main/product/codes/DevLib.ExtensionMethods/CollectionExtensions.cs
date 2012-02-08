@@ -18,6 +18,8 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Update value, if not cantain key then add value
         /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
         /// <param name="source">The source dictionary</param>
         /// <param name="sourceKey">The key of interest</param>
         /// <param name="sourceValue">The value to update</param>
@@ -52,8 +54,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
         public static bool IsEmpty<T>(this IEnumerable<T> source)
@@ -67,8 +70,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
         public static bool IsNotEmpty<T>(this IEnumerable<T> source)

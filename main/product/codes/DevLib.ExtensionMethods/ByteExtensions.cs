@@ -135,6 +135,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert bytes to object
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source">Byte array</param>
         /// <returns>Object</returns>
         public static T ToObject<T>(this byte[] source)
@@ -272,11 +273,11 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="memoryStream"></param>
         /// <param name="compressionMode"></param>
-        /// <param name="CompressionType"></param>
+        /// <param name="compressionType"></param>
         /// <returns></returns>
-        private static Stream GetZipStream(MemoryStream memoryStream, CompressionMode compressionMode, CompressionType CompressionType)
+        private static Stream GetZipStream(MemoryStream memoryStream, CompressionMode compressionMode, CompressionType compressionType)
         {
-            if (CompressionType == CompressionType.GZip)
+            if (compressionType == CompressionType.GZip)
             {
                 return new GZipStream(memoryStream, compressionMode);
             }

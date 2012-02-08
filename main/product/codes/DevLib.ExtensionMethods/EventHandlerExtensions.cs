@@ -16,6 +16,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Thread safety raise event
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="sender"></param>
         /// <param name="e"></param>

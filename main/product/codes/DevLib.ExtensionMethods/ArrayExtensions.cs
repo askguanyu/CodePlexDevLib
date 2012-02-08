@@ -15,7 +15,8 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Performs the specified action on each element of the specified array<T>
         /// </summary>
-        /// <param name="value">Array like int[]</param>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">Array like int[]</param>
         /// <param name="action">Method for element</param>
         /// <param name="ignoreException">if set to <c>true</c> ignore any exception</param>
         public static void ForEach<T>(this T[] source, Action<T> action, bool ignoreException = true)
@@ -41,6 +42,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Adds all elements of the suffixArray to the end of the sourceArray<T>
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="suffixArray">The array whose elements should be added to the end of the sourceArray</param>
         /// <param name="sourceArray">The target array</param>
         /// <param name="useDeepClone">Whether use deep clone of the element in suffixArray</param>
@@ -95,8 +97,9 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Find the first occurence of value type array in another value type array
         /// </summary>
-        /// <param name = "source">The array to search in</param>
-        /// <param name = "pattern">The array to find</param>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The array to search in</param>
+        /// <param name="pattern">The array to find</param>
         /// <returns>The first position of the found array or -1 if not found</returns>
         public static int FindArray<T>(this T[] source, T[] pattern) where T : struct
         {

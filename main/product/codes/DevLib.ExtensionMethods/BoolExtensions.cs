@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
-
     /// <summary>
     /// Bool Extensions
     /// </summary>

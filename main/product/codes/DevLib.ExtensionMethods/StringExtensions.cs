@@ -110,7 +110,7 @@ namespace DevLib.ExtensionMethods
                 return string.Empty;
             }
 
-            return source.Where(Char.IsDigit).Aggregate(new StringBuilder(source.Length), (stringBuilder, digi) => stringBuilder.Append(digi)).ToString();
+            return source.Where(char.IsDigit).Aggregate(new StringBuilder(source.Length), (stringBuilder, digi) => stringBuilder.Append(digi)).ToString();
         }
 
         /// <summary>
@@ -137,8 +137,11 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert string to enum
         /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
         /// <param name="source">String</param>
+        /// <param name="defaultValue">Default value of enum</param>
         /// <param name="ignoreCase">Whether ignore case</param>
+        /// <param name="ignoreException">Whether ignore exception</param>
         /// <returns>Enum</returns>
         public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool ignoreException = true) where TEnum : struct
         {
@@ -171,6 +174,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Whether string is in enum
         /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
         /// <param name="source">String</param>
         /// <returns>True if string in enum</returns>
         public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct

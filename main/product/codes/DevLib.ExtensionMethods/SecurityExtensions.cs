@@ -105,7 +105,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (rsa != null)
                 {
-                    rsa.Dispose();
+                    rsa.Clear();
                 }
             }
 
@@ -152,7 +152,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (rsa != null)
                 {
-                    rsa.Dispose();
+                    rsa.Clear();
                 }
             }
 

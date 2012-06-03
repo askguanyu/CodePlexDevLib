@@ -36,12 +36,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ColorUtilities.cs" />
     <Compile Include="NetUtilities.cs" />
     <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="RegexUtilities.cs" />

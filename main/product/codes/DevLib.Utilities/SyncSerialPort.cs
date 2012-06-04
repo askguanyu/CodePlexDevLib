@@ -88,11 +88,12 @@ namespace DevLib.Utilities
         {
             if (_portNames == null || _portNames.Length == 0)
             {
-                _currentStatus = SerialStatus.NotExistPort;
+                this._currentStatus = SerialStatus.NotExistPort;
             }
             else
             {
                 bool isExistPort = false;
+
                 for (int i = 0; i < _portNames.Length; i++)
                 {
                     if (_portNames[i].Equals(portName))
@@ -104,12 +105,12 @@ namespace DevLib.Utilities
 
                 if (isExistPort)
                 {
-                    _serialPort = new SerialPort(portName, baudRate, partity, dataBits, stopBits);
-                    _currentStatus = SerialStatus.OperateOK;
+                    this._serialPort = new SerialPort(portName, baudRate, partity, dataBits, stopBits);
+                    this._currentStatus = SerialStatus.OperateOK;
                 }
                 else
                 {
-                    _currentStatus = SerialStatus.NotFoundPort;
+                    this._currentStatus = SerialStatus.NotFoundPort;
                 }
             }
         }
@@ -127,7 +128,7 @@ namespace DevLib.Utilities
         /// </summary>
         public SerialStatus CurrentStatus
         {
-            get { return _currentStatus; }
+            get { return this._currentStatus; }
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace DevLib.Utilities
         /// </summary>
         public bool IsOpen
         {
-            get { return _serialPort.IsOpen; }
+            get { return this._serialPort.IsOpen; }
         }
 
         /// <summary>
@@ -143,26 +144,26 @@ namespace DevLib.Utilities
         /// </summary>
         public bool Open()
         {
-            if (_serialPort != null)
+            if (this._serialPort != null)
             {
                 try
                 {
-                    if (!_serialPort.IsOpen)
+                    if (!this._serialPort.IsOpen)
                     {
-                        _serialPort.Open();
+                        this._serialPort.Open();
                     }
 
                     return true;
                 }
                 catch
                 {
-                    _currentStatus = SerialStatus.OpenException;
+                    this._currentStatus = SerialStatus.OpenException;
                     return false;
                 }
             }
             else
             {
-                _currentStatus = SerialStatus.SerialPortNull;
+                this._currentStatus = SerialStatus.SerialPortNull;
                 return false;
             }
         }
@@ -172,18 +173,18 @@ namespace DevLib.Utilities
         /// </summary>
         public bool Close()
         {
-            if (_serialPort != null)
+            if (this._serialPort != null)
             {
-                if (_serialPort.IsOpen)
+                if (this._serialPort.IsOpen)
                 {
-                    _serialPort.Close();
+                    this._serialPort.Close();
                 }
 
                 return true;
             }
             else
             {
-                _currentStatus = SerialStatus.SerialPortNull;
+                this._currentStatus = SerialStatus.SerialPortNull;
                 return false;
             }
         }
@@ -193,10 +194,8 @@ namespace DevLib.Utilities
         /// </summary>
         public void Dispose()
         {
-            if (_serialPort != null)
-            {
-                _serialPort.Dispose();
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -207,50 +206,49 @@ namespace DevLib.Utilities
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish</param>
         public bool Send(byte[] sendData, out byte[] receivedData, int timeout)
         {
-            lock (_syncRoot)
+            lock (this._syncRoot)
             {
-                _autoResetEvent.Reset();
+                this._autoResetEvent.Reset();
 
                 if (sendData == null || sendData.Length == 0)
                 {
                     receivedData = new byte[0];
-                    _currentStatus = SerialStatus.SendDataEmpty;
+                    this._currentStatus = SerialStatus.SendDataEmpty;
                     return false;
                 }
 
                 if (_serialPort == null)
                 {
                     receivedData = new byte[0];
-                    _currentStatus = SerialStatus.SerialPortNull;
+                    this._currentStatus = SerialStatus.SerialPortNull;
                     return false;
                 }
 
-                _readTimeout = timeout;
+                this._readTimeout = timeout;
 
                 try
                 {
-                    if (!Open())
+                    if (!this.Open())
                     {
                         receivedData = new byte[0];
                         return false;
                     }
 
-                    _serialPort.Write(sendData, 0, sendData.Length);
+                    this._serialPort.Write(sendData, 0, sendData.Length);
                     Thread threadReceive = new Thread(new ParameterizedThreadStart(SyncReceiveData));
                     threadReceive.IsBackground = true;
-
                     //threadReceive.Name = "ReadSerialPortData";
                     threadReceive.Start(_serialPort);
-                    _autoResetEvent.WaitOne();
+                    this._autoResetEvent.WaitOne();
 
                     if (threadReceive.IsAlive)
                     {
                         threadReceive.Abort();
                     }
 
-                    if (_currentStatus == SerialStatus.OperateOK)
+                    if (this._currentStatus == SerialStatus.OperateOK)
                     {
-                        receivedData = _receiveBuffer;
+                        receivedData = this._receiveBuffer;
                         return true;
                     }
                     else
@@ -262,10 +260,33 @@ namespace DevLib.Utilities
                 catch
                 {
                     receivedData = new byte[0];
-                    _currentStatus = SerialStatus.SendException;
+                    this._currentStatus = SerialStatus.SendException;
                     return false;
                 }
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources
+                if (this._autoResetEvent != null)
+                {
+                    this._autoResetEvent.Dispose();
+                }
+
+                if (this._serialPort != null)
+                {
+                    this._serialPort.Dispose();
+                }
+            }
+
+            // free native resources if there are any
         }
 
         /// <summary>
@@ -281,22 +302,23 @@ namespace DevLib.Utilities
             {
                 byte firstByte = Convert.ToByte(serialPort.ReadByte());
                 int bytesRead = serialPort.BytesToRead;
-                _receiveBuffer = new byte[bytesRead + 1];
-                _receiveBuffer[0] = firstByte;
+                this._receiveBuffer = new byte[bytesRead + 1];
+                this._receiveBuffer[0] = firstByte;
+
                 for (int i = 1; i <= bytesRead; i++)
                 {
-                    _receiveBuffer[i] = Convert.ToByte(serialPort.ReadByte());
+                    this._receiveBuffer[i] = Convert.ToByte(serialPort.ReadByte());
                 }
 
-                _currentStatus = SerialStatus.OperateOK;
+                this._currentStatus = SerialStatus.OperateOK;
             }
             catch
             {
-                _currentStatus = SerialStatus.ReadTimeout;
+                this._currentStatus = SerialStatus.ReadTimeout;
             }
             finally
             {
-                _autoResetEvent.Set();
+                this._autoResetEvent.Set();
                 Close();
             }
         }

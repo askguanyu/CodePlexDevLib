@@ -48,6 +48,7 @@
     <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="RegexUtilities.cs" />
     <Compile Include="StringUtilities.cs" />
+    <Compile Include="SyncSerialPort.cs" />
     <Compile Include="WMIUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

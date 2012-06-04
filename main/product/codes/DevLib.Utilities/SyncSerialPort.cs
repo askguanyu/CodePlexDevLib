@@ -278,11 +278,13 @@ namespace DevLib.Utilities
                 if (this._autoResetEvent != null)
                 {
                     this._autoResetEvent.Dispose();
+                    this._autoResetEvent = null;
                 }
 
                 if (this._serialPort != null)
                 {
                     this._serialPort.Dispose();
+                    this._serialPort = null;
                 }
             }
 

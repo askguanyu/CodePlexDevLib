@@ -432,7 +432,9 @@ namespace DevLib.Samples
             host.Unloaded += (s, e) => (s as WcfIsolatedServiceHost).AssemblyFile.ConsoleOutput();
             host.Reloaded += (s, e) => s.ConsoleOutput();
             host.Open();
-            //host.Close();
+            host.Close();
+            host.Open();
+            host.Restart();
             host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
             //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
             var a = host.GetStateList();

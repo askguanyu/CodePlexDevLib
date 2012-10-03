@@ -242,7 +242,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 

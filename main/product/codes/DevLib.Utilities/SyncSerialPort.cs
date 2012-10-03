@@ -12,9 +12,9 @@ namespace DevLib.Utilities
     /// <summary>
     ///
     /// </summary>
-    public enum SerialStatus
+    public enum SerialState
     {
-        INIT,
+        Init = 0,
 
         OperateOK,
 
@@ -53,7 +53,7 @@ namespace DevLib.Utilities
         /// <summary>
         ///
         /// </summary>
-        private SerialStatus _currentStatus = SerialStatus.INIT;
+        private SerialState _currentState = SerialState.Init;
 
         /// <summary>
         ///
@@ -88,7 +88,7 @@ namespace DevLib.Utilities
         {
             if (_portNames == null || _portNames.Length == 0)
             {
-                this._currentStatus = SerialStatus.NotExistPort;
+                this._currentState = SerialState.NotExistPort;
             }
             else
             {
@@ -106,11 +106,11 @@ namespace DevLib.Utilities
                 if (isExistPort)
                 {
                     this._serialPort = new SerialPort(portName, baudRate, partity, dataBits, stopBits);
-                    this._currentStatus = SerialStatus.OperateOK;
+                    this._currentState = SerialState.OperateOK;
                 }
                 else
                 {
-                    this._currentStatus = SerialStatus.NotFoundPort;
+                    this._currentState = SerialState.NotFoundPort;
                 }
             }
         }
@@ -126,9 +126,9 @@ namespace DevLib.Utilities
         /// <summary>
         /// Current status
         /// </summary>
-        public SerialStatus CurrentStatus
+        public SerialState CurrentStatus
         {
-            get { return this._currentStatus; }
+            get { return this._currentState; }
         }
 
         /// <summary>
@@ -157,13 +157,13 @@ namespace DevLib.Utilities
                 }
                 catch
                 {
-                    this._currentStatus = SerialStatus.OpenException;
+                    this._currentState = SerialState.OpenException;
                     return false;
                 }
             }
             else
             {
-                this._currentStatus = SerialStatus.SerialPortNull;
+                this._currentState = SerialState.SerialPortNull;
                 return false;
             }
         }
@@ -184,7 +184,7 @@ namespace DevLib.Utilities
             }
             else
             {
-                this._currentStatus = SerialStatus.SerialPortNull;
+                this._currentState = SerialState.SerialPortNull;
                 return false;
             }
         }
@@ -194,7 +194,7 @@ namespace DevLib.Utilities
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -213,14 +213,14 @@ namespace DevLib.Utilities
                 if (sendData == null || sendData.Length == 0)
                 {
                     receivedData = new byte[0];
-                    this._currentStatus = SerialStatus.SendDataEmpty;
+                    this._currentState = SerialState.SendDataEmpty;
                     return false;
                 }
 
                 if (_serialPort == null)
                 {
                     receivedData = new byte[0];
-                    this._currentStatus = SerialStatus.SerialPortNull;
+                    this._currentState = SerialState.SerialPortNull;
                     return false;
                 }
 
@@ -246,7 +246,7 @@ namespace DevLib.Utilities
                         threadReceive.Abort();
                     }
 
-                    if (this._currentStatus == SerialStatus.OperateOK)
+                    if (this._currentState == SerialState.OperateOK)
                     {
                         receivedData = this._receiveBuffer;
                         return true;
@@ -260,7 +260,7 @@ namespace DevLib.Utilities
                 catch
                 {
                     receivedData = new byte[0];
-                    this._currentStatus = SerialStatus.SendException;
+                    this._currentState = SerialState.SendException;
                     return false;
                 }
             }
@@ -312,11 +312,11 @@ namespace DevLib.Utilities
                     this._receiveBuffer[i] = Convert.ToByte(serialPort.ReadByte());
                 }
 
-                this._currentStatus = SerialStatus.OperateOK;
+                this._currentState = SerialState.OperateOK;
             }
             catch
             {
-                this._currentStatus = SerialStatus.ReadTimeout;
+                this._currentState = SerialState.ReadTimeout;
             }
             finally
             {

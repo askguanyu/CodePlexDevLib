@@ -36,12 +36,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="WcfIsolatedServiceHost.cs" />
+    <Compile Include="WcfServiceHost.cs" />
+    <Compile Include="WcfServiceHostConstants.cs" />
+    <Compile Include="WcfServiceHostState.cs" />
+    <Compile Include="WcfServiceHostEventArgs.cs" />
+    <Compile Include="WcfServiceHostType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

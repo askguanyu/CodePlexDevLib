@@ -16,6 +16,8 @@ namespace DevLib.Samples
     using System.Management;
     using System.Net;
     using System.Net.NetworkInformation;
+    using System.Reflection;
+    using System.ServiceModel;
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
@@ -26,9 +28,9 @@ namespace DevLib.Samples
     using DevLib.Main;
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
+    using DevLib.ServiceModel;
     using DevLib.Utilities;
     using DevLib.WinForms;
-    using System.Reflection;
 
     public class Program
     {
@@ -43,7 +45,7 @@ namespace DevLib.Samples
 
             //TestCodeSnippet();
 
-            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
             //TestDevLibExtensionMethods();
 
@@ -53,7 +55,7 @@ namespace DevLib.Samples
 
             //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
-
+            TestDevLibServiceModel();
 
             PrintExitInfo();
         }
@@ -133,7 +135,7 @@ namespace DevLib.Samples
             //Trace.WriteLine("Exiting Main");
             //Trace.Unindent();
 
-            TestClass aclass = new TestClass() { MyName = "aaa" };
+            //TestClass aclass = new TestClass() { MyName = "aaa" };
             //aclass.ToByteArray().Compress().WriteBinaryFile("test.bin").ReadBinaryFile().Decompress().ToObject<TestEventClass>().MyName.ConsoleOutput();
             //aclass.ToXml().ToByteArray(Encoding.Unicode).Compress().Decompress().ToEncodingString(Encoding.Unicode).FromXml<TestEventClass>().MyName.ConsoleOutput();
 
@@ -414,6 +416,39 @@ namespace DevLib.Samples
 
             NetUtilities.GetRandomPortNumber().ConsoleOutput();
             StringUtilities.GetRandomAlphabetString(32).ConsoleOutput();
+        }
+
+        private static void TestDevLibServiceModel()
+        {
+            PrintMethodName("Test Dev.Lib.ServiceModel");
+
+            //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
+            //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
+
+            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll");
+
+            host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
+            host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
+            host.Unloaded += (s, e) => (s as WcfIsolatedServiceHost).AssemblyFile.ConsoleOutput();
+            host.Reloaded += (s, e) => s.ConsoleOutput();
+            host.Open();
+            //host.Close();
+            host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
+            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            Console.ReadKey();
+
+            host.Unload();
+            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            host.Unload();
+            host.Unload();
+            host.Reload();
+            host.Reload();
+            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            host.Open();
+            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            host.GetAppDomain().FriendlyName.ConsoleOutput("|after reload AppDomain");
+
+            Console.ReadKey();
         }
 
         private static void PrintMethodName(string name)

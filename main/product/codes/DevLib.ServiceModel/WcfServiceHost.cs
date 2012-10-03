@@ -24,11 +24,6 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        private Dictionary<string, WcfServiceHostState> _stateList = new Dictionary<string, WcfServiceHostState>();
-
-        /// <summary>
-        ///
-        /// </summary>
         public event EventHandler<WcfServiceHostEventArgs> Created;
 
         /// <summary>
@@ -83,7 +78,7 @@ namespace DevLib.ServiceModel
                     if (serviceHost.State == CommunicationState.Created ||
                         serviceHost.State == CommunicationState.Closed)
                     {
-                        this.RaiseEvent(Opening, serviceHost.Description.Name, WcfServiceHostState.Opening);
+                        this.RaiseEvent(Opening, serviceHost.Description.Name, WcfServiceHostStateEnum.Opening);
 
                         try
                         {
@@ -95,7 +90,7 @@ namespace DevLib.ServiceModel
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenExceptionStringFormat, e.Source, e.Message));
                         }
 
-                        this.RaiseEvent(Opened, serviceHost.Description.Name, WcfServiceHostState.Opened);
+                        this.RaiseEvent(Opened, serviceHost.Description.Name, WcfServiceHostStateEnum.Opened);
                     }
                 }
             }
@@ -112,7 +107,7 @@ namespace DevLib.ServiceModel
                 {
                     if (serviceHost.State == CommunicationState.Opened)
                     {
-                        this.RaiseEvent(Closing, serviceHost.Description.Name, WcfServiceHostState.Closing);
+                        this.RaiseEvent(Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
 
                         try
                         {
@@ -124,7 +119,7 @@ namespace DevLib.ServiceModel
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostCloseExceptionStringFormat, e.Source, e.Message));
                         }
 
-                        this.RaiseEvent(Closed, serviceHost.Description.Name, WcfServiceHostState.Closed);
+                        this.RaiseEvent(Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
                     }
                 }
             }
@@ -139,7 +134,7 @@ namespace DevLib.ServiceModel
             {
                 foreach (var serviceHost in this._serviceHostList)
                 {
-                    this.RaiseEvent(Aborting, serviceHost.Description.Name, WcfServiceHostState.Aborting);
+                    this.RaiseEvent(Aborting, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborting);
 
                     try
                     {
@@ -151,7 +146,7 @@ namespace DevLib.ServiceModel
                         Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostAbortExceptionStringFormat, e.Source, e.Message));
                     }
 
-                    this.RaiseEvent(Aborted, serviceHost.Description.Name, WcfServiceHostState.Aborted);
+                    this.RaiseEvent(Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
                 }
             }
         }
@@ -165,7 +160,7 @@ namespace DevLib.ServiceModel
             {
                 foreach (var serviceHost in this._serviceHostList)
                 {
-                    this.RaiseEvent(Restarting, serviceHost.Description.Name, WcfServiceHostState.Restarting);
+                    this.RaiseEvent(Restarting, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarting);
 
                     try
                     {
@@ -178,7 +173,7 @@ namespace DevLib.ServiceModel
                         Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostRestartExceptionStringFormat, e.Source, e.Message));
                     }
 
-                    this.RaiseEvent(Restarted, serviceHost.Description.Name, WcfServiceHostState.Restarted);
+                    this.RaiseEvent(Restarted, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarted);
                 }
             }
         }
@@ -205,9 +200,16 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, WcfServiceHostState> GetStateList()
+        public List<WcfServiceHostState> GetStateList()
         {
-            return this._stateList;
+            List<WcfServiceHostState> result = new List<WcfServiceHostState>();
+
+            foreach (var item in this._serviceHostList)
+            {
+                result.Add(new WcfServiceHostState() { ServiceType = item.Description.ServiceType.FullName, BaseAddress = item.BaseAddresses[0].AbsoluteUri, State = item.State });
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -227,7 +229,6 @@ namespace DevLib.ServiceModel
         public void Init(string assemblyFile, string configFile = null)
         {
             this._serviceHostList.Clear();
-            this._stateList.Clear();
 
             foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile ?? string.Format("{0}.config", assemblyFile)))
             {
@@ -235,7 +236,8 @@ namespace DevLib.ServiceModel
                 {
                     ServiceHost serviceHost = new ServiceHost(serviceType);
                     this._serviceHostList.Add(serviceHost);
-                    this._stateList.Add(serviceHost.Description.ServiceType.FullName, WcfServiceHostState.Closed);
+
+                    //this._stateList.Add(serviceHost.Description.ServiceType.FullName, WcfServiceHostState.Closed);
                     Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
                 }
                 catch (Exception e)
@@ -244,7 +246,7 @@ namespace DevLib.ServiceModel
                 }
             }
 
-            this.RaiseEvent(Created, assemblyFile, WcfServiceHostState.Created);
+            this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);
         }
 
         /// <summary>
@@ -266,7 +268,6 @@ namespace DevLib.ServiceModel
                     }
 
                     this._serviceHostList.Clear();
-                    this._stateList.Clear();
                 }
             }
 
@@ -278,10 +279,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler"></param>
         /// <param name="e"></param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostState state)
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostStateEnum state)
         {
-            this._stateList[wcfServiceName] = state;
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 

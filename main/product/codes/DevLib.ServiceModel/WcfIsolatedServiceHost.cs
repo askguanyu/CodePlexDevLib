@@ -203,9 +203,9 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <returns></returns>
-        public Dictionary<string, WcfServiceHostState> GetStateList()
+        public List<WcfServiceHostState> GetStateList()
         {
-            return this._wcfServiceHost == null ? new Dictionary<string, WcfServiceHostState>() : this._wcfServiceHost.GetStateList();
+            return this._wcfServiceHost.GetStateList();
         }
 
         /// <summary>

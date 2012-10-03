@@ -434,18 +434,19 @@ namespace DevLib.Samples
             host.Open();
             //host.Close();
             host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
-            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            var a = host.GetStateList();
             Console.ReadKey();
 
             host.Unload();
-            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
             host.Unload();
             host.Unload();
             host.Reload();
             host.Reload();
-            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
             host.Open();
-            host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
             host.GetAppDomain().FriendlyName.ConsoleOutput("|after reload AppDomain");
 
             Console.ReadKey();

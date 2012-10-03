@@ -5,10 +5,13 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ServiceModel
 {
+    using System;
+    using System.ServiceModel;
+
     /// <summary>
-    /// Defines the WcfServiceHost states
+    /// Defines the WcfServiceHost state Enum
     /// </summary>
-    public enum WcfServiceHostState
+    public enum WcfServiceHostStateEnum
     {
         Created,
         Opening,
@@ -20,5 +23,39 @@ namespace DevLib.ServiceModel
         Restarting,
         Restarted,
         Faulted
+    }
+
+    /// <summary>
+    /// WcfServiceHost State
+    /// </summary>
+    [Serializable]
+    public class WcfServiceHostState
+    {
+        /// <summary>
+        ///Gets or sets
+        /// </summary>
+        public string ServiceType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///Gets or sets
+        /// </summary>
+        public string BaseAddress
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        ///Gets or sets
+        /// </summary>
+        public CommunicationState State
+        {
+            get;
+            set;
+        }
     }
 }

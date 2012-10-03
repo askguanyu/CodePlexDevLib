@@ -17,7 +17,7 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <param name="state"></param>
-        public WcfServiceHostEventArgs(string wcfServiceName, WcfServiceHostState state)
+        public WcfServiceHostEventArgs(string wcfServiceName, WcfServiceHostStateEnum state)
         {
             this.WcfServiceName = wcfServiceName;
             this.State = state;
@@ -26,7 +26,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Gets Wcf service state
         /// </summary>
-        public WcfServiceHostState State
+        public WcfServiceHostStateEnum State
         {
             get;
             private set;

@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Utilities
 {
+    using System;
+    using System.IO;
     using System.Reflection;
 
     /// <summary>
@@ -12,6 +14,38 @@ namespace DevLib.Utilities
     /// </summary>
     public static class ReflectionUtilities
     {
+        /// <summary>
+        /// Gets the System.Type object with the specified name from assembly file
+        /// </summary>
+        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly</param>
+        /// <param name="name">The full name of the type</param>
+        /// <returns>A System.Type object that represents the specified class</returns>
+        public static Type GetType(string assemblyFile, string name)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
 
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException("name");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new ArgumentException("The file does not exist.", assemblyFile);
+            }
+
+            try
+            {
+                Assembly assembly = Assembly.LoadFrom(assemblyFile);
+                return assembly.GetType(name);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

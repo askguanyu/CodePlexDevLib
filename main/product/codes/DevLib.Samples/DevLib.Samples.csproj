@@ -62,6 +62,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,6 +94,10 @@
     <ProjectReference Include="..\DevLib.Net\DevLib.Net.csproj">
       <Project>{CF145C2E-642F-4EFA-A03D-96B5082E6650}</Project>
       <Name>DevLib.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceModel\DevLib.ServiceModel.csproj">
+      <Project>{61266225-A0B6-4792-A8C2-2B99DD02927A}</Project>
+      <Name>DevLib.ServiceModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.Utilities\DevLib.Utilities.csproj">
       <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>

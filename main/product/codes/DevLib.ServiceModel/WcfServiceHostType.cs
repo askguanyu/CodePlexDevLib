@@ -54,6 +54,7 @@ namespace DevLib.ServiceModel
             catch (Exception e)
             {
                 Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                throw;
             }
 
             return result;
@@ -103,12 +104,14 @@ namespace DevLib.ServiceModel
                     catch (Exception e)
                     {
                         Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                        throw;
                     }
                 }
             }
             catch (Exception e)
             {
                 Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                throw;
             }
 
             return result;
@@ -145,7 +148,7 @@ namespace DevLib.ServiceModel
             catch (Exception e)
             {
                 Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFromExceptionStringFormat, e.Source, e.Message, e.StackTrace));
-                return null;
+                throw;
             }
         }
 

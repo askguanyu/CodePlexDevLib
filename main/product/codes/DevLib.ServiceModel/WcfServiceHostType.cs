@@ -99,7 +99,12 @@ namespace DevLib.ServiceModel
                 {
                     try
                     {
-                        result.Add(assembly.GetType(serviceElement.Name));
+                        Type serviceType = assembly.GetType(serviceElement.Name);
+
+                        if (serviceType != null)
+                        {
+                            result.Add(serviceType);
+                        }
                     }
                     catch (Exception e)
                     {

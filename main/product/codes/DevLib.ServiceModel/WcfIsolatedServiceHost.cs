@@ -295,6 +295,7 @@ namespace DevLib.ServiceModel
             catch (Exception e)
             {
                 Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfIsolatedServiceHostCreateDomainExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                this.Unload();
                 throw;
             }
         }

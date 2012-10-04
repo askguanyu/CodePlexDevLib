@@ -67,30 +67,73 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfServiceHostEventArgs> Restarted;
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <param name="assemblyFile"></param>
+        /// <param name="configFile"></param>
+        public void Init(string assemblyFile, string configFile)
+        {
+            this._serviceHostList.Clear();
+
+            foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile ?? string.Format("{0}.config", assemblyFile)))
+            {
+                try
+                {
+                    ServiceHost serviceHost = new ServiceHost(serviceType);
+                    this._serviceHostList.Add(serviceHost);
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                }
+            }
+
+            this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);
+        }
+
+        /// <summary>
         /// Open Service Host
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void Open()
         {
             if (this._serviceHostList.Count > 0)
             {
-                foreach (var serviceHost in this._serviceHostList)
+                for (int i = 0; i < _serviceHostList.Count; i++)
                 {
-                    if (serviceHost.State == CommunicationState.Created ||
-                        serviceHost.State == CommunicationState.Closed)
+                    if (_serviceHostList[i].State == CommunicationState.Created)
                     {
-                        this.RaiseEvent(Opening, serviceHost.Description.Name, WcfServiceHostStateEnum.Opening);
+                        this.RaiseEvent(Opening, _serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opening);
 
                         try
                         {
-                            serviceHost.Open();
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
+                            _serviceHostList[i].Open();
+                            this.RaiseEvent(Opened, _serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenStringFormat, _serviceHostList[i].Description.ServiceType.FullName, _serviceHostList[i].BaseAddresses[0].AbsoluteUri));
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenExceptionStringFormat, e.Source, e.Message));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenExceptionStringFormat, e.Source, e.Message, e.StackTrace));
                         }
+                    }
 
-                        this.RaiseEvent(Opened, serviceHost.Description.Name, WcfServiceHostStateEnum.Opened);
+                    if (_serviceHostList[i].State == CommunicationState.Closing ||
+                        _serviceHostList[i].State == CommunicationState.Closed ||
+                        _serviceHostList[i].State == CommunicationState.Faulted)
+                    {
+                        this._serviceHostList[i] = new ServiceHost(_serviceHostList[i].Description.ServiceType);
+                        this.RaiseEvent(Opening, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opening);
+                        try
+                        {
+                            this._serviceHostList[i].Open();
+                            this.RaiseEvent(Opened, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenStringFormat, this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses[0].AbsoluteUri));
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                        }
                     }
                 }
             }
@@ -108,18 +151,16 @@ namespace DevLib.ServiceModel
                     if (serviceHost.State == CommunicationState.Opened)
                     {
                         this.RaiseEvent(Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
-
                         try
                         {
                             serviceHost.Close();
+                            this.RaiseEvent(Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostCloseStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostCloseExceptionStringFormat, e.Source, e.Message));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostCloseExceptionStringFormat, e.Source, e.Message, e.StackTrace));
                         }
-
-                        this.RaiseEvent(Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
                     }
                 }
             }
@@ -135,18 +176,16 @@ namespace DevLib.ServiceModel
                 foreach (var serviceHost in this._serviceHostList)
                 {
                     this.RaiseEvent(Aborting, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborting);
-
                     try
                     {
                         serviceHost.Abort();
+                        this.RaiseEvent(Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
                         Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostAbortStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostAbortExceptionStringFormat, e.Source, e.Message));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostAbortExceptionStringFormat, e.Source, e.Message, e.StackTrace));
                     }
-
-                    this.RaiseEvent(Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
                 }
             }
         }
@@ -154,26 +193,26 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Restart Service Host
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void Restart()
         {
             if (this._serviceHostList.Count > 0)
             {
-                foreach (var serviceHost in this._serviceHostList)
+                for (int i = 0; i < _serviceHostList.Count; i++)
                 {
-                    this.RaiseEvent(Restarting, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarting);
-
                     try
                     {
-                        serviceHost.Abort();
-                        serviceHost.Open();
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostRestartStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
+                        this.RaiseEvent(Restarting, _serviceHostList[i].Description.ServiceType.FullName, WcfServiceHostStateEnum.Restarting);
+                        this._serviceHostList[i].Abort();
+                        this._serviceHostList[i] = new ServiceHost(_serviceHostList[i].Description.ServiceType);
+                        this._serviceHostList[i].Open();
+                        this.RaiseEvent(Restarted, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Restarted);
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostRestartStringFormat, this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses[0].AbsoluteUri));
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostRestartExceptionStringFormat, e.Source, e.Message));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostRestartExceptionStringFormat, e.Source, e.Message, e.StackTrace));
                     }
-
-                    this.RaiseEvent(Restarted, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarted);
                 }
             }
         }
@@ -219,34 +258,6 @@ namespace DevLib.ServiceModel
         public override object InitializeLifetimeService()
         {
             return null;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="assemblyFile"></param>
-        /// <param name="configFile"></param>
-        public void Init(string assemblyFile, string configFile = null)
-        {
-            this._serviceHostList.Clear();
-
-            foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile ?? string.Format("{0}.config", assemblyFile)))
-            {
-                try
-                {
-                    ServiceHost serviceHost = new ServiceHost(serviceType);
-                    this._serviceHostList.Add(serviceHost);
-
-                    //this._stateList.Add(serviceHost.Description.ServiceType.FullName, WcfServiceHostState.Closed);
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitExceptionStringFormat, e.Source, e.Message));
-                }
-            }
-
-            this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);
         }
 
         /// <summary>

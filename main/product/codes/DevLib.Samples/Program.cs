@@ -425,19 +425,27 @@ namespace DevLib.Samples
             //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
             //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
 
-            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll");
+            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
 
             host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
             host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
             host.Unloaded += (s, e) => (s as WcfIsolatedServiceHost).AssemblyFile.ConsoleOutput();
             host.Reloaded += (s, e) => s.ConsoleOutput();
+            
             host.Open();
+            Console.WriteLine("first open");
             host.Close();
+            Console.WriteLine("first close");
             host.Open();
-            host.Restart();
+            Console.WriteLine("2 open");
+            host.Close();
+            Console.WriteLine("2 close");
+            host.Open();
+            Console.WriteLine("3 open");
+            //host.Restart();
             host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
             //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
-            var a = host.GetStateList();
+            //var a = host.GetStateList();
             Console.ReadKey();
 
             host.Unload();
@@ -452,6 +460,7 @@ namespace DevLib.Samples
             host.GetAppDomain().FriendlyName.ConsoleOutput("|after reload AppDomain");
 
             Console.ReadKey();
+            host.Dispose();
         }
 
         private static void PrintMethodName(string name)

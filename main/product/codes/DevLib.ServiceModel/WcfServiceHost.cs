@@ -75,19 +75,27 @@ namespace DevLib.ServiceModel
         {
             this._serviceHostList.Clear();
 
-            foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile ?? string.Format("{0}.config", assemblyFile)))
+            try
             {
-                try
+                foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile ?? string.Format("{0}.config", assemblyFile)))
                 {
-                    ServiceHost serviceHost = new ServiceHost(serviceType);
-                    this._serviceHostList.Add(serviceHost);
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
+                    try
+                    {
+                        ServiceHost serviceHost = new ServiceHost(serviceType);
+                        this._serviceHostList.Add(serviceHost);
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitStringFormat, serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                        throw;
+                    }
                 }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitExceptionStringFormat, e.Source, e.Message, e.StackTrace));
-                    throw;
-                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                throw;
             }
 
             this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);

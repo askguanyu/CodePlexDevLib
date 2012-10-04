@@ -18,7 +18,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostOpenExceptionStringFormat = "WcfServiceHost Open failure with exception. Source:{0} | Message{1}";
+        internal const string WcfServiceHostOpenExceptionStringFormat = "WcfServiceHost Open failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfIsolatedServiceHostCreateDomainExceptionStringFormat = "WcfIsolatedServiceHost CreateDomain failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -28,7 +33,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostCloseExceptionStringFormat = "WcfServiceHost Close failure with exception. Source:{0} | Message{1}";
+        internal const string WcfServiceHostCloseExceptionStringFormat = "WcfServiceHost Close failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -38,7 +43,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostAbortExceptionStringFormat = "WcfServiceHost Abort failure with exception. Source:{0} | Message{1}";
+        internal const string WcfServiceHostAbortExceptionStringFormat = "WcfServiceHost Abort failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -48,7 +53,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostRestartExceptionStringFormat = "WcfServiceHost Restart failure with exception. Source:{0} | Message{1}";
+        internal const string WcfServiceHostRestartExceptionStringFormat = "WcfServiceHost Restart failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -58,6 +63,16 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostInitExceptionStringFormat = "WcfServiceHost Init failure with exception. Source:{0} | Message{1}";
+        internal const string WcfServiceHostInitExceptionStringFormat = "WcfServiceHost Init failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfServiceHostTypeLoadFileExceptionStringFormat = "WcfServiceHostType LoadFile failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfServiceHostTypeLoadFromExceptionStringFormat = "WcfServiceHostType LoadFrom failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
     }
 }

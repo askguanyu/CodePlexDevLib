@@ -8,6 +8,7 @@ namespace DevLib.ServiceModel
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using System.ServiceModel;
@@ -50,9 +51,9 @@ namespace DevLib.ServiceModel
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
             }
 
             return result;
@@ -95,12 +96,19 @@ namespace DevLib.ServiceModel
                 ServiceModelSectionGroup serviceModelSectionGroup = configuration.GetSectionGroup("system.serviceModel") as ServiceModelSectionGroup;
                 foreach (ServiceElement serviceElement in serviceModelSectionGroup.Services.Services)
                 {
-                    result.Add(assembly.GetType(serviceElement.Name));
+                    try
+                    {
+                        result.Add(assembly.GetType(serviceElement.Name));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                    }
                 }
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
             }
 
             return result;
@@ -134,9 +142,10 @@ namespace DevLib.ServiceModel
                 Assembly assembly = Assembly.LoadFrom(assemblyFile);
                 return assembly.GetType(typeFullName);
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFromExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                return null;
             }
         }
 

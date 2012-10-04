@@ -7,6 +7,7 @@ namespace DevLib.ServiceModel
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using System.Threading;
@@ -31,7 +32,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile"></param>
         /// <param name="configFile"></param>
-        public WcfIsolatedServiceHost(string assemblyFile, string configFile = null)
+        public WcfIsolatedServiceHost(string assemblyFile, string configFile)
         {
             this.AssemblyFile = assemblyFile;
             this.ConfigFile = configFile ?? string.Format("{0}.config", assemblyFile);
@@ -246,18 +247,23 @@ namespace DevLib.ServiceModel
         /// </summary>
         private void CreateDomain()
         {
-            AppDomainSetup appDomainSetup = new AppDomainSetup();
-            appDomainSetup.ApplicationBase = Path.GetDirectoryName(this.AssemblyFile);
-            appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
-            appDomainSetup.ConfigurationFile = this.ConfigFile;
-            appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomain;
-
-            this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
-            this.RaiseEvent(Loaded, null);
-
-            this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
-            this.SubscribeAllWcfServiceHostEvent();
-            this._wcfServiceHost.Init(this.AssemblyFile, this.ConfigFile);
+            try
+            {
+                AppDomainSetup appDomainSetup = new AppDomainSetup();
+                appDomainSetup.ApplicationBase = Path.GetDirectoryName(this.AssemblyFile);
+                appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
+                appDomainSetup.ConfigurationFile = this.ConfigFile;
+                appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomain;
+                this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
+                this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
+                this.SubscribeAllWcfServiceHostEvent();
+                this._wcfServiceHost.Init(this.AssemblyFile, this.ConfigFile);
+                this.RaiseEvent(Loaded, null);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+            }
         }
 
         /// <summary>

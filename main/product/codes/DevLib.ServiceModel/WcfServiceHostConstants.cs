@@ -23,11 +23,6 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfIsolatedServiceHostCreateDomainExceptionStringFormat = "WcfIsolatedServiceHost CreateDomain failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
-
-        /// <summary>
-        ///
-        /// </summary>
         internal const string WcfServiceHostCloseStringFormat = "WcfServiceHost Close successfully. ServiceType: {0} | AbsoluteUri: {1}";
 
         /// <summary>
@@ -74,5 +69,30 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         internal const string WcfServiceHostTypeLoadFromExceptionStringFormat = "WcfServiceHostType LoadFrom failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfIsolatedServiceHostCreateDomainExceptionStringFormat = "WcfIsolatedServiceHost CreateDomain failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfIsolatedServiceHostOpenExceptionStringFormat = "WcfIsolatedServiceHost Open failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfIsolatedServiceHostCloseExceptionStringFormat = "WcfIsolatedServiceHost Close failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfIsolatedServiceHostAbortExceptionStringFormat = "WcfIsolatedServiceHost Abort failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string WcfIsolatedServiceHostRestartExceptionStringFormat = "WcfIsolatedServiceHost Restart failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
     }
 }

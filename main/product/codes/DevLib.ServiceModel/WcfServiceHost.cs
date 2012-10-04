@@ -86,6 +86,7 @@ namespace DevLib.ServiceModel
                 catch (Exception e)
                 {
                     Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostInitExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                    throw;
                 }
             }
 
@@ -115,6 +116,7 @@ namespace DevLib.ServiceModel
                         catch (Exception e)
                         {
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                            throw;
                         }
                     }
 
@@ -133,6 +135,7 @@ namespace DevLib.ServiceModel
                         catch (Exception e)
                         {
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                            throw;
                         }
                     }
                 }
@@ -160,6 +163,7 @@ namespace DevLib.ServiceModel
                         catch (Exception e)
                         {
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostCloseExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                            throw;
                         }
                     }
                 }
@@ -185,6 +189,7 @@ namespace DevLib.ServiceModel
                     catch (Exception e)
                     {
                         Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostAbortExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                        throw;
                     }
                 }
             }
@@ -212,6 +217,7 @@ namespace DevLib.ServiceModel
                     catch (Exception e)
                     {
                         Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostRestartExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                        throw;
                     }
                 }
             }

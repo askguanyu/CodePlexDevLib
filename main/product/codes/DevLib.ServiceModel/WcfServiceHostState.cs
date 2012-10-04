@@ -57,5 +57,14 @@ namespace DevLib.ServiceModel
             get;
             set;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.State.ToString();
+        }
     }
 }

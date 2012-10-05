@@ -285,7 +285,7 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ApplicationBase = Path.GetDirectoryName(this.AssemblyFile);
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
                 appDomainSetup.ConfigurationFile = this.ConfigFile;
-                appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomain;
+                appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
                 //appDomainSetup.ShadowCopyFiles = "true";
                 //appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
 

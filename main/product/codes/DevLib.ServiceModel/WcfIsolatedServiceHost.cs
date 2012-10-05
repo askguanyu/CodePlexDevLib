@@ -286,6 +286,9 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
                 appDomainSetup.ConfigurationFile = this.ConfigFile;
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomain;
+                //appDomainSetup.ShadowCopyFiles = "true";
+                //appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
+
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
                 this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
                 this.SubscribeAllWcfServiceHostEvent();

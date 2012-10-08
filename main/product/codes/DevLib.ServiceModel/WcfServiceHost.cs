@@ -67,10 +67,10 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfServiceHostEventArgs> Restarted;
 
         /// <summary>
-        ///
+        /// Initialize Wcf service
         /// </summary>
-        /// <param name="assemblyFile"></param>
-        /// <param name="configFile"></param>
+        /// <param name="assemblyFile">Wcf service assembly file</param>
+        /// <param name="configFile">Wcf service config file</param>
         public void Init(string assemblyFile, string configFile)
         {
             this._serviceHostList.Clear();
@@ -241,7 +241,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Get service host list
         /// </summary>
         /// <returns></returns>
         public List<ServiceHost> GetServiceHostList()
@@ -250,7 +250,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Get service state list
         /// </summary>
         /// <returns></returns>
         public List<WcfServiceHostState> GetStateList()

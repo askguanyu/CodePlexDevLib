@@ -118,7 +118,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Open Wcf service
         /// </summary>
         public void Open()
         {
@@ -137,7 +137,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Close Wcf service
         /// </summary>
         public void Close()
         {
@@ -156,7 +156,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Abort Wcf service
         /// </summary>
         public void Abort()
         {
@@ -175,7 +175,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Restart Wcf service
         /// </summary>
         public void Restart()
         {
@@ -194,7 +194,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Unload current isolated AppDomain
         /// </summary>
         public void Unload()
         {
@@ -214,7 +214,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Reload current isolated AppDomain
         /// </summary>
         public void Reload()
         {
@@ -224,7 +224,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Get current isolated AppDomain
         /// </summary>
         /// <returns></returns>
         public AppDomain GetAppDomain()
@@ -233,7 +233,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Get Wcf service state list
         /// </summary>
         /// <returns></returns>
         public List<WcfServiceHostState> GetStateList()

@@ -118,18 +118,30 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            MemoryStream memoryStream = null;
+            Image result = null;
+
             try
             {
-                using (MemoryStream memoryStream = new MemoryStream(source))
-                {
-                    memoryStream.Write(source, 0, source.Length);
-                    return Image.FromStream(memoryStream);
-                }
+                memoryStream = new MemoryStream(source);
+                memoryStream.Write(source, 0, source.Length);
+                result = Image.FromStream(memoryStream);
+                memoryStream.Flush();
             }
             catch
             {
-                return null;
+                throw;
             }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -150,12 +162,31 @@ namespace DevLib.ExtensionMethods
                 return default(T);
             }
 
-            using (MemoryStream memoryStream = new MemoryStream(source))
+            MemoryStream memoryStream = null;
+            T result = default(T);
+
+            try
             {
+                memoryStream = new MemoryStream(source);
                 memoryStream.Position = 0;
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
-                return (T)binaryFormatter.Deserialize(memoryStream);
+                result = (T)binaryFormatter.Deserialize(memoryStream);
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -175,12 +206,31 @@ namespace DevLib.ExtensionMethods
                 return null;
             }
 
-            using (MemoryStream memoryStream = new MemoryStream(source))
+            MemoryStream memoryStream = null;
+            object result = null;
+
+            try
             {
+                memoryStream = new MemoryStream(source);
                 memoryStream.Position = 0;
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
-                return binaryFormatter.Deserialize(memoryStream);
+                result = binaryFormatter.Deserialize(memoryStream);
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -197,15 +247,17 @@ namespace DevLib.ExtensionMethods
             }
 
             MemoryStream outputStream = null;
+            Stream zipStream = null;
             byte[] result = null;
 
             try
             {
                 outputStream = new MemoryStream();
-                Stream zipStream = GetZipStream(outputStream, CompressionMode.Compress, compressionType);
+                zipStream = GetZipStream(outputStream, CompressionMode.Compress, compressionType);
                 zipStream.Write(source, 0, source.Length);
-                zipStream.Close();
                 result = outputStream.ToArray();
+                zipStream.Flush();
+                outputStream.Flush();
             }
             catch
             {
@@ -213,9 +265,16 @@ namespace DevLib.ExtensionMethods
             }
             finally
             {
+                if (zipStream != null)
+                {
+                    zipStream.Close();
+                    zipStream = null;
+                }
+
                 if (outputStream != null)
                 {
                     outputStream.Close();
+                    outputStream = null;
                 }
             }
 
@@ -237,16 +296,19 @@ namespace DevLib.ExtensionMethods
 
             MemoryStream outputStream = null;
             MemoryStream inputStream = null;
+            Stream zipStream = null;
             byte[] result = null;
 
             try
             {
                 outputStream = new MemoryStream();
                 inputStream = new MemoryStream(source);
-                Stream zipStream = GetZipStream(inputStream, CompressionMode.Decompress, compressionType);
+                zipStream = GetZipStream(inputStream, CompressionMode.Decompress, compressionType);
                 zipStream.CopyTo(outputStream);
-                zipStream.Close();
                 result = outputStream.ToArray();
+                zipStream.Flush();
+                inputStream.Flush();
+                outputStream.Flush();
             }
             catch
             {
@@ -254,14 +316,22 @@ namespace DevLib.ExtensionMethods
             }
             finally
             {
+                if (zipStream != null)
+                {
+                    zipStream.Close();
+                    zipStream = null;
+                }
+
                 if (inputStream != null)
                 {
                     inputStream.Close();
+                    inputStream = null;
                 }
 
                 if (outputStream != null)
                 {
                     outputStream.Close();
+                    outputStream = null;
                 }
             }
 

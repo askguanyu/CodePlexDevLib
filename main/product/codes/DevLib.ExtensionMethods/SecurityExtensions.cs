@@ -47,9 +47,24 @@ namespace DevLib.ExtensionMethods
         {
             byte[] data;
 
-            using (MD5 hasher = MD5.Create())
+            MD5 hasher = null;
+            try
             {
+                hasher = MD5.Create();
                 data = hasher.ComputeHash(Encoding.Default.GetBytes(source));
+                hasher.Clear();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (hasher != null)
+                {
+                    hasher.Dispose();
+                    hasher = null;
+                }
             }
 
             if (data != null)
@@ -80,7 +95,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
             }
 
-            string result = string.Empty;
+            string result = null;
             RSACryptoServiceProvider rsa = null;
 
             try
@@ -96,6 +111,7 @@ namespace DevLib.ExtensionMethods
 
                 byte[] bytes = rsa.Decrypt(decryptByteArray, true);
                 result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
+                rsa.Clear();
             }
             catch
             {
@@ -105,7 +121,8 @@ namespace DevLib.ExtensionMethods
             {
                 if (rsa != null)
                 {
-                    rsa.Clear();
+                    rsa.Dispose();
+                    rsa = null;
                 }
             }
 
@@ -130,7 +147,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentException("Cannot encrypt using an empty key. Please supply an encryption key.");
             }
 
-            string result = string.Empty;
+            string result = null;
             RSACryptoServiceProvider rsa = null;
 
             try
@@ -143,6 +160,7 @@ namespace DevLib.ExtensionMethods
 
                 byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(source), true);
                 result = BitConverter.ToString(bytes);
+                rsa.Clear();
             }
             catch
             {
@@ -152,7 +170,8 @@ namespace DevLib.ExtensionMethods
             {
                 if (rsa != null)
                 {
-                    rsa.Clear();
+                    rsa.Dispose();
+                    rsa = null;
                 }
             }
 

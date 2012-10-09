@@ -168,13 +168,32 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            MemoryStream memoryStream = null;
+            T result = default(T);
+
+            try
             {
+                memoryStream = new MemoryStream();
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 binaryFormatter.Serialize(memoryStream, source);
                 memoryStream.Seek(0, SeekOrigin.Begin);
-                return (T)binaryFormatter.Deserialize(memoryStream);
+                result = (T)binaryFormatter.Deserialize(memoryStream);
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -196,12 +215,31 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            MemoryStream memoryStream = null;
+            byte[] result = null;
+
+            try
             {
+                memoryStream = new MemoryStream();
                 BinaryFormatter binaryFormatter = new BinaryFormatter();
                 binaryFormatter.Serialize(memoryStream, source);
-                return memoryStream.ToArray();
+                result = memoryStream.ToArray();
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -217,12 +255,31 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            MemoryStream memoryStream = null;
+            string result = null;
+
+            try
             {
+                memoryStream = new MemoryStream();
                 var serializer = new DataContractJsonSerializer(source.GetType());
                 serializer.WriteObject(memoryStream, source);
-                return Encoding.Default.GetString(memoryStream.ToArray());
+                result = Encoding.Default.GetString(memoryStream.ToArray());
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -239,12 +296,31 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            MemoryStream memoryStream = null;
+            string result = null;
+
+            try
             {
+                memoryStream = new MemoryStream();
                 var serializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
                 serializer.WriteObject(memoryStream, source);
-                return Encoding.Default.GetString(memoryStream.ToArray());
+                result = Encoding.Default.GetString(memoryStream.ToArray());
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -260,11 +336,30 @@ namespace DevLib.ExtensionMethods
                 return default(T);
             }
 
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source)))
+            MemoryStream memoryStream = null;
+            T result = default(T);
+
+            try
             {
+                memoryStream = new MemoryStream(Encoding.Default.GetBytes(source));
                 var serializer = new DataContractJsonSerializer(typeof(T));
-                return (T)serializer.ReadObject(memoryStream);
+                result = (T)serializer.ReadObject(memoryStream);
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -281,11 +376,30 @@ namespace DevLib.ExtensionMethods
                 return default(T);
             }
 
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source)))
+            MemoryStream memoryStream = null;
+            T result = default(T);
+
+            try
             {
+                memoryStream = new MemoryStream(Encoding.Default.GetBytes(source));
                 var serializer = new DataContractJsonSerializer(typeof(T), knownTypes);
-                return (T)serializer.ReadObject(memoryStream);
+                result = (T)serializer.ReadObject(memoryStream);
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -324,13 +438,32 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("encoding");
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            MemoryStream memoryStream = null;
+            string result = null;
+
+            try
             {
+                memoryStream = new MemoryStream();
                 XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
                 xmlSerializer.Serialize(memoryStream, source);
                 memoryStream.Position = 0;
-                return encoding.GetString(memoryStream.ToArray());
+                result = encoding.GetString(memoryStream.ToArray());
+                memoryStream.Flush();
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (memoryStream != null)
+                {
+                    memoryStream.Close();
+                    memoryStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -346,11 +479,29 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            using (TextReader inputStream = new StringReader(source))
+            TextReader inputStream = null;
+            T result = default(T);
+
+            try
             {
+                inputStream = new StringReader(source);
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                return (T)xmlSerializer.Deserialize(inputStream);
+                result = (T)xmlSerializer.Deserialize(inputStream);
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (inputStream != null)
+                {
+                    inputStream.Close();
+                    inputStream = null;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

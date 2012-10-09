@@ -28,10 +28,10 @@ namespace DevLib.ServiceModel
         private WcfServiceHost _wcfServiceHost;
 
         /// <summary>
-        ///
+        /// Create a isolated AppDomain to host Wcf service
         /// </summary>
-        /// <param name="assemblyFile"></param>
-        /// <param name="configFile"></param>
+        /// <param name="assemblyFile">Wcf service assembly file</param>
+        /// <param name="configFile">Wcf service config file</param>
         public WcfIsolatedServiceHost(string assemblyFile, string configFile)
         {
             this.AssemblyFile = assemblyFile;

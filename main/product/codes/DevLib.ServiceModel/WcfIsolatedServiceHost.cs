@@ -28,7 +28,7 @@ namespace DevLib.ServiceModel
         private WcfServiceHost _wcfServiceHost;
 
         /// <summary>
-        /// Create a isolated AppDomain to host Wcf service
+        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file</param>
         /// <param name="configFile">Wcf service config file</param>

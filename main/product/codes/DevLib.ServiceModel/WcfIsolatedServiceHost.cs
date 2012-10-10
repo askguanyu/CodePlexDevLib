@@ -217,9 +217,9 @@ namespace DevLib.ServiceModel
             if (this._appDomain != null)
             {
                 AppDomain.Unload(this._appDomain);
+                this.IsAppDomainLoaded = false;
                 this._appDomain = null;
                 this.RaiseEvent(Unloaded, null);
-                this.IsAppDomainLoaded = false;
             }
         }
 
@@ -296,15 +296,15 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
                 appDomainSetup.ConfigurationFile = this.ConfigFile;
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
-
                 //appDomainSetup.ShadowCopyFiles = "true";
                 //appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
+
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
                 this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
+                this.IsAppDomainLoaded = true;
                 this.SubscribeAllWcfServiceHostEvent();
                 this._wcfServiceHost.Init(this.AssemblyFile, this.ConfigFile);
                 this.RaiseEvent(Loaded, null);
-                this.IsAppDomainLoaded = true;
             }
             catch (Exception e)
             {

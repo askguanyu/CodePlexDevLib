@@ -425,7 +425,7 @@ namespace DevLib.Samples
             //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
             //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
 
-            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
+            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost(Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll"), Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll.config"));
 
             host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
             host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
@@ -443,7 +443,9 @@ namespace DevLib.Samples
             host.Open();
             Console.WriteLine("3 open");
             host.Abort();
-            Console.WriteLine("3 open");
+            Console.WriteLine("Abort");
+            host.Open();
+            Console.WriteLine("4 open");
             //host.Restart();
             host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
             //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());

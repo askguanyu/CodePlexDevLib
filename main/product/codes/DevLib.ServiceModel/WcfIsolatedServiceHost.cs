@@ -100,7 +100,16 @@ namespace DevLib.ServiceModel
         public event EventHandler<EventArgs> Reloaded;
 
         /// <summary>
-        ///Gets or sets
+        /// Gets a value indicating whether isolated AppDomain is loaded
+        /// </summary>
+        public bool IsAppDomainLoaded
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets current Wcf service assembly file
         /// </summary>
         public string AssemblyFile
         {
@@ -109,7 +118,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///Gets or sets
+        /// Gets current Wcf service config file
         /// </summary>
         public string ConfigFile
         {
@@ -210,6 +219,7 @@ namespace DevLib.ServiceModel
                 AppDomain.Unload(this._appDomain);
                 this._appDomain = null;
                 this.RaiseEvent(Unloaded, null);
+                this.IsAppDomainLoaded = false;
             }
         }
 
@@ -286,14 +296,15 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
                 appDomainSetup.ConfigurationFile = this.ConfigFile;
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
+
                 //appDomainSetup.ShadowCopyFiles = "true";
                 //appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
-
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
                 this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
                 this.SubscribeAllWcfServiceHostEvent();
                 this._wcfServiceHost.Init(this.AssemblyFile, this.ConfigFile);
                 this.RaiseEvent(Loaded, null);
+                this.IsAppDomainLoaded = true;
             }
             catch (Exception e)
             {

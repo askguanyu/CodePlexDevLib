@@ -111,34 +111,20 @@ namespace DevLib.ServiceModel
             {
                 for (int i = 0; i < _serviceHostList.Count; i++)
                 {
-                    if (_serviceHostList[i].State == CommunicationState.Created)
+                    if (_serviceHostList[i].State != CommunicationState.Opening ||
+                        _serviceHostList[i].State != CommunicationState.Opened)
                     {
                         this.RaiseEvent(Opening, _serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opening);
-
                         try
                         {
+                            if (_serviceHostList[i].State != CommunicationState.Created)
+                            {
+                                this._serviceHostList[i] = new ServiceHost(_serviceHostList[i].Description.ServiceType);
+                            }
+
                             _serviceHostList[i].Open();
                             this.RaiseEvent(Opened, _serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenStringFormat, _serviceHostList[i].Description.ServiceType.FullName, _serviceHostList[i].BaseAddresses[0].AbsoluteUri));
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenExceptionStringFormat, e.Source, e.Message, e.StackTrace));
-                            throw;
-                        }
-                    }
-
-                    if (_serviceHostList[i].State == CommunicationState.Closing ||
-                        _serviceHostList[i].State == CommunicationState.Closed ||
-                        _serviceHostList[i].State == CommunicationState.Faulted)
-                    {
-                        this._serviceHostList[i] = new ServiceHost(_serviceHostList[i].Description.ServiceType);
-                        this.RaiseEvent(Opening, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opening);
-                        try
-                        {
-                            this._serviceHostList[i].Open();
-                            this.RaiseEvent(Opened, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostOpenStringFormat, this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses[0].AbsoluteUri));
                         }
                         catch (Exception e)
                         {
@@ -213,9 +199,9 @@ namespace DevLib.ServiceModel
             {
                 for (int i = 0; i < _serviceHostList.Count; i++)
                 {
+                    this.RaiseEvent(Restarting, _serviceHostList[i].Description.ServiceType.FullName, WcfServiceHostStateEnum.Restarting);
                     try
                     {
-                        this.RaiseEvent(Restarting, _serviceHostList[i].Description.ServiceType.FullName, WcfServiceHostStateEnum.Restarting);
                         this._serviceHostList[i].Abort();
                         this._serviceHostList[i] = new ServiceHost(_serviceHostList[i].Description.ServiceType);
                         this._serviceHostList[i].Open();
@@ -286,7 +272,6 @@ namespace DevLib.ServiceModel
                 if (this._serviceHostList != null)
                 {
                     this.Abort();
-                    this.Close();
                     foreach (IDisposable item in this._serviceHostList)
                     {
                         item.Dispose();

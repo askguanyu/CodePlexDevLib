@@ -18,7 +18,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostOpenExceptionStringFormat = "WcfServiceHost Open failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfServiceHostOpenExceptionStringFormat = "Exception: WcfServiceHost Open failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -28,7 +28,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostCloseExceptionStringFormat = "WcfServiceHost Close failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfServiceHostCloseExceptionStringFormat = "Exception: WcfServiceHost Close failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -38,7 +38,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostAbortExceptionStringFormat = "WcfServiceHost Abort failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfServiceHostAbortExceptionStringFormat = "Exception: WcfServiceHost Abort failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -48,7 +48,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostRestartExceptionStringFormat = "WcfServiceHost Restart failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfServiceHostRestartExceptionStringFormat = "Exception: WcfServiceHost Restart failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
@@ -58,41 +58,41 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostInitExceptionStringFormat = "WcfServiceHost Init failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfServiceHostInitExceptionStringFormat = "Exception: WcfServiceHost Init failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostTypeLoadFileExceptionStringFormat = "WcfServiceHostType LoadFile failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfServiceHostTypeLoadFileExceptionStringFormat = "Exception: WcfServiceHostType LoadFile failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfServiceHostTypeLoadFromExceptionStringFormat = "WcfServiceHostType LoadFrom failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfServiceHostTypeLoadFromExceptionStringFormat = "Exception: WcfServiceHostType LoadFrom failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfIsolatedServiceHostCreateDomainExceptionStringFormat = "WcfIsolatedServiceHost CreateDomain failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfIsolatedServiceHostCreateDomainExceptionStringFormat = "Exception: WcfIsolatedServiceHost CreateDomain failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfIsolatedServiceHostOpenExceptionStringFormat = "WcfIsolatedServiceHost Open failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfIsolatedServiceHostOpenExceptionStringFormat = "Exception: WcfIsolatedServiceHost Open failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfIsolatedServiceHostCloseExceptionStringFormat = "WcfIsolatedServiceHost Close failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfIsolatedServiceHostCloseExceptionStringFormat = "Exception: WcfIsolatedServiceHost Close failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfIsolatedServiceHostAbortExceptionStringFormat = "WcfIsolatedServiceHost Abort failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfIsolatedServiceHostAbortExceptionStringFormat = "Exception: WcfIsolatedServiceHost Abort failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WcfIsolatedServiceHostRestartExceptionStringFormat = "WcfIsolatedServiceHost Restart failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
+        internal const string WcfIsolatedServiceHostRestartExceptionStringFormat = "Exception: WcfIsolatedServiceHost Restart failure with exception. Source:{0} | Message:{1} | StackTrace:{2}";
     }
 }

@@ -442,6 +442,8 @@ namespace DevLib.Samples
             Console.WriteLine("2 close");
             host.Open();
             Console.WriteLine("3 open");
+            host.Abort();
+            Console.WriteLine("3 open");
             //host.Restart();
             host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
             //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());

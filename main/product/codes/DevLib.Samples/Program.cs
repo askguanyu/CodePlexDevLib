@@ -45,7 +45,7 @@ namespace DevLib.Samples
 
             //TestCodeSnippet();
 
-            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
             //TestDevLibExtensionMethods();
 
@@ -55,7 +55,7 @@ namespace DevLib.Samples
 
             //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
-            TestDevLibServiceModel();
+            //TestDevLibServiceModel();
 
             PrintExitInfo();
         }
@@ -200,7 +200,7 @@ namespace DevLib.Samples
             //ts.Flush();
             //ts.Close();
 
-            CodeTimer.Initialize();
+            //CodeTimer.Initialize();
         }
 
         private static void TestDevLibDiagnostics()

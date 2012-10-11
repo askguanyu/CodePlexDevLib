@@ -20,6 +20,11 @@ namespace DevLib.Diagnostics
         /// <summary>
         ///
         /// </summary>
+        private static Random _random = new Random();
+
+        /// <summary>
+        ///
+        /// </summary>
         public static void Initialize()
         {
             DevLib.Diagnostics.CodeTimer.Time(1, "Initialize CodeTimer...", () => { });
@@ -104,7 +109,7 @@ namespace DevLib.Diagnostics
 
             // Backup current console color
             ConsoleColor originalForeColor = Console.ForegroundColor;
-            ConsoleColor consoleRandomColor = (ConsoleColor)new Random().Next(9, 15);
+            ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(9, 15);
 
             Console.ForegroundColor = consoleRandomColor;
             string beginTitle = string.Format("┌── Time Begin--> {0} ──┐", name);
@@ -114,10 +119,10 @@ namespace DevLib.Diagnostics
 
             // Record the latest GC counts
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            int[] gcCounts = new int[GC.MaxGeneration + 1];
+            int[] gcCountArray = new int[GC.MaxGeneration + 1];
             for (int i = 0; i <= GC.MaxGeneration; i++)
             {
-                gcCounts[i] = GC.CollectionCount(i);
+                gcCountArray[i] = GC.CollectionCount(i);
             }
 
             // Run action, record timespan
@@ -137,13 +142,15 @@ namespace DevLib.Diagnostics
 
             watch.Stop();
 
+            string[] gcResultArray = { "NA", "NA", "NA" };
+
             for (int i = 0; i <= GC.MaxGeneration; i++)
             {
-                gcCounts[i] = GC.CollectionCount(i) - gcCounts[i];
+                gcCountArray[i] = GC.CollectionCount(i) - gcCountArray[i];
+                gcResultArray[i] = gcCountArray[i].ToString();
             }
 
             // Console output recorded times
-            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
             string resultTitle = string.Format("{0,-17}{1,-18}{2,-17}{3,-2}/{4,-2}/{5,-2}", "Stopwatch", "ThreadTime", "CpuCycles", "G0", "G1", "G2");
             outputAction(resultTitle);
@@ -151,20 +158,7 @@ namespace DevLib.Diagnostics
 
             Console.ForegroundColor = ConsoleColor.Green;
 
-            string gcCount0 = "NA";
-            string gcCount1 = "NA";
-            string gcCount2 = "NA";
-            try
-            {
-                gcCount0 = gcCounts[0].ToString();
-                gcCount1 = gcCounts[1].ToString();
-                gcCount2 = gcCounts[2].ToString();
-            }
-            catch
-            {
-            }
-
-            string resultTime = string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcCount0, gcCount1, gcCount2);
+            string resultTime = string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcResultArray[0], gcResultArray[1], gcResultArray[2]);
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 

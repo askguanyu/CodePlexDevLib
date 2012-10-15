@@ -139,7 +139,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfIsolatedServiceHostOpenExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Open", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -158,7 +158,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfIsolatedServiceHostCloseExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Close", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -177,7 +177,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfIsolatedServiceHostAbortExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Abort", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -196,7 +196,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfIsolatedServiceHostRestartExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Restart", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -287,6 +287,22 @@ namespace DevLib.ServiceModel
         /// <summary>
         ///
         /// </summary>
+        /// <param name="eventHandler"></param>
+        /// <param name="e"></param>
+        protected virtual void RaiseEvent(EventHandler<EventArgs> eventHandler, EventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<EventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, e);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         private void CreateDomain()
         {
             try
@@ -296,9 +312,9 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
                 appDomainSetup.ConfigurationFile = this.ConfigFile;
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
+
                 //appDomainSetup.ShadowCopyFiles = "true";
                 //appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
-
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
                 this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
                 this.IsAppDomainLoaded = true;
@@ -308,7 +324,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfIsolatedServiceHostCreateDomainExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.CreateDomain", e.Source, e.Message, e.StackTrace));
                 this.Unload();
                 throw;
             }
@@ -344,22 +360,6 @@ namespace DevLib.ServiceModel
             this._wcfServiceHost.Aborted -= (s, e) => this.RaiseEvent(Aborted, e);
             this._wcfServiceHost.Restarting -= (s, e) => this.RaiseEvent(Restarting, e);
             this._wcfServiceHost.Restarted -= (s, e) => this.RaiseEvent(Restarted, e);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="eventHandler"></param>
-        /// <param name="e"></param>
-        private void RaiseEvent(EventHandler<EventArgs> eventHandler, EventArgs e)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<EventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
-
-            if (temp != null)
-            {
-                temp(this, e);
-            }
         }
     }
 }

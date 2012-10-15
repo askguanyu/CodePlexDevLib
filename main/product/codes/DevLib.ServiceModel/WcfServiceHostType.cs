@@ -53,7 +53,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
                 throw;
             }
 
@@ -93,7 +93,7 @@ namespace DevLib.ServiceModel
             try
             {
                 Assembly assembly = Assembly.LoadFrom(assemblyFile);
-                Configuration configuration = ConfigurationManager.OpenExeConfiguration(configFile.Substring(0, configFile.LastIndexOf('.')));
+                Configuration configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = configFile }, ConfigurationUserLevel.None);
                 ServiceModelSectionGroup serviceModelSectionGroup = configuration.GetSectionGroup("system.serviceModel") as ServiceModelSectionGroup;
                 foreach (ServiceElement serviceElement in serviceModelSectionGroup.Services.Services)
                 {
@@ -108,14 +108,14 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
                         throw;
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFileExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
                 throw;
             }
 
@@ -152,7 +152,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostTypeLoadFromExceptionStringFormat, e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFrom", e.Source, e.Message, e.StackTrace));
                 throw;
             }
         }

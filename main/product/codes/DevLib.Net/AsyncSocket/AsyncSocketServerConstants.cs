@@ -53,12 +53,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        internal const string DebugStringFormat = "Debug: {0}.";
-
-        /// <summary>
-        ///
-        /// </summary>
-        internal const string SocketStartSuccessfully = "Socket server start successfully...";
+        internal const string SocketStartSuccessfully = "Succeed: Socket server start successfully...";
 
         /// <summary>
         ///
@@ -99,5 +94,10 @@ namespace DevLib.Net.AsyncSocket
         ///
         /// </summary>
         internal const string ServerSendTotalBytesStringFormat = "Total bytes send by the server: {0}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string ExceptionStringFormat = "Exception: {0} failure with exception. Source: {1} | Message: {2} | StackTrace: {3}";
     }
 }

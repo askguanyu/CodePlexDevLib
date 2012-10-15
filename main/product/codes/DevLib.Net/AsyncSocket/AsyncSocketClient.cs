@@ -60,17 +60,17 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        public event EventHandler<AsyncSocketErrorEventArgs> ErrorOccurred;
-
-        /// <summary>
-        ///
-        /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataReceived;
 
         /// <summary>
         /// Client Data Sent Event
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataSent;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public event EventHandler<AsyncSocketErrorEventArgs> ErrorOccurred;
 
         /// <summary>
         /// Connect to remote endpoint
@@ -93,19 +93,23 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (ObjectDisposedException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ClientConnectExceptionStringFormat, e.Message));
-                this.OnDisconnected(new AsyncSocketUserTokenEventArgs(this._clientSocket));
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.Connect", e.Source, e.Message, e.StackTrace));
+                this.RaiseEvent(Disconnected, new AsyncSocketUserTokenEventArgs(this._clientSocket));
             }
             catch (SocketException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ClientConnectExceptionStringFormat, e.Message));
-
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.Connect", e.Source, e.Message, e.StackTrace));
                 if (e.ErrorCode == (int)SocketError.ConnectionReset)
                 {
-                    this.OnDisconnected(this._token);
+                    this.RaiseEvent(Disconnected, this._token);
                 }
 
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.DebugStringFormat, e.Message));
+                this.OnErrorOccurred(this._token.Socket, new AsyncSocketErrorEventArgs(e.Message, e, AsyncSocketErrorCodeEnum.ClientConnectException));
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.Connect", e.Source, e.Message, e.StackTrace));
+                this.RaiseEvent(Disconnected, this._token);
                 this.OnErrorOccurred(this._token.Socket, new AsyncSocketErrorEventArgs(e.Message, e, AsyncSocketErrorCodeEnum.ClientConnectException));
             }
         }
@@ -133,24 +137,22 @@ namespace DevLib.Net.AsyncSocket
                 this._clientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(this.ProcessSendFinished), this._clientSocket);
                 this._token.SetBuffer(data, 0);
                 this._token.SetBytesReceived(data.Length);
-                this.OnDataSent(this._token);
+                this.RaiseEvent(DataSent, this._token);
                 Debug.WriteLine(string.Format(AsyncSocketClientConstants.ClientSendBytesStringFormat, data.Length));
             }
             catch (ObjectDisposedException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ClientSendExceptionStringFormat, e.Message));
-                this.OnDisconnected(new AsyncSocketUserTokenEventArgs(this._clientSocket));
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.Send", e.Source, e.Message, e.StackTrace));
+                this.RaiseEvent(Disconnected, new AsyncSocketUserTokenEventArgs(this._clientSocket));
             }
             catch (SocketException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ClientSendExceptionStringFormat, e.Message));
-
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.Send", e.Source, e.Message, e.StackTrace));
                 if (e.ErrorCode == (int)SocketError.ConnectionReset)
                 {
-                    this.OnDisconnected(this._token);
+                    this.RaiseEvent(Disconnected, this._token);
                 }
 
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.DebugStringFormat, e.Message));
                 this.OnErrorOccurred(this._token.Socket, new AsyncSocketErrorEventArgs(e.Message, e, AsyncSocketErrorCodeEnum.ClientSendException));
             }
         }
@@ -227,12 +229,11 @@ namespace DevLib.Net.AsyncSocket
             {
                 this._clientSocket.Shutdown(SocketShutdown.Both);
                 this._clientSocket.Close();
-                this.OnDisconnected(this._token);
+                this.RaiseEvent(Disconnected, this._token);
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ClientDisconnectExceptionStringFormat, e.Message));
-
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.Disconnect", e.Source, e.Message, e.StackTrace));
                 this.OnErrorOccurred(this._token.Socket, new AsyncSocketErrorEventArgs(e.Message, e, AsyncSocketErrorCodeEnum.ClientDisconnectException));
             }
         }
@@ -249,60 +250,16 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnConnected(AsyncSocketUserTokenEventArgs e)
+        /// <param name="eventHandler"></param>
+        /// <param name="eventArgs"></param>
+        protected virtual void RaiseEvent(EventHandler<AsyncSocketUserTokenEventArgs> eventHandler, AsyncSocketUserTokenEventArgs eventArgs)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketUserTokenEventArgs> temp = Interlocked.CompareExchange(ref Connected, null, null);
+            EventHandler<AsyncSocketUserTokenEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, e);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnDisconnected(AsyncSocketUserTokenEventArgs e)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketUserTokenEventArgs> temp = Interlocked.CompareExchange(ref Disconnected, null, null);
-
-            if ((temp != null) && (e.Socket != null))
-            {
-                temp(this, e);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnDataReceived(AsyncSocketUserTokenEventArgs e)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketUserTokenEventArgs> temp = Interlocked.CompareExchange(ref DataReceived, null, null);
-
-            if (temp != null)
-            {
-                temp(this, e);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnDataSent(AsyncSocketUserTokenEventArgs e)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketUserTokenEventArgs> temp = Interlocked.CompareExchange(ref DataSent, null, null);
-
-            if (temp != null)
-            {
-                temp(this, e);
+                temp(this, eventArgs);
             }
         }
 
@@ -349,12 +306,12 @@ namespace DevLib.Net.AsyncSocket
             try
             {
                 asyncState.EndConnect(asyncResult);
-                this.OnConnected(this._token);
+                this.RaiseEvent(Connected, this._token);
                 this.ProcessWaitForData(asyncState);
             }
             catch (ObjectDisposedException)
             {
-                this.OnDisconnected(new AsyncSocketUserTokenEventArgs(this._clientSocket));
+                this.RaiseEvent(Disconnected, new AsyncSocketUserTokenEventArgs(this._clientSocket));
             }
             catch (SocketException e)
             {
@@ -374,7 +331,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (ObjectDisposedException)
             {
-                this.OnDisconnected(this._token);
+                this.RaiseEvent(Disconnected, this._token);
             }
             catch (SocketException e)
             {
@@ -394,29 +351,28 @@ namespace DevLib.Net.AsyncSocket
                 int length = asyncState.EndReceive(asyncResult);
                 if (0 == length)
                 {
-                    this.OnDisconnected(this._token);
+                    this.RaiseEvent(Disconnected, this._token);
                 }
                 else
                 {
                     this._token.SetBuffer(this._dataBuffer, 0);
                     this._token.SetBytesReceived(length);
-
-                    this.OnDataReceived(this._token);
+                    this.RaiseEvent(DataReceived, this._token);
                     this.ProcessWaitForData(asyncState);
                 }
             }
             catch (ObjectDisposedException)
             {
-                this.OnDisconnected(this._token);
+                this.RaiseEvent(Disconnected, this._token);
             }
             catch (SocketException e)
             {
                 if (e.ErrorCode == (int)SocketError.ConnectionReset)
                 {
-                    this.OnDisconnected(this._token);
+                    this.RaiseEvent(Disconnected, this._token);
                 }
 
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.DebugStringFormat, e.Message));
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.ProcessIncomingData", e.Source, e.Message, e.StackTrace));
                 this.OnErrorOccurred(this._token.Socket, new AsyncSocketErrorEventArgs(e.Message, e, AsyncSocketErrorCodeEnum.ClientReceiveException));
             }
         }
@@ -433,7 +389,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (ObjectDisposedException)
             {
-                this.OnDisconnected(this._token);
+                this.RaiseEvent(Disconnected, this._token);
             }
             catch (SocketException e)
             {
@@ -441,7 +397,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketClientConstants.DebugStringFormat, e.Message));
+                Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.ProcessSendFinished", e.Source, e.Message, e.StackTrace));
             }
         }
 
@@ -453,10 +409,10 @@ namespace DevLib.Net.AsyncSocket
         {
             if (e.ErrorCode == (int)SocketError.ConnectionReset)
             {
-                this.OnDisconnected(this._token);
+                this.RaiseEvent(Disconnected, this._token);
             }
 
-            Debug.WriteLine(string.Format(AsyncSocketClientConstants.DebugStringFormat, e.Message));
+            Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "AsyncSocketClient.HandleSocketException", e.Source, e.Message, e.StackTrace));
             this.OnErrorOccurred(this._token.Socket, new AsyncSocketErrorEventArgs(e.Message, e));
         }
     }

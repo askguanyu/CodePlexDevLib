@@ -18,31 +18,16 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        internal const string ClientSendBytesStringFormat = "Bytes send by the client: {0}";
+        internal const string ClientSendBytesStringFormat = "AsyncSocketClient: Bytes send by the client: {0}";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string ClientConnectSuccessfully = "Client connect successfully...";
+        internal const string ClientConnectSuccessfully = "Succeed: AsyncSocketClient connect successfully...";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string DebugStringFormat = "Debug: {0}.";
-
-        /// <summary>
-        ///
-        /// </summary>
-        internal const string ClientConnectExceptionStringFormat = "Client connect failure with exception: {0}";
-
-        /// <summary>
-        ///
-        /// </summary>
-        internal const string ClientDisconnectExceptionStringFormat = "Client disconnect failure with exception: {0}";
-
-        /// <summary>
-        ///
-        /// </summary>
-        internal const string ClientSendExceptionStringFormat = "Client send failure with exception: {0}";
+        internal const string ExceptionStringFormat = "Exception: {0} failure with exception. Source: {1} | Message: {2} | StackTrace: {3}";
     }
 }

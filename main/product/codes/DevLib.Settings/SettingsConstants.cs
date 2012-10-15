@@ -1,20 +1,15 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfServiceHostConstants.cs" company="YuGuan Corporation">
+// <copyright file="SettingsConstants.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceModel
+namespace DevLib.Settings
 {
     /// <summary>
-    /// WcfServiceHost Constants
+    /// Settings Constants
     /// </summary>
-    internal static class WcfServiceHostConstants
+    internal static class SettingsConstants
     {
-        /// <summary>
-        ///
-        /// </summary>
-        internal const string WcfServiceHostSucceedStringFormat = "Succeed: {0} successfully. ServiceType: {1} | AbsoluteUri: {2}";
-
         /// <summary>
         ///
         /// </summary>

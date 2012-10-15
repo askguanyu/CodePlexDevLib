@@ -9,6 +9,7 @@ namespace DevLib.Samples
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Diagnostics;
     using System.Dynamic;
     using System.IO;
@@ -29,6 +30,7 @@ namespace DevLib.Samples
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
     using DevLib.ServiceModel;
+    using DevLib.Settings;
     using DevLib.Utilities;
     using DevLib.WinForms;
 
@@ -43,9 +45,9 @@ namespace DevLib.Samples
             PrintStartInfo();
 
 
-            //TestCodeSnippet();
+            TestCodeSnippet();
 
-            new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
 
             //TestDevLibExtensionMethods();
 
@@ -80,6 +82,35 @@ namespace DevLib.Samples
         private static void TestCodeSnippet()
         {
             PrintMethodName("TestCodeSnippet");
+
+            TestClass me = new TestClass() { Name = "Foo", Age = 29 };
+
+            SettingsManager settings = new SettingsManager(Path.Combine(Environment.CurrentDirectory, "test2.config"));
+            settings.SetValue("time", DateTime.Now);
+            settings.SetValue("time", DateTime.Now);
+            settings.SetValue("time", DateTime.Now);
+            settings.SetValue("time", DateTime.Now);
+            settings.SetValue("color", (ConsoleColor)9);
+            settings.SetValue("me", me);
+            settings.GetValue<DateTime>("time").ConsoleOutput();
+            settings.GetValue<ConsoleColor>("color").ConsoleOutput();
+            settings.GetValue<TestClass>("me").Name.ConsoleOutput();
+            settings.GetValue<TestClass>("me").Age.ConsoleOutput();
+            settings.GetValue<string>("f").ConsoleOutput();
+            settings.Save();
+            
+            //Configuration config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "test.config") }, ConfigurationUserLevel.None);
+            //Configuration config1 = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()) }, ConfigurationUserLevel.None);
+            //config.Sections.Add(.AppSettings.Settings.Add("key1", "value1");
+            //config.AppSettings.Settings.Add("key2", "value2");
+            //config.AppSettings.Settings.Add("key3", "value3");
+            //config.AppSettings.Settings["key3"].Value = "value3";
+            //config.Save(ConfigurationSaveMode.Minimal, true);
+            //config.SaveAs("test1.config", ConfigurationSaveMode.Minimal, true);
+
+            //Properties.Settings.Default
+            
+
 
             //Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
             //NetworkInterface.GetAllNetworkInterfaces().ForEach(p => p.Id.ConsoleWriteLine());
@@ -216,7 +247,7 @@ namespace DevLib.Samples
 
             int times = 1000 * 10;
 
-            TestClass testClass = new TestClass { MyName = "Bill" };
+            TestClass testClass = new TestClass { Name = "Bill" };
             object[] parameters = new object[] { 1, 2 };
             MethodInfo methodInfo = typeof(TestClass).GetMethod("TestAdd");
 
@@ -288,16 +319,16 @@ namespace DevLib.Samples
             TestClass[] sourceArray
                 = new TestClass[]
             {
-                new TestClass(){ MyName="a"},
-                new TestClass(){ MyName="b"},
-                new TestClass(){ MyName="c"},
+                new TestClass(){ Name="a"},
+                new TestClass(){ Name="b"},
+                new TestClass(){ Name="c"},
             };
 
             TestClass[] appendArray = new TestClass[]
             {
-                new TestClass(){ MyName="d"},
-                new TestClass(){ MyName="e"},
-                new TestClass(){ MyName="f"},
+                new TestClass(){ Name="d"},
+                new TestClass(){ Name="e"},
+                new TestClass(){ Name="f"},
             };
 
             int[] sourceValueTypeArray
@@ -318,9 +349,9 @@ namespace DevLib.Samples
             //sourceArray = null;
             appendArray.AddRangeTo(ref sourceArray, true);
 
-            sourceArray[1].MyName = "change1";
-            appendArray[1].MyName = "change2";
-            sourceArray.ForEach((p) => { p.MyName.ConsoleOutput(); });
+            sourceArray[1].Name = "change1";
+            appendArray[1].Name = "change2";
+            sourceArray.ForEach((p) => { p.Name.ConsoleOutput(); });
 
             sourceValueTypeArray.AddRangeTo(ref appendValueTypeArray);
             appendValueTypeArray.ForEach((p) => { p.ConsoleOutput(); });
@@ -367,7 +398,7 @@ namespace DevLib.Samples
             //sourceArray.ToXml(Encoding.UTF8).ConsoleWriteLine();
 
             sourceArray.ForEach((p) => { p.CopyPropertiesFrom(appendArray[1]); });
-            sourceArray.ForEach((p) => { p.MyName.ConsoleOutput(); });
+            sourceArray.ForEach((p) => { p.Name.ConsoleOutput(); });
             "End: Object".ConsoleOutput();
             #endregion
 
@@ -489,7 +520,7 @@ namespace DevLib.Samples
 
         private static void testEventClassObject_OnTestMe(object sender, EventArgs e)
         {
-            (sender as TestClass).MyName.ConsoleOutput();
+            (sender as TestClass).Name.ConsoleOutput();
         }
     }
 
@@ -498,7 +529,13 @@ namespace DevLib.Samples
     {
         public event EventHandler<EventArgs> OnTestMe;
 
-        public string MyName
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        public int Age
         {
             get;
             set;

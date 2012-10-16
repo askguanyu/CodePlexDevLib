@@ -14,12 +14,17 @@ namespace DevLib.Utilities
     public static class ColorUtilities
     {
         /// <summary>
+        ///
+        /// </summary>
+        private static Random random = new Random();
+
+        /// <summary>
         /// Returns a random color
         /// </summary>
         /// <returns>The result color</returns>
         public static Color GetRandomColor()
         {
-            return Color.FromKnownColor((KnownColor)new Random().Next(1, 174));
+            return Color.FromKnownColor((KnownColor)random.Next(1, 174));
         }
     }
 }

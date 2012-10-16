@@ -45,7 +45,7 @@ namespace DevLib.ServiceModel
 
                 foreach (Type type in assemblyTypeList)
                 {
-                    if (type.IsClass && IsDefinedServiceContract(type))
+                    if (IsWcfServiceClass(type))
                     {
                         result.Add(type);
                     }
@@ -101,7 +101,7 @@ namespace DevLib.ServiceModel
                     {
                         Type serviceType = assembly.GetType(serviceElement.Name);
 
-                        if (serviceType != null)
+                        if (serviceType != null && IsWcfServiceClass(serviceType))
                         {
                             result.Add(serviceType);
                         }
@@ -162,23 +162,28 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private static bool IsDefinedServiceContract(Type type)
+        internal static bool IsWcfServiceClass(Type type)
         {
-            return
-                IsDefinedServiceContractAttribute(type) ||
-                IsDefinedServiceContract(type.GetInterfaces());
+            return type.IsClass && HasServiceContractAttribute(type) && !IsDerivedFrom(type, typeof(ClientBase<>));
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="types"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
-        private static bool IsDefinedServiceContract(Type[] types)
+        private static bool HasServiceContractAttribute(Type type)
         {
-            foreach (Type type in types)
+            if (type.IsDefined(typeof(ServiceContractAttribute), false))
             {
-                if (IsDefinedServiceContract(type))
+                return true;
+            }
+
+            Type[] interfaces = type.GetInterfaces();
+            for (int i = 0; i < interfaces.Length; i++)
+            {
+                Type type2 = interfaces[i];
+                if (type2.IsDefined(typeof(ServiceContractAttribute), false))
                 {
                     return true;
                 }
@@ -191,10 +196,11 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="baseType"></param>
         /// <returns></returns>
-        private static bool IsDefinedServiceContractAttribute(Type type)
+        private static bool IsDerivedFrom(Type type, Type baseType)
         {
-            return type.IsDefined(typeof(ServiceContractAttribute), false);
+            return !(type.BaseType == null) && (type.BaseType.GUID == baseType.GUID || IsDerivedFrom(type.BaseType, baseType));
         }
     }
 }

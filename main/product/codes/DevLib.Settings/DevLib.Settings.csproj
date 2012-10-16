@@ -45,6 +45,7 @@
     <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="SettingsConstants.cs" />
     <Compile Include="SettingsManager.cs" />
   </ItemGroup>

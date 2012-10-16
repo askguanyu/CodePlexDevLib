@@ -18,18 +18,18 @@ namespace DevLib.Utilities
         /// Gets the System.Type object with the specified name from assembly file
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly</param>
-        /// <param name="name">The full name of the type</param>
+        /// <param name="typeName">The full name of the type</param>
         /// <returns>A System.Type object that represents the specified class</returns>
-        public static Type GetType(string assemblyFile, string name)
+        public static Type GetType(string assemblyFile, string typeName)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
                 throw new ArgumentNullException("assemblyFile");
             }
 
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(typeName))
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException("typeName");
             }
 
             if (!File.Exists(assemblyFile))
@@ -40,7 +40,7 @@ namespace DevLib.Utilities
             try
             {
                 Assembly assembly = Assembly.LoadFrom(assemblyFile);
-                return assembly.GetType(name);
+                return assembly.GetType(typeName);
             }
             catch
             {

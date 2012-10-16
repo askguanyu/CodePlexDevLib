@@ -250,22 +250,6 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        /// <param name="eventHandler"></param>
-        /// <param name="eventArgs"></param>
-        protected virtual void RaiseEvent(EventHandler<AsyncSocketUserTokenEventArgs> eventHandler, AsyncSocketUserTokenEventArgs eventArgs)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketUserTokenEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
-
-            if (temp != null)
-            {
-                temp(this, eventArgs);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="e"></param>
         protected virtual void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
         {
@@ -293,6 +277,22 @@ namespace DevLib.Net.AsyncSocket
                     this._clientSocket.Close();
                     this._clientSocket.Dispose();
                 }
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="eventHandler"></param>
+        /// <param name="eventArgs"></param>
+        private void RaiseEvent(EventHandler<AsyncSocketUserTokenEventArgs> eventHandler, AsyncSocketUserTokenEventArgs eventArgs)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<AsyncSocketUserTokenEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, eventArgs);
             }
         }
 

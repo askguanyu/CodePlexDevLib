@@ -194,7 +194,7 @@ namespace DevLib.Settings
 
             try
             {
-                memoryStream = new MemoryStream(Encoding.Default.GetBytes(source));
+                memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(source));
                 var serializer = new DataContractJsonSerializer(typeof(T));
                 result = (T)serializer.ReadObject(memoryStream);
                 memoryStream.Flush();

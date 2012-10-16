@@ -326,7 +326,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Serializes a JSON object to an object
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of the result objet</typeparam>
         /// <param name="source">JSON string object</param>
         /// <returns>The result object</returns>
         public static T FromJson<T>(this string source)
@@ -365,7 +365,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Serializes a JSON object to an object
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of the result objet</typeparam>
         /// <param name="source">JSON string object</param>
         /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects.</param>
         /// <returns>The result object</returns>

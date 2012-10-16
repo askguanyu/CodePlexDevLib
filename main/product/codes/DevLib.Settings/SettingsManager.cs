@@ -12,10 +12,13 @@ namespace DevLib.Settings
     using System.IO;
 
     /// <summary>
-    /// Provides access to configuration files for client applications
+    /// Provides access to configuration files for client applications. This class cannot be inherited.
     /// </summary>
     public static class SettingsManager
     {
+        /// <summary>
+        ///
+        /// </summary>
         private static Dictionary<string, Settings> _settingsDict = new Dictionary<string, Settings>();
 
         /// <summary>
@@ -30,18 +33,19 @@ namespace DevLib.Settings
             }
 
             Configuration configuration = null;
+
             try
             {
                 configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = configFile }, ConfigurationUserLevel.None);
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "SettingsManager.SettingsManager", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "SettingsManager.Open", e.Source, e.Message, e.StackTrace));
                 configuration = ConfigurationManager.OpenExeConfiguration(Path.GetTempFileName());
             }
+
             _settingsDict.Add(configFile, new Settings(configFile, configuration));
             return _settingsDict[configFile];
-
         }
     }
 }

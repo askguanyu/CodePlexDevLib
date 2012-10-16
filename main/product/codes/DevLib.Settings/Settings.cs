@@ -1,22 +1,38 @@
-﻿using System;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Text;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="Settings.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 namespace DevLib.Settings
 {
+    using System;
+    using System.Configuration;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.Serialization.Json;
+    using System.Text;
+
+    /// <summary>
+    /// Represents a configuration file that is applicable to a particular application. This class cannot be inherited.
+    /// </summary>
     public sealed class Settings
     {
+        /// <summary>
+        ///
+        /// </summary>
+        private Configuration _configuration = null;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="configFile"></param>
+        /// <param name="configuration"></param>
         internal Settings(string configFile, Configuration configuration)
         {
             this.ConfigFile = configFile;
             this._configuration = configuration;
         }
-
-        private Configuration _configuration = null;
 
         /// <summary>
         /// Gets current configuration file
@@ -28,7 +44,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Writes the configuration settings to the current XML configuration file.
+        /// Writes the configuration settings to the current XML configuration file
         /// </summary>
         public void Save()
         {
@@ -43,9 +59,9 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Writes the configuration settings to the specified XML configuration file.
+        /// Writes the configuration settings to the specified XML configuration file
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">The path and file name to save the configuration file to</param>
         public void SaveAs(string fileName)
         {
             this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, true);
@@ -133,12 +149,12 @@ namespace DevLib.Settings
                 memoryStream = new MemoryStream();
                 var serializer = new DataContractJsonSerializer(source.GetType());
                 serializer.WriteObject(memoryStream, source);
-                result = Encoding.UTF8.GetString(memoryStream.ToArray());
+                result = Encoding.Default.GetString(memoryStream.ToArray());
                 memoryStream.Flush();
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "SettingsManager.ToJson", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "Settings.ToJson", e.Source, e.Message, e.StackTrace));
             }
             finally
             {
@@ -155,7 +171,7 @@ namespace DevLib.Settings
         /// <summary>
         /// Serializes a JSON object to an object
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of the result objet</typeparam>
         /// <param name="source">JSON string object</param>
         /// <returns>The result object</returns>
         private static T FromJson<T>(string source)
@@ -170,14 +186,14 @@ namespace DevLib.Settings
 
             try
             {
-                memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(source));
+                memoryStream = new MemoryStream(Encoding.Default.GetBytes(source));
                 var serializer = new DataContractJsonSerializer(typeof(T));
                 result = (T)serializer.ReadObject(memoryStream);
                 memoryStream.Flush();
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "SettingsManager.FromJson", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "Settings.FromJson", e.Source, e.Message, e.StackTrace));
             }
             finally
             {

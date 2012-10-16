@@ -85,8 +85,8 @@ namespace DevLib.Samples
 
             TestClass me = new TestClass() { Name = "Foo", Age = 29 };
 
-            Settings settings1 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test2.config"));
-            Settings settings2 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test2.config"));
+            Settings settings1 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.config"));
+            Settings settings2 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.config"));
             settings1.SetValue("time0", DateTime.Now);
             settings1.SetValue("time", DateTime.Now);
             settings1.SetValue("time", DateTime.Now);
@@ -104,7 +104,7 @@ namespace DevLib.Samples
             settings1.GetValue<ConsoleColor>("color").ConsoleOutput();
             settings1.GetValue<TestClass>("me").Name.ConsoleOutput();
             settings1.GetValue<TestClass>("me").Age.ConsoleOutput();
-            settings1.GetValue<string>("hello2").ConsoleOutput();
+            settings1.GetValue<string>("hello2","defalut").ConsoleOutput();
             settings1.Save();
             settings2.Save();
             

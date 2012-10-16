@@ -13,6 +13,8 @@ namespace DevLib.Utilities
     /// </summary>
     public static class StringUtilities
     {
+        private static Random _random = new Random();
+
         /// <summary>
         /// Returns a random alphabet string of the desired size
         /// </summary>
@@ -25,12 +27,11 @@ namespace DevLib.Utilities
                 return string.Empty;
             }
 
-            Random random = new Random();
             StringBuilder stringBuilder = new StringBuilder();
 
             for (int i = 0; i < size; i++)
             {
-                stringBuilder.Append(Convert.ToChar(Convert.ToInt32(Math.Floor((26 * random.NextDouble()) + 65))));
+                stringBuilder.Append(Convert.ToChar(Convert.ToInt32(Math.Floor((26 * _random.NextDouble()) + 65))));
             }
 
             return stringBuilder.ToString();
@@ -60,12 +61,11 @@ namespace DevLib.Utilities
             }
 
             int charsetBound = charset.Length - 1;
-            Random random = new Random();
             StringBuilder stringBuilder = new StringBuilder(size);
 
             for (int i = 0; i < size; i++)
             {
-                stringBuilder.Append(charset[random.Next(0, charsetBound)]);
+                stringBuilder.Append(charset[_random.Next(0, charsetBound)]);
             }
 
             return stringBuilder.ToString();

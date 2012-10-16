@@ -16,7 +16,7 @@ namespace DevLib.Utilities
         /// <summary>
         ///
         /// </summary>
-        private static Random random = new Random();
+        private static Random _random = new Random();
 
         /// <summary>
         /// Returns a random color
@@ -24,7 +24,7 @@ namespace DevLib.Utilities
         /// <returns>The result color</returns>
         public static Color GetRandomColor()
         {
-            return Color.FromKnownColor((KnownColor)random.Next(1, 174));
+            return Color.FromKnownColor((KnownColor)_random.Next(1, 174));
         }
     }
 }

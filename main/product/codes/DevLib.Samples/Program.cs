@@ -85,19 +85,28 @@ namespace DevLib.Samples
 
             TestClass me = new TestClass() { Name = "Foo", Age = 29 };
 
-            SettingsManager settings = new SettingsManager(Path.Combine(Environment.CurrentDirectory, "test2.config"));
-            settings.SetValue("time", DateTime.Now);
-            settings.SetValue("time", DateTime.Now);
-            settings.SetValue("time", DateTime.Now);
-            settings.SetValue("time", DateTime.Now);
-            settings.SetValue("color", (ConsoleColor)9);
-            settings.SetValue("me", me);
-            settings.GetValue<DateTime>("time").ConsoleOutput();
-            settings.GetValue<ConsoleColor>("color").ConsoleOutput();
-            settings.GetValue<TestClass>("me").Name.ConsoleOutput();
-            settings.GetValue<TestClass>("me").Age.ConsoleOutput();
-            settings.GetValue<string>("f").ConsoleOutput();
-            settings.Save();
+            Settings settings1 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test2.config"));
+            Settings settings2 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test2.config"));
+            settings1.SetValue("time0", DateTime.Now);
+            settings1.SetValue("time", DateTime.Now);
+            settings1.SetValue("time", DateTime.Now);
+            settings1.SetValue("time", DateTime.Now);
+            settings1.SetValue("txt1", "hello1");
+            settings1.SetValue("color", (ConsoleColor)9);
+            settings1.SetValue("me", me);
+            settings2.SetValue("time1", DateTime.Now);
+            settings2.SetValue("time2", DateTime.Now);
+            settings2.SetValue("time3", DateTime.Now);
+            settings2.SetValue("txt2", "hello2");
+            settings2.SetValue("color5", (ConsoleColor)15);
+            settings2.SetValue("me1", me);
+            settings1.GetValue<DateTime>("time").ConsoleOutput();
+            settings1.GetValue<ConsoleColor>("color").ConsoleOutput();
+            settings1.GetValue<TestClass>("me").Name.ConsoleOutput();
+            settings1.GetValue<TestClass>("me").Age.ConsoleOutput();
+            settings1.GetValue<string>("hello2").ConsoleOutput();
+            settings1.Save();
+            settings2.Save();
             
             //Configuration config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "test.config") }, ConfigurationUserLevel.None);
             //Configuration config1 = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()) }, ConfigurationUserLevel.None);

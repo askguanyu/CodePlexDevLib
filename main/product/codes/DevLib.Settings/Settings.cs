@@ -35,7 +35,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Gets current configuration file
+        /// Gets current configuration file.
         /// </summary>
         public string ConfigFile
         {
@@ -44,7 +44,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Writes the configuration settings to the current XML configuration file
+        /// Writes the configuration settings to the current XML configuration file.
         /// </summary>
         public void Save()
         {
@@ -59,19 +59,19 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Writes the configuration settings to the specified XML configuration file
+        /// Writes the configuration settings to the specified XML configuration file.
         /// </summary>
-        /// <param name="fileName">The path and file name to save the configuration file to</param>
+        /// <param name="fileName">The path and file name to save the configuration file to.</param>
         public void SaveAs(string fileName)
         {
             this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, true);
         }
 
         /// <summary>
-        /// Sets value for specified key
+        /// Sets value for specified key.
         /// </summary>
-        /// <param name="key">A string specifying the key</param>
-        /// <param name="value">An object specifying the value</param>
+        /// <param name="key">A string specifying the key.</param>
+        /// <param name="value">An object specifying the value.</param>
         public void SetValue(string key, object value)
         {
             if (this._configuration.AppSettings.Settings.AllKeys.Contains(key))
@@ -85,11 +85,11 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Gets value of specified key
+        /// Gets value of specified key.
         /// </summary>
-        /// <param name="key">A string specifying the key</param>
-        /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value</param>
-        /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection</returns>
+        /// <param name="key">A string specifying the key.</param>
+        /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
+        /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
         public T GetValue<T>(string key, T defaultValue = default(T))
         {
             if (this._configuration.AppSettings.Settings.AllKeys.Contains(key))
@@ -103,16 +103,16 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Removes a setting by key
+        /// Removes a setting by key.
         /// </summary>
-        /// <param name="key">A string specifying the key</param>
+        /// <param name="key">A string specifying the key.</param>
         public void Remove(string key)
         {
             this._configuration.AppSettings.Settings.Remove(key);
         }
 
         /// <summary>
-        /// Clears the settings
+        /// Clears the settings.
         /// </summary>
         public void Clear()
         {
@@ -120,19 +120,19 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Gets the keys to all setting items
+        /// Gets the keys to all setting items.
         /// </summary>
-        /// <returns>A string array of keys</returns>
+        /// <returns>A string array of keys.</returns>
         public string[] GetAllKeys()
         {
             return this._configuration.AppSettings.Settings.AllKeys;
         }
 
         /// <summary>
-        /// Serializes an object to a JSON string
+        /// Serializes an object to a JSON string.
         /// </summary>
-        /// <param name="source">Object to serialize</param>
-        /// <returns>JSON string</returns>
+        /// <param name="source">Object to serialize.</param>
+        /// <returns>JSON string.</returns>
         private static string ToJson(object source)
         {
             // Don't serialize a null object, simply return the default for that object
@@ -169,11 +169,11 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Serializes a JSON object to an object
+        /// Serializes a JSON object to an object.
         /// </summary>
-        /// <typeparam name="T">Type of the result objet</typeparam>
-        /// <param name="source">JSON string object</param>
-        /// <returns>The result object</returns>
+        /// <typeparam name="T">Type of the result objet.</typeparam>
+        /// <param name="source">JSON string object.</param>
+        /// <returns>The result object.</returns>
         private static T FromJson<T>(string source)
         {
             if (string.IsNullOrEmpty(source))

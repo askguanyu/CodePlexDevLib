@@ -9,17 +9,17 @@ namespace DevLib.Utilities
     using System.Text;
 
     /// <summary>
-    /// String Utilities
+    /// String Utilities.
     /// </summary>
     public static class StringUtilities
     {
         private static Random _random = new Random();
 
         /// <summary>
-        /// Returns a random alphabet string of the desired size
+        /// Returns a random alphabet string of the desired size.
         /// </summary>
-        /// <param name="size">Size of the random string to return</param>
-        /// <returns>The result string</returns>
+        /// <param name="size">Size of the random string to return.</param>
+        /// <returns>The result string.</returns>
         public static string GetRandomAlphabetString(int size)
         {
             if (size < 1)
@@ -38,21 +38,21 @@ namespace DevLib.Utilities
         }
 
         /// <summary>
-        /// Returns a random alphabet and numeric string of the desired size
+        /// Returns a random alphabet and numeric string of the desired size.
         /// </summary>
-        /// <param name="size">Size of the random string to return</param>
-        /// <returns>The result string</returns>
+        /// <param name="size">Size of the random string to return.</param>
+        /// <returns>The result string.</returns>
         public static string GetRandomAlphaNumericString(int size)
         {
             return GetRandomString("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", size);
         }
 
         /// <summary>
-        /// Returns a random string of the desired size with desired charset
+        /// Returns a random string of the desired size with desired charset.
         /// </summary>
-        /// <param name="charset">charset of the random</param>
-        /// <param name="size">Size of the random string to return</param>
-        /// <returns>The result string</returns>
+        /// <param name="charset">charset of the random.</param>
+        /// <param name="size">Size of the random string to return.</param>
+        /// <returns>The result string.</returns>
         public static string GetRandomString(string charset, int size)
         {
             if ((string.IsNullOrEmpty(charset)) || (size < 1))

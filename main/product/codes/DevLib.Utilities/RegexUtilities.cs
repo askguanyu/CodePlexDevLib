@@ -6,7 +6,7 @@
 namespace DevLib.Utilities
 {
     /// <summary>
-    /// Regex Utilities
+    /// Regex Utilities.
     /// </summary>
     public class RegexUtilities
     {

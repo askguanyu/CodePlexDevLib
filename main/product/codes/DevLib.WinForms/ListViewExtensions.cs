@@ -9,14 +9,14 @@ namespace DevLib.WinForms
     using System.Windows.Forms;
 
     /// <summary>
-    /// ListView Extensions
+    /// ListView Extensions.
     /// </summary>
     public static class ListViewExtensions
     {
         /// <summary>
-        /// Resizes the width of the columns
+        /// Resizes the width of the columns.
         /// </summary>
-        /// <param name="listView">ListView object</param>
+        /// <param name="listView">ListView object.</param>
         public static void AutoResizeColumns(this ListView listView)
         {
             listView.BeginUpdate();

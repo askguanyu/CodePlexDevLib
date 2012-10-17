@@ -9,7 +9,7 @@ namespace DevLib.Utilities
     using System.Drawing;
 
     /// <summary>
-    /// Color Utilities
+    /// Color Utilities.
     /// </summary>
     public static class ColorUtilities
     {
@@ -19,9 +19,9 @@ namespace DevLib.Utilities
         private static Random _random = new Random();
 
         /// <summary>
-        /// Returns a random color
+        /// Returns a random color.
         /// </summary>
-        /// <returns>The result color</returns>
+        /// <returns>The result color.</returns>
         public static Color GetRandomColor()
         {
             return Color.FromKnownColor((KnownColor)_random.Next(1, 174));

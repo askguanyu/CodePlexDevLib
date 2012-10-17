@@ -17,12 +17,12 @@ namespace DevLib.Net.AsyncSocket
     internal class AsyncSocketServerEventArgsBufferManager
     {
         /// <summary>
-        /// the total number of bytes controlled by the buffer pool
+        /// The total number of bytes controlled by the buffer pool.
         /// </summary>
         private int _numBytes;
 
         /// <summary>
-        /// the underlying byte array maintained by the Buffer Manager
+        /// The underlying byte array maintained by the Buffer Manager.
         /// </summary>
         private byte[] _buffer;
 
@@ -42,10 +42,10 @@ namespace DevLib.Net.AsyncSocket
         private int _bufferSize;
 
         /// <summary>
-        /// Constructor of BufferManager class
+        /// Constructor of BufferManager class.
         /// </summary>
-        /// <param name="totalBytes">Total Bytes</param>
-        /// <param name="bufferSize">Buffer Size</param>
+        /// <param name="totalBytes">Total Bytes.</param>
+        /// <param name="bufferSize">Buffer Size.</param>
         public AsyncSocketServerEventArgsBufferManager(int totalBytes, int bufferSize)
         {
             this._numBytes = totalBytes;
@@ -55,7 +55,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Allocates buffer space used by the buffer pool
+        /// Allocates buffer space used by the buffer pool.
         /// </summary>
         public void InitBuffer()
         {
@@ -64,9 +64,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Assigns a buffer from the buffer pool to the specified SocketAsyncEventArgs object
+        /// Assigns a buffer from the buffer pool to the specified SocketAsyncEventArgs object.
         /// </summary>
-        /// <returns>true if the buffer was successfully set, else false</returns>
+        /// <returns>true if the buffer was successfully set, else false.</returns>
         public bool SetBuffer(SocketAsyncEventArgs args)
         {
             if (this._freeIndexPool.Count > 0)
@@ -93,7 +93,7 @@ namespace DevLib.Net.AsyncSocket
 
         /// <summary>
         /// Removes the buffer from a SocketAsyncEventArg object.
-        /// This frees the buffer back to the buffer pool
+        /// This frees the buffer back to the buffer pool.
         /// </summary>
         public void FreeBuffer(SocketAsyncEventArgs args)
         {

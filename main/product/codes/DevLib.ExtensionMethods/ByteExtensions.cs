@@ -13,7 +13,7 @@ namespace DevLib.ExtensionMethods
     using System.Text;
 
     /// <summary>
-    /// Defines the various compression types that are available
+    /// Defines the various compression types that are available.
     /// </summary>
     public enum CompressionType
     {
@@ -22,16 +22,16 @@ namespace DevLib.ExtensionMethods
     }
 
     /// <summary>
-    /// Byte Extensions
+    /// Byte Extensions.
     /// </summary>
     public static class ByteExtensions
     {
         /// <summary>
-        /// Convert bytes to Hex string
+        /// Convert bytes to Hex string.
         /// </summary>
-        /// <param name="source">Byte array</param>
-        /// <param name="addSpace">Whether add space between Hex</param>
-        /// <returns>Hex string</returns>
+        /// <param name="source">Byte array.</param>
+        /// <param name="addSpace">Whether add space between Hex.</param>
+        /// <returns>Hex string.</returns>
         public static string ToHexString(this byte[] source, bool addSpace = true)
         {
             if (source == null)
@@ -66,31 +66,31 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert byte to Hex string
+        /// Convert byte to Hex string.
         /// </summary>
-        /// <param name="source">Byte</param>
-        /// <returns>Hex string</returns>
+        /// <param name="source">Byte.</param>
+        /// <returns>Hex string.</returns>
         public static string ToHexString(this byte source)
         {
             return Convert.ToString(source, 16).PadLeft(2, '0');
         }
 
         /// <summary>
-        /// Convert bytes to Encoding string by using Encoding.Default
+        /// Convert bytes to Encoding string by using Encoding.Default.
         /// </summary>
-        /// <param name="source">Byte array</param>
-        /// <returns>Encoding string by using Encoding.Default</returns>
+        /// <param name="source">Byte array.</param>
+        /// <returns>Encoding string by using Encoding.Default.</returns>
         public static string ToEncodingString(this byte[] source)
         {
             return source.ToEncodingString(Encoding.Default);
         }
 
         /// <summary>
-        /// Convert bytes to Encoding string
+        /// Convert bytes to Encoding string.
         /// </summary>
-        /// <param name="source">Byte array</param>
-        /// <param name="encoding">Encoding</param>
-        /// <returns>Encoding string</returns>
+        /// <param name="source">Byte array.</param>
+        /// <param name="encoding">Encoding.</param>
+        /// <returns>Encoding string.</returns>
         public static string ToEncodingString(this byte[] source, Encoding encoding)
         {
             if (source == null)
@@ -107,10 +107,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert bytes to Image
+        /// Convert bytes to Image.
         /// </summary>
-        /// <param name="source">Byte array</param>
-        /// <returns>Image object</returns>
+        /// <param name="source">Byte array.</param>
+        /// <returns>Image object.</returns>
         public static Image ToImage(this byte[] source)
         {
             if (source == null)
@@ -145,11 +145,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert bytes to object
+        /// Convert bytes to object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source">Byte array</param>
-        /// <returns>Object</returns>
+        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">Byte array.</param>
+        /// <returns>Object.</returns>
         public static T ToObject<T>(this byte[] source)
         {
             if (source == null)
@@ -190,10 +190,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert bytes to object
+        /// Convert bytes to object.
         /// </summary>
-        /// <param name="source">Byte array</param>
-        /// <returns>Object</returns>
+        /// <param name="source">Byte array.</param>
+        /// <returns>Object.</returns>
         public static object ToObject(this byte[] source)
         {
             if (source == null)
@@ -234,11 +234,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Compresses byte array using CompressionType
+        /// Compresses byte array using CompressionType.
         /// </summary>
-        /// <param name="source">Byte array to compress</param>
-        /// <param name="compressionType">Compression Type</param>
-        /// <returns>A compressed byte array</returns>
+        /// <param name="source">Byte array to compress.</param>
+        /// <param name="compressionType">Compression Type.</param>
+        /// <returns>A compressed byte array.</returns>
         public static byte[] Compress(this byte[] source, CompressionType compressionType = CompressionType.GZip)
         {
             if (source == null)
@@ -282,11 +282,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Decompresses byte array using CompressionType
+        /// Decompresses byte array using CompressionType.
         /// </summary>
-        /// <param name="source">Byte array to decompress</param>
-        /// <param name="compressionType">Compression Type</param>
-        /// <returns>A decompressed byte array</returns>
+        /// <param name="source">Byte array to decompress.</param>
+        /// <param name="compressionType">Compression Type.</param>
+        /// <returns>A decompressed byte array.</returns>
         public static byte[] Decompress(this byte[] source, CompressionType compressionType = CompressionType.GZip)
         {
             if (source == null)
@@ -339,7 +339,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Get Zip Stream by type
+        /// Get Zip Stream by type.
         /// </summary>
         /// <param name="memoryStream"></param>
         /// <param name="compressionMode"></param>

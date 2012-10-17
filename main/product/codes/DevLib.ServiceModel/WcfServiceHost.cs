@@ -12,7 +12,7 @@ namespace DevLib.ServiceModel
     using System.Threading;
 
     /// <summary>
-    /// Wcf ServiceHost
+    /// Wcf ServiceHost.
     /// </summary>
     public class WcfServiceHost : MarshalByRefObject, IDisposable
     {
@@ -67,10 +67,10 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfServiceHostEventArgs> Restarted;
 
         /// <summary>
-        /// Initialize Wcf service
+        /// Initialize Wcf service.
         /// </summary>
-        /// <param name="assemblyFile">Wcf service assembly file</param>
-        /// <param name="configFile">Wcf service config file</param>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
         public void Init(string assemblyFile, string configFile)
         {
             this._serviceHostList.Clear();
@@ -102,7 +102,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Open Service Host
+        /// Open Service Host.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void Open()
@@ -137,7 +137,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Close Service Host
+        /// Close Service Host.
         /// </summary>
         public void Close()
         {
@@ -165,7 +165,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Abort Service Host
+        /// Abort Service Host.
         /// </summary>
         public void Abort()
         {
@@ -190,7 +190,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Restart Service Host
+        /// Restart Service Host.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public void Restart()
@@ -227,7 +227,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get service host list
+        /// Get service host list.
         /// </summary>
         /// <returns></returns>
         public List<ServiceHost> GetServiceHostList()
@@ -236,16 +236,16 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get service state list
+        /// Get service state list.
         /// </summary>
         /// <returns></returns>
-        public List<WcfServiceHostState> GetStateList()
+        public List<WcfServiceHostInfo> GetHostInfoList()
         {
-            List<WcfServiceHostState> result = new List<WcfServiceHostState>();
+            List<WcfServiceHostInfo> result = new List<WcfServiceHostInfo>();
 
             foreach (var item in this._serviceHostList)
             {
-                result.Add(new WcfServiceHostState() { ServiceType = item.Description.ServiceType.FullName, BaseAddress = item.BaseAddresses[0].AbsoluteUri, State = item.State });
+                result.Add(new WcfServiceHostInfo() { ServiceType = item.Description.ServiceType.FullName, BaseAddress = item.BaseAddresses[0].AbsoluteUri, State = item.State });
             }
 
             return result;

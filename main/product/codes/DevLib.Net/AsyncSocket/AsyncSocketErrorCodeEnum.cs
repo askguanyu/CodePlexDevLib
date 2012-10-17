@@ -6,7 +6,7 @@
 namespace DevLib.Net.AsyncSocket
 {
     /// <summary>
-    /// Async Socket Error Code Enum
+    /// Async Socket Error Code Enum.
     /// </summary>
     public enum AsyncSocketErrorCodeEnum
     {

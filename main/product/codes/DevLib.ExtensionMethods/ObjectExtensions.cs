@@ -17,17 +17,17 @@ namespace DevLib.ExtensionMethods
     using System.Xml.Serialization;
 
     /// <summary>
-    /// Object Extensions
+    /// Object Extensions.
     /// </summary>
     public static class ObjectExtensions
     {
         /// <summary>
-        /// Invokes the method by the current instance, using the specified parameters
+        /// Invokes the method by the current instance, using the specified parameters.
         /// </summary>
-        /// <param name="source">The instance of the invoked method</param>
-        /// <param name="method">The name of the invoked method</param>
-        /// <param name="parameters">The parameters of the invoked method</param>
-        /// <returns>The return value of the invoked method</returns>
+        /// <param name="source">The instance of the invoked method.</param>
+        /// <param name="method">The name of the invoked method.</param>
+        /// <param name="parameters">The parameters of the invoked method.</param>
+        /// <returns>The return value of the invoked method.</returns>
         public static object InvokeMethod(this object source, string method, object[] parameters)
         {
             MethodInfo methodInfo = source.GetType().GetMethod(method);
@@ -35,11 +35,13 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// If object is not null, invoke method
+        /// If object is not null, invoke method.
         /// </summary>
-        /// <param name="source">Object to check</param>
-        /// <param name="action">Delegate method, E.g. source => DoSomething(source);</param>
-        /// <returns>Source object</returns>
+        /// <param name="source">Object to check.</param>
+        /// <param name="action">Delegate method.
+        /// <example>E.g. <code>source => DoSomething(source);</code></example>
+        /// </param>
+        /// <returns>Source object.</returns>
         public static object IfNotNull(this object source, Action<object> action)
         {
             if (source != null)
@@ -51,10 +53,12 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// If object is null, invoke method
+        /// If object is null, invoke method.
         /// </summary>
-        /// <param name="source">Object to check</param>
-        /// <param name="action">Delegate method, E.g. source => DoSomething(source);</param>
+        /// <param name="source">Object to check.</param>
+        /// <param name="action">Delegate method.
+        /// <example>E.g. <code>source => DoSomething(source);</code></example>
+        /// </param>
         public static void IfNull(this object source, Action<object> action)
         {
             if (source == null)
@@ -64,13 +68,13 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Invoke System.Console.WriteLine() or System.Console.Write()
+        /// Invoke System.Console.WriteLine() or System.Console.Write().
         /// </summary>
-        /// <typeparam name="T">The type of input object</typeparam>
-        /// <param name="source">The input object</param>
-        /// <param name="obj">Append object to display</param>
-        /// <param name="withNewLine">Whether followed by the current line terminator</param>
-        /// <returns>The input object</returns>
+        /// <typeparam name="T">The type of input object.</typeparam>
+        /// <param name="source">The input object.</param>
+        /// <param name="obj">Append object to display.</param>
+        /// <param name="withNewLine">Whether followed by the current line terminator.</param>
+        /// <returns>The input object.</returns>
         public static T ConsoleOutput<T>(this T source, object obj, bool withNewLine = true)
         {
             if (object.ReferenceEquals(obj, null))
@@ -100,13 +104,13 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Invoke System.Console.WriteLine() or System.Console.Write()
+        /// Invoke System.Console.WriteLine() or System.Console.Write().
         /// </summary>
-        /// <typeparam name="T">The type of input object</typeparam>
-        /// <param name="source">The input object</param>
-        /// <param name="format">A composite format string</param>
-        /// <param name="withNewLine">Whether followed by the current line terminator</param>
-        /// <returns>The input object</returns>
+        /// <typeparam name="T">The type of input object.</typeparam>
+        /// <param name="source">The input object.</param>
+        /// <param name="format">A composite format string.</param>
+        /// <param name="withNewLine">Whether followed by the current line terminator.</param>
+        /// <returns>The input object.</returns>
         public static T ConsoleOutput<T>(this T source, string format = null, bool withNewLine = true)
         {
             if (string.IsNullOrEmpty(format))
@@ -150,11 +154,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Perform a deep Copy of the object
+        /// Perform a deep Copy of the object.
         /// </summary>
-        /// <typeparam name="T">The type of object being copied</typeparam>
-        /// <param name="source">The object instance to copy</param>
-        /// <returns>The copied object</returns>
+        /// <typeparam name="T">The type of input object.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
         public static T CloneDeep<T>(this T source)
         {
             if (!typeof(T).IsSerializable)
@@ -197,11 +201,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert object to bytes
+        /// Convert object to bytes.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source">Object</param>
-        /// <returns>Byte array</returns>
+        /// <typeparam name="T">The type of input object</typeparam>
+        /// <param name="source">Object.</param>
+        /// <returns>Byte array.</returns>
         public static byte[] ToByteArray<T>(this T source)
         {
             if (!typeof(T).IsSerializable)
@@ -243,10 +247,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes an object to a JSON string
+        /// Serializes an object to a JSON string.
         /// </summary>
-        /// <param name="source">Object to serialize</param>
-        /// <returns>JSON string</returns>
+        /// <param name="source">Object to serialize.</param>
+        /// <returns>JSON string.</returns>
         public static string ToJson(this object source)
         {
             // Don't serialize a null object, simply return the default for that object
@@ -283,11 +287,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes an object to a JSON string
+        /// Serializes an object to a JSON string.
         /// </summary>
-        /// <param name="source">Object to serialize</param>
-        /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects</param>
-        /// <returns>JSON string</returns>
+        /// <param name="source">Object to serialize.</param>
+        /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects.</param>
+        /// <returns>JSON string.</returns>
         public static string ToJson(this object source, IEnumerable<Type> knownTypes)
         {
             // Don't serialize a null object, simply return the default for that object
@@ -324,11 +328,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes a JSON object to an object
+        /// Serializes a JSON object to an object.
         /// </summary>
-        /// <typeparam name="T">Type of the result objet</typeparam>
-        /// <param name="source">JSON string object</param>
-        /// <returns>The result object</returns>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
+        /// <param name="source">JSON string object.</param>
+        /// <returns>The result object.</returns>
         public static T FromJson<T>(this string source)
         {
             if (string.IsNullOrEmpty(source))
@@ -363,12 +367,12 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes a JSON object to an object
+        /// Serializes a JSON object to an object.
         /// </summary>
-        /// <typeparam name="T">Type of the result objet</typeparam>
-        /// <param name="source">JSON string object</param>
-        /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects.</param>
-        /// <returns>The result object</returns>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
+        /// <param name="source">JSON string object.</param>
+        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <returns>The result object.</returns>
         public static T FromJson<T>(this string source, IEnumerable<Type> knownTypes)
         {
             if (string.IsNullOrEmpty(source))
@@ -403,29 +407,29 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes the object into an XML string using Encoding.Default
+        /// Serializes the object into an XML string using Encoding.Default.
         /// </summary>
         /// <remarks>
         /// The object to be serialized should be decorated with the
         /// <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
         /// </remarks>
-        /// <param name="source">The object to serialize</param>
-        /// <returns>An XML encoded string representation of the source object</returns>
+        /// <param name="source">The object to serialize.</param>
+        /// <returns>An XML encoded string representation of the source object.</returns>
         public static string ToXml(this object source)
         {
             return source.ToXml(Encoding.Default);
         }
 
         /// <summary>
-        /// Serializes the object into an XML string
+        /// Serializes the object into an XML string.
         /// </summary>
         /// <remarks>
         /// The object to be serialized should be decorated with the
         /// <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
         /// </remarks>
         /// <param name="source">The object to serialize</param>
-        /// <param name="encoding">The Encoding scheme to use when serializing the data to XML</param>
-        /// <returns>An XML encoded string representation of the source object</returns>
+        /// <param name="encoding">The Encoding scheme to use when serializing the data to XML.</param>
+        /// <returns>An XML encoded string representation of the source object.</returns>
         public static string ToXml(this object source, Encoding encoding)
         {
             if (source == null)
@@ -467,11 +471,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes the XML string object into object
+        /// Deserializes the XML string object into object.
         /// </summary>
-        /// <typeparam name="T">Type of object</typeparam>
-        /// <param name="source">The XML string to deserialize</param>
-        /// <returns>Object</returns>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">The XML string to deserialize.</param>
+        /// <returns>Object.</returns>
         public static T FromXml<T>(this string source)
         {
             if (source == null)
@@ -505,14 +509,14 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Converts an object to the specified target type or returns the default value if
-        /// those 2 types are not convertible.
+        /// Converts an object to the specified target type
+        /// or returns the default value if those 2 types are not convertible.
         /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
         /// <para>
         /// If the exceptions are not ignored and the <paramref name="source"/> can't be convert even if
         /// the types are convertible with each other, an exception is thrown.</para>
         /// </summary>
-        /// <typeparam name = "T"></typeparam>
+        /// <typeparam name = "T">The type of <paramref name="returns"/> object.</typeparam>
         /// <param name = "source">The value.</param>
         /// <param name = "defaultValue">The default value.</param>
         /// <param name = "ignoreException">if set to <c>true</c> ignore any exception.</param>
@@ -535,11 +539,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Copies the readable and writable public property values from the target object to the source
+        /// Copies the readable and writable public property values from the target object to the source.
         /// </summary>
-        /// <remarks>The source and target objects must be of the same type</remarks>
-        /// <param name="source">The source object</param>
-        /// <param name="target">The target object</param>
+        /// <remarks>The source and target objects must be of the same type.</remarks>
+        /// <param name="source">The source object.</param>
+        /// <param name="target">The target object.</param>
         public static void CopyPropertiesFrom(this object source, object target)
         {
             source.CopyPropertiesFrom(target, string.Empty);
@@ -547,12 +551,12 @@ namespace DevLib.ExtensionMethods
 
         /// <summary>
         /// Copies the readable and writable public property values from the target object to the source and
-        /// optionally allows for the ignoring of any number of properties
+        /// optionally allows for the ignoring of any number of properties.
         /// </summary>
-        /// <remarks>The source and target objects must be of the same type</remarks>
-        /// <param name="source">The source object</param>
-        /// <param name="target">The target object</param>
-        /// <param name="ignoreProperty">A single property name to ignore</param>
+        /// <remarks>The source and target objects must be of the same type.</remarks>
+        /// <param name="source">The source object.</param>
+        /// <param name="target">The target object.</param>
+        /// <param name="ignoreProperty">A single property name to ignore.</param>
         public static void CopyPropertiesFrom(this object source, object target, string ignoreProperty)
         {
             source.CopyPropertiesFrom(target, new string[] { ignoreProperty });
@@ -560,12 +564,12 @@ namespace DevLib.ExtensionMethods
 
         /// <summary>
         /// Copies the readable and writable public property values from the target object to the source and
-        /// optionally allows for the ignoring of any number of properties
+        /// optionally allows for the ignoring of any number of properties.
         /// </summary>
-        /// <remarks>The source and target objects must be of the same type</remarks>
-        /// <param name="source">The source object</param>
-        /// <param name="target">The target object</param>
-        /// <param name="ignoreProperties">An array of property names to ignore</param>
+        /// <remarks>The source and target objects must be of the same type.</remarks>
+        /// <param name="source">The source object.</param>
+        /// <param name="target">The target object.</param>
+        /// <param name="ignoreProperties">An array of property names to ignore.</param>
         public static void CopyPropertiesFrom(this object source, object target, string[] ignoreProperties)
         {
             if (source == null)

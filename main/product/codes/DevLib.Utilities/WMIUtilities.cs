@@ -10,7 +10,7 @@ namespace DevLib.Utilities
     using System.Management;
 
     /// <summary>
-    /// WMI Utilities
+    /// WMI Utilities.
     /// </summary>
     public static class WMIUtilities
     {
@@ -85,11 +85,11 @@ namespace DevLib.Utilities
         public const string GPU = @"SELECT VideoProcessor FROM Win32_VideoController";
 
         /// <summary>
-        /// Query a WMI class and associated property
+        /// Query a WMI class and associated property.
         /// </summary>
-        /// <param name="WMIClass">WMI class, ingnore case</param>
-        /// <param name="ClassProperty">Associated property, ingnore case</param>
-        /// <returns>A string list of query result</returns>
+        /// <param name="WMIClass">WMI class, ingnore case.</param>
+        /// <param name="ClassProperty">Associated property, ingnore case.</param>
+        /// <returns>A string list of query result.</returns>
         public static List<string> Query(string WMIClass, string ClassProperty)
         {
             if (string.IsNullOrEmpty(WMIClass))
@@ -106,11 +106,11 @@ namespace DevLib.Utilities
         }
 
         /// <summary>
-        /// Query a WMI class and associated property
+        /// Query a WMI class and associated property.
         /// </summary>
-        /// <param name="WQLString">WQL query string, ingnore case</param>
-        /// <param name="ClassProperty">Associated property, ingnore case</param>
-        /// <returns>A string list of query result</returns>
+        /// <param name="WQLString">WQL query string, ingnore case.</param>
+        /// <param name="ClassProperty">Associated property, ingnore case.</param>
+        /// <returns>A string list of query result.</returns>
         public static List<string> QueryWQL(string WQLString, string ClassProperty = null)
         {
             if (string.IsNullOrEmpty(WQLString))

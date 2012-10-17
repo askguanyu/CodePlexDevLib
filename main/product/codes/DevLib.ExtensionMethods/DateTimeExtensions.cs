@@ -9,15 +9,15 @@ namespace DevLib.ExtensionMethods
     using System.Globalization;
 
     /// <summary>
-    /// DateTime Extensions
+    /// DateTime Extensions.
     /// </summary>
     public static class DateTimeExtensions
     {
         /// <summary>
-        /// Gets the week number for a provided date time value based on the current culture settings
+        /// Gets the week number for a provided date time value based on the current culture settings.
         /// </summary>
-        /// <param name="source">The DateTime</param>
-        /// <returns>The week number</returns>
+        /// <param name="source">The DateTime.</param>
+        /// <returns>The week number.</returns>
         public static int GetWeekOfYear(this DateTime source)
         {
             if (source == null)
@@ -35,8 +35,8 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Whether datetime is a weekend.
         /// </summary>
-        /// <param name="source">DateTime to check</param>
-        /// <returns>True if datetime is weekend</returns>
+        /// <param name="source">DateTime to check.</param>
+        /// <returns>True if datetime is weekend; otherwise, false.</returns>
         public static bool IsWeekend(this DateTime source)
         {
             if (source == null)

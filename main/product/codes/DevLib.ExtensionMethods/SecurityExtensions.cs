@@ -10,16 +10,16 @@ namespace DevLib.ExtensionMethods
     using System.Text;
 
     /// <summary>
-    /// Security Extensions
+    /// Security Extensions.
     /// </summary>
     public static class SecurityExtensions
     {
         /// <summary>
-        /// Verifies a <see cref="string">string</see> against the passed MD5 hash
+        /// Verifies a <see cref="string">string</see> against the passed MD5 hash.
         /// </summary>
-        /// <param name="source">The <see cref="string">string</see> to compare</param>
-        /// <param name="hash">The hash to compare against</param>
-        /// <returns>True if the input and the hash are the same, false otherwise</returns>
+        /// <param name="source">The <see cref="string">string</see> to compare.</param>
+        /// <param name="hash">The hash to compare against.</param>
+        /// <returns>True if the input and the hash are the same; otherwise, false.</returns>
         public static bool MD5Verify(this string source, string hash)
         {
             // Hash the input.
@@ -39,10 +39,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// MD5 encodes the passed <see cref="string">string</see>
+        /// MD5 encodes the passed <see cref="string">string</see>.
         /// </summary>
-        /// <param name="source">The <see cref="string">string</see> to encode</param>
-        /// <returns>An encoded <see cref="string">string; string.Empty if hash failed</see></returns>
+        /// <param name="source">The <see cref="string">string</see> to encode.</param>
+        /// <returns>An encoded <see cref="string">string</see>; string.Empty if hash failed.</returns>
         public static string ToMD5(this string source)
         {
             byte[] data;
@@ -80,9 +80,9 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Decryptes a string using the supplied key. Decoding is done using RSA encryption.
         /// </summary>
-        /// <param name="source">String to decrypt</param>
-        /// <param name="key">Decryption key</param>
-        /// <returns>The decrypted string or string.Empty if decryption failed</returns>
+        /// <param name="source">String to decrypt.</param>
+        /// <param name="key">Decryption key.</param>
+        /// <returns>The decrypted string or string. Empty if decryption failed.</returns>
         public static string RSADecrypt(this string source, string key)
         {
             if (string.IsNullOrEmpty(source))
@@ -132,9 +132,9 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Encryptes a string using the supplied key. Encoding is done using RSA encryption.
         /// </summary>
-        /// <param name="source">String to encrypt</param>
-        /// <param name="key">Encryption key</param>
-        /// <returns>A string representing a byte array separated by a minus sign</returns>
+        /// <param name="source">String to encrypt.</param>
+        /// <param name="key">Encryption key.</param>
+        /// <returns>A string representing a byte array separated by a minus sign.</returns>
         public static string RSAEncrypt(this string source, string key)
         {
             if (string.IsNullOrEmpty(source))

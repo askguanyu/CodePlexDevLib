@@ -12,7 +12,7 @@ namespace DevLib.Diagnostics
     using System.Threading;
 
     /// <summary>
-    /// Code performence timer
+    /// Code snippets performence timer.
     /// </summary>
     [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public static class CodeTimer
@@ -23,79 +23,48 @@ namespace DevLib.Diagnostics
         private static Random _random = new Random();
 
         /// <summary>
-        ///
+        /// Initialize code snippets performence timer.
         /// </summary>
         public static void Initialize()
         {
-            DevLib.Diagnostics.CodeTimer.Time(1, "Initialize CodeTimer...", () => { });
+            DevLib.Diagnostics.CodeTimer.Time(() => { }, 1, "Initialize CodeTimer...");
         }
 
         /// <summary>
-        ///
+        /// Run code snippets and give a performance test result.
         /// </summary>
-        /// <param name="action"></param>
-        /// <param name="iteration"></param>
-        public static void CodeTime(this Action action, int iteration)
+        /// <param name="action">Code snippets to run.</param>
+        /// <param name="iteration">Repeat times.</param>
+        /// <param name="name">The name of current performance.</param>
+        /// <param name="outputAction">The action to handle the performance test result string.
+        /// <example>Default: <code>Console.WriteLine</code></example>
+        /// </param>
+        public static void CodeTime(this Action action, int iteration = 1, string name = null, Action<string> outputAction = null)
         {
-            DevLib.Diagnostics.CodeTimer.Time(iteration, action);
+            DevLib.Diagnostics.CodeTimer.Time(action, iteration, name, outputAction);
         }
 
         /// <summary>
-        ///
+        /// Run code snippets and give a performance test result.
         /// </summary>
-        /// <param name="action"></param>
-        /// <param name="iteration"></param>
-        /// <param name="name"></param>
-        public static void CodeTime(this Action action, int iteration, string name)
+        /// <param name="action">Code snippets to run.
+        /// <example>E.g. <code>() => { Console.WriteLine("Hello"); }</code></example>
+        /// </param>
+        /// <param name="iteration">Repeat times.</param>
+        /// <param name="name">The name of current performance.</param>
+        /// <param name="outputAction">The action to handle the performance test result string.
+        /// <example>Default: <code>Console.WriteLine</code></example>
+        /// </param>
+        public static void Time(Action action, int iteration = 1, string name = null, Action<string> outputAction = null)
         {
-            DevLib.Diagnostics.CodeTimer.Time(iteration, name, action);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="iteration"></param>
-        /// <param name="name"></param>
-        /// <param name="outputAction"></param>
-        public static void CodeTime(this Action action, int iteration, string name, Action<string> outputAction)
-        {
-            DevLib.Diagnostics.CodeTimer.Time(iteration, name, action, outputAction);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="iteration"></param>
-        /// <param name="action">E.g. () => { Console.WriteLine("Hello"); }</param>
-        public static void Time(int iteration, Action action)
-        {
-            DevLib.Diagnostics.CodeTimer.Time(iteration, action.Method.ToString(), action, Console.WriteLine);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="iteration"></param>
-        /// <param name="name"></param>
-        /// <param name="action">E.g. () => { Console.WriteLine("Hello"); }</param>
-        public static void Time(int iteration, string name, Action action)
-        {
-            DevLib.Diagnostics.CodeTimer.Time(iteration, name, action, Console.WriteLine);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="iteration"></param>
-        /// <param name="name"></param>
-        /// <param name="action">E.g. () => { Console.WriteLine("Hello"); }</param>
-        /// <param name="outputAction"></param>
-        public static void Time(int iteration, string name, Action action, Action<string> outputAction)
-        {
-            if ((iteration < 1) || String.IsNullOrEmpty(name) || (action == null))
+            if ((action == null) || (iteration < 1))
             {
                 return;
+            }
+
+            if (name == null)
+            {
+                name = action.Method.ToString();
             }
 
             if (outputAction == null)

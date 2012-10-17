@@ -47,7 +47,7 @@
     <Compile Include="WcfIsolatedServiceHost.cs" />
     <Compile Include="WcfServiceHost.cs" />
     <Compile Include="WcfServiceHostConstants.cs" />
-    <Compile Include="WcfServiceHostState.cs" />
+    <Compile Include="WcfServiceHostInfo.cs" />
     <Compile Include="WcfServiceHostEventArgs.cs" />
     <Compile Include="WcfServiceHostType.cs" />
   </ItemGroup>

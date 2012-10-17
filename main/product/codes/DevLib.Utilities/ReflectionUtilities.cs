@@ -10,16 +10,16 @@ namespace DevLib.Utilities
     using System.Reflection;
 
     /// <summary>
-    /// Reflection Utilities
+    /// Reflection Utilities.
     /// </summary>
     public static class ReflectionUtilities
     {
         /// <summary>
-        /// Gets the System.Type object with the specified name from assembly file
+        /// Gets the System.Type object with the specified name from assembly file.
         /// </summary>
-        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly</param>
-        /// <param name="typeName">The full name of the type</param>
-        /// <returns>A System.Type object that represents the specified class</returns>
+        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
+        /// <param name="typeName">The full name of the type.</param>
+        /// <returns>A System.Type object that represents the specified class.</returns>
         public static Type GetType(string assemblyFile, string typeName)
         {
             if (string.IsNullOrEmpty(assemblyFile))

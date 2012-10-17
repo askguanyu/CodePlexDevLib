@@ -9,15 +9,15 @@ namespace DevLib.ExtensionMethods
     using System.Net;
 
     /// <summary>
-    /// Web Extensions
+    /// Web Extensions.
     /// </summary>
     public static class WebExtensions
     {
         /// <summary>
-        /// Downloads data from a url
+        /// Downloads data from a url.
         /// </summary>
-        /// <param name="url">Url to retrieve the data</param>
-        /// <returns>Byte array of data from the url</returns>
+        /// <param name="url">Url to retrieve the data.</param>
+        /// <returns>Byte array of data from the url.</returns>
         public static byte[] DownloadData(this string url)
         {
             byte[] downloadedData = new byte[0];

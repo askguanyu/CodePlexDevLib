@@ -6,7 +6,7 @@
 namespace DevLib.Net.AsyncSocket
 {
     /// <summary>
-    /// AsyncSocketClient constant and default value
+    /// AsyncSocketClient constant and default value.
     /// </summary>
     internal static class AsyncSocketClientConstants
     {

@@ -11,18 +11,18 @@ namespace DevLib.ExtensionMethods
     using System.Linq;
 
     /// <summary>
-    /// Collection Extensions
+    /// Collection Extensions.
     /// </summary>
     public static class CollectionExtensions
     {
         /// <summary>
-        /// Update value, if not cantain key then add value
+        /// Update value, if not cantain key then add value.
         /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="source">The source dictionary</param>
-        /// <param name="sourceKey">The key of interest</param>
-        /// <param name="sourceValue">The value to update</param>
+        /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
+        /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
+        /// <param name="source">The source dictionary.</param>
+        /// <param name="sourceKey">The key of the element to update.</param>
+        /// <param name="sourceValue">The value of element to update.</param>
         public static void Update<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey sourceKey, TValue sourceValue)
         {
             if (source == null)
@@ -54,11 +54,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// 
+        /// Determines whether a sequence is empty.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source"></param>
-        /// <returns></returns>
+        /// <returns>True if the source sequence is empty; otherwise, false.</returns>
         public static bool IsEmpty<T>(this IEnumerable<T> source)
         {
             if (source == null)
@@ -70,11 +70,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// 
+        /// Determines whether a sequence is NOT empty.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source"></param>
-        /// <returns></returns>
+        /// <returns>True if the source sequence is NOT empty; otherwise, false.</returns>
         public static bool IsNotEmpty<T>(this IEnumerable<T> source)
         {
             if (source == null)

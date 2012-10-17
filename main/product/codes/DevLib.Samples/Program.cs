@@ -44,9 +44,9 @@ namespace DevLib.Samples
         {
             PrintStartInfo();
 
-            //TestCodeSnippet();
+            //TestCodeSnippets();
 
-            //new Action(() => TestDevLibDiagnostics()).CodeTime(1);
+            new Action(() => TestDevLibDiagnostics()).CodeTime();
 
             //TestDevLibExtensionMethods();
 
@@ -58,7 +58,7 @@ namespace DevLib.Samples
 
             //TestDevLibServiceModel();
 
-            TestDevLibSettings();
+            //TestDevLibSettings();
 
             PrintExitInfo();
         }
@@ -80,35 +80,12 @@ namespace DevLib.Samples
             Console.ReadKey();
         }
 
-        private static void TestCodeSnippet()
+        private static void TestCodeSnippets()
         {
             PrintMethodName("TestCodeSnippet");
 
-            TestClass me = new TestClass() { Name = "Foo", Age = 29 };
+            Console.WriteLine(string.Format("hello{0}world",""));
 
-            Settings settings1 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.config"));
-            Settings settings2 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.config"));
-            settings1.SetValue("time0", DateTime.Now);
-            settings1.SetValue("time", DateTime.Now);
-            settings1.SetValue("time", DateTime.Now);
-            settings1.SetValue("time", DateTime.Now);
-            settings1.SetValue("txt1", "hello1");
-            settings1.SetValue("color", (ConsoleColor)9);
-            settings1.SetValue("me", me);
-            settings2.SetValue("time1", DateTime.Now);
-            settings2.SetValue("time2", DateTime.Now);
-            settings2.SetValue("time3", DateTime.Now);
-            settings2.SetValue("txt2", "hello2");
-            settings2.SetValue("color5", (ConsoleColor)15);
-            settings2.SetValue("me1", me);
-            settings1.GetValue<DateTime>("time").ConsoleOutput();
-            settings1.GetValue<ConsoleColor>("color").ConsoleOutput();
-            settings1.GetValue<TestClass>("me").Name.ConsoleOutput();
-            settings1.GetValue<TestClass>("me").Age.ConsoleOutput();
-            settings1.GetValue<string>("hello2","defalut").ConsoleOutput();
-            settings1.Save();
-            settings2.Save();
-            
             //Configuration config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "test.config") }, ConfigurationUserLevel.None);
             //Configuration config1 = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()) }, ConfigurationUserLevel.None);
             //config.Sections.Add(.AppSettings.Settings.Add("key1", "value1");
@@ -261,22 +238,22 @@ namespace DevLib.Samples
             object[] parameters = new object[] { 1, 2 };
             MethodInfo methodInfo = typeof(TestClass).GetMethod("TestAdd");
 
-            CodeTimer.Time(times, "Directly invoke", () =>
+            CodeTimer.Time(() =>
             {
                 testClass.TestAdd(1, 2);
-            });
+            }, times);
 
             methodInfo.Invoke(testClass, parameters).ConsoleOutput();
-            CodeTimer.Time(times, "Reflection invoke1", () =>
+            CodeTimer.Time(() =>
             {
                 methodInfo.Invoke(testClass, parameters);
-            });
+            }, times, "Reflection invoke1");
 
             testClass.InvokeMethod("TestAdd", parameters).ConsoleOutput();
-            CodeTimer.Time(times, "Reflection invoke3", () =>
+            CodeTimer.Time(() =>
             {
                 testClass.InvokeMethod("TestAdd", parameters);
-            });
+            }, times, "Reflection invoke3");
 
             //ReflectionUtilities.DynamicMethodExecute(methodInfo, testClass, parameters).ConsoleOutput();
             //CodeTimer.Time(times, "DynamicMethodExecute", () =>

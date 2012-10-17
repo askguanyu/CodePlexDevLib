@@ -6,12 +6,12 @@
 namespace DevLib.Net.AsyncSocket
 {
     /// <summary>
-    /// AsyncSocketServer constant and default value
+    /// AsyncSocketServer constant and default value.
     /// </summary>
     internal static class AsyncSocketServerConstants
     {
         /// <summary>
-        /// read, write (don't alloc buffer space for accepts)
+        /// read, write (don't alloc buffer space for accepts).
         /// </summary>
         internal const int OpsToPreAlloc = 2;
 

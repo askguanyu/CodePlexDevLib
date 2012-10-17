@@ -8,21 +8,21 @@ namespace DevLib.Net.AsyncSocket
     using System;
 
     /// <summary>
-    /// Async Socket Error EventArgs Class
+    /// Async Socket Error EventArgs Class.
     /// </summary>
     public class AsyncSocketErrorEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor of AsyncSocketErrorEventArgs
+        /// Constructor of AsyncSocketErrorEventArgs.
         /// </summary>
         public AsyncSocketErrorEventArgs() : this(string.Empty, null) { }
 
         /// <summary>
-        /// Constructor of AsyncSocketErrorEventArgs
+        /// Constructor of AsyncSocketErrorEventArgs.
         /// </summary>
-        /// <param name="message">Error Message</param>
-        /// <param name="exception">Exception object</param>
-        /// <param name="errorCode">AsyncSocketServerErrorCodeEnum</param>
+        /// <param name="message">Error Message.</param>
+        /// <param name="exception">Exception object.</param>
+        /// <param name="errorCode">AsyncSocketServerErrorCodeEnum.</param>
         public AsyncSocketErrorEventArgs(string message, Exception exception, AsyncSocketErrorCodeEnum errorCode = AsyncSocketErrorCodeEnum.ThrowSocketException)
         {
             this.Message = message;
@@ -31,7 +31,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets Error Message
+        /// Gets or sets Error Message.
         /// </summary>
         public string Message
         {
@@ -40,7 +40,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets Exception
+        /// Gets or sets Exception.
         /// </summary>
         public Exception Exception
         {
@@ -49,7 +49,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets Error Code
+        /// Gets or sets Error Code.
         /// </summary>
         public AsyncSocketErrorCodeEnum ErrorCode
         {

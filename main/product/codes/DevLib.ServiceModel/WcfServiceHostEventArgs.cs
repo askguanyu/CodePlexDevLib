@@ -8,7 +8,7 @@ namespace DevLib.ServiceModel
     using System;
 
     /// <summary>
-    /// WcfServiceHost EventArgs
+    /// WcfServiceHost EventArgs.
     /// </summary>
     [Serializable]
     public class WcfServiceHostEventArgs : EventArgs
@@ -24,7 +24,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets Wcf service state
+        /// Gets Wcf service state.
         /// </summary>
         public WcfServiceHostStateEnum State
         {
@@ -33,7 +33,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets Wcf service name
+        /// Gets Wcf service name.
         /// </summary>
         public string WcfServiceName
         {

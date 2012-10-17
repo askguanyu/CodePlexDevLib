@@ -13,7 +13,7 @@ namespace DevLib.Net.AsyncSocket
     using System.Threading;
 
     /// <summary>
-    /// AsyncSocket Client
+    /// AsyncSocket Client.
     /// </summary>
     public class AsyncSocketClient : IDisposable
     {
@@ -38,9 +38,9 @@ namespace DevLib.Net.AsyncSocket
         private byte[] _dataBuffer;
 
         /// <summary>
-        /// Constructor of AsyncSocketClient
+        /// Constructor of AsyncSocketClient.
         /// </summary>
-        /// <param name="bufferSize">Buffer size of data to be sent</param>
+        /// <param name="bufferSize">Buffer size of data to be sent.</param>
         public AsyncSocketClient(int bufferSize = AsyncSocketClientConstants.BufferSize)
         {
             this._bufferSize = bufferSize;
@@ -63,7 +63,7 @@ namespace DevLib.Net.AsyncSocket
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataReceived;
 
         /// <summary>
-        /// Client Data Sent Event
+        /// Client Data Sent Event.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataSent;
 
@@ -73,9 +73,9 @@ namespace DevLib.Net.AsyncSocket
         public event EventHandler<AsyncSocketErrorEventArgs> ErrorOccurred;
 
         /// <summary>
-        /// Connect to remote endpoint
+        /// Connect to remote endpoint.
         /// </summary>
-        /// <param name="remoteEndPoint">Remote IPEndPoint</param>
+        /// <param name="remoteEndPoint">Remote IPEndPoint.</param>
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Connect(IPEndPoint remoteEndPoint, bool useIOCP = true)
         {
@@ -115,10 +115,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Connect to remote endpoint
+        /// Connect to remote endpoint.
         /// </summary>
-        /// <param name="ip">Remote IP</param>
-        /// <param name="port">Remote port</param>
+        /// <param name="ip">Remote IP.</param>
+        /// <param name="port">Remote port.</param>
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Connect(string ip, int port, bool useIOCP = true)
         {
@@ -127,9 +127,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send binary data, call Connect method before using this method
+        /// Send binary data, call Connect method before using this method.
         /// </summary>
-        /// <param name="data">Data to be sent</param>
+        /// <param name="data">Data to be sent.</param>
         public void Send(byte[] data)
         {
             try
@@ -158,10 +158,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send strings, call Connect method before using this method
+        /// Send strings, call Connect method before using this method.
         /// </summary>
-        /// <param name="message">Message to be sent</param>
-        /// <param name="encoding">Character encoding</param>
+        /// <param name="message">Message to be sent.</param>
+        /// <param name="encoding">Character encoding.</param>
         public void Send(string message, Encoding encoding)
         {
             byte[] data = encoding.GetBytes(message);
@@ -169,10 +169,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send binary data once
+        /// Send binary data once.
         /// </summary>
-        /// <param name="remoteEndPoint">Remote endpoint</param>
-        /// <param name="data">Data to be sent</param>
+        /// <param name="remoteEndPoint">Remote endpoint.</param>
+        /// <param name="data">Data to be sent.</param>
         public void SendOnce(IPEndPoint remoteEndPoint, byte[] data)
         {
             this.Connect(remoteEndPoint);
@@ -181,11 +181,11 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send strings once
+        /// Send strings once.
         /// </summary>
-        /// <param name="remoteEndPoint">Remote endpoint</param>
-        /// <param name="message">Message to be sent</param>
-        /// <param name="encoding">Character encoding</param>
+        /// <param name="remoteEndPoint">Remote endpoint.</param>
+        /// <param name="message">Message to be sent.</param>
+        /// <param name="encoding">Character encoding.</param>
         public void SendOnce(IPEndPoint remoteEndPoint, string message, Encoding encoding)
         {
             this.Connect(remoteEndPoint);
@@ -194,11 +194,11 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send binary data once
+        /// Send binary data once.
         /// </summary>
-        /// <param name="ip">Remote IP</param>
-        /// <param name="port">Remote port</param>
-        /// <param name="data">Data to be sent</param>
+        /// <param name="ip">Remote IP.</param>
+        /// <param name="port">Remote port.</param>
+        /// <param name="data">Data to be sent.</param>
         public void SendOnce(string ip, int port, byte[] data)
         {
             this.Connect(ip, port);
@@ -207,12 +207,12 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send strings once
+        /// Send strings once.
         /// </summary>
-        /// <param name="ip">Remote IP</param>
-        /// <param name="port">Remote port</param>
-        /// <param name="message">Message to be sent</param>
-        /// <param name="encoding">Character encoding</param>
+        /// <param name="ip">Remote IP.</param>
+        /// <param name="port">Remote port.</param>
+        /// <param name="message">Message to be sent.</param>
+        /// <param name="encoding">Character encoding.</param>
         public void SendOnce(string ip, int port, string message, Encoding encoding)
         {
             this.Connect(ip, port);
@@ -221,7 +221,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Disconnect client
+        /// Disconnect client.
         /// </summary>
         public void Disconnect()
         {
@@ -250,21 +250,6 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketErrorEventArgs> temp = Interlocked.CompareExchange(ref ErrorOccurred, null, null);
-
-            if (temp != null)
-            {
-                temp(sender, e);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
@@ -277,6 +262,21 @@ namespace DevLib.Net.AsyncSocket
                     this._clientSocket.Close();
                     this._clientSocket.Dispose();
                 }
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="e"></param>
+        private void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<AsyncSocketErrorEventArgs> temp = Interlocked.CompareExchange(ref ErrorOccurred, null, null);
+
+            if (temp != null)
+            {
+                temp(sender, e);
             }
         }
 

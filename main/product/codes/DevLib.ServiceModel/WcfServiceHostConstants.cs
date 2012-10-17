@@ -6,7 +6,7 @@
 namespace DevLib.ServiceModel
 {
     /// <summary>
-    /// WcfServiceHost Constants
+    /// WcfServiceHost Constants.
     /// </summary>
     internal static class WcfServiceHostConstants
     {

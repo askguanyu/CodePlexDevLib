@@ -6,7 +6,7 @@
 namespace DevLib.Settings
 {
     /// <summary>
-    /// Settings Constants
+    /// Settings Constants.
     /// </summary>
     internal static class SettingsConstants
     {

@@ -13,7 +13,7 @@ namespace DevLib.ServiceModel
     using System.Threading;
 
     /// <summary>
-    /// Wcf Isolated ServiceHost
+    /// Wcf Isolated ServiceHost.
     /// </summary>
     public class WcfIsolatedServiceHost : MarshalByRefObject, IDisposable
     {
@@ -28,10 +28,10 @@ namespace DevLib.ServiceModel
         private WcfServiceHost _wcfServiceHost;
 
         /// <summary>
-        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service
+        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service.
         /// </summary>
-        /// <param name="assemblyFile">Wcf service assembly file</param>
-        /// <param name="configFile">Wcf service config file</param>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
         public WcfIsolatedServiceHost(string assemblyFile, string configFile)
         {
             this.AssemblyFile = assemblyFile;
@@ -100,7 +100,7 @@ namespace DevLib.ServiceModel
         public event EventHandler<EventArgs> Reloaded;
 
         /// <summary>
-        /// Gets a value indicating whether isolated AppDomain is loaded
+        /// Gets a value indicating whether isolated AppDomain is loaded.
         /// </summary>
         public bool IsAppDomainLoaded
         {
@@ -109,7 +109,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets current Wcf service assembly file
+        /// Gets current Wcf service assembly file.
         /// </summary>
         public string AssemblyFile
         {
@@ -118,7 +118,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets current Wcf service config file
+        /// Gets current Wcf service config file.
         /// </summary>
         public string ConfigFile
         {
@@ -127,7 +127,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Open Wcf service
+        /// Open Wcf service.
         /// </summary>
         public void Open()
         {
@@ -146,7 +146,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Close Wcf service
+        /// Close Wcf service.
         /// </summary>
         public void Close()
         {
@@ -165,7 +165,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Abort Wcf service
+        /// Abort Wcf service.
         /// </summary>
         public void Abort()
         {
@@ -184,7 +184,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Restart Wcf service
+        /// Restart Wcf service.
         /// </summary>
         public void Restart()
         {
@@ -203,7 +203,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Unload current isolated AppDomain
+        /// Unload current isolated AppDomain.
         /// </summary>
         public void Unload()
         {
@@ -224,7 +224,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Reload current isolated AppDomain
+        /// Reload current isolated AppDomain.
         /// </summary>
         public void Reload()
         {
@@ -234,7 +234,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get current isolated AppDomain
+        /// Get current isolated AppDomain.
         /// </summary>
         /// <returns></returns>
         public AppDomain GetAppDomain()
@@ -243,12 +243,12 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get Wcf service state list
+        /// Get Wcf service state list.
         /// </summary>
         /// <returns></returns>
-        public List<WcfServiceHostState> GetStateList()
+        public List<WcfServiceHostInfo> GetHostInfoList()
         {
-            return this._wcfServiceHost.GetStateList();
+            return this._wcfServiceHost.GetHostInfoList();
         }
 
         /// <summary>

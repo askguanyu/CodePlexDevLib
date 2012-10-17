@@ -12,15 +12,15 @@ namespace DevLib.ExtensionMethods
     using System.Text.RegularExpressions;
 
     /// <summary>
-    /// String Extensions
+    /// String Extensions.
     /// </summary>
     public static class StringExtensions
     {
         /// <summary>
-        /// Convert Hex string to byte array
+        /// Convert Hex string to byte array.
         /// </summary>
-        /// <param name="source">Hex string</param>
-        /// <returns>Byte array</returns>
+        /// <param name="source">Hex string.</param>
+        /// <returns>Byte array.</returns>
         public static byte[] ToHexByteArray(this string source)
         {
             string hexPattern = "^[0-9a-fA-F]+$";
@@ -51,19 +51,19 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Formats the value with the parameters using string.Format.
         /// </summary>
-        /// <param name = "source">The input string</param>
-        /// <param name = "parameters">The parameters</param>
-        /// <returns>The formated string</returns>
+        /// <param name = "source">The input string.</param>
+        /// <param name = "parameters">The parameters.</param>
+        /// <returns>The formated string.</returns>
         public static string FormatWith(this string source, params object[] parameters)
         {
             return string.Format(source, parameters);
         }
 
         /// <summary>
-        /// Remove any instance of the given character from the current string
+        /// Remove any instance of the given character from the current string.
         /// </summary>
         /// <param name="source"></param>
-        /// <param name="removeChar"></param>
+        /// <param name="removeChar">Chars to remove</param>
         /// <returns></returns>
         public static string Remove(this string source, params char[] removeChar)
         {
@@ -78,10 +78,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Remove any instance of the given string from the current string
+        /// Remove any instance of the given string from the current string.
         /// </summary>
         /// <param name="source"></param>
-        /// <param name="removeString"></param>
+        /// <param name="removeString">String to remove</param>
         /// <returns></returns>
         public static string Remove(this string source, params string[] removeString)
         {
@@ -89,20 +89,20 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// String is null or empty
+        /// Indicates whether the specified string is null or an System.String.Empty string.
         /// </summary>
-        /// <param name="source">The input string</param>
-        /// <returns>True if string is null or empty</returns>
+        /// <param name="source">The string to test.</param>
+        /// <returns>True if the value parameter is null or an empty string (""); otherwise, false.</returns>
         public static bool IsNullOrEmpty(this string source)
         {
             return string.IsNullOrEmpty(source);
         }
 
         /// <summary>
-        /// Extracts all digits from a string
+        /// Extracts all digits from a string.
         /// </summary>
-        /// <param name="source">String containing digits to extract</param>
-        /// <returns>All digits contained within the input string</returns>
+        /// <param name="source">String containing digits to extract.</param>
+        /// <returns>All digits contained within the input string.</returns>
         public static string ExtractDigits(this string source)
         {
             if (source.IsNullOrEmpty())
@@ -114,35 +114,35 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert string to byte array by using Encoding.Default
+        /// Convert string to byte array by using Encoding.Default.
         /// </summary>
-        /// <param name="source">String</param>
-        /// <returns>Byte array by using Encoding.Default</returns>
+        /// <param name="source">String.</param>
+        /// <returns>Byte array by using Encoding.Default.</returns>
         public static byte[] ToByteArray(this string source)
         {
             return Encoding.Default.GetBytes(source);
         }
 
         /// <summary>
-        /// Convert string to byte array
+        /// Convert string to byte array.
         /// </summary>
-        /// <param name="source">String</param>
-        /// <param name="encoding">Encoding</param>
-        /// <returns>Byte array</returns>
+        /// <param name="source">String.</param>
+        /// <param name="encoding">Encoding.</param>
+        /// <returns>Byte array.</returns>
         public static byte[] ToByteArray(this string source, Encoding encoding)
         {
             return encoding.GetBytes(source);
         }
 
         /// <summary>
-        /// Convert string to enum
+        /// Convert string to enum.
         /// </summary>
         /// <typeparam name="TEnum"></typeparam>
-        /// <param name="source">String</param>
-        /// <param name="defaultValue">Default value of enum</param>
-        /// <param name="ignoreCase">Whether ignore case</param>
-        /// <param name="ignoreException">Whether ignore exception</param>
-        /// <returns>Enum</returns>
+        /// <param name="source">String.</param>
+        /// <param name="defaultValue">Default value of enum.</param>
+        /// <param name="ignoreCase">Whether ignore case.</param>
+        /// <param name="ignoreException">Whether ignore exception.</param>
+        /// <returns>Enum.</returns>
         public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool ignoreException = true) where TEnum : struct
         {
             TEnum result;
@@ -172,21 +172,21 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Whether string is in enum
+        /// Whether string is in enum.
         /// </summary>
-        /// <typeparam name="TEnum"></typeparam>
-        /// <param name="source">String</param>
-        /// <returns>True if string in enum</returns>
+        /// <typeparam name="TEnum">The type of enum</typeparam>
+        /// <param name="source">String.</param>
+        /// <returns>True if string in enum.</returns>
         public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct
         {
             return Enum.IsDefined(typeof(TEnum), source);
         }
 
         /// <summary>
-        /// Base64 decodes a string
+        /// Base64 decodes a string.
         /// </summary>
-        /// <param name="source">A base64 encoded string</param>
-        /// <returns>Decoded string</returns>
+        /// <param name="source">A base64 encoded string.</param>
+        /// <returns>Decoded string.</returns>
         public static string Base64Decode(this string source)
         {
             byte[] buffer = Convert.FromBase64String(source);
@@ -195,10 +195,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Base64 encodes a string
+        /// Base64 encodes a string.
         /// </summary>
-        /// <param name="source">String to encode</param>
-        /// <returns>A base64 encoded string</returns>
+        /// <param name="source">String to encode.</param>
+        /// <returns>A base64 encoded string.</returns>
         public static string Base64Encode(this string source)
         {
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(source);

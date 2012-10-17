@@ -22,9 +22,10 @@ namespace DevLib.Settings
         private static Dictionary<string, Settings> _settingsDict = new Dictionary<string, Settings>();
 
         /// <summary>
-        /// Opens the configuration file for the current application
+        /// Opens the configuration file for the current application.
         /// </summary>
-        /// <param name="configFile">Configuration file for the current application, can be a new one</param>
+        /// <param name="configFile">Configuration file for the current application; Can be a new one.</param>
+        /// <returns>Settings instance.</returns>
         public static Settings Open(string configFile)
         {
             if (_settingsDict.ContainsKey(configFile))

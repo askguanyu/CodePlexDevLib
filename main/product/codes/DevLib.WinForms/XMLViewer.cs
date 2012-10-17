@@ -11,7 +11,7 @@ namespace DevLib.WinForms
     using System.Xml.Linq;
 
     /// <summary>
-    /// RichTextBox as XMLViewer
+    /// RichTextBox as XMLViewer.
     /// </summary>
     public class XMLViewer : System.Windows.Forms.RichTextBox
     {
@@ -21,7 +21,7 @@ namespace DevLib.WinForms
         private XMLViewerSettings _settings;
 
         /// <summary>
-        ///Gets or sets a value indicating whether
+        /// Gets a value indicating whether current is viewing XML.
         /// </summary>
         public bool IsViewingXML
         {
@@ -30,7 +30,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        ///Gets or sets
+        /// Gets the last text
         /// </summary>
         public string LastText
         {
@@ -165,10 +165,8 @@ namespace DevLib.WinForms
             this.LastText = string.Empty;
         }
 
-        // Get the Rtf of the xml element.
-
         /// <summary>
-        ///
+        /// Get the Rtf of the xml element.
         /// </summary>
         /// <param name="element"></param>
         /// <param name="level"></param>

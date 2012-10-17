@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfServiceHostState.cs" company="YuGuan Corporation">
+// <copyright file="WcfServiceHostInfo.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -9,7 +9,7 @@ namespace DevLib.ServiceModel
     using System.ServiceModel;
 
     /// <summary>
-    /// Defines the WcfServiceHost state Enum
+    /// Defines the WcfServiceHost state Enum.
     /// </summary>
     public enum WcfServiceHostStateEnum
     {
@@ -26,13 +26,13 @@ namespace DevLib.ServiceModel
     }
 
     /// <summary>
-    /// WcfServiceHost State
+    /// WcfServiceHost Info.
     /// </summary>
     [Serializable]
-    public class WcfServiceHostState
+    public class WcfServiceHostInfo
     {
         /// <summary>
-        ///Gets or sets
+        /// Gets or sets service type string
         /// </summary>
         public string ServiceType
         {
@@ -41,7 +41,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///Gets or sets
+        /// Gets or sets base address
         /// </summary>
         public string BaseAddress
         {
@@ -50,7 +50,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///Gets or sets
+        /// Gets or sets CommunicationState
         /// </summary>
         public CommunicationState State
         {

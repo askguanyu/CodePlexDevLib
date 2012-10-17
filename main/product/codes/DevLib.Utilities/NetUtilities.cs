@@ -9,14 +9,19 @@ namespace DevLib.Utilities
     using System.Net;
 
     /// <summary>
-    /// Net Utilities
+    /// Net Utilities.
     /// </summary>
     public static class NetUtilities
     {
         /// <summary>
-        /// Get Local IP Array
+        ///
         /// </summary>
-        /// <returns>IPAddress[]</returns>
+        private static Random _random = new Random();
+
+        /// <summary>
+        /// Get Local IP Array.
+        /// </summary>
+        /// <returns>IPAddress[].</returns>
         public static IPAddress[] GetLocalIPArray()
         {
             try
@@ -32,12 +37,12 @@ namespace DevLib.Utilities
         }
 
         /// <summary>
-        /// Generates a random port number
+        /// Generates a random port number.
         /// </summary>
-        /// <returns>Random port number</returns>
+        /// <returns>Random port number.</returns>
         public static int GetRandomPortNumber()
         {
-            return new Random().Next(1, 0xFFFF);
+            return _random.Next(1, 0xFFFF);
         }
     }
 }

@@ -20,14 +20,14 @@ namespace DevLib.Net.AsyncSocket
         private Socket _socket;
 
         /// <summary>
-        /// Constructor of AsyncUserToken
+        /// Constructor of AsyncUserToken.
         /// </summary>
         public AsyncSocketUserTokenEventArgs() : this(null) { }
 
         /// <summary>
-        /// Constructor of AsyncUserToken
+        /// Constructor of AsyncUserToken.
         /// </summary>
-        /// <param name="socket">Socket context</param>
+        /// <param name="socket">Socket context.</param>
         public AsyncSocketUserTokenEventArgs(Socket socket)
         {
             this.ReadEventArgs = new SocketAsyncEventArgs();
@@ -39,7 +39,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets SocketAsyncEventArgs
+        /// Gets or sets SocketAsyncEventArgs.
         /// </summary>
         public SocketAsyncEventArgs ReadEventArgs
         {
@@ -48,7 +48,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets length of received data bytes
+        /// Gets length of received data bytes.
         /// </summary>
         public int ReceivedBytesSize
         {
@@ -57,7 +57,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets offset of buffer
+        /// Gets offset of buffer.
         /// </summary>
         public int Offset
         {
@@ -66,7 +66,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets received buffer
+        /// Gets received buffer.
         /// </summary>
         public byte[] ReceivedBuffer
         {
@@ -75,7 +75,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets transferred raw data
+        /// Gets transferred raw data.
         /// </summary>
         public byte[] TransferredRawData
         {
@@ -88,7 +88,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets user defined operation flag
+        /// Gets or sets user defined operation flag.
         /// </summary>
         public object Operation
         {
@@ -97,7 +97,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets socket context
+        /// Gets or sets socket context.
         /// </summary>
         public Socket Socket
         {
@@ -117,7 +117,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets connection Id
+        /// Gets or sets connection Id.
         /// </summary>
         public Guid ConnectionId
         {
@@ -126,7 +126,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets connected client EndPoint
+        /// Gets connected client EndPoint.
         /// </summary>
         public IPEndPoint EndPoint
         {
@@ -135,18 +135,18 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Set BytesReceived
+        /// Set BytesReceived.
         /// </summary>
-        /// <param name="bytesReceived">Bytes Received</param>
+        /// <param name="bytesReceived">Bytes Received.</param>
         public void SetBytesReceived(int bytesReceived)
         {
             this.ReceivedBytesSize = bytesReceived;
         }
 
         /// <summary>
-        /// Set Buffer
+        /// Set Buffer.
         /// </summary>
-        /// <param name="buffer">buffer</param>
+        /// <param name="buffer">Buffer.</param>
         public void SetBuffer(byte[] buffer, int offset)
         {
             this.ReceivedBuffer = buffer;

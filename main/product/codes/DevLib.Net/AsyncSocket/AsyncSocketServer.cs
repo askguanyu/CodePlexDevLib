@@ -18,71 +18,71 @@ namespace DevLib.Net.AsyncSocket
     public class AsyncSocketServer : IDisposable
     {
         /// <summary>
-        /// Thread-safe dictionary of connected socket tokens
+        /// Thread-safe dictionary of connected socket tokens.
         /// </summary>
         private ConcurrentDictionary<Guid, AsyncSocketUserTokenEventArgs> _tokens;
 
         /// <summary>
-        /// Thread-safe dictionary of connected socket tokens with IP as primary key
+        /// Thread-safe dictionary of connected socket tokens with IP as primary key.
         /// </summary>
         private ConcurrentDictionary<IPAddress, AsyncSocketUserTokenEventArgs> _singleIPTokens;
 
         /// <summary>
-        /// the maximum number of connections the class is designed to handle simultaneously
+        /// The maximum number of connections the class is designed to handle simultaneously.
         /// </summary>
         private int _numConnections;
 
         /// <summary>
-        /// buffer size to use for each socket I/O operation
+        /// Buffer size to use for each socket I/O operation.
         /// </summary>
         private int _bufferSize;
 
         /// <summary>
-        /// represents a large reusable set of buffers for all socket operations
+        /// Represents a large reusable set of buffers for all socket operations.
         /// </summary>
         private AsyncSocketServerEventArgsBufferManager _bufferManager;
 
         /// <summary>
-        /// the socket used to listen for incoming connection requests
+        /// The socket used to listen for incoming connection requests.
         /// </summary>
         private Socket _listenSocket;
 
         /// <summary>
-        /// pool of reusable SocketAsyncEventArgs objects for read and accept socket operations
+        /// Pool of reusable SocketAsyncEventArgs objects for read and accept socket operations.
         /// </summary>
         private AsyncSocketServerEventArgsPool _readPool;
 
         /// <summary>
-        /// pool of reusable SocketAsyncEventArgs objects for write and accept socket operations
+        /// Pool of reusable SocketAsyncEventArgs objects for write and accept socket operations.
         /// </summary>
         private AsyncSocketServerEventArgsPool _writePool;
 
         /// <summary>
-        /// counter of the total bytes received by the server
+        /// Counter of the total bytes received by the server.
         /// </summary>
         private long _totalBytesRead;
 
         /// <summary>
-        /// counter of the total bytes sent by the server
+        /// Counter of the total bytes sent by the server.
         /// </summary>
         private long _totalBytesWrite;
 
         /// <summary>
-        /// the total number of clients connected to the server
+        /// The total number of clients connected to the server.
         /// </summary>
         private long _numConnectedSockets;
 
         /// <summary>
-        /// the max number of accepted clients
+        /// The max number of accepted clients.
         /// </summary>
         private Semaphore _maxNumberAcceptedClients;
 
         /// <summary>
-        /// Constructor of AsyncSocketServer
+        /// Constructor of AsyncSocketServer.
         /// </summary>
-        /// <param name="localEndPoint">local port to listen</param>
-        /// <param name="numConnections">the maximum number of connections the class is designed to handle simultaneously</param>
-        /// <param name="bufferSize">buffer size to use for each socket I/O operation</param>
+        /// <param name="localEndPoint">Local port to listen.</param>
+        /// <param name="numConnections">The maximum number of connections the class is designed to handle simultaneously.</param>
+        /// <param name="bufferSize">Buffer size to use for each socket I/O operation.</param>
         public AsyncSocketServer(IPEndPoint localEndPoint, int numConnections = AsyncSocketServerConstants.NumConnections, int bufferSize = AsyncSocketServerConstants.BufferSize)
         {
             this._totalBytesRead = 0;
@@ -94,11 +94,11 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Constructor of AsyncSocketServer
+        /// Constructor of AsyncSocketServer.
         /// </summary>
-        /// <param name="localPort">local port to listen</param>
-        /// <param name="numConnections">the maximum number of connections the class is designed to handle simultaneously</param>
-        /// <param name="bufferSize">buffer size to use for each socket I/O operation</param>
+        /// <param name="localPort">Local port to listen.</param>
+        /// <param name="numConnections">The maximum number of connections the class is designed to handle simultaneously.</param>
+        /// <param name="bufferSize">Buffer size to use for each socket I/O operation.</param>
         public AsyncSocketServer(int localPort, int numConnections = AsyncSocketServerConstants.NumConnections, int bufferSize = AsyncSocketServerConstants.BufferSize)
         {
             this._totalBytesRead = 0;
@@ -110,32 +110,32 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Client Connected Event
+        /// Client Connected Event.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> Connected;
 
         /// <summary>
-        /// Client Disconnected Event
+        /// Client Disconnected Event.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> Disconnected;
 
         /// <summary>
-        /// Server Data Received Event
+        /// Server Data Received Event.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataReceived;
 
         /// <summary>
-        /// Server Data Sent Event
+        /// Server Data Sent Event.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataSent;
 
         /// <summary>
-        /// Error Occurred Event
+        /// Error Occurred Event.
         /// </summary>
         public event EventHandler<AsyncSocketErrorEventArgs> ErrorOccurred;
 
         /// <summary>
-        /// Gets a value indicating whether socket server is listening
+        /// Gets a value indicating whether socket server is listening.
         /// </summary>
         public bool IsListening
         {
@@ -144,7 +144,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets Local EndPoint
+        /// Gets Local EndPoint.
         /// </summary>
         public IPEndPoint LocalEndPoint
         {
@@ -153,7 +153,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets numbers of connected sockets
+        /// Gets numbers of connected sockets.
         /// </summary>
         public long NumConnectedSockets
         {
@@ -161,7 +161,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets numbers of connected clients
+        /// Gets numbers of connected clients.
         /// </summary>
         public int NumConnectedClients
         {
@@ -169,7 +169,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets total bytes read
+        /// Gets total bytes read.
         /// </summary>
         public long TotalBytesRead
         {
@@ -177,7 +177,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets total bytes write
+        /// Gets total bytes write.
         /// </summary>
         public long TotalBytesWrite
         {
@@ -185,27 +185,27 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Whether connected client is online or not
+        /// Whether connected client is online or not.
         /// </summary>
-        /// <param name="connectionId">Connection Id</param>
-        /// <returns>true if online, else false</returns>
+        /// <param name="connectionId">Connection Id.</param>
+        /// <returns>true if online, else false.</returns>
         public bool IsOnline(Guid connectionId)
         {
             return this._tokens.ContainsKey(connectionId);
         }
 
         /// <summary>
-        /// Whether connected client is online or not
+        /// Whether connected client is online or not.
         /// </summary>
-        /// <param name="connectionIP">Connection IP</param>
-        /// <returns>true if online, else false</returns>
+        /// <param name="connectionIP">Connection IP.</param>
+        /// <returns>true if online, else false.</returns>
         public bool IsOnline(IPAddress connectionIP)
         {
             return this._singleIPTokens.ContainsKey(connectionIP);
         }
 
         /// <summary>
-        /// Start socket server
+        /// Start socket server.
         /// </summary>
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Start(bool useIOCP = true)
@@ -214,9 +214,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Start socket server to listen specific local port
+        /// Start socket server to listen specific local port.
         /// </summary>
-        /// <param name="localEndPoint">local port to listen</param>
+        /// <param name="localEndPoint">local port to listen.</param>
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Start(IPEndPoint localEndPoint, bool useIOCP = true)
         {
@@ -263,11 +263,11 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send the data back to the client
+        /// Send the data back to the client.
         /// </summary>
-        /// <param name="connectionId">Client connection Id</param>
-        /// <param name="buffer">Data to send</param>
-        /// <param name="operation">user defined operation</param>
+        /// <param name="connectionId">Client connection Id.</param>
+        /// <param name="buffer">Data to send.</param>
+        /// <param name="operation">user defined operation.</param>
         public void Send(Guid connectionId, byte[] buffer, object operation = null)
         {
             AsyncSocketUserTokenEventArgs token;
@@ -326,10 +326,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send the data back to the client
+        /// Send the data back to the client.
         /// </summary>
-        /// <param name="connectionIP">Client connection IP</param>
-        /// <param name="buffer">Data to send</param>
+        /// <param name="connectionIP">Client connection IP.</param>
+        /// <param name="buffer">Data to send.</param>
         public void Send(IPAddress connectionIP, byte[] buffer, object operation = null)
         {
             AsyncSocketUserTokenEventArgs token;
@@ -405,7 +405,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Stop socket server
+        /// Stop socket server.
         /// </summary>
         public void Stop()
         {
@@ -460,22 +460,6 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketErrorEventArgs> temp = Interlocked.CompareExchange(ref ErrorOccurred, null, null);
-
-            if (temp != null)
-            {
-                temp(sender, e);
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
@@ -497,6 +481,22 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<AsyncSocketErrorEventArgs> temp = Interlocked.CompareExchange(ref ErrorOccurred, null, null);
+
+            if (temp != null)
+            {
+                temp(sender, e);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="eventHandler"></param>
         /// <param name="eventArgs"></param>
         private void RaiseEvent(EventHandler<AsyncSocketUserTokenEventArgs> eventHandler, AsyncSocketUserTokenEventArgs eventArgs)
@@ -511,7 +511,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Initialize Read/Write Pool
+        /// Initialize Read/Write Pool.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private void InitializePool()

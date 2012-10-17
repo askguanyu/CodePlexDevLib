@@ -15,15 +15,15 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Configuration;
 
     /// <summary>
-    /// Wcf ServiceHost Type
+    /// Wcf ServiceHost Type.
     /// </summary>
     public static class WcfServiceHostType
     {
         /// <summary>
-        /// Get the type list of hosted services from assembly file
+        /// Get the type list of hosted services from assembly file.
         /// </summary>
-        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly</param>
-        /// <returns>The type list of hosted services</returns>
+        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
+        /// <returns>The type list of hosted services.</returns>
         public static List<Type> LoadFile(string assemblyFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
@@ -61,11 +61,11 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get the type list of hosted services from assembly file
+        /// Get the type list of hosted services from assembly file.
         /// </summary>
-        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly</param>
-        /// <param name="typeFullName">The path of the configuration file</param>
-        /// <returns>The type list of hosted services</returns>
+        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
+        /// <param name="typeFullName">The path of the configuration file.</param>
+        /// <returns>The type list of hosted services.</returns>
         public static List<Type> LoadFile(string assemblyFile, string configFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
@@ -123,11 +123,11 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets the System.Type object with the specified name from assembly file
+        /// Gets the System.Type object with the specified name from assembly file.
         /// </summary>
-        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly</param>
-        /// <param name="typeFullName">The full name of the type</param>
-        /// <returns>A System.Type object that represents the specified class</returns>
+        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
+        /// <param name="typeFullName">The full name of the type.</param>
+        /// <returns>A System.Type object that represents the specified class.</returns>
         public static Type LoadFrom(string assemblyFile, string typeFullName)
         {
             if (string.IsNullOrEmpty(assemblyFile))

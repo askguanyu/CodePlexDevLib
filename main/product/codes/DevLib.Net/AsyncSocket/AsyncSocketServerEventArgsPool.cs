@@ -15,12 +15,12 @@ namespace DevLib.Net.AsyncSocket
     internal class AsyncSocketServerEventArgsPool
     {
         /// <summary>
-        /// The SocketAsyncEventArgs object pool
+        /// The SocketAsyncEventArgs object pool.
         /// </summary>
         private ConcurrentStack<SocketAsyncEventArgs> _pool;
 
         /// <summary>
-        /// Initializes the object pool to the specified size
+        /// Initializes the object pool to the specified size.
         /// </summary>
         public AsyncSocketServerEventArgsPool()
         {
@@ -28,7 +28,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// The number of SocketAsyncEventArgs instances in the pool
+        /// The number of SocketAsyncEventArgs instances in the pool.
         /// </summary>
         public int Count
         {
@@ -36,18 +36,18 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Add a SocketAsyncEventArg instance to the pool
+        /// Add a SocketAsyncEventArg instance to the pool.
         /// </summary>
-        /// <param name="item">The SocketAsyncEventArgs instance to add to the pool</param>
+        /// <param name="item">The SocketAsyncEventArgs instance to add to the pool.</param>
         public void Push(SocketAsyncEventArgs item)
         {
             this._pool.Push(item);
         }
 
         /// <summary>
-        /// Removes a SocketAsyncEventArgs instance from the pool
+        /// Removes a SocketAsyncEventArgs instance from the pool.
         /// </summary>
-        /// <returns>The object removed from the pool</returns>
+        /// <returns>The object removed from the pool.</returns>
         public SocketAsyncEventArgs Pop()
         {
             SocketAsyncEventArgs outPop;

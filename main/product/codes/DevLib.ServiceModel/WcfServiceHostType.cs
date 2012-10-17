@@ -53,7 +53,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
                 throw;
             }
 
@@ -108,14 +108,14 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
                         throw;
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace));
                 throw;
             }
 
@@ -152,7 +152,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfServiceHostType.LoadFrom", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFrom", e.Source, e.Message, e.StackTrace));
                 throw;
             }
         }

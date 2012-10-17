@@ -42,25 +42,30 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            PrintStartInfo();
+            new Action(() =>
+            {
 
-            //TestCodeSnippets();
+                PrintStartInfo();
 
-            new Action(() => TestDevLibDiagnostics()).CodeTime();
+                TestCodeSnippets();
 
-            //TestDevLibExtensionMethods();
+                TestDevLibDiagnostics();
 
-            //TestDevLibNet();
+                //TestDevLibExtensionMethods();
 
-            //TestDevLibUtilities();
+                //TestDevLibNet();
 
-            //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
+                //TestDevLibUtilities();
 
-            //TestDevLibServiceModel();
+                //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
 
-            //TestDevLibSettings();
+                //TestDevLibServiceModel();
 
-            PrintExitInfo();
+                TestDevLibSettings();
+
+                PrintExitInfo();
+            }
+            ).CodeTime();
         }
 
         private static void PrintStartInfo()
@@ -82,9 +87,7 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
-            PrintMethodName("TestCodeSnippet");
-
-            Console.WriteLine(string.Format("hello{0}world",""));
+            PrintMethodName("Test CodeSnippets");
 
             //Configuration config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "test.config") }, ConfigurationUserLevel.None);
             //Configuration config1 = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()) }, ConfigurationUserLevel.None);

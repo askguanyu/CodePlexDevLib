@@ -139,7 +139,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Open", e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Open", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -158,7 +158,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Close", e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Close", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -177,7 +177,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Abort", e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Abort", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -196,7 +196,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.Restart", e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Restart", e.Source, e.Message, e.StackTrace));
                     throw;
                 }
             }
@@ -312,9 +312,9 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
                 appDomainSetup.ConfigurationFile = this.ConfigFile;
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
-
                 //appDomainSetup.ShadowCopyFiles = "true";
                 //appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
+
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
                 this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
                 this.IsAppDomainLoaded = true;
@@ -324,7 +324,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "WcfIsolatedServiceHost.CreateDomain", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.CreateDomain", e.Source, e.Message, e.StackTrace));
                 this.Unload();
                 throw;
             }

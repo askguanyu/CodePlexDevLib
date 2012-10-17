@@ -41,7 +41,7 @@ namespace DevLib.Settings
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "SettingsManager.Open", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.SettingsManager.Open", e.Source, e.Message, e.StackTrace));
                 configuration = ConfigurationManager.OpenExeConfiguration(Path.GetTempFileName());
             }
 

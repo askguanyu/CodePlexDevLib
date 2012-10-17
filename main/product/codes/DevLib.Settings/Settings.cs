@@ -154,7 +154,7 @@ namespace DevLib.Settings
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "Settings.ToJson", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.ToJson", e.Source, e.Message, e.StackTrace));
             }
             finally
             {
@@ -193,7 +193,7 @@ namespace DevLib.Settings
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "Settings.FromJson", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.FromJson", e.Source, e.Message, e.StackTrace));
             }
             finally
             {

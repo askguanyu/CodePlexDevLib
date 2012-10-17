@@ -137,7 +137,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert string to enum.
         /// </summary>
-        /// <typeparam name="TEnum"></typeparam>
+        /// <typeparam name="TEnum">The type of <paramref name="returns"/> enum.</typeparam>
         /// <param name="source">String.</param>
         /// <param name="defaultValue">Default value of enum.</param>
         /// <param name="ignoreCase">Whether ignore case.</param>
@@ -174,9 +174,9 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Whether string is in enum.
         /// </summary>
-        /// <typeparam name="TEnum">The type of enum</typeparam>
+        /// <typeparam name="TEnum">The type of enum.</typeparam>
         /// <param name="source">String.</param>
-        /// <returns>True if string in enum.</returns>
+        /// <returns>True if string in enum; otherwise, false.</returns>
         public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct
         {
             return Enum.IsDefined(typeof(TEnum), source);

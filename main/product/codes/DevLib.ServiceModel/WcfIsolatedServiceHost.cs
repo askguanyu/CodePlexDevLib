@@ -10,6 +10,7 @@ namespace DevLib.ServiceModel
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
+    using System.Security.Permissions;
     using System.Threading;
 
     /// <summary>
@@ -264,6 +265,7 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <returns></returns>
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
         {
             return null;

@@ -22,16 +22,9 @@ namespace DevLib.Diagnostics
         /// </summary>
         private static Random _random = new Random();
 
+        /*
         /// <summary>
-        /// Initialize code snippets performence timer.
-        /// </summary>
-        public static void Initialize()
-        {
-            DevLib.Diagnostics.CodeTimer.Time(() => { }, 1, "Initialize CodeTimer...");
-        }
-
-        /// <summary>
-        /// Run code snippets and give a performance test result.
+        /// Run code snippets and give a performance test result. Extension Method for .Net 3.5 or above.
         /// </summary>
         /// <param name="action">Code snippets to run.</param>
         /// <param name="iteration">Repeat times.</param>
@@ -43,19 +36,33 @@ namespace DevLib.Diagnostics
         {
             DevLib.Diagnostics.CodeTimer.Time(action, iteration, name, outputAction);
         }
+        */
+
+        /// <summary>
+        /// Encapsulates a method that has no parameters and does not return a value.
+        /// </summary>
+        public delegate void ActionDelegate();
+
+        /// <summary>
+        /// Initialize code snippets performence timer.
+        /// </summary>
+        public static void Initialize()
+        {
+            DevLib.Diagnostics.CodeTimer.Time(delegate() { }, 1, "Initialize CodeTimer...");
+        }
 
         /// <summary>
         /// Run code snippets and give a performance test result.
         /// </summary>
         /// <param name="action">Code snippets to run.
-        /// <example>E.g. <code>() => { Console.WriteLine("Hello"); }</code></example>
+        /// <example>E.g. <code>delegate() { Console.WriteLine("Hello"); }</code></example>
         /// </param>
         /// <param name="iteration">Repeat times.</param>
         /// <param name="name">The name of current performance.</param>
         /// <param name="outputAction">The action to handle the performance test result string.
         /// <example>Default: <code>Console.WriteLine</code></example>
         /// </param>
-        public static void Time(Action action, int iteration = 1, string name = null, Action<string> outputAction = null)
+        public static void Time(ActionDelegate action, int iteration = 1, string name = null, Action<string> outputAction = null)
         {
             if ((action == null) || (iteration < 1))
             {
@@ -78,7 +85,7 @@ namespace DevLib.Diagnostics
 
             // Backup current console color
             ConsoleColor originalForeColor = Console.ForegroundColor;
-            ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(9, 15);
+            ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(1, 15);
 
             Console.ForegroundColor = consoleRandomColor;
             string beginTitle = string.Format("┌── Time Begin--> {0} ──┐", name);
@@ -146,7 +153,7 @@ namespace DevLib.Diagnostics
             Console.WriteLine();
         }
 
-        #region NativeMethods
+        #region Native Methods Wrap
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool QueryThreadCycleTime(IntPtr threadHandle, ref ulong cycleTime);

@@ -66,7 +66,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Assigns a buffer from the buffer pool to the specified SocketAsyncEventArgs object.
         /// </summary>
-        /// <returns>true if the buffer was successfully set, else false.</returns>
+        /// <returns>true if the buffer was successfully set; otherwise, false.</returns>
         public bool SetBuffer(SocketAsyncEventArgs args)
         {
             if (this._freeIndexPool.Count > 0)

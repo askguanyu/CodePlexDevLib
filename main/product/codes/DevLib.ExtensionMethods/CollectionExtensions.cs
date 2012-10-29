@@ -58,7 +58,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source"></param>
-        /// <returns>True if the source sequence is empty; otherwise, false.</returns>
+        /// <returns>true if the source sequence is empty; otherwise, false.</returns>
         public static bool IsEmpty<T>(this IEnumerable<T> source)
         {
             if (source == null)
@@ -74,7 +74,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source"></param>
-        /// <returns>True if the source sequence is NOT empty; otherwise, false.</returns>
+        /// <returns>true if the source sequence is NOT empty; otherwise, false.</returns>
         public static bool IsNotEmpty<T>(this IEnumerable<T> source)
         {
             if (source == null)

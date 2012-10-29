@@ -20,59 +20,36 @@ namespace DevLib.ExtensionMethods
         /// <returns>Byte array of data from the url.</returns>
         public static byte[] DownloadData(this string url)
         {
-            byte[] downloadedData = new byte[0];
-            Stream stream = null;
-            MemoryStream memoryStream = null;
+            WebRequest req = WebRequest.Create(url);
 
-            try
+            using (WebResponse response = req.GetResponse())
             {
-                WebRequest req = WebRequest.Create(url);
-                WebResponse response = req.GetResponse();
-
-                stream = response.GetResponseStream();
-
-                // Download in chunks
-                byte[] buffer = new byte[1024];
-
-                int dataLength = (int)response.ContentLength;
-
-                // Download to memory
-                memoryStream = new MemoryStream();
-
-                while (true)
+                using (Stream stream = response.GetResponseStream())
                 {
-                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    using (MemoryStream memoryStream = new MemoryStream())
+                    {
+                        // Download in chunks
+                        byte[] buffer = new byte[1024];
+                        int dataLength = (int)response.ContentLength;
 
-                    if (bytesRead == 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        memoryStream.Write(buffer, 0, bytesRead);
+                        while (true)
+                        {
+                            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+
+                            if (bytesRead == 0)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                memoryStream.Write(buffer, 0, bytesRead);
+                            }
+                        }
+
+                        return memoryStream.ToArray();
                     }
                 }
-
-                downloadedData = memoryStream.ToArray();
             }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Close();
-                }
-
-                if (memoryStream != null)
-                {
-                    memoryStream.Close();
-                }
-            }
-
-            return downloadedData;
         }
     }
 }

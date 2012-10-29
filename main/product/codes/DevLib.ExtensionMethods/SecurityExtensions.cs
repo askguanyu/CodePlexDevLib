@@ -15,27 +15,29 @@ namespace DevLib.ExtensionMethods
     public static class SecurityExtensions
     {
         /// <summary>
-        /// Verifies a <see cref="string">string</see> against the passed MD5 hash.
+        /// Verifies a original string against the passed MD5 hash.
         /// </summary>
         /// <param name="source">The <see cref="string">string</see> to compare.</param>
         /// <param name="hash">The hash to compare against.</param>
-        /// <returns>True if the input and the hash are the same; otherwise, false.</returns>
-        public static bool MD5Verify(this string source, string hash)
+        /// <returns>true if the input and the hash are the same; otherwise, false.</returns>
+        public static bool MD5VerifyToHash(this string source, string hash)
         {
-            // Hash the input.
             string sourceHash = source.ToMD5();
 
-            // Create a StringComparer an compare the hashes.
-            StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+            return source.Equals(hash, StringComparison.OrdinalIgnoreCase);
+        }
 
-            if (0 == comparer.Compare(sourceHash, hash))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        /// <summary>
+        /// Verifies a MD5 hash against the passed original string.
+        /// </summary>
+        /// <param name="source">The MD5 hash to compare.</param>
+        /// <param name="original">The original to compare against.</param>
+        /// <returns>true if the input and the hash are the same; otherwise, false.</returns>
+        public static bool MD5VerifyToOriginal(this string source, string original)
+        {
+            string sourceHash = original.ToMD5();
+
+            return source.Equals(sourceHash, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -47,24 +49,9 @@ namespace DevLib.ExtensionMethods
         {
             byte[] data;
 
-            MD5 hasher = null;
-            try
+            using (MD5 hasher = MD5.Create())
             {
-                hasher = MD5.Create();
                 data = hasher.ComputeHash(Encoding.Default.GetBytes(source));
-                hasher.Clear();
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (hasher != null)
-                {
-                    hasher.Dispose();
-                    hasher = null;
-                }
             }
 
             if (data != null)
@@ -95,38 +82,14 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
             }
 
-            string result = null;
-            RSACryptoServiceProvider rsa = null;
-
-            try
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
-                CspParameters cspParameters = new CspParameters();
-                cspParameters.KeyContainerName = key;
-
-                rsa = new RSACryptoServiceProvider(cspParameters);
                 rsa.PersistKeyInCsp = true;
-
                 string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
                 byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, (a => Convert.ToByte(byte.Parse(a, System.Globalization.NumberStyles.HexNumber))));
-
                 byte[] bytes = rsa.Decrypt(decryptByteArray, true);
-                result = System.Text.UTF8Encoding.UTF8.GetString(bytes);
-                rsa.Clear();
+                return System.Text.UTF8Encoding.UTF8.GetString(bytes);
             }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (rsa != null)
-                {
-                    rsa.Dispose();
-                    rsa = null;
-                }
-            }
-
-            return result;
         }
 
         /// <summary>
@@ -147,35 +110,12 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentException("Cannot encrypt using an empty key. Please supply an encryption key.");
             }
 
-            string result = null;
-            RSACryptoServiceProvider rsa = null;
-
-            try
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
-                CspParameters cspParameters = new CspParameters();
-                cspParameters.KeyContainerName = key;
-
-                rsa = new RSACryptoServiceProvider(cspParameters);
                 rsa.PersistKeyInCsp = true;
-
                 byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(source), true);
-                result = BitConverter.ToString(bytes);
-                rsa.Clear();
+                return BitConverter.ToString(bytes);
             }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (rsa != null)
-                {
-                    rsa.Dispose();
-                    rsa = null;
-                }
-            }
-
-            return result;
         }
     }
 }

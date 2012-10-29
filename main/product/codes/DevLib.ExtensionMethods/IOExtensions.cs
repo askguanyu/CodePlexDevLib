@@ -329,7 +329,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The file to check.</param>
         /// <returns>
-        /// True if the caller has the required permissions and path contains the name of an existing file; otherwise, false.
+        /// true if the caller has the required permissions and path contains the name of an existing file; otherwise, false.
         /// This method also returns false if path is null, an invalid path, or a zero-length string.
         /// If the caller does not have sufficient permissions to read the specified file,
         /// no exception is thrown and the method returns false regardless of the existence of path.
@@ -343,7 +343,7 @@ namespace DevLib.ExtensionMethods
         /// Determines whether the given path refers to an existing directory on disk.
         /// </summary>
         /// <param name="source">The path to test.</param>
-        /// <returns>True if path refers to an existing directory; otherwise, false.</returns>
+        /// <returns>true if path refers to an existing directory; otherwise, false.</returns>
         public static bool ExistsDirectory(this string source)
         {
             return Directory.Exists(source);

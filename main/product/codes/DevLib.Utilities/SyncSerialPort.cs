@@ -276,7 +276,7 @@ namespace DevLib.Utilities
                 // free managed resources
                 if (this._autoResetEvent != null)
                 {
-                    this._autoResetEvent.Dispose();
+                    this._autoResetEvent.Close();
                     this._autoResetEvent = null;
                 }
 

@@ -191,7 +191,7 @@ namespace DevLib.WinForms
             // If the element has child elements or value, then add the element to the
             // Rtf. {{0}} will be replaced with the attributes and {{1}} will be replaced
             // with the child elements or value.
-            if (element.HasElements || !string.IsNullOrWhiteSpace(element.Value))
+            if (element.HasElements || !string.IsNullOrEmpty(element.Value))
             {
                 elementRtfFormat = string.Format(@"
 {0}\cf{1} <\cf{2} {3}{{0}}\cf{1} >\par
@@ -285,7 +285,7 @@ namespace DevLib.WinForms
         /// <returns></returns>
         public static string Encode(string originalText)
         {
-            if (string.IsNullOrWhiteSpace(originalText))
+            if (string.IsNullOrEmpty(originalText))
             {
                 return string.Empty;
             }

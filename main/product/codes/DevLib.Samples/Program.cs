@@ -42,12 +42,11 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            new Action(() =>
+            CodeTimer.Time(delegate()
             {
-
                 PrintStartInfo();
 
-                TestCodeSnippets();
+                //TestCodeSnippets();
 
                 TestDevLibDiagnostics();
 
@@ -61,11 +60,10 @@ namespace DevLib.Samples
 
                 //TestDevLibServiceModel();
 
-                TestDevLibSettings();
+                //TestDevLibSettings();
 
                 PrintExitInfo();
-            }
-            ).CodeTime();
+            });
         }
 
         private static void PrintStartInfo()
@@ -234,29 +232,26 @@ namespace DevLib.Samples
             ConcurrentBag<string> safeBag = new ConcurrentBag<string>();
 
             CodeTimer.Initialize();
-
+            
             int times = 1000 * 10;
 
             TestClass testClass = new TestClass { Name = "Bill" };
             object[] parameters = new object[] { 1, 2 };
             MethodInfo methodInfo = typeof(TestClass).GetMethod("TestAdd");
 
-            CodeTimer.Time(() =>
-            {
-                testClass.TestAdd(1, 2);
-            }, times);
+            CodeTimer.Time(delegate() { testClass.TestAdd(1, 2); }, times);
 
-            methodInfo.Invoke(testClass, parameters).ConsoleOutput();
-            CodeTimer.Time(() =>
-            {
-                methodInfo.Invoke(testClass, parameters);
-            }, times, "Reflection invoke1");
+            //methodInfo.Invoke(testClass, parameters).ConsoleOutput();
+            //CodeTimer.Time(new Action(() =>
+            //{
+            //    methodInfo.Invoke(testClass, parameters);
+            //}), times, "Reflection invoke1");
 
-            testClass.InvokeMethod("TestAdd", parameters).ConsoleOutput();
-            CodeTimer.Time(() =>
-            {
-                testClass.InvokeMethod("TestAdd", parameters);
-            }, times, "Reflection invoke3");
+            //testClass.InvokeMethod("TestAdd", parameters).ConsoleOutput();
+            //CodeTimer.Time(new Action(() =>
+            //{
+            //    testClass.InvokeMethod("TestAdd", parameters);
+            //}), times, "Reflection invoke3");
 
             //ReflectionUtilities.DynamicMethodExecute(methodInfo, testClass, parameters).ConsoleOutput();
             //CodeTimer.Time(times, "DynamicMethodExecute", () =>
@@ -353,18 +348,18 @@ namespace DevLib.Samples
             #endregion
 
             #region Byte
-            //byte[] bytes = new byte[] { 1, 2, 3, 4, 5,6,7,8,9,10 };
-            ////var obj = bytes.ToObject<int>();
+            byte[] bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            //var obj = bytes.ToObject<int>();
 
-            //TestEventClass aobject = new TestEventClass() { MyName = "object to []" };
-            //aobject.ToByteArray().ToObject<TestEventClass>().MyName.ConsoleWriteLine();
-            //int i = 123;
-            //i.ToByteArray().ToObject().ConsoleWriteLine();
+            "compress".ConsoleOutput();
+            var input = sourceArray.ToByteArray();
+            input.Length.ConsoleOutput();
 
-            //"compress".ConsoleWriteLine();
-            //sourceArray.ToByteArray().Length.ConsoleWriteLine();
-            //sourceArray.ToByteArray().Compress().Length.ConsoleWriteLine();
-            //sourceArray.ToByteArray().Compress().Decompress().Length.ConsoleWriteLine();
+            var compress = input.Compress();
+            compress.Length.ConsoleOutput();
+
+            var output = compress.Decompress();
+            output.Length.ConsoleOutput();
             #endregion
 
             #region Collection
@@ -390,6 +385,13 @@ namespace DevLib.Samples
             sourceArray.ForEach((p) => { p.CopyPropertiesFrom(appendArray[1]); });
             sourceArray.ForEach((p) => { p.Name.ConsoleOutput(); });
             "End: Object".ConsoleOutput();
+            #endregion
+
+            #region Security
+            string inputString = "Hello I am secret.".ConsoleOutput();
+            inputString.RSAEncrypt("key").ConsoleOutput().RSADecrypt("key").ConsoleOutput();
+            inputString.ToMD5().ConsoleOutput().MD5VerifyToOriginal(inputString).ConsoleOutput();
+
             #endregion
 
             #region String

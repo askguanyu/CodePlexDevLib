@@ -92,10 +92,31 @@ namespace DevLib.ExtensionMethods
         /// Indicates whether the specified string is null or an System.String.Empty string.
         /// </summary>
         /// <param name="source">The string to test.</param>
-        /// <returns>True if the value parameter is null or an empty string (""); otherwise, false.</returns>
+        /// <returns>true if the value parameter is null or an empty string (""); otherwise, false.</returns>
         public static bool IsNullOrEmpty(this string source)
         {
             return string.IsNullOrEmpty(source);
+        }
+
+        /// <summary>
+        /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+        /// </summary>
+        /// <param name="source">The string to test.</param>
+        /// <returns>true if the <paramref name="source" /> parameter is null or <see cref="F:System.String.Empty" />, or if <paramref name="source" /> consists exclusively of white-space characters. </returns>
+        public static bool IsNullOrWhiteSpace(this string source)
+        {
+            if (source == null)
+            {
+                return true;
+            }
+            for (int i = 0; i < source.Length; i++)
+            {
+                if (!char.IsWhiteSpace(source[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -145,28 +166,19 @@ namespace DevLib.ExtensionMethods
         /// <returns>Enum.</returns>
         public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool ignoreException = true) where TEnum : struct
         {
-            TEnum result;
-
-            if (ignoreException)
+            try
             {
-                if (Enum.TryParse<TEnum>(source, ignoreCase, out result))
-                {
-                    return result;
-                }
-                else
+                return (TEnum)Enum.Parse(typeof(TEnum), source, ignoreCase);
+            }
+            catch
+            {
+                if (ignoreException)
                 {
                     return defaultValue;
                 }
-            }
-            else
-            {
-                if (Enum.TryParse<TEnum>(source, ignoreCase, out result))
-                {
-                    return result;
-                }
                 else
                 {
-                    throw new ArgumentException("The source is not a item of Enum");
+                    throw;
                 }
             }
         }
@@ -176,7 +188,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="TEnum">The type of enum.</typeparam>
         /// <param name="source">String.</param>
-        /// <returns>True if string in enum; otherwise, false.</returns>
+        /// <returns>true if string in enum; otherwise, false.</returns>
         public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct
         {
             return Enum.IsDefined(typeof(TEnum), source);

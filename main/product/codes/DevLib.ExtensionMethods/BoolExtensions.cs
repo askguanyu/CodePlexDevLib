@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
+    using System;
+
     /// <summary>
     /// Bool Extensions.
     /// </summary>
@@ -34,10 +36,20 @@ namespace DevLib.ExtensionMethods
         /// Convert int to bool.
         /// </summary>
         /// <param name="source"></param>
-        /// <returns>True if 1; otherwise, false.</returns>
+        /// <returns>true if 1; otherwise, false.</returns>
         public static bool ToBool(this int source)
         {
             return source == 1 ? true : false;
+        }
+
+        /// <summary>
+        /// Convert "Yes" or "No" to bool.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns>true if "Yes"; otherwise, false.</returns>
+        public static bool ToBool(this string source, bool ignoreCase = true)
+        {
+            return source.Equals("Yes", ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) ? true : false;
         }
     }
 }

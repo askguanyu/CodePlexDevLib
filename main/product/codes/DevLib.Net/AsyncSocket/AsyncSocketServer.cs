@@ -189,7 +189,7 @@ namespace DevLib.Net.AsyncSocket
         /// Whether connected client is online or not.
         /// </summary>
         /// <param name="connectionId">Connection Id.</param>
-        /// <returns>true if online, else false.</returns>
+        /// <returns>true if online; otherwise, false.</returns>
         public bool IsOnline(Guid connectionId)
         {
             return this._tokens.ContainsKey(connectionId);
@@ -199,7 +199,7 @@ namespace DevLib.Net.AsyncSocket
         /// Whether connected client is online or not.
         /// </summary>
         /// <param name="connectionIP">Connection IP.</param>
-        /// <returns>true if online, else false.</returns>
+        /// <returns>true if online; otherwise, false.</returns>
         public bool IsOnline(IPAddress connectionIP)
         {
             return this._singleIPTokens.ContainsKey(connectionIP);

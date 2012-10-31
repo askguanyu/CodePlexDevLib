@@ -44,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -59,6 +60,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.AddIn" />
+    <Reference Include="System.AddIn.Contract" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -85,6 +88,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DevLib.AddIn\DevLib.AddIn.csproj">
+      <Project>{D2B536FD-62D2-46BA-9938-872C120C3FBF}</Project>
+      <Name>DevLib.AddIn</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Diagnostics\DevLib.Diagnostics.csproj">
       <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
       <Name>DevLib.Diagnostics</Name>

@@ -14,7 +14,7 @@ namespace DevLib.Diagnostics
     /// <summary>
     /// Code snippets performence timer.
     /// </summary>
-    [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+    [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
     public static class CodeTimer
     {
         /// <summary>

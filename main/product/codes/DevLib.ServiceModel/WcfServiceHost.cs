@@ -8,6 +8,7 @@ namespace DevLib.ServiceModel
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Security.Permissions;
     using System.ServiceModel;
     using System.Threading;
@@ -15,12 +16,20 @@ namespace DevLib.ServiceModel
     /// <summary>
     /// Wcf ServiceHost.
     /// </summary>
+    [Serializable]
     public class WcfServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
         ///
         /// </summary>
         private List<ServiceHost> _serviceHostList = new List<ServiceHost>();
+
+        /// <summary>
+        /// Constructor of WcfServiceHost, host Wcf service in current AppDomain. Use Initialize method to initialize wcf service.
+        /// </summary>
+        public WcfServiceHost()
+        {
+        }
 
         /// <summary>
         ///
@@ -68,38 +77,67 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfServiceHostEventArgs> Restarted;
 
         /// <summary>
+        /// Gets current Wcf service assembly file.
+        /// </summary>
+        public string AssemblyFile
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets current Wcf service config file.
+        /// </summary>
+        public string ConfigFile
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Initialize Wcf service.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
-        public void Init(string assemblyFile, string configFile)
+        public void Initialize(string assemblyFile, string configFile = null)
         {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new ArgumentException("The file does not exist.", assemblyFile);
+            }
+
+            this.AssemblyFile = assemblyFile;
             this._serviceHostList.Clear();
 
-            try
+            if (string.IsNullOrEmpty(configFile))
             {
-                foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile ?? string.Format("{0}.config", assemblyFile)))
+                this.Init(this.AssemblyFile, AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            }
+            else
+            {
+                this.ConfigFile = configFile;
+
+                if (!File.Exists(this.ConfigFile))
                 {
-                    try
-                    {
-                        ServiceHost serviceHost = new ServiceHost(serviceType);
-                        this._serviceHostList.Add(serviceHost);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace));
-                        throw;
-                    }
+                    throw new ArgumentException("The file does not exist.", this.ConfigFile);
+                }
+
+                try
+                {
+                    this._serviceHostList.AddRange(WcfServiceHostType.LoadServiceHost(this.AssemblyFile, this.ConfigFile));
+                    this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Initialize", e.Source, e.Message, e.StackTrace));
+                    throw;
                 }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace));
-                throw;
-            }
-
-            this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);
         }
 
         /// <summary>
@@ -125,7 +163,7 @@ namespace DevLib.ServiceModel
 
                             _serviceHostList[i].Open();
                             this.RaiseEvent(Opened, _serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", _serviceHostList[i].Description.ServiceType.FullName, _serviceHostList[i].BaseAddresses[0].AbsoluteUri));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
                         catch (Exception e)
                         {
@@ -153,7 +191,7 @@ namespace DevLib.ServiceModel
                         {
                             serviceHost.Close();
                             this.RaiseEvent(Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
                         catch (Exception e)
                         {
@@ -179,7 +217,7 @@ namespace DevLib.ServiceModel
                     {
                         serviceHost.Abort();
                         this.RaiseEvent(Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses[0].AbsoluteUri));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
                     catch (Exception e)
                     {
@@ -207,7 +245,7 @@ namespace DevLib.ServiceModel
                         this._serviceHostList[i] = new ServiceHost(_serviceHostList[i].Description.ServiceType);
                         this._serviceHostList[i].Open();
                         this.RaiseEvent(Restarted, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Restarted);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses[0].AbsoluteUri));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
                     catch (Exception e)
                     {
@@ -256,10 +294,46 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <returns></returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
         {
             return null;
+        }
+
+        /// <summary>
+        /// Initialize Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        internal void Init(string assemblyFile, string configFile)
+        {
+            this._serviceHostList.Clear();
+
+            try
+            {
+                // To use config file to setup ServiceHost, wcf service and config file should be in a same domain.
+                foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile))
+                {
+                    try
+                    {
+                        ServiceHost serviceHost = new ServiceHost(serviceType);
+                        this._serviceHostList.Add(serviceHost);
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace));
+                        throw;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace));
+                throw;
+            }
+
+            this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);
         }
 
         /// <summary>

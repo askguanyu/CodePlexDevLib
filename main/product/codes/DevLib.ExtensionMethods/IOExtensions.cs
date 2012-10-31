@@ -265,7 +265,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="fileName">Path or File name.</param>
         /// <returns>Full path or the file name if open folder successfully.</returns>
-        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static string OpenContainingFolder(this string fileName)
         {
             if (string.IsNullOrEmpty(fileName))

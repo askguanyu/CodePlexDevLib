@@ -6,6 +6,8 @@
 namespace DevLib.Samples
 {
     using System;
+    using System.AddIn;
+    using System.AddIn.Hosting;
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -24,6 +26,7 @@ namespace DevLib.Samples
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Linq;
+    using DevLib.AddIn;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
     using DevLib.Main;
@@ -42,13 +45,15 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            CodeTimer.Time(delegate()
-            {
+            //CodeTimer.Time(delegate()
+            //{
                 PrintStartInfo();
 
                 //TestCodeSnippets();
 
-                TestDevLibDiagnostics();
+                TestDevLibAddIn();
+
+                //TestDevLibDiagnostics();
 
                 //TestDevLibExtensionMethods();
 
@@ -63,7 +68,48 @@ namespace DevLib.Samples
                 //TestDevLibSettings();
 
                 PrintExitInfo();
-            });
+            //});
+        }
+
+        public static AddInDomain addin = null;
+
+        private static void TestDevLibAddIn()
+        {
+            PrintMethodName("Test DevLib.AddIn");
+
+            addin = AddInDomain.CreateDomain("wcf");
+
+            addin.Attached += new EventHandler(addin_Attached);
+            addin.Detached += new EventHandler(addin_Detached);
+
+            //var form = addin.CreateInstance<WinFormRibbon>();
+            //form.ShowDialog();
+
+            var wcf = addin.CreateInstance<WcfServiceHost>();
+            wcf.Initialize(@"E:\Temp\WcfCalc.dll");
+            wcf.Open();
+
+            //addin.Dispose();
+
+            //WcfServiceHost wcf = n  WcfServiceHost();
+
+            //ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll.config") }, ConfigurationUserLevel.None);
+            ////WcfIsolatedServiceHost wcf = new WcfIsolatedServiceHost();
+            //wcf.Initialize(Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll"));
+            //wcf.Open();
+
+        }
+
+        static void addin_Detached(object sender, EventArgs e)
+        {
+            var wcf = addin.CreateInstance<WcfServiceHost>();
+            wcf.Initialize(@"E:\Temp\WcfCalc.dll");
+            wcf.Open();
+        }
+
+        static void addin_Attached(object sender, EventArgs e)
+        {
+            Debug.WriteLine("start");
         }
 
         private static void PrintStartInfo()
@@ -87,6 +133,9 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test CodeSnippets");
 
+            AddInProcess addin = new AddInProcess(Platform.AnyCpu);
+            //Activator.CreateInstance<>
+            
             //Configuration config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "test.config") }, ConfigurationUserLevel.None);
             //Configuration config1 = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()) }, ConfigurationUserLevel.None);
             //config.Sections.Add(.AppSettings.Settings.Add("key1", "value1");
@@ -448,7 +497,8 @@ namespace DevLib.Samples
             //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
             //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
 
-            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost(Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll"), Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll.config"));
+            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost();
+            host.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
 
             host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
             host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");

@@ -16,11 +16,13 @@ namespace DevLib.ServiceModel
     /// <summary>
     /// Wcf Isolated ServiceHost.
     /// </summary>
+    [Serializable]
     public class WcfIsolatedServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
         ///
         /// </summary>
+        [NonSerialized]
         private AppDomain _appDomain;
 
         /// <summary>
@@ -29,15 +31,10 @@ namespace DevLib.ServiceModel
         private WcfServiceHost _wcfServiceHost;
 
         /// <summary>
-        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service.
+        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize wcf service.
         /// </summary>
-        /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="configFile">Wcf service config file.</param>
-        public WcfIsolatedServiceHost(string assemblyFile, string configFile)
+        public WcfIsolatedServiceHost()
         {
-            this.AssemblyFile = assemblyFile;
-            this.ConfigFile = configFile ?? string.Format("{0}.config", assemblyFile);
-            this.CreateDomain();
         }
 
         /// <summary>
@@ -125,6 +122,35 @@ namespace DevLib.ServiceModel
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        public void Initialize(string assemblyFile, string configFile = null)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new ArgumentException("The file does not exist.", assemblyFile);
+            }
+
+            this.AssemblyFile = assemblyFile;
+
+            this.ConfigFile = configFile ?? AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+
+            if (!File.Exists(this.ConfigFile))
+            {
+                throw new ArgumentException("The file does not exist.", this.ConfigFile);
+            }
+
+            this.CreateDomain();
         }
 
         /// <summary>
@@ -265,7 +291,7 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <returns></returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
         {
             return null;
@@ -310,12 +336,12 @@ namespace DevLib.ServiceModel
             try
             {
                 AppDomainSetup appDomainSetup = new AppDomainSetup();
-                appDomainSetup.ApplicationBase = Path.GetDirectoryName(this.AssemblyFile);
+                appDomainSetup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
                 appDomainSetup.ConfigurationFile = this.ConfigFile;
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
-                //appDomainSetup.ShadowCopyFiles = "true";
-                //appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
+                appDomainSetup.ShadowCopyFiles = "true";
+                appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
 
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
                 this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;

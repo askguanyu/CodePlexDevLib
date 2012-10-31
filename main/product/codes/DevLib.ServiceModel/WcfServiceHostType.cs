@@ -12,7 +12,9 @@ namespace DevLib.ServiceModel
     using System.IO;
     using System.Reflection;
     using System.ServiceModel;
+    using System.ServiceModel.Channels;
     using System.ServiceModel.Configuration;
+    using System.ServiceModel.Description;
 
     /// <summary>
     /// Wcf ServiceHost Type.
@@ -123,6 +125,89 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <param name="assemblyFile"></param>
+        /// <param name="configFile"></param>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        public static List<ServiceHost> LoadServiceHost(string assemblyFile, string configFile)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new ArgumentException("The file does not exist.", assemblyFile);
+            }
+
+            if (string.IsNullOrEmpty(configFile))
+            {
+                throw new ArgumentNullException("configFile");
+            }
+
+            if (!File.Exists(configFile))
+            {
+                throw new ArgumentException("The file does not exist.", configFile);
+            }
+
+            List<ServiceHost> result = new List<ServiceHost>();
+
+            try
+            {
+                Assembly assembly = Assembly.LoadFrom(assemblyFile);
+                Configuration configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = configFile }, ConfigurationUserLevel.None);
+                ServiceModelSectionGroup serviceModelSectionGroup = configuration.GetSectionGroup("system.serviceModel") as ServiceModelSectionGroup;
+                foreach (ServiceElement serviceElement in serviceModelSectionGroup.Services.Services)
+                {
+                    try
+                    {
+                        Type serviceType = assembly.GetType(serviceElement.Name);
+
+                        if (serviceType != null && IsWcfServiceClass(serviceType))
+                        {
+                            Uri baseAddress = null;
+
+                            foreach (BaseAddressElement baseAddressElement in serviceElement.Host.BaseAddresses)
+                            {
+                                baseAddress = new Uri(baseAddressElement.BaseAddress);
+                                break;
+                            }
+
+                            ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
+
+                            foreach (ServiceEndpointElement serviceEndpointElement in serviceElement.Endpoints)
+                            {
+                                if (!serviceEndpointElement.Binding.StartsWith("mex"))
+                                {
+                                    var contract = assembly.GetType(serviceEndpointElement.Contract);
+                                    var address = new Uri(baseAddress, serviceEndpointElement.Address);
+                                    var binding = GetBinding(serviceEndpointElement.Binding, false);
+                                    serviceHost.AddServiceEndpoint(serviceEndpointElement.Contract, binding, address);
+                                    result.Add(serviceHost);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadServiceHost", e.Source, e.Message, e.StackTrace));
+                        throw;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadServiceHost", e.Source, e.Message, e.StackTrace));
+                throw;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Gets the System.Type object with the specified name from assembly file.
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
@@ -165,6 +250,61 @@ namespace DevLib.ServiceModel
         internal static bool IsWcfServiceClass(Type type)
         {
             return type.IsClass && HasServiceContractAttribute(type) && !IsDerivedFrom(type, typeof(ClientBase<>));
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="isMexBinding"></param>
+        /// <returns></returns>
+        private static Binding GetBinding(string address, bool isMexBinding)
+        {
+            if (isMexBinding)
+            {
+                if (address.StartsWith("mexNamedPipeBinding"))
+                    return MetadataExchangeBindings.CreateMexNamedPipeBinding();
+
+                if (address.StartsWith("mexTcpBinding"))
+                    return MetadataExchangeBindings.CreateMexTcpBinding();
+
+                if (address.StartsWith("mexHttpBinding"))
+                    return MetadataExchangeBindings.CreateMexHttpBinding();
+
+                if (address.StartsWith("mexHttpsBinding"))
+                    return MetadataExchangeBindings.CreateMexHttpsBinding();
+            }
+            else
+            {
+                if (address.StartsWith("netNamedPipeBinding"))
+                    return new NetNamedPipeBinding();
+
+                if (address.StartsWith("netTcpBinding"))
+                    return new NetTcpBinding();
+
+                if (address.StartsWith("customBinding"))
+                    return new CustomBinding();
+
+                if (address.StartsWith("basicHttpBinding"))
+                    return new BasicHttpBinding();
+
+                if (address.StartsWith("wsHttpBinding"))
+                    return new WSHttpBinding();
+
+                if (address.StartsWith("ws2007HttpBinding"))
+                    return new WS2007HttpBinding();
+
+                if (address.StartsWith("ws2007FederationHttpBinding"))
+                    return new WS2007FederationHttpBinding();
+
+                if (address.StartsWith("wsDualHttpBinding"))
+                    return new WSDualHttpBinding();
+
+                if (address.StartsWith("wsFederationHttpBinding"))
+                    return new WSFederationHttpBinding();
+            }
+
+            return null;
         }
 
         /// <summary>

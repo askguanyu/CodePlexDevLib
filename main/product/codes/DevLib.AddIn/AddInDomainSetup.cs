@@ -22,7 +22,7 @@ namespace DevLib.AddIn
     ///
     /// </summary>
     [Serializable]
-    public class AddInDomainSetup
+    public sealed class AddInDomainSetup
     {
         /// <summary>
         ///

@@ -6,11 +6,11 @@
 namespace DevLib.AddIn
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Security.Permissions;
     using System.Threading;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a process for AddInDomain and handles things such as attach/detach events and restarting the process.

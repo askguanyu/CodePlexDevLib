@@ -17,7 +17,7 @@ namespace DevLib.ServiceModel
     /// Wcf Isolated ServiceHost.
     /// </summary>
     [Serializable]
-    public class WcfIsolatedServiceHost : MarshalByRefObject, IDisposable
+    public sealed class WcfIsolatedServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
         ///
@@ -301,7 +301,7 @@ namespace DevLib.ServiceModel
         ///
         /// </summary>
         /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {

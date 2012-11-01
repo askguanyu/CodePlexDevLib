@@ -90,7 +90,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Runs the AddIn Activator Host and blocks until the parent process exits.
+        /// Runs AddInActivatorHost until the parent process exits.
         /// </summary>
         public static void Run(string[] args)
         {
@@ -109,7 +109,7 @@ namespace DevLib.AddIn
             int processId = int.Parse(args[2]);
             AddInDomainSetup addInDomainSetup = AddInDomainSetup.ReadSetupFile(args[3]);
             AppDomain appDomain = AppDomain.CreateDomain(friendlyName, addInDomainSetup.Evidence, addInDomainSetup.AppDomainSetup);
-            var type = Assembly.GetEntryAssembly().GetType("DevLib.AddIn.AssemblyResolver");
+            Type type = Assembly.GetEntryAssembly().GetType("DevLib.AddIn.AssemblyResolver");
 
             if (type == null)
             {

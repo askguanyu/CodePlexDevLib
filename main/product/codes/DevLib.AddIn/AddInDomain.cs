@@ -15,7 +15,7 @@ namespace DevLib.AddIn
     /// <summary>
     /// Represents an isolated environment in a separate process in which objects can be created and invoked.
     /// </summary>
-    public sealed class AddInDomain : IAddInDomain, IDisposable
+    public sealed class AddInDomain : IDisposable
     {
         /// <summary>
         ///
@@ -49,8 +49,6 @@ namespace DevLib.AddIn
             this._process = new AddInActivatorProcess(this.FriendlyName, this.AddInDomainSetupInfo);
             this._process.Attached += OnProcessAttached;
             this._process.Detached += OnProcessDetached;
-
-            //this._process.Start();
         }
 
         /// <summary>
@@ -116,7 +114,7 @@ namespace DevLib.AddIn
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName)
         {
             this._process.Start();
-            return _process.AddInActivator.CreateInstanceAndUnwrap(assemblyName, typeName);
+            return _process.AddInActivatorClient.CreateInstanceAndUnwrap(assemblyName, typeName);
         }
 
         /// <summary>
@@ -126,7 +124,7 @@ namespace DevLib.AddIn
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName, object[] activationAttributes)
         {
             this._process.Start();
-            return _process.AddInActivator.CreateInstanceAndUnwrap(assemblyName, typeName, activationAttributes);
+            return _process.AddInActivatorClient.CreateInstanceAndUnwrap(assemblyName, typeName, activationAttributes);
         }
 
         /// <summary>
@@ -136,7 +134,7 @@ namespace DevLib.AddIn
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture, object[] activationAttributes, Evidence securityAttributes)
         {
             this._process.Start();
-            return _process.AddInActivator.CreateInstanceAndUnwrap(assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
+            return _process.AddInActivatorClient.CreateInstanceAndUnwrap(assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
         }
 
         /// <summary>

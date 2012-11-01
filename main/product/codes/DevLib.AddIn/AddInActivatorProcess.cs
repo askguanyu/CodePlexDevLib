@@ -10,9 +10,10 @@ namespace DevLib.AddIn
     using System.IO;
     using System.Security.Permissions;
     using System.Threading;
+    using System.Collections.Generic;
 
     /// <summary>
-    /// Represents a process for a AddIn Domain and handles things such as attach/detach events and restarting the process.
+    /// Represents a process for AddInDomain and handles things such as attach/detach events and restarting the process.
     /// </summary>
     internal class AddInActivatorProcess : IDisposable
     {
@@ -84,7 +85,7 @@ namespace DevLib.AddIn
 
             if (_addInDomainSetup.EnvironmentVariables != null)
             {
-                foreach (var item in this._addInDomainSetup.EnvironmentVariables)
+                foreach (KeyValuePair<string, string> item in this._addInDomainSetup.EnvironmentVariables)
                 {
                     processStartInfo.EnvironmentVariables[item.Key] = item.Value;
                 }
@@ -119,9 +120,9 @@ namespace DevLib.AddIn
         public event EventHandler Detached;
 
         /// <summary>
-        /// A proxy to the remote activator to use to create remote object instances.
+        /// A proxy to the remote AddInActivator to use to create remote object instances.
         /// </summary>
-        public AddInActivator AddInActivator
+        public AddInActivator AddInActivatorClient
         {
             get { return _addInActivatorClient != null ? _addInActivatorClient.AddInActivator : null; }
         }
@@ -129,7 +130,7 @@ namespace DevLib.AddIn
         /// <summary>
         /// Starts the remote process which will host an AddInActivator.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope"), EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public void Start()
         {
             this.CheckDisposed();
@@ -137,48 +138,48 @@ namespace DevLib.AddIn
             this._killRequested = false;
             bool isCreated;
             string guid = Guid.NewGuid().ToString();
-            EventWaitHandle serverStartedHandle = new EventWaitHandle(false, EventResetMode.ManualReset, string.Format(AddInActivatorHost.AddInDomainEventNameStringFormat, guid), out isCreated);
 
-            if (!isCreated)
+            using (EventWaitHandle serverStartedHandle = new EventWaitHandle(false, EventResetMode.ManualReset, string.Format(AddInActivatorHost.AddInDomainEventNameStringFormat, guid), out isCreated))
             {
-                throw new Exception("Event handle already existed for remote process.");
+                if (!isCreated)
+                {
+                    throw new Exception("Event handle already existed for remote process.");
+                }
+
+                string addInDomainAssemblyPath = Path.GetFullPath(new Uri(typeof(AddInActivatorProcess).Assembly.CodeBase).AbsolutePath);
+
+                AddInDomainSetup.WriteSetupFile(this._addInDomainSetup, this._addInDomainSetupFile);
+
+                // args[0] = process domain assembly path
+                // args[1] = guid
+                // args[2] = process id
+                // args[3] = ProcessDomainSetup file
+
+                this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\"", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile);
+                bool isStarted = this._process.Start();
+
+                if (!isStarted)
+                {
+                    throw new Exception(string.Format("Failed to start process from: {0}", this._process.StartInfo.FileName));
+                }
+
+                if (!serverStartedHandle.WaitOne(_addInDomainSetup.ProcessStartTimeout))
+                {
+                    throw new Exception("Waiting for remote process to start timeout.");
+                }
+
+                this._process.PriorityClass = this._addInDomainSetup.ProcessPriority;
+
+                this._addInActivatorClient = new AddInActivatorClient(guid, this._addInDomainSetup);
+
+                this.RaiseEvent(Attached);
             }
-
-            string addInDomainAssemblyPath = Path.GetFullPath(new Uri(typeof(AddInActivatorProcess).Assembly.CodeBase).AbsolutePath);
-
-            AddInDomainSetup.WriteSetupFile(this._addInDomainSetup, this._addInDomainSetupFile);
-
-            // args[0] = process domain assembly path
-            // args[1] = guid
-            // args[2] = process id
-            // args[3] = ProcessDomainSetup file
-
-            this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\"", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile);
-            bool isStarted = this._process.Start();
-
-            if (!isStarted)
-            {
-                throw new Exception(string.Format("Failed to start process from: {0}", this._process.StartInfo.FileName));
-            }
-
-            if (!serverStartedHandle.WaitOne(_addInDomainSetup.ProcessStartTimeout))
-            {
-                throw new Exception("Waiting for remote process to start timeout.");
-            }
-
-            serverStartedHandle.Close();
-
-            this._process.PriorityClass = this._addInDomainSetup.ProcessPriority;
-
-            this._addInActivatorClient = new AddInActivatorClient(guid, this._addInDomainSetup);
-
-            this.RaiseEvent(Attached);
         }
 
         /// <summary>
         /// Kills the remote process.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope"), EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public void Kill()
         {
             this.CheckDisposed();
@@ -199,30 +200,32 @@ namespace DevLib.AddIn
             if (this._addInDomainSetup.DeleteOnUnload)
             {
                 DeleteAssemblyFileDelegate deleteAssemblyFileDelegate = DeleteAssemblyFile;
-                ManualResetEvent cancelEvent = new ManualResetEvent(false);
-                IAsyncResult result = deleteAssemblyFileDelegate.BeginInvoke(cancelEvent, null, null);
+                using (ManualResetEvent cancelEvent = new ManualResetEvent(false))
+                {
+                    IAsyncResult result = deleteAssemblyFileDelegate.BeginInvoke(cancelEvent, null, null);
 
-                if (!result.AsyncWaitHandle.WaitOne(_addInDomainSetup.FileDeleteTimeout))
-                {
-                    cancelEvent.Set();
-                }
+                    if (!result.AsyncWaitHandle.WaitOne(_addInDomainSetup.FileDeleteTimeout))
+                    {
+                        cancelEvent.Set();
+                    }
 
-                try
-                {
-                    deleteAssemblyFileDelegate.EndInvoke(result);
-                }
-                catch (Exception lastException)
-                {
-                    throw new AddInDeleteOnUnloadException(string.Format("Failed to delete AddIn Domain '{0}' assembly", this._friendlyName), lastException);
-                }
+                    try
+                    {
+                        deleteAssemblyFileDelegate.EndInvoke(result);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new AddInDeleteOnUnloadException(string.Format("Failed to delete AddIn Domain '{0}' assembly", this._friendlyName), e);
+                    }
 
-                try
-                {
-                    File.Delete(this._addInDomainSetupFile);
-                }
-                catch (Exception lastException)
-                {
-                    throw new AddInDeleteOnUnloadException(string.Format("Failed to delete AddIn Domain '{0}' configuration file", this._friendlyName), lastException);
+                    try
+                    {
+                        File.Delete(this._addInDomainSetupFile);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new AddInDeleteOnUnloadException(string.Format("Failed to delete AddIn Domain '{0}' configuration file", this._friendlyName), e);
+                    }
                 }
             }
         }

@@ -31,8 +31,8 @@ namespace DevLib.AddIn
         public AddInDomainSetup()
         {
             this.ExeFileDirectory = Path.GetTempPath();
-            this.ProcessStartTimeout = new TimeSpan(0, 0, 3);
-            this.FileDeleteTimeout = new TimeSpan(0, 0, 3);
+            this.ProcessStartTimeout = new TimeSpan(0, 0, 5);
+            this.FileDeleteTimeout = new TimeSpan(0, 0, 5);
             this.DeleteOnUnload = true;
             this.RestartOnProcessExit = true;
             this.AppDomainSetup = AppDomain.CurrentDomain.SetupInformation;
@@ -188,6 +188,7 @@ namespace DevLib.AddIn
             StringBuilder stringBuilder = new StringBuilder(bytesNeeded);
             NativeMethods.SetLastError(0);
             bytesNeeded = NativeMethods.GetDllDirectory(bytesNeeded, stringBuilder);
+
             if (bytesNeeded == 0)
             {
                 int errorCode = Marshal.GetLastWin32Error();

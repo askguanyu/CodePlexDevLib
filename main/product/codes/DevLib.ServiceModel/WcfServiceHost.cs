@@ -25,10 +25,20 @@ namespace DevLib.ServiceModel
         private List<ServiceHost> _serviceHostList = new List<ServiceHost>();
 
         /// <summary>
-        /// Constructor of WcfServiceHost, host Wcf service in current AppDomain. Use Initialize method to initialize wcf service.
+        /// Default constructor of WcfServiceHost, host Wcf service in current AppDomain. Use Initialize method to initialize wcf service.
         /// </summary>
         public WcfServiceHost()
         {
+        }
+
+        /// <summary>
+        /// Constructor of WcfServiceHost.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        public WcfServiceHost(string assemblyFile, string configFile = null)
+        {
+            this.Initialize(assemblyFile, configFile);
         }
 
         /// <summary>

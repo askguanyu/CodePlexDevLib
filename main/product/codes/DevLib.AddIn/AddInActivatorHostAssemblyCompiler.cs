@@ -79,7 +79,7 @@ namespace DevLib.AddIn
             {
                 AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Succeed to compile assembly for AddInDomain with warnings.", results.Errors);
 
-                Debug.WriteLine(string.Format(AddInConstants.ExceptionStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString()));
+                Debug.WriteLine(string.Format(AddInConstants.WarningStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString()));
             }
 
             return results.PathToAssembly;

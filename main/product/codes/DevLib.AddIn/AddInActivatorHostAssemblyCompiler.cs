@@ -41,7 +41,7 @@ namespace DevLib.AddIn
                 Directory.CreateDirectory(addInDomainSetup.ExeFileDirectory);
             }
 
-            Dictionary<string, string> providerOptions = new Dictionary<string, string> { { "CompilerVersion", "v3.5" } };
+            Dictionary<string, string> providerOptions = new Dictionary<string, string> { { "CompilerVersion", "v2.0" } };
 
             CompilerResults results = null;
 
@@ -68,20 +68,18 @@ namespace DevLib.AddIn
 
             if (results.Errors.HasErrors)
             {
-                foreach (CompilerError item in results.Errors)
-                {
-                    Debug.WriteLine(string.Format(AddInConstants.ExceptionStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", item.FileName, item.ErrorText, item.Line));
-                }
+                AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Failed to compile assembly for AddInDomain due to compiler errors.", results.Errors);
 
-                throw new AddInAssemblyCompilerException("Failed to compile assembly for AddIn domain due to compiler errors.", results.Errors);
+                Debug.WriteLine(string.Format(AddInConstants.ExceptionStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString()));
+
+                throw addInAssemblyCompilerException;
             }
 
             if (results.Errors.HasWarnings)
             {
-                foreach (CompilerError item in results.Errors)
-                {
-                    Debug.WriteLine(string.Format(AddInConstants.WarningStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", item.FileName, item.ErrorText, item.Line));
-                }
+                AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Succeed to compile assembly for AddInDomain with warnings.", results.Errors);
+
+                Debug.WriteLine(string.Format(AddInConstants.ExceptionStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString()));
             }
 
             return results.PathToAssembly;

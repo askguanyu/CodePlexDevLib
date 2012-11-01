@@ -86,7 +86,7 @@ namespace DevLib.Samples
             //form.ShowDialog();
 
             var wcf = addin.CreateInstance<WcfServiceHost>();
-            wcf.Initialize(@"E:\Temp\WcfCalc.dll");
+            wcf.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
             wcf.Open();
 
             //addin.Dispose();
@@ -103,7 +103,7 @@ namespace DevLib.Samples
         static void addin_Detached(object sender, EventArgs e)
         {
             var wcf = addin.CreateInstance<WcfServiceHost>();
-            wcf.Initialize(@"E:\Temp\WcfCalc.dll");
+            wcf.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
             wcf.Open();
         }
 

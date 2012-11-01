@@ -7,27 +7,17 @@
     using System.Reflection;
     using System.Security.Permissions;
 
-    /// <summary>
-    ///
-    /// </summary>
     public class AssemblyResolver : MarshalByRefObject
     {
-        /// <summary>
-        ///
-        /// </summary>
         private readonly Dictionary<string, Dictionary<AssemblyName, string>> _assemblyDict;
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="dict"></param>
         public AssemblyResolver(Dictionary<AssemblyName, string> dict)
         {
             this._assemblyDict = new Dictionary<string, Dictionary<AssemblyName, string>>();
 
             if (dict != null)
             {
-                foreach (var item in dict)
+                foreach (KeyValuePair<AssemblyName, string> item in dict)
                 {
                     Dictionary<AssemblyName, string> subDict;
 
@@ -41,19 +31,12 @@
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <returns></returns>
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
         {
             return null;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public void Mount()
         {
@@ -61,9 +44,6 @@
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ReflectionOnlyResolve;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public void Unmount()
         {
@@ -71,12 +51,6 @@
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= ReflectionOnlyResolve;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
         private static bool PublicKeysTokenEqual(byte[] left, byte[] right)
         {
             if (left == null || right == null)
@@ -100,12 +74,6 @@
             return true;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
         private Assembly Resolve(object sender, ResolveEventArgs args)
         {
             string assemblyFile = FindAssemblyName(args.Name);
@@ -118,12 +86,6 @@
             return null;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
         private Assembly ReflectionOnlyResolve(object sender, ResolveEventArgs args)
         {
             string assemblyFile = FindAssemblyName(args.Name);
@@ -136,11 +98,6 @@
             return null;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         private string FindAssemblyName(string name)
         {
             AssemblyName assemblyName = new AssemblyName(name);
@@ -151,38 +108,28 @@
                 return null;
             }
 
-            foreach (var entry in subDict)
+            foreach (KeyValuePair<AssemblyName, string> item in subDict)
             {
-                if (assemblyName.Version != null && assemblyName.Version != entry.Key.Version)
+                if (assemblyName.Version != null && assemblyName.Version != item.Key.Version)
                     continue;
 
-                if (assemblyName.CultureInfo != null && !assemblyName.CultureInfo.Equals(entry.Key.CultureInfo))
+                if (assemblyName.CultureInfo != null && !assemblyName.CultureInfo.Equals(item.Key.CultureInfo))
                     continue;
 
-                if (!PublicKeysTokenEqual(assemblyName.GetPublicKeyToken(), entry.Key.GetPublicKeyToken()))
+                if (!PublicKeysTokenEqual(assemblyName.GetPublicKeyToken(), item.Key.GetPublicKeyToken()))
                     continue;
 
-                return entry.Value;
+                return item.Value;
             }
 
             return null;
         }
     }
 
-    /// <summary>
-    ///
-    /// </summary>
     class Program
     {
-        /// <summary>
-        ///
-        /// </summary>
         private static StreamWriter _logFile;
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="args"></param>
         static void Main(string[] args)
         {
             // args[0] = process domain assembly path
@@ -198,7 +145,8 @@
 
             try
             {
-                Dictionary<AssemblyName, string> resolveMap = new Dictionary<AssemblyName, string> { { new AssemblyName("${AddInAssemblyName}"), args[0] } };
+                Dictionary<AssemblyName, string> resolveMap = new Dictionary<AssemblyName, string>();
+                resolveMap.Add(new AssemblyName("${AddInAssemblyName}"), args[0]);
 
                 AssemblyResolver resolver = new AssemblyResolver(resolveMap);
 
@@ -211,14 +159,20 @@
                     throw new TypeLoadException(string.Format("Could not load AddInActivatorHost type {0} by using resolver with {1} mapped to {2}", "${AddInActivatorHostTypeName}", "${AddInAssemblyName}", args[0]));
                 }
 
-                MethodInfo methodInfo = hostType.GetMethod("Run", BindingFlags.Static | BindingFlags.Public, null, new[] { typeof(string[]) }, null);
+                Type[] types = new Type[1];
+                types[0] = typeof(string[]);
+
+                MethodInfo methodInfo = hostType.GetMethod("Run", BindingFlags.Static | BindingFlags.Public, null, types, null);
 
                 if (methodInfo == null)
                 {
                     throw new Exception("'Run' method on AddInActivatorHost was not found.");
                 }
 
-                methodInfo.Invoke(null, new[] { args });
+                object[] parameters = new object[1];
+                parameters[0] = args;
+
+                methodInfo.Invoke(null, parameters);
             }
             catch (Exception e)
             {
@@ -226,9 +180,6 @@
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
         private static void OpenLogFile()
         {
             string fileName = string.Format("{0}-{1}.log", Assembly.GetEntryAssembly().Location, Process.GetCurrentProcess().Id);
@@ -243,11 +194,6 @@
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
         private static void Log(string message, params object[] args)
         {
             if (_logFile == null)

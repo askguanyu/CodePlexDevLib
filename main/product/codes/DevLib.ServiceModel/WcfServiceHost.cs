@@ -99,6 +99,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         public void Initialize(string assemblyFile, string configFile = null)
         {
             if (string.IsNullOrEmpty(assemblyFile))
@@ -112,30 +113,30 @@ namespace DevLib.ServiceModel
             }
 
             this.AssemblyFile = assemblyFile;
-            this._serviceHostList.Clear();
 
             if (string.IsNullOrEmpty(configFile))
             {
-                this.Init(this.AssemblyFile, AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                this.ConfigFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+                this.Init(this.AssemblyFile, this.ConfigFile);
             }
             else
             {
-                this.ConfigFile = configFile;
-
-                if (!File.Exists(this.ConfigFile))
+                if (!File.Exists(configFile))
                 {
-                    throw new ArgumentException("The file does not exist.", this.ConfigFile);
+                    throw new ArgumentException("The file does not exist.", configFile);
                 }
+
+                this.ConfigFile = configFile;
+                string originalConfigFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
                 try
                 {
-                    this._serviceHostList.AddRange(WcfServiceHostType.LoadServiceHost(this.AssemblyFile, this.ConfigFile));
-                    this.RaiseEvent(Created, assemblyFile, WcfServiceHostStateEnum.Created);
+                    AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", this.ConfigFile);
+                    this.Init(this.AssemblyFile, this.ConfigFile);
                 }
-                catch (Exception e)
+                finally
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Initialize", e.Source, e.Message, e.StackTrace));
-                    throw;
+                    AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", originalConfigFile);
                 }
             }
         }

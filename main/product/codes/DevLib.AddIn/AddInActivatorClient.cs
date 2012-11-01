@@ -12,7 +12,7 @@ namespace DevLib.AddIn
     using System.Security.Permissions;
 
     /// <summary>
-    /// Provides access to an Activator in a remote process.
+    /// Provides access to AddInActivator in a remote process.
     /// </summary>
     internal class AddInActivatorClient : IDisposable
     {

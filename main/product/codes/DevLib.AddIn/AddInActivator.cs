@@ -14,7 +14,7 @@ namespace DevLib.AddIn
     ///
     /// </summary>
     [Serializable]
-    internal class AddInActivator : MarshalByRefObject, IAddInDomain
+    internal class AddInActivator : MarshalByRefObject
     {
         /// <summary>
         ///

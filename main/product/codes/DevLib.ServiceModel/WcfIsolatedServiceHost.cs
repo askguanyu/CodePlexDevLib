@@ -31,10 +31,20 @@ namespace DevLib.ServiceModel
         private WcfServiceHost _wcfServiceHost;
 
         /// <summary>
-        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize wcf service.
+        /// Default constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize wcf service.
         /// </summary>
         public WcfIsolatedServiceHost()
         {
+        }
+
+        /// <summary>
+        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        public WcfIsolatedServiceHost(string assemblyFile, string configFile = null)
+        {
+            this.Initialize(assemblyFile, configFile);
         }
 
         /// <summary>

@@ -31,8 +31,8 @@ namespace DevLib.AddIn
         public AddInDomainSetup()
         {
             this.ExeFileDirectory = Path.GetTempPath();
-            this.ProcessStartTimeout = new TimeSpan(0, 0, 5);
-            this.FileDeleteTimeout = new TimeSpan(0, 0, 5);
+            this.ProcessStartTimeout = new TimeSpan(0, 0, 3);
+            this.FileDeleteTimeout = new TimeSpan(0, 0, 3);
             this.DeleteOnUnload = true;
             this.RestartOnProcessExit = true;
             this.AppDomainSetup = AppDomain.CurrentDomain.SetupInformation;
@@ -91,7 +91,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies whether or not to delete the generated executable after the process domain has unloaded.
+        /// Specifies whether or not to delete the generated executable after AddInDomain has unloaded.
         /// </summary>
         public bool DeleteOnUnload
         {
@@ -100,7 +100,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifices whether the process domain process should be relaunched should the process exit prematurely.
+        /// Specifices whether AddInDomain should be relaunched when the process exit prematurely.
         /// </summary>
         public bool RestartOnProcessExit
         {
@@ -137,7 +137,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Remoting type filter level - controls how much functionality is exposed via remoting the process domain remotely.
+        /// Specifies the level of automatic deserialization for .NET Framework remoting.
         /// </summary>
         public TypeFilterLevel TypeFilterLevel
         {
@@ -155,7 +155,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// A map of assembly names to assembly file locations that will need to be resolved inside the Process Domain.
+        /// A dictionary of assembly names to assembly file locations that will need to be resolved inside AddInDomain.
         /// </summary>
         public Dictionary<AssemblyName, string> ExternalAssemblies
         {

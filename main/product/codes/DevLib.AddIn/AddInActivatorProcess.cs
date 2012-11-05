@@ -50,17 +50,12 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        private bool _killRequested;
-
-        /// <summary>
-        ///
-        /// </summary>
         private AddInActivatorClient _addInActivatorClient;
 
         /// <summary>
         ///
         /// </summary>
-        private bool _disposed;
+        private bool _isDisposing;
 
         /// <summary>
         ///
@@ -135,10 +130,9 @@ namespace DevLib.AddIn
         {
             this.CheckDisposed();
             this.DisposeClient();
-            this._killRequested = false;
-            bool isCreated;
             string guid = Guid.NewGuid().ToString();
 
+            bool isCreated;
             using (EventWaitHandle serverStartedHandle = new EventWaitHandle(false, EventResetMode.ManualReset, string.Format(AddInActivatorHost.AddInDomainEventNameStringFormat, guid), out isCreated))
             {
                 if (!isCreated)
@@ -154,7 +148,6 @@ namespace DevLib.AddIn
                 // args[1] = guid
                 // args[2] = process id
                 // args[3] = ProcessDomainSetup file
-
                 this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\"", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile);
                 bool isStarted = this._process.Start();
 
@@ -177,15 +170,28 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        public void Dispose()
+        {
+            if (this._isDisposing)
+            {
+                return;
+            }
+
+            this._isDisposing = true;
+            this.Kill();
+            this.DisposeClient();
+
+            this.RaiseEvent(Detached);
+        }
+
+        /// <summary>
         /// Kills the remote process.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public void Kill()
+        private void Kill()
         {
-            this.CheckDisposed();
-
-            this._killRequested = true;
-
             try
             {
                 if (this._process != null && !this._process.HasExited)
@@ -233,20 +239,6 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        public void Dispose()
-        {
-            if (this._disposed)
-            {
-                return;
-            }
-
-            this._disposed = true;
-            DisposeClient();
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="eventHandler"></param>
         private void RaiseEvent(EventHandler eventHandler)
         {
@@ -266,20 +258,7 @@ namespace DevLib.AddIn
         /// <param name="e"></param>
         private void OnProcessExited(object sender, EventArgs e)
         {
-            this.RaiseEvent(Detached);
-
-            if (this._addInDomainSetup.RestartOnProcessExit && !this._killRequested && this._addInActivatorClient != null)
-            {
-                try
-                {
-                    this._process.Refresh();
-                }
-                catch
-                {
-                }
-            }
-
-            this._killRequested = false;
+            this.Dispose();
         }
 
         /// <summary>
@@ -308,35 +287,35 @@ namespace DevLib.AddIn
 
                 isCanceled = cancelEvent.WaitOne(0);
 
-            } while (!isDeleted && !isCanceled);
+                } while (!isDeleted && !isCanceled);
 
-            if (!isDeleted && lastException != null)
-            {
-                throw lastException;
+                if (!isDeleted && lastException != null)
+                {
+                    throw lastException;
+                }
             }
-        }
 
-        /// <summary>
-        ///
-        /// </summary>
-        private void CheckDisposed()
-        {
-            if (this._disposed)
+            /// <summary>
+            ///
+            /// </summary>
+            private void CheckDisposed()
             {
-                throw new ObjectDisposedException("AddInActivatorProcess");
+                if (this._isDisposing)
+                {
+                    throw new ObjectDisposedException("AddInActivatorProcess");
+                }
             }
-        }
 
-        /// <summary>
-        ///
-        /// </summary>
-        private void DisposeClient()
-        {
-            if (this._addInActivatorClient != null)
+            /// <summary>
+            ///
+            /// </summary>
+            private void DisposeClient()
             {
-                this._addInActivatorClient.Dispose();
-                this._addInActivatorClient = null;
+                if (this._addInActivatorClient != null)
+                {
+                    this._addInActivatorClient.Dispose();
+                    this._addInActivatorClient = null;
+                }
             }
         }
     }
-}

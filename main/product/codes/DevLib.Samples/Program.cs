@@ -72,22 +72,33 @@ namespace DevLib.Samples
         }
 
         public static AddInDomain addin = null;
+        public static WcfServiceHost wcf = null;
 
         private static void TestDevLibAddIn()
         {
             PrintMethodName("Test DevLib.AddIn");
 
-            addin = AddInDomain.CreateDomain("wcf");
+            addin = new AddInDomain("wcf");
+            addin.Loaded += new EventHandler(addin_Started);
+            addin.Reloaded += new EventHandler(addin_Restarted);
+            addin.Unloaded += new EventHandler(addin_Stopped);
 
-            addin.Attached += new EventHandler(addin_Attached);
-            addin.Detached += new EventHandler(addin_Detached);
+            //addin.Load();
+            addin.CreateInstance<WcfServiceHost>(new object[] { @"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config" });
+
+
+            addin.Dispose();
+            addin.Dispose();
+            addin.Reload();
+            addin.Reload();
+
 
             //var form = addin.CreateInstance<WinFormRibbon>();
             //form.ShowDialog();
 
-            var wcf = addin.CreateInstance<WcfServiceHost>();
-            wcf.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
-            wcf.Open();
+            //wcf = addin.CreateInstance<WcfServiceHost>(new object[] { @"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config" });
+            //wcf.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            //wcf.Open();
 
             //addin.Dispose();
 
@@ -100,16 +111,20 @@ namespace DevLib.Samples
 
         }
 
-        static void addin_Detached(object sender, EventArgs e)
+        static void addin_Started(object sender, EventArgs e)
         {
-            var wcf = addin.CreateInstance<WcfServiceHost>();
-            wcf.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
-            wcf.Open();
+            Debug.WriteLine("addin_Started");
         }
 
-        static void addin_Attached(object sender, EventArgs e)
+        static void addin_Stopped(object sender, EventArgs e)
         {
-            Debug.WriteLine("start");
+            Debug.WriteLine("addin_Stopped");
+        }
+
+        static void addin_Restarted(object sender, EventArgs e)
+        {
+            Debug.WriteLine("addin_Restarted");
+            (addin.AddInObject as WcfServiceHost).Open();
         }
 
         private static void PrintStartInfo()

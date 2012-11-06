@@ -79,9 +79,9 @@ namespace DevLib.Samples
             PrintMethodName("Test DevLib.AddIn");
 
             addin = new AddInDomain("DevLibSample");
-            addin.Loaded += new EventHandler(addin_Started);
-            addin.Reloaded += new EventHandler(addin_Restarted);
-            addin.Unloaded += new EventHandler(addin_Stopped);
+            addin.Loaded += new EventHandler<AddInDomainEventArgs>(addin_Started);
+            addin.Reloaded += new EventHandler<AddInDomainEventArgs>(addin_Restarted);
+            addin.Unloaded += new EventHandler<AddInDomainEventArgs>(addin_Stopped);
 
             //addin.Load();
             addin.CreateInstance<WcfIsolatedServiceHost>(new object[] { @"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config" });
@@ -116,19 +116,19 @@ namespace DevLib.Samples
 
         }
 
-        static void addin_Started(object sender, EventArgs e)
+        static void addin_Started(object sender, AddInDomainEventArgs e)
         {
-            Debug.WriteLine("addin_Started");
+            Debug.WriteLine("addin_Started    " + e.AddInTypeName);
         }
 
-        static void addin_Stopped(object sender, EventArgs e)
+        static void addin_Stopped(object sender, AddInDomainEventArgs e)
         {
-            Debug.WriteLine("addin_Stopped");
+            Debug.WriteLine("addin_Stopped    " + e.AddInTypeName);
         }
 
-        static void addin_Restarted(object sender, EventArgs e)
+        static void addin_Restarted(object sender, AddInDomainEventArgs e)
         {
-            Debug.WriteLine("addin_Restarted");
+            Debug.WriteLine("addin_Restarted    " + e.AddInTypeName);
             //(addin.AddInObject as WcfIsolatedServiceHost).Open();
         }
 

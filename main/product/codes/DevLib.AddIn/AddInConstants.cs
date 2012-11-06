@@ -13,7 +13,7 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        internal const string DefaultFriendlyName = "DefaultAddInDomain";
+        internal const string DefaultFriendlyName = "Default";
 
         /// <summary>
         ///
@@ -44,5 +44,40 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         internal const string WarningStringFormat = "Warning: {0} with warning. Source: {1} | Message: {2} | StackTrace: {3}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string ProcessOuputStringFormat = "[{0}] output: {1}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string ProcessStartTimeoutException = "Waiting for remote process to start timeout.";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string ProcessStartExceptionStringFormat = "Failed to start process from: {0}";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string AssemblyResolverException = "Could not load type for assembly resolver.";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string EventHandleNotExist = "Event handle did not exist for remote process.";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string EventHandleAlreadyExistedException = "Event handle already existed for remote process.";
+
+        /// <summary>
+        ///
+        /// </summary>
+        internal const string DeleteFileExceptionStringFormat = "Failed to delete AddInDomain file '{0}'";
     }
 }

@@ -75,7 +75,7 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        private bool _canRestart;
+        private bool _canRestart = true;
 
         /// <summary>
         /// Creates a AddInDomain which allows hosting objects and code in isolated process.
@@ -100,20 +100,20 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        public event EventHandler Loaded;
+        public event EventHandler<AddInDomainEventArgs> Loaded;
 
         /// <summary>
         ///
         /// </summary>
-        public event EventHandler Unloaded;
+        public event EventHandler<AddInDomainEventArgs> Unloaded;
 
         /// <summary>
         ///
         /// </summary>
-        public event EventHandler Reloaded;
+        public event EventHandler<AddInDomainEventArgs> Reloaded;
 
         /// <summary>
-        ///Gets or sets
+        /// Gets AddIn type name.
         /// </summary>
         public string AddInTypeName
         {
@@ -122,7 +122,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets
+        /// Gets AddIn object.
         /// </summary>
         public object AddInObject
         {
@@ -131,7 +131,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets
+        /// Gets the friendly name of the AddInDomain.
         /// </summary>
         public string FriendlyName
         {
@@ -358,14 +358,14 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         /// <param name="eventHandler"></param>
-        private void RaiseEvent(EventHandler eventHandler)
+        private void RaiseEvent(EventHandler<AddInDomainEventArgs> eventHandler)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<AddInDomainEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(null, null);
+                temp(null, new AddInDomainEventArgs(this.FriendlyName ?? string.Empty, this.AddInTypeName ?? string.Empty));
             }
         }
 

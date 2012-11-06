@@ -132,32 +132,43 @@
 
         static void Main(string[] args)
         {
-            // args[0] = process domain assembly path
-            // args[1] = guid
-            // args[2] = process id
-            // args[3] = ProcessDomainSetup file
+            // args[0] = AddInDomain assembly path
+            // args[1] = GUID
+            // args[2] = PID
+            // args[3] = AddInDomainSetup file
 
             if (args.Length < 1)
             {
+                Console.WriteLine("Invalid arguments");
+                Console.WriteLine("args[0] = AddInDomain assembly path");
+                Console.WriteLine("args[1] = GUID");
+                Console.WriteLine("args[2] = PID");
+                Console.WriteLine("args[3] = AddInDomainSetup file");
                 Log("Invalid arguments");
                 return;
             }
 
             try
             {
-                Dictionary<AssemblyName, string> resolveMap = new Dictionary<AssemblyName, string>();
-                resolveMap.Add(new AssemblyName("${AddInAssemblyName}"), args[0]);
+                Log(string.Join(" ", args));
 
-                AssemblyResolver resolver = new AssemblyResolver(resolveMap);
+                Dictionary<AssemblyName, string> resolveDict = new Dictionary<AssemblyName, string>();
+                resolveDict.Add(new AssemblyName("$[AddInAssemblyName]"), args[0]);
+
+                AssemblyResolver resolver = new AssemblyResolver(resolveDict);
 
                 resolver.Mount();
 
-                Type hostType = Type.GetType("${AddInActivatorHostTypeName}");
+                Type hostType = Type.GetType("$[AddInActivatorHostTypeName]");
 
                 if (hostType == null)
                 {
-                    throw new TypeLoadException(string.Format("Could not load AddInActivatorHost type {0} by using resolver with {1} mapped to {2}", "${AddInActivatorHostTypeName}", "${AddInAssemblyName}", args[0]));
+                    Console.WriteLine(string.Format("Could not load AddInActivatorHost type $[AddInActivatorHostTypeName] by using resolver with $[AddInAssemblyName] mapped to {0}", args[0]));
+                    throw new TypeLoadException(string.Format("Could not load AddInActivatorHost type $[AddInActivatorHostTypeName] by using resolver with $[AddInAssemblyName] mapped to {0}", args[0]));
                 }
+
+                Console.WriteLine("Type.GetType($[AddInActivatorHostTypeName]) Succeed!");
+                Log("Type.GetType($[AddInActivatorHostTypeName]) succeed!");
 
                 Type[] types = new Type[1];
                 types[0] = typeof(string[]);
@@ -166,17 +177,27 @@
 
                 if (methodInfo == null)
                 {
+                    Console.WriteLine("'Run' method on AddInActivatorHost was not found.");
+                    Log("'Run' method on AddInActivatorHost was not found.");
                     throw new Exception("'Run' method on AddInActivatorHost was not found.");
                 }
+
+                Console.WriteLine("GetMethod on AddInActivatorHost succeed!");
+                Log("GetMethod on AddInActivatorHost succeed!");
 
                 object[] parameters = new object[1];
                 parameters[0] = args;
 
+                Console.WriteLine("Begin Invoke AddInActivatorHost method...");
+                Log("Begin Invoke AddInActivatorHost method...");
                 methodInfo.Invoke(null, parameters);
+                Console.WriteLine("End Invoke AddInActivatorHost method, succeed!");
+                Log("End Invoke AddInActivatorHost method, succeed!");
             }
             catch (Exception e)
             {
-                Log("Failed to launch AddInActivator Host: {0}", e);
+                Console.WriteLine("Summary: Failed to launch AddInActivatorHost: {0}", e);
+                Log("Summary: Failed to launch AddInActivatorHost: {0}", e);
             }
         }
 

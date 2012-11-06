@@ -40,11 +40,6 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        private string _addInTypeName;
-
-        /// <summary>
-        ///
-        /// </summary>
         private object[] _addInArgs = null;
 
         /// <summary>
@@ -76,6 +71,11 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         private Evidence _addInSecurityAttributes = null;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private bool _canRestart;
 
         /// <summary>
         /// Creates a AddInDomain which allows hosting objects and code in isolated process.
@@ -111,6 +111,15 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         public event EventHandler Reloaded;
+
+        /// <summary>
+        ///Gets or sets
+        /// </summary>
+        public string AddInTypeName
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Gets
@@ -155,10 +164,7 @@ namespace DevLib.AddIn
         public void Reload()
         {
             this.Unload();
-            if (!this.AddInDomainSetupInfo.RestartOnProcessExit)
-            {
-                this.RestartAddInActivatorProcess();
-            }
+            this.RestartAddInActivatorProcess();
         }
 
         /// <summary>
@@ -172,8 +178,8 @@ namespace DevLib.AddIn
         {
             this._overloadCreateInstanceAndUnwrap = 1;
             this._addInAssemblyName = assemblyName;
-            this._addInTypeName = typeName;
-            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName);
+            this.AddInTypeName = typeName;
+            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName);
             return this.AddInObject;
         }
 
@@ -189,9 +195,9 @@ namespace DevLib.AddIn
         {
             this._overloadCreateInstanceAndUnwrap = 2;
             this._addInAssemblyName = assemblyName;
-            this._addInTypeName = typeName;
+            this.AddInTypeName = typeName;
             this._addInActivationAttributes = activationAttributes;
-            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName, this._addInActivationAttributes);
+            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName, this._addInActivationAttributes);
             return this.AddInObject;
         }
 
@@ -223,7 +229,7 @@ namespace DevLib.AddIn
         {
             this._overloadCreateInstanceAndUnwrap = 3;
             this._addInAssemblyName = assemblyName;
-            this._addInTypeName = typeName;
+            this.AddInTypeName = typeName;
             this._addInIgnoreCase = ignoreCase;
             this._addInBindingAttr = bindingAttr;
             this._addInBinder = binder;
@@ -233,7 +239,7 @@ namespace DevLib.AddIn
             this._addInSecurityAttributes = securityAttributes;
             this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(
                 this._addInAssemblyName,
-                this._addInTypeName,
+                this.AddInTypeName,
                 this._addInIgnoreCase,
                 this._addInBindingAttr,
                 this._addInBinder,
@@ -280,6 +286,8 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private void Unload()
         {
+            this._canRestart = false;
+
             if (Interlocked.CompareExchange(ref _unloaded, 1, 0) == 1)
             {
                 return;
@@ -297,6 +305,8 @@ namespace DevLib.AddIn
         /// </summary>
         private void CreateAddInActivatorProcess()
         {
+            this._canRestart = true;
+
             this._addInActivatorProcess = new AddInActivatorProcess(this.FriendlyName, this.AddInDomainSetupInfo);
             this._addInActivatorProcess.Attached += OnProcessAttached;
             this._addInActivatorProcess.Detached += OnProcessDetached;
@@ -317,15 +327,15 @@ namespace DevLib.AddIn
                     switch (this._overloadCreateInstanceAndUnwrap)
                     {
                         case 1:
-                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName);
+                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName);
                             break;
                         case 2:
-                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName, this._addInActivationAttributes);
+                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName, this._addInActivationAttributes);
                             break;
                         case 3:
                             this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(
                                 this._addInAssemblyName,
-                                this._addInTypeName,
+                                this.AddInTypeName,
                                 this._addInIgnoreCase,
                                 this._addInBindingAttr,
                                 this._addInBinder,
@@ -378,7 +388,7 @@ namespace DevLib.AddIn
         {
             this.RaiseEvent(Unloaded);
 
-            if (this.AddInDomainSetupInfo.RestartOnProcessExit)
+            if (this.AddInDomainSetupInfo.RestartOnProcessExit && this._canRestart)
             {
                 RestartAddInActivatorProcess();
             }

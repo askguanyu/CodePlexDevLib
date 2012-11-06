@@ -71,10 +71,10 @@ namespace DevLib.AddIn
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo
             {
-                //CreateNoWindow = true,
-                FileName = this._assemblyFile,
+                CreateNoWindow = true,
                 UseShellExecute = false,
                 ErrorDialog = false,
+                FileName = this._assemblyFile,
                 WorkingDirectory = this._addInDomainSetup.WorkingDirectory,
             };
 
@@ -140,14 +140,14 @@ namespace DevLib.AddIn
                     throw new Exception("Event handle already existed for remote process.");
                 }
 
-                string addInDomainAssemblyPath = Path.GetFullPath(new Uri(typeof(AddInActivatorProcess).Assembly.CodeBase).AbsolutePath);
+                string addInDomainAssemblyPath = typeof(AddInActivatorProcess).Assembly.Location;
 
                 AddInDomainSetup.WriteSetupFile(this._addInDomainSetup, this._addInDomainSetupFile);
 
-                // args[0] = process domain assembly path
-                // args[1] = guid
-                // args[2] = process id
-                // args[3] = ProcessDomainSetup file
+                // args[0] = AddInDomain assembly path
+                // args[1] = GUID
+                // args[2] = PID
+                // args[3] = AddInDomainSetup file
                 this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\"", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile);
                 bool isStarted = this._process.Start();
 
@@ -287,35 +287,35 @@ namespace DevLib.AddIn
 
                 isCanceled = cancelEvent.WaitOne(0);
 
-                } while (!isDeleted && !isCanceled);
+            } while (!isDeleted && !isCanceled);
 
-                if (!isDeleted && lastException != null)
-                {
-                    throw lastException;
-                }
-            }
-
-            /// <summary>
-            ///
-            /// </summary>
-            private void CheckDisposed()
+            if (!isDeleted && lastException != null)
             {
-                if (this._isDisposing)
-                {
-                    throw new ObjectDisposedException("AddInActivatorProcess");
-                }
+                throw lastException;
             }
+        }
 
-            /// <summary>
-            ///
-            /// </summary>
-            private void DisposeClient()
+        /// <summary>
+        ///
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._isDisposing)
             {
-                if (this._addInActivatorClient != null)
-                {
-                    this._addInActivatorClient.Dispose();
-                    this._addInActivatorClient = null;
-                }
+                throw new ObjectDisposedException("AddInActivatorProcess");
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        private void DisposeClient()
+        {
+            if (this._addInActivatorClient != null)
+            {
+                this._addInActivatorClient.Dispose();
+                this._addInActivatorClient = null;
             }
         }
     }
+}

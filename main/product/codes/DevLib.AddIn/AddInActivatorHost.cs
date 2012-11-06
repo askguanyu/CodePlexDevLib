@@ -82,7 +82,7 @@ namespace DevLib.AddIn
             {
                 if (isCreated)
                 {
-                    throw new Exception("Event handle did not exist for remote process.");
+                    throw new Exception(AddInConstants.EventHandleNotExist);
                 }
 
                 serverStartedHandle.Set();
@@ -94,11 +94,10 @@ namespace DevLib.AddIn
         /// </summary>
         public static void Run(string[] args)
         {
-            // args[0] = process domain assembly path
-            // args[1] = guid
-            // args[2] = parent process id
-            // args[3] = ProcessDomainSetup file
-
+            // args[0] = AddInDomain assembly path
+            // args[1] = GUID
+            // args[2] = PID
+            // args[3] = AddInDomainSetup file
             if (args.Length != 4)
             {
                 return;
@@ -113,7 +112,7 @@ namespace DevLib.AddIn
 
             if (type == null)
             {
-                throw new TypeLoadException("Could not load type for assembly resolver.");
+                throw new TypeLoadException(AddInConstants.AssemblyResolverException);
             }
 
             // add AddInDomain assembly to resolver

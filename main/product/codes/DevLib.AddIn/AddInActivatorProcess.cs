@@ -72,9 +72,11 @@ namespace DevLib.AddIn
             ProcessStartInfo processStartInfo = new ProcessStartInfo
             {
                 CreateNoWindow = true,
-                UseShellExecute = false,
                 ErrorDialog = false,
                 FileName = this._assemblyFile,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
                 WorkingDirectory = this._addInDomainSetup.WorkingDirectory,
             };
 
@@ -93,6 +95,8 @@ namespace DevLib.AddIn
 
             this._addInDomainSetupFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(ConfigFileStringFormat, friendlyName));
 
+            this._process.OutputDataReceived += this.OnProcessDataReceived;
+            this._process.ErrorDataReceived += this.OnProcessDataReceived;
             this._process.Exited += this.OnProcessExited;
             this._process.EnableRaisingEvents = true;
         }
@@ -137,7 +141,7 @@ namespace DevLib.AddIn
             {
                 if (!isCreated)
                 {
-                    throw new Exception("Event handle already existed for remote process.");
+                    throw new Exception(AddInConstants.EventHandleAlreadyExistedException);
                 }
 
                 string addInDomainAssemblyPath = typeof(AddInActivatorProcess).Assembly.Location;
@@ -153,14 +157,18 @@ namespace DevLib.AddIn
 
                 if (!isStarted)
                 {
-                    throw new Exception(string.Format("Failed to start process from: {0}", this._process.StartInfo.FileName));
+                    Debug.WriteLine(string.Format(AddInConstants.ProcessStartExceptionStringFormat, this._process.StartInfo.FileName));
+                    throw new Exception(string.Format(AddInConstants.ProcessStartExceptionStringFormat, this._process.StartInfo.FileName));
                 }
 
                 if (!serverStartedHandle.WaitOne(_addInDomainSetup.ProcessStartTimeout))
                 {
-                    throw new Exception("Waiting for remote process to start timeout.");
+                    Debug.WriteLine(AddInConstants.ProcessStartTimeoutException);
+                    throw new Exception(AddInConstants.ProcessStartTimeoutException);
                 }
 
+                this._process.BeginOutputReadLine();
+                this._process.BeginErrorReadLine();
                 this._process.PriorityClass = this._addInDomainSetup.ProcessPriority;
 
                 this._addInActivatorClient = new AddInActivatorClient(guid, this._addInDomainSetup);
@@ -184,6 +192,17 @@ namespace DevLib.AddIn
             this.DisposeClient();
 
             this.RaiseEvent(Detached);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnProcessDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Console.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+            Debug.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
         }
 
         /// <summary>
@@ -221,7 +240,8 @@ namespace DevLib.AddIn
                     }
                     catch (Exception e)
                     {
-                        throw new AddInDeleteOnUnloadException(string.Format("Failed to delete AddIn Domain '{0}' assembly", this._friendlyName), e);
+                        Debug.WriteLine(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._friendlyName));
+                        throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._friendlyName), e);
                     }
 
                     try
@@ -230,7 +250,8 @@ namespace DevLib.AddIn
                     }
                     catch (Exception e)
                     {
-                        throw new AddInDeleteOnUnloadException(string.Format("Failed to delete AddIn Domain '{0}' configuration file", this._friendlyName), e);
+                        Debug.WriteLine(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainSetupFile));
+                        throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainSetupFile), e);
                     }
                 }
             }
@@ -302,7 +323,7 @@ namespace DevLib.AddIn
         {
             if (this._isDisposing)
             {
-                throw new ObjectDisposedException("AddInActivatorProcess");
+                throw new ObjectDisposedException("DevLib.AddIn.AddInActivatorProcess");
             }
         }
 

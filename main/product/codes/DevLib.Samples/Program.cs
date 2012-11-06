@@ -92,7 +92,7 @@ namespace DevLib.Samples
 
             var atype = Type.GetType(addin.AddInTypeName);
 
-            addin.Dispose();
+            //addin.Dispose();
             //addin.Dispose();
             //addin.Dispose();
             //addin.Reload();

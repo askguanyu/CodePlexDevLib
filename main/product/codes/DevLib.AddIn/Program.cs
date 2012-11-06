@@ -150,7 +150,7 @@
 
             try
             {
-                Log(string.Join(" ", args));
+                Log(Environment.CommandLine);
 
                 Dictionary<AssemblyName, string> resolveDict = new Dictionary<AssemblyName, string>();
                 resolveDict.Add(new AssemblyName("$[AddInAssemblyName]"), args[0]);
@@ -191,8 +191,6 @@
                 Console.WriteLine("Begin Invoke AddInActivatorHost method...");
                 Log("Begin Invoke AddInActivatorHost method...");
                 methodInfo.Invoke(null, parameters);
-                Console.WriteLine("End Invoke AddInActivatorHost method, succeed!");
-                Log("End Invoke AddInActivatorHost method, succeed!");
             }
             catch (Exception e)
             {
@@ -203,11 +201,14 @@
 
         private static void OpenLogFile()
         {
-            string fileName = string.Format("{0}-{1}.log", Assembly.GetEntryAssembly().Location, Process.GetCurrentProcess().Id);
+            string fileName = string.Format("{0}.log", Assembly.GetEntryAssembly().Location);
 
             try
             {
-                _logFile = new StreamWriter(fileName, false);
+                _logFile = new StreamWriter(fileName, true);
+                _logFile.WriteLine();
+                _logFile.WriteLine(string.Format("[{0}] [PID:{1}] Started.", DateTime.Now, Process.GetCurrentProcess().Id.ToString()));
+                _logFile.Flush();
             }
             catch (Exception e)
             {
@@ -224,7 +225,7 @@
 
             if (_logFile != null)
             {
-                _logFile.WriteLine(string.Format("[{0}] {1}", DateTime.Now, message), args);
+                _logFile.WriteLine(string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now, Process.GetCurrentProcess().Id.ToString(), message), args);
                 _logFile.Flush();
             }
         }

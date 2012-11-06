@@ -31,8 +31,8 @@ namespace DevLib.AddIn
         public AddInDomainSetup()
         {
             this.ExeFileDirectory = Path.GetTempPath();
-            this.ProcessStartTimeout = new TimeSpan(0, 0, 3);
-            this.FileDeleteTimeout = new TimeSpan(0, 0, 3);
+            this.ProcessStartTimeout = new TimeSpan(0, 0, 10);
+            this.FileDeleteTimeout = new TimeSpan(0, 0, 5);
             this.DeleteOnUnload = true;
             this.RestartOnProcessExit = true;
             this.AppDomainSetup = AppDomain.CurrentDomain.SetupInformation;

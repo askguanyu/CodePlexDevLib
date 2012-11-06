@@ -78,19 +78,24 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.AddIn");
 
-            addin = new AddInDomain("wcf");
+            addin = new AddInDomain("DevLibSample");
             addin.Loaded += new EventHandler(addin_Started);
             addin.Reloaded += new EventHandler(addin_Restarted);
             addin.Unloaded += new EventHandler(addin_Stopped);
 
             //addin.Load();
-            addin.CreateInstance<WcfServiceHost>(new object[] { @"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config" });
+            addin.CreateInstance<WcfIsolatedServiceHost>(new object[] { @"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config" });
+            
+            //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
+            addin.AddInTypeName.ConsoleOutput();
+
+            var atype = Type.GetType(addin.AddInTypeName);
 
             addin.Dispose();
-            addin.Dispose();
-            addin.Reload();
-            addin.Reload();
+            //addin.Dispose();
+            //addin.Dispose();
+            //addin.Reload();
 
 
             //var form = addin.CreateInstance<WinFormRibbon>();
@@ -124,7 +129,7 @@ namespace DevLib.Samples
         static void addin_Restarted(object sender, EventArgs e)
         {
             Debug.WriteLine("addin_Restarted");
-            (addin.AddInObject as WcfServiceHost).Open();
+            //(addin.AddInObject as WcfIsolatedServiceHost).Open();
         }
 
         private static void PrintStartInfo()

@@ -41,27 +41,28 @@ namespace DevLib.AddIn
                 Directory.CreateDirectory(addInDomainSetup.ExeFileDirectory);
             }
 
-            Dictionary<string, string> providerOptions = new Dictionary<string, string> { { "CompilerVersion", "v2.0" } };
+            // Dictionary<string, string> providerOptions = new Dictionary<string, string> { { "CompilerVersion", "v2.0" } };
 
             CompilerResults results = null;
 
-            using (CSharpCodeProvider provider = new CSharpCodeProvider(providerOptions))
+            // using (CSharpCodeProvider provider = new CSharpCodeProvider(providerOptions))
+            using (CSharpCodeProvider provider = new CSharpCodeProvider())
             {
                 List<string> compilerArgs = new List<string> { AddInPlatformTarget.GetPlatformTargetCompilerArgument(addInDomainSetup.Platform) };
 
                 CompilerParameters compilerParameters = new CompilerParameters
                 {
+                    // CompilerOptions = string.Join(" ", compilerArgs.ToArray()),
                     GenerateExecutable = true,
                     GenerateInMemory = false,
-                    CompilerOptions = string.Join(" ", compilerArgs.ToArray()),
                     OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName))
                 };
 
                 compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
 
                 string assemblySource = Properties.Resources.Program
-                    .Replace("${AddInActivatorHostTypeName}", typeof(AddInActivatorHost).AssemblyQualifiedName)
-                    .Replace("${AddInAssemblyName}", typeof(AddInActivatorHost).Assembly.FullName);
+                    .Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName)
+                    .Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
 
                 results = provider.CompileAssemblyFromSource(compilerParameters, assemblySource);
             }

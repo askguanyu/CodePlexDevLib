@@ -32,7 +32,7 @@ namespace DevLib.AddIn
         {
             this.ExeFileDirectory = Path.GetTempPath();
             this.ProcessStartTimeout = new TimeSpan(0, 0, 10);
-            this.FileDeleteTimeout = new TimeSpan(0, 0, 5);
+            this.FileDeleteTimeout = new TimeSpan(0, 0, 3);
             this.DeleteOnUnload = true;
             this.RestartOnProcessExit = true;
             this.AppDomainSetup = AppDomain.CurrentDomain.SetupInformation;

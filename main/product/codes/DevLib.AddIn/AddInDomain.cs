@@ -176,6 +176,8 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName)
         {
+            this.StartAddInActivatorProcess();
+
             this._overloadCreateInstanceAndUnwrap = 1;
             this._addInAssemblyName = assemblyName;
             this.AddInTypeName = typeName;
@@ -193,6 +195,8 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName, object[] activationAttributes)
         {
+            this.StartAddInActivatorProcess();
+
             this._overloadCreateInstanceAndUnwrap = 2;
             this._addInAssemblyName = assemblyName;
             this.AddInTypeName = typeName;
@@ -227,6 +231,8 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture, object[] activationAttributes, Evidence securityAttributes)
         {
+            this.StartAddInActivatorProcess();
+
             this._overloadCreateInstanceAndUnwrap = 3;
             this._addInAssemblyName = assemblyName;
             this.AddInTypeName = typeName;
@@ -310,7 +316,17 @@ namespace DevLib.AddIn
             this._addInActivatorProcess = new AddInActivatorProcess(this.FriendlyName, this.AddInDomainSetupInfo);
             this._addInActivatorProcess.Attached += OnProcessAttached;
             this._addInActivatorProcess.Detached += OnProcessDetached;
-            this._addInActivatorProcess.Start();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        private void StartAddInActivatorProcess()
+        {
+            if (this._addInActivatorProcess != null && !this._addInActivatorProcess.IsRunning)
+            {
+                this._addInActivatorProcess.Start();
+            }
         }
 
         /// <summary>
@@ -319,6 +335,8 @@ namespace DevLib.AddIn
         private void RestartAddInActivatorProcess()
         {
             this.CreateAddInActivatorProcess();
+
+            this.StartAddInActivatorProcess();
 
             if (this.AddInObject != null)
             {
@@ -344,14 +362,16 @@ namespace DevLib.AddIn
                                 this._addInActivationAttributes,
                                 this._addInSecurityAttributes);
                             break;
+                        default:
+                            break;
                     }
-
-                    this.RaiseEvent(Reloaded);
                 }
                 catch
                 {
                 }
             }
+
+            this.RaiseEvent(Reloaded);
         }
 
         /// <summary>

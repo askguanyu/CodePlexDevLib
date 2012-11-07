@@ -98,6 +98,7 @@ namespace DevLib.AddIn
             // args[1] = GUID
             // args[2] = PID
             // args[3] = AddInDomainSetup file
+
             if (args.Length != 4)
             {
                 return;

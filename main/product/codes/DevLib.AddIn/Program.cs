@@ -40,15 +40,15 @@
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public void Mount()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += Resolve;
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ReflectionOnlyResolve;
+            AppDomain.CurrentDomain.AssemblyResolve += this.Resolve;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += this.ReflectionOnlyResolve;
         }
 
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public void Unmount()
         {
-            AppDomain.CurrentDomain.AssemblyResolve -= Resolve;
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= ReflectionOnlyResolve;
+            AppDomain.CurrentDomain.AssemblyResolve -= this.Resolve;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= this.ReflectionOnlyResolve;
         }
 
         private static bool PublicKeysTokenEqual(byte[] left, byte[] right)
@@ -76,7 +76,7 @@
 
         private Assembly Resolve(object sender, ResolveEventArgs args)
         {
-            string assemblyFile = FindAssemblyName(args.Name);
+            string assemblyFile = this.FindAssemblyName(args.Name);
 
             if (assemblyFile != null)
             {
@@ -88,7 +88,7 @@
 
         private Assembly ReflectionOnlyResolve(object sender, ResolveEventArgs args)
         {
-            string assemblyFile = FindAssemblyName(args.Name);
+            string assemblyFile = this.FindAssemblyName(args.Name);
 
             if (assemblyFile != null)
             {
@@ -103,7 +103,7 @@
             AssemblyName assemblyName = new AssemblyName(name);
             Dictionary<AssemblyName, string> subDict;
 
-            if (!_assemblyDict.TryGetValue(assemblyName.Name, out subDict))
+            if (!this._assemblyDict.TryGetValue(assemblyName.Name, out subDict))
             {
                 return null;
             }

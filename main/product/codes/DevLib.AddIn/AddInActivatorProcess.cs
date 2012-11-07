@@ -127,6 +127,15 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
+        /// Gets a value indicating whether the process is started and running.
+        /// </summary>
+        public bool IsRunning
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Starts the remote process which will host an AddInActivator.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
@@ -134,9 +143,10 @@ namespace DevLib.AddIn
         {
             this.CheckDisposed();
             this.DisposeClient();
-            string guid = Guid.NewGuid().ToString();
 
+            string guid = Guid.NewGuid().ToString();
             bool isCreated;
+
             using (EventWaitHandle serverStartedHandle = new EventWaitHandle(false, EventResetMode.ManualReset, string.Format(AddInActivatorHost.AddInDomainEventNameStringFormat, guid), out isCreated))
             {
                 if (!isCreated)
@@ -152,10 +162,11 @@ namespace DevLib.AddIn
                 // args[1] = GUID
                 // args[2] = PID
                 // args[3] = AddInDomainSetup file
-                this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\"", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile);
-                bool isStarted = this._process.Start();
 
-                if (!isStarted)
+                this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\"", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile);
+                this.IsRunning = this._process.Start();
+
+                if (!this.IsRunning)
                 {
                     Debug.WriteLine(string.Format(AddInConstants.ProcessStartExceptionStringFormat, this._process.StartInfo.FileName));
                     throw new Exception(string.Format(AddInConstants.ProcessStartExceptionStringFormat, this._process.StartInfo.FileName));
@@ -188,9 +199,11 @@ namespace DevLib.AddIn
             }
 
             this._isDisposing = true;
+
             this.Kill();
             this.DisposeClient();
 
+            this.IsRunning = false;
             this.RaiseEvent(Detached);
         }
 

@@ -48,7 +48,7 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        internal const string ProcessOuputStringFormat = "[{0}] output: {1}";
+        internal const string ProcessOuputStringFormat = "[{0}] {1}";
 
         /// <summary>
         ///

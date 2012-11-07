@@ -200,8 +200,8 @@ namespace DevLib.AddIn
 
             this._isDisposing = true;
 
-            this.Kill();
             this.DisposeClient();
+            this.Kill();
 
             this.IsRunning = false;
             this.RaiseEvent(Detached);
@@ -229,6 +229,7 @@ namespace DevLib.AddIn
                 if (this._process != null && !this._process.HasExited)
                 {
                     this._process.Kill();
+                    this._process.WaitForExit(1000);
                 }
             }
             catch

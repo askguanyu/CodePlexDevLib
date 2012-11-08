@@ -120,6 +120,24 @@ namespace DevLib.AddIn
         public event EventHandler<AddInDomainEventArgs> Reloaded;
 
         /// <summary>
+        /// Gets AddInActivatorProcessInfo.
+        /// </summary>
+        public AddInActivatorProcessInfo ProcessInfo
+        {
+            get
+            {
+                if (this._addInActivatorProcess != null)
+                {
+                    return this._addInActivatorProcess.ProcessInfo;
+                }
+                else
+                {
+                    return new AddInActivatorProcessInfo();
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets AddIn type name.
         /// </summary>
         public string AddInTypeName

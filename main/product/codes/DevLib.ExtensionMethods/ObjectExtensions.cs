@@ -460,6 +460,47 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Gets object's all properties value.
+        /// </summary>
+        /// <param name="source">The source object.</param>
+        /// <param name="showPropertyName">Whether show property name.</param>
+        /// <returns>String</returns>
+        public static string TraverseProperties(this object source, bool showPropertyName = true)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            if (showPropertyName)
+            {
+                foreach (PropertyInfo property in source.GetType().GetProperties())
+                {
+                    if (property.CanRead)
+                    {
+                        object val = property.GetValue(source, null);
+                        stringBuilder.AppendLine(string.Format("{0} = {1}", property.Name, val.ToString()));
+                    }
+                }
+            }
+            else
+            {
+                foreach (PropertyInfo property in source.GetType().GetProperties())
+                {
+                    if (property.CanRead)
+                    {
+                        object val = property.GetValue(source, null);
+                        stringBuilder.AppendLine(val.ToString());
+                    }
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
         /// Converts an object to the specified target type or returns the default value if
         /// those 2 types are not convertible.
         /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>

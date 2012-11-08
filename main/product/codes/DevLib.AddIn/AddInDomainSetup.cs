@@ -46,7 +46,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies maximum time spent trying to delete a assembly from the disk.
+        /// Gets or sets maximum time spent trying to delete a assembly from the disk.
         /// </summary>
         public TimeSpan FileDeleteTimeout
         {
@@ -55,7 +55,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies where the temporary remote process executable file will be created.
+        /// Gets or sets where the temporary remote process executable file will be created.
         /// </summary>
         public string ExeFileDirectory
         {
@@ -64,7 +64,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies the working directory for the remote process.
+        /// Gets or sets the working directory for the remote process.
         /// </summary>
         public string WorkingDirectory
         {
@@ -73,7 +73,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies a directory to invoke SetDllDirectory with to redirect DLL probing to the working directory.
+        /// Gets or sets a directory to invoke SetDllDirectory with to redirect DLL probing to the working directory.
         /// </summary>
         public string DllDirectory
         {
@@ -82,7 +82,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies how long to wait for the remote process to start.
+        /// Gets or sets how long to wait for the remote process to start.
         /// </summary>
         public TimeSpan ProcessStartTimeout
         {
@@ -91,7 +91,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies whether or not to delete the generated executable after AddInDomain has unloaded.
+        /// Gets or sets whether or not to delete the generated executable after AddInDomain has unloaded.
         /// </summary>
         public bool DeleteOnUnload
         {
@@ -100,7 +100,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifices whether AddInDomain should be relaunched when the process exit prematurely.
+        /// Gets or sets whether AddInDomain should be relaunched when the process exit prematurely.
         /// </summary>
         public bool RestartOnProcessExit
         {
@@ -109,7 +109,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Setup information for the AppDomain that the object will be created in, in the remote process.
+        /// Gets or sets setup information for the AppDomain that the object will be created in, in the remote process.
         /// By default, this will be the current domain's setup information from which the proxy is being created.
         /// </summary>
         public AppDomainSetup AppDomainSetup
@@ -119,7 +119,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Allows specifying which platform to compile the target remote process assembly for.
+        /// Gets or sets which platform to compile the target remote process assembly for.
         /// </summary>
         public PlatformTargetEnum Platform
         {
@@ -128,7 +128,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Remote security policy.
+        /// Gets or sets remote security policy.
         /// </summary>
         public Evidence Evidence
         {
@@ -137,7 +137,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Specifies the level of automatic deserialization for .NET Framework remoting.
+        /// Gets or sets the level of automatic deserialization for .NET Framework remoting.
         /// </summary>
         public TypeFilterLevel TypeFilterLevel
         {
@@ -146,7 +146,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Environment variables of the remote process.
+        /// Gets or sets environment variables of the remote process.
         /// </summary>
         public Dictionary<string, string> EnvironmentVariables
         {
@@ -155,7 +155,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// A dictionary of assembly names to assembly file locations that will need to be resolved inside AddInDomain.
+        /// Gets or sets a dictionary of assembly names to assembly file locations that will need to be resolved inside AddInDomain.
         /// </summary>
         public Dictionary<AssemblyName, string> ExternalAssemblies
         {
@@ -164,7 +164,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// The priority to run the remote process at.
+        /// Gets or sets the priority to run the remote process at.
         /// </summary>
         public ProcessPriorityClass ProcessPriority
         {

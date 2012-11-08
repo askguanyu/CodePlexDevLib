@@ -137,7 +137,7 @@
             // args[2] = PID
             // args[3] = AddInDomainSetup file
 
-            if (args.Length < 1)
+            if (args.Length < 4)
             {
                 Console.WriteLine("Invalid arguments");
                 Console.WriteLine("args[0] = AddInDomain assembly path");

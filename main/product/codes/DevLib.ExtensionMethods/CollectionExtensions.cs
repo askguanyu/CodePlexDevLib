@@ -54,6 +54,24 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Performs the specified action on each element of the specified IDictionary.
+        /// </summary>
+        /// <param name="source">The source dictionary.</param>
+        /// <param name="action">Method for element.</param>
+        public static void ForEach<TKey, TValue>(this IDictionary<TKey, TValue> source, Action<TKey, TValue> action)
+        {
+            if ((source == null) || (source.Count == 0) || (action == null))
+            {
+                return;
+            }
+
+            foreach (var item in source)
+            {
+                action(item.Key, item.Value);
+            }
+        }
+
+        /// <summary>
         /// Determines whether a sequence is empty.
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>

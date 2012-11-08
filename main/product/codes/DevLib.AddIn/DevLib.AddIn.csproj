@@ -47,6 +47,7 @@
     <Compile Include="AddInActivatorHost.cs" />
     <Compile Include="AddInActivatorHostAssemblyCompiler.cs" />
     <Compile Include="AddInActivatorProcess.cs" />
+    <Compile Include="AddInActivatorProcessInfo.cs" />
     <Compile Include="AddInAssemblyCompilerException.cs" />
     <Compile Include="AddInConstants.cs" />
     <Compile Include="AddInDeleteOnUnloadException.cs" />

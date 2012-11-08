@@ -78,6 +78,8 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.AddIn");
 
+            var info = new AddInActivatorProcessInfo();
+
             addin = new AddInDomain("DevLibSample");
             addin.Loaded += new EventHandler<AddInDomainEventArgs>(addin_Started);
             addin.Reloaded += new EventHandler<AddInDomainEventArgs>(addin_Restarted);
@@ -89,6 +91,7 @@ namespace DevLib.Samples
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
             addin.AddInTypeName.ConsoleOutput();
+            addin.ProcessInfo.TraverseProperties().ConsoleOutput();
 
             var atype = Type.GetType(addin.AddInTypeName);
 

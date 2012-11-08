@@ -50,6 +50,11 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
+        private AddInActivatorProcessInfo _addInActivatorProcessInfo;
+
+        /// <summary>
+        ///
+        /// </summary>
         private AddInActivatorClient _addInActivatorClient;
 
         /// <summary>
@@ -103,8 +108,12 @@ namespace DevLib.AddIn
 
             this._addInDomainSetupFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(ConfigFileStringFormat, friendlyName));
 
-            this._process.OutputDataReceived += this.OnProcessDataReceived;
-            this._process.ErrorDataReceived += this.OnProcessDataReceived;
+            if (this._redirectOutput)
+            {
+                this._process.OutputDataReceived += this.OnProcessDataReceived;
+                this._process.ErrorDataReceived += this.OnProcessDataReceived;
+            }
+
             this._process.Exited += this.OnProcessExited;
             this._process.EnableRaisingEvents = true;
         }
@@ -141,6 +150,224 @@ namespace DevLib.AddIn
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets AddInActivatorProcessInfo.
+        /// </summary>
+        public AddInActivatorProcessInfo ProcessInfo
+        {
+            [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+            get
+            {
+                if (this._addInActivatorProcessInfo == null)
+                {
+                    this._addInActivatorProcessInfo = new AddInActivatorProcessInfo();
+                }
+
+                if (this._process != null)
+                {
+                    try
+                    {
+                        this._addInActivatorProcessInfo.BasePriority = this._process.BasePriority;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.BasePriority = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.ExitCode = this._process.ExitCode;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.ExitCode = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.ExitTime = this._process.ExitTime;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.ExitTime = new DateTime();
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.HasExited = this._process.HasExited;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.HasExited = false;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.Id = this._process.Id;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.Id = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.MachineName = this._process.MachineName;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.MachineName = string.Empty;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.MainWindowTitle = this._process.MainWindowTitle;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.MainWindowTitle = string.Empty;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.NonpagedSystemMemorySize64 = this._process.NonpagedSystemMemorySize64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.NonpagedSystemMemorySize64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PagedMemorySize64 = this._process.PagedMemorySize64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PagedMemorySize64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PagedSystemMemorySize64 = this._process.PagedSystemMemorySize64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PagedSystemMemorySize64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PeakPagedMemorySize64 = this._process.PeakPagedMemorySize64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PeakPagedMemorySize64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PeakVirtualMemorySize64 = this._process.PeakVirtualMemorySize64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PeakVirtualMemorySize64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PeakWorkingSet64 = this._process.PeakWorkingSet64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PeakWorkingSet64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PrivateMemorySize64 = this._process.PrivateMemorySize64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PrivateMemorySize64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PrivilegedProcessorTime = this._process.PrivilegedProcessorTime;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PrivilegedProcessorTime = new TimeSpan();
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.ProcessName = this._process.ProcessName;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.ProcessName = string.Empty;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.SessionId = this._process.SessionId;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.SessionId = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.StartTime = this._process.StartTime;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.StartTime = new DateTime();
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.TotalProcessorTime = this._process.TotalProcessorTime;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.TotalProcessorTime = new TimeSpan();
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.UserProcessorTime = this._process.UserProcessorTime;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.UserProcessorTime = new TimeSpan();
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.VirtualMemorySize64 = this._process.VirtualMemorySize64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.VirtualMemorySize64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.WorkingSet64 = this._process.WorkingSet64;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.WorkingSet64 = -1;
+                    }
+                }
+
+                return this._addInActivatorProcessInfo;
+            }
         }
 
         /// <summary>
@@ -333,8 +560,9 @@ namespace DevLib.AddIn
                 }
 
                 isCanceled = cancelEvent.WaitOne(0);
+            }
 
-            } while (!isDeleted && !isCanceled);
+            while (!isDeleted && !isCanceled);
 
             if (!isDeleted && lastException != null)
             {

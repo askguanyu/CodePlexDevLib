@@ -86,7 +86,7 @@ namespace DevLib.AddIn
         /// Creates a AddInDomain which allows hosting objects and code in isolated process.
         /// </summary>
         /// <param name="friendlyName">The friendly name of the AddInDomain.</param>
-        /// <param name="redirectOutput"></param>
+        /// <param name="redirectOutput">Whether the output of AddInActivatorProcess is written to the System.Diagnostics.Process.StandardOutput stream.</param>
         /// <param name="addInDomainSetup">Additional settings for creating AddInDomain.</param>
         public AddInDomain(string friendlyName = null, bool redirectOutput = true, AddInDomainSetup addInDomainSetup = null)
         {

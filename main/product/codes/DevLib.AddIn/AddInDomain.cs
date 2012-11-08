@@ -78,14 +78,21 @@ namespace DevLib.AddIn
         private bool _canRestart = true;
 
         /// <summary>
+        ///
+        /// </summary>
+        private bool _redirectOutput;
+
+        /// <summary>
         /// Creates a AddInDomain which allows hosting objects and code in isolated process.
         /// </summary>
         /// <param name="friendlyName">The friendly name of the AddInDomain.</param>
+        /// <param name="redirectOutput"></param>
         /// <param name="addInDomainSetup">Additional settings for creating AddInDomain.</param>
-        public AddInDomain(string friendlyName = null, AddInDomainSetup addInDomainSetup = null)
+        public AddInDomain(string friendlyName = null, bool redirectOutput = true, AddInDomainSetup addInDomainSetup = null)
         {
             this.FriendlyName = string.IsNullOrEmpty(friendlyName) ? AddInConstants.DefaultFriendlyName : friendlyName;
             this.AddInDomainSetupInfo = (addInDomainSetup == null) ? new AddInDomainSetup() : addInDomainSetup;
+            this._redirectOutput = redirectOutput;
             this.CreateAddInActivatorProcess();
         }
 
@@ -313,7 +320,7 @@ namespace DevLib.AddIn
         {
             this._canRestart = true;
 
-            this._addInActivatorProcess = new AddInActivatorProcess(this.FriendlyName, this.AddInDomainSetupInfo);
+            this._addInActivatorProcess = new AddInActivatorProcess(this.FriendlyName, this._redirectOutput, this.AddInDomainSetupInfo);
             this._addInActivatorProcess.Attached += OnProcessAttached;
             this._addInActivatorProcess.Detached += OnProcessDetached;
         }

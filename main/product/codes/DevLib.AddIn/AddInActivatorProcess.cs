@@ -60,13 +60,21 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
+        private bool _redirectOutput;
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="friendlyName"></param>
+        /// <param name="redirectOutput"></param>
         /// <param name="addInDomainSetup"></param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope"), EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public AddInActivatorProcess(string friendlyName, AddInDomainSetup addInDomainSetup)
+        public AddInActivatorProcess(string friendlyName, bool redirectOutput, AddInDomainSetup addInDomainSetup)
         {
             this._friendlyName = friendlyName;
+            this._redirectOutput = redirectOutput;
             this._addInDomainSetup = addInDomainSetup;
+
             this._assemblyFile = AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly(friendlyName, addInDomainSetup);
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo
@@ -74,8 +82,8 @@ namespace DevLib.AddIn
                 CreateNoWindow = true,
                 ErrorDialog = false,
                 FileName = this._assemblyFile,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
+                RedirectStandardError = this._redirectOutput,
+                RedirectStandardOutput = this._redirectOutput,
                 UseShellExecute = false,
                 WorkingDirectory = this._addInDomainSetup.WorkingDirectory,
             };
@@ -178,8 +186,12 @@ namespace DevLib.AddIn
                     throw new Exception(AddInConstants.ProcessStartTimeoutException);
                 }
 
-                this._process.BeginOutputReadLine();
-                this._process.BeginErrorReadLine();
+                if (this._redirectOutput)
+                {
+                    this._process.BeginOutputReadLine();
+                    this._process.BeginErrorReadLine();
+                }
+
                 this._process.PriorityClass = this._addInDomainSetup.ProcessPriority;
 
                 this._addInActivatorClient = new AddInActivatorClient(guid, this._addInDomainSetup);

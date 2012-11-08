@@ -121,20 +121,23 @@ namespace DevLib.Samples
 
         static void addin_Started(object sender, AddInDomainEventArgs e)
         {
-            Console.WriteLine("addin_Started    " + e.ProcessInfo.RetrieveProperties());
-            Debug.WriteLine("addin_Started    " + e.ProcessInfo.RetrieveProperties());
+            Console.WriteLine("!!!!!!!!addin_Started    " + e.FriendlyName);
+            e.ProcessInfo.RetrieveProperties().ForEach((k, v) => { Console.WriteLine(string.Format("{0} = {1}", k, v)); });
+            Debug.WriteLine("!!!!!!!!addin_Started    " + e.FriendlyName);
         }
 
         static void addin_Stopped(object sender, AddInDomainEventArgs e)
         {
-            Console.WriteLine("addin_Stopped    " + e.ProcessInfo.RetrieveProperties());
-            Debug.WriteLine("addin_Stopped    " + e.ProcessInfo.RetrieveProperties());
+            Console.WriteLine("!!!!!!!!addin_Stopped    " + e.FriendlyName);
+            e.ProcessInfo.RetrieveProperties().ForEach((k, v) => { Console.WriteLine(string.Format("{0} = {1}", k, v)); });
+            Debug.WriteLine("!!!!!!!!addin_Stopped    " + e.FriendlyName);
         }
 
         static void addin_Restarted(object sender, AddInDomainEventArgs e)
         {
-            Console.WriteLine("addin_Restarted    " + e.ProcessInfo.RetrieveProperties());
-            Debug.WriteLine("addin_Restarted    " + e.ProcessInfo.RetrieveProperties());
+            Console.WriteLine("!!!!!!!!addin_Restarted    " + e.FriendlyName);
+            e.ProcessInfo.RetrieveProperties().ForEach((k, v) => { Console.WriteLine(string.Format("{0} = {1}", k, v)); });
+            Debug.WriteLine("!!!!!!!!addin_Restarted    " + e.FriendlyName);
             //(addin.AddInObject as WcfIsolatedServiceHost).Open();
         }
 

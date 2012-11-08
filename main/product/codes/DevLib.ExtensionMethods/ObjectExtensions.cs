@@ -463,41 +463,25 @@ namespace DevLib.ExtensionMethods
         /// Gets object's all properties value.
         /// </summary>
         /// <param name="source">The source object.</param>
-        /// <param name="showPropertyName">Whether show property name.</param>
-        /// <returns>String</returns>
-        public static string RetrieveProperties(this object source, bool showPropertyName = true)
+        /// <returns></returns>
+        public static Dictionary<string, object> RetrieveProperties(this object source)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            StringBuilder stringBuilder = new StringBuilder();
+            Dictionary<string, object> result = new Dictionary<string, object>();
 
-            if (showPropertyName)
+            foreach (PropertyInfo property in source.GetType().GetProperties())
             {
-                foreach (PropertyInfo property in source.GetType().GetProperties())
+                if (property.CanRead)
                 {
-                    if (property.CanRead)
-                    {
-                        object val = property.GetValue(source, null);
-                        stringBuilder.AppendLine(string.Format("{0} = {1}", property.Name, val.ToString()));
-                    }
-                }
-            }
-            else
-            {
-                foreach (PropertyInfo property in source.GetType().GetProperties())
-                {
-                    if (property.CanRead)
-                    {
-                        object val = property.GetValue(source, null);
-                        stringBuilder.AppendLine(val.ToString());
-                    }
+                    result.Add(property.Name, property.GetValue(source, null));
                 }
             }
 
-            return stringBuilder.ToString();
+            return result;
         }
 
         /// <summary>

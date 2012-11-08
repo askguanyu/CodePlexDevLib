@@ -91,7 +91,7 @@ namespace DevLib.Samples
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
             addin.AddInTypeName.ConsoleOutput();
-            addin.ProcessInfo.TraverseProperties().ConsoleOutput();
+            addin.ProcessInfo.RetrieveProperties().ConsoleOutput();
 
             var atype = Type.GetType(addin.AddInTypeName);
 
@@ -121,17 +121,20 @@ namespace DevLib.Samples
 
         static void addin_Started(object sender, AddInDomainEventArgs e)
         {
-            Debug.WriteLine("addin_Started    " + e.AddInTypeName);
+            Console.WriteLine("addin_Started    " + e.ProcessInfo.RetrieveProperties());
+            Debug.WriteLine("addin_Started    " + e.ProcessInfo.RetrieveProperties());
         }
 
         static void addin_Stopped(object sender, AddInDomainEventArgs e)
         {
-            Debug.WriteLine("addin_Stopped    " + e.AddInTypeName);
+            Console.WriteLine("addin_Stopped    " + e.ProcessInfo.RetrieveProperties());
+            Debug.WriteLine("addin_Stopped    " + e.ProcessInfo.RetrieveProperties());
         }
 
         static void addin_Restarted(object sender, AddInDomainEventArgs e)
         {
-            Debug.WriteLine("addin_Restarted    " + e.AddInTypeName);
+            Console.WriteLine("addin_Restarted    " + e.ProcessInfo.RetrieveProperties());
+            Debug.WriteLine("addin_Restarted    " + e.ProcessInfo.RetrieveProperties());
             //(addin.AddInObject as WcfIsolatedServiceHost).Open();
         }
 

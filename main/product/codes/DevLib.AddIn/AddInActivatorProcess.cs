@@ -191,7 +191,7 @@ namespace DevLib.AddIn
                     }
                     catch
                     {
-                        this._addInActivatorProcessInfo.ExitTime = new DateTime();
+                        this._addInActivatorProcessInfo.ExitTime = DateTime.MinValue;
                     }
 
                     try
@@ -299,7 +299,7 @@ namespace DevLib.AddIn
                     }
                     catch
                     {
-                        this._addInActivatorProcessInfo.PrivilegedProcessorTime = new TimeSpan();
+                        this._addInActivatorProcessInfo.PrivilegedProcessorTime = TimeSpan.Zero;
                     }
 
                     try
@@ -326,7 +326,7 @@ namespace DevLib.AddIn
                     }
                     catch
                     {
-                        this._addInActivatorProcessInfo.StartTime = new DateTime();
+                        this._addInActivatorProcessInfo.StartTime = DateTime.MinValue;
                     }
 
                     try
@@ -335,7 +335,7 @@ namespace DevLib.AddIn
                     }
                     catch
                     {
-                        this._addInActivatorProcessInfo.TotalProcessorTime = new TimeSpan();
+                        this._addInActivatorProcessInfo.TotalProcessorTime = TimeSpan.Zero;
                     }
 
                     try
@@ -344,7 +344,7 @@ namespace DevLib.AddIn
                     }
                     catch
                     {
-                        this._addInActivatorProcessInfo.UserProcessorTime = new TimeSpan();
+                        this._addInActivatorProcessInfo.UserProcessorTime = TimeSpan.Zero;
                     }
 
                     try

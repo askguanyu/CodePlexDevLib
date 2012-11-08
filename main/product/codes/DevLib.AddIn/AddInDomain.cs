@@ -165,7 +165,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets
+        /// Gets AddInDomainSetup infomation.
         /// </summary>
         public AddInDomainSetup AddInDomainSetupInfo
         {
@@ -410,7 +410,7 @@ namespace DevLib.AddIn
 
             if (temp != null)
             {
-                temp(null, new AddInDomainEventArgs(this.FriendlyName ?? string.Empty, this.AddInTypeName ?? string.Empty));
+                temp(null, new AddInDomainEventArgs(this.FriendlyName, this.AddInTypeName, this.AddInObject, this.AddInDomainSetupInfo, this.ProcessInfo));
             }
         }
 

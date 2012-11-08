@@ -465,7 +465,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The source object.</param>
         /// <param name="showPropertyName">Whether show property name.</param>
         /// <returns>String</returns>
-        public static string TraverseProperties(this object source, bool showPropertyName = true)
+        public static string RetrieveProperties(this object source, bool showPropertyName = true)
         {
             if (source == null)
             {

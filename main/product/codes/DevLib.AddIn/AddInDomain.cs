@@ -297,7 +297,7 @@ namespace DevLib.AddIn
         /// <param name="args">The arguments to pass to the constructor. This array of arguments must match in number, order, and type the parameters of the constructor to invoke. If the default constructor is preferred, <paramref name="args" /> must be an empty array or null. </param>
         /// <returns>An instance of the object specified by <paramref name="typeName" />.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public T CreateInstance<T>(object[] args)
+        public T CreateInstance<T>(params object[] args)
         {
             return (T)this.CreateInstanceAndUnwrap(typeof(T).Assembly.FullName, typeof(T).FullName, true, BindingFlags.Default, null, args, null, null, null);
         }

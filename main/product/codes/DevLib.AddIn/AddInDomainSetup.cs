@@ -30,19 +30,20 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public AddInDomainSetup()
         {
-            this.ExeFileDirectory = Path.GetTempPath();
-            this.ProcessStartTimeout = new TimeSpan(0, 0, 10);
-            this.FileDeleteTimeout = new TimeSpan(0, 0, 3);
-            this.DeleteOnUnload = true;
-            this.RestartOnProcessExit = true;
             this.AppDomainSetup = AppDomain.CurrentDomain.SetupInformation;
-            this.WorkingDirectory = Environment.CurrentDirectory;
-            this.Evidence = AppDomain.CurrentDomain.Evidence;
-            this.TypeFilterLevel = TypeFilterLevel.Low;
+            this.DeleteOnUnload = true;
             this.DllDirectory = GetCurrentDllDirectory();
             this.EnvironmentVariables = new Dictionary<string, string>();
+            this.Evidence = AppDomain.CurrentDomain.Evidence;
+            this.ExeFileDirectory = Path.GetTempPath();
             this.ExternalAssemblies = new Dictionary<AssemblyName, string>();
+            this.FileDeleteTimeout = new TimeSpan(0, 0, 3);
+            this.Platform = PlatformTargetEnum.AnyCPU;
             this.ProcessPriority = ProcessPriorityClass.Normal;
+            this.ProcessStartTimeout = new TimeSpan(0, 0, 10);
+            this.RestartOnProcessExit = true;
+            this.TypeFilterLevel = TypeFilterLevel.Low;
+            this.WorkingDirectory = Environment.CurrentDirectory;
         }
 
         /// <summary>

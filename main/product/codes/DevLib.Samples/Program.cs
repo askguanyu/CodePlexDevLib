@@ -138,7 +138,7 @@ namespace DevLib.Samples
             Console.WriteLine("!!!!!!!!addin_Restarted    " + e.FriendlyName);
             e.ProcessInfo.RetrieveProperties().ForEach((k, v) => { Console.WriteLine(string.Format("{0} = {1}", k, v)); });
             Debug.WriteLine("!!!!!!!!addin_Restarted    " + e.FriendlyName);
-            //(addin.AddInObject as WcfIsolatedServiceHost).Open();
+            (e.AddInObject as WcfIsolatedServiceHost).Open();
         }
 
         private static void PrintStartInfo()

@@ -17,12 +17,13 @@ namespace DevLib.AddIn
         /// </summary>
         public AddInActivatorProcessInfo()
         {
-            this.MachineName = string.Empty;
-            this.MainWindowTitle = string.Empty;
-            this.ProcessName = string.Empty;
             this.BasePriority = -1;
             this.ExitCode = -1;
+            this.ExitTime = DateTime.MinValue;
+            this.HasExited = false;
             this.Id = -1;
+            this.MachineName = string.Empty;
+            this.MainWindowTitle = string.Empty;
             this.NonpagedSystemMemorySize64 = -1;
             this.PagedMemorySize64 = -1;
             this.PagedSystemMemorySize64 = -1;
@@ -30,7 +31,12 @@ namespace DevLib.AddIn
             this.PeakVirtualMemorySize64 = -1;
             this.PeakWorkingSet64 = -1;
             this.PrivateMemorySize64 = -1;
+            this.PrivilegedProcessorTime = TimeSpan.Zero;
+            this.ProcessName = string.Empty;
             this.SessionId = -1;
+            this.StartTime = DateTime.MinValue;
+            this.TotalProcessorTime = TimeSpan.Zero;
+            this.UserProcessorTime = TimeSpan.Zero;
             this.VirtualMemorySize64 = -1;
             this.WorkingSet64 = -1;
         }

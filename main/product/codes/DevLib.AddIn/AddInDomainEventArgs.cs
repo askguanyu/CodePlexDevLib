@@ -17,10 +17,16 @@ namespace DevLib.AddIn
         /// </summary>
         /// <param name="friendlyName"></param>
         /// <param name="addInTypeName"></param>
-        public AddInDomainEventArgs(string friendlyName, string addInTypeName)
+        /// <param name="addInObject"></param>
+        /// <param name="addInDomainSetupInfo"></param>
+        /// <param name="processInfo"></param>
+        public AddInDomainEventArgs(string friendlyName, string addInTypeName, object addInObject, AddInDomainSetup addInDomainSetupInfo, AddInActivatorProcessInfo processInfo)
         {
             this.FriendlyName = friendlyName;
             this.AddInTypeName = addInTypeName;
+            this.AddInObject = addInObject;
+            this.AddInDomainSetupInfo = addInDomainSetupInfo;
+            this.ProcessInfo = processInfo;
         }
 
         /// <summary>
@@ -33,9 +39,36 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
+        /// Gets AddIn object.
+        /// </summary>
+        public object AddInObject
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Gets the friendly name of the AddInDomain.
         /// </summary>
         public string FriendlyName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets AddInDomainSetup infomation.
+        /// </summary>
+        public AddInDomainSetup AddInDomainSetupInfo
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets AddInActivatorProcessInfo.
+        /// </summary>
+        public AddInActivatorProcessInfo ProcessInfo
         {
             get;
             private set;

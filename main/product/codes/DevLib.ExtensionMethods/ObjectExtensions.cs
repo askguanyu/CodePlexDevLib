@@ -14,6 +14,7 @@ namespace DevLib.ExtensionMethods
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Runtime.Serialization.Json;
     using System.Text;
+    using System.Xml;
     using System.Xml.Serialization;
 
     /// <summary>
@@ -252,7 +253,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes a JSON object to an object.
+        /// Deserializes a JSON object to an object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
         /// <param name="source">JSON string object.</param>
@@ -272,7 +273,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes a JSON object to an object.
+        /// Deserializes a JSON object to an object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
         /// <param name="source">JSON string object.</param>
@@ -293,48 +294,40 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes the object into an XML string using Encoding.Default.
-        /// </summary>
-        /// <remarks>
-        /// The object to be serialized should be decorated with the
-        /// <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
-        /// </remarks>
-        /// <param name="source">The object to serialize.</param>
-        /// <returns>An XML encoded string representation of the source object.</returns>
-        public static string ToXml(this object source)
-        {
-            return source.ToXml(Encoding.Default);
-        }
-
-        /// <summary>
         /// Serializes the object into an XML string.
         /// </summary>
         /// <remarks>
-        /// The object to be serialized should be decorated with the
-        /// <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
+        /// The object to be serialized should be decorated with the <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
         /// </remarks>
-        /// <param name="source">The object to serialize</param>
-        /// <param name="encoding">The Encoding scheme to use when serializing the data to XML.</param>
+        /// <param name="source">The object to serialize.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
+        /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <returns>An XML encoded string representation of the source object.</returns>
-        public static string ToXml(this object source, Encoding encoding)
+        public static string ToXml(this object source, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (encoding == null)
+            string result = null;
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Encoding = new System.Text.UTF8Encoding(false) }))
             {
-                throw new ArgumentNullException("encoding");
+                XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
+                if (removeDefaultNamespace)
+                {
+                    xmlns.Add(String.Empty, String.Empty);
+                }
+
+                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
+                xmlSerializer.Serialize(xmlWriter, source, xmlns);
+                result = stringBuilder.ToString();
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
-                xmlSerializer.Serialize(memoryStream, source);
-                memoryStream.Position = 0;
-                return encoding.GetString(memoryStream.ToArray());
-            }
+            return result;
         }
 
         /// <summary>

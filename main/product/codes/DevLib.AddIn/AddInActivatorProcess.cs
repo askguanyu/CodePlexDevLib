@@ -205,15 +205,6 @@ namespace DevLib.AddIn
 
                     try
                     {
-                        this._addInActivatorProcessInfo.PID = this._process.Id;
-                    }
-                    catch
-                    {
-                        this._addInActivatorProcessInfo.PID = -1;
-                    }
-
-                    try
-                    {
                         this._addInActivatorProcessInfo.MachineName = this._process.MachineName;
                     }
                     catch
@@ -282,6 +273,15 @@ namespace DevLib.AddIn
                     catch
                     {
                         this._addInActivatorProcessInfo.PeakWorkingSet64 = -1;
+                    }
+
+                    try
+                    {
+                        this._addInActivatorProcessInfo.PID = this._process.Id;
+                    }
+                    catch
+                    {
+                        this._addInActivatorProcessInfo.PID = -1;
                     }
 
                     try

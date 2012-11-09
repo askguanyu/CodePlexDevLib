@@ -21,7 +21,6 @@ namespace DevLib.AddIn
             this.ExitCode = -1;
             this.ExitTime = DateTime.MinValue;
             this.HasExited = false;
-            this.PID = -1;
             this.MachineName = string.Empty;
             this.MainWindowTitle = string.Empty;
             this.NonpagedSystemMemorySize64 = -1;
@@ -30,6 +29,7 @@ namespace DevLib.AddIn
             this.PeakPagedMemorySize64 = -1;
             this.PeakVirtualMemorySize64 = -1;
             this.PeakWorkingSet64 = -1;
+            this.PID = -1;
             this.PrivateMemorySize64 = -1;
             this.PrivilegedProcessorTime = TimeSpan.Zero;
             this.ProcessName = string.Empty;
@@ -72,15 +72,6 @@ namespace DevLib.AddIn
         /// Gets a value indicating whether the associated process has been terminated.
         /// </summary>
         public bool HasExited
-        {
-            get;
-            internal set;
-        }
-
-        /// <summary>
-        /// Gets the unique identifier for the associated process.
-        /// </summary>
-        public int PID
         {
             get;
             internal set;
@@ -153,6 +144,15 @@ namespace DevLib.AddIn
         /// Gets the maximum amount of physical memory used by the associated process.
         /// </summary>
         public long PeakWorkingSet64
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Gets the unique identifier for the associated process.
+        /// </summary>
+        public int PID
         {
             get;
             internal set;

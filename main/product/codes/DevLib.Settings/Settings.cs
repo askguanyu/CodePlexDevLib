@@ -6,12 +6,12 @@
 namespace DevLib.Settings
 {
     using System;
+    using System.Collections;
     using System.Configuration;
-    using System.Diagnostics;
     using System.IO;
-    using System.Linq;
-    using System.Runtime.Serialization.Json;
     using System.Text;
+    using System.Xml;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Represents a configuration file that is applicable to a particular application. This class cannot be inherited.
@@ -50,11 +50,11 @@ namespace DevLib.Settings
         {
             if (Path.Equals(this._configuration.FilePath, this.ConfigFile))
             {
-                this._configuration.Save(ConfigurationSaveMode.Minimal, true);
+                this._configuration.Save(ConfigurationSaveMode.Minimal, false);
             }
             else
             {
-                this._configuration.SaveAs(this.ConfigFile, ConfigurationSaveMode.Minimal, true);
+                this._configuration.SaveAs(this.ConfigFile, ConfigurationSaveMode.Minimal, false);
             }
         }
 
@@ -64,7 +64,7 @@ namespace DevLib.Settings
         /// <param name="fileName">The path and file name to save the configuration file to.</param>
         public void SaveAs(string fileName)
         {
-            this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, true);
+            this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, false);
         }
 
         /// <summary>
@@ -74,13 +74,15 @@ namespace DevLib.Settings
         /// <param name="value">An object specifying the value.</param>
         public void SetValue(string key, object value)
         {
-            if (this._configuration.AppSettings.Settings.AllKeys.Contains(key))
+            string valueString = Serialize(value);
+
+            if (Contains(this._configuration.AppSettings.Settings.AllKeys, key))
             {
-                this._configuration.AppSettings.Settings[key].Value = ToJson(value);
+                this._configuration.AppSettings.Settings[key].Value = valueString;
             }
             else
             {
-                this._configuration.AppSettings.Settings.Add(key, ToJson(value));
+                this._configuration.AppSettings.Settings.Add(key, valueString);
             }
         }
 
@@ -92,9 +94,16 @@ namespace DevLib.Settings
         /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
         public T GetValue<T>(string key, T defaultValue = default(T))
         {
-            if (this._configuration.AppSettings.Settings.AllKeys.Contains(key))
+            if (Contains(this._configuration.AppSettings.Settings.AllKeys, key))
             {
-                return FromJson<T>(this._configuration.AppSettings.Settings[key].Value);
+                try
+                {
+                    return Deserialize<T>(this._configuration.AppSettings.Settings[key].Value);
+                }
+                catch
+                {
+                    return defaultValue;
+                }
             }
             else
             {
@@ -129,11 +138,22 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Serializes an object to a JSON string.
+        ///
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private static bool Contains(string[] array, string item)
+        {
+            return Array.IndexOf(array, item) >= array.GetLowerBound(0);
+        }
+
+        /// <summary>
+        /// Serializes an object to string.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
-        /// <returns>JSON string.</returns>
-        private static string ToJson(object source)
+        /// <returns>String.</returns>
+        private static string Serialize(object source)
         {
             // Don't serialize a null object, simply return the default for that object
             if (source == null)
@@ -141,70 +161,45 @@ namespace DevLib.Settings
                 return string.Empty;
             }
 
-            MemoryStream memoryStream = null;
-            string result = string.Empty;
+            string result = null;
 
-            try
+            StringBuilder stringBuilder = new StringBuilder();
+
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+            xmlWriterSettings.OmitXmlDeclaration = true;
+            xmlWriterSettings.Encoding = new System.Text.UTF8Encoding(false);
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, xmlWriterSettings))
             {
-                memoryStream = new MemoryStream();
-                var serializer = new DataContractJsonSerializer(source.GetType());
-                serializer.WriteObject(memoryStream, source);
-                result = Encoding.Default.GetString(memoryStream.ToArray());
-                memoryStream.Flush();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.ToJson", e.Source, e.Message, e.StackTrace));
-            }
-            finally
-            {
-                if (memoryStream != null)
-                {
-                    memoryStream.Close();
-                    memoryStream = null;
-                }
+                XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
+                xmlns.Add(String.Empty, String.Empty);
+
+                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
+                xmlSerializer.Serialize(xmlWriter, source, xmlns);
+                result = stringBuilder.ToString();
             }
 
             return result;
         }
 
         /// <summary>
-        /// Serializes a JSON object to an object.
+        /// Deserializes string to an object.
         /// </summary>
         /// <typeparam name="T">Type of the result objet.</typeparam>
-        /// <param name="source">JSON string object.</param>
+        /// <param name="source">String.</param>
         /// <returns>The result object.</returns>
-        private static T FromJson<T>(string source)
+        private static T Deserialize<T>(string source)
         {
             if (string.IsNullOrEmpty(source))
             {
                 return default(T);
             }
 
-            MemoryStream memoryStream = null;
-            T result = default(T);
-
-            try
+            using (TextReader inputStream = new StringReader(source))
             {
-                memoryStream = new MemoryStream(Encoding.Default.GetBytes(source));
-                var serializer = new DataContractJsonSerializer(typeof(T));
-                result = (T)serializer.ReadObject(memoryStream);
-                memoryStream.Flush();
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                return (T)xmlSerializer.Deserialize(inputStream);
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.FromJson", e.Source, e.Message, e.StackTrace));
-            }
-            finally
-            {
-                if (memoryStream != null)
-                {
-                    memoryStream.Close();
-                    memoryStream = null;
-                }
-            }
-
-            return result;
         }
     }
 }

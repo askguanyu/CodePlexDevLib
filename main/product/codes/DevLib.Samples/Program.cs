@@ -45,8 +45,8 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            //CodeTimer.Time(delegate()
-            //{
+            CodeTimer.Time(delegate()
+            {
                 PrintStartInfo();
 
                 //TestCodeSnippets();
@@ -65,10 +65,10 @@ namespace DevLib.Samples
 
                 //TestDevLibServiceModel();
 
-                TestDevLibSettings();
+                //TestDevLibSettings();
 
                 PrintExitInfo();
-            //});
+            });
         }
 
         public static AddInDomain addin = null;

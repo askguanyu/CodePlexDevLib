@@ -21,7 +21,7 @@ namespace DevLib.AddIn
             this.ExitCode = -1;
             this.ExitTime = DateTime.MinValue;
             this.HasExited = false;
-            this.Id = -1;
+            this.PID = -1;
             this.MachineName = string.Empty;
             this.MainWindowTitle = string.Empty;
             this.NonpagedSystemMemorySize64 = -1;
@@ -80,7 +80,7 @@ namespace DevLib.AddIn
         /// <summary>
         /// Gets the unique identifier for the associated process.
         /// </summary>
-        public int Id
+        public int PID
         {
             get;
             internal set;

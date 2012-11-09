@@ -205,11 +205,11 @@ namespace DevLib.AddIn
 
                     try
                     {
-                        this._addInActivatorProcessInfo.Id = this._process.Id;
+                        this._addInActivatorProcessInfo.PID = this._process.Id;
                     }
                     catch
                     {
-                        this._addInActivatorProcessInfo.Id = -1;
+                        this._addInActivatorProcessInfo.PID = -1;
                     }
 
                     try

@@ -53,7 +53,7 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         [NonSerialized]
-        private readonly IpcChannel _channel;
+        private readonly IpcChannel _ipcChannel;
 
         /// <summary>
         ///
@@ -72,8 +72,8 @@ namespace DevLib.AddIn
             properties[AddInConstants.KeyIpcPortName] = string.Format(AddInServerChannelNameStringFormat, guid);
             properties[AddInConstants.KeyIpcChannelName] = string.Format(AddInServerChannelNameStringFormat, guid);
 
-            this._channel = new IpcChannel(properties, clientProvider, serverProvider);
-            ChannelServices.RegisterChannel(_channel, false);
+            this._ipcChannel = new IpcChannel(properties, clientProvider, serverProvider);
+            ChannelServices.RegisterChannel(_ipcChannel, false);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(AddInActivator), AddInActivatorName, WellKnownObjectMode.Singleton);
 
             bool isCreated;

@@ -24,7 +24,7 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        private readonly IChannel _channel;
+        private readonly IpcChannel _ipcChannel;
 
         /// <summary>
         ///
@@ -41,8 +41,8 @@ namespace DevLib.AddIn
             properties[AddInConstants.KeyIpcPortName] = string.Format(AddInActivatorHost.AddInClientChannelNameStringFormat, guid);
             properties[AddInConstants.KeyIpcChannelName] = string.Format(AddInActivatorHost.AddInClientChannelNameStringFormat, guid);
 
-            this._channel = new IpcChannel(properties, clientProvider, serverProvider);
-            ChannelServices.RegisterChannel(this._channel, false);
+            this._ipcChannel = new IpcChannel(properties, clientProvider, serverProvider);
+            ChannelServices.RegisterChannel(this._ipcChannel, false);
 
             this._addInActivator = (AddInActivator)Activator.GetObject(typeof(AddInActivator), string.Format(AddInConstants.IpcUrlStringFormat, string.Format(AddInActivatorHost.AddInServerChannelNameStringFormat, guid), AddInActivatorHost.AddInActivatorName));
         }
@@ -60,7 +60,7 @@ namespace DevLib.AddIn
         /// </summary>
         public void Dispose()
         {
-            ChannelServices.UnregisterChannel(_channel);
+            ChannelServices.UnregisterChannel(_ipcChannel);
         }
     }
 }

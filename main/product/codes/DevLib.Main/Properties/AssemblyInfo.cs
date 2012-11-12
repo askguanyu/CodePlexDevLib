@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("DevLib")]
-[assembly: AssemblyDescription(".Net Library for developers")]
+[assembly: AssemblyDescription(".Net Library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("YuGuan")]
 [assembly: AssemblyProduct("DevLib")]

@@ -324,10 +324,10 @@ namespace DevLib.AddIn
                 return;
             }
 
-            if (_addInActivatorProcess != null)
+            if (this._addInActivatorProcess != null)
             {
-                _addInActivatorProcess.Dispose();
-                _addInActivatorProcess = null;
+                this._addInActivatorProcess.Dispose();
+                this._addInActivatorProcess = null;
             }
         }
 

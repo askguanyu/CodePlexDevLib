@@ -73,7 +73,7 @@ namespace DevLib.AddIn
             properties[AddInConstants.KeyIpcChannelName] = string.Format(AddInServerChannelNameStringFormat, guid);
 
             this._ipcChannel = new IpcChannel(properties, clientProvider, serverProvider);
-            ChannelServices.RegisterChannel(_ipcChannel, false);
+            ChannelServices.RegisterChannel(this._ipcChannel, false);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(AddInActivator), AddInActivatorName, WellKnownObjectMode.Singleton);
 
             bool isCreated;

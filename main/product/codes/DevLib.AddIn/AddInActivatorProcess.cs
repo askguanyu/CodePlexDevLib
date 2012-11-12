@@ -140,7 +140,7 @@ namespace DevLib.AddIn
         /// </summary>
         public AddInActivator AddInActivatorClient
         {
-            get { return _addInActivatorClient != null ? _addInActivatorClient.AddInActivator : null; }
+            get { return this._addInActivatorClient != null ? this._addInActivatorClient.AddInActivator : null; }
         }
 
         /// <summary>

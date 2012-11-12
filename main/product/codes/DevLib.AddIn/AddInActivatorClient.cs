@@ -60,7 +60,7 @@ namespace DevLib.AddIn
         /// </summary>
         public void Dispose()
         {
-            ChannelServices.UnregisterChannel(_ipcChannel);
+            ChannelServices.UnregisterChannel(this._ipcChannel);
         }
     }
 }

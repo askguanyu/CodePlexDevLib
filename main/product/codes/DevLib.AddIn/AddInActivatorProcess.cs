@@ -167,6 +167,8 @@ namespace DevLib.AddIn
 
                 if (this._process != null)
                 {
+                    this._process.Refresh();
+
                     try
                     {
                         this._addInActivatorProcessInfo.BasePriority = this._process.BasePriority;

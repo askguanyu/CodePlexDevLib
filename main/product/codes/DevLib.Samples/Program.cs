@@ -86,7 +86,7 @@ namespace DevLib.Samples
             addin.Unloaded += new EventHandler<AddInDomainEventArgs>(addin_Stopped);
 
             //addin.Load();
-            addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            //addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
             
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
@@ -138,7 +138,11 @@ namespace DevLib.Samples
             Console.WriteLine("!!!!!!!!addin_Restarted    " + e.FriendlyName);
             e.ProcessInfo.RetrieveProperties().ForEach((k, v) => { Console.WriteLine(string.Format("{0} = {1}", k, v)); });
             Debug.WriteLine("!!!!!!!!addin_Restarted    " + e.FriendlyName);
-            (e.AddInObject as WcfIsolatedServiceHost).Open();
+            var temp = (e.AddInObject as WcfIsolatedServiceHost);
+            if (temp != null)
+            {
+                temp.Open();
+            }
         }
 
         private static void PrintStartInfo()

@@ -170,10 +170,7 @@
                 Console.WriteLine("Type.GetType($[AddInActivatorHostTypeName]) Succeed!");
                 Log("Type.GetType($[AddInActivatorHostTypeName]) succeed!");
 
-                Type[] types = new Type[1];
-                types[0] = typeof(string[]);
-
-                MethodInfo methodInfo = hostType.GetMethod("Run", BindingFlags.Static | BindingFlags.Public, null, types, null);
+                MethodInfo methodInfo = hostType.GetMethod("Run", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null);
 
                 if (methodInfo == null)
                 {
@@ -185,12 +182,9 @@
                 Console.WriteLine("GetMethod on AddInActivatorHost succeed!");
                 Log("GetMethod on AddInActivatorHost succeed!");
 
-                object[] parameters = new object[1];
-                parameters[0] = args;
-
                 Console.WriteLine("Begin Invoke AddInActivatorHost method...");
                 Log("Begin Invoke AddInActivatorHost method...");
-                methodInfo.Invoke(null, parameters);
+                methodInfo.Invoke(null, new object[] { args });
             }
             catch (Exception e)
             {

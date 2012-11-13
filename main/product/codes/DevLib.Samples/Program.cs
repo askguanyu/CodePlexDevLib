@@ -86,7 +86,7 @@ namespace DevLib.Samples
             addin.Unloaded += new EventHandler<AddInDomainEventArgs>(addin_Stopped);
 
             //addin.Load();
-            //addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
             
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 

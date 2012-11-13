@@ -161,29 +161,34 @@
 
                 Type hostType = Type.GetType("$[AddInActivatorHostTypeName]");
 
-                if (hostType == null)
+                if (hostType != null)
+                {
+                    Console.WriteLine("Type.GetType($[AddInActivatorHostTypeName]) Succeed!");
+                    Log("Type.GetType($[AddInActivatorHostTypeName]) succeed!");
+                }
+                else
                 {
                     Console.WriteLine(string.Format("Could not load AddInActivatorHost type $[AddInActivatorHostTypeName] by using resolver with $[AddInAssemblyName] mapped to {0}", args[0]));
                     throw new TypeLoadException(string.Format("Could not load AddInActivatorHost type $[AddInActivatorHostTypeName] by using resolver with $[AddInAssemblyName] mapped to {0}", args[0]));
                 }
 
-                Console.WriteLine("Type.GetType($[AddInActivatorHostTypeName]) Succeed!");
-                Log("Type.GetType($[AddInActivatorHostTypeName]) succeed!");
-
                 MethodInfo methodInfo = hostType.GetMethod("Run", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string[]) }, null);
 
-                if (methodInfo == null)
+                if (methodInfo != null)
+                {
+                    Console.WriteLine("GetMethod on AddInActivatorHost succeed!");
+                    Log("GetMethod on AddInActivatorHost succeed!");
+                }
+                else
                 {
                     Console.WriteLine("'Run' method on AddInActivatorHost was not found.");
                     Log("'Run' method on AddInActivatorHost was not found.");
                     throw new Exception("'Run' method on AddInActivatorHost was not found.");
                 }
 
-                Console.WriteLine("GetMethod on AddInActivatorHost succeed!");
-                Log("GetMethod on AddInActivatorHost succeed!");
-
                 Console.WriteLine("Begin Invoke AddInActivatorHost method...");
                 Log("Begin Invoke AddInActivatorHost method...");
+
                 methodInfo.Invoke(null, new object[] { args });
             }
             catch (Exception e)

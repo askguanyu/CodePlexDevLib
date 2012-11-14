@@ -353,16 +353,6 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            this.RaiseDataReceivedEvent(sender, e);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         private void StartAddInActivatorProcess()
         {
             if (this._addInActivatorProcess != null && !this._addInActivatorProcess.IsRunning)
@@ -470,6 +460,16 @@ namespace DevLib.AddIn
             {
                 RestartAddInActivatorProcess();
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            this.RaiseDataReceivedEvent(sender, e);
         }
     }
 }

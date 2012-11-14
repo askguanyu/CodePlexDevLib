@@ -444,26 +444,6 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnProcessDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                Debug.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
-
-                this.RaiseDataReceivedEvent(sender, e);
-
-                if (this._redirectOutput)
-                {
-                    Console.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
-                }
-            }
-        }
-
-        /// <summary>
         /// Kills the remote process.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
@@ -545,6 +525,26 @@ namespace DevLib.AddIn
             if (temp != null)
             {
                 temp(sender, e);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnProcessDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Debug.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+
+                this.RaiseDataReceivedEvent(sender, e);
+
+                if (this._redirectOutput)
+                {
+                    Console.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+                }
             }
         }
 

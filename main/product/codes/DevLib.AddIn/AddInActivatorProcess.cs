@@ -87,8 +87,8 @@ namespace DevLib.AddIn
                 CreateNoWindow = true,
                 ErrorDialog = false,
                 FileName = this._assemblyFile,
-                RedirectStandardError = this._redirectOutput,
-                RedirectStandardOutput = this._redirectOutput,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
                 UseShellExecute = false,
                 WorkingDirectory = this._addInDomainSetup.WorkingDirectory,
             };
@@ -108,12 +108,8 @@ namespace DevLib.AddIn
 
             this._addInDomainSetupFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(ConfigFileStringFormat, friendlyName));
 
-            if (this._redirectOutput)
-            {
-                this._process.OutputDataReceived += this.OnProcessDataReceived;
-                this._process.ErrorDataReceived += this.OnProcessDataReceived;
-            }
-
+            this._process.OutputDataReceived += this.OnProcessDataReceived;
+            this._process.ErrorDataReceived += this.OnProcessDataReceived;
             this._process.Exited += this.OnProcessExited;
             this._process.EnableRaisingEvents = true;
         }
@@ -134,6 +130,11 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         public event EventHandler Detached;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public event DataReceivedEventHandler DataReceived;
 
         /// <summary>
         /// A proxy to the remote AddInActivator to use to create remote object instances.
@@ -415,16 +416,10 @@ namespace DevLib.AddIn
                     throw new Exception(AddInConstants.ProcessStartTimeoutException);
                 }
 
-                if (this._redirectOutput)
-                {
-                    this._process.BeginOutputReadLine();
-                    this._process.BeginErrorReadLine();
-                }
-
+                this._process.BeginOutputReadLine();
+                this._process.BeginErrorReadLine();
                 this._process.PriorityClass = this._addInDomainSetup.ProcessPriority;
-
                 this._addInActivatorClient = new AddInActivatorClient(guid, this._addInDomainSetup);
-
                 this.RaiseEvent(Attached);
             }
         }
@@ -455,8 +450,17 @@ namespace DevLib.AddIn
         /// <param name="e"></param>
         private void OnProcessDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Console.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
-            Debug.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Debug.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+
+                this.RaiseDataReceivedEvent(sender, e);
+
+                if (this._redirectOutput)
+                {
+                    Console.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+                }
+            }
         }
 
         /// <summary>
@@ -480,6 +484,7 @@ namespace DevLib.AddIn
             if (this._addInDomainSetup.DeleteOnUnload)
             {
                 DeleteAssemblyFileDelegate deleteAssemblyFileDelegate = DeleteAssemblyFile;
+
                 using (ManualResetEvent cancelEvent = new ManualResetEvent(false))
                 {
                     IAsyncResult result = deleteAssemblyFileDelegate.BeginInvoke(cancelEvent, null, null);
@@ -524,6 +529,22 @@ namespace DevLib.AddIn
             if (temp != null)
             {
                 temp(null, null);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RaiseDataReceivedEvent(object sender, DataReceivedEventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            DataReceivedEventHandler temp = Interlocked.CompareExchange(ref DataReceived, null, null);
+
+            if (temp != null)
+            {
+                temp(sender, e);
             }
         }
 

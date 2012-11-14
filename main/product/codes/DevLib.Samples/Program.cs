@@ -80,10 +80,11 @@ namespace DevLib.Samples
 
             var info = new AddInActivatorProcessInfo();
 
-            addin = new AddInDomain("DevLibSample");
+            addin = new AddInDomain("DevLibSample", false);
             addin.Loaded += new EventHandler<AddInDomainEventArgs>(addin_Started);
             addin.Reloaded += new EventHandler<AddInDomainEventArgs>(addin_Restarted);
             addin.Unloaded += new EventHandler<AddInDomainEventArgs>(addin_Stopped);
+            addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
 
             //addin.Load();
             addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
@@ -117,6 +118,11 @@ namespace DevLib.Samples
             //wcf.Initialize(Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll"));
             //wcf.Open();
 
+        }
+
+        static void addin_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Console.WriteLine(e.Data);
         }
 
         static void addin_Started(object sender, AddInDomainEventArgs e)

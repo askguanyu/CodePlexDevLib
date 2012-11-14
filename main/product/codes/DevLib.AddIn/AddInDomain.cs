@@ -6,6 +6,7 @@
 namespace DevLib.AddIn
 {
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Reflection;
     using System.Security.Permissions;
@@ -86,13 +87,13 @@ namespace DevLib.AddIn
         /// Creates a AddInDomain which allows hosting objects and code in isolated process.
         /// </summary>
         /// <param name="friendlyName">The friendly name of the AddInDomain.</param>
-        /// <param name="redirectOutput">Whether the output of AddInActivatorProcess is written to the System.Diagnostics.Process.StandardOutput stream.</param>
+        /// <param name="showRedirectConsoleOutput">Whether the output of AddInActivatorProcess is shown in current console.</param>
         /// <param name="addInDomainSetup">Additional settings for creating AddInDomain.</param>
-        public AddInDomain(string friendlyName = null, bool redirectOutput = true, AddInDomainSetup addInDomainSetup = null)
+        public AddInDomain(string friendlyName = null, bool showRedirectConsoleOutput = true, AddInDomainSetup addInDomainSetup = null)
         {
             this.FriendlyName = string.IsNullOrEmpty(friendlyName) ? AddInConstants.DefaultFriendlyName : friendlyName;
             this.AddInDomainSetupInfo = (addInDomainSetup == null) ? new AddInDomainSetup() : addInDomainSetup;
-            this._redirectOutput = redirectOutput;
+            this._redirectOutput = showRedirectConsoleOutput;
             this.CreateAddInActivatorProcess();
         }
 
@@ -118,6 +119,11 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         public event EventHandler<AddInDomainEventArgs> Reloaded;
+
+        /// <summary>
+        /// Occurs when AddInActivatorProcess writes to its redirected <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream.
+        /// </summary>
+        public event DataReceivedEventHandler DataReceived;
 
         /// <summary>
         /// Gets AddInActivatorProcessInfo.
@@ -339,8 +345,19 @@ namespace DevLib.AddIn
             this._canRestart = true;
 
             this._addInActivatorProcess = new AddInActivatorProcess(this.FriendlyName, this._redirectOutput, this.AddInDomainSetupInfo);
-            this._addInActivatorProcess.Attached += OnProcessAttached;
-            this._addInActivatorProcess.Detached += OnProcessDetached;
+            this._addInActivatorProcess.Attached += this.OnProcessAttached;
+            this._addInActivatorProcess.Detached += this.OnProcessDetached;
+            this._addInActivatorProcess.DataReceived += this.OnDataReceived;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            this.RaiseDataReceivedEvent(sender, e);
         }
 
         /// <summary>
@@ -411,6 +428,22 @@ namespace DevLib.AddIn
             if (temp != null)
             {
                 temp(null, new AddInDomainEventArgs(this.FriendlyName, this.AddInTypeName, this.AddInObject, this.AddInDomainSetupInfo, this.ProcessInfo));
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RaiseDataReceivedEvent(object sender, DataReceivedEventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            DataReceivedEventHandler temp = Interlocked.CompareExchange(ref DataReceived, null, null);
+
+            if (temp != null)
+            {
+                temp(sender, e);
             }
         }
 

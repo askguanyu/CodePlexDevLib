@@ -121,7 +121,7 @@ namespace DevLib.AddIn
         public event EventHandler<AddInDomainEventArgs> Reloaded;
 
         /// <summary>
-        /// Occurs when AddInActivatorProcess writes to its redirected <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream.
+        /// Occurs when AddInDomain writes to its redirected <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream.
         /// </summary>
         public event DataReceivedEventHandler DataReceived;
 

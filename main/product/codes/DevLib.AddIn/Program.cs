@@ -136,6 +136,7 @@
             // args[1] = GUID
             // args[2] = PID
             // args[3] = AddInDomainSetup file
+            // args[4] = Redirect output or not
 
             if (args.Length < 4)
             {
@@ -144,9 +145,14 @@
                 Console.WriteLine("args[1] = GUID");
                 Console.WriteLine("args[2] = PID");
                 Console.WriteLine("args[3] = AddInDomainSetup file");
+                Console.WriteLine("args[4] = Redirect output or not");
                 Log("Invalid arguments");
                 return;
             }
+
+            bool redirectOutput = false;
+
+            bool.TryParse(args[4], out redirectOutput);
 
             try
             {
@@ -163,7 +169,11 @@
 
                 if (hostType != null)
                 {
-                    Console.WriteLine("Type.GetType($[AddInActivatorHostTypeName]) Succeed!");
+                    if (redirectOutput)
+                    {
+                        Console.WriteLine("Type.GetType($[AddInActivatorHostTypeName]) Succeed!");
+                    }
+
                     Log("Type.GetType($[AddInActivatorHostTypeName]) succeed!");
                 }
                 else
@@ -176,7 +186,11 @@
 
                 if (methodInfo != null)
                 {
-                    Console.WriteLine("GetMethod on AddInActivatorHost succeed!");
+                    if (redirectOutput)
+                    {
+                        Console.WriteLine("GetMethod on AddInActivatorHost succeed!");
+                    }
+
                     Log("GetMethod on AddInActivatorHost succeed!");
                 }
                 else
@@ -186,7 +200,11 @@
                     throw new Exception("'Run' method on AddInActivatorHost was not found.");
                 }
 
-                Console.WriteLine("Begin Invoke AddInActivatorHost method...");
+                if (redirectOutput)
+                {
+                    Console.WriteLine("Begin Invoke AddInActivatorHost method...");
+                }
+
                 Log("Begin Invoke AddInActivatorHost method...");
 
                 methodInfo.Invoke(null, new object[] { args });

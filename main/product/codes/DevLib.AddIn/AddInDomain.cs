@@ -84,6 +84,11 @@ namespace DevLib.AddIn
         private bool _redirectOutput;
 
         /// <summary>
+        ///
+        /// </summary>
+        private string _addInTypeName;
+
+        /// <summary>
         /// Creates a AddInDomain which allows hosting objects and code in isolated process.
         /// </summary>
         /// <param name="friendlyName">The friendly name of the AddInDomain.</param>
@@ -108,17 +113,17 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        public event EventHandler<AddInDomainEventArgs> Loaded;
+        public event EventHandler Loaded;
 
         /// <summary>
         ///
         /// </summary>
-        public event EventHandler<AddInDomainEventArgs> Unloaded;
+        public event EventHandler Unloaded;
 
         /// <summary>
         ///
         /// </summary>
-        public event EventHandler<AddInDomainEventArgs> Reloaded;
+        public event EventHandler Reloaded;
 
         /// <summary>
         /// Occurs when AddInDomain writes to its redirected <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream.
@@ -141,15 +146,6 @@ namespace DevLib.AddIn
                     return new AddInActivatorProcessInfo();
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets AddIn type name.
-        /// </summary>
-        public string AddInTypeName
-        {
-            get;
-            private set;
         }
 
         /// <summary>
@@ -211,8 +207,8 @@ namespace DevLib.AddIn
 
             this._overloadCreateInstanceAndUnwrap = 1;
             this._addInAssemblyName = assemblyName;
-            this.AddInTypeName = typeName;
-            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName);
+            this._addInTypeName = typeName;
+            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName);
             return this.AddInObject;
         }
 
@@ -230,9 +226,9 @@ namespace DevLib.AddIn
 
             this._overloadCreateInstanceAndUnwrap = 2;
             this._addInAssemblyName = assemblyName;
-            this.AddInTypeName = typeName;
+            this._addInTypeName = typeName;
             this._addInActivationAttributes = activationAttributes;
-            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName, this._addInActivationAttributes);
+            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName, this._addInActivationAttributes);
             return this.AddInObject;
         }
 
@@ -266,7 +262,7 @@ namespace DevLib.AddIn
 
             this._overloadCreateInstanceAndUnwrap = 3;
             this._addInAssemblyName = assemblyName;
-            this.AddInTypeName = typeName;
+            this._addInTypeName = typeName;
             this._addInIgnoreCase = ignoreCase;
             this._addInBindingAttr = bindingAttr;
             this._addInBinder = binder;
@@ -276,7 +272,7 @@ namespace DevLib.AddIn
             this._addInSecurityAttributes = securityAttributes;
             this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(
                 this._addInAssemblyName,
-                this.AddInTypeName,
+                this._addInTypeName,
                 this._addInIgnoreCase,
                 this._addInBindingAttr,
                 this._addInBinder,
@@ -377,15 +373,15 @@ namespace DevLib.AddIn
                     switch (this._overloadCreateInstanceAndUnwrap)
                     {
                         case 1:
-                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName);
+                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName);
                             break;
                         case 2:
-                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this.AddInTypeName, this._addInActivationAttributes);
+                            this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName, this._addInActivationAttributes);
                             break;
                         case 3:
                             this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(
                                 this._addInAssemblyName,
-                                this.AddInTypeName,
+                                this._addInTypeName,
                                 this._addInIgnoreCase,
                                 this._addInBindingAttr,
                                 this._addInBinder,
@@ -410,14 +406,14 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         /// <param name="eventHandler"></param>
-        private void RaiseEvent(EventHandler<AddInDomainEventArgs> eventHandler)
+        private void RaiseEvent(EventHandler eventHandler)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AddInDomainEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(null, new AddInDomainEventArgs(this.FriendlyName, this.AddInTypeName, this.AddInObject, this.AddInDomainSetupInfo, this.ProcessInfo));
+                temp(this, null);
             }
         }
 
@@ -426,14 +422,14 @@ namespace DevLib.AddIn
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void RaiseDataReceivedEvent(object sender, DataReceivedEventArgs e)
+        private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             DataReceivedEventHandler temp = Interlocked.CompareExchange(ref DataReceived, null, null);
 
             if (temp != null)
             {
-                temp(sender, e);
+                temp(this, e);
             }
         }
 
@@ -469,7 +465,7 @@ namespace DevLib.AddIn
         /// <param name="e"></param>
         private void OnDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.RaiseDataReceivedEvent(sender, e);
+            this.RaiseDataReceivedEvent(e);
         }
     }
 }

@@ -6,9 +6,9 @@
 namespace DevLib.Settings
 {
     using System;
-    using System.Configuration;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.IO;
-    using System.Text;
     using System.Xml;
     using System.Xml.Serialization;
 
@@ -20,17 +20,32 @@ namespace DevLib.Settings
         /// <summary>
         ///
         /// </summary>
-        private Configuration _configuration = null;
+        private Dictionary<string, object> _settingsItemDictionary;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private XmlReaderSettings _xmlReaderSettings;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private XmlWriterSettings _xmlWriterSettings;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private XmlSerializerNamespaces _xmlNamespaces;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="configFile"></param>
-        /// <param name="configuration"></param>
-        internal Settings(string configFile, Configuration configuration)
+        internal Settings(string configFile)
         {
             this.ConfigFile = configFile;
-            this._configuration = configuration;
+            this.Init();
+            this.Reload();
         }
 
         /// <summary>
@@ -43,27 +58,106 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Writes the configuration settings to the current XML configuration file.
+        /// Gets
         /// </summary>
-        public void Save()
+        public int Count
         {
-            if (Path.Equals(this._configuration.FilePath, this.ConfigFile))
+            get
             {
-                this._configuration.Save(ConfigurationSaveMode.Minimal, false);
-            }
-            else
-            {
-                this._configuration.SaveAs(this.ConfigFile, ConfigurationSaveMode.Minimal, false);
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    return this._settingsItemDictionary.Count;
+                }
             }
         }
 
         /// <summary>
-        /// Writes the configuration settings to the specified XML configuration file.
+        ///Gets or sets
+        /// </summary>
+        public object this[string key]
+        {
+            get
+            {
+                return this.GetValue(key);
+            }
+
+            set
+            {
+                this.SetValue(key, value);
+            }
+        }
+
+        /// <summary>
+        ///Gets
+        /// </summary>
+        public string[] Keys
+        {
+            get
+            {
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    string[] result = new string[this._settingsItemDictionary.Count];
+                    this._settingsItemDictionary.Keys.CopyTo(result, 0);
+                    return result;
+                }
+            }
+        }
+
+        /// <summary>
+        ///Gets
+        /// </summary>
+        public object[] Values
+        {
+            get
+            {
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    object[] result = new object[this._settingsItemDictionary.Count];
+                    this._settingsItemDictionary.Values.CopyTo(result, 0);
+                    return result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Writes the configuration settings to the current XML configuration file.
+        /// </summary>
+        public void Save()
+        {
+            if (string.IsNullOrEmpty(this.ConfigFile))
+            {
+                throw new ArgumentNullException("Settings.ConfigFile", "Didn't specify a configuration file.");
+            }
+
+            try
+            {
+                this.WriteXmlFile(this.ConfigFile);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Writes the configuration settings to the specified XML configuration file. Keep using current Settings instance.
         /// </summary>
         /// <param name="fileName">The path and file name to save the configuration file to.</param>
         public void SaveAs(string fileName)
         {
-            this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, false);
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName", "Didn't specify a configuration file.");
+            }
+
+            try
+            {
+                this.WriteXmlFile(fileName);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -73,15 +167,11 @@ namespace DevLib.Settings
         /// <param name="value">An object specifying the value.</param>
         public void SetValue(string key, object value)
         {
-            string valueString = Serialize(value);
+            this.CheckNullKey(key);
 
-            if (Contains(this._configuration.AppSettings.Settings.AllKeys, key))
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                this._configuration.AppSettings.Settings[key].Value = valueString;
-            }
-            else
-            {
-                this._configuration.AppSettings.Settings.Add(key, valueString);
+                this._settingsItemDictionary[key] = value;
             }
         }
 
@@ -91,22 +181,87 @@ namespace DevLib.Settings
         /// <param name="key">A string specifying the key.</param>
         /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
         /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
-        public T GetValue<T>(string key, T defaultValue = default(T))
+        public object GetValue(string key)
         {
-            if (Contains(this._configuration.AppSettings.Settings.AllKeys, key))
+            this.CheckNullKey(key);
+
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                try
+                if (this._settingsItemDictionary.ContainsKey(key))
                 {
-                    return Deserialize<T>(this._configuration.AppSettings.Settings[key].Value);
+                    try
+                    {
+                        return this._settingsItemDictionary[key];
+                    }
+                    catch
+                    {
+                        throw;
+                    }
                 }
-                catch
+                else
+                {
+                    throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets value of specified key.
+        /// </summary>
+        /// <param name="key">A string specifying the key.</param>
+        /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
+        /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
+        public T GetValue<T>(string key)
+        {
+            this.CheckNullKey(key);
+
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            {
+                if (this._settingsItemDictionary.ContainsKey(key))
+                {
+                    try
+                    {
+                        return (T)this._settingsItemDictionary[key];
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets value of specified key.
+        /// </summary>
+        /// <param name="key">A string specifying the key.</param>
+        /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
+        /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
+        public T GetValue<T>(string key, T defaultValue)
+        {
+            this.CheckNullKey(key);
+
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            {
+                if (this._settingsItemDictionary.ContainsKey(key))
+                {
+                    try
+                    {
+                        return (T)this._settingsItemDictionary[key];
+                    }
+                    catch
+                    {
+                        return defaultValue;
+                    }
+                }
+                else
                 {
                     return defaultValue;
                 }
-            }
-            else
-            {
-                return defaultValue;
             }
         }
 
@@ -116,7 +271,12 @@ namespace DevLib.Settings
         /// <param name="key">A string specifying the key.</param>
         public void Remove(string key)
         {
-            this._configuration.AppSettings.Settings.Remove(key);
+            this.CheckNullKey(key);
+
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            {
+                this._settingsItemDictionary.Remove(key);
+            }
         }
 
         /// <summary>
@@ -124,80 +284,140 @@ namespace DevLib.Settings
         /// </summary>
         public void Clear()
         {
-            this._configuration.AppSettings.Settings.Clear();
-        }
-
-        /// <summary>
-        /// Gets the keys to all setting items.
-        /// </summary>
-        /// <returns>A string array of keys.</returns>
-        public string[] GetAllKeys()
-        {
-            return this._configuration.AppSettings.Settings.AllKeys;
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            {
+                this._settingsItemDictionary.Clear();
+            }
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="array"></param>
-        /// <param name="item"></param>
+        /// <param name="key"></param>
         /// <returns></returns>
-        private static bool Contains(string[] array, string item)
+        public bool Contains(string key)
         {
-            return Array.IndexOf(array, item) >= array.GetLowerBound(0);
+            this.CheckNullKey(key);
+
+            return this._settingsItemDictionary.ContainsKey(key);
         }
 
         /// <summary>
-        /// Serializes an object to string.
+        ///
         /// </summary>
-        /// <param name="source">Object to serialize.</param>
-        /// <returns>String.</returns>
-        private static string Serialize(object source)
+        public void Reload()
         {
-            // Don't serialize a null object, simply return the default for that object
-            if (source == null)
+            if (string.IsNullOrEmpty(this.ConfigFile) || !File.Exists(this.ConfigFile))
             {
-                return string.Empty;
+                return;
             }
 
-            string result = null;
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
-            xmlWriterSettings.OmitXmlDeclaration = true;
-            xmlWriterSettings.Encoding = new System.Text.UTF8Encoding(false);
-
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, xmlWriterSettings))
+            using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
             {
-                XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
-                xmlns.Add(String.Empty, String.Empty);
+                if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                {
+                    return;
+                }
 
-                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
-                xmlSerializer.Serialize(xmlWriter, source, xmlns);
-                result = stringBuilder.ToString();
+                xmlReader.ReadStartElement("settings");
+
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    this._settingsItemDictionary.Clear();
+
+                    while (xmlReader.NodeType != XmlNodeType.EndElement)
+                    {
+                        string key = xmlReader.GetAttribute("key");
+
+                        xmlReader.ReadStartElement("item");
+
+                        string valueTypeName = xmlReader.GetAttribute("type");
+                        XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+
+                        xmlReader.ReadStartElement("value");
+                        object value = valueSerializer.Deserialize(xmlReader);
+                        xmlReader.ReadEndElement();
+
+                        this._settingsItemDictionary.Add(key, value);
+
+                        xmlReader.ReadEndElement();
+                        xmlReader.MoveToContent();
+                    }
+                }
+
+                xmlReader.ReadEndElement();
             }
-
-            return result;
         }
 
         /// <summary>
-        /// Deserializes string to an object.
+        ///
         /// </summary>
-        /// <typeparam name="T">Type of the result objet.</typeparam>
-        /// <param name="source">String.</param>
-        /// <returns>The result object.</returns>
-        private static T Deserialize<T>(string source)
+        private void Init()
         {
-            if (string.IsNullOrEmpty(source))
-            {
-                return default(T);
-            }
+            this._settingsItemDictionary = new Dictionary<string, object>();
 
-            using (TextReader inputStream = new StringReader(source))
+            this._xmlWriterSettings = new XmlWriterSettings();
+            this._xmlWriterSettings.ConformanceLevel = ConformanceLevel.Auto;
+            this._xmlWriterSettings.OmitXmlDeclaration = true;
+            this._xmlWriterSettings.Indent = true;
+
+            this._xmlReaderSettings = new XmlReaderSettings();
+            this._xmlReaderSettings.IgnoreComments = true;
+            this._xmlReaderSettings.IgnoreProcessingInstructions = true;
+            this._xmlReaderSettings.IgnoreWhitespace = true;
+            this._xmlReaderSettings.ConformanceLevel = ConformanceLevel.Auto;
+
+            this._xmlNamespaces = new XmlSerializerNamespaces();
+            this._xmlNamespaces.Add(String.Empty, String.Empty);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="key"></param>
+        private void CheckNullKey(string key)
+        {
+            if (string.IsNullOrEmpty(key))
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                return (T)xmlSerializer.Deserialize(inputStream);
+                throw new ArgumentNullException("key");
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="fileName"></param>
+        private void WriteXmlFile(string fileName)
+        {
+            using (XmlWriter writer = XmlWriter.Create(fileName, this._xmlWriterSettings))
+            {
+                writer.WriteStartElement("settings");
+
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
+                    {
+                        writer.WriteStartElement("item");
+
+                        writer.WriteStartAttribute("key");
+                        writer.WriteValue(item.Key);
+                        writer.WriteEndAttribute();
+
+                        Type valueType = item.Value.GetType();
+                        XmlSerializer valueSerializer = new XmlSerializer(valueType);
+
+                        writer.WriteStartElement("value");
+                        writer.WriteStartAttribute("type");
+                        writer.WriteValue(valueType.AssemblyQualifiedName);
+                        writer.WriteEndAttribute();
+                        valueSerializer.Serialize(writer, item.Value, this._xmlNamespaces);
+                        writer.WriteEndElement();
+
+                        writer.WriteEndElement();
+                    }
+                }
+
+                writer.WriteEndElement();
             }
         }
     }

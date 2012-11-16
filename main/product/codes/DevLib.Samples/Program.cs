@@ -49,23 +49,50 @@ namespace DevLib.Samples
             {
                 PrintStartInfo();
 
-                //TestCodeSnippets();
+                CodeTimer.Time(delegate()
+                {
+                    //TestCodeSnippets();
+                });
 
-                //TestDevLibAddIn();
+                CodeTimer.Time(delegate()
+                {
+                    //TestDevLibAddIn();
+                });
 
-                //TestDevLibDiagnostics();
+                CodeTimer.Time(delegate()
+                {
+                    //TestDevLibDiagnostics();
+                });
 
-                //TestDevLibExtensionMethods();
+                CodeTimer.Time(delegate()
+                {
+                    //TestDevLibExtensionMethods();
+                });
 
-                //TestDevLibNet();
+                CodeTimer.Time(delegate()
+                {
+                    //TestDevLibNet();
+                });
 
-                //TestDevLibUtilities();
+                CodeTimer.Time(delegate()
+                {
+                    //TestDevLibUtilities();
+                });
 
-                //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
+                CodeTimer.Time(delegate()
+                {
+                    //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
+                });
 
-                //TestDevLibServiceModel();
+                CodeTimer.Time(delegate()
+                {
+                    //TestDevLibServiceModel();
+                });
 
-                //TestDevLibSettings();
+                CodeTimer.Time(delegate()
+                {
+                    TestDevLibSettings();
+                });
 
                 PrintExitInfo();
             });
@@ -88,7 +115,7 @@ namespace DevLib.Samples
 
             //addin.Load();
             addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
-            
+
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
             addin.AddInTypeName.ConsoleOutput();
@@ -174,7 +201,7 @@ namespace DevLib.Samples
 
             AddInProcess addin = new AddInProcess(Platform.AnyCpu);
             //Activator.CreateInstance<>
-            
+
             //Configuration config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "test.config") }, ConfigurationUserLevel.None);
             //Configuration config1 = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()) }, ConfigurationUserLevel.None);
             //config.Sections.Add(.AppSettings.Settings.Add("key1", "value1");
@@ -185,7 +212,7 @@ namespace DevLib.Samples
             //config.SaveAs("test1.config", ConfigurationSaveMode.Minimal, true);
 
             //Properties.Settings.Default
-            
+
 
 
             //Dns.GetHostAddresses("localhost").ForEach(p => p.ConsoleWriteLine());
@@ -256,7 +283,7 @@ namespace DevLib.Samples
             //@"hello".Base64Encode().ConsoleOutput();
 
             //WMIUtilities.QueryWQL(WMIUtilities.MACADDRESS).ForEach(p => p.ConsoleOutput());
-            
+
 
             //TraceSource ts = new TraceSource("TraceTest");
             //SourceSwitch sourceSwitch = new SourceSwitch("SourceSwitch", "Verbose");
@@ -298,12 +325,12 @@ namespace DevLib.Samples
 
 
             // Activity tests.
-            
+
             //ts.TraceEvent(TraceEventType.Start, 9, "Will not appear until the switch is changed.");
             //ts.Switch.Level = SourceLevels.ActivityTracing | SourceLevels.Critical;
             //ts.TraceEvent(TraceEventType.Suspend, 10, "Switch includes ActivityTracing, this should appear");
             //ts.TraceEvent(TraceEventType.Critical, 11, "Switch includes Critical, this should appear");
-            
+
             //ts.Flush();
             //ts.Close();
 
@@ -320,7 +347,7 @@ namespace DevLib.Samples
             ConcurrentBag<string> safeBag = new ConcurrentBag<string>();
 
             CodeTimer.Initialize();
-            
+
             int times = 1000 * 10;
 
             TestClass testClass = new TestClass { Name = "Bill" };
@@ -543,7 +570,7 @@ namespace DevLib.Samples
             host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
             host.Unloaded += (s, e) => (s as WcfIsolatedServiceHost).AssemblyFile.ConsoleOutput();
             host.Reloaded += (s, e) => s.ConsoleOutput();
-            
+
             host.Open();
             Console.WriteLine("first open");
             host.Close();
@@ -585,30 +612,58 @@ namespace DevLib.Samples
 
             TestClass me = new TestClass() { Name = "Foo", Age = 29 };
 
-            Settings settings1 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.xml"));
-            Settings settings2 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.xml"));
+            //Settings settings1 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.xml"));
+            //Settings settings2 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.xml"));
 
-            settings1.SetValue("time0", DateTime.Now);
-            settings1.SetValue("time", DateTime.Now);
-            settings1.Remove("asdf");
+            //Hashtable a = new Hashtable();
+            //a.Add("hello", DateTime.Now);
+
+            //settings1.SetValue("time0", a);
             //settings1.SetValue("time", DateTime.Now);
-            //settings1.SetValue("time", DateTime.Now);
-            //settings1.SetValue("txt1", "hello1");
-            //settings1.SetValue("color", (ConsoleColor)9);
-            settings1.SetValue("me", me);
-            //settings2.SetValue("time1", DateTime.Now);
-            //settings2.SetValue("time2", DateTime.Now);
-            //settings2.SetValue("time3", DateTime.Now);
-            //settings2.SetValue("txt2", "hello2");
-            //settings2.SetValue("color5", (ConsoleColor)15);
-            //settings2.SetValue("me1", me);
-            settings1.GetValue<DateTime>("time").ConsoleOutput();
-            settings1.GetValue<ConsoleColor>("color").ConsoleOutput();
-            //settings1.GetValue<TestClass>("me").Name.ConsoleOutput();
-            //settings1.GetValue<TestClass>("me").Age.ConsoleOutput();
-            settings1.GetValue<string>("hello2", "defalut").ConsoleOutput();
-            settings1.Save();
-            settings2.Save();
+            //settings1.Remove("asdf");
+            ////settings1.SetValue("time", DateTime.Now);
+            ////settings1.SetValue("time", DateTime.Now);
+            ////settings1.SetValue("txt1", "hello1");
+            ////settings1.SetValue("color", (ConsoleColor)9);
+            //settings1.SetValue("me", me);
+            ////settings2.SetValue("time1", DateTime.Now);
+            ////settings2.SetValue("time2", DateTime.Now);
+            ////settings2.SetValue("time3", DateTime.Now);
+            ////settings2.SetValue("txt2", "hello2");
+            ////settings2.SetValue("color5", (ConsoleColor)15);
+            ////settings2.SetValue("me1", me);
+            //settings1.GetValue<DateTime>("time").ConsoleOutput();
+            //settings1.GetValue<ConsoleColor>("color").ConsoleOutput();
+            ////settings1.GetValue<TestClass>("me").Name.ConsoleOutput();
+            ////settings1.GetValue<TestClass>("me").Age.ConsoleOutput();
+            //settings1.GetValue<string>("hello2", "defalut").ConsoleOutput();
+            //settings1.Save();
+            //settings2.Save();
+            //Dictionary<string, object> a = new Dictionary<string, object>();
+            //IsolatedStorageSettings setting = IsolatedStorageSettings.ApplicationSettings;
+            //a["key1"] = 1;
+            //a["key2"] = "hello string";
+            //a["key3"] = DateTime.Now;
+            //a["key4"] = me;
+
+            //a.ForEach((k, v) => { Console.WriteLine(k.ToString() + v.ToString()); });
+
+            Settings setting = SettingsManager.Open("zzz.xml");
+            Settings setting1 = SettingsManager.Open("zzz.xml");
+
+            setting["key1"] = 1;
+            setting["key2"] = "hello string";
+            setting["key3"] = DateTime.Now;
+            setting["key4"] = me;
+            setting["key5"] = me;
+            setting.Save();
+
+            setting1["key3"] = me;
+            setting1["key4"] = me;
+            setting1.Save();
+            setting.Reload();
+            setting.ConfigFile.ConsoleOutput();
+            setting.Values.ForEach(p => p.ToString().ConsoleOutput());
 
         }
 

@@ -400,8 +400,9 @@ namespace DevLib.AddIn
                 // args[1] = GUID
                 // args[2] = PID
                 // args[3] = AddInDomainSetup file
+                // args[4] = Redirect output or not
 
-                this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\"", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile);
+                this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\" {4}", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile, this._redirectOutput);
                 this.IsRunning = this._process.Start();
 
                 if (!this.IsRunning)
@@ -517,14 +518,14 @@ namespace DevLib.AddIn
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void RaiseDataReceivedEvent(object sender, DataReceivedEventArgs e)
+        private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             DataReceivedEventHandler temp = Interlocked.CompareExchange(ref DataReceived, null, null);
 
             if (temp != null)
             {
-                temp(sender, e);
+                temp(null, e);
             }
         }
 
@@ -539,7 +540,7 @@ namespace DevLib.AddIn
             {
                 Debug.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
 
-                this.RaiseDataReceivedEvent(sender, e);
+                this.RaiseDataReceivedEvent(e);
 
                 if (this._redirectOutput)
                 {

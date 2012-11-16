@@ -98,8 +98,9 @@ namespace DevLib.AddIn
             // args[1] = GUID
             // args[2] = PID
             // args[3] = AddInDomainSetup file
+            // args[4] = Redirect output or not
 
-            if (args.Length != 4)
+            if (args.Length < 4)
             {
                 return;
             }

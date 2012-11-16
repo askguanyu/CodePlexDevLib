@@ -58,7 +58,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Gets
+        /// Gets current settings count.
         /// </summary>
         public int Count
         {
@@ -72,7 +72,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///Gets or sets
+        /// Gets or sets settings value.
         /// </summary>
         public object this[string key]
         {
@@ -88,7 +88,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///Gets
+        /// Gets current settings all keys.
         /// </summary>
         public string[] Keys
         {
@@ -104,7 +104,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///Gets
+        /// Gets current settings all values.
         /// </summary>
         public object[] Values
         {
@@ -179,8 +179,7 @@ namespace DevLib.Settings
         /// Gets value of specified key.
         /// </summary>
         /// <param name="key">A string specifying the key.</param>
-        /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
-        /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
+        /// <returns>A configuration object.</returns>
         public object GetValue(string key)
         {
             this.CheckNullKey(key);
@@ -209,8 +208,7 @@ namespace DevLib.Settings
         /// Gets value of specified key.
         /// </summary>
         /// <param name="key">A string specifying the key.</param>
-        /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
-        /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
+        /// <returns>A configuration object.</returns>
         public T GetValue<T>(string key)
         {
             this.CheckNullKey(key);
@@ -291,10 +289,10 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///
+        /// Determines whether settings contains the specified key.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">A string specifying the key.</param>
+        /// <returns>True if contains an element with the specified key; otherwise, false.</returns>
         public bool Contains(string key)
         {
             this.CheckNullKey(key);
@@ -303,7 +301,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///
+        /// Reload settings from current XML configuration file.
         /// </summary>
         public void Reload()
         {

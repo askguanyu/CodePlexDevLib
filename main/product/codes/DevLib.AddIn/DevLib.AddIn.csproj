@@ -52,7 +52,6 @@
     <Compile Include="AddInConstants.cs" />
     <Compile Include="AddInDeleteOnUnloadException.cs" />
     <Compile Include="AddInDomain.cs" />
-    <Compile Include="AddInDomainEventArgs.cs" />
     <Compile Include="AddInDomainSetup.cs" />
     <Compile Include="AddInPlatformTarget.cs" />
     <Compile Include="NativeMethods.cs" />

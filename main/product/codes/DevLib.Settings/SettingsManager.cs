@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Settings
 {
-    using System;
+    using System.Collections;
     using System.Collections.Generic;
-    using System.Configuration;
-    using System.Diagnostics;
     using System.IO;
 
     /// <summary>
@@ -19,34 +17,34 @@ namespace DevLib.Settings
         /// <summary>
         ///
         /// </summary>
-        private static Dictionary<string, Settings> _settingsDict = new Dictionary<string, Settings>();
+        private static Dictionary<string, Settings> _settingsDictionary = new Dictionary<string, Settings>();
 
         /// <summary>
         /// Opens the configuration file for the current application.
         /// </summary>
         /// <param name="configFile">Configuration file for the current application; Can be a new one.</param>
         /// <returns>Settings instance.</returns>
-        public static Settings Open(string configFile)
+        public static Settings Open(string configFile = null)
         {
-            if (_settingsDict.ContainsKey(configFile))
+            if (string.IsNullOrEmpty(configFile))
             {
-                return _settingsDict[configFile];
+                return new Settings(null);
             }
 
-            Configuration configuration = null;
+            string key = Path.GetFullPath(configFile).ToLowerInvariant();
 
-            try
+            lock (((ICollection)_settingsDictionary).SyncRoot)
             {
-                configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = configFile }, ConfigurationUserLevel.None);
+                if (_settingsDictionary.ContainsKey(key))
+                {
+                    return _settingsDictionary[key];
+                }
+                else
+                {
+                    _settingsDictionary.Add(key, new Settings(key));
+                    return _settingsDictionary[key];
+                }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.SettingsManager.Open", e.Source, e.Message, e.StackTrace));
-                configuration = ConfigurationManager.OpenExeConfiguration(Path.GetTempFileName());
-            }
-
-            _settingsDict.Add(configFile, new Settings(configFile, configuration));
-            return _settingsDict[configFile];
         }
     }
 }

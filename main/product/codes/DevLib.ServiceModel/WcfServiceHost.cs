@@ -178,7 +178,7 @@ namespace DevLib.ServiceModel
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", e.Source, e.Message, e.StackTrace));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", e.Source, e.Message, e.StackTrace, e.ToString()));
                             throw;
                         }
                     }
@@ -206,7 +206,7 @@ namespace DevLib.ServiceModel
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", e.Source, e.Message, e.StackTrace));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", e.Source, e.Message, e.StackTrace, e.ToString()));
                             throw;
                         }
                     }
@@ -232,7 +232,7 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", e.Source, e.Message, e.StackTrace));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", e.Source, e.Message, e.StackTrace, e.ToString()));
                         throw;
                     }
                 }
@@ -260,7 +260,7 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", e.Source, e.Message, e.StackTrace));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", e.Source, e.Message, e.StackTrace, e.ToString()));
                         throw;
                     }
                 }
@@ -333,14 +333,14 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace, e.ToString()));
                         throw;
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace, e.ToString()));
                 throw;
             }
 

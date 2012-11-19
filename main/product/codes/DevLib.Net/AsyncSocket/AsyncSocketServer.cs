@@ -253,7 +253,7 @@ namespace DevLib.Net.AsyncSocket
                 catch (Exception e)
                 {
                     this.IsListening = false;
-                    Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Start", e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Start", e.Source, e.Message, e.StackTrace, e.ToString()));
                     throw;
                 }
 
@@ -305,7 +305,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (ObjectDisposedException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace, e.ToString()));
                 this.RaiseDisconnectedEvent(token);
             }
             catch (SocketException socketException)
@@ -321,7 +321,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace, e.ToString()));
                 throw;
             }
         }
@@ -367,7 +367,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (ObjectDisposedException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace, e.ToString()));
                 this.RaiseDisconnectedEvent(token);
             }
             catch (SocketException socketException)
@@ -383,7 +383,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Send", e.Source, e.Message, e.StackTrace, e.ToString()));
                 throw;
             }
         }
@@ -418,7 +418,7 @@ namespace DevLib.Net.AsyncSocket
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Stop", e.Source, e.Message, e.StackTrace));
+                    Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Stop", e.Source, e.Message, e.StackTrace, e.ToString()));
                     throw;
                 }
                 finally
@@ -436,7 +436,7 @@ namespace DevLib.Net.AsyncSocket
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Stop", e.Source, e.Message, e.StackTrace));
+                            Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Stop", e.Source, e.Message, e.StackTrace, e.ToString()));
                             throw;
                         }
                     }
@@ -577,16 +577,16 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (ObjectDisposedException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.StartAccept", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.StartAccept", e.Source, e.Message, e.StackTrace, e.ToString()));
             }
             catch (SocketException e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.StartAccept", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.StartAccept", e.Source, e.Message, e.StackTrace, e.ToString()));
                 this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(AsyncSocketServerConstants.SocketAcceptedException, e, AsyncSocketErrorCodeEnum.ServerAcceptException));
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.StartAccept", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.StartAccept", e.Source, e.Message, e.StackTrace, e.ToString()));
                 throw;
             }
         }
@@ -642,7 +642,7 @@ namespace DevLib.Net.AsyncSocket
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.ProcessAccept", ex.Source, ex.Message, ex.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.ProcessAccept", ex.Source, ex.Message, ex.StackTrace, ex.ToString()));
                 this.OnErrorOccurred(token, new AsyncSocketErrorEventArgs(ex.Message, ex, AsyncSocketErrorCodeEnum.ThrowSocketException));
             }
             finally
@@ -710,7 +710,7 @@ namespace DevLib.Net.AsyncSocket
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.ProcessReceive", ex.Source, ex.Message, ex.StackTrace));
+                    Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.ProcessReceive", ex.Source, ex.Message, ex.StackTrace, ex.ToString()));
                     throw;
                 }
             }
@@ -794,7 +794,7 @@ namespace DevLib.Net.AsyncSocket
             catch (Exception e)
             {
                 token.Socket.Close();
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.CloseClientSocket", e.Source, e.Message, e.StackTrace));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.CloseClientSocket", e.Source, e.Message, e.StackTrace, e.ToString()));
                 throw;
             }
             finally

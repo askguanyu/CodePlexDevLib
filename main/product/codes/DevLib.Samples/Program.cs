@@ -617,8 +617,8 @@ namespace DevLib.Samples
             //Settings settings1 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.xml"));
             //Settings settings2 = SettingsManager.Open(Path.Combine(Environment.CurrentDirectory, "test3.xml"));
 
-            //Hashtable a = new Hashtable();
-            //a.Add("hello", DateTime.Now);
+            Hashtable a = new Hashtable();
+            a.Add("hello", DateTime.Now);
 
             //settings1.SetValue("time0", a);
             //settings1.SetValue("time", DateTime.Now);
@@ -650,18 +650,23 @@ namespace DevLib.Samples
 
             //a.ForEach((k, v) => { Console.WriteLine(k.ToString() + v.ToString()); });
 
+            List<string> alist = new List<string>() { "a", "b", "c" };
+            List<TestClass> blist = new List<TestClass>() { me, me, me };
+
             Settings setting = SettingsManager.Open("zzz.xml");
             Settings setting1 = SettingsManager.Open("zzz.xml");
 
-            setting["key1"] = 1;
-            setting["key2"] = "hello string";
-            setting["key3"] = DateTime.Now;
-            setting["key4"] = me;
-            setting["key5"] = me;
+            //setting["key1"] = 1;
+            //setting["key2"] = "hello string";
+            //setting["key3"] = DateTime.Now;
+            //setting["key4"] = me;
+            //setting["key5"] = alist;
+            //setting["key6"] = blist;
+            setting["key7"] = a;
             setting.Save();
 
-            setting1["key3"] = me;
-            setting1["key4"] = me;
+            setting1["key3"] = DateTime.Now;
+            setting1["key2"] = "hello string123";
             setting1.Save();
             setting.Reload();
             setting.ConfigFile.ConsoleOutput();

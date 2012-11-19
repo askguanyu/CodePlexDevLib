@@ -38,12 +38,12 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        internal const string ExceptionStringFormat = "Exception: {0} failure with exception. Source: {1} | Message: {2} | StackTrace: {3}";
+        internal const string ExceptionStringFormat = "[Exception:\r\n{0} failure with exception.\r\nSource:\r\n{1}\r\nMessage:\r\n{2}\r\nStackTrace:\r\n{3}\r\nRaw:\r\n{4}\r\n]";
 
         /// <summary>
         ///
         /// </summary>
-        internal const string WarningStringFormat = "Warning: {0} with warning. Source: {1} | Message: {2} | StackTrace: {3}";
+        internal const string WarningStringFormat = "[Warning:\r\n{0} failure with exception.\r\nSource:\r\n{1}\r\nMessage:\r\n{2}\r\nStackTrace:\r\n{3}\r\nRaw:\r\n{4}\r\n]";
 
         /// <summary>
         ///

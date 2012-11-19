@@ -71,7 +71,7 @@ namespace DevLib.AddIn
             {
                 AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Failed to compile assembly for AddInDomain due to compiler errors.", results.Errors);
 
-                Debug.WriteLine(string.Format(AddInConstants.ExceptionStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString()));
+                Debug.WriteLine(string.Format(AddInConstants.ExceptionStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString(), string.Empty));
 
                 throw addInAssemblyCompilerException;
             }
@@ -80,7 +80,7 @@ namespace DevLib.AddIn
             {
                 AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Succeed to compile assembly for AddInDomain with warnings.", results.Errors);
 
-                Debug.WriteLine(string.Format(AddInConstants.WarningStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString()));
+                Debug.WriteLine(string.Format(AddInConstants.WarningStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString(), string.Empty));
             }
 
             return results.PathToAssembly;

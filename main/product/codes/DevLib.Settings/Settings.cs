@@ -8,6 +8,7 @@ namespace DevLib.Settings
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Xml;
     using System.Xml.Serialization;
@@ -45,7 +46,14 @@ namespace DevLib.Settings
         {
             this.ConfigFile = configFile;
             this.Init();
-            this.Reload();
+            try
+            {
+                this.Reload();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+            }
         }
 
         /// <summary>
@@ -133,9 +141,9 @@ namespace DevLib.Settings
             {
                 this.WriteXmlFile(this.ConfigFile);
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Save", e.Source, e.Message, e.StackTrace, e.ToString()));
             }
         }
 
@@ -154,9 +162,9 @@ namespace DevLib.Settings
             {
                 this.WriteXmlFile(fileName);
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.SaveAs", e.Source, e.Message, e.StackTrace, e.ToString()));
             }
         }
 
@@ -192,8 +200,9 @@ namespace DevLib.Settings
                     {
                         return this._settingsItemDictionary[key];
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.GetValue", e.Source, e.Message, e.StackTrace, e.ToString()));
                         throw;
                     }
                 }
@@ -221,8 +230,9 @@ namespace DevLib.Settings
                     {
                         return (T)this._settingsItemDictionary[key];
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.GetValue<T>", e.Source, e.Message, e.StackTrace, e.ToString()));
                         throw;
                     }
                 }
@@ -251,8 +261,9 @@ namespace DevLib.Settings
                     {
                         return (T)this._settingsItemDictionary[key];
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.GetValue<T>", e.Source, e.Message, e.StackTrace, e.ToString()));
                         return defaultValue;
                     }
                 }
@@ -323,27 +334,58 @@ namespace DevLib.Settings
                 {
                     this._settingsItemDictionary.Clear();
 
-                    while (xmlReader.NodeType != XmlNodeType.EndElement)
+                    while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
                     {
-                        string key = xmlReader.GetAttribute("key");
+                        try
+                        {
+                            string key = xmlReader.GetAttribute("key");
+                            object value = null;
 
-                        xmlReader.ReadStartElement("item");
+                            try
+                            {
+                                xmlReader.ReadStartElement("item");
 
-                        string valueTypeName = xmlReader.GetAttribute("type");
-                        XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+                                string valueTypeName = xmlReader.GetAttribute("type");
+                                XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
 
-                        xmlReader.ReadStartElement("value");
-                        object value = valueSerializer.Deserialize(xmlReader);
-                        xmlReader.ReadEndElement();
+                                try
+                                {
+                                    xmlReader.ReadStartElement("value");
+                                    value = valueSerializer.Deserialize(xmlReader);
 
-                        this._settingsItemDictionary.Add(key, value);
-
-                        xmlReader.ReadEndElement();
-                        xmlReader.MoveToContent();
+                                    if (!string.IsNullOrEmpty(key))
+                                    {
+                                        this._settingsItemDictionary.Add(key, value);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                }
+                                finally
+                                {
+                                    xmlReader.ReadEndElement();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            }
+                            finally
+                            {
+                                xmlReader.ReadEndElement();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        }
+                        finally
+                        {
+                            xmlReader.MoveToContent();
+                        }
                     }
                 }
-
-                xmlReader.ReadEndElement();
             }
         }
 
@@ -395,23 +437,43 @@ namespace DevLib.Settings
                 {
                     foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
                     {
-                        writer.WriteStartElement("item");
+                        XmlSerializer valueSerializer = null;
 
-                        writer.WriteStartAttribute("key");
-                        writer.WriteValue(item.Key);
-                        writer.WriteEndAttribute();
+                        try
+                        {
+                            Type valueType = item.Value.GetType();
+                            valueSerializer = new XmlSerializer(valueType);
 
-                        Type valueType = item.Value.GetType();
-                        XmlSerializer valueSerializer = new XmlSerializer(valueType);
+                            writer.WriteStartElement("item");
 
-                        writer.WriteStartElement("value");
-                        writer.WriteStartAttribute("type");
-                        writer.WriteValue(valueType.AssemblyQualifiedName);
-                        writer.WriteEndAttribute();
-                        valueSerializer.Serialize(writer, item.Value, this._xmlNamespaces);
-                        writer.WriteEndElement();
+                            writer.WriteStartAttribute("key");
+                            writer.WriteValue(item.Key);
+                            writer.WriteEndAttribute();
 
-                        writer.WriteEndElement();
+                            writer.WriteStartElement("value");
+                            writer.WriteStartAttribute("type");
+                            writer.WriteValue(valueType.AssemblyQualifiedName);
+                            writer.WriteEndAttribute();
+                            try
+                            {
+                                valueSerializer.Serialize(writer, item.Value, this._xmlNamespaces);
+                            }
+                            catch (Exception e)
+                            {
+                                writer.WriteString(e.Message);
+                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.WriteXmlFile", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            }
+                            finally
+                            {
+                                writer.WriteEndElement();
+                            }
+
+                            writer.WriteEndElement();
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.WriteXmlFile", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        }
                     }
                 }
 

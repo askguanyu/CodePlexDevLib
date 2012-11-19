@@ -5,7 +5,8 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Net.AsyncSocket
 {
-    using System.Collections.Concurrent;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Net.Sockets;
 
     /// <summary>
@@ -29,7 +30,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         ///
         /// </summary>
-        private ConcurrentStack<int> _freeIndexPool;
+        private Stack<int> _freeIndexPool;
 
         /// <summary>
         ///
@@ -51,7 +52,7 @@ namespace DevLib.Net.AsyncSocket
             this._numBytes = totalBytes;
             this._currentIndex = 0;
             this._bufferSize = bufferSize;
-            this._freeIndexPool = new ConcurrentStack<int>();
+            this._freeIndexPool = new Stack<int>();
         }
 
         /// <summary>
@@ -69,26 +70,26 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>true if the buffer was successfully set; otherwise, false.</returns>
         public bool SetBuffer(SocketAsyncEventArgs args)
         {
-            if (this._freeIndexPool.Count > 0)
+            lock (((ICollection)this._freeIndexPool).SyncRoot)
             {
-                int offset;
-                if (this._freeIndexPool.TryPop(out offset))
+                if (this._freeIndexPool.Count > 0)
                 {
+                    int offset = this._freeIndexPool.Pop();
                     args.SetBuffer(this._buffer, offset, this._bufferSize);
+                    return true;
                 }
+            }
+
+            if ((this._numBytes - this._bufferSize) < this._currentIndex)
+            {
+                return false;
             }
             else
             {
-                if ((this._numBytes - this._bufferSize) < this._currentIndex)
-                {
-                    return false;
-                }
-
                 args.SetBuffer(this._buffer, this._currentIndex, this._bufferSize);
                 this._currentIndex += this._bufferSize;
+                return true;
             }
-
-            return true;
         }
 
         /// <summary>
@@ -97,7 +98,11 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public void FreeBuffer(SocketAsyncEventArgs args)
         {
-            this._freeIndexPool.Push(args.Offset);
+            lock (((ICollection)this._freeIndexPool).SyncRoot)
+            {
+                this._freeIndexPool.Push(args.Offset);
+            }
+
             args.SetBuffer(null, 0, 0);
         }
     }

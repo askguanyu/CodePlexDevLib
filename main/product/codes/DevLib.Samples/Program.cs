@@ -91,7 +91,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate()
                 {
-                    TestDevLibSettings();
+                    //TestDevLibSettings();
                 });
 
                 PrintExitInfo();
@@ -522,22 +522,34 @@ namespace DevLib.Samples
             PrintMethodName("Test Dev.Lib.Net");
 
             #region AsyncSocket
-            //AsyncSocketServer svr = new AsyncSocketServer(9999);
-            //svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
-            //svr.Start();
+            AsyncSocketServer svr = new AsyncSocketServer(9999);
+            svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
+            svr.Start();
 
-            //AsyncSocketClient client = new AsyncSocketClient();
-            //client.DataSent += new EventHandler<AsyncSocketUserTokenEventArgs>(client_DataSent);
-            //client.Connect("127.0.0.1", 9999);
-            //client.Send("hello1  你好 end", Encoding.UTF8);
+            AsyncSocketClient client = new AsyncSocketClient();
+
+            client.DataSent += new EventHandler<AsyncSocketUserTokenEventArgs>(client_DataSent);
+            client.Connect("127.0.0.1", 9999);
+            client.Send("hello1  你好 end", Encoding.UTF8);
+            Thread.Sleep(100);
+            client.Send("hello2  你好 end", Encoding.UTF8);
+            Thread.Sleep(100);
+            client.Send("hello3  你好 end", Encoding.UTF8);
+            Thread.Sleep(100);
             //client.Send("hello2  你好 end", Encoding.UTF32);
             //client.Send("hello3  你好 end", Encoding.BigEndianUnicode);
             //client.Send("hello4  你好 end", Encoding.ASCII);
             //client.Send("hello5  你好 end", Encoding.Unicode);
+
+            //Console.ReadKey();
+
+            //client.Dispose();
+            //svr.Dispose();
+
             #endregion
 
-            NetUtilities.GetLocalIPArray().ForEach((p) => { p.ConsoleOutput(); });
-            NetUtilities.GetRandomPortNumber().ConsoleOutput();
+            //NetUtilities.GetLocalIPArray().ForEach((p) => { p.ConsoleOutput(); });
+            //NetUtilities.GetRandomPortNumber().ConsoleOutput();
 
         }
 
@@ -690,7 +702,7 @@ namespace DevLib.Samples
 
         private static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
         {
-            e.TransferredRawData.ToEncodingString(Encoding.Unicode).ConsoleOutput();
+            e.TransferredRawData.ToEncodingString(Encoding.UTF8).ConsoleOutput();
             Console.WriteLine();
         }
 

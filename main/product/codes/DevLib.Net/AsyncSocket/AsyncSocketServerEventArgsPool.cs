@@ -5,8 +5,8 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Net.AsyncSocket
 {
-    using System;
-    using System.Collections.Concurrent;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Net.Sockets;
 
     /// <summary>
@@ -17,14 +17,14 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// The SocketAsyncEventArgs object pool.
         /// </summary>
-        private ConcurrentStack<SocketAsyncEventArgs> _pool;
+        private Stack<SocketAsyncEventArgs> _pool;
 
         /// <summary>
         /// Initializes the object pool to the specified size.
         /// </summary>
         public AsyncSocketServerEventArgsPool()
         {
-            this._pool = new ConcurrentStack<SocketAsyncEventArgs>();
+            this._pool = new Stack<SocketAsyncEventArgs>();
         }
 
         /// <summary>
@@ -32,7 +32,13 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public int Count
         {
-            get { return this._pool.Count; }
+            get
+            {
+                lock (((ICollection)this._pool).SyncRoot)
+                {
+                    return this._pool.Count;
+                }
+            }
         }
 
         /// <summary>
@@ -41,7 +47,10 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="item">The SocketAsyncEventArgs instance to add to the pool.</param>
         public void Push(SocketAsyncEventArgs item)
         {
-            this._pool.Push(item);
+            lock (((ICollection)this._pool).SyncRoot)
+            {
+                this._pool.Push(item);
+            }
         }
 
         /// <summary>
@@ -50,14 +59,9 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>The object removed from the pool.</returns>
         public SocketAsyncEventArgs Pop()
         {
-            SocketAsyncEventArgs outPop;
-            if (this._pool.TryPop(out outPop))
+            lock (((ICollection)this._pool).SyncRoot)
             {
-                return outPop;
-            }
-            else
-            {
-                return null;
+                return this._pool.Pop();
             }
         }
     }

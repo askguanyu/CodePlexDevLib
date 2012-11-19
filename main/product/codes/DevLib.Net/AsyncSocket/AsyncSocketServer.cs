@@ -6,11 +6,12 @@
 namespace DevLib.Net.AsyncSocket
 {
     using System;
-    using System.Collections.Concurrent;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Net;
     using System.Net.Sockets;
+    using System.Security.Permissions;
     using System.Threading;
 
     /// <summary>
@@ -21,12 +22,12 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Thread-safe dictionary of connected socket tokens.
         /// </summary>
-        private ConcurrentDictionary<Guid, AsyncSocketUserTokenEventArgs> _tokens;
+        private Dictionary<Guid, AsyncSocketUserTokenEventArgs> _tokens;
 
         /// <summary>
         /// Thread-safe dictionary of connected socket tokens with IP as primary key.
         /// </summary>
-        private ConcurrentDictionary<IPAddress, AsyncSocketUserTokenEventArgs> _singleIPTokens;
+        private Dictionary<IPAddress, AsyncSocketUserTokenEventArgs> _singleIPTokens;
 
         /// <summary>
         /// The maximum number of connections the class is designed to handle simultaneously.
@@ -166,7 +167,13 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public int NumConnectedClients
         {
-            get { return this._singleIPTokens.Count; }
+            get
+            {
+                lock (((ICollection)this._singleIPTokens).SyncRoot)
+                {
+                    return this._singleIPTokens.Count;
+                }
+            }
         }
 
         /// <summary>
@@ -192,7 +199,10 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>true if online; otherwise, false.</returns>
         public bool IsOnline(Guid connectionId)
         {
-            return this._tokens.ContainsKey(connectionId);
+            lock (((ICollection)this._tokens).SyncRoot)
+            {
+                return this._tokens.ContainsKey(connectionId);
+            }
         }
 
         /// <summary>
@@ -202,7 +212,10 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>true if online; otherwise, false.</returns>
         public bool IsOnline(IPAddress connectionIP)
         {
-            return this._singleIPTokens.ContainsKey(connectionIP);
+            lock (((ICollection)this._singleIPTokens).SyncRoot)
+            {
+                return this._singleIPTokens.ContainsKey(connectionIP);
+            }
         }
 
         /// <summary>
@@ -230,7 +243,6 @@ namespace DevLib.Net.AsyncSocket
                     if (null != this._listenSocket)
                     {
                         this._listenSocket.Close();
-                        this._listenSocket.Dispose();
                         this._listenSocket = null;
                     }
 
@@ -273,10 +285,13 @@ namespace DevLib.Net.AsyncSocket
         {
             AsyncSocketUserTokenEventArgs token;
 
-            if (!this._tokens.TryGetValue(connectionId, out token))
+            lock (((ICollection)this._tokens).SyncRoot)
             {
-                this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
-                throw new KeyNotFoundException();
+                if (!this._tokens.TryGetValue(connectionId, out token))
+                {
+                    this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
+                    throw new KeyNotFoundException();
+                }
             }
 
             SocketAsyncEventArgs writeEventArgs;
@@ -335,10 +350,13 @@ namespace DevLib.Net.AsyncSocket
         {
             AsyncSocketUserTokenEventArgs token;
 
-            if (!this._singleIPTokens.TryGetValue(connectionIP, out token))
+            lock (((ICollection)this._singleIPTokens).SyncRoot)
             {
-                this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionIP), null, AsyncSocketErrorCodeEnum.SocketNoExist));
-                throw new KeyNotFoundException();
+                if (!this._singleIPTokens.TryGetValue(connectionIP, out token))
+                {
+                    this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionIP), null, AsyncSocketErrorCodeEnum.SocketNoExist));
+                    throw new KeyNotFoundException();
+                }
             }
 
             SocketAsyncEventArgs writeEventArgs;
@@ -396,10 +414,13 @@ namespace DevLib.Net.AsyncSocket
         {
             AsyncSocketUserTokenEventArgs token;
 
-            if (!this._tokens.TryGetValue(connectionId, out token))
+            lock (((ICollection)this._tokens).SyncRoot)
             {
-                this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
-                throw new KeyNotFoundException();
+                if (!this._tokens.TryGetValue(connectionId, out token))
+                {
+                    this.OnErrorOccurred(null, new AsyncSocketErrorEventArgs(string.Format(AsyncSocketServerConstants.ClientClosedStringFormat, connectionId), null, AsyncSocketErrorCodeEnum.SocketNoExist));
+                    throw new KeyNotFoundException();
+                }
             }
 
             this.RaiseDisconnectedEvent(token);
@@ -423,26 +444,36 @@ namespace DevLib.Net.AsyncSocket
                 }
                 finally
                 {
-                    foreach (AsyncSocketUserTokenEventArgs token in this._tokens.Values)
+                    lock (((ICollection)this._tokens).SyncRoot)
                     {
-                        try
+                        foreach (AsyncSocketUserTokenEventArgs token in this._tokens.Values)
                         {
-                            this.CloseClientSocket(token);
-
-                            if (null != token)
+                            try
                             {
-                                this.RaiseEvent(Disconnected, token);
+                                this.CloseClientSocket(token);
+
+                                if (null != token)
+                                {
+                                    this.RaiseEvent(Disconnected, token);
+                                }
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Stop", e.Source, e.Message, e.StackTrace, e.ToString()));
-                            throw;
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Stop", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                throw;
+                            }
                         }
                     }
 
-                    this._tokens.Clear();
-                    this._singleIPTokens.Clear();
+                    lock (((ICollection)this._tokens).SyncRoot)
+                    {
+                        this._tokens.Clear();
+                    }
+
+                    lock (((ICollection)this._singleIPTokens).SyncRoot)
+                    {
+                        this._singleIPTokens.Clear();
+                    }
                 }
 
                 this.IsListening = false;
@@ -470,10 +501,10 @@ namespace DevLib.Net.AsyncSocket
                 if (this._listenSocket != null)
                 {
                     this._listenSocket.Close();
-                    this._listenSocket.Dispose();
+                    this._listenSocket = null;
                 }
 
-                this._maxNumberAcceptedClients.Dispose();
+                this._maxNumberAcceptedClients.Close();
             }
 
             // free native resources
@@ -520,8 +551,8 @@ namespace DevLib.Net.AsyncSocket
             this._bufferManager = new AsyncSocketServerEventArgsBufferManager(_bufferSize * _numConnections * AsyncSocketServerConstants.OpsToPreAlloc, _bufferSize);
             this._readPool = new AsyncSocketServerEventArgsPool();
             this._writePool = new AsyncSocketServerEventArgsPool();
-            this._tokens = new ConcurrentDictionary<Guid, AsyncSocketUserTokenEventArgs>();
-            this._singleIPTokens = new ConcurrentDictionary<IPAddress, AsyncSocketUserTokenEventArgs>();
+            this._tokens = new Dictionary<Guid, AsyncSocketUserTokenEventArgs>();
+            this._singleIPTokens = new Dictionary<IPAddress, AsyncSocketUserTokenEventArgs>();
             this._maxNumberAcceptedClients = new Semaphore(_numConnections, _numConnections);
             this._bufferManager.InitBuffer();
             SocketAsyncEventArgs readWriteEventArg;
@@ -553,6 +584,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         /// <param name="acceptEventArg"></param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private void StartAccept(SocketAsyncEventArgs acceptEventArg)
         {
             if (acceptEventArg == null)
@@ -567,12 +599,15 @@ namespace DevLib.Net.AsyncSocket
 
             try
             {
-                _maxNumberAcceptedClients.WaitOne();
-
-                bool willRaiseEvent = _listenSocket.AcceptAsync(acceptEventArg);
-                if (!willRaiseEvent)
+                if (!this._maxNumberAcceptedClients.SafeWaitHandle.IsClosed)
                 {
-                    this.ProcessAccept(acceptEventArg);
+                    this._maxNumberAcceptedClients.WaitOne();
+
+                    bool willRaiseEvent = _listenSocket.AcceptAsync(acceptEventArg);
+                    if (!willRaiseEvent)
+                    {
+                        this.ProcessAccept(acceptEventArg);
+                    }
                 }
             }
             catch (ObjectDisposedException e)
@@ -613,41 +648,56 @@ namespace DevLib.Net.AsyncSocket
             token = (AsyncSocketUserTokenEventArgs)readEventArg.UserToken;
             token.Socket = e.AcceptSocket;
             token.ConnectionId = Guid.NewGuid();
-            this._tokens.GetOrAdd(token.ConnectionId, token);
-            this._singleIPTokens.AddOrUpdate(token.EndPoint.Address, token, (key, oldValue) => oldValue);
-            this.RaiseEvent(Connected, token);
 
-            try
+            if (token != null && token.EndPoint != null)
             {
-                bool willRaiseEvent = token.Socket.ReceiveAsync(readEventArg);
-                if (!willRaiseEvent)
+                lock (((ICollection)this._tokens).SyncRoot)
                 {
-                    this.ProcessReceive(readEventArg);
+                    this._tokens[token.ConnectionId] = token;
                 }
-            }
-            catch (ObjectDisposedException)
-            {
-                this.RaiseDisconnectedEvent(token);
-            }
-            catch (SocketException socketException)
-            {
-                if (socketException.ErrorCode == (int)SocketError.ConnectionReset)
+
+                lock (((ICollection)this._singleIPTokens).SyncRoot)
+                {
+                    if (!this._singleIPTokens.ContainsKey(token.EndPoint.Address))
+                    {
+                        this._singleIPTokens.Add(token.EndPoint.Address, token);
+                    }
+                }
+
+                this.RaiseEvent(Connected, token);
+
+                try
+                {
+                    bool willRaiseEvent = token.Socket.ReceiveAsync(readEventArg);
+                    if (!willRaiseEvent)
+                    {
+                        this.ProcessReceive(readEventArg);
+                    }
+                }
+                catch (ObjectDisposedException)
                 {
                     this.RaiseDisconnectedEvent(token);
                 }
-                else
+                catch (SocketException socketException)
                 {
-                    this.OnErrorOccurred(token, new AsyncSocketErrorEventArgs(AsyncSocketServerConstants.SocketReceiveException, socketException));
+                    if (socketException.ErrorCode == (int)SocketError.ConnectionReset)
+                    {
+                        this.RaiseDisconnectedEvent(token);
+                    }
+                    else
+                    {
+                        this.OnErrorOccurred(token, new AsyncSocketErrorEventArgs(AsyncSocketServerConstants.SocketReceiveException, socketException));
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.ProcessAccept", ex.Source, ex.Message, ex.StackTrace, ex.ToString()));
-                this.OnErrorOccurred(token, new AsyncSocketErrorEventArgs(ex.Message, ex, AsyncSocketErrorCodeEnum.ThrowSocketException));
-            }
-            finally
-            {
-                this.StartAccept(e);
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.ProcessAccept", ex.Source, ex.Message, ex.StackTrace, ex.ToString()));
+                    this.OnErrorOccurred(token, new AsyncSocketErrorEventArgs(ex.Message, ex, AsyncSocketErrorCodeEnum.ThrowSocketException));
+                }
+                finally
+                {
+                    this.StartAccept(e);
+                }
             }
         }
 
@@ -757,17 +807,24 @@ namespace DevLib.Net.AsyncSocket
         {
             if (null != token)
             {
-                AsyncSocketUserTokenEventArgs outSingleIPToken;
-                this._singleIPTokens.TryRemove(token.EndPoint.Address, out outSingleIPToken);
-
-                AsyncSocketUserTokenEventArgs outToken;
-                if (this._tokens.TryRemove(token.ConnectionId, out outToken))
+                if (token.EndPoint != null)
                 {
-                    this.CloseClientSocket(token);
-
-                    if (null != token)
+                    lock (((ICollection)this._singleIPTokens).SyncRoot)
                     {
-                        this.RaiseEvent(Disconnected, token);
+                        this._singleIPTokens.Remove(token.EndPoint.Address);
+                    }
+                }
+
+                lock (((ICollection)this._tokens).SyncRoot)
+                {
+                    if (this._tokens.Remove(token.ConnectionId))
+                    {
+                        this.CloseClientSocket(token);
+
+                        if (null != token)
+                        {
+                            this.RaiseEvent(Disconnected, token);
+                        }
                     }
                 }
             }
@@ -777,6 +834,7 @@ namespace DevLib.Net.AsyncSocket
         ///
         /// </summary>
         /// <param name="token"></param>
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private void CloseClientSocket(AsyncSocketUserTokenEventArgs token)
         {
             try
@@ -800,7 +858,11 @@ namespace DevLib.Net.AsyncSocket
             finally
             {
                 Interlocked.Decrement(ref _numConnectedSockets);
-                this._maxNumberAcceptedClients.Release();
+
+                if (!this._maxNumberAcceptedClients.SafeWaitHandle.IsClosed)
+                {
+                    this._maxNumberAcceptedClients.Release();
+                }
 
                 Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, _numConnectedSockets.ToString()));
 

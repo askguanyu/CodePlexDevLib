@@ -260,7 +260,7 @@ namespace DevLib.Net.AsyncSocket
                 {
                     this._clientSocket.Shutdown(SocketShutdown.Both);
                     this._clientSocket.Close();
-                    this._clientSocket.Dispose();
+                    this._clientSocket = null;
                 }
             }
         }
@@ -327,7 +327,10 @@ namespace DevLib.Net.AsyncSocket
         {
             try
             {
-                socket.BeginReceive(this._dataBuffer, 0, this._bufferSize, SocketFlags.None, new AsyncCallback(this.ProcessIncomingData), socket);
+                if (socket != null)
+                {
+                    socket.BeginReceive(this._dataBuffer, 0, this._bufferSize, SocketFlags.None, new AsyncCallback(this.ProcessIncomingData), socket);
+                }
             }
             catch (ObjectDisposedException)
             {

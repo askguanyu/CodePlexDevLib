@@ -20,7 +20,7 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        private const string ConfigFileStringFormat = @"DevLib.AddIn.{0}.cfg";
+        private const string ConfigFileStringFormat = @"{0}.exe.cfg";
 
         /// <summary>
         ///
@@ -580,13 +580,10 @@ namespace DevLib.AddIn
                 catch (Exception e)
                 {
                     lastException = e;
-                    Thread.Sleep(100);
                 }
 
                 isCanceled = cancelEvent.WaitOne(0);
-            }
-
-            while (!isDeleted && !isCanceled);
+            } while (!isDeleted && !isCanceled);
 
             if (!isDeleted && lastException != null)
             {

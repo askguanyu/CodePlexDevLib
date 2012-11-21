@@ -13,7 +13,7 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        internal const string DefaultFriendlyName = "Default";
+        internal const string DefaultFriendlyName = "AddInDomain";
 
         /// <summary>
         ///

@@ -20,7 +20,7 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
-        private const string OutputAssemblyFileStringFormat = @"DevLib.AddIn.{0}.exe";
+        private const string OutputAssemblyFileStringFormat = @"{0}.exe";
 
         /// <summary>
         ///

@@ -86,7 +86,7 @@ namespace DevLib.Settings
         {
             get
             {
-                return this.GetValue(key);
+                return this.GetValue(key, true);
             }
 
             set
@@ -187,10 +187,16 @@ namespace DevLib.Settings
         /// Gets value of specified key.
         /// </summary>
         /// <param name="key">A string specifying the key.</param>
+        /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <returns>A configuration object.</returns>
-        public object GetValue(string key)
+        public object GetValue(string key, bool refresh = false)
         {
             this.CheckNullKey(key);
+
+            if (refresh)
+            {
+                this.Refresh();
+            }
 
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
@@ -217,10 +223,16 @@ namespace DevLib.Settings
         /// Gets value of specified key.
         /// </summary>
         /// <param name="key">A string specifying the key.</param>
+        /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <returns>A configuration object.</returns>
-        public T GetValue<T>(string key)
+        public T GetValue<T>(string key, bool refresh = false)
         {
             this.CheckNullKey(key);
+
+            if (refresh)
+            {
+                this.Refresh();
+            }
 
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
@@ -247,11 +259,17 @@ namespace DevLib.Settings
         /// Gets value of specified key.
         /// </summary>
         /// <param name="key">A string specifying the key.</param>
+        /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
         /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
-        public T GetValue<T>(string key, T defaultValue)
+        public T GetValue<T>(string key, bool refresh = false, T defaultValue = default(T))
         {
             this.CheckNullKey(key);
+
+            if (refresh)
+            {
+                this.Refresh();
+            }
 
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
@@ -312,7 +330,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Reload settings from current XML configuration file.
+        /// Reload settings from current XML configuration file. All settings will be clear and load from XML configuration file again.
         /// </summary>
         public void Reload()
         {
@@ -356,6 +374,83 @@ namespace DevLib.Settings
                                     if (!string.IsNullOrEmpty(key))
                                     {
                                         this._settingsItemDictionary.Add(key, value);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                }
+                                finally
+                                {
+                                    xmlReader.ReadEndElement();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                xmlReader.Skip();
+                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            }
+                            finally
+                            {
+                                xmlReader.ReadEndElement();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        }
+                        finally
+                        {
+                            xmlReader.MoveToContent();
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Refresh settings from current XML configuration file.
+        /// </summary>
+        public void Refresh()
+        {
+            if (string.IsNullOrEmpty(this.ConfigFile) || !File.Exists(this.ConfigFile))
+            {
+                return;
+            }
+
+            using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
+            {
+                if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                {
+                    return;
+                }
+
+                xmlReader.ReadStartElement("settings");
+
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
+                    {
+                        try
+                        {
+                            string key = xmlReader.GetAttribute("key");
+                            object value = null;
+
+                            try
+                            {
+                                xmlReader.ReadStartElement("item");
+
+                                string valueTypeName = xmlReader.GetAttribute("type");
+                                XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+
+                                try
+                                {
+                                    xmlReader.ReadStartElement("value");
+                                    value = valueSerializer.Deserialize(xmlReader);
+
+                                    if (!string.IsNullOrEmpty(key))
+                                    {
+                                        this._settingsItemDictionary[key] = value;
                                     }
                                 }
                                 catch (Exception e)

@@ -105,28 +105,35 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.AddIn");
 
-            var info = new AddInActivatorProcessInfo();
+            //var info = new AddInActivatorProcessInfo();
 
-            addin = new AddInDomain("DevLibSample", false);
-            addin.Loaded += new EventHandler(addin_Started);
-            addin.Reloaded += new EventHandler(addin_Restarted);
-            addin.Unloaded += new EventHandler(addin_Stopped);
-            addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
+            //addin = new AddInDomain("DevLib.AddIn.Sample", false);
+            //addin.Loaded += new EventHandler(addin_Started);
+            //addin.Reloaded += new EventHandler(addin_Restarted);
+            //addin.Unloaded += new EventHandler(addin_Stopped);
+            //addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
 
             //addin.Load();
-            addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            //addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+
+            using (AddInDomain domain=new AddInDomain("DevLib.AddIn.Sample1",false))
+            {
+                var remoteObj = domain.CreateInstance<TestClass>();
+                string a = remoteObj.ShowAndExit();
+                Console.WriteLine(a);
+            }
 
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
-            addin.AddInObject.ConsoleOutput();
+            //addin.AddInObject.ConsoleOutput();
             //addin.ProcessInfo.RetrieveProperties().ConsoleOutput();
 
-            addin.AddInObject.GetType().AssemblyQualifiedName.ConsoleOutput();
+            //addin.AddInObject.GetType().AssemblyQualifiedName.ConsoleOutput();
 
-            addin.Dispose();
             //addin.Dispose();
             //addin.Dispose();
-            addin.Reload();
+            //addin.Dispose();
+            //addin.Reload();
 
 
             //var form = addin.CreateInstance<WinFormRibbon>();
@@ -733,6 +740,18 @@ namespace DevLib.Samples
         {
             Console.WriteLine("TestClass.TestMe() done!");
             OnTestMe.RaiseEvent(this, new EventArgs());
+        }
+
+        public string ShowAndExit()
+        {
+            try
+            {
+                return "TestClass.ShowAndExit";
+            }
+            finally
+            {
+                var p = Process.GetCurrentProcess();
+            }
         }
 
         public int TestAdd(int a, int b)

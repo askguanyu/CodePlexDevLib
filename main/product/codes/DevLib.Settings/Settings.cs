@@ -455,7 +455,7 @@ namespace DevLib.Settings
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                    Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Refresh", e.Source, e.Message, e.StackTrace, e.ToString()));
                                 }
                                 finally
                                 {
@@ -465,7 +465,7 @@ namespace DevLib.Settings
                             catch (Exception e)
                             {
                                 xmlReader.Skip();
-                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Refresh", e.Source, e.Message, e.StackTrace, e.ToString()));
                             }
                             finally
                             {
@@ -474,7 +474,7 @@ namespace DevLib.Settings
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Refresh", e.Source, e.Message, e.StackTrace, e.ToString()));
                         }
                         finally
                         {

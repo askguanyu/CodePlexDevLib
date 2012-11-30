@@ -36,6 +36,7 @@ namespace DevLib.Samples
     using DevLib.Settings;
     using DevLib.Utilities;
     using DevLib.WinForms;
+    using System.Runtime.Serialization.Formatters;
 
     public class Program
     {
@@ -56,7 +57,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate()
                 {
-                    //TestDevLibAddIn();
+                    TestDevLibAddIn();
                 });
 
                 CodeTimer.Time(delegate()
@@ -116,12 +117,29 @@ namespace DevLib.Samples
             //addin.Load();
             //addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
 
-            using (AddInDomain domain=new AddInDomain("DevLib.AddIn.Sample1",false))
-            {
-                var remoteObj = domain.CreateInstance<TestClass>();
-                string a = remoteObj.ShowAndExit();
-                Console.WriteLine(a);
-            }
+            //using (AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", false))
+            //{
+            //    var remoteObj = domain.CreateInstance<TestClass>();
+            //    string a = remoteObj.ShowAndExit();
+            //    Console.WriteLine(a);
+            //}
+
+            AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", false);
+            var remoteObj = domain.CreateInstance<AsyncSocketServer>();
+            remoteObj.Start(999);
+            remoteObj.DataReceived += remoteObj_DataReceived;
+            domain.DataReceived += domain_DataReceived;
+
+            Console.WriteLine("next");
+            Console.ReadKey();
+
+            AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2", false);
+            var remoteObj1 = domain1.CreateInstance<AsyncSocketClient>();
+            remoteObj1.SendOnce("127.0.0.1", 999, "!!!!!!!!!!!!!!!!hello555555555555", Encoding.Default);
+
+            Console.WriteLine("next");
+            Console.ReadKey();
+
 
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
@@ -152,6 +170,16 @@ namespace DevLib.Samples
             //wcf.Initialize(Path.Combine(Environment.CurrentDirectory, "WcfCalc.dll"));
             //wcf.Open();
 
+        }
+
+        static void domain_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Console.WriteLine(e.Data);
+        }
+
+        static void remoteObj_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
+        {
+            e.TransferredRawData.ToEncodingString().ConsoleOutput();
         }
 
         static void addin_DataReceived(object sender, DataReceivedEventArgs e)

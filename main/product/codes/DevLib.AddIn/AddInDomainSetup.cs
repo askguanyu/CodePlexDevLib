@@ -42,7 +42,7 @@ namespace DevLib.AddIn
             this.ProcessPriority = ProcessPriorityClass.Normal;
             this.ProcessStartTimeout = new TimeSpan(0, 0, 10);
             this.RestartOnProcessExit = true;
-            this.TypeFilterLevel = TypeFilterLevel.Low;
+            this.TypeFilterLevel = TypeFilterLevel.Full;
             this.WorkingDirectory = Environment.CurrentDirectory;
         }
 

@@ -15,7 +15,7 @@ namespace DevLib.Net.AsyncSocket
     /// <summary>
     /// AsyncSocket Client.
     /// </summary>
-    public class AsyncSocketClient : IDisposable
+    public class AsyncSocketClient : MarshalByRefObject, IDisposable
     {
         /// <summary>
         ///
@@ -36,6 +36,15 @@ namespace DevLib.Net.AsyncSocket
         ///
         /// </summary>
         private byte[] _dataBuffer;
+
+        /// <summary>
+        /// Constructor of AsyncSocketClient.
+        /// </summary>
+        public AsyncSocketClient()
+        {
+            this._bufferSize = AsyncSocketClientConstants.BufferSize;
+            this._dataBuffer = new byte[this._bufferSize];
+        }
 
         /// <summary>
         /// Constructor of AsyncSocketClient.

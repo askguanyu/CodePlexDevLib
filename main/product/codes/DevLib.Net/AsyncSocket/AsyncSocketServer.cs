@@ -17,7 +17,8 @@ namespace DevLib.Net.AsyncSocket
     /// <summary>
     /// Implements the connection logic for the socket server.
     /// </summary>
-    public class AsyncSocketServer : IDisposable
+    [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+    public class AsyncSocketServer : MarshalByRefObject, IDisposable
     {
         /// <summary>
         /// Thread-safe dictionary of connected socket tokens.
@@ -78,6 +79,18 @@ namespace DevLib.Net.AsyncSocket
         /// The max number of accepted clients.
         /// </summary>
         private Semaphore _maxNumberAcceptedClients;
+
+        /// <summary>
+        /// Constructor of AsyncSocketServer.
+        /// </summary>
+        public AsyncSocketServer()
+        {
+            this._totalBytesRead = 0;
+            this._totalBytesWrite = 0;
+            this._numConnectedSockets = 0;
+            this._numConnections = AsyncSocketServerConstants.NumConnections;
+            this._bufferSize = AsyncSocketServerConstants.BufferSize;
+        }
 
         /// <summary>
         /// Constructor of AsyncSocketServer.
@@ -224,6 +237,12 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Start(bool useIOCP = true)
         {
+            this.Start(this.LocalEndPoint, useIOCP);
+        }
+
+        public void Start(int localPort, bool useIOCP = true)
+        {
+            this.LocalEndPoint = new IPEndPoint(IPAddress.Any, localPort);
             this.Start(this.LocalEndPoint, useIOCP);
         }
 

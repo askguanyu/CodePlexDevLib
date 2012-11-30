@@ -39,17 +39,18 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if 1; otherwise, false.</returns>
         public static bool ToBool(this int source)
         {
-            return source == 1 ? true : false;
+            return source.Equals(1);
         }
 
         /// <summary>
         /// Convert "Yes" or "No" to bool.
         /// </summary>
         /// <param name="source"></param>
+        /// <param name="ignoreCase">Indicating a case-sensitive or insensitive comparison.</param>
         /// <returns>true if "Yes"; otherwise, false.</returns>
         public static bool ToBool(this string source, bool ignoreCase = true)
         {
-            return source.Equals("Yes", ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) ? true : false;
+            return string.Compare(source, "Yes", ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0;
         }
     }
 }

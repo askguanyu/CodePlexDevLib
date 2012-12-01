@@ -17,7 +17,6 @@ namespace DevLib.Net.AsyncSocket
     /// <summary>
     /// Implements the connection logic for the socket server.
     /// </summary>
-    [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
     public class AsyncSocketServer : MarshalByRefObject, IDisposable
     {
         /// <summary>

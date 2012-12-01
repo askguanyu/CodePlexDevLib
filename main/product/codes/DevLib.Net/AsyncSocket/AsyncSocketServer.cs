@@ -289,7 +289,7 @@ namespace DevLib.Net.AsyncSocket
 
                 this.IsListening = true;
                 StartAccept(null);
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.SocketStartSuccessfully));
+                Debug.WriteLine(AsyncSocketServerConstants.SocketStartSuccessfully);
             }
         }
 

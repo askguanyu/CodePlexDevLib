@@ -239,6 +239,11 @@ namespace DevLib.Net.AsyncSocket
             this.Start(this.LocalEndPoint, useIOCP);
         }
 
+        /// <summary>
+        /// Start socket server.
+        /// </summary>
+        /// <param name="localPort">Local port to listen.</param>
+        /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Start(int localPort, bool useIOCP = true)
         {
             this.LocalEndPoint = new IPEndPoint(IPAddress.Any, localPort);
@@ -248,7 +253,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Start socket server to listen specific local port.
         /// </summary>
-        /// <param name="localEndPoint">local port to listen.</param>
+        /// <param name="localEndPoint">Local port to listen.</param>
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Start(IPEndPoint localEndPoint, bool useIOCP = true)
         {
@@ -298,7 +303,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         /// <param name="connectionId">Client connection Id.</param>
         /// <param name="buffer">Data to send.</param>
-        /// <param name="operation">user defined operation.</param>
+        /// <param name="operation">User defined operation.</param>
         public void Send(Guid connectionId, byte[] buffer, object operation = null)
         {
             AsyncSocketUserTokenEventArgs token;
@@ -425,9 +430,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Disconnect client
+        /// Disconnect client.
         /// </summary>
-        /// <param name="connectionId">Client connection Id</param>
+        /// <param name="connectionId">Client connection Id.</param>
         public void Disconnect(Guid connectionId)
         {
             AsyncSocketUserTokenEventArgs token;
@@ -478,7 +483,6 @@ namespace DevLib.Net.AsyncSocket
                             catch (Exception e)
                             {
                                 Debug.WriteLine(string.Format(AsyncSocketServerConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketServer.Stop", e.Source, e.Message, e.StackTrace, e.ToString()));
-                                throw;
                             }
                         }
                     }

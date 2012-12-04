@@ -124,7 +124,7 @@ namespace DevLib.Samples
             //    Console.WriteLine(a);
             //}
 
-            AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", false);
+            AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1");
             var remoteObj = domain.CreateInstance<AsyncSocketServer>();
             remoteObj.Start(999);
             remoteObj.DataReceived += remoteObj_DataReceived;
@@ -133,7 +133,7 @@ namespace DevLib.Samples
             Console.WriteLine("next");
             Console.ReadKey();
 
-            AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2", false);
+            AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2");
             var remoteObj1 = domain1.CreateInstance<AsyncSocketClient>();
             remoteObj1.SendOnce("127.0.0.1", 999, "!!!!!!!!!!!!!!!!hello555555555555", Encoding.Default);
 

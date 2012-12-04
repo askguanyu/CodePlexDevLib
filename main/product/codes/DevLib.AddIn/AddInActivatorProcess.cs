@@ -538,13 +538,15 @@ namespace DevLib.AddIn
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+                string output = string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data);
+
+                Debug.WriteLine(output);
 
                 this.RaiseDataReceivedEvent(e);
 
                 if (this._redirectOutput)
                 {
-                    Console.WriteLine(string.Format(AddInConstants.ProcessOuputStringFormat, this._assemblyFile, e.Data));
+                    Console.WriteLine(output);
                 }
             }
         }

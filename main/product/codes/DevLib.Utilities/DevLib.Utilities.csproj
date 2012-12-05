@@ -41,6 +41,9 @@
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\AssemblyInfoCommon.cs">
+      <Link>Properties\AssemblyInfoCommon.cs</Link>
+    </Compile>
     <Compile Include="ColorUtilities.cs" />
     <Compile Include="NetUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

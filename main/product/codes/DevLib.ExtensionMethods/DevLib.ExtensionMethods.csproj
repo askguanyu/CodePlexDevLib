@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\AssemblyInfoCommon.cs">
+      <Link>Properties\AssemblyInfoCommon.cs</Link>
+    </Compile>
     <Compile Include="ArrayExtensions.cs" />
     <Compile Include="BoolExtensions.cs" />
     <Compile Include="ByteExtensions.cs" />

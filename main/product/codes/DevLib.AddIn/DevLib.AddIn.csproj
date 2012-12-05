@@ -39,6 +39,9 @@
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\AssemblyInfoCommon.cs">
+      <Link>Properties\AssemblyInfoCommon.cs</Link>
+    </Compile>
     <Compile Include="AddInActivator.cs" />
     <Compile Include="AddInActivatorClient.cs" />
     <Compile Include="AddInActivatorHost.cs" />

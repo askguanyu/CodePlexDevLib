@@ -39,9 +39,6 @@
     <Reference Include="System.Runtime.Remoting" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="AddInActivator.cs" />
     <Compile Include="AddInActivatorClient.cs" />
     <Compile Include="AddInActivatorHost.cs" />
@@ -56,6 +53,7 @@
     <Compile Include="AddInPlatformTarget.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

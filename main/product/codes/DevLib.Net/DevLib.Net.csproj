@@ -39,9 +39,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="AsyncSocket\AsyncSocketClient.cs" />
     <Compile Include="AsyncSocket\AsyncSocketClientConstants.cs" />
     <Compile Include="AsyncSocket\AsyncSocketErrorCodeEnum.cs" />
@@ -51,6 +48,7 @@
     <Compile Include="AsyncSocket\AsyncSocketServerEventArgsBufferManager.cs" />
     <Compile Include="AsyncSocket\AsyncSocketServerEventArgsPool.cs" />
     <Compile Include="AsyncSocket\AsyncSocketUserTokenEventArgs.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

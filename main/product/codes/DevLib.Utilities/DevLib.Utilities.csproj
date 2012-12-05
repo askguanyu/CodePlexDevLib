@@ -41,11 +41,9 @@
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\DevLib.Main\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="ColorUtilities.cs" />
     <Compile Include="NetUtilities.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="RegexUtilities.cs" />
     <Compile Include="StringUtilities.cs" />

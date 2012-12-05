@@ -39,6 +39,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\AssemblyInfoCommon.cs">
+      <Link>Properties\AssemblyInfoCommon.cs</Link>
+    </Compile>
     <Compile Include="AsyncSocket\AsyncSocketClient.cs" />
     <Compile Include="AsyncSocket\AsyncSocketClientConstants.cs" />
     <Compile Include="AsyncSocket\AsyncSocketErrorCodeEnum.cs" />

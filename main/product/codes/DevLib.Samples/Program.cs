@@ -139,7 +139,8 @@ namespace DevLib.Samples
 
             Console.WriteLine("next");
             Console.ReadKey();
-
+            domain.Dispose();
+            domain1.Dispose();
 
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 

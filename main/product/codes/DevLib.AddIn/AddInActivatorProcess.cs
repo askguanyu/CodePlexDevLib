@@ -117,6 +117,14 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
+        ~AddInActivatorProcess()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="cancelEvent"></param>
         /// <returns></returns>
         private delegate void DeleteAssemblyFileDelegate(ManualResetEvent cancelEvent);
@@ -585,35 +593,35 @@ namespace DevLib.AddIn
                 }
 
                 isCanceled = cancelEvent.WaitOne(0);
-            } while (!isDeleted && !isCanceled);
+                } while (!isDeleted && !isCanceled);
 
-            if (!isDeleted && lastException != null)
-            {
-                throw lastException;
+                if (!isDeleted && lastException != null)
+                {
+                    throw lastException;
+                }
             }
-        }
 
-        /// <summary>
-        ///
-        /// </summary>
-        private void CheckDisposed()
-        {
-            if (this._isDisposing)
+            /// <summary>
+            ///
+            /// </summary>
+            private void CheckDisposed()
             {
-                throw new ObjectDisposedException("DevLib.AddIn.AddInActivatorProcess");
+                if (this._isDisposing)
+                {
+                    throw new ObjectDisposedException("DevLib.AddIn.AddInActivatorProcess");
+                }
             }
-        }
 
-        /// <summary>
-        ///
-        /// </summary>
-        private void DisposeClient()
-        {
-            if (this._addInActivatorClient != null)
+            /// <summary>
+            ///
+            /// </summary>
+            private void DisposeClient()
             {
-                this._addInActivatorClient.Dispose();
-                this._addInActivatorClient = null;
+                if (this._addInActivatorClient != null)
+                {
+                    this._addInActivatorClient.Dispose();
+                    this._addInActivatorClient = null;
+                }
             }
         }
     }
-}

@@ -37,7 +37,7 @@ namespace DevLib.AddIn
             this.Evidence = AppDomain.CurrentDomain.Evidence;
             this.ExeFileDirectory = Path.GetTempPath();
             this.ExternalAssemblies = new Dictionary<AssemblyName, string>();
-            this.FileDeleteTimeout = new TimeSpan(0, 0, 3);
+            this.FileDeleteTimeout = new TimeSpan(0, 0, 0);
             this.Platform = PlatformTargetEnum.AnyCPU;
             this.ProcessPriority = ProcessPriorityClass.Normal;
             this.ProcessStartTimeout = new TimeSpan(0, 0, 10);

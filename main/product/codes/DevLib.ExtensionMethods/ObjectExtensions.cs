@@ -457,7 +457,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The source object.</param>
         /// <returns></returns>
-        public static Dictionary<string, object> RetrieveProperties(this object source)
+        public static Dictionary<string, object> TraverseProperties(this object source)
         {
             if (source == null)
             {

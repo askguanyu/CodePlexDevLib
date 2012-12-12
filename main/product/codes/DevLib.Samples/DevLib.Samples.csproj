@@ -93,6 +93,10 @@
       <Project>{D2B536FD-62D2-46BA-9938-872C120C3FBF}</Project>
       <Name>DevLib.AddIn</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.DesignPatterns\DevLib.DesignPatterns.csproj">
+      <Project>{fba87267-25f7-4363-a5e2-d12dcb011222}</Project>
+      <Name>DevLib.DesignPatterns</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Diagnostics\DevLib.Diagnostics.csproj">
       <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
       <Name>DevLib.Diagnostics</Name>

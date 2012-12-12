@@ -21,9 +21,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Utilities", "DevLib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.WinForms", "DevLib.WinForms\DevLib.WinForms.csproj", "{73AF4976-0D28-4EB8-852E-2B375B6EBC33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.DesignPatterns", "DevLib.DesignPatterns\DevLib.DesignPatterns.csproj", "{FBA87267-25F7-4363-A5E2-D12DCB011222}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
+		SccNumberOfProjects = 12
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -57,6 +59,9 @@ Global
 		SccProjectUniqueName10 = DevLib.WinForms\\DevLib.WinForms.csproj
 		SccProjectName10 = DevLib.WinForms
 		SccLocalPath10 = DevLib.WinForms
+		SccProjectUniqueName11 = DevLib.DesignPatterns\\DevLib.DesignPatterns.csproj
+		SccProjectName11 = DevLib.DesignPatterns
+		SccLocalPath11 = DevLib.DesignPatterns
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -175,6 +180,16 @@ Global
 		{73AF4976-0D28-4EB8-852E-2B375B6EBC33}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{73AF4976-0D28-4EB8-852E-2B375B6EBC33}.Release|x86.ActiveCfg = Release|Any CPU
 		{73AF4976-0D28-4EB8-852E-2B375B6EBC33}.Release|x86.Build.0 = Release|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FBA87267-25F7-4363-A5E2-D12DCB011222}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,6 +5,17 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Samples
 {
+    using DevLib.AddIn;
+    using DevLib.DesignPatterns;
+    using DevLib.Diagnostics;
+    using DevLib.ExtensionMethods;
+    using DevLib.Main;
+    using DevLib.Net;
+    using DevLib.Net.AsyncSocket;
+    using DevLib.ServiceModel;
+    using DevLib.Settings;
+    using DevLib.Utilities;
+    using DevLib.WinForms;
     using System;
     using System.AddIn;
     using System.AddIn.Hosting;
@@ -20,24 +31,13 @@ namespace DevLib.Samples
     using System.Net;
     using System.Net.NetworkInformation;
     using System.Reflection;
+    using System.Runtime.Serialization.Formatters;
     using System.ServiceModel;
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Linq;
-    using DevLib.AddIn;
-    using DevLib.Diagnostics;
-    using DevLib.ExtensionMethods;
-    using DevLib.Main;
-    using DevLib.Net;
-    using DevLib.Net.AsyncSocket;
-    using DevLib.ServiceModel;
-    using DevLib.Settings;
-    using DevLib.Utilities;
-    using DevLib.WinForms;
-    using System.Runtime.Serialization.Formatters;
-    using DevLib.DesignPatterns;
 
     public class Program
     {

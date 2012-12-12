@@ -37,6 +37,7 @@ namespace DevLib.Samples
     using DevLib.Utilities;
     using DevLib.WinForms;
     using System.Runtime.Serialization.Formatters;
+    using DevLib.DesignPatterns;
 
     public class Program
     {
@@ -57,7 +58,12 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate()
                 {
-                    TestDevLibAddIn();
+                    //TestDevLibAddIn();
+                });
+
+                CodeTimer.Time(delegate()
+                {
+                    TestDevLibDesignPatterns();
                 });
 
                 CodeTimer.Time(delegate()
@@ -97,6 +103,20 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             });
+        }
+
+        private static void TestDevLibDesignPatterns()
+        {
+            PrintMethodName("Test DevLib.DesignPatterns");
+
+
+            var a = Singleton<TestClass>.Instance;
+            var b = Singleton<TestClass>.Instance;
+
+            a.Age = 30;
+            b.Age = 29;
+            a.Age.ConsoleOutput();
+
         }
 
         public static AddInDomain addin = null;

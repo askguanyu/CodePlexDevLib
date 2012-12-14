@@ -35,6 +35,7 @@ namespace DevLib.Samples
     using System.ServiceModel;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Linq;
@@ -111,11 +112,18 @@ namespace DevLib.Samples
 
 
             var a = Singleton<TestClass>.Instance;
-            var b = Singleton<TestClass>.Instance;
-
             a.Age = 30;
-            b.Age = 29;
-            a.Age.ConsoleOutput();
+            a.Name = "Same one";
+
+            Parallel.For(0, 5, (i) =>
+            {
+                int age = i;
+                Singleton<TestClass>.Instance.Age = age;
+                Singleton<TestClass>.Instance.Age.ConsoleOutput();
+                Singleton<TestClass>.Instance.Name.ConsoleOutput();
+            });
+
+            Singleton<TestClass>.Instance.Age.ConsoleOutput();
 
         }
 

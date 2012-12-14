@@ -6,20 +6,10 @@
 namespace DevLib.DesignPatterns
 {
     /// <summary>
-    /// Singleton Design Pattern
+    /// Singleton Design Pattern, thread-safe without using locks.
     /// </summary>
     public sealed class Singleton<T> where T : new()
     {
-        /// <summary>
-        ///
-        /// </summary>
-        private static readonly object _syncRoot = new object();
-
-        /// <summary>
-        ///
-        /// </summary>
-        private static T _instance;
-
         /// <summary>
         ///
         /// </summary>
@@ -32,19 +22,24 @@ namespace DevLib.DesignPatterns
         {
             get
             {
-                if (_instance == null)
-                {
-                    lock (_syncRoot)
-                    {
-                        if (_instance == null)
-                        {
-                            _instance = new T();
-                        }
-                    }
-                }
-
-                return _instance;
+                return Inner._instance;
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        private class Inner
+        {
+            /// <summary>
+            ///
+            /// </summary>
+            internal static T _instance = new T();
+
+            /// <summary>
+            ///
+            /// </summary>
+            static Inner() { }
         }
     }
 }

@@ -25,6 +25,11 @@ namespace DevLib.AddIn
         /// <summary>
         ///
         /// </summary>
+        private const string LogFileStringFormat = @"{0}.exe.log";
+
+        /// <summary>
+        ///
+        /// </summary>
         private readonly AddInDomainSetup _addInDomainSetup;
 
         /// <summary>
@@ -46,6 +51,11 @@ namespace DevLib.AddIn
         ///
         /// </summary>
         private readonly string _addInDomainSetupFile;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private readonly string _addInDomainLogFile;
 
         /// <summary>
         ///
@@ -107,6 +117,7 @@ namespace DevLib.AddIn
             };
 
             this._addInDomainSetupFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(ConfigFileStringFormat, friendlyName));
+            this._addInDomainLogFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(LogFileStringFormat, friendlyName));
 
             this._process.OutputDataReceived += this.OnProcessDataReceived;
             this._process.ErrorDataReceived += this.OnProcessDataReceived;
@@ -502,6 +513,16 @@ namespace DevLib.AddIn
                         Debug.WriteLine(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainSetupFile));
                         throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainSetupFile), e);
                     }
+
+                    try
+                    {
+                        File.Delete(this._addInDomainLogFile);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainLogFile));
+                        throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainLogFile), e);
+                    }
                 }
             }
         }
@@ -593,35 +614,36 @@ namespace DevLib.AddIn
                 }
 
                 isCanceled = cancelEvent.WaitOne(0);
-                } while (!isDeleted && !isCanceled);
-
-                if (!isDeleted && lastException != null)
-                {
-                    throw lastException;
-                }
             }
+            while (!isDeleted && !isCanceled);
 
-            /// <summary>
-            ///
-            /// </summary>
-            private void CheckDisposed()
+            if (!isDeleted && lastException != null)
             {
-                if (this._isDisposing)
-                {
-                    throw new ObjectDisposedException("DevLib.AddIn.AddInActivatorProcess");
-                }
+                throw lastException;
             }
+        }
 
-            /// <summary>
-            ///
-            /// </summary>
-            private void DisposeClient()
+        /// <summary>
+        ///
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._isDisposing)
             {
-                if (this._addInActivatorClient != null)
-                {
-                    this._addInActivatorClient.Dispose();
-                    this._addInActivatorClient = null;
-                }
+                throw new ObjectDisposedException("DevLib.AddIn.AddInActivatorProcess");
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        private void DisposeClient()
+        {
+            if (this._addInActivatorClient != null)
+            {
+                this._addInActivatorClient.Dispose();
+                this._addInActivatorClient = null;
             }
         }
     }
+}

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Settings
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
@@ -17,7 +18,7 @@ namespace DevLib.Settings
         /// <summary>
         ///
         /// </summary>
-        private static Dictionary<string, Settings> _settingsDictionary = new Dictionary<string, Settings>();
+        private static Dictionary<string, Settings> _settingsDictionary = new Dictionary<string, Settings>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Opens the configuration file for the current application.
@@ -31,7 +32,7 @@ namespace DevLib.Settings
                 return new Settings(null);
             }
 
-            string key = Path.GetFullPath(configFile).ToLowerInvariant();
+            string key = Path.GetFullPath(configFile);
 
             lock (((ICollection)_settingsDictionary).SyncRoot)
             {

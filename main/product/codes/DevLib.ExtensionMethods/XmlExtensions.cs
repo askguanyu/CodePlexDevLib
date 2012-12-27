@@ -32,7 +32,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The parent node.</param>
         /// <param name="childNode">The name of the child node.</param>
         /// <param name="namespaceUri">The node namespace.</param>
-        /// <returns>The newly cerated XML node.</returns>
+        /// <returns>The newly created XML node.</returns>
         public static XmlNode CreateChildNode(this XmlNode source, string childNode, string namespaceUri)
         {
             XmlDocument document = source is XmlDocument ? (XmlDocument)source : source.OwnerDocument;
@@ -123,7 +123,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Gets an attribute value.
         /// </summary>
-        /// <param name="source">The node to retreive the value from.</param>
+        /// <param name="source">The node to retrieve the value from.</param>
         /// <param name="attributeName">The Name of the attribute.</param>
         /// <returns>The attribute value.</returns>
         public static string GetAttribute(this XmlNode source, string attributeName)
@@ -135,7 +135,7 @@ namespace DevLib.ExtensionMethods
         /// Gets an attribute value
         /// If the value is empty, uses the specified default value.
         /// </summary>
-        /// <param name="source">The node to retreive the value from.</param>
+        /// <param name="source">The node to retrieve the value from.</param>
         /// <param name="attributeName">The Name of the attribute.</param>
         /// <param name="defaultValue">The default value to be returned if no matching attribute exists.</param>
         /// <returns>The attribute value.</returns>

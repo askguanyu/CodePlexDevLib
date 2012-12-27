@@ -9,6 +9,7 @@ namespace DevLib.Net.AsyncSocket
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.Sockets;
     using System.Security.Permissions;
@@ -171,7 +172,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public long NumConnectedSockets
         {
-            get { return _numConnectedSockets; }
+            get { return this._numConnectedSockets; }
         }
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public long TotalBytesRead
         {
-            get { return _totalBytesRead; }
+            get { return this._totalBytesRead; }
         }
 
         /// <summary>
@@ -201,7 +202,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public long TotalBytesWrite
         {
-            get { return _totalBytesWrite; }
+            get { return this._totalBytesWrite; }
         }
 
         /// <summary>
@@ -293,7 +294,7 @@ namespace DevLib.Net.AsyncSocket
                 }
 
                 this.IsListening = true;
-                StartAccept(null);
+                this.StartAccept(null);
                 Debug.WriteLine(AsyncSocketServerConstants.SocketStartSuccessfully);
             }
         }
@@ -318,17 +319,17 @@ namespace DevLib.Net.AsyncSocket
             }
 
             SocketAsyncEventArgs writeEventArgs;
-            writeEventArgs = _writePool.Pop();
+            writeEventArgs = this._writePool.Pop();
             writeEventArgs.UserToken = token;
             token.Operation = operation;
 
-            if (buffer.Length <= _bufferSize)
+            if (buffer.Length <= this._bufferSize)
             {
                 Array.Copy(buffer, 0, writeEventArgs.Buffer, writeEventArgs.Offset, buffer.Length);
             }
             else
             {
-                _bufferManager.FreeBuffer(writeEventArgs);
+                this._bufferManager.FreeBuffer(writeEventArgs);
 
                 writeEventArgs.SetBuffer(buffer, 0, buffer.Length);
             }
@@ -369,6 +370,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         /// <param name="connectionIP">Client connection IP.</param>
         /// <param name="buffer">Data to send.</param>
+        /// <param name="operation"></param>
         public void Send(IPAddress connectionIP, byte[] buffer, object operation = null)
         {
             AsyncSocketUserTokenEventArgs token;
@@ -383,17 +385,17 @@ namespace DevLib.Net.AsyncSocket
             }
 
             SocketAsyncEventArgs writeEventArgs;
-            writeEventArgs = _writePool.Pop();
+            writeEventArgs = this._writePool.Pop();
             writeEventArgs.UserToken = token;
             token.Operation = operation;
 
-            if (buffer.Length <= _bufferSize)
+            if (buffer.Length <= this._bufferSize)
             {
                 Array.Copy(buffer, 0, writeEventArgs.Buffer, writeEventArgs.Offset, buffer.Length);
             }
             else
             {
-                _bufferManager.FreeBuffer(writeEventArgs);
+                this._bufferManager.FreeBuffer(writeEventArgs);
 
                 writeEventArgs.SetBuffer(buffer, 0, buffer.Length);
             }
@@ -477,7 +479,7 @@ namespace DevLib.Net.AsyncSocket
 
                                 if (null != token)
                                 {
-                                    this.RaiseEvent(Disconnected, token);
+                                    this.RaiseEvent(this.Disconnected, token);
                                 }
                             }
                             catch (Exception e)
@@ -540,7 +542,7 @@ namespace DevLib.Net.AsyncSocket
         private void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<AsyncSocketErrorEventArgs> temp = Interlocked.CompareExchange(ref ErrorOccurred, null, null);
+            EventHandler<AsyncSocketErrorEventArgs> temp = Interlocked.CompareExchange(ref this.ErrorOccurred, null, null);
 
             if (temp != null)
             {
@@ -567,34 +569,34 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Initialize Read/Write Pool.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         private void InitializePool()
         {
-            this._bufferManager = new AsyncSocketServerEventArgsBufferManager(_bufferSize * _numConnections * AsyncSocketServerConstants.OpsToPreAlloc, _bufferSize);
+            this._bufferManager = new AsyncSocketServerEventArgsBufferManager(this._bufferSize * this._numConnections * AsyncSocketServerConstants.OpsToPreAlloc, this._bufferSize);
             this._readPool = new AsyncSocketServerEventArgsPool();
             this._writePool = new AsyncSocketServerEventArgsPool();
             this._tokens = new Dictionary<Guid, AsyncSocketUserTokenEventArgs>();
             this._singleIPTokens = new Dictionary<IPAddress, AsyncSocketUserTokenEventArgs>();
-            this._maxNumberAcceptedClients = new Semaphore(_numConnections, _numConnections);
+            this._maxNumberAcceptedClients = new Semaphore(this._numConnections, this._numConnections);
             this._bufferManager.InitBuffer();
             SocketAsyncEventArgs readWriteEventArg;
             AsyncSocketUserTokenEventArgs token;
 
             /// Initialize read Pool
-            for (int i = 0; i < _numConnections; i++)
+            for (int i = 0; i < this._numConnections; i++)
             {
                 token = new AsyncSocketUserTokenEventArgs();
-                token.ReadEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
+                token.ReadEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(this.IO_Completed);
                 this._bufferManager.SetBuffer(token.ReadEventArgs);
                 token.SetBuffer(token.ReadEventArgs.Buffer, token.ReadEventArgs.Offset);
                 this._readPool.Push(token.ReadEventArgs);
             }
 
             /// Initialize write Pool
-            for (int i = 0; i < _numConnections; i++)
+            for (int i = 0; i < this._numConnections; i++)
             {
                 readWriteEventArg = new SocketAsyncEventArgs();
-                readWriteEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
+                readWriteEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(this.IO_Completed);
                 readWriteEventArg.UserToken = null;
                 this._bufferManager.SetBuffer(readWriteEventArg);
                 this._writePool.Push(readWriteEventArg);
@@ -605,14 +607,14 @@ namespace DevLib.Net.AsyncSocket
         ///
         /// </summary>
         /// <param name="acceptEventArg"></param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private void StartAccept(SocketAsyncEventArgs acceptEventArg)
         {
             if (acceptEventArg == null)
             {
                 acceptEventArg = new SocketAsyncEventArgs();
-                acceptEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(AcceptEventArg_Completed);
+                acceptEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(this.AcceptEventArg_Completed);
             }
             else
             {
@@ -625,7 +627,7 @@ namespace DevLib.Net.AsyncSocket
                 {
                     this._maxNumberAcceptedClients.WaitOne();
 
-                    bool willRaiseEvent = _listenSocket.AcceptAsync(acceptEventArg);
+                    bool willRaiseEvent = this._listenSocket.AcceptAsync(acceptEventArg);
                     if (!willRaiseEvent)
                     {
                         this.ProcessAccept(acceptEventArg);
@@ -649,8 +651,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AcceptEventArg_Completed(object sender, SocketAsyncEventArgs e)
         {
             this.ProcessAccept(e);
@@ -663,10 +667,10 @@ namespace DevLib.Net.AsyncSocket
         private void ProcessAccept(SocketAsyncEventArgs e)
         {
             AsyncSocketUserTokenEventArgs token;
-            Interlocked.Increment(ref _numConnectedSockets);
-            Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, _numConnectedSockets.ToString()));
+            Interlocked.Increment(ref this._numConnectedSockets);
+            Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, this._numConnectedSockets.ToString()));
             SocketAsyncEventArgs readEventArg;
-            readEventArg = _readPool.Pop();
+            readEventArg = this._readPool.Pop();
             token = (AsyncSocketUserTokenEventArgs)readEventArg.UserToken;
             token.Socket = e.AcceptSocket;
             token.ConnectionId = Guid.NewGuid();
@@ -686,7 +690,7 @@ namespace DevLib.Net.AsyncSocket
                     }
                 }
 
-                this.RaiseEvent(Connected, token);
+                this.RaiseEvent(this.Connected, token);
 
                 try
                 {
@@ -724,8 +728,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="e"></param>
         private void IO_Completed(object sender, SocketAsyncEventArgs e)
         {
@@ -752,10 +757,10 @@ namespace DevLib.Net.AsyncSocket
 
             if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
             {
-                Interlocked.Add(ref _totalBytesRead, e.BytesTransferred);
+                Interlocked.Add(ref this._totalBytesRead, e.BytesTransferred);
                 Debug.WriteLine(string.Format(AsyncSocketServerConstants.ServerReceiveTotalBytesStringFormat, this._totalBytesRead.ToString()));
                 token.SetBytesReceived(e.BytesTransferred);
-                this.RaiseEvent(DataReceived, token);
+                this.RaiseEvent(this.DataReceived, token);
 
                 try
                 {
@@ -799,21 +804,21 @@ namespace DevLib.Net.AsyncSocket
         private void ProcessSend(SocketAsyncEventArgs e)
         {
             AsyncSocketUserTokenEventArgs token = (AsyncSocketUserTokenEventArgs)e.UserToken;
-            Interlocked.Add(ref _totalBytesWrite, e.BytesTransferred);
+            Interlocked.Add(ref this._totalBytesWrite, e.BytesTransferred);
 
-            if (e.Count > _bufferSize)
+            if (e.Count > this._bufferSize)
             {
-                _bufferManager.SetBuffer(e);
+                this._bufferManager.SetBuffer(e);
             }
 
-            _writePool.Push(e);
+            this._writePool.Push(e);
             e.UserToken = null;
 
             if (e.SocketError == SocketError.Success)
             {
                 Debug.WriteLine(string.Format(AsyncSocketServerConstants.ServerSendTotalBytesStringFormat, e.BytesTransferred.ToString()));
 
-                this.RaiseEvent(DataSent, token);
+                this.RaiseEvent(this.DataSent, token);
             }
             else
             {
@@ -845,7 +850,7 @@ namespace DevLib.Net.AsyncSocket
 
                         if (null != token)
                         {
-                            this.RaiseEvent(Disconnected, token);
+                            this.RaiseEvent(this.Disconnected, token);
                         }
                     }
                 }
@@ -879,16 +884,16 @@ namespace DevLib.Net.AsyncSocket
             }
             finally
             {
-                Interlocked.Decrement(ref _numConnectedSockets);
+                Interlocked.Decrement(ref this._numConnectedSockets);
 
                 if (!this._maxNumberAcceptedClients.SafeWaitHandle.IsClosed)
                 {
                     this._maxNumberAcceptedClients.Release();
                 }
 
-                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, _numConnectedSockets.ToString()));
+                Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, this._numConnectedSockets.ToString()));
 
-                _readPool.Push(token.ReadEventArgs);
+                this._readPool.Push(token.ReadEventArgs);
             }
         }
     }

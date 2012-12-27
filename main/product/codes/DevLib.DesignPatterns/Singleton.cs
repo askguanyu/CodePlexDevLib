@@ -13,7 +13,9 @@ namespace DevLib.DesignPatterns
         /// <summary>
         ///
         /// </summary>
-        private Singleton() { }
+        private Singleton()
+        {
+        }
 
         /// <summary>
         /// Gets singleton instance.
@@ -39,7 +41,9 @@ namespace DevLib.DesignPatterns
             /// <summary>
             ///
             /// </summary>
-            static Inner() { }
+            static Inner()
+            {
+            }
         }
     }
 }

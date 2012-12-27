@@ -80,22 +80,6 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Gets or sets settings value.
-        /// </summary>
-        public object this[string key]
-        {
-            get
-            {
-                return this.GetValue(key, true);
-            }
-
-            set
-            {
-                this.SetValue(key, value);
-            }
-        }
-
-        /// <summary>
         /// Gets current settings all keys.
         /// </summary>
         public string[] Keys
@@ -124,6 +108,22 @@ namespace DevLib.Settings
                     this._settingsItemDictionary.Values.CopyTo(result, 0);
                     return result;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets settings value.
+        /// </summary>
+        public object this[string key]
+        {
+            get
+            {
+                return this.GetValue(key, true);
+            }
+
+            set
+            {
+                this.SetValue(key, value);
             }
         }
 
@@ -504,7 +504,7 @@ namespace DevLib.Settings
             this._xmlReaderSettings.ConformanceLevel = ConformanceLevel.Auto;
 
             this._xmlNamespaces = new XmlSerializerNamespaces();
-            this._xmlNamespaces.Add(String.Empty, String.Empty);
+            this._xmlNamespaces.Add(string.Empty, string.Empty);
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace DevLib.Net.AsyncSocket
 
     /// <summary>
     /// This class creates a single large buffer which can be divided up and assigned to SocketAsyncEventArgs objects for use with each socket I/O operation.
-    /// This enables bufffers to be easily reused and gaurds against fragmenting heap memory.
+    /// This enables buffers to be easily reused and guards against fragmenting heap memory.
     ///
     /// The operations exposed on the class are not thread safe.
     /// </summary>

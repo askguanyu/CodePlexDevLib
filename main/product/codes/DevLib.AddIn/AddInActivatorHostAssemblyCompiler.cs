@@ -5,12 +5,12 @@
 //-----------------------------------------------------------------------
 namespace DevLib.AddIn
 {
+    using Microsoft.CSharp;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Security.Permissions;
-    using Microsoft.CSharp;
 
     /// <summary>
     /// Generates an assembly to run in a separate process in order to host an AddInActivator.
@@ -41,18 +41,18 @@ namespace DevLib.AddIn
                 Directory.CreateDirectory(addInDomainSetup.ExeFileDirectory);
             }
 
-            // Dictionary<string, string> providerOptions = new Dictionary<string, string> { { "CompilerVersion", "v2.0" } };
+            ////Dictionary<string, string> providerOptions = new Dictionary<string, string> { { "CompilerVersion", "v2.0" } };
 
             CompilerResults results = null;
 
-            // using (CSharpCodeProvider provider = new CSharpCodeProvider(providerOptions))
+            ////using (CSharpCodeProvider provider = new CSharpCodeProvider(providerOptions))
             using (CSharpCodeProvider provider = new CSharpCodeProvider())
             {
                 List<string> compilerArgs = new List<string> { AddInPlatformTarget.GetPlatformTargetCompilerArgument(addInDomainSetup.Platform) };
 
                 CompilerParameters compilerParameters = new CompilerParameters
                 {
-                    // CompilerOptions = string.Join(" ", compilerArgs.ToArray()),
+                    ////CompilerOptions = string.Join(" ", compilerArgs.ToArray()),
                     GenerateExecutable = true,
                     GenerateInMemory = false,
                     OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName))

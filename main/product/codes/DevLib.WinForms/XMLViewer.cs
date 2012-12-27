@@ -6,6 +6,7 @@
 namespace DevLib.WinForms
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
     using System.Text;
     using System.Xml.Linq;
@@ -39,7 +40,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        /// The format settings.
+        /// Gets or sets the format settings.
         /// </summary>
         public XMLViewerSettings Settings
         {
@@ -108,15 +109,14 @@ namespace DevLib.WinForms
                 }
 
                 // Get the Rtf of the root element.
-                string rootRtfContent = ProcessElement(xmlDoc.Root, 0);
+                string rootRtfContent = this.ProcessElement(xmlDoc.Root, 0);
 
                 xmlRtfContent.Append(rootRtfContent);
 
                 this.LastText = this.Text;
 
                 // Construct the completed Rtf, and set the Rtf property to this value.
-                this.Rtf = string.Format(rtfFormat, Settings.ToRtfFormatString(),
-                    xmlRtfContent.ToString());
+                this.Rtf = string.Format(rtfFormat, this.Settings.ToRtfFormatString(), xmlRtfContent.ToString());
 
                 this.IsViewingXML = true;
             }
@@ -171,7 +171,7 @@ namespace DevLib.WinForms
         /// <param name="element"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2241:Provide correct arguments to formatting methods")]
+        [SuppressMessage("Microsoft.Usage", "CA2241:Provide correct arguments to formatting methods", Justification = "Reviewed.")]
         private string ProcessElement(XElement element, int level)
         {
             // This viewer does not support the Xml file that has Namespace.
@@ -207,24 +207,19 @@ namespace DevLib.WinForms
                 {
                     foreach (var childElement in element.Elements())
                     {
-                        string childElementRtfContent =
-                            ProcessElement(childElement, level + 1);
+                        string childElementRtfContent = this.ProcessElement(childElement, level + 1);
                         childElementsRtfContent.Append(childElementRtfContent);
                     }
                 }
-
-                // If !string.IsNullOrWhiteSpace(element.Value), then construct the Rtf
-                // of the value.
                 else
                 {
-                    childElementsRtfContent.AppendFormat(@"{ 0}\cf{ 1} { 2}\par",
+                    childElementsRtfContent.AppendFormat(@"
+{ 0}\cf{ 1} { 2}\par",
                         new string(' ', 4 * (level + 1)),
                         XMLViewerSettings.ValueID,
                         CharacterEncoder.Encode(element.Value.Trim()));
                 }
             }
-
-            // This element only has attributes. {{0}} will be replaced with the attributes.
             else
             {
                 elementRtfFormat =
@@ -254,8 +249,7 @@ namespace DevLib.WinForms
                 attributesRtfContent.Append(" ");
             }
 
-            return string.Format(elementRtfFormat, attributesRtfContent,
-                childElementsRtfContent);
+            return string.Format(elementRtfFormat, attributesRtfContent, childElementsRtfContent);
         }
 
         /// <summary>
@@ -264,10 +258,6 @@ namespace DevLib.WinForms
         private void InitializeComponent()
         {
             this.SuspendLayout();
-
-            //
-            // XMLViewer
-            //
             this.WordWrap = false;
             this.ResumeLayout(false);
         }
@@ -367,7 +357,7 @@ namespace DevLib.WinForms
         public const int TagID = 5;
 
         /// <summary>
-        /// The color of an Xml element name.
+        /// Gets or sets the color of an Xml element name.
         /// </summary>
         public Color Element
         {
@@ -376,7 +366,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        /// The color of an Xml element value.
+        /// Gets or sets the color of an Xml element value.
         /// </summary>
         public Color Value
         {
@@ -385,7 +375,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        /// The color of an Attribute Key in Xml element.
+        /// Gets or sets the color of an Attribute Key in Xml element.
         /// </summary>
         public Color AttributeKey
         {
@@ -394,7 +384,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        /// The color of an Attribute Value in Xml element.
+        /// Gets or sets the color of an Attribute Value in Xml element.
         /// </summary>
         public Color AttributeValue
         {
@@ -403,7 +393,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        /// The color of the tags and operators like "<,/> and =".
+        /// Gets or sets the color of the tags and operators like ", and =".
         /// </summary>
         public Color Tag
         {
@@ -414,6 +404,7 @@ namespace DevLib.WinForms
         /// <summary>
         /// Convert the settings to Rtf color definitions.
         /// </summary>
+        /// <returns></returns>
         public string ToRtfFormatString()
         {
             // The Rtf color definition format.
@@ -421,11 +412,11 @@ namespace DevLib.WinForms
 
             StringBuilder rtfFormatString = new StringBuilder();
 
-            rtfFormatString.AppendFormat(format, Element.R, Element.G, Element.B);
-            rtfFormatString.AppendFormat(format, Value.R, Value.G, Value.B);
-            rtfFormatString.AppendFormat(format, AttributeKey.R, AttributeKey.G, AttributeKey.B);
-            rtfFormatString.AppendFormat(format, AttributeValue.R, AttributeValue.G, AttributeValue.B);
-            rtfFormatString.AppendFormat(format, Tag.R, Tag.G, Tag.B);
+            rtfFormatString.AppendFormat(format, this.Element.R, this.Element.G, this.Element.B);
+            rtfFormatString.AppendFormat(format, this.Value.R, this.Value.G, this.Value.B);
+            rtfFormatString.AppendFormat(format, this.AttributeKey.R, this.AttributeKey.G, this.AttributeKey.B);
+            rtfFormatString.AppendFormat(format, this.AttributeValue.R, this.AttributeValue.G, this.AttributeValue.B);
+            rtfFormatString.AppendFormat(format, this.Tag.R, this.Tag.G, this.Tag.B);
 
             return rtfFormatString.ToString();
         }

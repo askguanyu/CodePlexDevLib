@@ -16,7 +16,7 @@ namespace DevLib.ExtensionMethods
     public static class CollectionExtensions
     {
         /// <summary>
-        /// Update value, if not cantain key then add value.
+        /// Update value, if not contain key then add value.
         /// </summary>
         /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
         /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
@@ -56,6 +56,8 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Performs the specified action on each element of the specified IDictionary.
         /// </summary>
+        /// <typeparam name="TKey">The type of keys in the collection.</typeparam>
+        /// <typeparam name="TValue">The type of values in the collection.</typeparam>
         /// <param name="source">The source dictionary.</param>
         /// <param name="action">Method for element.</param>
         public static void ForEach<TKey, TValue>(this IDictionary<TKey, TValue> source, Action<TKey, TValue> action)

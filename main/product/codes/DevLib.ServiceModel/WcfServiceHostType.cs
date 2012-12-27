@@ -9,6 +9,7 @@ namespace DevLib.ServiceModel
     using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
     using System.ServiceModel;
@@ -130,7 +131,7 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile"></param>
         /// <param name="configFile"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static List<ServiceHost> LoadServiceHost(string assemblyFile, string configFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
@@ -263,45 +264,71 @@ namespace DevLib.ServiceModel
             if (isMexBinding)
             {
                 if (address.StartsWith("mexNamedPipeBinding"))
+                {
                     return MetadataExchangeBindings.CreateMexNamedPipeBinding();
+                }
 
                 if (address.StartsWith("mexTcpBinding"))
+                {
                     return MetadataExchangeBindings.CreateMexTcpBinding();
+                }
 
                 if (address.StartsWith("mexHttpBinding"))
+                {
                     return MetadataExchangeBindings.CreateMexHttpBinding();
+                }
 
                 if (address.StartsWith("mexHttpsBinding"))
+                {
                     return MetadataExchangeBindings.CreateMexHttpsBinding();
+                }
             }
             else
             {
                 if (address.StartsWith("netNamedPipeBinding"))
+                {
                     return new NetNamedPipeBinding();
+                }
 
                 if (address.StartsWith("netTcpBinding"))
+                {
                     return new NetTcpBinding();
+                }
 
                 if (address.StartsWith("customBinding"))
+                {
                     return new CustomBinding();
+                }
 
                 if (address.StartsWith("basicHttpBinding"))
+                {
                     return new BasicHttpBinding();
+                }
 
                 if (address.StartsWith("wsHttpBinding"))
+                {
                     return new WSHttpBinding();
+                }
 
                 if (address.StartsWith("ws2007HttpBinding"))
+                {
                     return new WS2007HttpBinding();
+                }
 
                 if (address.StartsWith("ws2007FederationHttpBinding"))
+                {
                     return new WS2007FederationHttpBinding();
+                }
 
                 if (address.StartsWith("wsDualHttpBinding"))
+                {
                     return new WSDualHttpBinding();
+                }
 
                 if (address.StartsWith("wsFederationHttpBinding"))
+                {
                     return new WSFederationHttpBinding();
+                }
             }
 
             return null;

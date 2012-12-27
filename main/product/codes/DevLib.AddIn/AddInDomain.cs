@@ -167,7 +167,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets AddInDomainSetup infomation.
+        /// Gets AddInDomainSetup information.
         /// </summary>
         public AddInDomainSetup AddInDomainSetupInfo
         {
@@ -321,7 +321,7 @@ namespace DevLib.AddIn
         {
             this._canRestart = false;
 
-            if (Interlocked.CompareExchange(ref _unloaded, 1, 0) == 1)
+            if (Interlocked.CompareExchange(ref this._unloaded, 1, 0) == 1)
             {
                 return;
             }
@@ -399,7 +399,7 @@ namespace DevLib.AddIn
                 }
             }
 
-            this.RaiseEvent(Reloaded);
+            this.RaiseEvent(this.Reloaded);
         }
 
         /// <summary>
@@ -425,7 +425,7 @@ namespace DevLib.AddIn
         private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            DataReceivedEventHandler temp = Interlocked.CompareExchange(ref DataReceived, null, null);
+            DataReceivedEventHandler temp = Interlocked.CompareExchange(ref this.DataReceived, null, null);
 
             if (temp != null)
             {
@@ -440,7 +440,7 @@ namespace DevLib.AddIn
         /// <param name="e"></param>
         private void OnProcessAttached(object sender, EventArgs e)
         {
-            this.RaiseEvent(Loaded);
+            this.RaiseEvent(this.Loaded);
         }
 
         /// <summary>
@@ -450,11 +450,11 @@ namespace DevLib.AddIn
         /// <param name="e"></param>
         private void OnProcessDetached(object sender, EventArgs e)
         {
-            this.RaiseEvent(Unloaded);
+            this.RaiseEvent(this.Unloaded);
 
             if (this.AddInDomainSetupInfo.RestartOnProcessExit && this._canRestart)
             {
-                RestartAddInActivatorProcess();
+                this.RestartAddInActivatorProcess();
             }
         }
 

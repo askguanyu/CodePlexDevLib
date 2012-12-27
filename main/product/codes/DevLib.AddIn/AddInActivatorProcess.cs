@@ -8,6 +8,7 @@ namespace DevLib.AddIn
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Security.Permissions;
     using System.Threading;
@@ -83,7 +84,8 @@ namespace DevLib.AddIn
         /// <param name="friendlyName"></param>
         /// <param name="redirectOutput"></param>
         /// <param name="addInDomainSetup"></param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope"), EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public AddInActivatorProcess(string friendlyName, bool redirectOutput, AddInDomainSetup addInDomainSetup)
         {
             this._friendlyName = friendlyName;
@@ -103,7 +105,7 @@ namespace DevLib.AddIn
                 WorkingDirectory = this._addInDomainSetup.WorkingDirectory,
             };
 
-            if (_addInDomainSetup.EnvironmentVariables != null)
+            if (this._addInDomainSetup.EnvironmentVariables != null)
             {
                 foreach (KeyValuePair<string, string> item in this._addInDomainSetup.EnvironmentVariables)
                 {
@@ -430,7 +432,7 @@ namespace DevLib.AddIn
                     throw new Exception(string.Format(AddInConstants.ProcessStartExceptionStringFormat, this._process.StartInfo.FileName));
                 }
 
-                if (!serverStartedHandle.WaitOne(_addInDomainSetup.ProcessStartTimeout))
+                if (!serverStartedHandle.WaitOne(this._addInDomainSetup.ProcessStartTimeout))
                 {
                     Debug.WriteLine(AddInConstants.ProcessStartTimeoutException);
                     throw new Exception(AddInConstants.ProcessStartTimeoutException);
@@ -440,7 +442,7 @@ namespace DevLib.AddIn
                 this._process.BeginErrorReadLine();
                 this._process.PriorityClass = this._addInDomainSetup.ProcessPriority;
                 this._addInActivatorClient = new AddInActivatorClient(guid, this._addInDomainSetup);
-                this.RaiseEvent(Attached);
+                this.RaiseEvent(this.Attached);
             }
         }
 
@@ -460,7 +462,7 @@ namespace DevLib.AddIn
             this.Kill();
 
             this.IsRunning = false;
-            this.RaiseEvent(Detached);
+            this.RaiseEvent(this.Detached);
         }
 
         /// <summary>
@@ -483,13 +485,13 @@ namespace DevLib.AddIn
 
             if (this._addInDomainSetup.DeleteOnUnload)
             {
-                DeleteAssemblyFileDelegate deleteAssemblyFileDelegate = DeleteAssemblyFile;
+                DeleteAssemblyFileDelegate deleteAssemblyFileDelegate = this.DeleteAssemblyFile;
 
                 using (ManualResetEvent cancelEvent = new ManualResetEvent(false))
                 {
                     IAsyncResult result = deleteAssemblyFileDelegate.BeginInvoke(cancelEvent, null, null);
 
-                    if (!result.AsyncWaitHandle.WaitOne(_addInDomainSetup.FileDeleteTimeout))
+                    if (!result.AsyncWaitHandle.WaitOne(this._addInDomainSetup.FileDeleteTimeout))
                     {
                         cancelEvent.Set();
                     }
@@ -550,7 +552,7 @@ namespace DevLib.AddIn
         private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            DataReceivedEventHandler temp = Interlocked.CompareExchange(ref DataReceived, null, null);
+            DataReceivedEventHandler temp = Interlocked.CompareExchange(ref this.DataReceived, null, null);
 
             if (temp != null)
             {

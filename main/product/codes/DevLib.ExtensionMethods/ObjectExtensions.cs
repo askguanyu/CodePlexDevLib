@@ -319,7 +319,7 @@ namespace DevLib.ExtensionMethods
                 XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
                 if (removeDefaultNamespace)
                 {
-                    xmlns.Add(String.Empty, String.Empty);
+                    xmlns.Add(string.Empty, string.Empty);
                 }
 
                 XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());

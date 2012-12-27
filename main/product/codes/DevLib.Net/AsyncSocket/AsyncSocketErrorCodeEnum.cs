@@ -26,5 +26,5 @@ namespace DevLib.Net.AsyncSocket
         ClientReceiveException,
         SocketNoExist,
         ThrowSocketException,
-    };
+    }
 }

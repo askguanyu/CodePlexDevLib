@@ -15,7 +15,10 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Constructor of AsyncSocketErrorEventArgs.
         /// </summary>
-        public AsyncSocketErrorEventArgs() : this(string.Empty, null) { }
+        public AsyncSocketErrorEventArgs()
+            : this(string.Empty, null)
+        {
+        }
 
         /// <summary>
         /// Constructor of AsyncSocketErrorEventArgs.

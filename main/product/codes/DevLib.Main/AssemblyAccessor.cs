@@ -13,7 +13,7 @@ namespace DevLib.Main
     public static class AssemblyAccessor
     {
         /// <summary>
-        /// Gets Assembly Title
+        /// Gets Assembly Title.
         /// </summary>
         /// <returns></returns>
         public static string AssemblyTitle()
@@ -22,7 +22,7 @@ namespace DevLib.Main
             if (attributes.Length > 0)
             {
                 AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-                if (titleAttribute.Title != "")
+                if (!string.IsNullOrEmpty(titleAttribute.Title))
                 {
                     return titleAttribute.Title;
                 }
@@ -32,7 +32,7 @@ namespace DevLib.Main
         }
 
         /// <summary>
-        /// Gets Assembly Version
+        /// Gets Assembly Version.
         /// </summary>
         /// <returns></returns>
         public static string AssemblyVersion()
@@ -41,7 +41,7 @@ namespace DevLib.Main
         }
 
         /// <summary>
-        /// Gets Assembly Description
+        /// Gets Assembly Description.
         /// </summary>
         /// <returns></returns>
         public static string AssemblyDescription()
@@ -49,14 +49,14 @@ namespace DevLib.Main
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
             if (attributes.Length == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             return ((AssemblyDescriptionAttribute)attributes[0]).Description;
         }
 
         /// <summary>
-        /// Gets Assembly Product
+        /// Gets Assembly Product.
         /// </summary>
         /// <returns></returns>
         public static string AssemblyProduct()
@@ -64,14 +64,14 @@ namespace DevLib.Main
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
             if (attributes.Length == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             return ((AssemblyProductAttribute)attributes[0]).Product;
         }
 
         /// <summary>
-        /// Gets Assembly Copyright
+        /// Gets Assembly Copyright.
         /// </summary>
         /// <returns></returns>
         public static string AssemblyCopyright()
@@ -79,14 +79,14 @@ namespace DevLib.Main
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
             if (attributes.Length == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
         }
 
         /// <summary>
-        /// Gets Assembly Company
+        /// Gets Assembly Company.
         /// </summary>
         /// <returns></returns>
         public static string AssemblyCompany()
@@ -94,14 +94,14 @@ namespace DevLib.Main
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
             if (attributes.Length == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             return ((AssemblyCompanyAttribute)attributes[0]).Company;
         }
 
         /// <summary>
-        /// Gets Assembly FileVersion
+        /// Gets Assembly FileVersion.
         /// </summary>
         /// <returns></returns>
         public static string AssemblyFileVersion()
@@ -109,7 +109,7 @@ namespace DevLib.Main
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
             if (attributes.Length == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             return ((AssemblyFileVersionAttribute)attributes[0]).Version;

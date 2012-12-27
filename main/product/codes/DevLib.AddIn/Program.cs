@@ -111,13 +111,19 @@
             foreach (KeyValuePair<AssemblyName, string> item in subDict)
             {
                 if (assemblyName.Version != null && assemblyName.Version != item.Key.Version)
+                {
                     continue;
+                }
 
                 if (assemblyName.CultureInfo != null && !assemblyName.CultureInfo.Equals(item.Key.CultureInfo))
+                {
                     continue;
+                }
 
                 if (!PublicKeysTokenEqual(assemblyName.GetPublicKeyToken(), item.Key.GetPublicKeyToken()))
+                {
                     continue;
+                }
 
                 return item.Value;
             }

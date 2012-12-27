@@ -106,6 +106,23 @@ namespace DevLib.Samples
             });
         }
 
+        private static void PrintStartInfo()
+        {
+            ConsoleColor originalForeColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Start DevLib.Samples ...");
+            Console.ForegroundColor = originalForeColor;
+            Console.WriteLine();
+        }
+
+        private static void PrintExitInfo()
+        {
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
+
         private static void TestDevLibDesignPatterns()
         {
             PrintMethodName("Test DevLib.DesignPatterns");
@@ -126,9 +143,6 @@ namespace DevLib.Samples
             Singleton<TestClass>.Instance.Age.ConsoleOutput();
 
         }
-
-        public static AddInDomain addin = null;
-        public static WcfServiceHost wcf = null;
 
         private static void TestDevLibAddIn()
         {
@@ -242,23 +256,6 @@ namespace DevLib.Samples
             {
                 temp.Open();
             }
-        }
-
-        private static void PrintStartInfo()
-        {
-            ConsoleColor originalForeColor = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Start DevLib.Samples ...");
-            Console.ForegroundColor = originalForeColor;
-            Console.WriteLine();
-        }
-
-        private static void PrintExitInfo()
-        {
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
 
         private static void TestCodeSnippets()

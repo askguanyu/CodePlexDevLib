@@ -7,12 +7,13 @@ namespace DevLib.Diagnostics
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
     using System.Security.Permissions;
     using System.Threading;
 
     /// <summary>
-    /// Code snippets performence timer.
+    /// Code snippets performance timer.
     /// </summary>
     [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
     public static class CodeTimer
@@ -44,7 +45,7 @@ namespace DevLib.Diagnostics
         public delegate void ActionDelegate();
 
         /// <summary>
-        /// Initialize code snippets performence timer.
+        /// Initialize code snippets performance timer.
         /// </summary>
         public static void Initialize()
         {
@@ -154,15 +155,18 @@ namespace DevLib.Diagnostics
         }
 
         #region Native Methods Wrap
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("kernel32.dll")]
+        [SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass", Justification = "Reviewed.")]
+        [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool QueryThreadCycleTime(IntPtr threadHandle, ref ulong cycleTime);
+        internal static extern bool QueryThreadCycleTime(IntPtr threadHandle, ref ulong cycleTime);
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("kernel32.dll")]
-        static extern IntPtr GetCurrentThread();
+        [SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass", Justification = "Reviewed.")]
+        [DllImport("kernel32.dll")]
+        internal static extern IntPtr GetCurrentThread();
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool GetThreadTimes(IntPtr threadHandle, out long creationTime, out long exitTime, out long kernelTime, out long userTime);
+        [SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass", Justification = "Reviewed.")]
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool GetThreadTimes(IntPtr threadHandle, out long creationTime, out long exitTime, out long kernelTime, out long userTime);
 
         /// <summary>
         ///

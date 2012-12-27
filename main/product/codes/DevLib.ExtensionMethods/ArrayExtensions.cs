@@ -13,12 +13,12 @@ namespace DevLib.ExtensionMethods
     public static class ArrayExtensions
     {
         /// <summary>
-        /// Performs the specified action on each element of the specified array.<T>
+        /// Performs the specified action on each element of the specified array.
         /// </summary>
         /// <typeparam name="T">The type of the elements of the array.</typeparam>
-        /// <param name="source">Array like int[].</param>
+        /// <param name="source">Source array.</param>
         /// <param name="action">Method for element.</param>
-        /// <param name="ignoreException">if set to <c>true</c> ignore any exception.</param>
+        /// <param name="ignoreException">If set to <c>true</c> ignore any exception.</param>
         public static void ForEach<T>(this T[] source, Action<T> action, bool ignoreException = true)
         {
             if (ignoreException)
@@ -40,7 +40,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Adds all elements of the suffixArray to the end of the sourceArray.<T>
+        /// Adds all elements of the suffixArray to the end of the sourceArray.
         /// </summary>
         /// <typeparam name="T">The type of the elements of the array.</typeparam>
         /// <param name="suffixArray">The array whose elements should be added to the end of the sourceArray.</param>
@@ -95,7 +95,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Find the first occurence of value type array in another value type array.
+        /// Find the first occurrence of value type array in another value type array.
         /// </summary>
         /// <typeparam name="T">The type of the elements of the array.</typeparam>
         /// <param name="source">The array to search in.</param>

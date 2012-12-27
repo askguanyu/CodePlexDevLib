@@ -54,9 +54,9 @@ namespace DevLib.AddIn
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine(Message);
+            stringBuilder.AppendLine(this.Message);
 
-            foreach (CompilerError error in Errors)
+            foreach (CompilerError error in this.Errors)
             {
                 stringBuilder.AppendFormat("{0}\r\n", error);
             }

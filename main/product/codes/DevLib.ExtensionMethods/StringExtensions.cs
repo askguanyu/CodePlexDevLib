@@ -7,7 +7,6 @@ namespace DevLib.ExtensionMethods
 {
     using System;
     using System.Linq;
-    using System.Security.Cryptography;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -53,7 +52,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name = "source">The input string.</param>
         /// <param name = "parameters">The parameters.</param>
-        /// <returns>The formated string.</returns>
+        /// <returns>The formatted string.</returns>
         public static string FormatWith(this string source, params object[] parameters)
         {
             return string.Format(source, parameters);
@@ -109,6 +108,7 @@ namespace DevLib.ExtensionMethods
             {
                 return true;
             }
+
             for (int i = 0; i < source.Length; i++)
             {
                 if (!char.IsWhiteSpace(source[i]))
@@ -116,6 +116,7 @@ namespace DevLib.ExtensionMethods
                     return false;
                 }
             }
+
             return true;
         }
 

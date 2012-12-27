@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Globalization;
     using System.Security.Cryptography;
     using System.Text;
 
@@ -65,7 +66,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Decryptes a string using the supplied key. Decoding is done using RSA encryption.
+        /// Decrypts a string using the supplied key. Decoding is done using RSA encryption.
         /// </summary>
         /// <param name="source">String to decrypt.</param>
         /// <param name="key">Decryption key.</param>
@@ -86,14 +87,14 @@ namespace DevLib.ExtensionMethods
             {
                 rsa.PersistKeyInCsp = true;
                 string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
-                byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, (a => Convert.ToByte(byte.Parse(a, System.Globalization.NumberStyles.HexNumber))));
+                byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, a => Convert.ToByte(byte.Parse(a, NumberStyles.HexNumber)));
                 byte[] bytes = rsa.Decrypt(decryptByteArray, true);
                 return System.Text.UTF8Encoding.UTF8.GetString(bytes);
             }
         }
 
         /// <summary>
-        /// Encryptes a string using the supplied key. Encoding is done using RSA encryption.
+        /// Encrypts a string using the supplied key. Encoding is done using RSA encryption.
         /// </summary>
         /// <param name="source">String to encrypt.</param>
         /// <param name="key">Encryption key.</param>

@@ -13,6 +13,9 @@ namespace DevLib.Utilities
     /// </summary>
     public static class StringUtilities
     {
+        /// <summary>
+        ///
+        /// </summary>
         private static Random _random = new Random();
 
         /// <summary>
@@ -55,7 +58,7 @@ namespace DevLib.Utilities
         /// <returns>The result string.</returns>
         public static string GetRandomString(string charset, int size)
         {
-            if ((string.IsNullOrEmpty(charset)) || (size < 1))
+            if (string.IsNullOrEmpty(charset) || size < 1)
             {
                 return string.Empty;
             }

@@ -22,7 +22,10 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Constructor of AsyncUserToken.
         /// </summary>
-        public AsyncSocketUserTokenEventArgs() : this(null) { }
+        public AsyncSocketUserTokenEventArgs()
+            : this(null)
+        {
+        }
 
         /// <summary>
         /// Constructor of AsyncUserToken.
@@ -103,15 +106,15 @@ namespace DevLib.Net.AsyncSocket
         {
             get
             {
-                return _socket;
+                return this._socket;
             }
 
             set
             {
                 if (value != null)
                 {
-                    _socket = value;
-                    this.EndPoint = (IPEndPoint)_socket.RemoteEndPoint;
+                    this._socket = value;
+                    this.EndPoint = (IPEndPoint)this._socket.RemoteEndPoint;
                 }
             }
         }

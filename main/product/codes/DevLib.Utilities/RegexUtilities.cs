@@ -8,7 +8,7 @@ namespace DevLib.Utilities
     /// <summary>
     /// Regex Utilities.
     /// </summary>
-    public class RegexUtilities
+    public static class RegexUtilities
     {
         public const string Alpha = @"^[a-zA-Z]*$";
         public const string AlphaUpperCase = @"^[A-Z]*$";

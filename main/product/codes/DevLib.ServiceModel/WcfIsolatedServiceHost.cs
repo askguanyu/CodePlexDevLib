@@ -31,7 +31,7 @@ namespace DevLib.ServiceModel
         private WcfServiceHost _wcfServiceHost;
 
         /// <summary>
-        /// Default constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize wcf service.
+        /// Default constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize Wcf service.
         /// </summary>
         public WcfIsolatedServiceHost()
         {
@@ -256,7 +256,7 @@ namespace DevLib.ServiceModel
                 AppDomain.Unload(this._appDomain);
                 this.IsAppDomainLoaded = false;
                 this._appDomain = null;
-                this.RaiseEvent(Unloaded, null);
+                this.RaiseEvent(this.Unloaded, null);
             }
         }
 
@@ -267,7 +267,7 @@ namespace DevLib.ServiceModel
         {
             this.Unload();
             this.CreateDomain();
-            this.RaiseEvent(Reloaded, null);
+            this.RaiseEvent(this.Reloaded, null);
         }
 
         /// <summary>
@@ -354,11 +354,11 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
 
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
-                this._wcfServiceHost = _appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
+                this._wcfServiceHost = this._appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHost).FullName) as WcfServiceHost;
                 this.IsAppDomainLoaded = true;
                 this.SubscribeAllWcfServiceHostEvent();
                 this._wcfServiceHost.Init(this.AssemblyFile, this.ConfigFile);
-                this.RaiseEvent(Loaded, null);
+                this.RaiseEvent(this.Loaded, null);
             }
             catch (Exception e)
             {
@@ -373,15 +373,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         private void SubscribeAllWcfServiceHostEvent()
         {
-            this._wcfServiceHost.Created += (s, e) => this.RaiseEvent(Created, e);
-            this._wcfServiceHost.Opening += (s, e) => this.RaiseEvent(Opening, e);
-            this._wcfServiceHost.Opened += (s, e) => this.RaiseEvent(Opened, e);
-            this._wcfServiceHost.Closing += (s, e) => this.RaiseEvent(Closing, e);
-            this._wcfServiceHost.Closed += (s, e) => this.RaiseEvent(Closed, e);
-            this._wcfServiceHost.Aborting += (s, e) => this.RaiseEvent(Aborting, e);
-            this._wcfServiceHost.Aborted += (s, e) => this.RaiseEvent(Aborted, e);
-            this._wcfServiceHost.Restarting += (s, e) => this.RaiseEvent(Restarting, e);
-            this._wcfServiceHost.Restarted += (s, e) => this.RaiseEvent(Restarted, e);
+            this._wcfServiceHost.Created += (s, e) => this.RaiseEvent(this.Created, e);
+            this._wcfServiceHost.Opening += (s, e) => this.RaiseEvent(this.Opening, e);
+            this._wcfServiceHost.Opened += (s, e) => this.RaiseEvent(this.Opened, e);
+            this._wcfServiceHost.Closing += (s, e) => this.RaiseEvent(this.Closing, e);
+            this._wcfServiceHost.Closed += (s, e) => this.RaiseEvent(this.Closed, e);
+            this._wcfServiceHost.Aborting += (s, e) => this.RaiseEvent(this.Aborting, e);
+            this._wcfServiceHost.Aborted += (s, e) => this.RaiseEvent(this.Aborted, e);
+            this._wcfServiceHost.Restarting += (s, e) => this.RaiseEvent(this.Restarting, e);
+            this._wcfServiceHost.Restarted += (s, e) => this.RaiseEvent(this.Restarted, e);
         }
 
         /// <summary>
@@ -389,15 +389,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         private void UnSubscribeAllWcfServiceHostEvent()
         {
-            this._wcfServiceHost.Created -= (s, e) => this.RaiseEvent(Created, e);
-            this._wcfServiceHost.Opening -= (s, e) => this.RaiseEvent(Opening, e);
-            this._wcfServiceHost.Opened -= (s, e) => this.RaiseEvent(Opened, e);
-            this._wcfServiceHost.Closing -= (s, e) => this.RaiseEvent(Closing, e);
-            this._wcfServiceHost.Closed -= (s, e) => this.RaiseEvent(Closed, e);
-            this._wcfServiceHost.Aborting -= (s, e) => this.RaiseEvent(Aborting, e);
-            this._wcfServiceHost.Aborted -= (s, e) => this.RaiseEvent(Aborted, e);
-            this._wcfServiceHost.Restarting -= (s, e) => this.RaiseEvent(Restarting, e);
-            this._wcfServiceHost.Restarted -= (s, e) => this.RaiseEvent(Restarted, e);
+            this._wcfServiceHost.Created -= (s, e) => this.RaiseEvent(this.Created, e);
+            this._wcfServiceHost.Opening -= (s, e) => this.RaiseEvent(this.Opening, e);
+            this._wcfServiceHost.Opened -= (s, e) => this.RaiseEvent(this.Opened, e);
+            this._wcfServiceHost.Closing -= (s, e) => this.RaiseEvent(this.Closing, e);
+            this._wcfServiceHost.Closed -= (s, e) => this.RaiseEvent(this.Closed, e);
+            this._wcfServiceHost.Aborting -= (s, e) => this.RaiseEvent(this.Aborting, e);
+            this._wcfServiceHost.Aborted -= (s, e) => this.RaiseEvent(this.Aborted, e);
+            this._wcfServiceHost.Restarting -= (s, e) => this.RaiseEvent(this.Restarting, e);
+            this._wcfServiceHost.Restarted -= (s, e) => this.RaiseEvent(this.Restarted, e);
         }
     }
 }

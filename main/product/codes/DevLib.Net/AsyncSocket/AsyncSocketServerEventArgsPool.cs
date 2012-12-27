@@ -10,7 +10,7 @@ namespace DevLib.Net.AsyncSocket
     using System.Net.Sockets;
 
     /// <summary>
-    /// Represents a collection of resusable SocketAsyncEventArgs objects.
+    /// Represents a collection of reusable SocketAsyncEventArgs objects.
     /// </summary>
     internal class AsyncSocketServerEventArgsPool
     {
@@ -28,7 +28,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// The number of SocketAsyncEventArgs instances in the pool.
+        /// Gets the number of SocketAsyncEventArgs instances in the pool.
         /// </summary>
         public int Count
         {

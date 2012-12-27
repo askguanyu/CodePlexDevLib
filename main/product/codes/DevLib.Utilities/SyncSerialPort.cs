@@ -216,7 +216,7 @@ namespace DevLib.Utilities
                     return false;
                 }
 
-                if (_serialPort == null)
+                if (this._serialPort == null)
                 {
                     receivedData = new byte[0];
                     this._currentState = SerialStateEnum.SerialPortNull;
@@ -234,10 +234,10 @@ namespace DevLib.Utilities
                     }
 
                     this._serialPort.Write(sendData, 0, sendData.Length);
-                    Thread threadReceive = new Thread(new ParameterizedThreadStart(SyncReceiveData));
+                    Thread threadReceive = new Thread(new ParameterizedThreadStart(this.SyncReceiveData));
                     threadReceive.IsBackground = true;
-                    //threadReceive.Name = "ReadSerialPortData";
-                    threadReceive.Start(_serialPort);
+                    ////threadReceive.Name = "ReadSerialPortData";
+                    threadReceive.Start(this._serialPort);
                     this._autoResetEvent.WaitOne();
 
                     if (threadReceive.IsAlive)
@@ -297,7 +297,7 @@ namespace DevLib.Utilities
         {
             SerialPort serialPort = serialPortobj as SerialPort;
             System.Threading.Thread.Sleep(0);
-            serialPort.ReadTimeout = _readTimeout;
+            serialPort.ReadTimeout = this._readTimeout;
 
             try
             {

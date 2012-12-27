@@ -8,7 +8,7 @@ namespace DevLib.AddIn
     using System;
 
     /// <summary>
-    /// AddInActivator process infomation.
+    /// AddInActivator process information.
     /// </summary>
     public class AddInActivatorProcessInfo
     {

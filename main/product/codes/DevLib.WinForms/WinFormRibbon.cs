@@ -13,7 +13,6 @@ namespace DevLib.WinForms
     /// </summary>
     public partial class WinFormRibbon : Form
     {
-
         /// <summary>
         ///
         /// </summary>

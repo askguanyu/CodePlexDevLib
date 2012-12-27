@@ -87,8 +87,8 @@ namespace DevLib.Utilities
         /// <summary>
         /// Query a WMI class and associated property.
         /// </summary>
-        /// <param name="WMIClass">WMI class, ingnore case.</param>
-        /// <param name="ClassProperty">Associated property, ingnore case.</param>
+        /// <param name="WMIClass">WMI class, ignore case.</param>
+        /// <param name="ClassProperty">Associated property, ignore case.</param>
         /// <returns>A string list of query result.</returns>
         public static List<string> Query(string WMIClass, string ClassProperty)
         {
@@ -108,8 +108,8 @@ namespace DevLib.Utilities
         /// <summary>
         /// Query a WMI class and associated property.
         /// </summary>
-        /// <param name="WQLString">WQL query string, ingnore case.</param>
-        /// <param name="ClassProperty">Associated property, ingnore case.</param>
+        /// <param name="WQLString">WQL query string, ignore case.</param>
+        /// <param name="ClassProperty">Associated property, ignore case.</param>
         /// <returns>A string list of query result.</returns>
         public static List<string> QueryWQL(string WQLString, string ClassProperty = null)
         {

@@ -171,7 +171,7 @@ namespace DevLib.AddIn
         /// <summary>
         /// Gets the amount of private working set memory allocated for the associated process.
         /// </summary>
-        public float PrivateWorkingSet
+        public float PrivateWorkingSetMemorySize
         {
             get
             {

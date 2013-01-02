@@ -15,12 +15,12 @@ namespace DevLib.Net.AsyncSocket
     public class AsyncSocketUserTokenEventArgs : EventArgs
     {
         /// <summary>
-        ///
+        /// Field _socket.
         /// </summary>
         private Socket _socket;
 
         /// <summary>
-        /// Constructor of AsyncUserToken.
+        /// Initializes a new instance of the <see cref="AsyncSocketUserTokenEventArgs" /> class.
         /// </summary>
         public AsyncSocketUserTokenEventArgs()
             : this(null)
@@ -28,7 +28,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Constructor of AsyncUserToken.
+        /// Initializes a new instance of the <see cref="AsyncSocketUserTokenEventArgs" /> class.
         /// </summary>
         /// <param name="socket">Socket context.</param>
         public AsyncSocketUserTokenEventArgs(Socket socket)
@@ -149,7 +149,8 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Set Buffer.
         /// </summary>
-        /// <param name="buffer">Buffer.</param>
+        /// <param name="buffer">Buffer bytes.</param>
+        /// <param name="offset">Offset of buffer.</param>
         public void SetBuffer(byte[] buffer, int offset)
         {
             this.ReceivedBuffer = buffer;

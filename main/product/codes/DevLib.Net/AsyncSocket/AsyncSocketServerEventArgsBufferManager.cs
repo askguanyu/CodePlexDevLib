@@ -12,7 +12,6 @@ namespace DevLib.Net.AsyncSocket
     /// <summary>
     /// This class creates a single large buffer which can be divided up and assigned to SocketAsyncEventArgs objects for use with each socket I/O operation.
     /// This enables buffers to be easily reused and guards against fragmenting heap memory.
-    ///
     /// The operations exposed on the class are not thread safe.
     /// </summary>
     internal class AsyncSocketServerEventArgsBufferManager
@@ -28,22 +27,22 @@ namespace DevLib.Net.AsyncSocket
         private byte[] _buffer;
 
         /// <summary>
-        ///
+        /// Field _freeIndexPool.
         /// </summary>
         private Stack<int> _freeIndexPool;
 
         /// <summary>
-        ///
+        /// Field _currentIndex.
         /// </summary>
         private int _currentIndex;
 
         /// <summary>
-        ///
+        /// Field _bufferSize.
         /// </summary>
         private int _bufferSize;
 
         /// <summary>
-        /// Constructor of BufferManager class.
+        /// Initializes a new instance of the <see cref="AsyncSocketServerEventArgsBufferManager" /> class.
         /// </summary>
         /// <param name="totalBytes">Total Bytes.</param>
         /// <param name="bufferSize">Buffer Size.</param>
@@ -67,6 +66,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Assigns a buffer from the buffer pool to the specified SocketAsyncEventArgs object.
         /// </summary>
+        /// <param name="args">Instance of SocketAsyncEventArgs.</param>
         /// <returns>true if the buffer was successfully set; otherwise, false.</returns>
         public bool SetBuffer(SocketAsyncEventArgs args)
         {
@@ -96,6 +96,7 @@ namespace DevLib.Net.AsyncSocket
         /// Removes the buffer from a SocketAsyncEventArg object.
         /// This frees the buffer back to the buffer pool.
         /// </summary>
+        /// <param name="args">Instance of SocketAsyncEventArgs.</param>
         public void FreeBuffer(SocketAsyncEventArgs args)
         {
             lock (((ICollection)this._freeIndexPool).SyncRoot)

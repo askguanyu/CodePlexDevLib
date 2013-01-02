@@ -20,7 +20,7 @@ namespace DevLib.Net.AsyncSocket
         private Stack<SocketAsyncEventArgs> _pool;
 
         /// <summary>
-        /// Initializes the object pool to the specified size.
+        /// Initializes a new instance of the <see cref="AsyncSocketServerEventArgsPool" /> class.
         /// </summary>
         public AsyncSocketServerEventArgsPool()
         {

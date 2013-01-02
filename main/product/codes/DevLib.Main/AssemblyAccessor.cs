@@ -8,14 +8,14 @@ namespace DevLib.Main
     using System.Reflection;
 
     /// <summary>
-    /// AssemblyAccessor
+    /// Static Class AssemblyAccessor.
     /// </summary>
     public static class AssemblyAccessor
     {
         /// <summary>
         /// Gets Assembly Title.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assembly Title.</returns>
         public static string AssemblyTitle()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
@@ -34,7 +34,7 @@ namespace DevLib.Main
         /// <summary>
         /// Gets Assembly Version.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assembly Version.</returns>
         public static string AssemblyVersion()
         {
             return Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -43,7 +43,7 @@ namespace DevLib.Main
         /// <summary>
         /// Gets Assembly Description.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assembly Description.</returns>
         public static string AssemblyDescription()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
@@ -58,7 +58,7 @@ namespace DevLib.Main
         /// <summary>
         /// Gets Assembly Product.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assembly Product.</returns>
         public static string AssemblyProduct()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
@@ -73,7 +73,7 @@ namespace DevLib.Main
         /// <summary>
         /// Gets Assembly Copyright.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assembly Copyright.</returns>
         public static string AssemblyCopyright()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
@@ -88,7 +88,7 @@ namespace DevLib.Main
         /// <summary>
         /// Gets Assembly Company.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assembly Company.</returns>
         public static string AssemblyCompany()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
@@ -103,7 +103,7 @@ namespace DevLib.Main
         /// <summary>
         /// Gets Assembly FileVersion.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Assembly FileVersion.</returns>
         public static string AssemblyFileVersion()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);

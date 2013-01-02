@@ -17,7 +17,14 @@ namespace DevLib.ExtensionMethods
     /// </summary>
     public enum CompressionType
     {
+        /// <summary>
+        /// Represents GZipStream.
+        /// </summary>
         GZip = 0,
+
+        /// <summary>
+        /// Represents DeflateStream.
+        /// </summary>
         Deflate = 1
     }
 
@@ -68,7 +75,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert byte to Hex string.
         /// </summary>
-        /// <param name="source">Byte.</param>
+        /// <param name="source">Source byte.</param>
         /// <returns>Hex string.</returns>
         public static string ToHexString(this byte source)
         {
@@ -89,7 +96,7 @@ namespace DevLib.ExtensionMethods
         /// Convert bytes to Encoding string.
         /// </summary>
         /// <param name="source">Byte array.</param>
-        /// <param name="encoding">Encoding.</param>
+        /// <param name="encoding">Instance of Encoding.</param>
         /// <returns>Encoding string.</returns>
         public static string ToEncodingString(this byte[] source, Encoding encoding)
         {
@@ -130,7 +137,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
         /// <param name="source">Byte array.</param>
-        /// <returns>Object.</returns>
+        /// <returns>Instance of T.</returns>
         public static T ToObject<T>(this byte[] source)
         {
             if (source == null)
@@ -155,7 +162,7 @@ namespace DevLib.ExtensionMethods
         /// Convert bytes to object.
         /// </summary>
         /// <param name="source">Byte array.</param>
-        /// <returns>Object.</returns>
+        /// <returns>Instance object.</returns>
         public static object ToObject(this byte[] source)
         {
             if (source == null)
@@ -235,10 +242,10 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Get Zip Stream by type.
         /// </summary>
-        /// <param name="memoryStream"></param>
-        /// <param name="compressionMode"></param>
-        /// <param name="compressionType"></param>
-        /// <returns></returns>
+        /// <param name="memoryStream">Instance of MemoryStream.</param>
+        /// <param name="compressionMode">Compression mode.</param>
+        /// <param name="compressionType">Compression type.</param>
+        /// <returns>Instance of Stream.</returns>
         private static Stream GetZipStream(MemoryStream memoryStream, CompressionMode compressionMode, CompressionType compressionType)
         {
             if (compressionType == CompressionType.GZip)

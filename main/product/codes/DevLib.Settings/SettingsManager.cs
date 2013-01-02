@@ -16,7 +16,7 @@ namespace DevLib.Settings
     public static class SettingsManager
     {
         /// <summary>
-        ///
+        /// Field _settingsDictionary.
         /// </summary>
         private static Dictionary<string, Settings> _settingsDictionary = new Dictionary<string, Settings>(StringComparer.OrdinalIgnoreCase);
 

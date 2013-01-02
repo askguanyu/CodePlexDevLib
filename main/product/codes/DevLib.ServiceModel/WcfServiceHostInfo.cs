@@ -13,15 +13,54 @@ namespace DevLib.ServiceModel
     /// </summary>
     public enum WcfServiceHostStateEnum
     {
+        /// <summary>
+        /// Represents Created.
+        /// </summary>
         Created,
+
+        /// <summary>
+        /// Represents Opening.
+        /// </summary>
         Opening,
+
+        /// <summary>
+        /// Represents Opened.
+        /// </summary>
         Opened,
+
+        /// <summary>
+        /// Represents Closing.
+        /// </summary>
         Closing,
+
+        /// <summary>
+        /// Represents Closed.
+        /// </summary>
         Closed,
+
+        /// <summary>
+        /// Represents Aborting.
+        /// </summary>
         Aborting,
+
+        /// <summary>
+        /// Represents Aborted.
+        /// </summary>
         Aborted,
+
+        /// <summary>
+        /// Represents Restarting.
+        /// </summary>
         Restarting,
+
+        /// <summary>
+        /// Represents Restarted.
+        /// </summary>
         Restarted,
+
+        /// <summary>
+        /// Represents Faulted.
+        /// </summary>
         Faulted
     }
 
@@ -59,9 +98,9 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Current CommunicationState string.</returns>
         public override string ToString()
         {
             return this.State.ToString();

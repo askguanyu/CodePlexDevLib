@@ -77,7 +77,7 @@ namespace DevLib.ExtensionMethods
         /// Determines whether a sequence is empty.
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
-        /// <param name="source"></param>
+        /// <param name="source">Source IEnumerable.</param>
         /// <returns>true if the source sequence is empty; otherwise, false.</returns>
         public static bool IsEmpty<T>(this IEnumerable<T> source)
         {
@@ -93,7 +93,7 @@ namespace DevLib.ExtensionMethods
         /// Determines whether a sequence is NOT empty.
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
-        /// <param name="source"></param>
+        /// <param name="source">Source IEnumerable.</param>
         /// <returns>true if the source sequence is NOT empty; otherwise, false.</returns>
         public static bool IsNotEmpty<T>(this IEnumerable<T> source)
         {

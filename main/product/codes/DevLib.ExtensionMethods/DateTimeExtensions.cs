@@ -36,7 +36,7 @@ namespace DevLib.ExtensionMethods
         /// Whether DateTime is a weekend.
         /// </summary>
         /// <param name="source">DateTime to check.</param>
-        /// <returns>True if DateTime is weekend; otherwise, false.</returns>
+        /// <returns>true if DateTime is weekend; otherwise, false.</returns>
         public static bool IsWeekend(this DateTime source)
         {
             if (source == null)

@@ -18,27 +18,32 @@ namespace DevLib.Net.AsyncSocket
     public class AsyncSocketClient : MarshalByRefObject, IDisposable
     {
         /// <summary>
-        ///
+        /// Field _bufferSize.
         /// </summary>
         private int _bufferSize;
 
         /// <summary>
-        ///
+        /// Field _clientSocket.
         /// </summary>
         private Socket _clientSocket = null;
 
         /// <summary>
-        ///
+        /// Field _token.
         /// </summary>
         private AsyncSocketUserTokenEventArgs _token;
 
         /// <summary>
-        ///
+        /// Field _dataBuffer.
         /// </summary>
         private byte[] _dataBuffer;
 
         /// <summary>
-        /// Constructor of AsyncSocketClient.
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncSocketClient" /> class.
         /// </summary>
         public AsyncSocketClient()
         {
@@ -47,7 +52,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Constructor of AsyncSocketClient.
+        /// Initializes a new instance of the <see cref="AsyncSocketClient" /> class.
         /// </summary>
         /// <param name="bufferSize">Buffer size of data to be sent.</param>
         public AsyncSocketClient(int bufferSize = AsyncSocketClientConstants.BufferSize)
@@ -57,27 +62,35 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Finalizes an instance of the <see cref="AsyncSocketClient" /> class.
+        /// </summary>
+        ~AsyncSocketClient()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Event Connected.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> Connected;
 
         /// <summary>
-        ///
+        /// Event Disconnected.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> Disconnected;
 
         /// <summary>
-        ///
+        /// Event DataReceived.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataReceived;
 
         /// <summary>
-        /// Client Data Sent Event.
+        /// Event DataSent.
         /// </summary>
         public event EventHandler<AsyncSocketUserTokenEventArgs> DataSent;
 
         /// <summary>
-        ///
+        /// Event ErrorOccurred.
         /// </summary>
         public event EventHandler<AsyncSocketErrorEventArgs> ErrorOccurred;
 
@@ -88,6 +101,8 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Connect(IPEndPoint remoteEndPoint, bool useIOCP = true)
         {
+            this.CheckDisposed();
+
             this._clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
@@ -141,6 +156,8 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="data">Data to be sent.</param>
         public void Send(byte[] data)
         {
+            this.CheckDisposed();
+
             try
             {
                 this._clientSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(this.ProcessSendFinished), this._clientSocket);
@@ -234,6 +251,8 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public void Disconnect()
         {
+            this.CheckDisposed();
+
             try
             {
                 this._clientSocket.Shutdown(SocketShutdown.Both);
@@ -248,7 +267,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AsyncSocketClient" /> class.
         /// </summary>
         public void Dispose()
         {
@@ -257,27 +276,57 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AsyncSocketClient" /> class.
         /// </summary>
-        /// <param name="disposing"></param>
+        public void Close()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="AsyncSocketClient" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
+            if (this._disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
-                // dispose managed resources
                 if (this._clientSocket != null)
                 {
                     this._clientSocket.Shutdown(SocketShutdown.Both);
                     this._clientSocket.Close();
                     this._clientSocket = null;
                 }
+
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
             }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+
+            this._disposed = true;
         }
 
         /// <summary>
-        ///
+        /// Method OnErrorOccurred.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of AsyncSocketErrorEventArgs.</param>
         private void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -290,10 +339,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method RaiseEvent.
         /// </summary>
-        /// <param name="eventHandler"></param>
-        /// <param name="eventArgs"></param>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        /// <param name="eventArgs">Instance of AsyncSocketUserTokenEventArgs.</param>
         private void RaiseEvent(EventHandler<AsyncSocketUserTokenEventArgs> eventHandler, AsyncSocketUserTokenEventArgs eventArgs)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -306,9 +355,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method ProcessConnect.
         /// </summary>
-        /// <param name="asyncResult"></param>
+        /// <param name="asyncResult">Instance of IAsyncResult.</param>
         private void ProcessConnect(IAsyncResult asyncResult)
         {
             Socket asyncState = (Socket)asyncResult.AsyncState;
@@ -329,9 +378,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method ProcessWaitForData.
         /// </summary>
-        /// <param name="socket"></param>
+        /// <param name="socket">Instance of Socket.</param>
         private void ProcessWaitForData(Socket socket)
         {
             try
@@ -352,9 +401,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method ProcessIncomingData.
         /// </summary>
-        /// <param name="asyncResult"></param>
+        /// <param name="asyncResult">Instance of IAsyncResult.</param>
         private void ProcessIncomingData(IAsyncResult asyncResult)
         {
             Socket asyncState = (Socket)asyncResult.AsyncState;
@@ -390,9 +439,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method ProcessSendFinished.
         /// </summary>
-        /// <param name="asyncResult"></param>
+        /// <param name="asyncResult">Instance of IAsyncResult.</param>
         private void ProcessSendFinished(IAsyncResult asyncResult)
         {
             try
@@ -414,9 +463,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method HandleSocketException.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Instance of SocketException.</param>
         private void HandleSocketException(SocketException e)
         {
             if (e.ErrorCode == (int)SocketError.ConnectionReset)
@@ -426,6 +475,17 @@ namespace DevLib.Net.AsyncSocket
 
             Debug.WriteLine(string.Format(AsyncSocketClientConstants.ExceptionStringFormat, "DevLib.Net.AsyncSocket.AsyncSocketClient.HandleSocketException", e.Source, e.Message, e.StackTrace, e.ToString()));
             this.OnErrorOccurred(this._token.Socket, new AsyncSocketErrorEventArgs(e.Message, e));
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.Net.AsyncSocket.AsyncSocketClient");
+            }
         }
     }
 }

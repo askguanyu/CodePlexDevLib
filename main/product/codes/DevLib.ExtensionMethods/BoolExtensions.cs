@@ -15,7 +15,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Converts the value of this instance to its equivalent string representation (either "Yes" or "No").
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source">Source bool.</param>
         /// <returns>"Yes" or "No" string.</returns>
         public static string ToYesNoString(this bool source)
         {
@@ -25,7 +25,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Converts the value in number format {1 , 0}.
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source">Source bool.</param>
         /// <returns>1 if true; otherwise, 0.</returns>
         public static int ToBinaryTypeNumber(this bool source)
         {
@@ -35,7 +35,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert int to bool.
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source">Source int.</param>
         /// <returns>true if 1; otherwise, false.</returns>
         public static bool ToBool(this int source)
         {
@@ -45,7 +45,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert "Yes" or "No" to bool.
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source">Source string.</param>
         /// <param name="ignoreCase">Indicating a case-sensitive or insensitive comparison.</param>
         /// <returns>true if "Yes"; otherwise, false.</returns>
         public static bool ToBool(this string source, bool ignoreCase = true)

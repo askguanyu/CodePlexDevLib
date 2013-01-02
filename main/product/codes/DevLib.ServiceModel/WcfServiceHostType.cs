@@ -67,8 +67,8 @@ namespace DevLib.ServiceModel
         /// Get the type list of hosted services from assembly file.
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
-        /// <param name="typeFullName">The path of the configuration file.</param>
-        /// <returns>The type list of hosted services.</returns>
+        /// <param name="configFile">Wcf configuration file.</param>
+        /// <returns>Instance of List{Type}.</returns>
         public static List<Type> LoadFile(string assemblyFile, string configFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
@@ -126,11 +126,11 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Static Method LoadServiceHost.
         /// </summary>
-        /// <param name="assemblyFile"></param>
-        /// <param name="configFile"></param>
-        /// <returns></returns>
+        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
+        /// <param name="configFile">Wcf configuration file.</param>
+        /// <returns>Instance of List{ServiceHost}.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static List<ServiceHost> LoadServiceHost(string assemblyFile, string configFile)
         {
@@ -244,21 +244,21 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Static Method IsWcfServiceClass.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">Source Type.</param>
+        /// <returns>true if type is WcfService Class; otherwise, false.</returns>
         internal static bool IsWcfServiceClass(Type type)
         {
             return type.IsClass && HasServiceContractAttribute(type) && !IsDerivedFrom(type, typeof(ClientBase<>));
         }
 
         /// <summary>
-        ///
+        /// Static Method GetBinding.
         /// </summary>
-        /// <param name="address"></param>
-        /// <param name="isMexBinding"></param>
-        /// <returns></returns>
+        /// <param name="address">Binding address.</param>
+        /// <param name="isMexBinding">Whether the binding is mex.</param>
+        /// <returns>Instance of Binding.</returns>
         private static Binding GetBinding(string address, bool isMexBinding)
         {
             if (isMexBinding)
@@ -335,10 +335,10 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Static Method HasServiceContractAttribute.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">Source Type.</param>
+        /// <returns>true if has ServiceContractAttribute; otherwise, false.</returns>
         private static bool HasServiceContractAttribute(Type type)
         {
             if (type.IsDefined(typeof(ServiceContractAttribute), false))
@@ -360,11 +360,11 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Static Method IsDerivedFrom.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="baseType"></param>
-        /// <returns></returns>
+        /// <param name="type">Target Type.</param>
+        /// <param name="baseType">Base Type.</param>
+        /// <returns>true if derived from baseType; otherwise, false.</returns>
         private static bool IsDerivedFrom(Type type, Type baseType)
         {
             return !(type.BaseType == null) && (type.BaseType.GUID == baseType.GUID || IsDerivedFrom(type.BaseType, baseType));

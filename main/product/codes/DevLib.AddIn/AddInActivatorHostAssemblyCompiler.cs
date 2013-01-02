@@ -5,12 +5,12 @@
 //-----------------------------------------------------------------------
 namespace DevLib.AddIn
 {
-    using Microsoft.CSharp;
     using System.CodeDom.Compiler;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Security.Permissions;
+    using Microsoft.CSharp;
 
     /// <summary>
     /// Generates an assembly to run in a separate process in order to host an AddInActivator.
@@ -18,21 +18,21 @@ namespace DevLib.AddIn
     internal static class AddInActivatorHostAssemblyCompiler
     {
         /// <summary>
-        ///
+        /// Const Field OutputAssemblyFileStringFormat.
         /// </summary>
         private const string OutputAssemblyFileStringFormat = @"{0}.exe";
 
         /// <summary>
-        ///
+        /// Static Readonly Field ReferencedAssemblies.
         /// </summary>
         private static readonly string[] ReferencedAssemblies = new[] { "System.dll" };
 
         /// <summary>
-        ///
+        /// Static Method CreateRemoteHostAssembly.
         /// </summary>
-        /// <param name="friendlyName"></param>
-        /// <param name="addInDomainSetup"></param>
-        /// <returns></returns>
+        /// <param name="friendlyName">A name for the assembly.</param>
+        /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
+        /// <returns>The path of the assembly, or null if the assembly was generated in memory.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static string CreateRemoteHostAssembly(string friendlyName, AddInDomainSetup addInDomainSetup)
         {

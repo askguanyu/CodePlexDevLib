@@ -19,29 +19,29 @@ namespace DevLib.Settings
     public sealed class Settings
     {
         /// <summary>
-        ///
+        /// Field _settingsItemDictionary.
         /// </summary>
         private Dictionary<string, object> _settingsItemDictionary;
 
         /// <summary>
-        ///
+        /// Field _xmlReaderSettings.
         /// </summary>
         private XmlReaderSettings _xmlReaderSettings;
 
         /// <summary>
-        ///
+        /// Field _xmlWriterSettings.
         /// </summary>
         private XmlWriterSettings _xmlWriterSettings;
 
         /// <summary>
-        ///
+        /// Field _xmlNamespaces.
         /// </summary>
         private XmlSerializerNamespaces _xmlNamespaces;
 
         /// <summary>
-        ///
+        /// Initializes a new instance of the <see cref="Settings" /> class.
         /// </summary>
-        /// <param name="configFile"></param>
+        /// <param name="configFile">Configuration file name.</param>
         internal Settings(string configFile)
         {
             this.ConfigFile = configFile;
@@ -114,6 +114,8 @@ namespace DevLib.Settings
         /// <summary>
         /// Gets or sets settings value.
         /// </summary>
+        /// <param name="key">The key of the value to get or set.</param>
+        /// <returns>The value associated with the specified key.</returns>
         public object this[string key]
         {
             get
@@ -222,6 +224,7 @@ namespace DevLib.Settings
         /// <summary>
         /// Gets value of specified key.
         /// </summary>
+        /// <typeparam name="T">Type of value.</typeparam>
         /// <param name="key">A string specifying the key.</param>
         /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <returns>A configuration object.</returns>
@@ -258,6 +261,7 @@ namespace DevLib.Settings
         /// <summary>
         /// Gets value of specified key.
         /// </summary>
+        /// <typeparam name="T">Type of value.</typeparam>
         /// <param name="key">A string specifying the key.</param>
         /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
@@ -321,7 +325,7 @@ namespace DevLib.Settings
         /// Determines whether settings contains the specified key.
         /// </summary>
         /// <param name="key">A string specifying the key.</param>
-        /// <returns>True if contains an element with the specified key; otherwise, false.</returns>
+        /// <returns>true if contains an element with the specified key; otherwise, false.</returns>
         public bool Contains(string key)
         {
             this.CheckNullKey(key);
@@ -486,7 +490,7 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///
+        /// Method Init.
         /// </summary>
         private void Init()
         {
@@ -508,9 +512,9 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///
+        /// Method CheckNullKey.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Key to check.</param>
         private void CheckNullKey(string key)
         {
             if (string.IsNullOrEmpty(key))
@@ -520,9 +524,9 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        ///
+        /// Method WriteXmlFile.
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName"> Xml file name.</param>
         private void WriteXmlFile(string fileName)
         {
             using (XmlWriter writer = XmlWriter.Create(fileName, this._xmlWriterSettings))

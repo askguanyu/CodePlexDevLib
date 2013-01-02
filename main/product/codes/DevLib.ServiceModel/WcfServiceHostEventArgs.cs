@@ -14,9 +14,10 @@ namespace DevLib.ServiceModel
     public class WcfServiceHostEventArgs : EventArgs
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the <see cref="WcfServiceHostEventArgs" /> class.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="wcfServiceName">String of Wcf Service Name.</param>
+        /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
         public WcfServiceHostEventArgs(string wcfServiceName, WcfServiceHostStateEnum state)
         {
             this.WcfServiceName = wcfServiceName;

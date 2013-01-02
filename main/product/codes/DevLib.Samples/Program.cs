@@ -48,56 +48,56 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            CodeTimer.Time(delegate()
+            CodeTimer.Time(delegate
             {
                 PrintStartInfo();
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestCodeSnippets();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestDevLibAddIn();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
-                    TestDevLibDesignPatterns();
+                    //TestDevLibDesignPatterns();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestDevLibDiagnostics();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestDevLibExtensionMethods();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestDevLibNet();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestDevLibUtilities();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestDevLibServiceModel();
                 });
 
-                CodeTimer.Time(delegate()
+                CodeTimer.Time(delegate
                 {
                     //TestDevLibSettings();
                 });
@@ -173,6 +173,7 @@ namespace DevLib.Samples
             domain.DataReceived += domain_DataReceived;
 
             Console.WriteLine("next");
+            domain.ProcessInfo.PrivateWorkingSet.ConsoleOutput();
             Console.ReadKey();
 
             AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2");

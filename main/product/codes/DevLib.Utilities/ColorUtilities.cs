@@ -14,7 +14,7 @@ namespace DevLib.Utilities
     public static class ColorUtilities
     {
         /// <summary>
-        ///
+        /// Static Field _random.
         /// </summary>
         private static Random _random = new Random();
 

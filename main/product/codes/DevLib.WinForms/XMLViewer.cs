@@ -17,7 +17,7 @@ namespace DevLib.WinForms
     public class XMLViewer : System.Windows.Forms.RichTextBox
     {
         /// <summary>
-        ///
+        /// Field _settings.
         /// </summary>
         private XMLViewerSettings _settings;
 
@@ -100,12 +100,12 @@ namespace DevLib.WinForms
                     xmlRtfContent.AppendFormat(@"
 \cf{0} <?\cf{1} xml \cf{2} version\cf{0} =\cf0 ""\cf{3} {4}\cf0 "" 
 \cf{2} encoding\cf{0} =\cf0 ""\cf{3} {5}\cf0 ""\cf{0} ?>\par",
-                        XMLViewerSettings.TagID,
-                        XMLViewerSettings.ElementID,
-                        XMLViewerSettings.AttributeKeyID,
-                        XMLViewerSettings.AttributeValueID,
-                        xmlDoc.Declaration.Version,
-                        xmlDoc.Declaration.Encoding);
+                                                             XMLViewerSettings.TagID,
+                                                             XMLViewerSettings.ElementID,
+                                                             XMLViewerSettings.AttributeKeyID,
+                                                             XMLViewerSettings.AttributeValueID,
+                                                             xmlDoc.Declaration.Version,
+                                                             xmlDoc.Declaration.Encoding);
                 }
 
                 // Get the Rtf of the root element.
@@ -135,7 +135,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        ///
+        /// Method ResetXMLtoPlain.
         /// </summary>
         public void ResetXMLtoPlain()
         {
@@ -145,7 +145,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        ///
+        /// Method ResetPlainText.
         /// </summary>
         public void ResetPlainText()
         {
@@ -156,7 +156,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        ///
+        /// Method ResetText.
         /// </summary>
         public override void ResetText()
         {
@@ -168,9 +168,9 @@ namespace DevLib.WinForms
         /// <summary>
         /// Get the Rtf of the xml element.
         /// </summary>
-        /// <param name="element"></param>
-        /// <param name="level"></param>
-        /// <returns></returns>
+        /// <param name="element">Instance of XElement.</param>
+        /// <param name="level">Level of indent.</param>
+        /// <returns>Rtf string.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2241:Provide correct arguments to formatting methods", Justification = "Reviewed.")]
         private string ProcessElement(XElement element, int level)
         {
@@ -197,10 +197,10 @@ namespace DevLib.WinForms
 {0}\cf{1} <\cf{2} {3}{{0}}\cf{1} >\par
 {{1}}
 {0}\cf{1} </\cf{2} {3}\cf{1} >\par",
-                    indent,
-                    XMLViewerSettings.TagID,
-                    XMLViewerSettings.ElementID,
-                    element.Name);
+                                   indent,
+                                   XMLViewerSettings.TagID,
+                                   XMLViewerSettings.ElementID,
+                                   element.Name);
 
                 // Construct the Rtf of child elements.
                 if (element.HasElements)
@@ -213,8 +213,7 @@ namespace DevLib.WinForms
                 }
                 else
                 {
-                    childElementsRtfContent.AppendFormat(@"
-{ 0}\cf{ 1} { 2}\par",
+                    childElementsRtfContent.AppendFormat(@"{ 0}\cf{ 1} { 2}\par",
                         new string(' ', 4 * (level + 1)),
                         XMLViewerSettings.ValueID,
                         CharacterEncoder.Encode(element.Value.Trim()));
@@ -225,10 +224,10 @@ namespace DevLib.WinForms
                 elementRtfFormat =
                     string.Format(@"
 {0}\cf{1} <\cf{2} {3}{{0}}\cf{1} />\par",
-                    indent,
-                    XMLViewerSettings.TagID,
-                    XMLViewerSettings.ElementID,
-                    element.Name);
+                                        indent,
+                                        XMLViewerSettings.TagID,
+                                        XMLViewerSettings.ElementID,
+                                        element.Name);
             }
 
             // Construct the Rtf of the attributes.
@@ -253,7 +252,7 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
-        ///
+        /// Method InitializeComponent.
         /// </summary>
         private void InitializeComponent()
         {
@@ -264,15 +263,15 @@ namespace DevLib.WinForms
     }
 
     /// <summary>
-    ///
+    /// Class CharacterEncoder.
     /// </summary>
     public class CharacterEncoder
     {
         /// <summary>
-        ///
+        /// Static Method Encode.
         /// </summary>
-        /// <param name="originalText"></param>
-        /// <returns></returns>
+        /// <param name="originalText">Original Text.</param>
+        /// <returns>Encoded string.</returns>
         public static string Encode(string originalText)
         {
             if (string.IsNullOrEmpty(originalText))
@@ -327,32 +326,32 @@ namespace DevLib.WinForms
     }
 
     /// <summary>
-    ///
+    /// Class XMLViewerSettings.
     /// </summary>
     public class XMLViewerSettings
     {
         /// <summary>
-        ///
+        /// Const Field ElementID.
         /// </summary>
         public const int ElementID = 1;
 
         /// <summary>
-        ///
+        /// Const Field ValueID.
         /// </summary>
         public const int ValueID = 2;
 
         /// <summary>
-        ///
+        /// Const Field AttributeKeyID.
         /// </summary>
         public const int AttributeKeyID = 3;
 
         /// <summary>
-        ///
+        /// Const Field AttributeValueID.
         /// </summary>
         public const int AttributeValueID = 4;
 
         /// <summary>
-        ///
+        /// Const Field TagID.
         /// </summary>
         public const int TagID = 5;
 
@@ -404,7 +403,7 @@ namespace DevLib.WinForms
         /// <summary>
         /// Convert the settings to Rtf color definitions.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Rtf string.</returns>
         public string ToRtfFormatString()
         {
             // The Rtf color definition format.

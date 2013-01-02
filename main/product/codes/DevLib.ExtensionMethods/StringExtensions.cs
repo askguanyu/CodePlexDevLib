@@ -61,9 +61,9 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Remove any instance of the given character from the current string.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="removeChar">Chars to remove</param>
-        /// <returns></returns>
+        /// <param name="source">Source string.</param>
+        /// <param name="removeChar">Chars to remove.</param>
+        /// <returns>Result string.</returns>
         public static string Remove(this string source, params char[] removeChar)
         {
             var result = source;
@@ -79,9 +79,9 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Remove any instance of the given string from the current string.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="removeString">String to remove</param>
-        /// <returns></returns>
+        /// <param name="source">Source string.</param>
+        /// <param name="removeString">String to remove.</param>
+        /// <returns>Result string.</returns>
         public static string Remove(this string source, params string[] removeString)
         {
             return removeString.Aggregate(source, (current, c) => current.Replace(c, string.Empty));
@@ -138,7 +138,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert string to byte array by using Encoding.Default.
         /// </summary>
-        /// <param name="source">String.</param>
+        /// <param name="source">Source string.</param>
         /// <returns>Byte array by using Encoding.Default.</returns>
         public static byte[] ToByteArray(this string source)
         {
@@ -148,8 +148,8 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert string to byte array.
         /// </summary>
-        /// <param name="source">String.</param>
-        /// <param name="encoding">Encoding.</param>
+        /// <param name="source">Source string.</param>
+        /// <param name="encoding">Instance of Encoding.</param>
         /// <returns>Byte array.</returns>
         public static byte[] ToByteArray(this string source, Encoding encoding)
         {
@@ -160,11 +160,11 @@ namespace DevLib.ExtensionMethods
         /// Convert string to enum.
         /// </summary>
         /// <typeparam name="TEnum">The type of <paramref name="returns"/> enum.</typeparam>
-        /// <param name="source">String.</param>
+        /// <param name="source">Source string.</param>
         /// <param name="defaultValue">Default value of enum.</param>
         /// <param name="ignoreCase">Whether ignore case.</param>
         /// <param name="ignoreException">Whether ignore exception.</param>
-        /// <returns>Enum.</returns>
+        /// <returns>Instance of TEnum.</returns>
         public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool ignoreException = true) where TEnum : struct
         {
             try
@@ -188,7 +188,7 @@ namespace DevLib.ExtensionMethods
         /// Whether string is in enum.
         /// </summary>
         /// <typeparam name="TEnum">The type of enum.</typeparam>
-        /// <param name="source">String.</param>
+        /// <param name="source">Source string.</param>
         /// <returns>true if string in enum; otherwise, false.</returns>
         public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct
         {

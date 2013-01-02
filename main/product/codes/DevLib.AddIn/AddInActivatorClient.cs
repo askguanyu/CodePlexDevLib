@@ -17,20 +17,25 @@ namespace DevLib.AddIn
     internal class AddInActivatorClient : IDisposable
     {
         /// <summary>
-        ///
+        /// Readonly Field _addInActivator.
         /// </summary>
         private readonly AddInActivator _addInActivator;
 
         /// <summary>
-        ///
+        /// Readonly Field _ipcChannel.
         /// </summary>
         private readonly IpcChannel _ipcChannel;
 
         /// <summary>
-        ///
+        /// Field _disposed.
         /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="addInDomainSetup"></param>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddInActivatorClient" /> class.
+        /// </summary>
+        /// <param name="guid">Guid string.</param>
+        /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public AddInActivatorClient(string guid, AddInDomainSetup addInDomainSetup)
         {
@@ -48,7 +53,15 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets
+        /// Finalizes an instance of the <see cref="AddInActivatorClient" /> class.
+        /// </summary>
+        ~AddInActivatorClient()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Gets instance of AddInActivator.
         /// </summary>
         public AddInActivator AddInActivator
         {
@@ -56,11 +69,65 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AddInActivatorClient" /> class.
         /// </summary>
         public void Dispose()
         {
-            ChannelServices.UnregisterChannel(this._ipcChannel);
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="AddInActivatorClient" /> class.
+        /// </summary>
+        public void Close()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="AddInActivatorClient" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this._disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                ChannelServices.UnregisterChannel(this._ipcChannel);
+
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+
+            this._disposed = true;
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.AddIn.AddInActivatorClient");
+            }
         }
     }
 }

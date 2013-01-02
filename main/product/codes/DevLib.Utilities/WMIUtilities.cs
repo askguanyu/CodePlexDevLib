@@ -15,72 +15,72 @@ namespace DevLib.Utilities
     public static class WMIUtilities
     {
         /// <summary>
-        ///
+        /// Const Field WIN32_ACCOUNT.
         /// </summary>
         public const string WIN32_ACCOUNT = @"SELECT Caption FROM Win32_Account";
 
         /// <summary>
-        ///
+        /// Const Field MAINBOARD_SN.
         /// </summary>
         public const string MAINBOARD_SN = @"SELECT SerialNumber FROM Win32_BaseBoard";
 
         /// <summary>
-        ///
+        /// Const Field BIOS_SN.
         /// </summary>
         public const string BIOS_SN = @"SELECT SerialNumber FROM Win32_BIOS";
 
         /// <summary>
-        ///
+        /// Const Field HARDDISK_MODEL.
         /// </summary>
         public const string HARDDISK_MODEL = @"SELECT Model FROM Win32_DiskDrive";
 
         /// <summary>
-        ///
+        /// Const Field HARDDISK_SN.
         /// </summary>
         public const string HARDDISK_SN = @"SELECT SerialNumber FROM Win32_DiskDrive";
 
         /// <summary>
-        ///
+        /// Const Field HARDDISK_SIZE.
         /// </summary>
         public const string HARDDISK_SIZE = @"SELECT Size FROM Win32_DiskDrive";
 
         /// <summary>
-        ///
+        /// Const Field MACADDRESS.
         /// </summary>
         public const string MACADDRESS = @"SELECT MACAddress FROM Win32_NetworkAdapter";
 
         /// <summary>
-        ///
+        /// Const Field PHYSICALMEMORY_SN.
         /// </summary>
         public const string PHYSICALMEMORY_SN = @"SELECT SerialNumber FROM Win32_PhysicalMemory";
 
         /// <summary>
-        ///
+        /// Const Field PHYSICALMEMORY_SIZE.
         /// </summary>
         public const string PHYSICALMEMORY_SIZE = @"SELECT Capacity FROM Win32_PhysicalMemory";
 
         /// <summary>
-        ///
+        /// Const Field CPU_ID.
         /// </summary>
         public const string CPU_ID = @"SELECT ProcessorId FROM Win32_Processor";
 
         /// <summary>
-        ///
+        /// Const Field VOLUME_SN.
         /// </summary>
         public const string VOLUME_SN = @"SELECT SerialNumber FROM Win32_Volume";
 
         /// <summary>
-        ///
+        /// Const Field LOGICALDISK_SN.
         /// </summary>
         public const string LOGICALDISK_SN = @"SELECT VolumeSerialNumber FROM Win32_LogicalDisk";
 
         /// <summary>
-        ///
+        /// Const Field PC_MODEL.
         /// </summary>
         public const string PC_MODEL = @"SELECT Model FROM Win32_ComputerSystem";
 
         /// <summary>
-        ///
+        /// Const Field GPU.
         /// </summary>
         public const string GPU = @"SELECT VideoProcessor FROM Win32_VideoController";
 
@@ -163,6 +163,7 @@ namespace DevLib.Utilities
                 if (managementObjectSearcher != null)
                 {
                     managementObjectSearcher.Dispose();
+                    managementObjectSearcher = null;
                 }
             }
 

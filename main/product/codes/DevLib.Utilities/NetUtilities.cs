@@ -14,14 +14,14 @@ namespace DevLib.Utilities
     public static class NetUtilities
     {
         /// <summary>
-        ///
+        /// Static Field _random.
         /// </summary>
         private static Random _random = new Random();
 
         /// <summary>
         /// Get Local IP Array.
         /// </summary>
-        /// <returns>IPAddress[].</returns>
+        /// <returns>Instance of IPAddress[].</returns>
         public static IPAddress[] GetLocalIPArray()
         {
             try

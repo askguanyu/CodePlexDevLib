@@ -72,7 +72,7 @@ namespace DevLib.ExtensionMethods
         /// Invoke System.Console.WriteLine() or System.Console.Write().
         /// </summary>
         /// <typeparam name="T">The type of input object.</typeparam>
-        /// <param name="source">The input object.</param>
+        /// <param name="source">Source object.</param>
         /// <param name="obj">Append object to display.</param>
         /// <param name="withNewLine">Whether followed by the current line terminator.</param>
         /// <returns>The input object.</returns>
@@ -108,7 +108,7 @@ namespace DevLib.ExtensionMethods
         /// Invoke System.Console.WriteLine() or System.Console.Write().
         /// </summary>
         /// <typeparam name="T">The type of input object.</typeparam>
-        /// <param name="source">The input object.</param>
+        /// <param name="source">Source object.</param>
         /// <param name="format">A composite format string.</param>
         /// <param name="withNewLine">Whether followed by the current line terminator.</param>
         /// <returns>The input object.</returns>
@@ -186,7 +186,7 @@ namespace DevLib.ExtensionMethods
         /// Convert object to bytes.
         /// </summary>
         /// <typeparam name="T">The type of input object</typeparam>
-        /// <param name="source">Object.</param>
+        /// <param name="source">Source object.</param>
         /// <returns>Byte array.</returns>
         public static byte[] ToByteArray<T>(this T source)
         {
@@ -335,7 +335,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">The XML string to deserialize.</param>
-        /// <returns>Object.</returns>
+        /// <returns>Instance of T.</returns>
         public static T FromXml<T>(this string source)
         {
             if (source == null)
@@ -456,7 +456,7 @@ namespace DevLib.ExtensionMethods
         /// Gets object's all properties value.
         /// </summary>
         /// <param name="source">The source object.</param>
-        /// <returns></returns>
+        /// <returns>Instance of Dictionary{string, object}.</returns>
         public static Dictionary<string, object> TraverseProperties(this object source)
         {
             if (source == null)
@@ -485,10 +485,10 @@ namespace DevLib.ExtensionMethods
         /// If the exceptions are not ignored and the <paramref name="source"/> can't be convert even if
         /// the types are convertible with each other, an exception is thrown.</para>
         /// </summary>
-        /// <typeparam name = "T"></typeparam>
+        /// <typeparam name = "T">Type to convert to.</typeparam>
         /// <param name = "source">The value.</param>
         /// <param name = "defaultValue">The default value.</param>
-        /// <returns>The target type</returns>
+        /// <returns>The target type.</returns>
         private static T ConvertTo<T>(this object source, T defaultValue)
         {
             if (source != null)

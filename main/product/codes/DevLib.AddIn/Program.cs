@@ -1,4 +1,9 @@
-﻿namespace DevLib.AddIn
+﻿//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace DevLib.AddIn
 {
     using System;
     using System.Collections.Generic;
@@ -7,142 +12,27 @@
     using System.Reflection;
     using System.Security.Permissions;
 
-    public class AssemblyResolver : MarshalByRefObject
-    {
-        private readonly Dictionary<string, Dictionary<AssemblyName, string>> _assemblyDict;
-
-        public AssemblyResolver(Dictionary<AssemblyName, string> dict)
-        {
-            this._assemblyDict = new Dictionary<string, Dictionary<AssemblyName, string>>();
-
-            if (dict != null)
-            {
-                foreach (KeyValuePair<AssemblyName, string> item in dict)
-                {
-                    Dictionary<AssemblyName, string> subDict;
-
-                    if (!this._assemblyDict.TryGetValue(item.Key.Name, out subDict))
-                    {
-                        this._assemblyDict[item.Key.Name] = subDict = new Dictionary<AssemblyName, string>();
-                    }
-
-                    subDict[item.Key] = item.Value;
-                }
-            }
-        }
-
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public override object InitializeLifetimeService()
-        {
-            return null;
-        }
-
-        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public void Mount()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += this.Resolve;
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += this.ReflectionOnlyResolve;
-        }
-
-        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public void Unmount()
-        {
-            AppDomain.CurrentDomain.AssemblyResolve -= this.Resolve;
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= this.ReflectionOnlyResolve;
-        }
-
-        private static bool PublicKeysTokenEqual(byte[] left, byte[] right)
-        {
-            if (left == null || right == null)
-            {
-                return left == right;
-            }
-
-            if (left.Length != right.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < left.Length; i++)
-            {
-                if (left[i] != right[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private Assembly Resolve(object sender, ResolveEventArgs args)
-        {
-            string assemblyFile = this.FindAssemblyName(args.Name);
-
-            if (assemblyFile != null)
-            {
-                return Assembly.LoadFrom(assemblyFile);
-            }
-
-            return null;
-        }
-
-        private Assembly ReflectionOnlyResolve(object sender, ResolveEventArgs args)
-        {
-            string assemblyFile = this.FindAssemblyName(args.Name);
-
-            if (assemblyFile != null)
-            {
-                return Assembly.ReflectionOnlyLoadFrom(assemblyFile);
-            }
-
-            return null;
-        }
-
-        private string FindAssemblyName(string name)
-        {
-            AssemblyName assemblyName = new AssemblyName(name);
-            Dictionary<AssemblyName, string> subDict;
-
-            if (!this._assemblyDict.TryGetValue(assemblyName.Name, out subDict))
-            {
-                return null;
-            }
-
-            foreach (KeyValuePair<AssemblyName, string> item in subDict)
-            {
-                if (assemblyName.Version != null && assemblyName.Version != item.Key.Version)
-                {
-                    continue;
-                }
-
-                if (assemblyName.CultureInfo != null && !assemblyName.CultureInfo.Equals(item.Key.CultureInfo))
-                {
-                    continue;
-                }
-
-                if (!PublicKeysTokenEqual(assemblyName.GetPublicKeyToken(), item.Key.GetPublicKeyToken()))
-                {
-                    continue;
-                }
-
-                return item.Value;
-            }
-
-            return null;
-        }
-    }
-
+    /// <summary>
+    /// Class Program.
+    /// </summary>
     class Program
     {
+        /// <summary>
+        /// Static Field _logFile.
+        /// </summary>
         private static StreamWriter _logFile;
 
+        /// <summary>
+        /// Method Main, entry point.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
         static void Main(string[] args)
         {
-            // args[0] = AddInDomain assembly path
-            // args[1] = GUID
-            // args[2] = PID
-            // args[3] = AddInDomainSetup file
-            // args[4] = Redirect output or not
+            //// args[0] = AddInDomain assembly path
+            //// args[1] = GUID
+            //// args[2] = PID
+            //// args[3] = AddInDomainSetup file
+            //// args[4] = Redirect output or not
 
             if (args.Length < 4)
             {
@@ -222,6 +112,9 @@
             }
         }
 
+        /// <summary>
+        /// Static Method OpenLogFile.
+        /// </summary>
         private static void OpenLogFile()
         {
             string fileName = string.Format("{0}.log", Assembly.GetEntryAssembly().Location);
@@ -239,6 +132,11 @@
             }
         }
 
+        /// <summary>
+        /// Static Method Log.
+        /// </summary>
+        /// <param name="message">Message to log.</param>
+        /// <param name="args">The object array to write into format string.</param>
         private static void Log(string message, params object[] args)
         {
             if (_logFile == null)
@@ -251,6 +149,175 @@
                 _logFile.WriteLine(string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now, Process.GetCurrentProcess().Id.ToString(), message), args);
                 _logFile.Flush();
             }
+        }
+    }
+
+    /// <summary>
+    /// Class AssemblyResolver.
+    /// </summary>
+    public class AssemblyResolver : MarshalByRefObject
+    {
+        /// <summary>
+        /// Readonly Field _assemblyDict.
+        /// </summary>
+        private readonly Dictionary<string, Dictionary<AssemblyName, string>> _assemblyDict;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyResolver" /> class.
+        /// </summary>
+        /// <param name="dict">Instance of Dictionary.</param>
+        public AssemblyResolver(Dictionary<AssemblyName, string> dict)
+        {
+            this._assemblyDict = new Dictionary<string, Dictionary<AssemblyName, string>>();
+
+            if (dict != null)
+            {
+                foreach (KeyValuePair<AssemblyName, string> item in dict)
+                {
+                    Dictionary<AssemblyName, string> subDict;
+
+                    if (!this._assemblyDict.TryGetValue(item.Key.Name, out subDict))
+                    {
+                        this._assemblyDict[item.Key.Name] = subDict = new Dictionary<AssemblyName, string>();
+                    }
+
+                    subDict[item.Key] = item.Value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gives the <see cref="T:System.AppDomain" /> an infinite lifetime by preventing a lease from being created.
+        /// </summary>
+        /// <exception cref="T:System.AppDomainUnloadedException">The operation is attempted on an unloaded application domain.</exception>
+        /// <returns>Always null.</returns>
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Subscribe events.
+        /// </summary>
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+        public void Mount()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += this.Resolve;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += this.ReflectionOnlyResolve;
+        }
+
+        /// <summary>
+        /// Unsubscribe events.
+        /// </summary>
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+        public void Unmount()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve -= this.Resolve;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= this.ReflectionOnlyResolve;
+        }
+
+        /// <summary>
+        /// Static Method PublicKeysTokenEqual.
+        /// </summary>
+        /// <param name="left">Left token.</param>
+        /// <param name="right">Right token.</param>
+        /// <returns>true if equals; otherwise, false.</returns>
+        private static bool PublicKeysTokenEqual(byte[] left, byte[] right)
+        {
+            if (left == null || right == null)
+            {
+                return left == right;
+            }
+
+            if (left.Length != right.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (left[i] != right[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Method Resolve.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="args">Instance of ResolveEventArgs.</param>
+        /// <returns>Instance of Assembly.</returns>
+        private Assembly Resolve(object sender, ResolveEventArgs args)
+        {
+            string assemblyFile = this.FindAssemblyName(args.Name);
+
+            if (assemblyFile != null)
+            {
+                return Assembly.LoadFrom(assemblyFile);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Method ReflectionOnlyResolve.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="args">Instance of ResolveEventArgs.</param>
+        /// <returns>Instance of Assembly.</returns>
+        private Assembly ReflectionOnlyResolve(object sender, ResolveEventArgs args)
+        {
+            string assemblyFile = this.FindAssemblyName(args.Name);
+
+            if (assemblyFile != null)
+            {
+                return Assembly.ReflectionOnlyLoadFrom(assemblyFile);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Method FindAssemblyName.
+        /// </summary>
+        /// <param name="name">The display name of the assembly, as returned by the <see cref="P:System.Reflection.AssemblyName.FullName" /> property.</param>
+        /// <returns>AssemblyName string.</returns>
+        private string FindAssemblyName(string name)
+        {
+            AssemblyName assemblyName = new AssemblyName(name);
+            Dictionary<AssemblyName, string> subDict;
+
+            if (!this._assemblyDict.TryGetValue(assemblyName.Name, out subDict))
+            {
+                return null;
+            }
+
+            foreach (KeyValuePair<AssemblyName, string> item in subDict)
+            {
+                if (assemblyName.Version != null && assemblyName.Version != item.Key.Version)
+                {
+                    continue;
+                }
+
+                if (assemblyName.CultureInfo != null && !assemblyName.CultureInfo.Equals(item.Key.CultureInfo))
+                {
+                    continue;
+                }
+
+                if (!PublicKeysTokenEqual(assemblyName.GetPublicKeyToken(), item.Key.GetPublicKeyToken()))
+                {
+                    continue;
+                }
+
+                return item.Value;
+            }
+
+            return null;
         }
     }
 }

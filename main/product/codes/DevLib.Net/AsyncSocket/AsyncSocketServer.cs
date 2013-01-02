@@ -81,7 +81,12 @@ namespace DevLib.Net.AsyncSocket
         private Semaphore _maxNumberAcceptedClients;
 
         /// <summary>
-        /// Constructor of AsyncSocketServer.
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncSocketServer" /> class.
         /// </summary>
         public AsyncSocketServer()
         {
@@ -93,7 +98,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Constructor of AsyncSocketServer.
+        /// Initializes a new instance of the <see cref="AsyncSocketServer" /> class.
         /// </summary>
         /// <param name="localEndPoint">Local port to listen.</param>
         /// <param name="numConnections">The maximum number of connections the class is designed to handle simultaneously.</param>
@@ -109,7 +114,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Constructor of AsyncSocketServer.
+        /// Initializes a new instance of the <see cref="AsyncSocketServer" /> class.
         /// </summary>
         /// <param name="localPort">Local port to listen.</param>
         /// <param name="numConnections">The maximum number of connections the class is designed to handle simultaneously.</param>
@@ -122,6 +127,14 @@ namespace DevLib.Net.AsyncSocket
             this._numConnections = numConnections;
             this._bufferSize = bufferSize;
             this.LocalEndPoint = new IPEndPoint(IPAddress.Any, localPort);
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="AsyncSocketServer" /> class.
+        /// </summary>
+        ~AsyncSocketServer()
+        {
+            this.Dispose(false);
         }
 
         /// <summary>
@@ -212,6 +225,8 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>true if online; otherwise, false.</returns>
         public bool IsOnline(Guid connectionId)
         {
+            this.CheckDisposed();
+
             lock (((ICollection)this._tokens).SyncRoot)
             {
                 return this._tokens.ContainsKey(connectionId);
@@ -225,6 +240,8 @@ namespace DevLib.Net.AsyncSocket
         /// <returns>true if online; otherwise, false.</returns>
         public bool IsOnline(IPAddress connectionIP)
         {
+            this.CheckDisposed();
+
             lock (((ICollection)this._singleIPTokens).SyncRoot)
             {
                 return this._singleIPTokens.ContainsKey(connectionIP);
@@ -258,6 +275,8 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="useIOCP">Specifies whether the socket should only use Overlapped I/O mode.</param>
         public void Start(IPEndPoint localEndPoint, bool useIOCP = true)
         {
+            this.CheckDisposed();
+
             if (!this.IsListening)
             {
                 this.InitializePool();
@@ -307,6 +326,8 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="operation">User defined operation.</param>
         public void Send(Guid connectionId, byte[] buffer, object operation = null)
         {
+            this.CheckDisposed();
+
             AsyncSocketUserTokenEventArgs token;
 
             lock (((ICollection)this._tokens).SyncRoot)
@@ -370,9 +391,11 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         /// <param name="connectionIP">Client connection IP.</param>
         /// <param name="buffer">Data to send.</param>
-        /// <param name="operation"></param>
+        /// <param name="operation">User defined operation.</param>
         public void Send(IPAddress connectionIP, byte[] buffer, object operation = null)
         {
+            this.CheckDisposed();
+
             AsyncSocketUserTokenEventArgs token;
 
             lock (((ICollection)this._singleIPTokens).SyncRoot)
@@ -437,6 +460,8 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="connectionId">Client connection Id.</param>
         public void Disconnect(Guid connectionId)
         {
+            this.CheckDisposed();
+
             AsyncSocketUserTokenEventArgs token;
 
             lock (((ICollection)this._tokens).SyncRoot)
@@ -456,6 +481,8 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         public void Stop()
         {
+            this.CheckDisposed();
+
             if (this.IsListening)
             {
                 try
@@ -505,7 +532,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AsyncSocketServer" /> class.
         /// </summary>
         public void Dispose()
         {
@@ -514,14 +541,27 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AsyncSocketServer" /> class.
         /// </summary>
-        /// <param name="disposing"></param>
+        public void Close()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="AsyncSocketServer" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
+            if (this._disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
-                // dispose managed resources
                 if (this._listenSocket != null)
                 {
                     this._listenSocket.Close();
@@ -529,16 +569,30 @@ namespace DevLib.Net.AsyncSocket
                 }
 
                 this._maxNumberAcceptedClients.Close();
+
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
             }
 
             // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+
+            this._disposed = true;
         }
 
         /// <summary>
-        ///
+        /// Method OnErrorOccurred.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of AsyncSocketErrorEventArgs.</param>
         private void OnErrorOccurred(object sender, AsyncSocketErrorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -551,10 +605,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method RaiseEvent.
         /// </summary>
-        /// <param name="eventHandler"></param>
-        /// <param name="eventArgs"></param>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        /// <param name="eventArgs">Instance of AsyncSocketUserTokenEventArgs.</param>
         private void RaiseEvent(EventHandler<AsyncSocketUserTokenEventArgs> eventHandler, AsyncSocketUserTokenEventArgs eventArgs)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -582,7 +636,7 @@ namespace DevLib.Net.AsyncSocket
             SocketAsyncEventArgs readWriteEventArg;
             AsyncSocketUserTokenEventArgs token;
 
-            /// Initialize read Pool
+            // Initialize read Pool
             for (int i = 0; i < this._numConnections; i++)
             {
                 token = new AsyncSocketUserTokenEventArgs();
@@ -592,7 +646,7 @@ namespace DevLib.Net.AsyncSocket
                 this._readPool.Push(token.ReadEventArgs);
             }
 
-            /// Initialize write Pool
+            // Initialize write Pool
             for (int i = 0; i < this._numConnections; i++)
             {
                 readWriteEventArg = new SocketAsyncEventArgs();
@@ -604,9 +658,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method StartAccept.
         /// </summary>
-        /// <param name="acceptEventArg"></param>
+        /// <param name="acceptEventArg">Instance of SocketAsyncEventArgs.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private void StartAccept(SocketAsyncEventArgs acceptEventArg)
@@ -651,19 +705,19 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// 
+        /// Method AcceptEventArg_Completed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of SocketAsyncEventArgs.</param>
         private void AcceptEventArg_Completed(object sender, SocketAsyncEventArgs e)
         {
             this.ProcessAccept(e);
         }
 
         /// <summary>
-        ///
+        /// Method ProcessAccept.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Instance of SocketAsyncEventArgs.</param>
         private void ProcessAccept(SocketAsyncEventArgs e)
         {
             AsyncSocketUserTokenEventArgs token;
@@ -728,10 +782,10 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// 
+        /// Method IO_Completed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of SocketAsyncEventArgs.</param>
         private void IO_Completed(object sender, SocketAsyncEventArgs e)
         {
             switch (e.LastOperation)
@@ -748,9 +802,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method ProcessReceive.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Instance of SocketAsyncEventArgs.</param>
         private void ProcessReceive(SocketAsyncEventArgs e)
         {
             AsyncSocketUserTokenEventArgs token = (AsyncSocketUserTokenEventArgs)e.UserToken;
@@ -798,9 +852,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method ProcessSend.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Instance of SocketAsyncEventArgs.</param>
         private void ProcessSend(SocketAsyncEventArgs e)
         {
             AsyncSocketUserTokenEventArgs token = (AsyncSocketUserTokenEventArgs)e.UserToken;
@@ -827,9 +881,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method RaiseDisconnectedEvent.
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="token">Instance of AsyncSocketUserTokenEventArgs.</param>
         private void RaiseDisconnectedEvent(AsyncSocketUserTokenEventArgs token)
         {
             if (null != token)
@@ -858,9 +912,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        ///
+        /// Method CloseClientSocket.
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="token">Instance of AsyncSocketUserTokenEventArgs.</param>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private void CloseClientSocket(AsyncSocketUserTokenEventArgs token)
         {
@@ -894,6 +948,17 @@ namespace DevLib.Net.AsyncSocket
                 Debug.WriteLine(string.Format(AsyncSocketServerConstants.ClientConnectionStringFormat, this._numConnectedSockets.ToString()));
 
                 this._readPool.Push(token.ReadEventArgs);
+            }
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.Net.AsyncSocket.AsyncSocketServer");
             }
         }
     }

@@ -13,7 +13,7 @@ namespace DevLib.Net.AsyncSocket
     public class AsyncSocketErrorEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructor of AsyncSocketErrorEventArgs.
+        /// Initializes a new instance of the <see cref="AsyncSocketErrorEventArgs" /> class.
         /// </summary>
         public AsyncSocketErrorEventArgs()
             : this(string.Empty, null)
@@ -21,11 +21,11 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Constructor of AsyncSocketErrorEventArgs.
+        /// Initializes a new instance of the <see cref="AsyncSocketErrorEventArgs" /> class.
         /// </summary>
         /// <param name="message">Error Message.</param>
         /// <param name="exception">Exception object.</param>
-        /// <param name="errorCode">AsyncSocketServerErrorCodeEnum.</param>
+        /// <param name="errorCode">Instance of AsyncSocketErrorCodeEnum.</param>
         public AsyncSocketErrorEventArgs(string message, Exception exception, AsyncSocketErrorCodeEnum errorCode = AsyncSocketErrorCodeEnum.ThrowSocketException)
         {
             this.Message = message;

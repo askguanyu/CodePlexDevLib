@@ -20,17 +20,23 @@ namespace DevLib.ServiceModel
     public sealed class WcfIsolatedServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
-        ///
+        /// Field _appDomain.
         /// </summary>
         [NonSerialized]
         private AppDomain _appDomain;
 
         /// <summary>
-        ///
+        /// Field _wcfServiceHost.
         /// </summary>
         private WcfServiceHost _wcfServiceHost;
 
         /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfIsolatedServiceHost" /> class.
         /// Default constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize Wcf service.
         /// </summary>
         public WcfIsolatedServiceHost()
@@ -38,7 +44,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Constructor of WcfIsolatedServiceHost, create an isolated AppDomain to host Wcf service.
+        /// Initializes a new instance of the <see cref="WcfIsolatedServiceHost" /> class.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
@@ -48,62 +54,70 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Finalizes an instance of the <see cref="WcfIsolatedServiceHost" /> class.
+        /// </summary>
+        ~WcfIsolatedServiceHost()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Event Created.
         /// </summary>
         public event EventHandler<EventArgs> Created;
 
         /// <summary>
-        ///
+        /// Event Opening.
         /// </summary>
         public event EventHandler<EventArgs> Opening;
 
         /// <summary>
-        ///
+        /// Event Opened.
         /// </summary>
         public event EventHandler<EventArgs> Opened;
 
         /// <summary>
-        ///
+        /// Event Closing.
         /// </summary>
         public event EventHandler<EventArgs> Closing;
 
         /// <summary>
-        ///
+        /// Event Closed.
         /// </summary>
         public event EventHandler<EventArgs> Closed;
 
         /// <summary>
-        ///
+        /// Event Aborting.
         /// </summary>
         public event EventHandler<EventArgs> Aborting;
 
         /// <summary>
-        ///
+        /// Event Aborted.
         /// </summary>
         public event EventHandler<EventArgs> Aborted;
 
         /// <summary>
-        ///
+        /// Event Restarting.
         /// </summary>
         public event EventHandler<EventArgs> Restarting;
 
         /// <summary>
-        ///
+        /// Event Restarted.
         /// </summary>
         public event EventHandler<EventArgs> Restarted;
 
         /// <summary>
-        ///
+        /// Event Loaded.
         /// </summary>
         public event EventHandler<EventArgs> Loaded;
 
         /// <summary>
-        ///
+        /// Event Unloaded.
         /// </summary>
         public event EventHandler<EventArgs> Unloaded;
 
         /// <summary>
-        ///
+        /// Event Reloaded.
         /// </summary>
         public event EventHandler<EventArgs> Reloaded;
 
@@ -168,6 +182,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void Open()
         {
+            this.CheckDisposed();
+
             if (this._wcfServiceHost != null)
             {
                 try
@@ -187,6 +203,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void Close()
         {
+            this.CheckDisposed();
+
             if (this._wcfServiceHost != null)
             {
                 try
@@ -206,6 +224,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void Abort()
         {
+            this.CheckDisposed();
+
             if (this._wcfServiceHost != null)
             {
                 try
@@ -225,6 +245,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void Restart()
         {
+            this.CheckDisposed();
+
             if (this._wcfServiceHost != null)
             {
                 try
@@ -244,6 +266,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void Unload()
         {
+            this.CheckDisposed();
+
             if (this._wcfServiceHost != null)
             {
                 this._wcfServiceHost.Dispose();
@@ -265,6 +289,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void Reload()
         {
+            this.CheckDisposed();
+
             this.Unload();
             this.CreateDomain();
             this.RaiseEvent(this.Reloaded, null);
@@ -273,23 +299,38 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Get current isolated AppDomain.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Instance of AppDomain.</returns>
         public AppDomain GetAppDomain()
         {
+            this.CheckDisposed();
+
             return this._appDomain;
         }
 
         /// <summary>
         /// Get Wcf service state list.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Instance of List.</returns>
         public List<WcfServiceHostInfo> GetHostInfoList()
         {
+            this.CheckDisposed();
+
             return this._wcfServiceHost.GetHostInfoList();
         }
 
         /// <summary>
-        ///
+        /// Gives the <see cref="T:System.AppDomain" /> an infinite lifetime by preventing a lease from being created.
+        /// </summary>
+        /// <exception cref="T:System.AppDomainUnloadedException">The operation is attempted on an unloaded application domain.</exception>
+        /// <returns>Always null.</returns>
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="WcfIsolatedServiceHost" /> class.
         /// </summary>
         public void Dispose()
         {
@@ -298,35 +339,44 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="WcfIsolatedServiceHost" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
         /// </summary>
-        /// <returns></returns>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public override object InitializeLifetimeService()
-        {
-            return null;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         private void Dispose(bool disposing)
         {
-            if (disposing)
+            if (this._disposed)
             {
-                // free managed resources
-                this.Unload();
+                return;
             }
 
-            // free native resources if there are any
+            if (disposing)
+            {
+                this.Unload();
+
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+
+            this._disposed = true;
         }
 
         /// <summary>
-        ///
+        /// Method RaiseEvent.
         /// </summary>
-        /// <param name="eventHandler"></param>
-        /// <param name="e"></param>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        /// <param name="e">Instance of EventArgs.</param>
         private void RaiseEvent(EventHandler<EventArgs> eventHandler, EventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -339,7 +389,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Method CreateDomain.
         /// </summary>
         private void CreateDomain()
         {
@@ -369,7 +419,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Method SubscribeAllWcfServiceHostEvent.
         /// </summary>
         private void SubscribeAllWcfServiceHostEvent()
         {
@@ -385,7 +435,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        ///
+        /// Method UnSubscribeAllWcfServiceHostEvent.
         /// </summary>
         private void UnSubscribeAllWcfServiceHostEvent()
         {
@@ -398,6 +448,17 @@ namespace DevLib.ServiceModel
             this._wcfServiceHost.Aborted -= (s, e) => this.RaiseEvent(this.Aborted, e);
             this._wcfServiceHost.Restarting -= (s, e) => this.RaiseEvent(this.Restarting, e);
             this._wcfServiceHost.Restarted -= (s, e) => this.RaiseEvent(this.Restarted, e);
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.ServiceModel.WcfIsolatedServiceHost");
+            }
         }
     }
 }

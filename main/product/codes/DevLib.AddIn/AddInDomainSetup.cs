@@ -19,13 +19,13 @@ namespace DevLib.AddIn
     using System.Text;
 
     /// <summary>
-    ///
+    /// Class AddInDomainSetup.
     /// </summary>
     [Serializable]
     public sealed class AddInDomainSetup
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the <see cref="AddInDomainSetup" /> class.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public AddInDomainSetup()
@@ -92,7 +92,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets or sets whether or not to delete the generated executable after AddInDomain has unloaded.
+        /// Gets or sets a value indicating whether or not to delete the generated executable after AddInDomain has unloaded.
         /// </summary>
         public bool DeleteOnUnload
         {
@@ -101,7 +101,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets or sets whether AddInDomain should be relaunched when the process exit prematurely.
+        /// Gets or sets a value indicating whether AddInDomain should be relaunched when the process exit prematurely.
         /// </summary>
         public bool RestartOnProcessExit
         {
@@ -176,6 +176,7 @@ namespace DevLib.AddIn
         /// <summary>
         /// Gets the currently configured DLL search path as set by SetDllDirectory.
         /// </summary>
+        /// <returns>Dll Directory.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static string GetCurrentDllDirectory()
         {
@@ -204,10 +205,10 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Static Method WriteSetupFile.
         /// </summary>
-        /// <param name="addInDomainSetup"></param>
-        /// <param name="fileName"></param>
+        /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
+        /// <param name="fileName">Setup file name.</param>
         internal static void WriteSetupFile(AddInDomainSetup addInDomainSetup, string fileName)
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -219,10 +220,10 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Static Method ReadSetupFile.
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
+        /// <param name="fileName">Setup file name.</param>
+        /// <returns>Instance of AddInDomainSetup.</returns>
         internal static AddInDomainSetup ReadSetupFile(string fileName)
         {
             BinaryFormatter formatter = new BinaryFormatter();

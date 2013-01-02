@@ -18,49 +18,49 @@ namespace DevLib.AddIn
     using System.Threading;
 
     /// <summary>
-    ///
+    /// Class AddInActivatorHost.
     /// </summary>
     [Serializable]
     internal class AddInActivatorHost : MarshalByRefObject
     {
         /// <summary>
-        ///
+        /// Const Field AddInServerChannelNameStringFormat.
         /// </summary>
         public const string AddInServerChannelNameStringFormat = "DevLib_AddInDomainServer_{0}";
 
         /// <summary>
-        ///
+        /// Const Field AddInClientChannelNameStringFormat.
         /// </summary>
         public const string AddInClientChannelNameStringFormat = "DevLib_AddInDomainClient_{0}";
 
         /// <summary>
-        ///
+        /// Const Field AddInDomainEventNameStringFormat.
         /// </summary>
         public const string AddInDomainEventNameStringFormat = "DevLib_AddInDomainEvent_{0}";
 
         /// <summary>
-        ///
+        /// Const Field AddInActivatorName.
         /// </summary>
         public const string AddInActivatorName = "DevLib_AddInActivator";
 
         /// <summary>
-        ///
+        /// Readonly Field _process.
         /// </summary>
         [NonSerialized]
         private readonly Process _process;
 
         /// <summary>
-        ///
+        /// Readonly Field _ipcChannel.
         /// </summary>
         [NonSerialized]
         private readonly IpcChannel _ipcChannel;
 
         /// <summary>
-        ///
+        /// Initializes a new instance of the <see cref="AddInActivatorHost" /> class.
         /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="processId"></param>
-        /// <param name="addInDomainSetup"></param>
+        /// <param name="guid">Guid string.</param>
+        /// <param name="processId">Process Id.</param>
+        /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
         public AddInActivatorHost(string guid, int processId, AddInDomainSetup addInDomainSetup)
         {
             SetupDllDirectory(addInDomainSetup.DllDirectory);
@@ -92,13 +92,14 @@ namespace DevLib.AddIn
         /// <summary>
         /// Runs AddInActivatorHost until the parent process exits.
         /// </summary>
+        /// <param name="args">Command line arguments.</param>
         public static void Run(string[] args)
         {
-            // args[0] = AddInDomain assembly path
-            // args[1] = GUID
-            // args[2] = PID
-            // args[3] = AddInDomainSetup file
-            // args[4] = Redirect output or not
+            //// args[0] = AddInDomain assembly path
+            //// args[1] = GUID
+            //// args[2] = PID
+            //// args[3] = AddInDomainSetup file
+            //// args[4] = Redirect output or not
 
             if (args.Length < 4)
             {
@@ -166,9 +167,9 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Static Method SetupDllDirectory.
         /// </summary>
-        /// <param name="dllDirectory"></param>
+        /// <param name="dllDirectory">Dll directory.</param>
         private static void SetupDllDirectory(string dllDirectory)
         {
             if (!string.IsNullOrEmpty(dllDirectory))

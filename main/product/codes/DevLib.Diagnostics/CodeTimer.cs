@@ -19,7 +19,7 @@ namespace DevLib.Diagnostics
     public static class CodeTimer
     {
         /// <summary>
-        ///
+        /// Static Field _random.
         /// </summary>
         private static Random _random = new Random();
 
@@ -49,14 +49,14 @@ namespace DevLib.Diagnostics
         /// </summary>
         public static void Initialize()
         {
-            DevLib.Diagnostics.CodeTimer.Time(delegate() { }, 1, "Initialize CodeTimer...");
+            DevLib.Diagnostics.CodeTimer.Time(delegate { }, 1, "Initialize CodeTimer...");
         }
 
         /// <summary>
         /// Run code snippets and give a performance test result.
         /// </summary>
         /// <param name="action">Code snippets to run.
-        /// <example>E.g. <code>delegate() { Console.WriteLine("Hello"); }</code></example>
+        /// <example>E.g. <code>delegate { Console.WriteLine("Hello"); }</code></example>
         /// </param>
         /// <param name="iteration">Repeat times.</param>
         /// <param name="name">The name of current performance.</param>
@@ -107,7 +107,7 @@ namespace DevLib.Diagnostics
             watch.Start();
 
             ulong cycleCount = GetCycleCount();
-            long threadTimeCount = GetCurrentThreadTimes();
+            long threadTimeCount = GetCurrentThreadTime();
 
             for (int i = 0; i < iteration; i++)
             {
@@ -115,7 +115,7 @@ namespace DevLib.Diagnostics
             }
 
             ulong cpuCycles = GetCycleCount() - cycleCount;
-            long threadTime = GetCurrentThreadTimes() - threadTimeCount;
+            long threadTime = GetCurrentThreadTime() - threadTimeCount;
 
             watch.Stop();
 
@@ -169,9 +169,9 @@ namespace DevLib.Diagnostics
         internal static extern bool GetThreadTimes(IntPtr threadHandle, out long creationTime, out long exitTime, out long kernelTime, out long userTime);
 
         /// <summary>
-        ///
+        /// Static Method GetCycleCount.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Cycle count.</returns>
         private static ulong GetCycleCount()
         {
             ulong cycleCount = 0;
@@ -187,10 +187,10 @@ namespace DevLib.Diagnostics
         }
 
         /// <summary>
-        ///
+        /// Static Method GetCurrentThreadTime.
         /// </summary>
-        /// <returns></returns>
-        private static long GetCurrentThreadTimes()
+        /// <returns>Thread time.</returns>
+        private static long GetCurrentThreadTime()
         {
             long temp = 0;
             long kernelTime = 0;

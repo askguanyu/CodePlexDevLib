@@ -6,6 +6,7 @@
 namespace DevLib.AddIn
 {
     using System;
+    using System.Diagnostics;
 
     /// <summary>
     /// AddInActivator process information.
@@ -13,7 +14,7 @@ namespace DevLib.AddIn
     public class AddInActivatorProcessInfo
     {
         /// <summary>
-        ///
+        /// Initializes a new instance of the <see cref="AddInActivatorProcessInfo" /> class.
         /// </summary>
         public AddInActivatorProcessInfo()
         {
@@ -165,6 +166,37 @@ namespace DevLib.AddIn
         {
             get;
             internal set;
+        }
+
+        /// <summary>
+        /// Gets the amount of private working set memory allocated for the associated process.
+        /// </summary>
+        public float PrivateWorkingSet
+        {
+            get
+            {
+                float result = -1;
+                PerformanceCounter performanceCounter = null;
+
+                try
+                {
+                    performanceCounter = new PerformanceCounter("Process", "Working Set - Private", this.ProcessName);
+                    result = performanceCounter.NextValue();
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    if (performanceCounter != null)
+                    {
+                        performanceCounter.Dispose();
+                        performanceCounter = null;
+                    }
+                }
+
+                return result;
+            }
         }
 
         /// <summary>

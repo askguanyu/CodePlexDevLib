@@ -14,24 +14,54 @@ namespace DevLib.Utilities
     /// </summary>
     public enum SerialStateEnum
     {
+        /// <summary>
+        /// Represents Init.
+        /// </summary>
         Init = 0,
 
+        /// <summary>
+        /// Represents Operate OK.
+        /// </summary>
         OperateOK,
 
+        /// <summary>
+        /// Represents Not Found Port.
+        /// </summary>
         NotFoundPort,
 
+        /// <summary>
+        /// Represents Not Exist Port.
+        /// </summary>
         NotExistPort,
 
+        /// <summary>
+        /// Represents Serial Port Null.
+        /// </summary>
         SerialPortNull,
 
+        /// <summary>
+        /// Represents Open Exception.
+        /// </summary>
         OpenException,
 
+        /// <summary>
+        /// Represents Send Exception.
+        /// </summary>
         SendException,
 
+        /// <summary>
+        /// Represents Send Data Empty.
+        /// </summary>
         SendDataEmpty,
 
+        /// <summary>
+        /// Represents Read Timeout.
+        /// </summary>
         ReadTimeout,
 
+        /// <summary>
+        /// Represents Read Exception.
+        /// </summary>
         ReadException
     }
 
@@ -41,39 +71,44 @@ namespace DevLib.Utilities
     public class SyncSerialPort : IDisposable
     {
         /// <summary>
-        ///
+        /// Static Field _portNames.
         /// </summary>
         private static string[] _portNames = SerialPort.GetPortNames();
 
         /// <summary>
-        ///
+        /// Field _serialPort.
         /// </summary>
         private SerialPort _serialPort = null;
 
         /// <summary>
-        ///
+        /// Field _currentState.
         /// </summary>
         private SerialStateEnum _currentState = SerialStateEnum.Init;
 
         /// <summary>
-        ///
+        /// Field _receiveBuffer.
         /// </summary>
         private byte[] _receiveBuffer = null;
 
         /// <summary>
-        ///
+        /// Field _readTimeout.
         /// </summary>
         private int _readTimeout = 1000;
 
         /// <summary>
-        ///
+        /// Field _autoResetEvent.
         /// </summary>
         private AutoResetEvent _autoResetEvent = new AutoResetEvent(false);
 
         /// <summary>
-        ///
+        /// Field _syncRoot.
         /// </summary>
         private object _syncRoot = new object();
+
+        /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
 
         /// <summary>
         /// Initializes a new instance of the SyncSerialPort class using the specified port name, baud rate, parity bit, data bits, and stop bit.
@@ -115,6 +150,14 @@ namespace DevLib.Utilities
         }
 
         /// <summary>
+        /// Finalizes an instance of the <see cref="SyncSerialPort" /> class.
+        /// </summary>
+        ~SyncSerialPort()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
         /// Gets an array of serial port names for the current computer.
         /// </summary>
         public static string[] PortNames
@@ -131,7 +174,7 @@ namespace DevLib.Utilities
         }
 
         /// <summary>
-        /// Gets a value indicating the open or closed status of SyncSerialPort.
+        /// Gets a value indicating whether the open or closed status of SyncSerialPort.
         /// </summary>
         public bool IsOpen
         {
@@ -141,8 +184,11 @@ namespace DevLib.Utilities
         /// <summary>
         /// Opens a new serial port connection.
         /// </summary>
+        /// <returns>true if succeed; otherwise, false.</returns>
         public bool Open()
         {
+            this.CheckDisposed();
+
             if (this._serialPort != null)
             {
                 try
@@ -170,8 +216,11 @@ namespace DevLib.Utilities
         /// <summary>
         /// Closes the port connection.
         /// </summary>
+        /// <returns>true if succeed; otherwise, false.</returns>
         public bool Close()
         {
+            this.CheckDisposed();
+
             if (this._serialPort != null)
             {
                 if (this._serialPort.IsOpen)
@@ -189,22 +238,16 @@ namespace DevLib.Utilities
         }
 
         /// <summary>
-        ///
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Sync send a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
         /// <param name="receivedData">The byte array to write the received data.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <returns>true if succeed; otherwise, false.</returns>
         public bool Send(byte[] sendData, out byte[] receivedData, int timeout)
         {
+            this.CheckDisposed();
+
             lock (this._syncRoot)
             {
                 this._autoResetEvent.Reset();
@@ -266,14 +309,28 @@ namespace DevLib.Utilities
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="SyncSerialPort" /> class.
         /// </summary>
-        /// <param name="disposing"></param>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="SyncSerialPort" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
+            if (this._disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
-                // free managed resources
                 if (this._autoResetEvent != null)
                 {
                     this._autoResetEvent.Close();
@@ -285,14 +342,29 @@ namespace DevLib.Utilities
                     this._serialPort.Dispose();
                     this._serialPort = null;
                 }
+
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
             }
 
-            // free native resources if there are any
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+
+            this._disposed = true;
         }
 
         /// <summary>
         /// Sync receive data.
         /// </summary>
+        /// <param name="serialPortobj">Instance of SerialPort.</param>
         private void SyncReceiveData(object serialPortobj)
         {
             SerialPort serialPort = serialPortobj as SerialPort;
@@ -321,6 +393,17 @@ namespace DevLib.Utilities
             {
                 this._autoResetEvent.Set();
                 this.Close();
+            }
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.Utilities.SyncSerialPort");
             }
         }
     }

@@ -19,71 +19,71 @@ namespace DevLib.AddIn
     internal class AddInActivatorProcess : IDisposable
     {
         /// <summary>
-        ///
+        /// Const Field ConfigFileStringFormat.
         /// </summary>
         private const string ConfigFileStringFormat = @"{0}.exe.cfg";
 
         /// <summary>
-        ///
+        /// Const Field LogFileStringFormat.
         /// </summary>
         private const string LogFileStringFormat = @"{0}.exe.log";
 
         /// <summary>
-        ///
+        /// Readonly Field _addInDomainSetup.
         /// </summary>
         private readonly AddInDomainSetup _addInDomainSetup;
 
         /// <summary>
-        ///
+        /// Readonly Field _assemblyFile.
         /// </summary>
         private readonly string _assemblyFile;
 
         /// <summary>
-        ///
+        /// Readonly Field _process.
         /// </summary>
         private readonly Process _process;
 
         /// <summary>
-        ///
+        /// Readonly Field _friendlyName.
         /// </summary>
         private readonly string _friendlyName;
 
         /// <summary>
-        ///
+        /// Readonly Field _addInDomainSetupFile.
         /// </summary>
         private readonly string _addInDomainSetupFile;
 
         /// <summary>
-        ///
+        /// Readonly Field _addInDomainLogFile.
         /// </summary>
         private readonly string _addInDomainLogFile;
 
         /// <summary>
-        ///
+        /// Field _addInActivatorProcessInfo.
         /// </summary>
         private AddInActivatorProcessInfo _addInActivatorProcessInfo;
 
         /// <summary>
-        ///
+        /// Field _addInActivatorClient.
         /// </summary>
         private AddInActivatorClient _addInActivatorClient;
 
         /// <summary>
-        ///
-        /// </summary>
-        private bool _isDisposing;
-
-        /// <summary>
-        ///
+        /// Field _redirectOutput.
         /// </summary>
         private bool _redirectOutput;
 
         /// <summary>
-        ///
+        /// Field _disposed.
         /// </summary>
-        /// <param name="friendlyName"></param>
-        /// <param name="redirectOutput"></param>
-        /// <param name="addInDomainSetup"></param>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddInActivatorProcess" /> class.
+        /// </summary>
+        /// <param name="friendlyName">Process name.</param>
+        /// <param name="redirectOutput">Whether redirect console output.</param>
+        /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public AddInActivatorProcess(string friendlyName, bool redirectOutput, AddInDomainSetup addInDomainSetup)
@@ -128,37 +128,36 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Finalizes an instance of the <see cref="AddInActivatorProcess" /> class.
         /// </summary>
         ~AddInActivatorProcess()
         {
-            this.Dispose();
+            this.Dispose(false);
         }
 
         /// <summary>
-        ///
+        /// Delegate DeleteAssemblyFileDelegate.
         /// </summary>
-        /// <param name="cancelEvent"></param>
-        /// <returns></returns>
+        /// <param name="cancelEvent">Instance of ManualResetEvent.</param>
         private delegate void DeleteAssemblyFileDelegate(ManualResetEvent cancelEvent);
 
         /// <summary>
-        ///
+        /// Event Attached.
         /// </summary>
         public event EventHandler Attached;
 
         /// <summary>
-        ///
+        /// Event Detached.
         /// </summary>
         public event EventHandler Detached;
 
         /// <summary>
-        ///
+        /// Event DataReceived.
         /// </summary>
         public event DataReceivedEventHandler DataReceived;
 
         /// <summary>
-        /// A proxy to the remote AddInActivator to use to create remote object instances.
+        /// Gets a proxy to the remote AddInActivator to use to create remote object instances.
         /// </summary>
         public AddInActivator AddInActivatorClient
         {
@@ -175,7 +174,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets AddInActivatorProcessInfo.
+        /// Gets instance of AddInActivatorProcessInfo.
         /// </summary>
         public AddInActivatorProcessInfo ProcessInfo
         {
@@ -417,11 +416,11 @@ namespace DevLib.AddIn
 
                 AddInDomainSetup.WriteSetupFile(this._addInDomainSetup, this._addInDomainSetupFile);
 
-                // args[0] = AddInDomain assembly path
-                // args[1] = GUID
-                // args[2] = PID
-                // args[3] = AddInDomainSetup file
-                // args[4] = Redirect output or not
+                //// args[0] = AddInDomain assembly path
+                //// args[1] = GUID
+                //// args[2] = PID
+                //// args[3] = AddInDomainSetup file
+                //// args[4] = Redirect output or not
 
                 this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\" {4}", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile, this._redirectOutput);
                 this.IsRunning = this._process.Start();
@@ -447,22 +446,58 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AddInActivatorProcess" /> class.
         /// </summary>
         public void Dispose()
         {
-            if (this._isDisposing)
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="AddInActivatorProcess" /> class.
+        /// </summary>
+        public void Close()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="AddInActivatorProcess" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this._disposed)
             {
                 return;
             }
 
-            this._isDisposing = true;
+            if (disposing)
+            {
+                this.DisposeClient();
+                this.Kill();
 
-            this.DisposeClient();
-            this.Kill();
+                this.IsRunning = false;
+                this.RaiseEvent(this.Detached);
 
-            this.IsRunning = false;
-            this.RaiseEvent(this.Detached);
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+
+            this._disposed = true;
         }
 
         /// <summary>
@@ -530,9 +565,9 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method RaiseEvent.
         /// </summary>
-        /// <param name="eventHandler"></param>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
         private void RaiseEvent(EventHandler eventHandler)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -545,10 +580,9 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method RaiseDataReceivedEvent.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="e">Instance of DataReceivedEventArgs.</param>
         private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -561,15 +595,15 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method OnProcessDataReceived.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of DataReceivedEventArgs.</param>
         private void OnProcessDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                string output = string.Format(AddInConstants.ProcessOuputStringFormat, this._friendlyName, e.Data);
+                string output = string.Format(AddInConstants.ProcessOutputStringFormat, this._friendlyName, e.Data);
 
                 Debug.WriteLine(output);
 
@@ -583,19 +617,19 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method OnProcessExited.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
         private void OnProcessExited(object sender, EventArgs e)
         {
             this.Dispose();
         }
 
         /// <summary>
-        ///
+        /// Method DeleteAssemblyFile.
         /// </summary>
-        /// <param name="cancelEvent"></param>
+        /// <param name="cancelEvent">Instance of ManualResetEvent.</param>
         private void DeleteAssemblyFile(ManualResetEvent cancelEvent)
         {
             bool isDeleted = false;
@@ -626,18 +660,18 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method CheckDisposed.
         /// </summary>
         private void CheckDisposed()
         {
-            if (this._isDisposing)
+            if (this._disposed)
             {
                 throw new ObjectDisposedException("DevLib.AddIn.AddInActivatorProcess");
             }
         }
 
         /// <summary>
-        ///
+        /// Method DisposeClient.
         /// </summary>
         private void DisposeClient()
         {

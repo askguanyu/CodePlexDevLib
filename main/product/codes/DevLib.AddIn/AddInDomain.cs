@@ -19,77 +19,82 @@ namespace DevLib.AddIn
     public sealed class AddInDomain : IDisposable
     {
         /// <summary>
-        ///
+        /// Field _addInActivatorProcess.
         /// </summary>
         private AddInActivatorProcess _addInActivatorProcess;
 
         /// <summary>
-        ///
+        /// Field _unloaded.
         /// </summary>
         private int _unloaded;
 
         /// <summary>
-        ///
+        /// Field _overloadCreateInstanceAndUnwrap.
         /// </summary>
         private int _overloadCreateInstanceAndUnwrap = 0;
 
         /// <summary>
-        ///
+        /// Field _addInAssemblyName.
         /// </summary>
         private string _addInAssemblyName;
 
         /// <summary>
-        ///
+        /// Field _addInArgs.
         /// </summary>
         private object[] _addInArgs = null;
 
         /// <summary>
-        ///
+        /// Field _addInActivationAttributes.
         /// </summary>
         private object[] _addInActivationAttributes = null;
 
         /// <summary>
-        ///
+        /// Field _addInIgnoreCase.
         /// </summary>
         private bool _addInIgnoreCase;
 
         /// <summary>
-        ///
+        /// Field _addInBindingAttr.
         /// </summary>
         private BindingFlags _addInBindingAttr = BindingFlags.Default;
 
         /// <summary>
-        ///
+        /// Field _addInBinder.
         /// </summary>
         private Binder _addInBinder = null;
 
         /// <summary>
-        ///
+        /// Field _addInCulture.
         /// </summary>
         private CultureInfo _addInCulture = null;
 
         /// <summary>
-        ///
+        /// Field _addInSecurityAttributes.
         /// </summary>
         private Evidence _addInSecurityAttributes = null;
 
         /// <summary>
-        ///
+        /// Field _canRestart.
         /// </summary>
         private bool _canRestart = true;
 
         /// <summary>
-        ///
+        /// Field _redirectOutput.
         /// </summary>
         private bool _redirectOutput;
 
         /// <summary>
-        ///
+        /// Field _addInTypeName.
         /// </summary>
         private string _addInTypeName;
 
         /// <summary>
-        /// Creates a AddInDomain which allows hosting objects and code in isolated process.
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddInDomain" /> class.
         /// </summary>
         /// <param name="friendlyName">The friendly name of the AddInDomain.</param>
         /// <param name="showRedirectConsoleOutput">Whether the output of AddInActivatorProcess is shown in current console.</param>
@@ -103,25 +108,25 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Finalizes an instance of the <see cref="AddInDomain" /> class.
         /// </summary>
         ~AddInDomain()
         {
-            Unload();
+            this.Dispose(false);
         }
 
         /// <summary>
-        ///
+        /// Event Loaded.
         /// </summary>
         public event EventHandler Loaded;
 
         /// <summary>
-        ///
+        /// Event Unloaded.
         /// </summary>
         public event EventHandler Unloaded;
 
         /// <summary>
-        ///
+        /// Event Reloaded.
         /// </summary>
         public event EventHandler Reloaded;
 
@@ -186,7 +191,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method Reload.
         /// </summary>
         public void Reload()
         {
@@ -203,6 +208,8 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName)
         {
+            this.CheckDisposed();
+
             this.StartAddInActivatorProcess();
 
             this._overloadCreateInstanceAndUnwrap = 1;
@@ -222,6 +229,8 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName, object[] activationAttributes)
         {
+            this.CheckDisposed();
+
             this.StartAddInActivatorProcess();
 
             this._overloadCreateInstanceAndUnwrap = 2;
@@ -241,6 +250,7 @@ namespace DevLib.AddIn
         /// <param name="args">The arguments to pass to the constructor. This array of arguments must match in number, order, and type the parameters of the constructor to invoke. If the default constructor is preferred, <paramref name="args" /> must be an empty array or null. </param>
         /// <param name="culture">A culture-specific object used to govern the coercion of types. If <paramref name="culture" /> is null, the CultureInfo for the current thread is used. </param>
         /// <param name="activationAttributes">An array of one or more attributes that can participate in activation. Typically, an array that contains a single <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> object. The <see cref="T:System.Runtime.Remoting.Activation.UrlAttribute" /> specifies the URL that is required to activate a remote object. </param>
+        /// <param name="securityAttributes">Information used to authorize creation of <paramref name="typeName" />.</param>
         /// <exception cref="T:System.ArgumentNullException">
         ///   <paramref name="assemblyName" /> or <paramref name="typeName" /> is null. </exception>
         /// <exception cref="T:System.MissingMethodException">No matching constructor was found. </exception>
@@ -258,6 +268,8 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public object CreateInstanceAndUnwrap(string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture, object[] activationAttributes, Evidence securityAttributes)
         {
+            this.CheckDisposed();
+
             this.StartAddInActivatorProcess();
 
             this._overloadCreateInstanceAndUnwrap = 3;
@@ -286,6 +298,7 @@ namespace DevLib.AddIn
         /// <summary>
         /// Creates an object of the specified type.
         /// </summary>
+        /// <typeparam name="T">Type of instance.</typeparam>
         /// <returns>An instance of the object specified by <paramref name="typeName" />.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public T CreateInstance<T>()
@@ -296,6 +309,7 @@ namespace DevLib.AddIn
         /// <summary>
         /// Creates an object of the specified type.
         /// </summary>
+        /// <typeparam name="T">Type of instance.</typeparam>
         /// <param name="args">The arguments to pass to the constructor. This array of arguments must match in number, order, and type the parameters of the constructor to invoke. If the default constructor is preferred, <paramref name="args" /> must be an empty array or null. </param>
         /// <returns>An instance of the object specified by <paramref name="typeName" />.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
@@ -305,16 +319,58 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AddInDomain" /> class.
         /// </summary>
-        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public void Dispose()
         {
-            Unload();
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        ///
+        /// Releases all resources used by the current instance of the <see cref="AddInDomain" /> class.
+        /// </summary>
+        public void Close()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="AddInDomain" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        private void Dispose(bool disposing)
+        {
+            if (this._disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                this.Unload();
+
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+
+            this._disposed = true;
+        }
+
+        /// <summary>
+        /// Method Unload.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private void Unload()
@@ -334,7 +390,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method CreateAddInActivatorProcess.
         /// </summary>
         private void CreateAddInActivatorProcess()
         {
@@ -347,7 +403,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method StartAddInActivatorProcess.
         /// </summary>
         private void StartAddInActivatorProcess()
         {
@@ -358,7 +414,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method RestartAddInActivatorProcess.
         /// </summary>
         private void RestartAddInActivatorProcess()
         {
@@ -403,9 +459,9 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method RaiseEvent.
         /// </summary>
-        /// <param name="eventHandler"></param>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
         private void RaiseEvent(EventHandler eventHandler)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -418,10 +474,9 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method RaiseDataReceivedEvent.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="e">Instance of DataReceivedEventArgs.</param>
         private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
@@ -434,20 +489,20 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method OnProcessAttached.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
         private void OnProcessAttached(object sender, EventArgs e)
         {
             this.RaiseEvent(this.Loaded);
         }
 
         /// <summary>
-        ///
+        /// Method OnProcessDetached.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
         private void OnProcessDetached(object sender, EventArgs e)
         {
             this.RaiseEvent(this.Unloaded);
@@ -459,13 +514,24 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        ///
+        /// Method OnDataReceived.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of DataReceivedEventArgs.</param>
         private void OnDataReceived(object sender, DataReceivedEventArgs e)
         {
             this.RaiseDataReceivedEvent(e);
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.AddIn.AddInDomain");
+            }
         }
     }
 }

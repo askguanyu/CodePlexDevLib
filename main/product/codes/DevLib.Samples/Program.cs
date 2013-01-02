@@ -173,7 +173,7 @@ namespace DevLib.Samples
             domain.DataReceived += domain_DataReceived;
 
             Console.WriteLine("next");
-            domain.ProcessInfo.PrivateWorkingSet.ConsoleOutput();
+            domain.ProcessInfo.PrivateWorkingSetMemorySize.ConsoleOutput();
             Console.ReadKey();
 
             AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2");

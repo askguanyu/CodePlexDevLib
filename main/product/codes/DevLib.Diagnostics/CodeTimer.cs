@@ -138,6 +138,8 @@ namespace DevLib.Diagnostics
                 gcResultArray[i] = gcCountArray[i].ToString();
             }
 
+            Console.WriteLine();
+
             // Console output recorded times
             Console.ForegroundColor = ConsoleColor.White;
             string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "Stopwatch", "ThreadTime", "CpuCycles", string.Join("/", gcTitleArray));
@@ -185,6 +187,7 @@ namespace DevLib.Diagnostics
         private static ulong GetCycleCount()
         {
             ulong cycleCount = 0;
+
             try
             {
                 QueryThreadCycleTime(GetCurrentThread(), ref cycleCount);
@@ -205,6 +208,7 @@ namespace DevLib.Diagnostics
             long temp = 0;
             long kernelTime = 0;
             long userTimer = 0;
+
             try
             {
                 GetThreadTimes(GetCurrentThread(), out temp, out temp, out kernelTime, out userTimer);

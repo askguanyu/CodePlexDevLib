@@ -80,6 +80,8 @@ namespace DevLib.Diagnostics
                 outputAction = Console.WriteLine;
             }
 
+            string titleName = name.PadRight(53, '-');
+
             // Backup current thread priority
             var originalPriorityClass = Process.GetCurrentProcess().PriorityClass;
             var originalThreadPriority = Thread.CurrentThread.Priority;
@@ -89,15 +91,19 @@ namespace DevLib.Diagnostics
             ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(1, 15);
 
             Console.ForegroundColor = consoleRandomColor;
-            string beginTitle = string.Format("┌── Time Begin--> {0} ──┐", name);
+            string beginTitle = string.Format(@"/--Time Begin-->{0}--\", titleName);
             outputAction(beginTitle);
             Debug.WriteLine(beginTitle);
             Console.ForegroundColor = originalForeColor;
 
             // Record the latest GC counts
+            int gcArrayLength = GC.MaxGeneration + 1;
+
+            int[] gcCountArray = new int[gcArrayLength];
+
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            int[] gcCountArray = new int[GC.MaxGeneration + 1];
-            for (int i = 0; i <= GC.MaxGeneration; i++)
+
+            for (int i = 0; i < gcArrayLength; i++)
             {
                 gcCountArray[i] = GC.CollectionCount(i);
             }
@@ -114,33 +120,37 @@ namespace DevLib.Diagnostics
                 action();
             }
 
-            ulong cpuCycles = GetCycleCount() - cycleCount;
             long threadTime = GetCurrentThreadTime() - threadTimeCount;
+            ulong cpuCycles = GetCycleCount() - cycleCount;
 
             watch.Stop();
 
-            string[] gcResultArray = { "NA", "NA", "NA" };
-
-            for (int i = 0; i <= GC.MaxGeneration; i++)
+            for (int i = 0; i < gcArrayLength; i++)
             {
                 gcCountArray[i] = GC.CollectionCount(i) - gcCountArray[i];
+            }
+
+            string[] gcTitleArray = new string[gcArrayLength];
+            string[] gcResultArray = new string[gcArrayLength];
+            for (int i = 0; i < gcArrayLength; i++)
+            {
+                gcTitleArray[i] = string.Format("G{0}", i);
                 gcResultArray[i] = gcCountArray[i].ToString();
             }
 
             // Console output recorded times
             Console.ForegroundColor = ConsoleColor.White;
-            string resultTitle = string.Format("{0,-17}{1,-18}{2,-17}{3,-2}/{4,-2}/{5,-2}", "Stopwatch", "ThreadTime", "CpuCycles", "G0", "G1", "G2");
+            string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "Stopwatch", "ThreadTime", "CpuCycles", string.Join("/", gcTitleArray));
             outputAction(resultTitle);
             Debug.WriteLine(resultTitle);
 
             Console.ForegroundColor = ConsoleColor.Green;
-
-            string resultTime = string.Format("{0,7:N0}ms{1,16:N0}ms{2,17:N0}{3,10}{4,3}{5,3}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcResultArray[0], gcResultArray[1], gcResultArray[2]);
+            string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, string.Join("/", gcResultArray));
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 
             Console.ForegroundColor = consoleRandomColor;
-            string endTitle = string.Format("└── Time End----> {0} ──┘", name);
+            string endTitle = string.Format(@"\--Time End---->{0}--/", titleName);
             outputAction(endTitle);
             Debug.WriteLine(endTitle);
 

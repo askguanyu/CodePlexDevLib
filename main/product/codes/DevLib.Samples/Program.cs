@@ -103,7 +103,7 @@ namespace DevLib.Samples
                 });
 
                 PrintExitInfo();
-            });
+            }, 1, "DevLib.Samples");
         }
 
         private static void PrintStartInfo()

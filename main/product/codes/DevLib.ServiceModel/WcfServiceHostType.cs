@@ -126,89 +126,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Static Method LoadServiceHost.
-        /// </summary>
-        /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
-        /// <param name="configFile">Wcf configuration file.</param>
-        /// <returns>Instance of List{ServiceHost}.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static List<ServiceHost> LoadServiceHost(string assemblyFile, string configFile)
-        {
-            if (string.IsNullOrEmpty(assemblyFile))
-            {
-                throw new ArgumentNullException("assemblyFile");
-            }
-
-            if (!File.Exists(assemblyFile))
-            {
-                throw new ArgumentException("The file does not exist.", assemblyFile);
-            }
-
-            if (string.IsNullOrEmpty(configFile))
-            {
-                throw new ArgumentNullException("configFile");
-            }
-
-            if (!File.Exists(configFile))
-            {
-                throw new ArgumentException("The file does not exist.", configFile);
-            }
-
-            List<ServiceHost> result = new List<ServiceHost>();
-
-            try
-            {
-                Assembly assembly = Assembly.LoadFrom(assemblyFile);
-                Configuration configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = configFile }, ConfigurationUserLevel.None);
-                ServiceModelSectionGroup serviceModelSectionGroup = configuration.GetSectionGroup("system.serviceModel") as ServiceModelSectionGroup;
-                foreach (ServiceElement serviceElement in serviceModelSectionGroup.Services.Services)
-                {
-                    try
-                    {
-                        Type serviceType = assembly.GetType(serviceElement.Name);
-
-                        if (serviceType != null && IsWcfServiceClass(serviceType))
-                        {
-                            Uri baseAddress = null;
-
-                            foreach (BaseAddressElement baseAddressElement in serviceElement.Host.BaseAddresses)
-                            {
-                                baseAddress = new Uri(baseAddressElement.BaseAddress);
-                                break;
-                            }
-
-                            ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
-
-                            foreach (ServiceEndpointElement serviceEndpointElement in serviceElement.Endpoints)
-                            {
-                                if (!serviceEndpointElement.Binding.StartsWith("mex"))
-                                {
-                                    var contract = assembly.GetType(serviceEndpointElement.Contract);
-                                    var address = new Uri(baseAddress, serviceEndpointElement.Address);
-                                    var binding = GetBinding(serviceEndpointElement.Binding, false);
-                                    serviceHost.AddServiceEndpoint(serviceEndpointElement.Contract, binding, address);
-                                    result.Add(serviceHost);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadServiceHost", e.Source, e.Message, e.StackTrace, e.ToString()));
-                        throw;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadServiceHost", e.Source, e.Message, e.StackTrace, e.ToString()));
-                throw;
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Gets the System.Type object with the specified name from assembly file.
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
@@ -259,7 +176,7 @@ namespace DevLib.ServiceModel
         /// <param name="address">Binding address.</param>
         /// <param name="isMexBinding">Whether the binding is mex.</param>
         /// <returns>Instance of Binding.</returns>
-        private static Binding GetBinding(string address, bool isMexBinding)
+        internal static Binding GetBinding(string address, bool isMexBinding)
         {
             if (isMexBinding)
             {

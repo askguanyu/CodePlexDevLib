@@ -59,7 +59,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    //TestDevLibAddIn();
+                    TestDevLibAddIn();
                 });
 
                 CodeTimer.Time(delegate
@@ -263,7 +263,10 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test CodeSnippets");
 
-            AddInProcess addin = new AddInProcess(Platform.AnyCpu);
+            DateTime a = new DateTime();
+            a.IsWeekend().ConsoleOutput();
+
+            //AddInProcess addin = new AddInProcess(Platform.AnyCpu);
             //Activator.CreateInstance<>
 
             //Configuration config = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = Path.Combine(Environment.CurrentDirectory, "test.config") }, ConfigurationUserLevel.None);

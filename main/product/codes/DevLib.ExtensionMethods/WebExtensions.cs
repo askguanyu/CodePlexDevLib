@@ -20,17 +20,18 @@ namespace DevLib.ExtensionMethods
         /// <returns>Byte array of data from the url.</returns>
         public static byte[] DownloadData(this string url)
         {
-            WebRequest req = WebRequest.Create(url);
+            WebRequest webRequest = WebRequest.Create(url);
 
-            using (WebResponse response = req.GetResponse())
+            using (WebResponse webResponse = webRequest.GetResponse())
             {
-                using (Stream stream = response.GetResponseStream())
+                using (Stream stream = webResponse.GetResponseStream())
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
                     {
                         // Download in chunks
                         byte[] buffer = new byte[1024];
-                        int dataLength = (int)response.ContentLength;
+
+                        ////int dataLength = (int)webResponse.ContentLength;
 
                         while (true)
                         {

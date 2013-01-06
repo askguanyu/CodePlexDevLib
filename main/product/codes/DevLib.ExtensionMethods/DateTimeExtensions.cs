@@ -20,11 +20,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>The week number.</returns>
         public static int GetWeekOfYear(this DateTime source)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
             var culture = CultureInfo.CurrentUICulture;
             var calendar = culture.Calendar;
             var dateTimeFormat = culture.DateTimeFormat;
@@ -39,11 +34,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if DateTime is weekend; otherwise, false.</returns>
         public static bool IsWeekend(this DateTime source)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
             return (source.DayOfWeek == DayOfWeek.Sunday) || (source.DayOfWeek == DayOfWeek.Saturday);
         }
     }

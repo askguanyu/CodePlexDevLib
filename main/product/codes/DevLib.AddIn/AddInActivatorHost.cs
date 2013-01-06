@@ -127,34 +127,34 @@ namespace DevLib.AddIn
             addInDomainSetup.ExternalAssemblies[typeof(AddInActivatorHost).Assembly.GetName()] = typeof(AddInActivatorHost).Assembly.Location;
 
             object resolver = appDomain.CreateInstanceFromAndUnwrap(
-                type.Assembly.Location,
-                type.FullName,
-                false,
-                BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance,
-                null,
-                new[] { addInDomainSetup.ExternalAssemblies },
-                null,
-                null,
-                null);
+                                        type.Assembly.Location,
+                                        type.FullName,
+                                        false,
+                                        BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance,
+                                        null,
+                                        new[] { addInDomainSetup.ExternalAssemblies },
+                                        null,
+                                        null,
+                                        null);
 
             type.InvokeMember("Mount", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, resolver, null);
 
             AddInActivatorHost host = (AddInActivatorHost)appDomain.CreateInstanceFromAndUnwrap(
-                typeof(AddInActivatorHost).Assembly.Location,
-                typeof(AddInActivatorHost).FullName,
-                false,
-                BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance,
-                null,
-                new object[] { guid, processId, addInDomainSetup },
-                null,
-                null,
-                null);
+                                                                    typeof(AddInActivatorHost).Assembly.Location,
+                                                                    typeof(AddInActivatorHost).FullName,
+                                                                    false,
+                                                                    BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance,
+                                                                    null,
+                                                                    new object[] { guid, processId, addInDomainSetup },
+                                                                    null,
+                                                                    null,
+                                                                    null);
 
             host.WaitForExit();
 
             type.InvokeMember("Unmount", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, resolver, null);
 
-            // If parent process (host) finishes, the current process must end
+            // if parent process (host) finishes, the current process must end
             Environment.Exit(0);
         }
 

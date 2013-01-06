@@ -25,7 +25,7 @@ namespace DevLib.ExtensionMethods
         {
             string sourceHash = source.ToMD5();
 
-            return string.Compare(source, hash, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Compare(sourceHash, hash, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         /// <summary>
@@ -36,9 +36,9 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if the input and the hash are the same; otherwise, false.</returns>
         public static bool MD5VerifyToOriginal(this string source, string original)
         {
-            string sourceHash = original.ToMD5();
+            string originalHash = original.ToMD5();
 
-            return string.Compare(source, sourceHash, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Compare(source, originalHash, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         /// <summary>

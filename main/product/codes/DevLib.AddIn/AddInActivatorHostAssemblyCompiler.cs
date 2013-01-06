@@ -52,7 +52,7 @@ namespace DevLib.AddIn
 
                 CompilerParameters compilerParameters = new CompilerParameters
                 {
-                    ////CompilerOptions = string.Join(" ", compilerArgs.ToArray()),
+                    CompilerOptions = string.Join(" ", compilerArgs.ToArray()),
                     GenerateExecutable = true,
                     GenerateInMemory = false,
                     OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName))

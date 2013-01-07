@@ -59,7 +59,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    TestDevLibAddIn();
+                    //TestDevLibAddIn();
                 });
 
                 CodeTimer.Time(delegate
@@ -166,7 +166,7 @@ namespace DevLib.Samples
             //    Console.WriteLine(a);
             //}
 
-            AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1");
+            AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", true, new AddInDomainSetup { Platform = PlatformTargetEnum.x86 });
             var remoteObj = domain.CreateInstance<AsyncSocketServer>();
             remoteObj.Start(999);
             remoteObj.DataReceived += remoteObj_DataReceived;
@@ -175,6 +175,8 @@ namespace DevLib.Samples
             Console.WriteLine("next");
             domain.ProcessInfo.PrivateWorkingSetMemorySize.ConsoleOutput();
             Console.ReadKey();
+            domain.AddInDomainSetupInfo.DllDirectory.ConsoleOutput();
+
 
             AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2");
             var remoteObj1 = domain1.CreateInstance<AsyncSocketClient>();
@@ -182,6 +184,8 @@ namespace DevLib.Samples
 
             Console.WriteLine("next");
             Console.ReadKey();
+            domain1.AddInDomainSetupInfo.DllDirectory.ConsoleOutput();
+
             domain.Dispose();
             domain1.Dispose();
 

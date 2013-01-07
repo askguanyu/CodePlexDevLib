@@ -124,7 +124,7 @@ namespace DevLib.WinForms
             {
                 this.IsViewingXML = false;
                 this.LastText = this.Text;
-                throw new ApplicationException("Please check the input Xml. Error:" + xmlException.Message, xmlException);
+                throw new ApplicationException(string.Format("Please check the input Xml. Error: {0}", xmlException.Message), xmlException);
             }
             catch
             {
@@ -177,8 +177,7 @@ namespace DevLib.WinForms
             // This viewer does not support the Xml file that has Namespace.
             if (!string.IsNullOrEmpty(element.Name.Namespace.NamespaceName))
             {
-                throw new ApplicationException(
-                    "This viewer does not support the Xml file that has Namespace.");
+                throw new ApplicationException("This viewer does not support the Xml file that has Namespace.");
             }
 
             string elementRtfFormat = string.Empty;
@@ -221,8 +220,7 @@ namespace DevLib.WinForms
             }
             else
             {
-                elementRtfFormat =
-                    string.Format(@"
+                elementRtfFormat = string.Format(@"
 {0}\cf{1} <\cf{2} {3}{{0}}\cf{1} />\par",
                                         indent,
                                         XMLViewerSettings.TagID,
@@ -242,6 +240,7 @@ namespace DevLib.WinForms
                         XMLViewerSettings.AttributeValueID,
                         attribute.Name,
                         CharacterEncoder.Encode(attribute.Value));
+
                     attributesRtfContent.Append(attributeRtfContent);
                 }
 

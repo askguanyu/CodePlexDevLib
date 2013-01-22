@@ -331,6 +331,13 @@ namespace DevLib.Utilities
 
             if (disposing)
             {
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+
                 if (this._autoResetEvent != null)
                 {
                     this._autoResetEvent.Close();
@@ -342,13 +349,6 @@ namespace DevLib.Utilities
                     this._serialPort.Dispose();
                     this._serialPort = null;
                 }
-
-                // dispose managed resources
-                ////if (managedResource != null)
-                ////{
-                ////    managedResource.Dispose();
-                ////    managedResource = null;
-                ////}
             }
 
             // free native resources

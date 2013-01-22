@@ -99,14 +99,24 @@ namespace DevLib.AddIn
 
             if (disposing)
             {
-                ChannelServices.UnregisterChannel(this._ipcChannel);
-
                 // dispose managed resources
                 ////if (managedResource != null)
                 ////{
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
+
+                if (this._ipcChannel != null)
+                {
+                    try
+                    {
+                        this._ipcChannel.StopListening(null);
+                        ChannelServices.UnregisterChannel(this._ipcChannel);
+                    }
+                    catch
+                    {
+                    }
+                }
             }
 
             // free native resources

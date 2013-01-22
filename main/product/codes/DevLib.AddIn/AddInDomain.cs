@@ -349,14 +349,14 @@ namespace DevLib.AddIn
 
             if (disposing)
             {
-                this.Unload();
-
                 // dispose managed resources
                 ////if (managedResource != null)
                 ////{
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
+
+                this.Unload();
             }
 
             // free native resources
@@ -450,8 +450,9 @@ namespace DevLib.AddIn
                             break;
                     }
                 }
-                catch
+                catch (Exception e)
                 {
+                    ExceptionHandler.Log(e);
                 }
             }
 

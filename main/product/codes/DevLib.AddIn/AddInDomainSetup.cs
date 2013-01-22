@@ -10,12 +10,10 @@ namespace DevLib.AddIn
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
-    using System.Runtime.InteropServices;
     using System.Runtime.Serialization.Formatters;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Security.Permissions;
     using System.Security.Policy;
-    using System.Text;
 
     /// <summary>
     /// Class AddInDomainSetup.
@@ -31,7 +29,7 @@ namespace DevLib.AddIn
         {
             this.AppDomainSetup = AppDomain.CurrentDomain.SetupInformation;
             this.DeleteOnUnload = true;
-            this.DllDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            this.DllDirectory = Directory.GetCurrentDirectory();
             this.EnvironmentVariables = new Dictionary<string, string>();
             this.Evidence = AppDomain.CurrentDomain.Evidence;
             this.ExeFileDirectory = Path.GetTempPath();
@@ -43,49 +41,6 @@ namespace DevLib.AddIn
             this.RestartOnProcessExit = true;
             this.TypeFilterLevel = TypeFilterLevel.Full;
             this.WorkingDirectory = Environment.CurrentDirectory;
-        }
-
-        /// <summary>
-        /// Gets the currently configured DLL search path as set by SetDllDirectory.
-        /// </summary>
-        [Obsolete("This property has been deprecated. Please use AppDomain.CurrentDomain.DllDirectory instead.")]
-        public string CurrentDllDirectory
-        {
-            [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-            get
-            {
-                try
-                {
-                    int bytesNeeded = NativeMethods.GetDllDirectory(0, null);
-
-                    if (bytesNeeded == 0)
-                    {
-                        return string.Empty;
-                        ////throw new Win32Exception();
-                    }
-
-                    StringBuilder stringBuilder = new StringBuilder(bytesNeeded);
-                    NativeMethods.SetLastError(0);
-                    bytesNeeded = NativeMethods.GetDllDirectory(bytesNeeded, stringBuilder);
-
-                    if (bytesNeeded == 0)
-                    {
-                        int errorCode = Marshal.GetLastWin32Error();
-
-                        if (errorCode != 0)
-                        {
-                            return string.Empty;
-                            ////throw new Win32Exception(errorCode);
-                        }
-                    }
-
-                    return stringBuilder.ToString();
-                }
-                catch
-                {
-                    return string.Empty;
-                }
-            }
         }
 
         /// <summary>

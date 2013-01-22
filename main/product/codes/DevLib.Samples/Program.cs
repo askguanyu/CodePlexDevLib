@@ -30,7 +30,9 @@ namespace DevLib.Samples
     using System.Management;
     using System.Net;
     using System.Net.NetworkInformation;
+    using System.Net.Sockets;
     using System.Reflection;
+    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters;
     using System.ServiceModel;
     using System.Text;
@@ -148,16 +150,15 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.AddIn");
 
-            //var info = new AddInActivatorProcessInfo();
+            var info = new AddInActivatorProcessInfo();
 
-            //addin = new AddInDomain("DevLib.AddIn.Sample", false);
-            //addin.Loaded += new EventHandler(addin_Started);
-            //addin.Reloaded += new EventHandler(addin_Restarted);
-            //addin.Unloaded += new EventHandler(addin_Stopped);
-            //addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
+            var addin = new AddInDomain("DevLib.AddIn.Sample");
+            addin.Loaded += new EventHandler(addin_Started);
+            addin.Reloaded += new EventHandler(addin_Restarted);
+            addin.Unloaded += new EventHandler(addin_Stopped);
+            addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
 
-            //addin.Load();
-            //addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
 
             //using (AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", false))
             //{
@@ -166,28 +167,67 @@ namespace DevLib.Samples
             //    Console.WriteLine(a);
             //}
 
-            AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", true, new AddInDomainSetup { Platform = PlatformTargetEnum.x86 });
-            var remoteObj = domain.CreateInstance<AsyncSocketServer>();
-            remoteObj.Start(999);
-            remoteObj.DataReceived += remoteObj_DataReceived;
-            domain.DataReceived += domain_DataReceived;
+            //AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", true, new AddInDomainSetup { Platform = PlatformTargetEnum.AnyCPU });
+            //AddInDomain domain3 = new AddInDomain("DevLib.AddIn.Sample3", true, new AddInDomainSetup { Platform = PlatformTargetEnum.AnyCPU });
+            //var remoteObj = domain.CreateInstance<AsyncSocketServer>();
+            //var remoteObj3 = domain3.CreateInstance<AsyncSocketServer>();
+            //remoteObj.Start(2000);
+            //remoteObj3.Start(2500);
+            //remoteObj.DataReceived += remoteObj_DataReceived;
+            //domain.DataReceived += domain_DataReceived;
 
-            Console.WriteLine("next");
-            domain.ProcessInfo.PrivateWorkingSetMemorySize.ConsoleOutput();
+            //remoteObj3.DataReceived += remoteObj_DataReceived;
+            //domain3.DataReceived += domain_DataReceived;
+
+            //Console.WriteLine("next");
+            //domain.ProcessInfo.PrivateWorkingSetMemorySize.ConsoleOutput();
+            //Console.ReadKey();
+            //domain.AddInDomainSetupInfo.DllDirectory.ConsoleOutput();
+
+            ////Task.Factory.StartNew(() =>
+            ////{
+            ////    Parallel.For(0, 2000, (loop) =>
+            ////    {
+
+            ////        AsyncSocketClient client1 = new AsyncSocketClient("127.0.0.1", 9999);
+            ////        client1.Connect();
+            ////        //client1.SendOnce("127.0.0.1", 9999, loop.ToString(), Encoding.ASCII);
+            ////        client1.Send(loop.ToString(), Encoding.Default);
+            ////    });
+            ////});
+
+            //Console.WriteLine("next");
+            //Console.ReadKey();
+
+            //AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2");
+            //var remoteObj1 = domain1.CreateInstance<AsyncSocketClient>();
+            //remoteObj1.Connect("127.0.0.1", 2500);
+
+            //for (int i = 0; i < 20000; i++)
+            //{
+            //    new AsyncSocketClient("127.0.0.1", 2500).Connect().Send(i.ToString(), Encoding.Default);
+
+            //    //remoteObj1.Send(DateTime.Now.ToString()+"  ", Encoding.Default);
+            //}
+
+            Console.WriteLine("next1");
             Console.ReadKey();
-            domain.AddInDomainSetupInfo.DllDirectory.ConsoleOutput();
+
+            //Task.Factory.StartNew(() =>
+            //{
+            //    Parallel.For(0, 20000, (loop) =>
+            //    {
+            //        new AsyncSocketClient("127.0.0.1", 999).Connect().Send(DateTime.Now.ToString(), Encoding.Default);
+            //    });
+            //});
+            //remoteObj1.SendOnce("127.0.0.1", 9999, "!!!!!!!!!!!!!!!!hello555555555555", Encoding.Default);
 
 
-            AddInDomain domain1 = new AddInDomain("DevLib.AddIn.Sample2");
-            var remoteObj1 = domain1.CreateInstance<AsyncSocketClient>();
-            remoteObj1.SendOnce("127.0.0.1", 999, "!!!!!!!!!!!!!!!!hello555555555555", Encoding.Default);
-
-            Console.WriteLine("next");
             Console.ReadKey();
-            domain1.AddInDomainSetupInfo.DllDirectory.ConsoleOutput();
+            //domain1.AddInDomainSetupInfo.DllDirectory.ConsoleOutput();
 
-            domain.Dispose();
-            domain1.Dispose();
+            //domain.Dispose();
+            //domain1.Dispose();
 
             //addin.CreateInstance<TestClass>().TestAdd(1,2).ConsoleOutput();
 
@@ -227,6 +267,7 @@ namespace DevLib.Samples
 
         static void remoteObj_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
         {
+            (sender as AsyncSocketServer).ConnectedSocketsCount.ConsoleOutput("ConnectedSocketsCount: {0}");
             e.TransferredRawData.ToEncodingString().ConsoleOutput();
         }
 
@@ -486,6 +527,17 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ExtensionMethods");
 
+            #region SerializationExtensions
+
+            Person person = new Person("foo", "好的", 1);
+            //person.SerializeJson().ConsoleOutput().DeserializeJson<Person>();
+            //var aperson = person.SerializeJson(Encoding.UTF8).ConsoleOutput().DeserializeJson<Person>(Encoding.UTF8);
+            var aperson = person.SerializeXml().DeserializeXml<Person>().LastName.ConsoleOutput();
+
+            Console.ReadKey();
+
+            #endregion
+
             #region Array
             TestClass[] sourceArray
                 = new TestClass[]
@@ -538,7 +590,7 @@ namespace DevLib.Samples
             //var obj = bytes.ToObject<int>();
 
             "compress".ConsoleOutput();
-            var input = sourceArray.ToByteArray();
+            var input = sourceArray.SerializeBinary();
             input.Length.ConsoleOutput();
 
             var compress = input.Compress();
@@ -559,7 +611,11 @@ namespace DevLib.Samples
             #endregion
 
             #region IO
-            //"hello".CreateTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
+            var a = "   C:\\asdasd\\ \" \"   ";
+            var c = Path.GetInvalidPathChars();
+            string b = a.Remove(c);
+            "hello".WriteTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
+
             //DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();
             //@".\out\list.bin".ReadBinaryFile<DateTime>().ConsoleWriteLine();
             #endregion
@@ -591,20 +647,52 @@ namespace DevLib.Samples
             PrintMethodName("Test Dev.Lib.Net");
 
             #region AsyncSocket
-            AsyncSocketServer svr = new AsyncSocketServer(9999);
-            svr.DataReceived += new EventHandler<AsyncSocketUserTokenEventArgs>(svr_DataReceived);
-            svr.Start();
 
-            AsyncSocketClient client = new AsyncSocketClient();
+            AsyncSocketClient client = new AsyncSocketClient("127.0.0.1", 999);
+            //AsyncSocketClient client1 = new AsyncSocketClient("127.0.0.1", 999);
+            client.Connect();
+            //client1.Connect();
 
-            client.DataSent += new EventHandler<AsyncSocketUserTokenEventArgs>(client_DataSent);
-            client.Connect("127.0.0.1", 9999);
-            client.Send("hello1  你好 end", Encoding.UTF8);
-            Thread.Sleep(100);
-            client.Send("hello2  你好 end", Encoding.UTF8);
-            Thread.Sleep(100);
-            client.Send("hello3  你好 end", Encoding.UTF8);
-            Thread.Sleep(100);
+            for (int i = 0; i < 100; i++)
+            {
+                //Thread.Sleep(10);
+                client.Send(i.ToString());
+                //client1.Send(null);
+            }
+
+
+            Console.WriteLine("Over.");
+            Console.ReadKey();
+
+
+
+            //AsyncSocketServer svr = new AsyncSocketServer();
+            //svr.DataReceived += svr_DataReceived;
+            //svr.Start(9999);
+
+            //Task.Factory.StartNew(() =>
+            //{
+            //    Parallel.For(0, 2000, (loop) =>
+            //    {
+
+            //        AsyncSocketClient client1 = new AsyncSocketClient("127.0.0.1", 9999);
+            //        client1.Connect();
+            //        //client1.SendOnce("127.0.0.1", 9999, loop.ToString(), Encoding.ASCII);
+            //        client1.Send(loop.ToString(), Encoding.ASCII);
+            //    });
+            //});
+
+            //Console.ReadKey();
+
+            //AsyncSocketClient client = new AsyncSocketClient();
+            //client.DataSent += new EventHandler<AsyncSocketUserTokenEventArgs>(client_DataSent);
+            //client.Connect("127.0.0.1", 9999);
+            //client.Send("hello1  你好 end", Encoding.UTF8);
+            //Thread.Sleep(100);
+            //client.Send("hello2  你好 end", Encoding.UTF8);
+            //Thread.Sleep(100);
+            //client.Send("hello3  你好 end", Encoding.UTF8);
+            //Thread.Sleep(100);
             //client.Send("hello2  你好 end", Encoding.UTF32);
             //client.Send("hello3  你好 end", Encoding.BigEndianUnicode);
             //client.Send("hello4  你好 end", Encoding.ASCII);
@@ -612,8 +700,9 @@ namespace DevLib.Samples
 
             //Console.ReadKey();
 
-            //client.Dispose();
             //svr.Dispose();
+            //client.Dispose();
+            
 
             #endregion
 
@@ -772,6 +861,7 @@ namespace DevLib.Samples
         private static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
         {
             e.TransferredRawData.ToEncodingString(Encoding.UTF8).ConsoleOutput();
+            //svr.Send(e.ConnectionId, e.TransferredRawData);
             Console.WriteLine();
         }
 
@@ -781,17 +871,20 @@ namespace DevLib.Samples
         }
     }
 
+    [DataContract()]
     [Serializable]
     public class TestClass
     {
         public event EventHandler<EventArgs> OnTestMe;
 
+        [DataMember()]
         public string Name
         {
             get;
             set;
         }
 
+        [DataMember()]
         public int Age
         {
             get;
@@ -821,4 +914,29 @@ namespace DevLib.Samples
             return a + b;
         }
     }
+
+    [DataContract]
+    [Serializable]
+    public class Person
+    {
+        public Person()
+        {
+
+        }
+
+        [DataMember()]
+        public string FirstName;
+        [DataMember]
+        public string LastName;
+        [DataMember()]
+        public int ID;
+
+        public Person(string newfName, string newLName, int newID)
+        {
+            FirstName = newfName;
+            LastName = newLName;
+            ID = newID;
+        }
+    }
+
 }

@@ -10,12 +10,7 @@ namespace DevLib.ExtensionMethods
     using System.ComponentModel;
     using System.IO;
     using System.Reflection;
-    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
-    using System.Runtime.Serialization.Json;
-    using System.Text;
-    using System.Xml;
-    using System.Xml.Serialization;
 
     /// <summary>
     /// Object Extensions.
@@ -183,174 +178,6 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert object to bytes.
-        /// </summary>
-        /// <typeparam name="T">The type of input object</typeparam>
-        /// <param name="source">Source object.</param>
-        /// <returns>Byte array.</returns>
-        public static byte[] ToByteArray<T>(this T source)
-        {
-            if (!typeof(T).IsSerializable)
-            {
-                throw new ArgumentException("The type must be serializable.", "source");
-            }
-
-            // Don't serialize a null object, simply return the default for that object
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
-                binaryFormatter.Serialize(memoryStream, source);
-                return memoryStream.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Serializes an object to a JSON string.
-        /// </summary>
-        /// <param name="source">Object to serialize.</param>
-        /// <returns>JSON string.</returns>
-        public static string ToJson(this object source)
-        {
-            // Don't serialize a null object, simply return the default for that object
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                var serializer = new DataContractJsonSerializer(source.GetType());
-                serializer.WriteObject(memoryStream, source);
-                return Encoding.Default.GetString(memoryStream.ToArray());
-            }
-        }
-
-        /// <summary>
-        /// Serializes an object to a JSON string.
-        /// </summary>
-        /// <param name="source">Object to serialize.</param>
-        /// <param name="knownTypes">An IEnumerable of known types.  Useful for complex objects.</param>
-        /// <returns>JSON string.</returns>
-        public static string ToJson(this object source, IEnumerable<Type> knownTypes)
-        {
-            // Don't serialize a null object, simply return the default for that object
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                var serializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
-                serializer.WriteObject(memoryStream, source);
-                return Encoding.Default.GetString(memoryStream.ToArray());
-            }
-        }
-
-        /// <summary>
-        /// Deserializes a JSON object to an object.
-        /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
-        /// <param name="source">JSON string object.</param>
-        /// <returns>The result object.</returns>
-        public static T FromJson<T>(this string source)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return default(T);
-            }
-
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source)))
-            {
-                var serializer = new DataContractJsonSerializer(typeof(T));
-                return (T)serializer.ReadObject(memoryStream);
-            }
-        }
-
-        /// <summary>
-        /// Deserializes a JSON object to an object.
-        /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
-        /// <param name="source">JSON string object.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
-        /// <returns>The result object.</returns>
-        public static T FromJson<T>(this string source, IEnumerable<Type> knownTypes)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return default(T);
-            }
-
-            using (MemoryStream memoryStream = new MemoryStream(Encoding.Default.GetBytes(source)))
-            {
-                var serializer = new DataContractJsonSerializer(typeof(T), knownTypes);
-                return (T)serializer.ReadObject(memoryStream);
-            }
-        }
-
-        /// <summary>
-        /// Serializes the object into an XML string.
-        /// </summary>
-        /// <remarks>
-        /// The object to be serialized should be decorated with the <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
-        /// </remarks>
-        /// <param name="source">The object to serialize.</param>
-        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
-        /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
-        /// <returns>An XML encoded string representation of the source object.</returns>
-        public static string ToXml(this object source, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            string result = null;
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Encoding = new System.Text.UTF8Encoding(false) }))
-            {
-                XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
-                if (removeDefaultNamespace)
-                {
-                    xmlns.Add(string.Empty, string.Empty);
-                }
-
-                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
-                xmlSerializer.Serialize(xmlWriter, source, xmlns);
-                result = stringBuilder.ToString();
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deserializes the XML string object into object.
-        /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
-        /// <param name="source">The XML string to deserialize.</param>
-        /// <returns>Instance of T.</returns>
-        public static T FromXml<T>(this string source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            using (TextReader inputStream = new StringReader(source))
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                return (T)xmlSerializer.Deserialize(inputStream);
-            }
-        }
-
-        /// <summary>
         /// Converts an object to the specified target type
         /// or returns the default value if those 2 types are not convertible.
         /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
@@ -365,19 +192,45 @@ namespace DevLib.ExtensionMethods
         /// <returns>The target type</returns>
         public static T ConvertTo<T>(this object source, T defaultValue = default(T), bool ignoreException = true)
         {
-            if (ignoreException)
+            if (source == null)
             {
-                try
+                throw new ArgumentNullException("source");
+            }
+
+            try
+            {
+                var targetType = typeof(T);
+
+                if (source.GetType() == targetType)
                 {
-                    return source.ConvertTo<T>(defaultValue);
+                    return (T)source;
                 }
-                catch
+
+                var converter = TypeDescriptor.GetConverter(source);
+                if (converter != null && converter.CanConvertTo(targetType))
+                {
+                    return (T)converter.ConvertTo(source, targetType);
+                }
+
+                converter = TypeDescriptor.GetConverter(targetType);
+                if (converter != null && converter.CanConvertFrom(source.GetType()))
+                {
+                    return (T)converter.ConvertFrom(source);
+                }
+
+                throw new NotSupportedException();
+            }
+            catch
+            {
+                if (ignoreException)
                 {
                     return defaultValue;
                 }
+                else
+                {
+                    throw;
+                }
             }
-
-            return source.ConvertTo<T>(defaultValue);
         }
 
         /// <summary>
@@ -398,21 +251,8 @@ namespace DevLib.ExtensionMethods
         /// <remarks>The source and target objects must be of the same type.</remarks>
         /// <param name="source">The source object.</param>
         /// <param name="target">The target object.</param>
-        /// <param name="ignoreProperty">A single property name to ignore.</param>
-        public static void CopyPropertiesFrom(this object source, object target, string ignoreProperty)
-        {
-            source.CopyPropertiesFrom(target, new string[] { ignoreProperty });
-        }
-
-        /// <summary>
-        /// Copies the readable and writable public property values from the target object to the source and
-        /// optionally allows for the ignoring of any number of properties.
-        /// </summary>
-        /// <remarks>The source and target objects must be of the same type.</remarks>
-        /// <param name="source">The source object.</param>
-        /// <param name="target">The target object.</param>
         /// <param name="ignoreProperties">An array of property names to ignore.</param>
-        public static void CopyPropertiesFrom(this object source, object target, string[] ignoreProperties)
+        public static void CopyPropertiesFrom(this object source, object target, params string[] ignoreProperties)
         {
             if (source == null)
             {
@@ -475,51 +315,6 @@ namespace DevLib.ExtensionMethods
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Converts an object to the specified target type or returns the default value if
-        /// those 2 types are not convertible.
-        /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
-        /// <para>
-        /// If the exceptions are not ignored and the <paramref name="source"/> can't be convert even if
-        /// the types are convertible with each other, an exception is thrown.</para>
-        /// </summary>
-        /// <typeparam name = "T">Type to convert to.</typeparam>
-        /// <param name = "source">The value.</param>
-        /// <param name = "defaultValue">The default value.</param>
-        /// <returns>The target type.</returns>
-        private static T ConvertTo<T>(this object source, T defaultValue)
-        {
-            if (source != null)
-            {
-                var targetType = typeof(T);
-
-                if (source.GetType() == targetType)
-                {
-                    return (T)source;
-                }
-
-                var converter = TypeDescriptor.GetConverter(source);
-                if (converter != null)
-                {
-                    if (converter.CanConvertTo(targetType))
-                    {
-                        return (T)converter.ConvertTo(source, targetType);
-                    }
-                }
-
-                converter = TypeDescriptor.GetConverter(targetType);
-                if (converter != null)
-                {
-                    if (converter.CanConvertFrom(source.GetType()))
-                    {
-                        return (T)converter.ConvertFrom(source);
-                    }
-                }
-            }
-
-            return defaultValue;
         }
     }
 }

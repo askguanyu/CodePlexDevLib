@@ -60,9 +60,9 @@ namespace DevLib.AddIn
 
                 compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
 
-                string assemblySource = Properties.Resources.Program
-                    .Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName)
-                    .Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
+                string assemblySource = DevLib.AddIn.Properties.Resources.Program
+                                                                                 .Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName)
+                                                                                 .Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
 
                 results = provider.CompileAssemblyFromSource(compilerParameters, assemblySource);
             }

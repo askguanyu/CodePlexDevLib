@@ -9,7 +9,6 @@ namespace DevLib.ExtensionMethods
     using System.Drawing;
     using System.IO;
     using System.IO.Compression;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
 
     /// <summary>
@@ -83,34 +82,19 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert bytes to Encoding string by using Encoding.Default.
-        /// </summary>
-        /// <param name="source">Byte array.</param>
-        /// <returns>Encoding string by using Encoding.Default.</returns>
-        public static string ToEncodingString(this byte[] source)
-        {
-            return source.ToEncodingString(Encoding.Default);
-        }
-
-        /// <summary>
         /// Convert bytes to Encoding string.
         /// </summary>
         /// <param name="source">Byte array.</param>
         /// <param name="encoding">Instance of Encoding.</param>
         /// <returns>Encoding string.</returns>
-        public static string ToEncodingString(this byte[] source, Encoding encoding)
+        public static string ToEncodingString(this byte[] source, Encoding encoding = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (source.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            return encoding.GetString(source);
+            return encoding == null ? Encoding.Default.GetString(source) : encoding.GetString(source);
         }
 
         /// <summary>
@@ -129,57 +113,6 @@ namespace DevLib.ExtensionMethods
             {
                 memoryStream.Write(source, 0, source.Length);
                 return Image.FromStream(memoryStream);
-            }
-        }
-
-        /// <summary>
-        /// Convert bytes to object.
-        /// </summary>
-        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
-        /// <param name="source">Byte array.</param>
-        /// <returns>Instance of T.</returns>
-        public static T ToObject<T>(this byte[] source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            if (source.Length == 0)
-            {
-                return default(T);
-            }
-
-            using (MemoryStream memoryStream = new MemoryStream(source))
-            {
-                memoryStream.Position = 0;
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
-                return (T)binaryFormatter.Deserialize(memoryStream);
-            }
-        }
-
-        /// <summary>
-        /// Convert bytes to object.
-        /// </summary>
-        /// <param name="source">Byte array.</param>
-        /// <returns>Instance object.</returns>
-        public static object ToObject(this byte[] source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            if (source.Length == 0)
-            {
-                return null;
-            }
-
-            using (MemoryStream memoryStream = new MemoryStream(source))
-            {
-                memoryStream.Position = 0;
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
-                return binaryFormatter.Deserialize(memoryStream);
             }
         }
 

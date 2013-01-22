@@ -476,18 +476,15 @@ namespace DevLib.AddIn
 
             if (disposing)
             {
-                this.DisposeClient();
-                this.Kill();
-
-                this.IsRunning = false;
-                this.RaiseEvent(this.Detached);
-
                 // dispose managed resources
                 ////if (managedResource != null)
                 ////{
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
+
+                this.DisposeClient();
+                this.Kill();
             }
 
             // free native resources
@@ -496,6 +493,9 @@ namespace DevLib.AddIn
             ////    Marshal.FreeHGlobal(nativeResource);
             ////    nativeResource = IntPtr.Zero;
             ////}
+
+            this.IsRunning = false;
+            this.RaiseEvent(this.Detached);
 
             this._disposed = true;
         }
@@ -514,8 +514,9 @@ namespace DevLib.AddIn
                     this._process.WaitForExit(1000);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                ExceptionHandler.Log(e);
             }
 
             if (this._addInDomainSetup.DeleteOnUnload)
@@ -537,7 +538,7 @@ namespace DevLib.AddIn
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._friendlyName));
+                        ExceptionHandler.Log(e);
                         throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._friendlyName), e);
                     }
 
@@ -547,7 +548,7 @@ namespace DevLib.AddIn
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainSetupFile));
+                        ExceptionHandler.Log(e);
                         throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainSetupFile), e);
                     }
 
@@ -557,7 +558,7 @@ namespace DevLib.AddIn
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainLogFile));
+                        ExceptionHandler.Log(e);
                         throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainLogFile), e);
                     }
                 }

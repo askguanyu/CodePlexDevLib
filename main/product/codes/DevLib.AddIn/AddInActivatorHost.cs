@@ -8,7 +8,6 @@ namespace DevLib.AddIn
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
@@ -63,7 +62,7 @@ namespace DevLib.AddIn
         /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
         public AddInActivatorHost(string guid, int processId, AddInDomainSetup addInDomainSetup)
         {
-            SetupDllDirectory(addInDomainSetup.DllDirectory);
+            Directory.SetCurrentDirectory(addInDomainSetup.DllDirectory);
             BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider { TypeFilterLevel = addInDomainSetup.TypeFilterLevel };
             BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
             this._process = Process.GetProcessById(processId);
@@ -164,21 +163,6 @@ namespace DevLib.AddIn
         public void WaitForExit()
         {
             this._process.WaitForExit();
-        }
-
-        /// <summary>
-        /// Static Method SetupDllDirectory.
-        /// </summary>
-        /// <param name="dllDirectory">Dll directory.</param>
-        private static void SetupDllDirectory(string dllDirectory)
-        {
-            if (!string.IsNullOrEmpty(dllDirectory))
-            {
-                if (!NativeMethods.SetDllDirectory(dllDirectory))
-                {
-                    throw new Win32Exception();
-                }
-            }
         }
     }
 }

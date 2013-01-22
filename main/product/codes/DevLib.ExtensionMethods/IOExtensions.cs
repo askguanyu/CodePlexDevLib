@@ -16,83 +16,33 @@ namespace DevLib.ExtensionMethods
     public static class IOExtensions
     {
         /// <summary>
-        /// Creates a new file, writes the specified string to the file, and then closes the file.
-        /// </summary>
-        /// <param name="contents">The string to write to the file.</param>
-        /// <param name="fileName">The file to write to.</param>
-        /// <param name="overwritten">Whether overwrite exists file.</param>
-        /// <returns>Full path of the file name if write file successfully.</returns>
-        public static string WriteTextFile(this string contents, string fileName, bool overwritten = true)
-        {
-            if (string.IsNullOrEmpty(fileName))
-            {
-                throw new ArgumentNullException("fileName");
-            }
-
-            string fullName = Path.GetFullPath(fileName);
-            string fullPath = Path.GetDirectoryName(fullName);
-
-            if (!overwritten && fullName.ExistsFile())
-            {
-                throw new ArgumentException("The file exists.", fullName);
-            }
-
-            if (!Directory.Exists(fullPath))
-            {
-                try
-                {
-                    Directory.CreateDirectory(fullPath);
-                }
-                catch
-                {
-                    throw;
-                }
-            }
-
-            try
-            {
-                File.WriteAllText(fullName, contents);
-                return fullName;
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Creates a new file, writes the specified string to the file using the specified encoding, and then closes the file.
         /// </summary>
         /// <param name="contents">The string to write to the file.</param>
         /// <param name="fileName">The file to write to.</param>
-        /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>Full path of the file name if write file successfully.</returns>
-        public static string WriteTextFile(this string contents, string fileName, Encoding encoding, bool overwritten = true)
+        public static string WriteTextFile(this string contents, string fileName, bool overwritten = true, Encoding encoding = null)
         {
             if (string.IsNullOrEmpty(fileName))
             {
                 throw new ArgumentNullException("fileName");
             }
 
-            if (encoding == null)
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwritten && fullPath.ExistsFile())
             {
-                throw new ArgumentNullException("encoding");
+                throw new ArgumentException("The file exists.", fullPath);
             }
 
-            string fullName = Path.GetFullPath(fileName);
-            string fullPath = Path.GetDirectoryName(fullName);
-
-            if (!overwritten && fullName.ExistsFile())
-            {
-                throw new ArgumentException("The file exists.", fullName);
-            }
-
-            if (!Directory.Exists(fullPath))
+            if (!Directory.Exists(fullDirectoryPath))
             {
                 try
                 {
-                    Directory.CreateDirectory(fullPath);
+                    Directory.CreateDirectory(fullDirectoryPath);
                 }
                 catch
                 {
@@ -102,43 +52,20 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                File.WriteAllText(fullName, contents, encoding);
-                return fullName;
+                if (encoding == null)
+                {
+                    File.WriteAllText(fullPath, contents);
+                }
+                else
+                {
+                    File.WriteAllText(fullPath, contents, encoding);
+                }
+
+                return fullPath;
             }
             catch
             {
                 throw;
-            }
-        }
-
-        /// <summary>
-        /// Opens a text file, reads all lines of the file, and then closes the file.
-        /// </summary>
-        /// <param name="fileName">The file to open for reading.</param>
-        /// <returns>A string containing all lines of the file.</returns>
-        public static string ReadTextFile(this string fileName)
-        {
-            if (string.IsNullOrEmpty(fileName))
-            {
-                throw new ArgumentNullException("fileName");
-            }
-
-            string fullName = Path.GetFullPath(fileName);
-
-            if (File.Exists(fullName))
-            {
-                try
-                {
-                    return File.ReadAllText(fullName);
-                }
-                catch
-                {
-                    throw;
-                }
-            }
-            else
-            {
-                throw new FileNotFoundException(fullName);
             }
         }
 
@@ -148,25 +75,20 @@ namespace DevLib.ExtensionMethods
         /// <param name="fileName">The file to open for reading.</param>
         /// <param name="encoding">The encoding applied to the contents of the file.</param>
         /// <returns>A string containing all lines of the file.</returns>
-        public static string ReadTextFile(this string fileName, Encoding encoding)
+        public static string ReadTextFile(this string fileName, Encoding encoding = null)
         {
             if (string.IsNullOrEmpty(fileName))
             {
                 throw new ArgumentNullException("fileName");
             }
 
-            if (encoding == null)
-            {
-                throw new ArgumentNullException("encoding");
-            }
+            string fullPath = Path.GetFullPath(fileName);
 
-            string fullName = Path.GetFullPath(fileName);
-
-            if (File.Exists(fullName))
+            if (File.Exists(fullPath))
             {
                 try
                 {
-                    return File.ReadAllText(fullName);
+                    return encoding == null ? File.ReadAllText(fullPath) : File.ReadAllText(fullPath, encoding);
                 }
                 catch
                 {
@@ -175,7 +97,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                throw new FileNotFoundException(fullName);
+                throw new FileNotFoundException(fullPath);
             }
         }
 
@@ -198,19 +120,19 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("binary");
             }
 
-            string fullName = Path.GetFullPath(fileName);
-            string fullPath = Path.GetDirectoryName(fullName);
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwritten && fullName.ExistsFile())
+            if (!overwritten && fullPath.ExistsFile())
             {
-                throw new ArgumentException("The file exists.", fullName);
+                throw new ArgumentException("The file exists.", fullPath);
             }
 
-            if (!Directory.Exists(fullPath))
+            if (!Directory.Exists(fullDirectoryPath))
             {
                 try
                 {
-                    Directory.CreateDirectory(fullPath);
+                    Directory.CreateDirectory(fullDirectoryPath);
                 }
                 catch
                 {
@@ -220,8 +142,8 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                File.WriteAllBytes(fullName, bytes);
-                return fullName;
+                File.WriteAllBytes(fullPath, bytes);
+                return fullPath;
             }
             catch
             {
@@ -241,13 +163,13 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("fileName");
             }
 
-            string fullName = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(fileName);
 
-            if (File.Exists(fullName))
+            if (File.Exists(fullPath))
             {
                 try
                 {
-                    return File.ReadAllBytes(fullName);
+                    return File.ReadAllBytes(fullPath);
                 }
                 catch
                 {
@@ -256,7 +178,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                throw new FileNotFoundException(fullName);
+                throw new FileNotFoundException(fullPath);
             }
         }
 
@@ -273,13 +195,13 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("fileName");
             }
 
-            string fullName = Path.GetFullPath(fileName);
-            string fullPath = Path.GetDirectoryName(fullName);
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
             try
             {
-                System.Diagnostics.Process.Start("explorer.exe", fullPath);
-                return fullName;
+                System.Diagnostics.Process.Start("explorer.exe", fullDirectoryPath);
+                return fullPath;
             }
             catch
             {
@@ -297,14 +219,7 @@ namespace DevLib.ExtensionMethods
         /// </returns>
         public static string GetDirectoryName(this string source)
         {
-            try
-            {
-                return Path.GetDirectoryName(source);
-            }
-            catch
-            {
-                return Path.GetDirectoryName(source.Remove("\""));
-            }
+            return Path.GetDirectoryName(source);
         }
 
         /// <summary>
@@ -314,14 +229,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>A string containing the fully qualified location of path, such as "C:\MyFile.txt".</returns>
         public static string GetFullPath(this string source)
         {
-            try
-            {
-                return Path.GetFullPath(source);
-            }
-            catch
-            {
-                return Path.GetFullPath(source.Remove("\""));
-            }
+            return Path.GetFullPath(source);
         }
 
         /// <summary>
@@ -347,6 +255,53 @@ namespace DevLib.ExtensionMethods
         public static bool ExistsDirectory(this string source)
         {
             return Directory.Exists(source);
+        }
+
+        /// <summary>
+        /// Stream object to bytes.
+        /// </summary>
+        /// <param name="source">Stream source.</param>
+        /// <returns>Byte array</returns>
+        public static byte[] ToByteArray(this Stream source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (source is MemoryStream)
+            {
+                return ((MemoryStream)source).ToArray();
+            }
+            else
+            {
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    byte[] array = new byte[81920];
+                    int count;
+                    while ((count = source.Read(array, 0, array.Length)) != 0)
+                    {
+                        memoryStream.Write(array, 0, count);
+                    }
+
+                    return memoryStream.ToArray();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Bytes to Stream object.
+        /// </summary>
+        /// <param name="source">Bytes source</param>
+        /// <returns>Stream object.</returns>
+        public static Stream ToStream(this byte[] source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            return new MemoryStream(source);
         }
     }
 }

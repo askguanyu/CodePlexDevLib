@@ -195,7 +195,7 @@ namespace DevLib.ServiceModel
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            ExceptionHandler.Log(e);
                             throw;
                         }
                     }
@@ -214,21 +214,19 @@ namespace DevLib.ServiceModel
             {
                 foreach (var serviceHost in this._serviceHostList)
                 {
-                    if (serviceHost.State == CommunicationState.Opened)
+                    this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
+                    try
                     {
-                        this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
-                        try
-                        {
-                            serviceHost.Close();
-                            this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", e.Source, e.Message, e.StackTrace, e.ToString()));
-                            throw;
-                        }
+                        serviceHost.Close();
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
+                    catch (Exception e)
+                    {
+                        serviceHost.Abort();
+                        ExceptionHandler.Log(e);
+                    }
+
+                    this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
                 }
             }
         }
@@ -248,14 +246,14 @@ namespace DevLib.ServiceModel
                     try
                     {
                         serviceHost.Abort();
-                        this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
                         Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", e.Source, e.Message, e.StackTrace, e.ToString()));
-                        throw;
+                        ExceptionHandler.Log(e);
                     }
+
+                    this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
                 }
             }
         }
@@ -283,7 +281,7 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        ExceptionHandler.Log(e);
                         throw;
                     }
                 }
@@ -361,14 +359,14 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        ExceptionHandler.Log(e);
                         throw;
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
                 throw;
             }
 
@@ -406,23 +404,33 @@ namespace DevLib.ServiceModel
 
             if (disposing)
             {
-                if (this._serviceHostList != null)
-                {
-                    this.Abort();
-                    foreach (IDisposable item in this._serviceHostList)
-                    {
-                        item.Dispose();
-                    }
-
-                    this._serviceHostList.Clear();
-                }
-
                 // dispose managed resources
                 ////if (managedResource != null)
                 ////{
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
+
+                if (this._serviceHostList != null && this._serviceHostList.Count > 0)
+                {
+                    foreach (var serviceHost in this._serviceHostList)
+                    {
+                        if (serviceHost != null)
+                        {
+                            try
+                            {
+                                serviceHost.Close();
+                            }
+                            catch
+                            {
+                                serviceHost.Abort();
+                            }
+                        }
+                    }
+
+                    this._serviceHostList.Clear();
+                    this._serviceHostList = null;
+                }
             }
 
             // free native resources

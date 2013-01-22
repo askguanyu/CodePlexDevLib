@@ -136,24 +136,14 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert string to byte array by using Encoding.Default.
-        /// </summary>
-        /// <param name="source">Source string.</param>
-        /// <returns>Byte array by using Encoding.Default.</returns>
-        public static byte[] ToByteArray(this string source)
-        {
-            return Encoding.Default.GetBytes(source);
-        }
-
-        /// <summary>
         /// Convert string to byte array.
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="encoding">Instance of Encoding.</param>
         /// <returns>Byte array.</returns>
-        public static byte[] ToByteArray(this string source, Encoding encoding)
+        public static byte[] ToByteArray(this string source, Encoding encoding = null)
         {
-            return encoding.GetBytes(source);
+            return encoding == null ? Encoding.Default.GetBytes(source) : encoding.GetBytes(source);
         }
 
         /// <summary>

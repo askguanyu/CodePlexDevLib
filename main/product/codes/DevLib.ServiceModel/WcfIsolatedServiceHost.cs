@@ -7,7 +7,6 @@ namespace DevLib.ServiceModel
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using System.Security.Permissions;
@@ -192,7 +191,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Open", e.Source, e.Message, e.StackTrace, e.ToString()));
+                    ExceptionHandler.Log(e);
                     throw;
                 }
             }
@@ -213,7 +212,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Close", e.Source, e.Message, e.StackTrace, e.ToString()));
+                    ExceptionHandler.Log(e);
                     throw;
                 }
             }
@@ -234,7 +233,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Abort", e.Source, e.Message, e.StackTrace, e.ToString()));
+                    ExceptionHandler.Log(e);
                     throw;
                 }
             }
@@ -255,7 +254,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.Restart", e.Source, e.Message, e.StackTrace, e.ToString()));
+                    ExceptionHandler.Log(e);
                     throw;
                 }
             }
@@ -352,14 +351,25 @@ namespace DevLib.ServiceModel
 
             if (disposing)
             {
-                this.Unload();
-
                 // dispose managed resources
                 ////if (managedResource != null)
                 ////{
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
+
+                if (this._wcfServiceHost != null)
+                {
+                    this._wcfServiceHost.Dispose();
+                    this._wcfServiceHost = null;
+                }
+
+                if (this._appDomain != null)
+                {
+                    AppDomain.Unload(this._appDomain);
+                    this.IsAppDomainLoaded = false;
+                    this._appDomain = null;
+                }
             }
 
             // free native resources
@@ -412,7 +422,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfIsolatedServiceHost.CreateDomain", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
                 this.Unload();
                 throw;
             }

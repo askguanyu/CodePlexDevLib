@@ -8,8 +8,6 @@ namespace DevLib.ServiceModel
     using System;
     using System.Collections.Generic;
     using System.Configuration;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
     using System.ServiceModel;
@@ -56,7 +54,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
                 throw;
             }
 
@@ -111,14 +109,14 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        ExceptionHandler.Log(e);
                         throw;
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFile", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
                 throw;
             }
 
@@ -155,7 +153,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(WcfServiceHostConstants.ExceptionStringFormat, "DevLib.ServiceModel.WcfServiceHostType.LoadFrom", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
                 throw;
             }
         }

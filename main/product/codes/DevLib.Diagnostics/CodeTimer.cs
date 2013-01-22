@@ -83,8 +83,8 @@ namespace DevLib.Diagnostics
             string titleName = name.PadRight(53, '-');
 
             // Backup current thread priority
-            var originalPriorityClass = Process.GetCurrentProcess().PriorityClass;
-            var originalThreadPriority = Thread.CurrentThread.Priority;
+            ProcessPriorityClass originalPriorityClass = Process.GetCurrentProcess().PriorityClass;
+            ThreadPriority originalThreadPriority = Thread.CurrentThread.Priority;
 
             // Backup current console color
             ConsoleColor originalForeColor = Console.ForegroundColor;
@@ -142,7 +142,7 @@ namespace DevLib.Diagnostics
 
             // Console output recorded times
             Console.ForegroundColor = ConsoleColor.White;
-            string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "Stopwatch", "ThreadTime", "CpuCycles", string.Join("/", gcTitleArray));
+            string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "Stopwatch", "ThreadTime", "CPUCycles", string.Join("/", gcTitleArray));
             outputAction(resultTitle);
             Debug.WriteLine(resultTitle);
 

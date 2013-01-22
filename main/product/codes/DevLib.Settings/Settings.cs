@@ -8,7 +8,6 @@ namespace DevLib.Settings
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Xml;
     using System.Xml.Serialization;
@@ -52,7 +51,7 @@ namespace DevLib.Settings
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
             }
         }
 
@@ -145,7 +144,7 @@ namespace DevLib.Settings
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Save", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
             }
         }
 
@@ -166,7 +165,7 @@ namespace DevLib.Settings
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.SaveAs", e.Source, e.Message, e.StackTrace, e.ToString()));
+                ExceptionHandler.Log(e);
             }
         }
 
@@ -210,7 +209,7 @@ namespace DevLib.Settings
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.GetValue", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        ExceptionHandler.Log(e);
                         throw;
                     }
                 }
@@ -247,7 +246,7 @@ namespace DevLib.Settings
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.GetValue<T>", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        ExceptionHandler.Log(e);
                         throw;
                     }
                 }
@@ -285,7 +284,7 @@ namespace DevLib.Settings
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.GetValue<T>", e.Source, e.Message, e.StackTrace, e.ToString()));
+                        ExceptionHandler.Log(e);
                         return defaultValue;
                     }
                 }
@@ -382,7 +381,7 @@ namespace DevLib.Settings
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                    ExceptionHandler.Log(e);
                                 }
                                 finally
                                 {
@@ -392,7 +391,7 @@ namespace DevLib.Settings
                             catch (Exception e)
                             {
                                 xmlReader.Skip();
-                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                ExceptionHandler.Log(e);
                             }
                             finally
                             {
@@ -401,7 +400,7 @@ namespace DevLib.Settings
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Reload", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            ExceptionHandler.Log(e);
                         }
                         finally
                         {
@@ -459,7 +458,7 @@ namespace DevLib.Settings
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Refresh", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                    ExceptionHandler.Log(e);
                                 }
                                 finally
                                 {
@@ -469,7 +468,7 @@ namespace DevLib.Settings
                             catch (Exception e)
                             {
                                 xmlReader.Skip();
-                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Refresh", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                ExceptionHandler.Log(e);
                             }
                             finally
                             {
@@ -478,7 +477,7 @@ namespace DevLib.Settings
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.Refresh", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            ExceptionHandler.Log(e);
                         }
                         finally
                         {
@@ -561,7 +560,7 @@ namespace DevLib.Settings
                             catch (Exception e)
                             {
                                 writer.WriteString(e.Message);
-                                Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.WriteXmlFile", e.Source, e.Message, e.StackTrace, e.ToString()));
+                                ExceptionHandler.Log(e);
                             }
                             finally
                             {
@@ -572,7 +571,7 @@ namespace DevLib.Settings
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine(string.Format(SettingsConstants.ExceptionStringFormat, "DevLib.Settings.Settings.WriteXmlFile", e.Source, e.Message, e.StackTrace, e.ToString()));
+                            ExceptionHandler.Log(e);
                         }
                     }
                 }

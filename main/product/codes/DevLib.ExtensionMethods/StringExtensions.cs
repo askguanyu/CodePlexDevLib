@@ -143,7 +143,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>Byte array.</returns>
         public static byte[] ToByteArray(this string source, Encoding encoding = null)
         {
-            return encoding == null ? Encoding.Default.GetBytes(source) : encoding.GetBytes(source);
+            return (encoding ?? Encoding.Default).GetBytes(source);
         }
 
         /// <summary>

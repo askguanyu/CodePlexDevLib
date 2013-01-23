@@ -62,8 +62,18 @@ namespace DevLib.AddIn
         /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
         public AddInActivatorHost(string guid, int processId, AddInDomainSetup addInDomainSetup)
         {
-            Directory.SetCurrentDirectory(addInDomainSetup.DllDirectory);
-            BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider { TypeFilterLevel = addInDomainSetup.TypeFilterLevel };
+            try
+            {
+                Directory.SetCurrentDirectory(addInDomainSetup.DllDirectory);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+            }
+
+            BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+            serverProvider.TypeFilterLevel = addInDomainSetup.TypeFilterLevel;
+
             BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
             this._process = Process.GetProcessById(processId);
 

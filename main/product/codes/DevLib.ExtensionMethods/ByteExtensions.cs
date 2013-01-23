@@ -94,7 +94,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            return encoding == null ? Encoding.Default.GetString(source) : encoding.GetString(source);
+            return (encoding ?? Encoding.Default).GetString(source);
         }
 
         /// <summary>

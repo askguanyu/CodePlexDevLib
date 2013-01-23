@@ -199,7 +199,7 @@ namespace DevLib.ExtensionMethods
             {
                 DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
-                return encoding == null ? Encoding.Default.GetString(memoryStream.ToArray()) : encoding.GetString(memoryStream.ToArray());
+                return (encoding ?? Encoding.Default).GetString(memoryStream.ToArray());
             }
         }
 
@@ -223,7 +223,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            using (MemoryStream memoryStream = encoding == null ? new MemoryStream(Encoding.Default.GetBytes(source)) : new MemoryStream(encoding.GetBytes(source)))
+            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
                 DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
                 return dataContractJsonSerializer.ReadObject(memoryStream);
@@ -245,7 +245,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            using (MemoryStream memoryStream = encoding == null ? new MemoryStream(Encoding.Default.GetBytes(source)) : new MemoryStream(encoding.GetBytes(source)))
+            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
                 DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
                 return (T)dataContractJsonSerializer.ReadObject(memoryStream);

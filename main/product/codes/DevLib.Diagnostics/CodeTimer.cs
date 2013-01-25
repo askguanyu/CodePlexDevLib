@@ -49,7 +49,7 @@ namespace DevLib.Diagnostics
         /// </summary>
         public static void Initialize()
         {
-            DevLib.Diagnostics.CodeTimer.Time(delegate { }, 1, "Initialize CodeTimer...");
+            DevLib.Diagnostics.CodeTimer.Time(delegate { }, 1, "Initialize CodeTimer...", delegate { });
         }
 
         /// <summary>
@@ -110,20 +110,21 @@ namespace DevLib.Diagnostics
 
             // Run action, record timespan
             Stopwatch watch = new Stopwatch();
-            watch.Start();
 
             ulong cycleCount = GetCycleCount();
             long threadTimeCount = GetCurrentThreadTime();
+
+            watch.Start();
 
             for (int i = 0; i < iteration; i++)
             {
                 action();
             }
 
+            watch.Stop();
+
             long threadTime = GetCurrentThreadTime() - threadTimeCount;
             ulong cpuCycles = GetCycleCount() - cycleCount;
-
-            watch.Stop();
 
             for (int i = 0; i < gcArrayLength; i++)
             {
@@ -142,7 +143,7 @@ namespace DevLib.Diagnostics
 
             // Console output recorded times
             Console.ForegroundColor = ConsoleColor.White;
-            string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "Stopwatch", "ThreadTime", "CPUCycles", string.Join("/", gcTitleArray));
+            string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "[Stopwatch]", "[ThreadTime]", "[CPUCycles]", string.Format("[{0}]", string.Join("/", gcTitleArray)));
             outputAction(resultTitle);
             Debug.WriteLine(resultTitle);
 

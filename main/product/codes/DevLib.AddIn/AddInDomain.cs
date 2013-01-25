@@ -79,11 +79,6 @@ namespace DevLib.AddIn
         private bool _canRestart = true;
 
         /// <summary>
-        /// Field _redirectOutput.
-        /// </summary>
-        private bool _redirectOutput;
-
-        /// <summary>
         /// Field _addInTypeName.
         /// </summary>
         private string _addInTypeName;
@@ -103,7 +98,7 @@ namespace DevLib.AddIn
         {
             this.FriendlyName = string.IsNullOrEmpty(friendlyName) ? AddInConstants.DefaultFriendlyName : friendlyName;
             this.AddInDomainSetupInfo = (addInDomainSetup == null) ? new AddInDomainSetup() : addInDomainSetup;
-            this._redirectOutput = showRedirectConsoleOutput;
+            this.RedirectOutput = showRedirectConsoleOutput;
             this.CreateAddInActivatorProcess();
         }
 
@@ -134,6 +129,15 @@ namespace DevLib.AddIn
         /// Occurs when AddInDomain writes to its redirected <see cref="P:System.Diagnostics.Process.StandardOutput" /> stream.
         /// </summary>
         public event DataReceivedEventHandler DataReceived;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the output of AddInActivatorProcess is shown in current console.
+        /// </summary>
+        public bool RedirectOutput
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets AddInActivatorProcessInfo.
@@ -172,12 +176,12 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets AddInDomainSetup information.
+        /// Gets or sets AddInDomainSetup information.
         /// </summary>
         public AddInDomainSetup AddInDomainSetupInfo
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
@@ -396,7 +400,7 @@ namespace DevLib.AddIn
         {
             this._canRestart = true;
 
-            this._addInActivatorProcess = new AddInActivatorProcess(this.FriendlyName, this._redirectOutput, this.AddInDomainSetupInfo);
+            this._addInActivatorProcess = new AddInActivatorProcess(this.FriendlyName, this.RedirectOutput, this.AddInDomainSetupInfo);
             this._addInActivatorProcess.Attached += this.OnProcessAttached;
             this._addInActivatorProcess.Detached += this.OnProcessDetached;
             this._addInActivatorProcess.DataReceived += this.OnDataReceived;

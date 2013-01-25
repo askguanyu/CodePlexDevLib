@@ -39,7 +39,9 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public AddInActivatorClient(string guid, AddInDomainSetup addInDomainSetup)
         {
-            BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider { TypeFilterLevel = addInDomainSetup.TypeFilterLevel };
+            BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+            serverProvider.TypeFilterLevel = addInDomainSetup.TypeFilterLevel;
+
             BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
 
             Hashtable properties = new Hashtable();

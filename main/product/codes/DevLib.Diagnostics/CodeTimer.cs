@@ -49,7 +49,7 @@ namespace DevLib.Diagnostics
         /// </summary>
         public static void Initialize()
         {
-            DevLib.Diagnostics.CodeTimer.Time(delegate { }, 1, "Initialize CodeTimer...", delegate { });
+            DevLib.Diagnostics.CodeTimer.Time(delegate { }, 1, string.Empty, delegate { });
         }
 
         /// <summary>

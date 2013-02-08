@@ -42,15 +42,14 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AsyncSocket\AsyncSocketClient.cs" />
-    <Compile Include="AsyncSocket\AsyncSocketClientConstants.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketTcpClientConstants.cs" />
     <Compile Include="AsyncSocket\AsyncSocketErrorCodeEnum.cs" />
     <Compile Include="AsyncSocket\AsyncSocketErrorEventArgs.cs" />
-    <Compile Include="AsyncSocket\AsyncSocketServer.cs" />
-    <Compile Include="AsyncSocket\AsyncSocketServerConstants.cs" />
-    <Compile Include="AsyncSocket\AsyncSocketServerEventArgsBufferManager.cs" />
-    <Compile Include="AsyncSocket\AsyncSocketServerEventArgsPool.cs" />
-    <Compile Include="AsyncSocket\AsyncSocketUserTokenEventArgs.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketTcpClient.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketTcpServer.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketTcpServerConstants.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketSessionEventArgs.cs" />
+    <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

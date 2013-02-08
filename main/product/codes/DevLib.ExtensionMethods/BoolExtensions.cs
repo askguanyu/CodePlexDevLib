@@ -52,5 +52,41 @@ namespace DevLib.ExtensionMethods
         {
             return string.Compare(source, "Yes", ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0;
         }
+
+        /// <summary>
+        /// If source is true, invoke method.
+        /// </summary>
+        /// <param name="source">Source bool.</param>
+        /// <param name="action">Delegate method.
+        /// <example>E.g. <code>() => DoSomething();</code></example>
+        /// </param>
+        /// <returns>The source.</returns>
+        public static bool IfTrue(this bool source, Action action)
+        {
+            if (source)
+            {
+                action();
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// If source is false, invoke method.
+        /// </summary>
+        /// <param name="source">Source bool.</param>
+        /// <param name="action">Delegate method.
+        /// <example>E.g. <code>() => DoSomething();</code></example>
+        /// </param>
+        /// <returns>The source.</returns>
+        public static bool IfFalse(this bool source, Action action)
+        {
+            if (!source)
+            {
+                action();
+            }
+
+            return source;
+        }
     }
 }

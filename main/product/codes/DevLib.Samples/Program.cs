@@ -81,7 +81,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    //TestDevLibNet();
+                    TestDevLibNet();
                 });
 
                 CodeTimer.Time(delegate
@@ -265,10 +265,9 @@ namespace DevLib.Samples
             Console.WriteLine(e.Data);
         }
 
-        static void remoteObj_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
+        static void remoteObj_DataReceived(object sender, AsyncSocketSessionEventArgs e)
         {
-            (sender as AsyncSocketServer).ConnectedSocketsCount.ConsoleOutput("ConnectedSocketsCount: {0}");
-            e.TransferredRawData.ToEncodingString().ConsoleOutput();
+
         }
 
         static void addin_DataReceived(object sender, DataReceivedEventArgs e)
@@ -310,6 +309,214 @@ namespace DevLib.Samples
 
             DateTime a = new DateTime();
             a.IsWeekend().ConsoleOutput();
+
+            var b1 = new Dictionary<int, string>(1000000);
+            ReaderWriterLockSlim rwl1 = new ReaderWriterLockSlim();
+            CodeTimer.Initialize();
+            CodeTimer.Time(delegate
+            {
+                for (int loop = 0; loop < 1000000; loop++)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        int i = loop;
+                        rwl1.EnterWriteLock();
+                        try
+                        {
+                            b1[i] = DateTime.Now.ToString();
+                        }
+                        catch
+                        {
+                        }
+                        finally
+                        {
+                            rwl1.ExitWriteLock();
+                        }
+                    });
+                }
+            }, 2, "ReaderWriterLockSlimDictW");
+
+            CodeTimer.Time(delegate
+            {
+                for (int loop = 0; loop < 1000000; loop++)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        string output;
+                        int i = loop;
+                        rwl1.EnterReadLock();
+                        try
+                        {
+                            b1.TryGetValue(2, out output);
+                        }
+                        catch
+                        {
+                        }
+                        finally
+                        {
+                            rwl1.ExitReadLock();
+                        }
+                    });
+                }
+            }, 2, "ReaderWriterLockSlimDictR");
+
+            var b = new Dictionary<int, string>(1000000);
+            ReaderWriterLock rwl = new ReaderWriterLock();
+            CodeTimer.Initialize();
+            CodeTimer.Time(delegate
+            {
+                for (int loop = 0; loop < 1000000; loop++)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        int i = loop;
+                        rwl.AcquireWriterLock(Timeout.Infinite);
+                        try
+                        {
+                            b[i] = DateTime.Now.ToString();
+                        }
+                        catch
+                        {
+                        }
+                        finally
+                        {
+                            rwl.ReleaseWriterLock();
+                        }
+                    });
+                }
+            }, 2, "ReaderWriterLockDictW");
+
+            CodeTimer.Time(delegate
+            {
+                for (int loop = 0; loop < 1000000; loop++)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        string output;
+                        int i = loop;
+                        rwl.AcquireReaderLock(Timeout.Infinite);
+                        try
+                        {
+                            b.TryGetValue(2, out output);
+                        }
+                        catch
+                        {
+                        }
+                        finally
+                        {
+                            rwl.ReleaseReaderLock();
+                        }
+                    });
+                }
+            }, 2, "ReaderWriterLockDictR");
+
+            var d = new Dictionary<int, string>(1000000);
+            CodeTimer.Initialize();
+            CodeTimer.Time(delegate
+            {
+                for (int loop = 0; loop < 1000000; loop++)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        int i = loop;
+                        //c[i] = DateTime.Now.ToString();
+                        lock (((ICollection)d).SyncRoot)
+                        {
+                            try
+                            {
+                                d[i] = DateTime.Now.ToString();
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    });
+                }
+            }, 2, "LockDictW");
+
+            CodeTimer.Time(delegate
+            {
+                for (int loop = 0; loop < 1000000; loop++)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        int i = loop;
+                        string output;
+                        lock (((ICollection)d).SyncRoot)
+                        {
+                            try
+                            {
+                                d.TryGetValue(2, out output);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    });
+                }
+            }, 2, "LockDictR");
+
+
+
+
+
+            var c = new Dictionary<int, string>(1000000);
+            CodeTimer.Initialize();
+            CodeTimer.Time(delegate
+            {
+                Parallel.For(0, 1000000, (loop) =>
+                {
+                    int i = loop;
+                    c.Add(i, DateTime.Now.ToString());
+                });
+            }, 1, "DictW");
+
+            CodeTimer.Time(delegate
+            {
+                for (int loop = 0; loop < 1000000; loop++)
+                {
+                    Task.Factory.StartNew(() =>
+                    {
+                        int i = loop;
+                        string output;
+
+                        try
+                        {
+                            c.TryGetValue(2, out output);
+                        }
+                        catch
+                        {
+                        }
+                    });
+                }
+            }, 1, "DictR");
+
+            var e = new ConcurrentDictionary<int, string>(10000, 1000000);
+            CodeTimer.Initialize();
+            CodeTimer.Time(delegate
+            {
+                Parallel.For(0, 1000000, (loop) =>
+                {
+                    int i = loop;
+                    e.TryAdd(i, DateTime.Now.ToString());
+                });
+            }, 1, "ConcurrentDictionaryW");
+
+            CodeTimer.Time(delegate
+            {
+                Parallel.For(0, 1000000, (loop) =>
+                {
+                    int i = loop;
+                    string output;
+                    e.TryGetValue(2, out output);
+                });
+            }, 1, "ConcurrentDictionaryR");
+
+
+            Console.WriteLine("done!");
+            Console.ReadKey();
+
+
 
             //AddInProcess addin = new AddInProcess(Platform.AnyCpu);
             //Activator.CreateInstance<>
@@ -648,24 +855,159 @@ namespace DevLib.Samples
 
             #region AsyncSocket
 
-            AsyncSocketClient client = new AsyncSocketClient("127.0.0.1", 999);
-            //AsyncSocketClient client1 = new AsyncSocketClient("127.0.0.1", 999);
-            client.Connect();
-            //client1.Connect();
+            AsyncSocketTcpServer server = new AsyncSocketTcpServer(999);
 
-            for (int i = 0; i < 100; i++)
+            Task.Factory.StartNew(() =>
             {
-                //Thread.Sleep(10);
-                client.Send(i.ToString());
-                //client1.Send(null);
+                try
+                {
+                    server.Connected += server_Connected;
+                    server.Disconnected += server_Disconnected;
+                    server.DataReceived += server_DataReceived;
+                    server.DataSent += server_DataSent;
+                    server.Start().IfTrue(() => "Started!".ConsoleOutput()).IfFalse(() => "Start failed!".ConsoleOutput());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            });
+
+            Console.WriteLine("press to stop server");
+            Console.ReadKey();
+            try
+            {
+                server.Stop().IfTrue(() => { Console.WriteLine("server stoped!"); Console.ReadKey(); });
+            }
+            catch (Exception e)
+            {
+                e.ConsoleOutput();
             }
 
 
-            Console.WriteLine("Over.");
+            try
+            {
+                server.Start().IfTrue(() => { Console.WriteLine("server start!"); Console.ReadKey(); });
+            }
+            catch (Exception e)
+            {
+                e.ConsoleOutput();
+            }
+
+            Console.WriteLine("tcp client.");
+            Console.ReadKey();
+            AsyncSocketTcpClient tcpclient = new AsyncSocketTcpClient("127.0.0.1", 999);
+            tcpclient.DataReceived += tcpclient_DataReceived;
+            tcpclient.Start();
+            tcpclient.Send("hello1".ToByteArray());
+            Console.WriteLine("tcp client over1.");
+            Console.ReadKey();
+            tcpclient.Send("hello2".ToByteArray());
+            Thread.Sleep(50);
+            tcpclient.Send("hello3".ToByteArray());
+            Console.WriteLine("tcp client over2.");
             Console.ReadKey();
 
+            AsyncSocketTcpClient client1 = new AsyncSocketTcpClient("127.0.0.1", 999);
+            client1.Start();
+            client1.Send("hello".ToByteArray());
+
+            Console.WriteLine("Over1.");
+            Console.ReadKey();
+            //client1.Disconnect();
+
+            Console.WriteLine("press to stop server");
+            Console.ReadKey();
+            try
+            {
+                server.Stop().IfTrue(() => { Console.WriteLine("server stoped!"); Console.ReadKey(); });
+            }
+            catch (Exception e)
+            {
+                e.ConsoleOutput();
+            }
 
 
+            try
+            {
+                server.Start().IfTrue(() => { Console.WriteLine("server start!"); Console.ReadKey(); });
+            }
+            catch (Exception e)
+            {
+                e.ConsoleOutput();
+            }
+
+            //AsyncSocketClient client = new AsyncSocketClient("127.0.0.1", 999);
+            //client.Connect();
+            //client.Send("a");
+            //client.Send("b");
+
+            //AsyncSocketClient client1 = new AsyncSocketClient("127.0.0.1", 999);
+            //client1.Connect();
+            //client1.Send("c");
+            //client1.Send("d");
+
+            //client.Send("a");
+
+            string temp = "012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345 || ";
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < 1; i++)
+            {
+                builder.Append(temp);
+            }
+
+
+            //client1.Send(builder.ToString());
+            Console.WriteLine("Over2.");
+            Console.ReadKey();
+
+            AsyncSocketTcpClient client2 = new AsyncSocketTcpClient("127.0.0.1", 999);
+            client2.Start();
+            client2.Send(builder.ToString().ToByteArray());
+
+            Console.WriteLine("Over3.");
+            Console.ReadKey();
+            //client1.Send(new byte[1] { 1 });
+            client2.Stop();
+
+
+
+            Console.WriteLine("Over4.");
+            Console.ReadKey();
+
+            List<AsyncSocketTcpClient> clientList = new List<AsyncSocketTcpClient>();
+
+            for (int loop = 0; loop < 2000; loop++)
+            {
+                clientList.Add(new AsyncSocketTcpClient("127.0.0.1", 999));
+            }
+
+            foreach (var item in clientList)
+            {
+                item.Start();
+                Thread.Sleep(5);
+            }
+
+            foreach (var item in clientList)
+            {
+                item.Send(DateTime.Now.ToString().ToByteArray());
+                Thread.Sleep(5);
+            }
+
+            //for (int i = 0; i < 1000; i++)
+            //{
+            //    Thread.Sleep(5);
+            //    client.Send(i.ToString());
+            //    client1.Send(i.ToString() + Environment.NewLine);
+            //}
+
+
+            Console.WriteLine("Press to Stop Server.");
+            Console.ReadKey();
+            server.Stop();
+
+            Console.WriteLine("Over.");
+            Console.ReadKey();
             //AsyncSocketServer svr = new AsyncSocketServer();
             //svr.DataReceived += svr_DataReceived;
             //svr.Start(9999);
@@ -677,7 +1019,7 @@ namespace DevLib.Samples
 
             //        AsyncSocketClient client1 = new AsyncSocketClient("127.0.0.1", 9999);
             //        client1.Connect();
-            //        //client1.SendOnce("127.0.0.1", 9999, loop.ToString(), Encoding.ASCII);
+            //        client1.SendOnce("127.0.0.1", 9999, loop.ToString(), Encoding.ASCII);
             //        client1.Send(loop.ToString(), Encoding.ASCII);
             //    });
             //});
@@ -709,6 +1051,41 @@ namespace DevLib.Samples
             //NetUtilities.GetLocalIPArray().ForEach((p) => { p.ConsoleOutput(); });
             //NetUtilities.GetRandomPortNumber().ConsoleOutput();
 
+        }
+
+        static void tcpclient_DataReceived(object sender, AsyncSocketSessionEventArgs e)
+        {
+            e.DataTransferred.ToEncodingString().ConsoleOutput("client received: {0}");
+        }
+
+        static void server_DataSent(object sender, AsyncSocketSessionEventArgs e)
+        {
+            //e.DataTransferred.ToEncodingString().ConsoleOutput(" sent!");
+        }
+
+        static void server_DataReceived(object sender, AsyncSocketSessionEventArgs e)
+        {
+            e.DataTransferred.ToEncodingString().ConsoleOutput(" received!");
+
+            //(sender as AsyncSocketTcpServer).Send(e.SessionId, "from server".ToByteArray(Encoding.UTF8));
+            //Thread.Sleep(10);
+            //(sender as AsyncSocketTcpServer).Send(e.SessionId, e.SessionIPEndPoint.ToString().ToByteArray(Encoding.UTF8));
+            //Thread.Sleep(10);
+            (sender as AsyncSocketTcpServer).Send(e.SessionId, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffff").ToByteArray(Encoding.UTF8));
+            //(sender as AsyncSocketServer).GetRemoteIPEndPoint(e.sessionId).Port.ConsoleOutput();
+        }
+
+        static void server_Disconnected(object sender, AsyncSocketSessionEventArgs e)
+        {
+            e.SessionIPEndPoint.ConsoleOutput(" disconnected!");
+            (sender as AsyncSocketTcpServer).ConnectedSocketsCount.ConsoleOutput("Disconnected! There are {0} clients connected to the server");
+            (sender as AsyncSocketTcpServer).PeakConnectedSocketsCount.ConsoleOutput("Peak: {0} clients connected to the server");
+        }
+
+        static void server_Connected(object sender, AsyncSocketSessionEventArgs e)
+        {
+            e.SessionIPEndPoint.ConsoleOutput(" connected.");
+            (sender as AsyncSocketTcpServer).ConnectedSocketsCount.ConsoleOutput("Connected. There are {0} clients connected to the server");
         }
 
         private static void TestDevLibWinForms()
@@ -852,15 +1229,15 @@ namespace DevLib.Samples
             Console.ForegroundColor = originalForeColor;
         }
 
-        private static void client_DataSent(object sender, AsyncSocketUserTokenEventArgs e)
+        private static void client_DataSent(object sender, AsyncSocketSessionEventArgs e)
         {
-            e.TransferredRawData.ToHexString().ConsoleOutput();
+
             Console.WriteLine();
         }
 
-        private static void svr_DataReceived(object sender, AsyncSocketUserTokenEventArgs e)
+        private static void svr_DataReceived(object sender, AsyncSocketSessionEventArgs e)
         {
-            e.TransferredRawData.ToEncodingString(Encoding.UTF8).ConsoleOutput();
+
             //svr.Send(e.ConnectionId, e.TransferredRawData);
             Console.WriteLine();
         }

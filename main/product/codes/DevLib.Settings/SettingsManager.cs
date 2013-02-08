@@ -11,7 +11,7 @@ namespace DevLib.Settings
     using System.IO;
 
     /// <summary>
-    /// Provides access to configuration files for client applications. This class cannot be inherited.
+    /// Provides access to customized configuration files for applications. This class cannot be inherited.
     /// </summary>
     public static class SettingsManager
     {
@@ -23,7 +23,7 @@ namespace DevLib.Settings
         /// <summary>
         /// Opens the configuration file for the current application.
         /// </summary>
-        /// <param name="configFile">Configuration file for the current application; Can be a new one.</param>
+        /// <param name="configFile">Configuration file for the current application; if null or string.Empty use a new Settings instance.</param>
         /// <returns>Settings instance.</returns>
         public static Settings Open(string configFile = null)
         {

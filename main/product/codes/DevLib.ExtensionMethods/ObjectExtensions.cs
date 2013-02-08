@@ -33,12 +33,13 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// If object is not null, invoke method.
         /// </summary>
+        /// <typeparam name="T">The type of input object.</typeparam>
         /// <param name="source">Object to check.</param>
         /// <param name="action">Delegate method.
         /// <example>E.g. <code>source => DoSomething(source);</code></example>
         /// </param>
         /// <returns>Source object.</returns>
-        public static object IfNotNull(this object source, Action<object> action)
+        public static T IfNotNull<T>(this T source, Action<T> action)
         {
             if (source != null)
             {
@@ -51,49 +52,17 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// If object is null, invoke method.
         /// </summary>
+        /// <typeparam name="T">The type of input object.</typeparam>
         /// <param name="source">Object to check.</param>
         /// <param name="action">Delegate method.
         /// <example>E.g. <code>source => DoSomething(source);</code></example>
         /// </param>
-        public static void IfNull(this object source, Action<object> action)
+        /// <returns>Source object.</returns>
+        public static T IfNull<T>(this T source, Action<T> action)
         {
             if (source == null)
             {
                 action(source);
-            }
-        }
-
-        /// <summary>
-        /// Invoke System.Console.WriteLine() or System.Console.Write().
-        /// </summary>
-        /// <typeparam name="T">The type of input object.</typeparam>
-        /// <param name="source">Source object.</param>
-        /// <param name="obj">Append object to display.</param>
-        /// <param name="withNewLine">Whether followed by the current line terminator.</param>
-        /// <returns>The input object.</returns>
-        public static T ConsoleOutput<T>(this T source, object obj, bool withNewLine = true)
-        {
-            if (object.ReferenceEquals(obj, null))
-            {
-                if (withNewLine)
-                {
-                    Console.WriteLine(source);
-                }
-                else
-                {
-                    Console.Write(source);
-                }
-            }
-            else
-            {
-                if (withNewLine)
-                {
-                    Console.WriteLine("{0}{1}", source, obj);
-                }
-                else
-                {
-                    Console.Write("{0}{1}", source, obj);
-                }
             }
 
             return source;
@@ -104,12 +73,12 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of input object.</typeparam>
         /// <param name="source">Source object.</param>
-        /// <param name="format">A composite format string.</param>
+        /// <param name="appendObj">Append object to display.</param>
         /// <param name="withNewLine">Whether followed by the current line terminator.</param>
         /// <returns>The input object.</returns>
-        public static T ConsoleOutput<T>(this T source, string format = null, bool withNewLine = true)
+        public static T ConsoleOutput<T>(this T source, object appendObj = null, bool withNewLine = true)
         {
-            if (string.IsNullOrEmpty(format))
+            if (appendObj == null)
             {
                 if (withNewLine)
                 {
@@ -119,31 +88,31 @@ namespace DevLib.ExtensionMethods
                 {
                     Console.Write(source);
                 }
+
+                return source;
             }
-            else
+
+            if ((appendObj is string) && (appendObj as string).Contains("{0}"))
             {
-                if (format.Contains("{0}"))
+                if (withNewLine)
                 {
-                    if (withNewLine)
-                    {
-                        Console.WriteLine(format, source);
-                    }
-                    else
-                    {
-                        Console.Write(format, source);
-                    }
+                    Console.WriteLine(appendObj as string, source);
                 }
                 else
                 {
-                    if (withNewLine)
-                    {
-                        Console.WriteLine("{0}{1}", source, format);
-                    }
-                    else
-                    {
-                        Console.Write("{0}{1}", source, format);
-                    }
+                    Console.Write(appendObj as string, source);
                 }
+
+                return source;
+            }
+
+            if (withNewLine)
+            {
+                Console.WriteLine("{0}{1}", source, appendObj);
+            }
+            else
+            {
+                Console.Write("{0}{1}", source, appendObj);
             }
 
             return source;
@@ -178,18 +147,13 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Converts an object to the specified target type
-        /// or returns the default value if those 2 types are not convertible.
-        /// <para>Any exceptions are optionally ignored (<paramref name="ignoreException"/>).</para>
-        /// <para>
-        /// If the exceptions are not ignored and the <paramref name="source"/> can't be convert even if
-        /// the types are convertible with each other, an exception is thrown.</para>
+        /// Converts an object to the specified target type or returns the default value if those two types are not convertible.
         /// </summary>
-        /// <typeparam name = "T">The type of <paramref name="returns"/> object.</typeparam>
-        /// <param name = "source">The value.</param>
-        /// <param name = "defaultValue">The default value.</param>
-        /// <param name = "ignoreException">if set to <c>true</c> ignore any exception.</param>
-        /// <returns>The target type</returns>
+        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <param name="ignoreException">if set to <c>true</c> ignore any exception.</param>
+        /// <returns>The target type.</returns>
         public static T ConvertTo<T>(this object source, T defaultValue = default(T), bool ignoreException = true)
         {
             if (source == null)

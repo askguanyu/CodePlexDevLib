@@ -6,88 +6,73 @@
 namespace DevLib.Net.AsyncSocket
 {
     /// <summary>
-    /// Async Socket Error Code Enum.
+    /// AsyncSocketErrorCode Enum.
     /// </summary>
     public enum AsyncSocketErrorCodeEnum
     {
         /// <summary>
-        /// Represents Server Start Exception.
+        /// Represents UnspecifiedException.
         /// </summary>
-        ServerStartException,
+        UnspecifiedException,
 
         /// <summary>
-        /// Represents Server Stop Exception.
+        /// Represents TcpServerStartException.
         /// </summary>
-        ServerStopException,
+        TcpServerStartException,
 
         /// <summary>
-        /// Represents Server Connect Exception.
+        /// Represents TcpServerStopException.
         /// </summary>
-        ServerConnectException,
+        TcpServerStopException,
 
         /// <summary>
-        /// Represents Server Disconnect Exception.
+        /// Represents TcpServerAcceptSessionException.
         /// </summary>
-        ServerDisconnectException,
+        TcpServerAcceptSessionException,
 
         /// <summary>
-        /// Represents Server Accept Exception.
+        /// Represents TcpServerCloseSessionException.
         /// </summary>
-        ServerAcceptException,
+        TcpServerCloseSessionException,
 
         /// <summary>
-        /// Represents Server SendBack Exception.
+        /// Represents TcpServerSendException.
         /// </summary>
-        ServerSendBackException,
+        TcpServerSendException,
 
         /// <summary>
-        /// Represents Server Receive Exception.
+        /// Represents TcpServerReceiveException.
         /// </summary>
-        ServerReceiveException,
+        TcpServerReceiveException,
 
         /// <summary>
-        /// Represents Client Start Exception.
+        /// Represents TcpClientStartException.
         /// </summary>
-        ClientStartException,
+        TcpClientStartException,
 
         /// <summary>
-        /// Represents Client Stop Exception.
+        /// Represents TcpClientStopException.
         /// </summary>
-        ClientStopException,
+        TcpClientStopException,
 
         /// <summary>
-        /// Represents Client Connect Exception.
+        /// Represents TcpClientConnectException.
         /// </summary>
-        ClientConnectException,
+        TcpClientConnectException,
 
         /// <summary>
-        /// Represents Client Disconnect Exception.
+        /// Represents TcpClientDisconnectException.
         /// </summary>
-        ClientDisconnectException,
+        TcpClientDisconnectException,
 
         /// <summary>
-        /// Represents Client Accept Exception.
+        /// Represents TcpClientSendException.
         /// </summary>
-        ClientAcceptException,
+        TcpClientSendException,
 
         /// <summary>
-        /// Represents Client Send Exception.
+        /// Represents TcpClientReceiveException.
         /// </summary>
-        ClientSendException,
-
-        /// <summary>
-        /// Represents Client Receive Exception.
-        /// </summary>
-        ClientReceiveException,
-
-        /// <summary>
-        /// Represents Socket No Exist.
-        /// </summary>
-        SocketNoExist,
-
-        /// <summary>
-        /// Represents Throw Socket Exception.
-        /// </summary>
-        ThrowSocketException,
+        TcpClientReceiveException,
     }
 }

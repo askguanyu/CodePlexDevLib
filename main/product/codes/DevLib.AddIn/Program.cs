@@ -67,10 +67,10 @@ namespace DevLib.AddIn
                 {
                     if (redirectOutput)
                     {
-                        Console.WriteLine("Type.GetType($[AddInActivatorHostTypeName]) Succeed!");
+                        Console.WriteLine("Succeeded: Type.GetType($[AddInActivatorHostTypeName])");
                     }
 
-                    Log("Type.GetType($[AddInActivatorHostTypeName]) succeed!");
+                    Log("Succeeded: Type.GetType($[AddInActivatorHostTypeName])");
                 }
                 else
                 {
@@ -84,10 +84,10 @@ namespace DevLib.AddIn
                 {
                     if (redirectOutput)
                     {
-                        Console.WriteLine("GetMethod on AddInActivatorHost succeed!");
+                        Console.WriteLine("Succeeded: GetMethod on AddInActivatorHost");
                     }
 
-                    Log("GetMethod on AddInActivatorHost succeed!");
+                    Log("Succeeded: GetMethod on AddInActivatorHost");
                 }
                 else
                 {

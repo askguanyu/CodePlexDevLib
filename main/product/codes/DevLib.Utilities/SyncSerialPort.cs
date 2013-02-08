@@ -184,7 +184,7 @@ namespace DevLib.Utilities
         /// <summary>
         /// Opens a new serial port connection.
         /// </summary>
-        /// <returns>true if succeed; otherwise, false.</returns>
+        /// <returns>true if succeeded; otherwise, false.</returns>
         public bool Open()
         {
             this.CheckDisposed();
@@ -216,7 +216,7 @@ namespace DevLib.Utilities
         /// <summary>
         /// Closes the port connection.
         /// </summary>
-        /// <returns>true if succeed; otherwise, false.</returns>
+        /// <returns>true if succeeded; otherwise, false.</returns>
         public bool Close()
         {
             this.CheckDisposed();
@@ -243,7 +243,7 @@ namespace DevLib.Utilities
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
         /// <param name="receivedData">The byte array to write the received data.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
-        /// <returns>true if succeed; otherwise, false.</returns>
+        /// <returns>true if succeeded; otherwise, false.</returns>
         public bool Send(byte[] sendData, out byte[] receivedData, int timeout)
         {
             this.CheckDisposed();
@@ -329,6 +329,8 @@ namespace DevLib.Utilities
                 return;
             }
 
+            this._disposed = true;
+
             if (disposing)
             {
                 // dispose managed resources
@@ -357,8 +359,6 @@ namespace DevLib.Utilities
             ////    Marshal.FreeHGlobal(nativeResource);
             ////    nativeResource = IntPtr.Zero;
             ////}
-
-            this._disposed = true;
         }
 
         /// <summary>

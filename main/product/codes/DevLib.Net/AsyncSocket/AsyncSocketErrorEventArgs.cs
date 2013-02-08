@@ -8,7 +8,7 @@ namespace DevLib.Net.AsyncSocket
     using System;
 
     /// <summary>
-    /// Async Socket Error EventArgs Class.
+    /// AsyncSocketError EventArgs.
     /// </summary>
     public class AsyncSocketErrorEventArgs : EventArgs
     {
@@ -24,9 +24,9 @@ namespace DevLib.Net.AsyncSocket
         /// Initializes a new instance of the <see cref="AsyncSocketErrorEventArgs" /> class.
         /// </summary>
         /// <param name="message">Error Message.</param>
-        /// <param name="exception">Exception object.</param>
+        /// <param name="exception">Instance of Exception.</param>
         /// <param name="errorCode">Instance of AsyncSocketErrorCodeEnum.</param>
-        public AsyncSocketErrorEventArgs(string message, Exception exception, AsyncSocketErrorCodeEnum errorCode = AsyncSocketErrorCodeEnum.ThrowSocketException)
+        public AsyncSocketErrorEventArgs(string message, Exception exception, AsyncSocketErrorCodeEnum errorCode = AsyncSocketErrorCodeEnum.UnspecifiedException)
         {
             this.Message = message;
             this.Exception = exception;
@@ -34,30 +34,30 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets or sets Error Message.
+        /// Gets Error Message.
         /// </summary>
         public string Message
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
-        /// Gets or sets Exception.
+        /// Gets Exception.
         /// </summary>
         public Exception Exception
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
-        /// Gets or sets Error Code.
+        /// Gets Error Code.
         /// </summary>
         public AsyncSocketErrorCodeEnum ErrorCode
         {
             get;
-            set;
+            private set;
         }
     }
 }

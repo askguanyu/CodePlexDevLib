@@ -99,6 +99,8 @@ namespace DevLib.AddIn
                 return;
             }
 
+            this._disposed = true;
+
             if (disposing)
             {
                 // dispose managed resources
@@ -127,8 +129,6 @@ namespace DevLib.AddIn
             ////    Marshal.FreeHGlobal(nativeResource);
             ////    nativeResource = IntPtr.Zero;
             ////}
-
-            this._disposed = true;
         }
 
         /// <summary>

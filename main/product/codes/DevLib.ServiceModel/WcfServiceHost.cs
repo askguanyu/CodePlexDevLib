@@ -191,7 +191,7 @@ namespace DevLib.ServiceModel
 
                             this._serviceHostList[i].Open();
                             this.RaiseEvent(this.Opened, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
                         catch (Exception e)
                         {
@@ -218,7 +218,7 @@ namespace DevLib.ServiceModel
                     try
                     {
                         serviceHost.Close();
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
                     catch (Exception e)
                     {
@@ -246,7 +246,7 @@ namespace DevLib.ServiceModel
                     try
                     {
                         serviceHost.Abort();
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
                     catch (Exception e)
                     {
@@ -277,7 +277,7 @@ namespace DevLib.ServiceModel
                         this._serviceHostList[i] = new ServiceHost(this._serviceHostList[i].Description.ServiceType);
                         this._serviceHostList[i].Open();
                         this.RaiseEvent(this.Restarted, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Restarted);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
                     catch (Exception e)
                     {
@@ -355,7 +355,7 @@ namespace DevLib.ServiceModel
                     {
                         ServiceHost serviceHost = new ServiceHost(serviceType);
                         this._serviceHostList.Add(serviceHost);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceedStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                     }
                     catch (Exception e)
                     {
@@ -381,6 +381,11 @@ namespace DevLib.ServiceModel
         /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
         private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostStateEnum state)
         {
+            if (this._disposed)
+            {
+                return;
+            }
+
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
@@ -401,6 +406,8 @@ namespace DevLib.ServiceModel
             {
                 return;
             }
+
+            this._disposed = true;
 
             if (disposing)
             {
@@ -439,8 +446,6 @@ namespace DevLib.ServiceModel
             ////    Marshal.FreeHGlobal(nativeResource);
             ////    nativeResource = IntPtr.Zero;
             ////}
-
-            this._disposed = true;
         }
 
         /// <summary>

@@ -60,8 +60,7 @@ namespace DevLib.AddIn
 
                 compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
 
-                string assemblySource = DevLib.AddIn.Properties.Resources.Program
-                                                                                 .Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName)
+                string assemblySource = DevLib.AddIn.Properties.Resources.Program.Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName)
                                                                                  .Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
 
                 results = provider.CompileAssemblyFromSource(compilerParameters, assemblySource);
@@ -78,7 +77,7 @@ namespace DevLib.AddIn
 
             if (results.Errors.HasWarnings)
             {
-                AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Succeed to compile assembly for AddInDomain with warnings.", results.Errors);
+                AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Succeeded to compile assembly for AddInDomain with warnings.", results.Errors);
 
                 Debug.WriteLine(string.Format(AddInConstants.WarningStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString(), string.Empty));
             }

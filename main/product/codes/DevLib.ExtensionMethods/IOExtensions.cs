@@ -22,7 +22,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="fileName">The file to write to.</param>
         /// <param name="overwritten">Whether overwrite exists file.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
-        /// <returns>Full path of the file name if write file successfully.</returns>
+        /// <returns>Full path of the file name if write file succeeded.</returns>
         public static string WriteTextFile(this string contents, string fileName, bool overwritten = true, Encoding encoding = null)
         {
             if (string.IsNullOrEmpty(fileName))
@@ -107,7 +107,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="bytes">The bytes to write to the file.</param>
         /// <param name="fileName">The file to write to.</param>
         /// <param name="overwritten">Whether overwrite exists file.</param>
-        /// <returns>Full path of the file name if write file successfully.</returns>
+        /// <returns>Full path of the file name if write file succeeded.</returns>
         public static string WriteBinaryFile(this byte[] bytes, string fileName, bool overwritten = true)
         {
             if (string.IsNullOrEmpty(fileName))
@@ -186,7 +186,7 @@ namespace DevLib.ExtensionMethods
         /// Open containing folder with Windows Explorer.
         /// </summary>
         /// <param name="fileName">Path or File name.</param>
-        /// <returns>Full path or the file name if open folder successfully.</returns>
+        /// <returns>Full path or the file name if open folder succeeded.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static string OpenContainingFolder(this string fileName)
         {
@@ -261,7 +261,7 @@ namespace DevLib.ExtensionMethods
         /// Stream object to bytes.
         /// </summary>
         /// <param name="source">Stream source.</param>
-        /// <returns>Byte array</returns>
+        /// <returns>Byte array.</returns>
         public static byte[] ToByteArray(this Stream source)
         {
             if (source == null)
@@ -292,7 +292,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Bytes to Stream object.
         /// </summary>
-        /// <param name="source">Bytes source</param>
+        /// <param name="source">Bytes source.</param>
         /// <returns>Stream object.</returns>
         public static Stream ToStream(this byte[] source)
         {

@@ -9,6 +9,7 @@ namespace DevLib.Settings
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
+    using System.Threading;
     using System.Xml;
     using System.Xml.Serialization;
 
@@ -38,13 +39,20 @@ namespace DevLib.Settings
         private XmlSerializerNamespaces _xmlNamespaces;
 
         /// <summary>
+        /// Field _readerWriterLock.
+        /// </summary>
+        private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Settings" /> class.
         /// </summary>
         /// <param name="configFile">Configuration file name.</param>
         internal Settings(string configFile)
         {
             this.ConfigFile = configFile;
+
             this.Init();
+
             try
             {
                 this.Reload();
@@ -71,9 +79,15 @@ namespace DevLib.Settings
         {
             get
             {
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+                try
                 {
                     return this._settingsItemDictionary.Count;
+                }
+                finally
+                {
+                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -85,11 +99,17 @@ namespace DevLib.Settings
         {
             get
             {
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+                try
                 {
                     string[] result = new string[this._settingsItemDictionary.Count];
                     this._settingsItemDictionary.Keys.CopyTo(result, 0);
                     return result;
+                }
+                finally
+                {
+                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -101,11 +121,17 @@ namespace DevLib.Settings
         {
             get
             {
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+                try
                 {
                     object[] result = new object[this._settingsItemDictionary.Count];
                     this._settingsItemDictionary.Values.CopyTo(result, 0);
                     return result;
+                }
+                finally
+                {
+                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -145,6 +171,8 @@ namespace DevLib.Settings
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
+
+                throw;
             }
         }
 
@@ -166,6 +194,8 @@ namespace DevLib.Settings
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
+
+                throw;
             }
         }
 
@@ -178,9 +208,15 @@ namespace DevLib.Settings
         {
             this.CheckNullKey(key);
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 this._settingsItemDictionary[key] = value;
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -199,7 +235,9 @@ namespace DevLib.Settings
                 this.Refresh();
             }
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (this._settingsItemDictionary.ContainsKey(key))
                 {
@@ -210,6 +248,7 @@ namespace DevLib.Settings
                     catch (Exception e)
                     {
                         ExceptionHandler.Log(e);
+
                         throw;
                     }
                 }
@@ -217,6 +256,10 @@ namespace DevLib.Settings
                 {
                     throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
                 }
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -236,7 +279,9 @@ namespace DevLib.Settings
                 this.Refresh();
             }
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (this._settingsItemDictionary.ContainsKey(key))
                 {
@@ -247,6 +292,7 @@ namespace DevLib.Settings
                     catch (Exception e)
                     {
                         ExceptionHandler.Log(e);
+
                         throw;
                     }
                 }
@@ -255,6 +301,10 @@ namespace DevLib.Settings
                     throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
                 }
             }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
+            }
         }
 
         /// <summary>
@@ -262,10 +312,10 @@ namespace DevLib.Settings
         /// </summary>
         /// <typeparam name="T">Type of value.</typeparam>
         /// <param name="key">A string specifying the key.</param>
-        /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <param name="defaultValue">If <paramref name="key"/> does not exist, return default value.</param>
+        /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <returns>A configuration object, or <paramref name="defaultValue"/> if <paramref name="key"/> does not exist in the collection.</returns>
-        public T GetValue<T>(string key, bool refresh = false, T defaultValue = default(T))
+        public T GetValue<T>(string key, T defaultValue, bool refresh)
         {
             this.CheckNullKey(key);
 
@@ -274,7 +324,9 @@ namespace DevLib.Settings
                 this.Refresh();
             }
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (this._settingsItemDictionary.ContainsKey(key))
                 {
@@ -285,6 +337,7 @@ namespace DevLib.Settings
                     catch (Exception e)
                     {
                         ExceptionHandler.Log(e);
+
                         return defaultValue;
                     }
                 }
@@ -292,6 +345,10 @@ namespace DevLib.Settings
                 {
                     return defaultValue;
                 }
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -303,9 +360,15 @@ namespace DevLib.Settings
         {
             this.CheckNullKey(key);
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 this._settingsItemDictionary.Remove(key);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -329,7 +392,16 @@ namespace DevLib.Settings
         {
             this.CheckNullKey(key);
 
-            return this._settingsItemDictionary.ContainsKey(key);
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
+            {
+                return this._settingsItemDictionary.ContainsKey(key);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
+            }
         }
 
         /// <summary>

@@ -42,7 +42,7 @@ namespace DevLib.AddIn
                 Console.WriteLine("args[2] = PID");
                 Console.WriteLine("args[3] = AddInDomainSetup file");
                 Console.WriteLine("args[4] = Redirect output or not");
-                Log("Invalid arguments");
+                Log(false, "Invalid arguments");
                 return;
             }
 
@@ -52,7 +52,7 @@ namespace DevLib.AddIn
 
             try
             {
-                Log(Environment.CommandLine);
+                Log(redirectOutput, Environment.CommandLine);
 
                 Dictionary<AssemblyName, string> resolveDict = new Dictionary<AssemblyName, string>();
                 resolveDict.Add(new AssemblyName("$[AddInAssemblyName]"), args[0]);
@@ -65,16 +65,11 @@ namespace DevLib.AddIn
 
                 if (hostType != null)
                 {
-                    if (redirectOutput)
-                    {
-                        Console.WriteLine("Succeeded: Type.GetType($[AddInActivatorHostTypeName])");
-                    }
-
-                    Log("Succeeded: Type.GetType($[AddInActivatorHostTypeName])");
+                    Log(redirectOutput, "Succeeded: Type.GetType($[AddInActivatorHostTypeName])");
                 }
                 else
                 {
-                    Console.WriteLine(string.Format("Could not load AddInActivatorHost type $[AddInActivatorHostTypeName] by using resolver with $[AddInAssemblyName] mapped to {0}", args[0]));
+                    Log(redirectOutput, string.Format("Could not load AddInActivatorHost type $[AddInActivatorHostTypeName] by using resolver with $[AddInAssemblyName] mapped to {0}", args[0]));
                     throw new TypeLoadException(string.Format("Could not load AddInActivatorHost type $[AddInActivatorHostTypeName] by using resolver with $[AddInAssemblyName] mapped to {0}", args[0]));
                 }
 
@@ -82,53 +77,48 @@ namespace DevLib.AddIn
 
                 if (methodInfo != null)
                 {
-                    if (redirectOutput)
-                    {
-                        Console.WriteLine("Succeeded: GetMethod on AddInActivatorHost");
-                    }
-
-                    Log("Succeeded: GetMethod on AddInActivatorHost");
+                    Log(redirectOutput, "Succeeded: GetMethod on AddInActivatorHost");
                 }
                 else
                 {
-                    Console.WriteLine("'Run' method on AddInActivatorHost was not found.");
-                    Log("'Run' method on AddInActivatorHost was not found.");
+                    Log(redirectOutput, "'Run' method on AddInActivatorHost was not found.");
                     throw new Exception("'Run' method on AddInActivatorHost was not found.");
                 }
 
-                if (redirectOutput)
-                {
-                    Console.WriteLine("Begin Invoke AddInActivatorHost method...");
-                }
-
-                Log("Begin Invoke AddInActivatorHost method...");
+                Log(redirectOutput, "Begin Invoke AddInActivatorHost method.");
 
                 methodInfo.Invoke(null, new object[] { args });
             }
             catch (Exception e)
             {
-                Console.WriteLine("Summary: Failed to launch AddInActivatorHost: {0}", e);
-                Log("Summary: Failed to launch AddInActivatorHost: {0}", e);
+                Log(redirectOutput, "Summary: Failed to launch AddInActivatorHost: {0}", e.ToString());
             }
         }
 
         /// <summary>
         /// Static Method OpenLogFile.
         /// </summary>
-        private static void OpenLogFile()
+        /// <param name="redirectOutput">Whether redirect console output.</param>
+        private static void OpenLogFile(bool redirectOutput)
         {
             string fileName = string.Format("{0}.log", Assembly.GetEntryAssembly().Location);
+            string log = string.Format("[{0}] [PID:{1}] [AddInDomain is started.]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffff"), Process.GetCurrentProcess().Id.ToString());
+
+            if (redirectOutput)
+            {
+                Console.WriteLine(log);
+            }
 
             try
             {
                 _logFile = new StreamWriter(fileName, true);
                 _logFile.WriteLine();
-                _logFile.WriteLine(string.Format("[{0}] [PID:{1}] Started.", DateTime.Now, Process.GetCurrentProcess().Id.ToString()));
+                _logFile.WriteLine(log);
                 _logFile.Flush();
             }
             catch (Exception e)
             {
-                Console.WriteLine("Failed to open AddInDomain bootstrap log: {0}", e);
+                Console.WriteLine("Failed to open AddInDomain bootstrap log: {0}", e.ToString());
             }
         }
 
@@ -137,16 +127,23 @@ namespace DevLib.AddIn
         /// </summary>
         /// <param name="message">Message to log.</param>
         /// <param name="args">The object array to write into format string.</param>
-        private static void Log(string message, params object[] args)
+        private static void Log(bool redirectOutput, string message, params object[] args)
         {
+            string log = string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffff"), Process.GetCurrentProcess().Id.ToString(), message);
+
             if (_logFile == null)
             {
-                OpenLogFile();
+                OpenLogFile(redirectOutput);
+            }
+
+            if (redirectOutput)
+            {
+                Console.WriteLine(log);
             }
 
             if (_logFile != null)
             {
-                _logFile.WriteLine(string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now, Process.GetCurrentProcess().Id.ToString(), message), args);
+                _logFile.WriteLine(log, args);
                 _logFile.Flush();
             }
         }

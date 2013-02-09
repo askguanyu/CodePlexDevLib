@@ -389,11 +389,6 @@ namespace DevLib.ServiceModel
         /// <param name="e">Instance of EventArgs.</param>
         private void RaiseEvent(EventHandler<EventArgs> eventHandler, EventArgs e)
         {
-            if (this._disposed)
-            {
-                return;
-            }
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<EventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 

@@ -97,7 +97,7 @@ namespace DevLib.AddIn
         public AddInDomain(string friendlyName = null, bool showRedirectConsoleOutput = true, AddInDomainSetup addInDomainSetup = null)
         {
             this.FriendlyName = string.IsNullOrEmpty(friendlyName) ? AddInConstants.DefaultFriendlyName : friendlyName;
-            this.AddInDomainSetupInfo = (addInDomainSetup == null) ? new AddInDomainSetup() : addInDomainSetup;
+            this.AddInDomainSetupInfo = addInDomainSetup ?? new AddInDomainSetup(); ;
             this.RedirectOutput = showRedirectConsoleOutput;
             this.CreateAddInActivatorProcess();
         }
@@ -469,11 +469,6 @@ namespace DevLib.AddIn
         /// <param name="eventHandler">Instance of EventHandler.</param>
         private void RaiseEvent(EventHandler eventHandler)
         {
-            if (this._disposed)
-            {
-                return;
-            }
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
@@ -489,11 +484,6 @@ namespace DevLib.AddIn
         /// <param name="e">Instance of DataReceivedEventArgs.</param>
         private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
-            if (this._disposed)
-            {
-                return;
-            }
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             DataReceivedEventHandler temp = Interlocked.CompareExchange(ref this.DataReceived, null, null);
 

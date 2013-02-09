@@ -634,11 +634,6 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="eventArgs">Instance of AsyncSocketSessionEventArgs.</param>
         private void RaiseEvent(EventHandler<AsyncSocketSessionEventArgs> eventHandler, AsyncSocketSessionEventArgs eventArgs)
         {
-            if (this._disposed)
-            {
-                return;
-            }
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<AsyncSocketSessionEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
@@ -655,11 +650,6 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="eventArgs">Instance of AsyncSocketErrorEventArgs.</param>
         private void RaiseEvent(EventHandler<AsyncSocketErrorEventArgs> eventHandler, AsyncSocketErrorEventArgs eventArgs)
         {
-            if (this._disposed)
-            {
-                return;
-            }
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<AsyncSocketErrorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
@@ -675,11 +665,6 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="eventHandler">Instance of EventHandler.</param>
         private void RaiseEvent(EventHandler eventHandler)
         {
-            if (this._disposed)
-            {
-                return;
-            }
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 

@@ -855,7 +855,27 @@ namespace DevLib.Samples
 
             #region AsyncSocket
 
-            AsyncSocketTcpServer server = new AsyncSocketTcpServer(999);
+            AsyncSocketTcpServer server = null;
+
+            try
+            {
+                AddInDomain tcpdomain = new AddInDomain();
+                server = tcpdomain.CreateInstance<AsyncSocketTcpServer>();
+                server.LocalPort = 999;
+            }
+            catch (Exception e)
+            {
+                e.ConsoleOutput();
+
+                try
+                {
+                    server = new AsyncSocketTcpServer(999);
+                }
+                catch (Exception ee)
+                {
+                    ee.ConsoleOutput();
+                }
+            }
 
             Task.Factory.StartNew(() =>
             {

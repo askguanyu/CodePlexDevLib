@@ -381,11 +381,6 @@ namespace DevLib.ServiceModel
         /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
         private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostStateEnum state)
         {
-            if (this._disposed)
-            {
-                return;
-            }
-
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 

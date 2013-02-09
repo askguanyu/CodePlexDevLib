@@ -91,7 +91,7 @@ namespace DevLib.AddIn
             }
             catch (Exception e)
             {
-                Log(redirectOutput, "Summary: Failed to launch AddInActivatorHost: {0}", e.ToString());
+                Log(redirectOutput, string.Format("Summary: Failed to launch AddInActivatorHost:\r\n{0}", e.ToString()));
             }
         }
 
@@ -125,9 +125,9 @@ namespace DevLib.AddIn
         /// <summary>
         /// Static Method Log.
         /// </summary>
+        /// <param name="redirectOutput">Whether redirect console output.</param>
         /// <param name="message">Message to log.</param>
-        /// <param name="args">The object array to write into format string.</param>
-        private static void Log(bool redirectOutput, string message, params object[] args)
+        private static void Log(bool redirectOutput, string message)
         {
             string log = string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffff"), Process.GetCurrentProcess().Id.ToString(), message);
 
@@ -143,7 +143,7 @@ namespace DevLib.AddIn
 
             if (_logFile != null)
             {
-                _logFile.WriteLine(log, args);
+                _logFile.WriteLine(log);
                 _logFile.Flush();
             }
         }

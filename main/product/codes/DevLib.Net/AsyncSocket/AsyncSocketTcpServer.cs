@@ -9,6 +9,7 @@ namespace DevLib.Net.AsyncSocket
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.Sockets;
     using System.Threading;
@@ -482,6 +483,7 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="sessionId">Connected socket session Id.</param>
         /// <param name="buffer">Data to send.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public bool Send(int sessionId, byte[] buffer)
         {
             this.CheckDisposed();
@@ -793,6 +795,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Method ProcessAccept.
         /// </summary>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         private void ProcessAccept()
         {
             if (this._acceptSocketAsyncEventArgs != null && this._acceptSocketAsyncEventArgs.SocketError == SocketError.Success)

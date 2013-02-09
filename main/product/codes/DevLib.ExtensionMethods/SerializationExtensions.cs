@@ -7,6 +7,7 @@ namespace DevLib.ExtensionMethods
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
@@ -361,6 +362,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="type">Type of DataContract object.</param>
         /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
         /// <returns>Instance of DataContract object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static object DeserializeDataContractXml(this string source, Type type, IEnumerable<Type> knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
@@ -387,6 +389,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The DataContract XML string to deserialize.</param>
         /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
         /// <returns>Instance of T.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static T DeserializeDataContractXml<T>(this string source, IEnumerable<Type> knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))

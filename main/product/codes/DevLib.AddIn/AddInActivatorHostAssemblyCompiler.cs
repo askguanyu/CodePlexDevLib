@@ -50,14 +50,11 @@ namespace DevLib.AddIn
             {
                 List<string> compilerArgs = new List<string> { AddInPlatformTarget.GetPlatformTargetCompilerArgument(addInDomainSetup.Platform) };
 
-                CompilerParameters compilerParameters = new CompilerParameters
-                {
-                    CompilerOptions = string.Join(" ", compilerArgs.ToArray()),
-                    GenerateExecutable = true,
-                    GenerateInMemory = false,
-                    OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName))
-                };
-
+                CompilerParameters compilerParameters = new CompilerParameters();
+                compilerParameters.CompilerOptions = string.Join(" ", compilerArgs.ToArray());
+                compilerParameters.GenerateExecutable = true;
+                compilerParameters.GenerateInMemory = false;
+                compilerParameters.OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName));
                 compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
 
                 string assemblySource = DevLib.AddIn.Properties.Resources.Program.Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName)

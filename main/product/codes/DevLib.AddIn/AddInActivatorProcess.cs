@@ -91,19 +91,18 @@ namespace DevLib.AddIn
             this._friendlyName = friendlyName;
             this._redirectOutput = redirectOutput;
             this._addInDomainSetup = addInDomainSetup;
-
             this._assemblyFile = AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly(friendlyName, addInDomainSetup);
+            this._addInDomainSetupFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(ConfigFileStringFormat, friendlyName));
+            this._addInDomainLogFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(LogFileStringFormat, friendlyName));
 
-            ProcessStartInfo processStartInfo = new ProcessStartInfo
-            {
-                CreateNoWindow = true,
-                ErrorDialog = false,
-                FileName = this._assemblyFile,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                WorkingDirectory = this._addInDomainSetup.WorkingDirectory,
-            };
+            ProcessStartInfo processStartInfo = new ProcessStartInfo();
+            processStartInfo.CreateNoWindow = true;
+            processStartInfo.ErrorDialog = false;
+            processStartInfo.FileName = this._assemblyFile;
+            processStartInfo.RedirectStandardError = true;
+            processStartInfo.RedirectStandardOutput = true;
+            processStartInfo.UseShellExecute = false;
+            processStartInfo.WorkingDirectory = this._addInDomainSetup.WorkingDirectory;
 
             if (this._addInDomainSetup.EnvironmentVariables != null)
             {
@@ -113,14 +112,8 @@ namespace DevLib.AddIn
                 }
             }
 
-            this._process = new Process
-            {
-                StartInfo = processStartInfo
-            };
-
-            this._addInDomainSetupFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(ConfigFileStringFormat, friendlyName));
-            this._addInDomainLogFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(LogFileStringFormat, friendlyName));
-
+            this._process = new Process();
+            this._process.StartInfo = processStartInfo;
             this._process.OutputDataReceived += this.OnProcessDataReceived;
             this._process.ErrorDataReceived += this.OnProcessDataReceived;
             this._process.Exited += this.OnProcessExited;
@@ -161,7 +154,10 @@ namespace DevLib.AddIn
         /// </summary>
         public AddInActivator AddInActivatorClient
         {
-            get { return this._addInActivatorClient != null ? this._addInActivatorClient.AddInActivator : null; }
+            get
+            {
+                return this._addInActivatorClient != null ? this._addInActivatorClient.AddInActivator : null;
+            }
         }
 
         /// <summary>
@@ -400,6 +396,7 @@ namespace DevLib.AddIn
         public void Start()
         {
             this.CheckDisposed();
+
             this.DisposeClient();
 
             string guid = Guid.NewGuid().ToString();
@@ -487,6 +484,11 @@ namespace DevLib.AddIn
 
                 this.DisposeClient();
                 this.Kill();
+
+                if (this._process != null)
+                {
+                    this._process.Dispose();
+                }
             }
 
             // free native resources

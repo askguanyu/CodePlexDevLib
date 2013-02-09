@@ -7,6 +7,7 @@ namespace DevLib.Net.AsyncSocket
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.Sockets;
     using System.Threading;
@@ -316,6 +317,7 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         /// <param name="buffer">Data to send.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public bool Send(byte[] buffer)
         {
             this.CheckDisposed();

@@ -1,9 +1,4 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="Program.cs" company="Microsoft Corporation">
-//     Copyright (c) Microsoft Corporation. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-namespace DevLib.AddIn
+﻿namespace DevLib.AddIn
 {
     using System;
     using System.Collections.Generic;

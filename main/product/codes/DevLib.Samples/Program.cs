@@ -856,10 +856,11 @@ namespace DevLib.Samples
             #region AsyncSocket
 
             AsyncSocketTcpServer server = null;
+            AddInDomain tcpdomain = null;
 
             try
             {
-                AddInDomain tcpdomain = new AddInDomain();
+                tcpdomain = new AddInDomain("atest");
                 server = tcpdomain.CreateInstance<AsyncSocketTcpServer>();
                 server.LocalPort = 999;
             }
@@ -997,7 +998,7 @@ namespace DevLib.Samples
 
             List<AsyncSocketTcpClient> clientList = new List<AsyncSocketTcpClient>();
 
-            for (int loop = 0; loop < 2000; loop++)
+            for (int loop = 0; loop < 200; loop++)
             {
                 clientList.Add(new AsyncSocketTcpClient("127.0.0.1", 999));
             }
@@ -1064,7 +1065,12 @@ namespace DevLib.Samples
 
             //svr.Dispose();
             //client.Dispose();
-            
+
+            if (tcpdomain!=null)
+            {
+                tcpdomain.Dispose();
+            }
+
 
             #endregion
 

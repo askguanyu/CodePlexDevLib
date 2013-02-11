@@ -1065,10 +1065,10 @@ namespace DevLib.Samples
             //svr.Dispose();
             //client.Dispose();
 
-            //if (tcpdomain!=null)
-            //{
-            //    tcpdomain.Dispose();
-            //}
+            if (tcpdomain != null)
+            {
+                tcpdomain.Dispose();
+            }
 
 
             #endregion

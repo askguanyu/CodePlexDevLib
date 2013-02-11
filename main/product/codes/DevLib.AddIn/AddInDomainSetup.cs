@@ -37,7 +37,7 @@ namespace DevLib.AddIn
             this.FileDeleteTimeout = new TimeSpan(0, 0, 0);
             this.Platform = PlatformTargetEnum.AnyCPU;
             this.ProcessPriority = ProcessPriorityClass.Normal;
-            this.ProcessStartTimeout = new TimeSpan(0, 0, 10);
+            this.ProcessStartTimeout = new TimeSpan(0, 0, 15);
             this.RestartOnProcessExit = true;
             this.TypeFilterLevel = TypeFilterLevel.Full;
             this.WorkingDirectory = Environment.CurrentDirectory;

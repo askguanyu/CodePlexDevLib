@@ -97,7 +97,7 @@ namespace DevLib.AddIn
         public AddInDomain(string friendlyName = null, bool showRedirectConsoleOutput = true, AddInDomainSetup addInDomainSetup = null)
         {
             this.FriendlyName = string.IsNullOrEmpty(friendlyName) ? AddInConstants.DefaultFriendlyName : friendlyName;
-            this.AddInDomainSetupInfo = addInDomainSetup ?? new AddInDomainSetup(); ;
+            this.AddInDomainSetupInfo = addInDomainSetup ?? new AddInDomainSetup();
             this.RedirectOutput = showRedirectConsoleOutput;
             this.CreateAddInActivatorProcess();
         }
@@ -388,6 +388,9 @@ namespace DevLib.AddIn
 
             if (this._addInActivatorProcess != null)
             {
+                this._addInActivatorProcess.Attached -= this.OnProcessAttached;
+                this._addInActivatorProcess.Detached -= this.OnProcessDetached;
+                this._addInActivatorProcess.DataReceived -= this.OnDataReceived;
                 this._addInActivatorProcess.Dispose();
                 this._addInActivatorProcess = null;
             }

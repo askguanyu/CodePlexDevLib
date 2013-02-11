@@ -17,8 +17,6 @@ namespace DevLib.Samples
     using DevLib.Utilities;
     using DevLib.WinForms;
     using System;
-    using System.AddIn;
-    using System.AddIn.Hosting;
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -860,7 +858,7 @@ namespace DevLib.Samples
 
             try
             {
-                tcpdomain = new AddInDomain("atest");
+                tcpdomain = new AddInDomain("AsyncSocketTcpServer");
                 server = tcpdomain.CreateInstance<AsyncSocketTcpServer>();
                 server.LocalPort = 999;
             }
@@ -998,13 +996,14 @@ namespace DevLib.Samples
 
             List<AsyncSocketTcpClient> clientList = new List<AsyncSocketTcpClient>();
 
-            for (int loop = 0; loop < 200; loop++)
+            for (int loop = 0; loop < 1000; loop++)
             {
                 clientList.Add(new AsyncSocketTcpClient("127.0.0.1", 999));
             }
 
             foreach (var item in clientList)
             {
+                item.DataReceived += tcpclient_DataReceived;
                 item.Start();
                 Thread.Sleep(5);
             }
@@ -1066,10 +1065,10 @@ namespace DevLib.Samples
             //svr.Dispose();
             //client.Dispose();
 
-            if (tcpdomain!=null)
-            {
-                tcpdomain.Dispose();
-            }
+            //if (tcpdomain!=null)
+            //{
+            //    tcpdomain.Dispose();
+            //}
 
 
             #endregion

@@ -57,10 +57,16 @@ namespace DevLib.AddIn
                 compilerParameters.OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName));
                 compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
 
-                string assemblySource = DevLib.AddIn.Properties.Resources.Program.Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName)
-                                                                                 .Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
+                string assemblySource = DevLib.AddIn.Properties.Resources.Program.Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName).Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
 
                 results = provider.CompileAssemblyFromSource(compilerParameters, assemblySource);
+            }
+
+            if (results.Errors.HasWarnings)
+            {
+                AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Succeeded to compile assembly for AddInDomain with warnings.", results.Errors);
+
+                Debug.WriteLine(string.Format(AddInConstants.WarningStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString(), string.Empty));
             }
 
             if (results.Errors.HasErrors)
@@ -70,13 +76,6 @@ namespace DevLib.AddIn
                 Debug.WriteLine(string.Format(AddInConstants.ExceptionStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString(), string.Empty));
 
                 throw addInAssemblyCompilerException;
-            }
-
-            if (results.Errors.HasWarnings)
-            {
-                AddInAssemblyCompilerException addInAssemblyCompilerException = new AddInAssemblyCompilerException("Succeeded to compile assembly for AddInDomain with warnings.", results.Errors);
-
-                Debug.WriteLine(string.Format(AddInConstants.WarningStringFormat, "DevLib.AddIn.AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly", results.ToString(), addInAssemblyCompilerException.ToString(), results.Output.ToString(), string.Empty));
             }
 
             return results.PathToAssembly;

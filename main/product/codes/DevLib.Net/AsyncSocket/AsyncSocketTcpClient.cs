@@ -51,7 +51,7 @@ namespace DevLib.Net.AsyncSocket
         /// Initializes a new instance of the <see cref="AsyncSocketTcpClient" /> class.
         /// </summary>
         public AsyncSocketTcpClient()
-            : this("127.0.0.1", -1, 8192)
+            : this(IPAddress.Loopback.ToString(), IPEndPoint.MinPort, 8192)
         {
         }
 
@@ -192,9 +192,9 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Establishes a connection to a remote host.
         /// </summary>
-        /// <param name="ignoreException">if set to <c>true</c> ignore any exception.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Start(bool ignoreException = true)
+        public bool Start(bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -250,7 +250,7 @@ namespace DevLib.Net.AsyncSocket
                                                                   e,
                                                                   AsyncSocketErrorCodeEnum.TcpClientStartException));
 
-                    if (!ignoreException)
+                    if (throwOnError)
                     {
                         throw;
                     }
@@ -263,9 +263,9 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Closes the socket connection.
         /// </summary>
-        /// <param name="ignoreException">if set to <c>true</c> ignore any exception.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Stop(bool ignoreException = true)
+        public bool Stop(bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -273,9 +273,9 @@ namespace DevLib.Net.AsyncSocket
             {
                 try
                 {
+                    this.CloseReceiveSocketAsyncEventArgs();
                     this.CloseConnectSocketAsyncEventArgs();
                     this.CloseClientSocket();
-                    this.CloseReceiveSocketAsyncEventArgs();
 
                     Debug.WriteLine(AsyncSocketTcpClientConstants.TcpClientStopSucceeded);
 
@@ -296,7 +296,7 @@ namespace DevLib.Net.AsyncSocket
                                                                   e,
                                                                   AsyncSocketErrorCodeEnum.TcpClientStopException));
 
-                    if (!ignoreException)
+                    if (throwOnError)
                     {
                         throw;
                     }
@@ -313,14 +313,20 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send the data to server.
+        /// Sends data asynchronously to a connected socket.
         /// </summary>
         /// <param name="buffer">Data to send.</param>
+        /// <param name="userToken">A user or application object associated with this asynchronous socket operation.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public bool Send(byte[] buffer)
+        public bool Send(byte[] buffer, object userToken = null)
         {
             this.CheckDisposed();
+
+            if (!this.IsConnected)
+            {
+                return false;
+            }
 
             if (this._clientSocket != null)
             {
@@ -329,7 +335,7 @@ namespace DevLib.Net.AsyncSocket
                 try
                 {
                     sendSocketAsyncEventArgs = new SocketAsyncEventArgs();
-                    sendSocketAsyncEventArgs.UserToken = this._clientSocket;
+                    sendSocketAsyncEventArgs.UserToken = userToken;
                     sendSocketAsyncEventArgs.RemoteEndPoint = this._connectSocketAsyncEventArgs.RemoteEndPoint;
                     sendSocketAsyncEventArgs.SetBuffer(buffer, 0, buffer.Length);
                     sendSocketAsyncEventArgs.Completed += this.SendSocketAsyncEventArgsCompleted;
@@ -415,9 +421,9 @@ namespace DevLib.Net.AsyncSocket
 
                 try
                 {
+                    this.CloseReceiveSocketAsyncEventArgs();
                     this.CloseConnectSocketAsyncEventArgs();
                     this.CloseClientSocket();
-                    this.CloseReceiveSocketAsyncEventArgs();
                 }
                 catch (Exception e)
                 {
@@ -425,8 +431,8 @@ namespace DevLib.Net.AsyncSocket
                 }
                 finally
                 {
-                    this._connectSocketAsyncEventArgs = null;
                     this._receiveSocketAsyncEventArgs = null;
+                    this._connectSocketAsyncEventArgs = null;
                     this._clientSocket = null;
                 }
             }
@@ -493,13 +499,21 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="connectSocketAsyncEventArgs">Instance of SocketAsyncEventArgs.</param>
         private void ConnectSocketAsyncEventArgsCompleted(object sender, SocketAsyncEventArgs connectSocketAsyncEventArgs)
         {
-            switch (connectSocketAsyncEventArgs.LastOperation)
+            try
             {
-                case SocketAsyncOperation.Connect:
-                    this.ProcessConnect();
-                    break;
-                default:
-                    break;
+                switch (connectSocketAsyncEventArgs.LastOperation)
+                {
+                    case SocketAsyncOperation.Connect:
+                        this.ProcessConnect();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
             }
         }
 
@@ -525,7 +539,6 @@ namespace DevLib.Net.AsyncSocket
                 try
                 {
                     this._receiveSocketAsyncEventArgs = new SocketAsyncEventArgs();
-                    this._receiveSocketAsyncEventArgs.UserToken = this._clientSocket;
                     this._receiveSocketAsyncEventArgs.RemoteEndPoint = this._clientSocket.RemoteEndPoint;
                     this._receiveSocketAsyncEventArgs.SetBuffer(new byte[this.BufferSize], 0, this.BufferSize);
                     this._receiveSocketAsyncEventArgs.Completed += this.ReceiveSocketAsyncEventArgsCompleted;
@@ -576,7 +589,7 @@ namespace DevLib.Net.AsyncSocket
 
                 try
                 {
-                    sessionIPEndPoint = (receiveSocketAsyncEventArgs.UserToken as Socket).LocalEndPoint as IPEndPoint;
+                    sessionIPEndPoint = this._clientSocket.LocalEndPoint as IPEndPoint;
                 }
                 catch
                 {
@@ -586,8 +599,6 @@ namespace DevLib.Net.AsyncSocket
                 {
                     Interlocked.Add(ref this._totalBytesReceived, receiveSocketAsyncEventArgs.BytesTransferred);
 
-                    Socket sessionSocket = receiveSocketAsyncEventArgs.UserToken as Socket;
-
                     this.RaiseEvent(
                                     this.DataReceived,
                                     new AsyncSocketSessionEventArgs(
@@ -595,11 +606,12 @@ namespace DevLib.Net.AsyncSocket
                                                                     sessionIPEndPoint,
                                                                     receiveSocketAsyncEventArgs.Buffer,
                                                                     receiveSocketAsyncEventArgs.BytesTransferred,
-                                                                    receiveSocketAsyncEventArgs.Offset));
+                                                                    receiveSocketAsyncEventArgs.Offset,
+                                                                    receiveSocketAsyncEventArgs.UserToken));
 
                     try
                     {
-                        bool willRaiseEvent = sessionSocket.ReceiveAsync(receiveSocketAsyncEventArgs);
+                        bool willRaiseEvent = this._clientSocket.ReceiveAsync(receiveSocketAsyncEventArgs);
                         if (!willRaiseEvent)
                         {
                             this.ProcessReceive(receiveSocketAsyncEventArgs);
@@ -628,7 +640,7 @@ namespace DevLib.Net.AsyncSocket
 
                 try
                 {
-                    sessionIPEndPoint = (receiveSocketAsyncEventArgs.UserToken as Socket).LocalEndPoint as IPEndPoint;
+                    sessionIPEndPoint = this._clientSocket.LocalEndPoint as IPEndPoint;
                 }
                 catch
                 {
@@ -645,13 +657,21 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="receiveSocketAsyncEventArgs">Instance of SocketAsyncEventArgs.</param>
         private void ReceiveSocketAsyncEventArgsCompleted(object sender, SocketAsyncEventArgs receiveSocketAsyncEventArgs)
         {
-            switch (receiveSocketAsyncEventArgs.LastOperation)
+            try
             {
-                case SocketAsyncOperation.Receive:
-                    this.ProcessReceive(receiveSocketAsyncEventArgs);
-                    break;
-                default:
-                    break;
+                switch (receiveSocketAsyncEventArgs.LastOperation)
+                {
+                    case SocketAsyncOperation.Receive:
+                        this.ProcessReceive(receiveSocketAsyncEventArgs);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
             }
         }
 
@@ -662,13 +682,21 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="sendSocketAsyncEventArgs">Instance of SocketAsyncEventArgs.</param>
         private void SendSocketAsyncEventArgsCompleted(object sender, SocketAsyncEventArgs sendSocketAsyncEventArgs)
         {
-            switch (sendSocketAsyncEventArgs.LastOperation)
+            try
             {
-                case SocketAsyncOperation.Send:
-                    this.ProcessSend(sendSocketAsyncEventArgs);
-                    break;
-                default:
-                    break;
+                switch (sendSocketAsyncEventArgs.LastOperation)
+                {
+                    case SocketAsyncOperation.Send:
+                        this.ProcessSend(sendSocketAsyncEventArgs);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
             }
         }
 
@@ -680,11 +708,16 @@ namespace DevLib.Net.AsyncSocket
         {
             if (sendSocketAsyncEventArgs != null && sendSocketAsyncEventArgs.BytesTransferred > 0 && sendSocketAsyncEventArgs.SocketError == SocketError.Success)
             {
+                if (this._receiveSocketAsyncEventArgs != null)
+                {
+                    this._receiveSocketAsyncEventArgs.UserToken = sendSocketAsyncEventArgs.UserToken;
+                }
+
                 IPEndPoint sessionIPEndPoint = null;
 
                 try
                 {
-                    sessionIPEndPoint = (sendSocketAsyncEventArgs.UserToken as Socket).LocalEndPoint as IPEndPoint;
+                    sessionIPEndPoint = this._clientSocket.LocalEndPoint as IPEndPoint;
                 }
                 catch
                 {
@@ -701,7 +734,8 @@ namespace DevLib.Net.AsyncSocket
                                                                     sessionIPEndPoint,
                                                                     sendSocketAsyncEventArgs.Buffer,
                                                                     sendSocketAsyncEventArgs.BytesTransferred,
-                                                                    sendSocketAsyncEventArgs.Offset));
+                                                                    sendSocketAsyncEventArgs.Offset,
+                                                                    sendSocketAsyncEventArgs.UserToken));
                 }
                 catch (Exception e)
                 {

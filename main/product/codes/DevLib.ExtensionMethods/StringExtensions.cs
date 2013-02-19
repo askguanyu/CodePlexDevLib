@@ -153,9 +153,9 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source string.</param>
         /// <param name="defaultValue">Default value of enum.</param>
         /// <param name="ignoreCase">Whether ignore case.</param>
-        /// <param name="ignoreException">Whether ignore exception.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>Instance of TEnum.</returns>
-        public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool ignoreException = true) where TEnum : struct
+        public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool throwOnError = false) where TEnum : struct
         {
             try
             {
@@ -163,13 +163,13 @@ namespace DevLib.ExtensionMethods
             }
             catch
             {
-                if (ignoreException)
+                if (throwOnError)
                 {
-                    return defaultValue;
+                    throw;
                 }
                 else
                 {
-                    throw;
+                    return defaultValue;
                 }
             }
         }

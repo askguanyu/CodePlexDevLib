@@ -152,13 +152,18 @@ namespace DevLib.ExtensionMethods
         /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
         /// <param name="source">The value.</param>
         /// <param name="defaultValue">The default value.</param>
-        /// <param name="ignoreException">if set to <c>true</c> ignore any exception.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The target type.</returns>
-        public static T ConvertTo<T>(this object source, T defaultValue = default(T), bool ignoreException = true)
+        public static T ConvertTo<T>(this object source, T defaultValue = default(T), bool throwOnError = false)
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("source");
+                }
+
+                return default(T);
             }
 
             try
@@ -186,13 +191,13 @@ namespace DevLib.ExtensionMethods
             }
             catch
             {
-                if (ignoreException)
+                if (throwOnError)
                 {
-                    return defaultValue;
+                    throw;
                 }
                 else
                 {
-                    throw;
+                    return defaultValue;
                 }
             }
         }

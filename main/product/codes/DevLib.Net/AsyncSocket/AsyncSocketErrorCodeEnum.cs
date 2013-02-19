@@ -74,5 +74,35 @@ namespace DevLib.Net.AsyncSocket
         /// Represents TcpClientReceiveException.
         /// </summary>
         TcpClientReceiveException,
+
+        /// <summary>
+        /// Represents UdpServerStartException.
+        /// </summary>
+        UdpServerStartException,
+
+        /// <summary>
+        /// Represents UdpServerStopException.
+        /// </summary>
+        UdpServerStopException,
+
+        /// <summary>
+        /// Represents UdpServerReceiveException.
+        /// </summary>
+        UdpServerReceiveException,
+
+        /// <summary>
+        /// Represents UdpClientStartException.
+        /// </summary>
+        UdpClientStartException,
+
+        /// <summary>
+        /// Represents UdpClientStopException.
+        /// </summary>
+        UdpClientStopException,
+
+        /// <summary>
+        /// Represents UdpClientSendException.
+        /// </summary>
+        UdpClientSendException,
     }
 }

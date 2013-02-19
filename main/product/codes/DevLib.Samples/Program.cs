@@ -79,7 +79,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    TestDevLibNet();
+                    //TestDevLibNet();
                 });
 
                 CodeTimer.Time(delegate
@@ -853,6 +853,36 @@ namespace DevLib.Samples
 
             #region AsyncSocket
 
+            try
+            {
+                AsyncSocketUdpServer udpserver = new AsyncSocketUdpServer(999);
+                udpserver.DataReceived += server_DataReceived;
+                udpserver.Start().IfTrue(() => { Console.WriteLine("udp server started."); });
+            }
+            catch (Exception e)
+            {
+                e.ConsoleOutput();
+            }
+
+            Console.ReadKey();
+
+            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp01".ToByteArray());
+            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp02".ToByteArray());
+            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp03".ToByteArray());
+            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp04".ToByteArray());
+
+            AsyncSocketUdpClient udpclient = new AsyncSocketUdpClient("127.0.0.1", 999);
+            udpclient.Start();
+            udpclient.Send("Hello udp1".ToByteArray());
+            udpclient.Send("Hello udp2".ToByteArray());
+            udpclient.Send("Hello udp3".ToByteArray());
+            udpclient.Send("Hello udp4".ToByteArray());
+            udpclient.Stop();
+            udpclient.Send("Hello udp5".ToByteArray());
+            Console.WriteLine("udp client sent.");
+            Console.ReadKey();
+
+
             AsyncSocketTcpServer server = null;
             AddInDomain tcpdomain = null;
 
@@ -918,12 +948,12 @@ namespace DevLib.Samples
             AsyncSocketTcpClient tcpclient = new AsyncSocketTcpClient("127.0.0.1", 999);
             tcpclient.DataReceived += tcpclient_DataReceived;
             tcpclient.Start();
-            tcpclient.Send("hello1".ToByteArray());
+            tcpclient.Send("hello1".ToByteArray(),"test token1");
             Console.WriteLine("tcp client over1.");
             Console.ReadKey();
-            tcpclient.Send("hello2".ToByteArray());
+            tcpclient.Send("hello2".ToByteArray(), "test token2");
             Thread.Sleep(50);
-            tcpclient.Send("hello3".ToByteArray());
+            tcpclient.Send("hello3".ToByteArray(), "test token3");
             Console.WriteLine("tcp client over2.");
             Console.ReadKey();
 
@@ -1003,15 +1033,20 @@ namespace DevLib.Samples
 
             foreach (var item in clientList)
             {
+                item.DataSent += item_DataSent;
                 item.DataReceived += tcpclient_DataReceived;
                 item.Start();
-                Thread.Sleep(5);
+                //Thread.Sleep(5);
             }
 
-            foreach (var item in clientList)
+            for (int i = 0; i < clientList.Count; i++)
             {
-                item.Send(DateTime.Now.ToString().ToByteArray());
-                Thread.Sleep(5);
+                int loop = i;
+                Task.Factory.StartNew(() =>
+                {
+                    clientList[loop].Send(loop.ToString().ToByteArray(), loop);
+                    //Thread.Sleep(5);
+                });
             }
 
             //for (int i = 0; i < 1000; i++)
@@ -1078,9 +1113,14 @@ namespace DevLib.Samples
 
         }
 
+        static void item_DataSent(object sender, AsyncSocketSessionEventArgs e)
+        {
+            "client sent: {0} token{1}".FormatWith(e.DataTransferred.ToEncodingString(), e.UserToken).ConsoleOutput();
+        }
+
         static void tcpclient_DataReceived(object sender, AsyncSocketSessionEventArgs e)
         {
-            e.DataTransferred.ToEncodingString().ConsoleOutput("client received: {0}");
+            "client received: {0} token{1}".FormatWith(e.DataTransferred.ToEncodingString(), e.UserToken).ConsoleOutput();
         }
 
         static void server_DataSent(object sender, AsyncSocketSessionEventArgs e)
@@ -1096,7 +1136,14 @@ namespace DevLib.Samples
             //Thread.Sleep(10);
             //(sender as AsyncSocketTcpServer).Send(e.SessionId, e.SessionIPEndPoint.ToString().ToByteArray(Encoding.UTF8));
             //Thread.Sleep(10);
-            (sender as AsyncSocketTcpServer).Send(e.SessionId, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffff").ToByteArray(Encoding.UTF8));
+            try
+            {
+                (sender as AsyncSocketTcpServer).Send(e.SessionId, e.DataTransferred);
+            }
+            catch (Exception ee)
+            {
+                //ee.ConsoleOutput();
+            }
             //(sender as AsyncSocketServer).GetRemoteIPEndPoint(e.sessionId).Port.ConsoleOutput();
         }
 
@@ -1224,6 +1271,13 @@ namespace DevLib.Samples
 
             List<string> alist = new List<string>() { "a", "b", "c" };
             List<TestClass> blist = new List<TestClass>() { me, me, me };
+
+            Config config = ConfigManager.Open("zzzz.xml");
+            config.SetValue("hello", "a");
+            config.SetValue("hello", blist);
+            config.SetValue("hello", "b");
+            config.Save();
+
 
             Settings setting = SettingsManager.Open("zzz.xml");
             Settings setting1 = SettingsManager.Open("zzz.xml");

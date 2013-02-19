@@ -63,7 +63,7 @@ namespace DevLib.Net.AsyncSocket
         /// Initializes a new instance of the <see cref="AsyncSocketTcpServer" /> class.
         /// </summary>
         public AsyncSocketTcpServer()
-            : this(-1, 8192, false)
+            : this(IPEndPoint.MinPort, 8192, false)
         {
         }
 
@@ -219,9 +219,9 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Start AsyncSocketTcpServer.
         /// </summary>
-        /// <param name="ignoreException">if set to <c>true</c> ignore any exception.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Start(bool ignoreException = true)
+        public bool Start(bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -261,7 +261,7 @@ namespace DevLib.Net.AsyncSocket
                                                                   e,
                                                                   AsyncSocketErrorCodeEnum.TcpServerStartException));
 
-                    if (!ignoreException)
+                    if (throwOnError)
                     {
                         throw;
                     }
@@ -274,9 +274,9 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Stop AsyncSocketTcpServer.
         /// </summary>
-        /// <param name="ignoreException">if set to <c>true</c> ignore any exception.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Stop(bool ignoreException = true)
+        public bool Stop(bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -309,7 +309,7 @@ namespace DevLib.Net.AsyncSocket
                                                                   e,
                                                                   AsyncSocketErrorCodeEnum.TcpServerStopException));
 
-                    if (!ignoreException)
+                    if (throwOnError)
                     {
                         throw;
                     }
@@ -419,6 +419,11 @@ namespace DevLib.Net.AsyncSocket
         {
             this.CheckDisposed();
 
+            if (!this.IsListening)
+            {
+                return false;
+            }
+
             SocketAsyncEventArgs sessionSocketAsyncEventArgs = null;
 
             this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
@@ -478,7 +483,7 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Send the data back to the client.
+        /// Sends data asynchronously to a connected socket.
         /// </summary>
         /// <param name="sessionId">Connected socket session Id.</param>
         /// <param name="buffer">Data to send.</param>
@@ -487,6 +492,11 @@ namespace DevLib.Net.AsyncSocket
         public bool Send(int sessionId, byte[] buffer)
         {
             this.CheckDisposed();
+
+            if (!this.IsListening)
+            {
+                return false;
+            }
 
             SocketAsyncEventArgs sessionSocketAsyncEventArgs = null;
 
@@ -767,13 +777,21 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="acceptSocketAsyncEventArgs">Instance of SocketAsyncEventArgs.</param>
         private void AcceptSocketAsyncEventArgsCompleted(object sender, SocketAsyncEventArgs acceptSocketAsyncEventArgs)
         {
-            switch (acceptSocketAsyncEventArgs.LastOperation)
+            try
             {
-                case SocketAsyncOperation.Accept:
-                    this.ProcessAccept();
-                    break;
-                default:
-                    break;
+                switch (acceptSocketAsyncEventArgs.LastOperation)
+                {
+                    case SocketAsyncOperation.Accept:
+                        this.ProcessAccept();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
             }
         }
 
@@ -885,13 +903,21 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="receiveSocketAsyncEventArgs">Instance of SocketAsyncEventArgs.</param>
         private void ReceiveSocketAsyncEventArgsCompleted(object sender, SocketAsyncEventArgs receiveSocketAsyncEventArgs)
         {
-            switch (receiveSocketAsyncEventArgs.LastOperation)
+            try
             {
-                case SocketAsyncOperation.Receive:
-                    this.ProcessReceive(receiveSocketAsyncEventArgs);
-                    break;
-                default:
-                    break;
+                switch (receiveSocketAsyncEventArgs.LastOperation)
+                {
+                    case SocketAsyncOperation.Receive:
+                        this.ProcessReceive(receiveSocketAsyncEventArgs);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
             }
         }
 
@@ -1017,13 +1043,21 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="sendSocketAsyncEventArgs">Instance of SocketAsyncEventArgs.</param>
         private void SendSocketAsyncEventArgsCompleted(object sender, SocketAsyncEventArgs sendSocketAsyncEventArgs)
         {
-            switch (sendSocketAsyncEventArgs.LastOperation)
+            try
             {
-                case SocketAsyncOperation.Send:
-                    this.ProcessSend(sendSocketAsyncEventArgs);
-                    break;
-                default:
-                    break;
+                switch (sendSocketAsyncEventArgs.LastOperation)
+                {
+                    case SocketAsyncOperation.Send:
+                        this.ProcessSend(sendSocketAsyncEventArgs);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
             }
         }
 

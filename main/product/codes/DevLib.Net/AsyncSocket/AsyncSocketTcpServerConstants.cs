@@ -26,14 +26,14 @@ namespace DevLib.Net.AsyncSocket
         internal const string TcpServerStopException = "Failed: AsyncSocketTcpServer Stop.";
 
         /// <summary>
-        /// Const Field TcpServerSendException.
-        /// </summary>
-        internal const string TcpServerSendException = "Failed: AsyncSocketTcpServer Send.";
-
-        /// <summary>
         /// Const Field TcpServerAcceptSessionException.
         /// </summary>
         internal const string TcpServerAcceptSessionException = "Failed: AsyncSocketTcpServer Accept.";
+
+        /// <summary>
+        /// Const Field TcpServerSendException.
+        /// </summary>
+        internal const string TcpServerSendException = "Failed: AsyncSocketTcpServer Send.";
 
         /// <summary>
         /// Const Field TcpServerReceiveException.

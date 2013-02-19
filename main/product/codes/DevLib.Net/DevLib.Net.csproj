@@ -49,6 +49,10 @@
     <Compile Include="AsyncSocket\AsyncSocketTcpServer.cs" />
     <Compile Include="AsyncSocket\AsyncSocketTcpServerConstants.cs" />
     <Compile Include="AsyncSocket\AsyncSocketSessionEventArgs.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketUdpClient.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketUdpClientConstants.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketUdpServer.cs" />
+    <Compile Include="AsyncSocket\AsyncSocketUdpServerConstants.cs" />
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

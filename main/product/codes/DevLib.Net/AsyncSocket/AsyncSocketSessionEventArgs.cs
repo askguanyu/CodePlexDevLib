@@ -16,10 +16,18 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncSocketSessionEventArgs" /> class.
         /// </summary>
+        public AsyncSocketSessionEventArgs()
+            : this(-1, null, null, 0, 0, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncSocketSessionEventArgs" /> class.
+        /// </summary>
         /// <param name="sessionId">Connected client Id.</param>
         /// <param name="sessionIPEndPoint">Connected client IPEndPoint.</param>
         public AsyncSocketSessionEventArgs(int sessionId, IPEndPoint sessionIPEndPoint)
-            : this(sessionId, sessionIPEndPoint, null, 0, 0)
+            : this(sessionId, sessionIPEndPoint, null, 0, 0, null)
         {
         }
 
@@ -31,13 +39,15 @@ namespace DevLib.Net.AsyncSocket
         /// <param name="buffer">Buffer to use with an asynchronous socket method.</param>
         /// <param name="bytesTransferred">The number of bytes transferred in the socket operation.</param>
         /// <param name="offset">Offset of the buffer.</param>
-        public AsyncSocketSessionEventArgs(int sessionId, IPEndPoint sessionIPEndPoint, byte[] buffer, int bytesTransferred, int offset)
+        /// <param name="userToken">A user or application object associated with this asynchronous socket operation.</param>
+        public AsyncSocketSessionEventArgs(int sessionId, IPEndPoint sessionIPEndPoint, byte[] buffer, int bytesTransferred, int offset, object userToken = null)
         {
             this.SessionId = sessionId;
             this.SessionIPEndPoint = sessionIPEndPoint;
             this.Buffer = buffer;
             this.BytesTransferred = bytesTransferred;
             this.Offset = offset;
+            this.UserToken = userToken;
         }
 
         /// <summary>
@@ -53,6 +63,15 @@ namespace DevLib.Net.AsyncSocket
         /// Gets Session IPEndPoint.
         /// </summary>
         public IPEndPoint SessionIPEndPoint
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a user or application object associated with this asynchronous socket operation.
+        /// </summary>
+        public object UserToken
         {
             get;
             private set;

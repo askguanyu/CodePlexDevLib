@@ -9,6 +9,7 @@ namespace DevLib.Settings
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
+    using System.Text;
     using System.Threading;
     using System.Xml;
     using System.Xml.Serialization;
@@ -61,6 +62,14 @@ namespace DevLib.Settings
             {
                 ExceptionHandler.Log(e);
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Settings" /> class.
+        /// </summary>
+        internal Settings()
+        {
+            this.Init();
         }
 
         /// <summary>
@@ -145,7 +154,7 @@ namespace DevLib.Settings
         {
             get
             {
-                return this.GetValue(key, true);
+                return this.GetValue(key, false);
             }
 
             set
@@ -526,6 +535,148 @@ namespace DevLib.Settings
                                     if (!string.IsNullOrEmpty(key))
                                     {
                                         this._settingsItemDictionary[key] = value;
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    ExceptionHandler.Log(e);
+                                }
+                                finally
+                                {
+                                    xmlReader.ReadEndElement();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                xmlReader.Skip();
+                                ExceptionHandler.Log(e);
+                            }
+                            finally
+                            {
+                                xmlReader.ReadEndElement();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+                        }
+                        finally
+                        {
+                            xmlReader.MoveToContent();
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets an XML string that represents the Settings.
+        /// </summary>
+        /// <returns>The XML representation for this Settings.</returns>
+        public string GetRawXml()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            using (XmlWriter writer = XmlWriter.Create(stringBuilder, this._xmlWriterSettings))
+            {
+                writer.WriteStartElement("settings");
+
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
+                    {
+                        XmlSerializer valueSerializer = null;
+
+                        try
+                        {
+                            Type valueType = item.Value.GetType();
+                            valueSerializer = new XmlSerializer(valueType);
+
+                            writer.WriteStartElement("item");
+
+                            writer.WriteStartAttribute("key");
+                            writer.WriteValue(item.Key);
+                            writer.WriteEndAttribute();
+
+                            writer.WriteStartElement("value");
+                            writer.WriteStartAttribute("type");
+                            writer.WriteValue(valueType.AssemblyQualifiedName);
+                            writer.WriteEndAttribute();
+                            try
+                            {
+                                valueSerializer.Serialize(writer, item.Value, this._xmlNamespaces);
+                            }
+                            catch (Exception e)
+                            {
+                                writer.WriteString(e.Message);
+                                ExceptionHandler.Log(e);
+                            }
+                            finally
+                            {
+                                writer.WriteEndElement();
+                            }
+
+                            writer.WriteEndElement();
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+                        }
+                    }
+                }
+
+                writer.WriteEndElement();
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Sets the Settings with an XML string.
+        /// </summary>
+        /// <param name="rawXml">The XML to use.</param>
+        public void SetRawXml(string rawXml)
+        {
+            if (string.IsNullOrEmpty(rawXml))
+            {
+                return;
+            }
+
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), this._xmlReaderSettings))
+            {
+                if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                {
+                    return;
+                }
+
+                xmlReader.ReadStartElement("settings");
+
+                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                {
+                    this._settingsItemDictionary.Clear();
+
+                    while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
+                    {
+                        try
+                        {
+                            string key = xmlReader.GetAttribute("key");
+                            object value = null;
+
+                            try
+                            {
+                                xmlReader.ReadStartElement("item");
+
+                                string valueTypeName = xmlReader.GetAttribute("type");
+                                XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+
+                                try
+                                {
+                                    xmlReader.ReadStartElement("value");
+                                    value = valueSerializer.Deserialize(xmlReader);
+
+                                    if (!string.IsNullOrEmpty(key))
+                                    {
+                                        this._settingsItemDictionary.Add(key, value);
                                     }
                                 }
                                 catch (Exception e)

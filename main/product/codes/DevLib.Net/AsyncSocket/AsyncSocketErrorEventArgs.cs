@@ -29,7 +29,7 @@ namespace DevLib.Net.AsyncSocket
         public AsyncSocketErrorEventArgs(string message, Exception exception, AsyncSocketErrorCodeEnum errorCode = AsyncSocketErrorCodeEnum.UnspecifiedException)
         {
             this.Message = message;
-            this.Exception = exception;
+            this.SourceException = exception;
             this.ErrorCode = errorCode;
         }
 
@@ -43,9 +43,9 @@ namespace DevLib.Net.AsyncSocket
         }
 
         /// <summary>
-        /// Gets Exception.
+        /// Gets SourceException.
         /// </summary>
-        public Exception Exception
+        public Exception SourceException
         {
             get;
             private set;
@@ -58,6 +58,19 @@ namespace DevLib.Net.AsyncSocket
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Creates and returns a string representation of the current exception.
+        /// </summary>
+        /// <returns>A string representation of the current exception.</returns>
+        public override string ToString()
+        {
+            return string.Format(
+                                 "[ErrorCode:] {0}\r\n[Message:] {1}\r\n[Exception:] {2}",
+                                 this.ErrorCode.ToString(),
+                                 this.Message ?? string.Empty,
+                                 this.SourceException == null ? string.Empty : this.SourceException.ToString());
         }
     }
 }

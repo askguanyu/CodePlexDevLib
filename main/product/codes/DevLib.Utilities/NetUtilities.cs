@@ -42,7 +42,7 @@ namespace DevLib.Utilities
         /// <returns>Random port number.</returns>
         public static int GetRandomPortNumber()
         {
-            return _random.Next(1, 0xFFFF);
+            return _random.Next(IPEndPoint.MinPort, IPEndPoint.MaxPort);
         }
     }
 }

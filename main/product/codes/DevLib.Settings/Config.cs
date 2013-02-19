@@ -8,10 +8,6 @@ namespace DevLib.Settings
     using System;
     using System.Collections.Generic;
     using System.Configuration;
-    using System.IO;
-    using System.Text;
-    using System.Xml;
-    using System.Xml.Serialization;
 
     /// <summary>
     /// Represents a configuration file that is applicable to a particular application. This class cannot be inherited.
@@ -24,14 +20,9 @@ namespace DevLib.Settings
         private Configuration _configuration;
 
         /// <summary>
-        /// Field _xmlWriterSettings.
+        /// Field _settings.
         /// </summary>
-        private XmlWriterSettings _xmlWriterSettings;
-
-        /// <summary>
-        /// Field _xmlNamespaces.
-        /// </summary>
-        private XmlSerializerNamespaces _xmlNamespaces;
+        private Settings _settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Config" /> class.
@@ -41,7 +32,7 @@ namespace DevLib.Settings
         {
             this.ConfigFile = configFile;
 
-            this.Init();
+            this._settings = new Settings();
 
             try
             {
@@ -69,7 +60,7 @@ namespace DevLib.Settings
         {
             get
             {
-                return this._configuration.AppSettings.Settings.Count;
+                return this._configuration.AppSettings.Settings.Count + this._settings.Count;
             }
         }
 
@@ -80,7 +71,10 @@ namespace DevLib.Settings
         {
             get
             {
-                return this._configuration.AppSettings.Settings.AllKeys;
+                List<string> result = new List<string>();
+                result.AddRange(this._configuration.AppSettings.Settings.AllKeys);
+                result.AddRange(this._settings.Keys);
+                return result.ToArray();
             }
         }
 
@@ -93,7 +87,7 @@ namespace DevLib.Settings
         {
             get
             {
-                return this.GetValue(key, true);
+                return this.GetValue(key, false);
             }
 
             set
@@ -114,6 +108,10 @@ namespace DevLib.Settings
 
             try
             {
+                this._configuration.Sections.Remove("settings");
+                this._configuration.Sections.Add("settings", new DefaultSection());
+                this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+
                 this._configuration.Save(ConfigurationSaveMode.Minimal, false);
             }
             catch (Exception e)
@@ -137,6 +135,10 @@ namespace DevLib.Settings
 
             try
             {
+                this._configuration.Sections.Remove("settings");
+                this._configuration.Sections.Add("settings", new DefaultSection());
+                this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+
                 this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, false);
             }
             catch (Exception e)
@@ -156,15 +158,26 @@ namespace DevLib.Settings
         {
             this.CheckNullKey(key);
 
-            string valueString = this.Serialize(value);
-
-            if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
+            if (this.CanConvertible(value.GetType()))
             {
-                this._configuration.AppSettings.Settings[key].Value = valueString;
+                string valueString = Convert.ToString(value);
+
+                if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
+                {
+                    this._configuration.AppSettings.Settings[key].Value = valueString;
+                }
+                else
+                {
+                    this._configuration.AppSettings.Settings.Add(key, valueString);
+                }
+
+                this._settings.Remove(key);
             }
             else
             {
-                this._configuration.AppSettings.Settings.Add(key, valueString);
+                this._settings.SetValue(key, value);
+
+                this._configuration.AppSettings.Settings.Remove(key);
             }
         }
 
@@ -174,7 +187,7 @@ namespace DevLib.Settings
         /// <param name="key">A string specifying the key.</param>
         /// <param name="refresh">Whether refresh settings before gets value.</param>
         /// <returns>A configuration object.</returns>
-        public string GetValue(string key, bool refresh = false)
+        public object GetValue(string key, bool refresh = false)
         {
             this.CheckNullKey(key);
 
@@ -196,10 +209,22 @@ namespace DevLib.Settings
                     throw;
                 }
             }
-            else
+
+            if (this._settings.Contains(key))
             {
-                throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
+                try
+                {
+                    return this._settings.GetValue(key, false);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+
+                    throw;
+                }
             }
+
+            throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
         }
 
         /// <summary>
@@ -222,7 +247,7 @@ namespace DevLib.Settings
             {
                 try
                 {
-                    return this.Deserialize<T>(this._configuration.AppSettings.Settings[key].Value);
+                    return (T)Convert.ChangeType(this._configuration.AppSettings.Settings[key].Value, typeof(T));
                 }
                 catch (Exception e)
                 {
@@ -231,10 +256,22 @@ namespace DevLib.Settings
                     throw;
                 }
             }
-            else
+
+            if (this._settings.Contains(key))
             {
-                throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
+                try
+                {
+                    return this._settings.GetValue<T>(key, false);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+
+                    throw;
+                }
             }
+
+            throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
         }
 
         /// <summary>
@@ -258,17 +295,20 @@ namespace DevLib.Settings
             {
                 try
                 {
-                    return this.Deserialize<T>(this._configuration.AppSettings.Settings[key].Value);
+                    return (T)Convert.ChangeType(this._configuration.AppSettings.Settings[key].Value, typeof(T));
                 }
                 catch
                 {
                     return defaultValue;
                 }
             }
-            else
+
+            if (this._settings.Contains(key))
             {
-                return defaultValue;
+                return this._settings.GetValue<T>(key, defaultValue, false);
             }
+
+            return defaultValue;
         }
 
         /// <summary>
@@ -280,6 +320,8 @@ namespace DevLib.Settings
             this.CheckNullKey(key);
 
             this._configuration.AppSettings.Settings.Remove(key);
+
+            this._settings.Remove(key);
         }
 
         /// <summary>
@@ -288,6 +330,7 @@ namespace DevLib.Settings
         public void Clear()
         {
             this._configuration.AppSettings.Settings.Clear();
+            this._settings.Clear();
         }
 
         /// <summary>
@@ -299,7 +342,7 @@ namespace DevLib.Settings
         {
             this.CheckNullKey(key);
 
-            return this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key);
+            return this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key) || this._settings.Contains(key);
         }
 
         /// <summary>
@@ -307,12 +350,19 @@ namespace DevLib.Settings
         /// </summary>
         public void Refresh()
         {
-            if (string.IsNullOrEmpty(this.ConfigFile))
-            {
-                this.ConfigFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-            }
-
             this._configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = this.ConfigFile }, ConfigurationUserLevel.None);
+
+            if (this._configuration.Sections["settings"] != null)
+            {
+                try
+                {
+                    this._settings.SetRawXml(this._configuration.Sections["settings"].SectionInformation.GetRawXml());
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+            }
         }
 
         /// <summary>
@@ -334,87 +384,6 @@ namespace DevLib.Settings
         private bool CanConvertible(Type source)
         {
             return source.GetInterface("IConvertible") != null;
-        }
-
-        /// <summary>
-        /// Serializes an object to string.
-        /// </summary>
-        /// <param name="source">Object to serialize.</param>
-        /// <returns>Serialized string.</returns>
-        private string Serialize(object source)
-        {
-            // Don't serialize a null object, simply return the default for that object
-            if (source == null)
-            {
-                return string.Empty;
-            }
-
-            string result = null;
-
-            Type sourceType = source.GetType();
-
-            if (this.CanConvertible(sourceType))
-            {
-                result = Convert.ToString(source);
-            }
-            else
-            {
-                StringBuilder stringBuilder = new StringBuilder();
-
-                using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, this._xmlWriterSettings))
-                {
-                    XmlSerializer xmlSerializer = new XmlSerializer(sourceType);
-                    xmlSerializer.Serialize(xmlWriter, source, this._xmlNamespaces);
-                    result = stringBuilder.ToString();
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deserializes string to an object.
-        /// </summary>
-        /// <typeparam name="T">Type of the result objet.</typeparam>
-        /// <param name="source">Source string.</param>
-        /// <returns>The result object.</returns>
-        private T Deserialize<T>(string source)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return default(T);
-            }
-
-            T result = default(T);
-
-            if (this.CanConvertible(typeof(T)))
-            {
-                result = (T)Convert.ChangeType(source, typeof(T));
-            }
-            else
-            {
-                using (TextReader textReader = new StringReader(source))
-                {
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                    return (T)xmlSerializer.Deserialize(textReader);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Method Init.
-        /// </summary>
-        private void Init()
-        {
-            this._xmlWriterSettings = new XmlWriterSettings();
-            this._xmlWriterSettings.ConformanceLevel = ConformanceLevel.Auto;
-            this._xmlWriterSettings.OmitXmlDeclaration = true;
-            this._xmlWriterSettings.Indent = true;
-
-            this._xmlNamespaces = new XmlSerializerNamespaces();
-            this._xmlNamespaces.Add(string.Empty, string.Empty);
         }
 
         /// <summary>

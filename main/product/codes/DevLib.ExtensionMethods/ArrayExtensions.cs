@@ -18,24 +18,42 @@ namespace DevLib.ExtensionMethods
         /// <typeparam name="T">The type of the elements of the array.</typeparam>
         /// <param name="source">Source array.</param>
         /// <param name="action">Method for element.</param>
-        /// <param name="ignoreException">If set to <c>true</c> ignore any exception.</param>
-        public static void ForEach<T>(this T[] source, Action<T> action, bool ignoreException = true)
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        public static void ForEach<T>(this T[] source, Action<T> action, bool throwOnError = false)
         {
-            if (ignoreException)
+            if (source == null)
             {
-                if ((source == null) || (source.Length == 0) || (action == null))
+                if (throwOnError)
                 {
-                    return;
+                    throw new ArgumentNullException("source");
                 }
 
-                for (int i = 0; i < source.Length; i++)
+                return;
+            }
+
+            if (action == null)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("action");
+                }
+
+                return;
+            }
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                try
                 {
                     action(source[i]);
                 }
-            }
-            else
-            {
-                Array.ForEach<T>(source, action);
+                catch
+                {
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+                }
             }
         }
 

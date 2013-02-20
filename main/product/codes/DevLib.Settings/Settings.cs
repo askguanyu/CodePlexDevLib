@@ -8,6 +8,7 @@ namespace DevLib.Settings
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Text;
     using System.Threading;
@@ -635,6 +636,7 @@ namespace DevLib.Settings
         /// Sets the Settings with an XML string.
         /// </summary>
         /// <param name="rawXml">The XML to use.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public void SetRawXml(string rawXml)
         {
             if (string.IsNullOrEmpty(rawXml))

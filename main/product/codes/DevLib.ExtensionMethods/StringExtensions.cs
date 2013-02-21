@@ -210,96 +210,100 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Retrieves left part substring from this instance. The substring ends at the first occurrence of the specified string position.
+        /// Retrieves left part substring from this instance. The substring ends at the first occurrence of the specified string position. If the specified string is not found, the return value is <see cref="F:System.String.Empty" />.
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="value">The string to seek.</param>
         /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
         /// <returns>A string equivalent to the substring that ends at the first occurrence of the specified string position.</returns>
-        public static string LeftSubstringIndexOf(this string source, string value, bool ignoreCase = true)
+        public static string LeftSubstringIndexOf(this string source, string value, bool ignoreCase = false)
         {
-            if (source.IsNullOrWhiteSpace() || value.IsNullOrWhiteSpace())
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(value))
             {
                 return source;
             }
 
             int index = ignoreCase ? source.IndexOf(value, StringComparison.OrdinalIgnoreCase) : source.IndexOf(value);
 
+            // The index position of the value parameter if that string is found, or -1 if it is not. If value is System.String.Empty, the return value is 0.
             if (index == -1 || index == 0)
             {
-                return source;
+                return string.Empty;
             }
 
             return source.Substring(0, index);
         }
 
         /// <summary>
-        /// Retrieves left part substring from this instance. The substring ends at the last occurrence of the specified string position.
+        /// Retrieves left part substring from this instance. The substring ends at the last occurrence of the specified string position. If the specified string is not found, the return value is <see cref="F:System.String.Empty" />.
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="value">The string to seek.</param>
         /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
         /// <returns>A string equivalent to the substring that ends at the last occurrence of the specified string position.</returns>
-        public static string LeftSubstringLastIndexOf(this string source, string value, bool ignoreCase = true)
+        public static string LeftSubstringLastIndexOf(this string source, string value, bool ignoreCase = false)
         {
-            if (source.IsNullOrWhiteSpace() || value.IsNullOrWhiteSpace())
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(value))
             {
                 return source;
             }
 
             int index = ignoreCase ? source.LastIndexOf(value, StringComparison.OrdinalIgnoreCase) : source.LastIndexOf(value);
 
+            // The index position of the value parameter if that string is found, or -1 if it is not. If value is System.String.Empty, the return value is 0.
             if (index == -1 || index == 0)
             {
-                return source;
+                return string.Empty;
             }
 
             return source.Substring(0, index);
         }
 
         /// <summary>
-        /// Retrieves right part substring from this instance. The substring starts at the first occurrence of the specified string position.
+        /// Retrieves right part substring from this instance. The substring starts at the first occurrence of the specified string position. If the specified string is not found, the return value is <see cref="F:System.String.Empty" />.
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="value">The string to seek.</param>
         /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
         /// <returns>A string equivalent to the substring that starts at the first occurrence of the specified string position.</returns>
-        public static string RightSubstringIndexOf(this string source, string value, bool ignoreCase = true)
+        public static string RightSubstringIndexOf(this string source, string value, bool ignoreCase = false)
         {
-            if (source.IsNullOrWhiteSpace() || value.IsNullOrWhiteSpace())
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(value))
             {
                 return source;
             }
 
             int index = ignoreCase ? source.IndexOf(value, StringComparison.OrdinalIgnoreCase) : source.IndexOf(value);
 
+            // The index position of the value parameter if that string is found, or -1 if it is not. If value is System.String.Empty, the return value is 0.
             if (index == -1 || index == 0)
             {
-                return source;
+                return string.Empty;
             }
 
             return source.Substring(index + 1);
         }
 
         /// <summary>
-        /// Retrieves right part substring from this instance. The substring starts at the last occurrence of the specified string position.
+        /// Retrieves right part substring from this instance. The substring starts at the last occurrence of the specified string position. If the specified string is not found, the return value is <see cref="F:System.String.Empty" />.
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="value">The string to seek.</param>
         /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
         /// <returns>A string equivalent to the substring that starts at the last occurrence of the specified string position.</returns>
-        public static string RightSubstringLastIndexOf(this string source, string value, bool ignoreCase = true)
+        public static string RightSubstringLastIndexOf(this string source, string value, bool ignoreCase = false)
         {
-            if (source.IsNullOrWhiteSpace() || value.IsNullOrWhiteSpace())
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(value))
             {
                 return source;
             }
 
             int index = ignoreCase ? source.LastIndexOf(value, StringComparison.OrdinalIgnoreCase) : source.LastIndexOf(value);
 
+            // The index position of the value parameter if that string is found, or -1 if it is not. If value is System.String.Empty, the return value is 0.
             if (index == -1 || index == 0)
             {
-                return source;
+                return string.Empty;
             }
 
             return source.Substring(index + 1);

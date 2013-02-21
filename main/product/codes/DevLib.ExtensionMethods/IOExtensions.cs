@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Security.Permissions;
     using System.Text;
@@ -70,6 +71,54 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Appends the specified string to the file, creating the file if it does not already exist.
+        /// </summary>
+        /// <param name="contents">The string to append to the file.</param>
+        /// <param name="fileName">The file to append the specified string to.</param>
+        /// <param name="encoding">The character encoding to use.</param>
+        /// <returns>Full path of the file name if write file succeeded.</returns>
+        public static string AppendTextFile(this string contents, string fileName, Encoding encoding = null)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            try
+            {
+                if (encoding == null)
+                {
+                    File.AppendAllText(fullPath, contents);
+                }
+                else
+                {
+                    File.AppendAllText(fullPath, contents, encoding);
+                }
+
+                return fullPath;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Opens a file, reads all lines of the file with the specified encoding, and then closes the file.
         /// </summary>
         /// <param name="fileName">The file to open for reading.</param>
@@ -89,6 +138,38 @@ namespace DevLib.ExtensionMethods
                 try
                 {
                     return encoding == null ? File.ReadAllText(fullPath) : File.ReadAllText(fullPath, encoding);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException(fullPath);
+            }
+        }
+
+        /// <summary>
+        /// Opens a file, reads all lines of the file with the specified encoding, and then closes the file.
+        /// </summary>
+        /// <param name="fileName">The file to open for reading.</param>
+        /// <param name="encoding">The encoding applied to the contents of the file.</param>
+        /// <returns>A string array containing all lines of the file.</returns>
+        public static string[] ReadFileAllLines(this string fileName, Encoding encoding = null)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+
+            if (File.Exists(fullPath))
+            {
+                try
+                {
+                    return encoding == null ? File.ReadAllLines(fullPath) : File.ReadAllLines(fullPath, encoding);
                 }
                 catch
                 {
@@ -200,7 +281,7 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                System.Diagnostics.Process.Start("explorer.exe", fullDirectoryPath);
+                Process.Start("explorer.exe", fullDirectoryPath);
                 return fullPath;
             }
             catch

@@ -63,11 +63,12 @@ namespace DevLib.Diagnostics
         /// <param name="outputAction">The action to handle the performance test result string.
         /// <example>Default: <code>Console.WriteLine</code></example>
         /// </param>
-        public static void Time(ActionDelegate action, int iteration = 1, string name = null, Action<string> outputAction = null)
+        /// <returns>CodeTimer result.</returns>
+        public static CodeTimerResult Time(ActionDelegate action, int iteration = 1, string name = null, Action<string> outputAction = null)
         {
             if ((action == null) || (iteration < 1))
             {
-                return;
+                return null;
             }
 
             if (name == null)
@@ -165,6 +166,9 @@ namespace DevLib.Diagnostics
             Thread.CurrentThread.Priority = originalThreadPriority;
 
             Console.WriteLine();
+
+            CodeTimerResult result = new CodeTimerResult(watch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcCountArray);
+            return result;
         }
 
         #region Native Methods Wrap
@@ -221,5 +225,62 @@ namespace DevLib.Diagnostics
             return kernelTime + userTimer;
         }
         #endregion
+    }
+
+    /// <summary>
+    /// Code snippets performance test result.
+    /// </summary>
+    public class CodeTimerResult
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CodeTimerResult" /> class.
+        /// </summary>
+        /// <param name="stopwatchElapsedMilliseconds">Stopwatch timespan in milliseconds.</param>
+        /// <param name="threadTimeElapsedMilliseconds">ThreadTime timespan in milliseconds.</param>
+        /// <param name="cpuCycles">CPU cycles.</param>
+        /// <param name="gcCountArray">GC Count Array.</param>
+        public CodeTimerResult(long stopwatchElapsedMilliseconds, long threadTimeElapsedMilliseconds, ulong cpuCycles, int[] gcCountArray)
+        {
+            this.StopwatchElapsedMilliseconds = stopwatchElapsedMilliseconds;
+            this.ThreadTimeElapsedMilliseconds = threadTimeElapsedMilliseconds;
+            this.CPUCycles = cpuCycles;
+            this.GCCountArray = gcCountArray;
+        }
+
+        /// <summary>
+        /// Gets stopwatch timespan in milliseconds.
+        /// </summary>
+        public long StopwatchElapsedMilliseconds
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets threadTime timespan in milliseconds.
+        /// </summary>
+        public long ThreadTimeElapsedMilliseconds
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets CPU cycles.
+        /// </summary>
+        public ulong CPUCycles
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets GC Count Array.
+        /// </summary>
+        public int[] GCCountArray
+        {
+            get;
+            private set;
+        }
     }
 }

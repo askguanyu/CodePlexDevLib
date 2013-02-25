@@ -52,7 +52,7 @@ namespace DevLib.Samples
             {
                 PrintStartInfo();
 
-                CodeTimer.Time(delegate
+                var result = CodeTimer.Time(delegate
                 {
                     //TestCodeSnippets();
                 });
@@ -948,7 +948,7 @@ namespace DevLib.Samples
             AsyncSocketTcpClient tcpclient = new AsyncSocketTcpClient("127.0.0.1", 999);
             tcpclient.DataReceived += tcpclient_DataReceived;
             tcpclient.Start();
-            tcpclient.Send("hello1".ToByteArray(),"test token1");
+            tcpclient.Send("hello1".ToByteArray(), "test token1");
             Console.WriteLine("tcp client over1.");
             Console.ReadKey();
             tcpclient.Send("hello2".ToByteArray(), "test token2");

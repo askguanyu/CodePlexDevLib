@@ -23,9 +23,7 @@ namespace DevLib.AddIn
         {
             if (exception != null)
             {
-                StackTrace stackTrace = new StackTrace(exception, false);
-                StackFrame stackFrame = stackTrace.GetFrame(stackTrace.FrameCount - 1);
-                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), GetCallStackInfo(stackFrame), exception.ToString());
+                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), GetCallStackInfo(new StackFrame(1)), exception.ToString());
                 Debug.WriteLine(message);
                 Console.WriteLine(message);
             }

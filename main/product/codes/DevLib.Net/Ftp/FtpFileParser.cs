@@ -259,6 +259,8 @@ namespace DevLib.Net.Ftp
             if (inputString.Substring(0, 5) == "<DIR>")
             {
                 result.IsDirectory = true;
+                result.Size = -1;
+
                 inputString = inputString.Substring(5, inputString.Length - 5).Trim();
             }
             else

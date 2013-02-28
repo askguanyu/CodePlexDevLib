@@ -710,7 +710,7 @@ namespace DevLib.Net.Ftp
                     throw;
                 }
 
-                return 0;
+                return -1;
             }
             finally
             {

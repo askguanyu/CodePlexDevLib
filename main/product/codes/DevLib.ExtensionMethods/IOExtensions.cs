@@ -198,7 +198,7 @@ namespace DevLib.ExtensionMethods
 
             if (bytes == null)
             {
-                throw new ArgumentNullException("binary");
+                throw new ArgumentNullException("bytes");
             }
 
             string fullPath = Path.GetFullPath(fileName);
@@ -260,6 +260,58 @@ namespace DevLib.ExtensionMethods
             else
             {
                 throw new FileNotFoundException(fullPath);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new file, writes the specified stream to the file, and then closes the file.
+        /// </summary>
+        /// <param name="source">The stream to write to the file.</param>
+        /// <param name="fileName">The file to write to.</param>
+        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <returns>Full path of the file name if write file succeeded.</returns>
+        public static string WriteFile(this Stream source, string fileName, bool overwritten = true)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwritten && fullPath.ExistsFile())
+            {
+                throw new ArgumentException("The file exists.", fullPath);
+            }
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            using (FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                byte[] buffer = new byte[81920];
+                int count;
+                while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    fileStream.Write(buffer, 0, count);
+                }
+
+                return fullPath;
             }
         }
 
@@ -358,11 +410,11 @@ namespace DevLib.ExtensionMethods
             {
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    byte[] array = new byte[81920];
+                    byte[] buffer = new byte[81920];
                     int count;
-                    while ((count = source.Read(array, 0, array.Length)) != 0)
+                    while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
                     {
-                        memoryStream.Write(array, 0, count);
+                        memoryStream.Write(buffer, 0, count);
                     }
 
                     return memoryStream.ToArray();
@@ -383,6 +435,34 @@ namespace DevLib.ExtensionMethods
             }
 
             return new MemoryStream(source);
+        }
+
+        /// <summary>
+        /// Copy source stream to destination stream.
+        /// </summary>
+        /// <param name="source">Source stream.</param>
+        /// <param name="destinationStream">Destination stream.</param>
+        /// <returns>This instance.</returns>
+        public static Stream CopyTo(this Stream source, Stream destinationStream)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (destinationStream == null)
+            {
+                throw new ArgumentNullException("destinationStream");
+            }
+
+            byte[] buffer = new byte[81920];
+            int count;
+            while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                destinationStream.Write(buffer, 0, count);
+            }
+
+            return source;
         }
     }
 }

@@ -262,11 +262,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Gets object's all properties value.
+        /// Retrieve object's all properties value.
         /// </summary>
         /// <param name="source">The source object.</param>
         /// <returns>Instance of Dictionary{string, object}.</returns>
-        public static Dictionary<string, object> TraverseProperties(this object source)
+        public static Dictionary<string, object> RetrieveProperties(this object source)
         {
             if (source == null)
             {

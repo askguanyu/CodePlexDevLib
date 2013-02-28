@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ExceptionHandler.cs" company="YuGuan Corporation">
+// <copyright file="DiagnosticsUtilities.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceModel
+namespace DevLib.Diagnostics
 {
     using System;
     using System.Diagnostics;
@@ -11,19 +11,19 @@ namespace DevLib.ServiceModel
     using System.Text;
 
     /// <summary>
-    /// Exception Handler.
+    /// Diagnostics Utilities.
     /// </summary>
-    internal static class ExceptionHandler
+    public static class DiagnosticsUtilities
     {
         /// <summary>
-        /// Log Exception.
+        /// WriteLine exception information to console.
         /// </summary>
         /// <param name="exception">Exception instance.</param>
-        public static void Log(Exception exception)
+        public static void ConsoleOutputException(Exception exception)
         {
             if (exception != null)
             {
-                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
+                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), DiagnosticsUtilities.GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
                 Debug.WriteLine(message);
                 Console.WriteLine(message);
             }

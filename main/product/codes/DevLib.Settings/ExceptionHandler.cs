@@ -23,18 +23,18 @@ namespace DevLib.Settings
         {
             if (exception != null)
             {
-                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), GetCallStackInfo(new StackFrame(1)), exception.ToString());
+                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
                 Debug.WriteLine(message);
                 Console.WriteLine(message);
             }
         }
 
         /// <summary>
-        /// Builds a readable representation of the stack frame.
+        /// Builds a readable representation of the method in which the frame is executing.
         /// </summary>
-        /// <param name="stackFrame">The frame that the System.Diagnostics.StackTrace object should contain, representing the function calls in the stack trace.</param>
-        /// <returns>A readable representation of the stack frame.</returns>
-        public static string GetCallStackInfo(StackFrame stackFrame)
+        /// <param name="stackFrame">Instance of <see cref="T:System.Diagnostics.StackFrame" />, which represents a function call on the call stack for the current thread.</param>
+        /// <returns>A readable representation of the method in which the frame is executing.</returns>
+        public static string GetStackFrameMethodInfo(StackFrame stackFrame)
         {
             if (stackFrame == null)
             {

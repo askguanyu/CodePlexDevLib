@@ -22,6 +22,26 @@ namespace DevLib.Net.Ftp
         }
 
         /// <summary>
+        /// Gets or sets file parent directory.
+        /// </summary>
+        public string ParentDirectory
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets file full path.
+        /// </summary>
+        public string FullPath
+        {
+            get
+            {
+                return string.Format("{0}/{1}", string.IsNullOrEmpty(this.ParentDirectory) ? string.Empty : this.ParentDirectory.TrimEnd('/'), this.Name ?? string.Empty);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets file size in byte.
         /// </summary>
         public long Size

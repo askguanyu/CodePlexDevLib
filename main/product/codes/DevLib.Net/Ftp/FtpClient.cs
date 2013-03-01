@@ -86,7 +86,7 @@ namespace DevLib.Net.Ftp
         }
 
         /// <summary>
-        /// Gets or sets ftp password
+        /// Gets or sets ftp password.
         /// </summary>
         public string Password
         {

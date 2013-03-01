@@ -159,7 +159,7 @@ namespace DevLib.Net.Ftp
         {
             try
             {
-                return this.GetFtpWebResponseRawString(WebRequestMethods.Ftp.PrintWorkingDirectory, "/") != null;
+                return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, "/")) != null;
             }
             catch (Exception e)
             {
@@ -174,7 +174,7 @@ namespace DevLib.Net.Ftp
         /// <returns>Current working directory string.</returns>
         public string PrintWorkingDirectory()
         {
-            return this.GetFtpWebResponseRawString(WebRequestMethods.Ftp.PrintWorkingDirectory, null);
+            return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, null));
         }
 
         /// <summary>
@@ -184,8 +184,9 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo.</returns>
         public List<FtpFileInfo> GetFullDirectoryList(string remotePath = null)
         {
-            string rawString = this.GetFtpWebResponseRawString(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
-            return FtpFileParser.GetFullDirectoryList(rawString);
+            FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
+            string rawString = this.GetFtpWebResponseRawString(request);
+            return FtpFileParser.GetFullDirectoryList(rawString, request.RequestUri.LocalPath);
         }
 
         /// <summary>
@@ -195,8 +196,9 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo.</returns>
         public List<FtpFileInfo> GetDirectoryList(string remotePath = null)
         {
-            string rawString = this.GetFtpWebResponseRawString(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
-            return FtpFileParser.GetDirectoryList(rawString);
+            FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
+            string rawString = this.GetFtpWebResponseRawString(request);
+            return FtpFileParser.GetDirectoryList(rawString, request.RequestUri.LocalPath);
         }
 
         /// <summary>
@@ -206,8 +208,9 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo.</returns>
         public List<FtpFileInfo> GetFileList(string remotePath = null)
         {
-            string rawString = this.GetFtpWebResponseRawString(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
-            return FtpFileParser.GetFileList(rawString);
+            FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
+            string rawString = this.GetFtpWebResponseRawString(request);
+            return FtpFileParser.GetFileList(rawString, request.RequestUri.LocalPath);
         }
 
         /// <summary>
@@ -352,7 +355,7 @@ namespace DevLib.Net.Ftp
 
             if (!overwritten)
             {
-                string checkName = this.GetFtpWebResponseRawString(WebRequestMethods.Ftp.ListDirectory, string.IsNullOrEmpty(remoteFile) ? fileName : remoteFile);
+                string checkName = this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectory, string.IsNullOrEmpty(remoteFile) ? fileName : remoteFile));
 
                 if (checkName != null)
                 {
@@ -777,7 +780,7 @@ namespace DevLib.Net.Ftp
 
             try
             {
-                uri = new Uri(string.Format("ftp://{0}/{1}", this.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.TrimStart('/')));
+                uri = new Uri(string.Format("ftp://{0}/{1}", this.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.Trim('/')));
             }
             catch (Exception e)
             {
@@ -802,22 +805,10 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Method GetFtpWebResponseRawString.
         /// </summary>
-        /// <param name="method">Ftp method.</param>
-        /// <param name="path">Ftp path.</param>
+        /// <param name="request">Instance of FtpWebRequest.</param>
         /// <returns>String from FtpWebResponse's stream.</returns>
-        private string GetFtpWebResponseRawString(string method, string path)
+        private string GetFtpWebResponseRawString(FtpWebRequest request)
         {
-            FtpWebRequest request = null;
-
-            try
-            {
-                request = this.CreateFtpWebRequest(method, path);
-            }
-            catch
-            {
-                return null;
-            }
-
             string result = null;
 
             FtpWebResponse response = null;

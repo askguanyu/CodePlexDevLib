@@ -45,8 +45,9 @@ namespace DevLib.Net.Ftp
         /// Get Ftp full directory list.
         /// </summary>
         /// <param name="rawString">Source string.</param>
+        /// <param name="parentPath">Parent path string.</param>
         /// <returns>List of FtpFileInfo.</returns>
-        public static List<FtpFileInfo> GetFullDirectoryList(string rawString)
+        public static List<FtpFileInfo> GetFullDirectoryList(string rawString, string parentPath)
         {
             List<FtpFileInfo> result = null;
 
@@ -71,6 +72,7 @@ namespace DevLib.Net.Ftp
                             FtpFileInfo ftpFileInfo = new FtpFileInfo();
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseWindowsStyleFtpFile(item);
+                            ftpFileInfo.ParentDirectory = parentPath;
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != "..")
                             {
                                 result.Add(ftpFileInfo);
@@ -89,6 +91,7 @@ namespace DevLib.Net.Ftp
                             FtpFileInfo ftpFileInfo = new FtpFileInfo();
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseUnixStyleFtpFile(item);
+                            ftpFileInfo.ParentDirectory = parentPath;
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != "..")
                             {
                                 result.Add(ftpFileInfo);
@@ -110,8 +113,9 @@ namespace DevLib.Net.Ftp
         /// Get Ftp directory list.
         /// </summary>
         /// <param name="rawString">Source string.</param>
+        /// <param name="parentPath">Parent path string.</param>
         /// <returns>List of FtpFileInfo.</returns>
-        public static List<FtpFileInfo> GetDirectoryList(string rawString)
+        public static List<FtpFileInfo> GetDirectoryList(string rawString, string parentPath)
         {
             List<FtpFileInfo> result = null;
 
@@ -136,6 +140,7 @@ namespace DevLib.Net.Ftp
                             FtpFileInfo ftpFileInfo = new FtpFileInfo();
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseWindowsStyleFtpFile(item);
+                            ftpFileInfo.ParentDirectory = parentPath;
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);
@@ -154,6 +159,7 @@ namespace DevLib.Net.Ftp
                             FtpFileInfo ftpFileInfo = new FtpFileInfo();
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseUnixStyleFtpFile(item);
+                            ftpFileInfo.ParentDirectory = parentPath;
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);
@@ -175,8 +181,9 @@ namespace DevLib.Net.Ftp
         /// Get Ftp file list.
         /// </summary>
         /// <param name="rawString">Source string.</param>
+        /// <param name="parentPath">Parent path string.</param>
         /// <returns>List of FtpFileInfo.</returns>
-        public static List<FtpFileInfo> GetFileList(string rawString)
+        public static List<FtpFileInfo> GetFileList(string rawString, string parentPath)
         {
             List<FtpFileInfo> result = null;
 
@@ -201,6 +208,7 @@ namespace DevLib.Net.Ftp
                             FtpFileInfo ftpFileInfo = new FtpFileInfo();
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseWindowsStyleFtpFile(item);
+                            ftpFileInfo.ParentDirectory = parentPath;
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && !ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);
@@ -219,6 +227,7 @@ namespace DevLib.Net.Ftp
                             FtpFileInfo ftpFileInfo = new FtpFileInfo();
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseUnixStyleFtpFile(item);
+                            ftpFileInfo.ParentDirectory = parentPath;
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && !ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);

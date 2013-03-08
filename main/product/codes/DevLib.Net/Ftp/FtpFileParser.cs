@@ -11,7 +11,7 @@ namespace DevLib.Net.Ftp
     using System.Text.RegularExpressions;
 
     /// <summary>
-    /// Ftp File Parser Class.
+    /// Class FtpFileParser.
     /// </summary>
     internal class FtpFileParser
     {

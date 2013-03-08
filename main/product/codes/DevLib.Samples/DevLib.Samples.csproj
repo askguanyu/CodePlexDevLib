@@ -61,10 +61,12 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,6 +85,9 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ServiceProcessTestService.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="SyncDictionary.cs" />
   </ItemGroup>
@@ -114,6 +119,10 @@
     <ProjectReference Include="..\DevLib.ServiceModel\DevLib.ServiceModel.csproj">
       <Project>{61266225-A0B6-4792-A8C2-2B99DD02927A}</Project>
       <Name>DevLib.ServiceModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceProcess\DevLib.ServiceProcess.csproj">
+      <Project>{40b2a751-81aa-4873-8477-3025c8ce2795}</Project>
+      <Name>DevLib.ServiceProcess</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.Settings\DevLib.Settings.csproj">
       <Project>{83DFFACE-8534-4C70-BC64-D7989F815009}</Project>

@@ -8,8 +8,9 @@ namespace DevLib.Net.Ftp
     using System;
 
     /// <summary>
-    /// FtpFileInfo Class.
+    /// Class FtpFileInfo.
     /// </summary>
+    [Serializable]
     public class FtpFileInfo
     {
         /// <summary>

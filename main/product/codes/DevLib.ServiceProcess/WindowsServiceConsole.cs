@@ -80,6 +80,7 @@ namespace DevLib.ServiceProcess
         private static bool HandleConsoleInput(string input)
         {
             bool canContinue = true;
+            ServiceControllerStatus originalStatus = _serviceStatus;
 
             if (input != null)
             {
@@ -87,38 +88,90 @@ namespace DevLib.ServiceProcess
                 {
                     case "S":
                         Console.WriteLine();
-                        _serviceStatus = ServiceControllerStatus.StartPending;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        _windowsService.OnStart(_args);
-                        _serviceStatus = ServiceControllerStatus.Running;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+
+                        try
+                        {
+                            _serviceStatus = ServiceControllerStatus.StartPending;
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                            _windowsService.OnStart(_args);
+                            _serviceStatus = ServiceControllerStatus.Running;
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+                            _serviceStatus = originalStatus;
+                        }
+                        finally
+                        {
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        }
+
                         break;
 
                     case "T":
                         Console.WriteLine();
-                        _serviceStatus = ServiceControllerStatus.StopPending;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        _windowsService.OnStop();
-                        _serviceStatus = ServiceControllerStatus.Stopped;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+
+                        try
+                        {
+                            _serviceStatus = ServiceControllerStatus.StopPending;
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                            _windowsService.OnStop();
+                            _serviceStatus = ServiceControllerStatus.Stopped;
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+                            _serviceStatus = originalStatus;
+                        }
+                        finally
+                        {
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        }
+
                         break;
 
                     case "P":
                         Console.WriteLine();
-                        _serviceStatus = ServiceControllerStatus.PausePending;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        _windowsService.OnPause();
-                        _serviceStatus = ServiceControllerStatus.Paused;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+
+                        try
+                        {
+                            _serviceStatus = ServiceControllerStatus.PausePending;
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                            _windowsService.OnPause();
+                            _serviceStatus = ServiceControllerStatus.Paused;
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+                            _serviceStatus = originalStatus;
+                        }
+                        finally
+                        {
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        }
+
                         break;
 
                     case "R":
                         Console.WriteLine();
-                        _serviceStatus = ServiceControllerStatus.ContinuePending;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        _windowsService.OnContinue();
-                        _serviceStatus = ServiceControllerStatus.Running;
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+
+                        try
+                        {
+                            _serviceStatus = ServiceControllerStatus.ContinuePending;
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                            _windowsService.OnContinue();
+                            _serviceStatus = ServiceControllerStatus.Running;
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+                            _serviceStatus = originalStatus;
+                        }
+                        finally
+                        {
+                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        }
+
                         break;
 
                     case "I":

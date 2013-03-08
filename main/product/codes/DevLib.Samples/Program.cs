@@ -12,7 +12,9 @@ namespace DevLib.Samples
     using DevLib.Main;
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
+    using DevLib.Net.Ftp;
     using DevLib.ServiceModel;
+    using DevLib.ServiceProcess;
     using DevLib.Settings;
     using DevLib.Utilities;
     using DevLib.WinForms;
@@ -99,11 +101,25 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
+                    //TestDevLibServiceProcess(args);
+                });
+
+                CodeTimer.Time(delegate
+                {
                     //TestDevLibSettings();
                 });
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestDevLibServiceProcess(string[] args)
+        {
+            PrintMethodName("Test DevLib.ServiceProcess");
+
+            ServiceProcessTestService testService = new ServiceProcessTestService();
+
+            WindowsServiceBase.Run(testService, args);
         }
 
         private static void PrintStartInfo()
@@ -238,7 +254,7 @@ namespace DevLib.Samples
             //addin.Dispose();
             //addin.Dispose();
             //addin.Reload();
-
+            
 
             //var form = addin.CreateInstance<WinFormRibbon>();
             //form.ShowDialog();
@@ -847,50 +863,53 @@ namespace DevLib.Samples
 
         }
 
+        static AsyncSocketTcpServer staticserver = null;
+
+
         private static void TestDevLibNet()
         {
             PrintMethodName("Test Dev.Lib.Net");
 
             #region AsyncSocket
 
-            try
-            {
-                AsyncSocketUdpServer udpserver = new AsyncSocketUdpServer(999);
-                udpserver.DataReceived += server_DataReceived;
-                udpserver.Start().IfTrue(() => { Console.WriteLine("udp server started."); });
-            }
-            catch (Exception e)
-            {
-                e.ConsoleOutput();
-            }
+            //try
+            //{
+            //    AsyncSocketUdpServer udpserver = new AsyncSocketUdpServer(999);
+            //    udpserver.DataReceived += server_DataReceived;
+            //    udpserver.Start().IfTrue(() => { Console.WriteLine("udp server started."); });
+            //}
+            //catch (Exception e)
+            //{
+            //    e.ConsoleOutput();
+            //}
 
-            Console.ReadKey();
+            //Console.ReadKey();
 
-            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp01".ToByteArray());
-            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp02".ToByteArray());
-            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp03".ToByteArray());
-            AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp04".ToByteArray());
+            //AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp01".ToByteArray());
+            //AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp02".ToByteArray());
+            //AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp03".ToByteArray());
+            //AsyncSocketUdpClient.SendTo("127.0.0.1", 999, "Hello udp04".ToByteArray());
 
-            AsyncSocketUdpClient udpclient = new AsyncSocketUdpClient("127.0.0.1", 999);
-            udpclient.Start();
-            udpclient.Send("Hello udp1".ToByteArray());
-            udpclient.Send("Hello udp2".ToByteArray());
-            udpclient.Send("Hello udp3".ToByteArray());
-            udpclient.Send("Hello udp4".ToByteArray());
-            udpclient.Stop();
-            udpclient.Send("Hello udp5".ToByteArray());
-            Console.WriteLine("udp client sent.");
-            Console.ReadKey();
+            //AsyncSocketUdpClient udpclient = new AsyncSocketUdpClient("127.0.0.1", 999);
+            //udpclient.Start();
+            //udpclient.Send("Hello udp1".ToByteArray());
+            //udpclient.Send("Hello udp2".ToByteArray());
+            //udpclient.Send("Hello udp3".ToByteArray());
+            //udpclient.Send("Hello udp4".ToByteArray());
+            //udpclient.Stop();
+            //udpclient.Send("Hello udp5".ToByteArray());
+            //Console.WriteLine("udp client sent.");
+            //Console.ReadKey();
 
-
-            AsyncSocketTcpServer server = null;
             AddInDomain tcpdomain = null;
 
             try
             {
+                throw new Exception();
+
                 tcpdomain = new AddInDomain("AsyncSocketTcpServer");
-                server = tcpdomain.CreateInstance<AsyncSocketTcpServer>();
-                server.LocalPort = 999;
+                staticserver = tcpdomain.CreateInstance<AsyncSocketTcpServer>();
+                staticserver.LocalPort = 999;
             }
             catch (Exception e)
             {
@@ -898,7 +917,7 @@ namespace DevLib.Samples
 
                 try
                 {
-                    server = new AsyncSocketTcpServer(999);
+                    staticserver = new AsyncSocketTcpServer(999);
                 }
                 catch (Exception ee)
                 {
@@ -910,11 +929,12 @@ namespace DevLib.Samples
             {
                 try
                 {
-                    server.Connected += server_Connected;
-                    server.Disconnected += server_Disconnected;
-                    server.DataReceived += server_DataReceived;
-                    server.DataSent += server_DataSent;
-                    server.Start().IfTrue(() => "Started!".ConsoleOutput()).IfFalse(() => "Start failed!".ConsoleOutput());
+                    staticserver.Connected += server_Connected;
+                    staticserver.Disconnected += server_Disconnected;
+                    staticserver.DataReceived += server_DataReceived;
+                    staticserver.DataSent += server_DataSent;
+                    staticserver.Start().IfTrue(() => "Started!".ConsoleOutput()).IfFalse(() => "Start failed!".ConsoleOutput());
+                    new AsyncSocketTcpServer(999).Start();
                 }
                 catch (Exception e)
                 {
@@ -926,7 +946,7 @@ namespace DevLib.Samples
             Console.ReadKey();
             try
             {
-                server.Stop().IfTrue(() => { Console.WriteLine("server stoped!"); Console.ReadKey(); });
+                staticserver.Stop().IfTrue(() => { Console.WriteLine("server stoped!"); Console.ReadKey(); });
             }
             catch (Exception e)
             {
@@ -936,7 +956,7 @@ namespace DevLib.Samples
 
             try
             {
-                server.Start().IfTrue(() => { Console.WriteLine("server start!"); Console.ReadKey(); });
+                staticserver.Start().IfTrue(() => { Console.WriteLine("server start!"); Console.ReadKey(); });
             }
             catch (Exception e)
             {
@@ -969,7 +989,7 @@ namespace DevLib.Samples
             Console.ReadKey();
             try
             {
-                server.Stop().IfTrue(() => { Console.WriteLine("server stoped!"); Console.ReadKey(); });
+                staticserver.Stop().IfTrue(() => { Console.WriteLine("server stoped!"); Console.ReadKey(); });
             }
             catch (Exception e)
             {
@@ -979,7 +999,7 @@ namespace DevLib.Samples
 
             try
             {
-                server.Start().IfTrue(() => { Console.WriteLine("server start!"); Console.ReadKey(); });
+                staticserver.Start().IfTrue(() => { Console.WriteLine("server start!"); Console.ReadKey(); });
             }
             catch (Exception e)
             {
@@ -1059,7 +1079,7 @@ namespace DevLib.Samples
 
             Console.WriteLine("Press to Stop Server.");
             Console.ReadKey();
-            server.Stop();
+            staticserver.Stop();
 
             Console.WriteLine("Over.");
             Console.ReadKey();
@@ -1128,22 +1148,26 @@ namespace DevLib.Samples
             //e.DataTransferred.ToEncodingString().ConsoleOutput(" sent!");
         }
 
+        static byte[] senddata = "hello".ToByteArray(Encoding.ASCII);
         static void server_DataReceived(object sender, AsyncSocketSessionEventArgs e)
         {
-            e.DataTransferred.ToEncodingString().ConsoleOutput(" received!");
+            staticserver.Send(e.SessionId, senddata);
+            //(sender as AsyncSocketTcpServer).Send(e.SessionId, e.DataTransferred);
+
+            //e.DataTransferred.ToEncodingString().ConsoleOutput(" received!");
 
             //(sender as AsyncSocketTcpServer).Send(e.SessionId, "from server".ToByteArray(Encoding.UTF8));
             //Thread.Sleep(10);
             //(sender as AsyncSocketTcpServer).Send(e.SessionId, e.SessionIPEndPoint.ToString().ToByteArray(Encoding.UTF8));
             //Thread.Sleep(10);
-            try
-            {
-                (sender as AsyncSocketTcpServer).Send(e.SessionId, e.DataTransferred);
-            }
-            catch (Exception ee)
-            {
-                //ee.ConsoleOutput();
-            }
+            //try
+            //{
+            //    (sender as AsyncSocketTcpServer).Send(e.SessionId, e.DataTransferred);
+            //}
+            //catch (Exception ee)
+            //{
+            //    ee.ConsoleOutput();
+            //}
             //(sender as AsyncSocketServer).GetRemoteIPEndPoint(e.sessionId).Port.ConsoleOutput();
         }
 
@@ -1288,7 +1312,6 @@ namespace DevLib.Samples
             //setting["key4"] = me;
             //setting["key5"] = alist;
             //setting["key6"] = blist;
-            setting["key7"] = a;
             setting.Save();
 
             setting1["key3"] = DateTime.Now;

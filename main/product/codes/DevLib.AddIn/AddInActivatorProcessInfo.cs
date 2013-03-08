@@ -11,6 +11,7 @@ namespace DevLib.AddIn
     /// <summary>
     /// AddInActivator process information.
     /// </summary>
+    [Serializable]
     public class AddInActivatorProcessInfo
     {
         /// <summary>

@@ -11,99 +11,27 @@ namespace DevLib.Net.Ftp
     using System.Net;
 
     /// <summary>
-    /// Ftp Client Class.
+    /// Class FtpClient.
     /// </summary>
     public class FtpClient : MarshalByRefObject
     {
-        /// <summary>
-        /// Field _networkCredential.
-        /// </summary>
-        private NetworkCredential _networkCredential;
+        public FtpSetup FtpSetupInfo { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpClient" /> class.
         /// </summary>
         public FtpClient()
         {
+            this.FtpSetupInfo = new FtpSetup();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpClient" /> class.
         /// </summary>
-        /// <param name="hostName">Ftp host name.</param>
-        /// <param name="username">Ftp username.</param>
-        /// <param name="password">Ftp password.</param>
-        public FtpClient(string hostName, string username, string password)
+
+        public FtpClient(FtpSetup ftpSetup)
         {
-            this.HostName = hostName;
-
-            if (this._networkCredential == null)
-            {
-                this._networkCredential = new NetworkCredential();
-            }
-
-            this._networkCredential.UserName = username;
-            this._networkCredential.Password = password;
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether using SSL.
-        /// </summary>
-        public bool EnableSSL
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets ftp host name.
-        /// </summary>
-        public string HostName
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets ftp username.
-        /// </summary>
-        public string UserName
-        {
-            get
-            {
-                return this._networkCredential != null ? this._networkCredential.UserName : string.Empty;
-            }
-
-            set
-            {
-                if (this._networkCredential == null)
-                {
-                    this._networkCredential = new NetworkCredential();
-                }
-
-                this._networkCredential.UserName = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets ftp password.
-        /// </summary>
-        public string Password
-        {
-            get
-            {
-                return this._networkCredential != null ? this._networkCredential.Password : string.Empty;
-            }
-
-            set
-            {
-                if (this._networkCredential == null)
-                {
-                    this._networkCredential = new NetworkCredential();
-                }
-
-                this._networkCredential.Password = value;
-            }
+            this.FtpSetupInfo = ftpSetup;
         }
 
         /// <summary>
@@ -780,7 +708,7 @@ namespace DevLib.Net.Ftp
 
             try
             {
-                uri = new Uri(string.Format("ftp://{0}/{1}", this.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.Trim('/')));
+                uri = new Uri(string.Format("ftp://{0}/{1}", this.FtpSetupInfo.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.Trim('/')));
             }
             catch (Exception e)
             {
@@ -789,16 +717,19 @@ namespace DevLib.Net.Ftp
             }
 
             FtpWebRequest result = FtpWebRequest.Create(uri) as FtpWebRequest;
-            result.Proxy = null;
-            if (this._networkCredential != null)
+            if (this.FtpSetupInfo.FtpCredential != null)
             {
-                result.Credentials = this._networkCredential;
+                result.Credentials = this.FtpSetupInfo.FtpCredential;
             }
 
-            result.EnableSsl = this.EnableSSL;
             result.Method = method;
-            result.KeepAlive = true;
-            result.UsePassive = true;
+            result.EnableSsl = this.FtpSetupInfo.EnableSSL;
+            result.KeepAlive = this.FtpSetupInfo.KeepAlive;
+            result.Proxy = this.FtpSetupInfo.Proxy;
+            result.ReadWriteTimeout = this.FtpSetupInfo.ReadWriteTimeout;
+            result.UseBinary = this.FtpSetupInfo.UseBinary;
+            result.UsePassive = this.FtpSetupInfo.UsePassive;
+
             return result;
         }
 
@@ -847,7 +778,7 @@ namespace DevLib.Net.Ftp
         /// </summary>
         private void CheckHostName()
         {
-            if (string.IsNullOrEmpty(this.HostName))
+            if (string.IsNullOrEmpty(this.FtpSetupInfo.HostName))
             {
                 throw new ArgumentNullException("HostName");
             }

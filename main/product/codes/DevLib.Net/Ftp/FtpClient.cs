@@ -175,7 +175,7 @@ namespace DevLib.Net.Ftp
             {
                 if (throwOnError)
                 {
-                    throw new ArgumentException("The file exists.", fullPath);
+                    throw new ArgumentException("The specified file already exists.", fullPath);
                 }
 
                 return false;
@@ -282,7 +282,8 @@ namespace DevLib.Net.Ftp
             {
                 if (throwOnError)
                 {
-                    throw new FileNotFoundException("The file does not exist.", fullPath);
+                    
+                    throw new FileNotFoundException("The specified file does not exist.", fullPath);
                 }
 
                 return false;
@@ -296,7 +297,7 @@ namespace DevLib.Net.Ftp
                 {
                     if (throwOnError)
                     {
-                        throw new ArgumentException("The file exists.", remoteFile);
+                        throw new ArgumentException("The specified file already exists.", remoteFile);
                     }
 
                     return false;
@@ -394,7 +395,7 @@ namespace DevLib.Net.Ftp
             {
                 if (throwOnError)
                 {
-                    throw new FileNotFoundException("The file does not exist.", fullPath);
+                    throw new FileNotFoundException("The specified file does not exist.", fullPath);
                 }
 
                 return false;

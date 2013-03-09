@@ -36,7 +36,7 @@ namespace DevLib.ExtensionMethods
 
             if (!overwritten && fullPath.ExistsFile())
             {
-                throw new ArgumentException("The file exists.", fullPath);
+                throw new ArgumentException("The specified file already exists.", fullPath);
             }
 
             if (!Directory.Exists(fullDirectoryPath))
@@ -206,7 +206,7 @@ namespace DevLib.ExtensionMethods
 
             if (!overwritten && fullPath.ExistsFile())
             {
-                throw new ArgumentException("The file exists.", fullPath);
+                throw new ArgumentException("The specified file already exists.", fullPath);
             }
 
             if (!Directory.Exists(fullDirectoryPath))
@@ -287,7 +287,7 @@ namespace DevLib.ExtensionMethods
 
             if (!overwritten && fullPath.ExistsFile())
             {
-                throw new ArgumentException("The file exists.", fullPath);
+                throw new ArgumentException("The specified file already exists.", fullPath);
             }
 
             if (!Directory.Exists(fullDirectoryPath))
@@ -388,6 +388,66 @@ namespace DevLib.ExtensionMethods
         public static bool ExistsDirectory(this string source)
         {
             return Directory.Exists(source);
+        }
+
+        /// <summary>
+        /// Moves a specified file to a new location, providing the option to specify a new file name.
+        /// </summary>
+        /// <param name="sourceFileName">The name of the file to move.</param>
+        /// <param name="destFileName">The new path for the file.</param>
+        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <returns>Full path of the destination file name if move file succeeded.</returns>
+        public static string MoveTo(this string sourceFileName, string destFileName, bool overwritten = true)
+        {
+            if (string.IsNullOrEmpty(sourceFileName))
+            {
+                throw new ArgumentNullException("sourceFileName");
+            }
+
+            if (string.IsNullOrEmpty(destFileName))
+            {
+                throw new ArgumentNullException("destFileName");
+            }
+
+            string sourceFullPath = Path.GetFullPath(sourceFileName);
+            string sourceFullDirectoryPath = Path.GetDirectoryName(sourceFullPath);
+
+            string destFullPath = Path.GetFullPath(destFileName);
+            string destFullDirectoryPath = Path.GetDirectoryName(destFileName);
+
+            if (destFullPath.ExistsFile())
+            {
+                if (overwritten)
+                {
+                    File.Delete(destFullPath);
+                }
+                else
+                {
+                    throw new ArgumentException("The specified file already exists.", sourceFullPath);
+                }
+            }
+
+            if (!Directory.Exists(destFullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(destFullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            try
+            {
+                File.Move(sourceFullPath, destFullPath);
+                return destFullPath;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>

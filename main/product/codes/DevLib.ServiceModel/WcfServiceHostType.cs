@@ -34,7 +34,7 @@ namespace DevLib.ServiceModel
 
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The file does not exist.", assemblyFile);
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
             }
 
             List<Type> result = new List<Type>();
@@ -76,7 +76,7 @@ namespace DevLib.ServiceModel
 
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The file does not exist.", assemblyFile);
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
             }
 
             if (string.IsNullOrEmpty(configFile))
@@ -86,7 +86,7 @@ namespace DevLib.ServiceModel
 
             if (!File.Exists(configFile))
             {
-                throw new ArgumentException("The file does not exist.", configFile);
+                throw new FileNotFoundException("The specified file does not exist.", configFile);
             }
 
             List<Type> result = new List<Type>();
@@ -143,7 +143,7 @@ namespace DevLib.ServiceModel
 
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The file does not exist.", assemblyFile);
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
             }
 
             try

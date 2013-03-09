@@ -161,7 +161,7 @@ namespace DevLib.ServiceModel
 
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The file does not exist.", assemblyFile);
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
             }
 
             this.AssemblyFile = assemblyFile;
@@ -170,7 +170,7 @@ namespace DevLib.ServiceModel
 
             if (!File.Exists(this.ConfigFile))
             {
-                throw new ArgumentException("The file does not exist.", this.ConfigFile);
+                throw new FileNotFoundException("The specified file does not exist.", this.ConfigFile);
             }
 
             this.CreateDomain();

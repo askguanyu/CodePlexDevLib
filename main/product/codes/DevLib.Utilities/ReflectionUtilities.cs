@@ -34,7 +34,7 @@ namespace DevLib.Utilities
 
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The file does not exist.", assemblyFile);
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
             }
 
             try

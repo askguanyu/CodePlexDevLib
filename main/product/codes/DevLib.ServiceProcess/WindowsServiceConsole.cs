@@ -89,99 +89,121 @@ namespace DevLib.ServiceProcess
                     case "S":
                         Console.WriteLine();
 
-                        try
+                        if (_serviceStatus == ServiceControllerStatus.Stopped)
                         {
-                            _serviceStatus = ServiceControllerStatus.StartPending;
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                            _windowsService.OnStart(_args);
-                            _serviceStatus = ServiceControllerStatus.Running;
+                            try
+                            {
+                                _serviceStatus = ServiceControllerStatus.StartPending;
+                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                _windowsService.OnStart(_args);
+                                _serviceStatus = ServiceControllerStatus.Running;
+                            }
+                            catch (Exception e)
+                            {
+                                ExceptionHandler.Log(e);
+                                _serviceStatus = originalStatus;
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-                            _serviceStatus = originalStatus;
-                        }
-                        finally
-                        {
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        }
+
+                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
 
                         break;
 
                     case "T":
                         Console.WriteLine();
 
-                        try
+                        if (_serviceStatus == ServiceControllerStatus.Running || _serviceStatus == ServiceControllerStatus.Paused)
                         {
-                            _serviceStatus = ServiceControllerStatus.StopPending;
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                            _windowsService.OnStop();
-                            _serviceStatus = ServiceControllerStatus.Stopped;
+                            try
+                            {
+                                _serviceStatus = ServiceControllerStatus.StopPending;
+                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                _windowsService.OnStop();
+                                _serviceStatus = ServiceControllerStatus.Stopped;
+                            }
+                            catch (Exception e)
+                            {
+                                ExceptionHandler.Log(e);
+                                _serviceStatus = originalStatus;
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-                            _serviceStatus = originalStatus;
-                        }
-                        finally
-                        {
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        }
+
+                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
 
                         break;
 
                     case "P":
                         Console.WriteLine();
 
-                        try
+                        if (_serviceStatus == ServiceControllerStatus.Running)
                         {
-                            _serviceStatus = ServiceControllerStatus.PausePending;
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                            _windowsService.OnPause();
-                            _serviceStatus = ServiceControllerStatus.Paused;
+                            try
+                            {
+                                _serviceStatus = ServiceControllerStatus.PausePending;
+                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                _windowsService.OnPause();
+                                _serviceStatus = ServiceControllerStatus.Paused;
+                            }
+                            catch (Exception e)
+                            {
+                                ExceptionHandler.Log(e);
+                                _serviceStatus = originalStatus;
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-                            _serviceStatus = originalStatus;
-                        }
-                        finally
-                        {
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        }
+
+                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
 
                         break;
 
                     case "R":
                         Console.WriteLine();
 
-                        try
+                        if (_serviceStatus == ServiceControllerStatus.Paused)
                         {
-                            _serviceStatus = ServiceControllerStatus.ContinuePending;
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                            _windowsService.OnContinue();
-                            _serviceStatus = ServiceControllerStatus.Running;
+                            try
+                            {
+                                _serviceStatus = ServiceControllerStatus.ContinuePending;
+                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                _windowsService.OnContinue();
+                                _serviceStatus = ServiceControllerStatus.Running;
+                            }
+                            catch (Exception e)
+                            {
+                                ExceptionHandler.Log(e);
+                                _serviceStatus = originalStatus;
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-                            _serviceStatus = originalStatus;
-                        }
-                        finally
-                        {
-                            WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
-                        }
+
+                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
 
                         break;
 
                     case "I":
                         Console.WriteLine();
-                        WindowsServiceInstaller.RuntimeInstall(_windowsService.WindowsServiceSetupInfo);
+
+                        if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
+                        {
+                            WindowsServiceInstaller.RuntimeInstall(_windowsService.WindowsServiceSetupInfo);
+                        }
+                        else
+                        {
+                            WriteToConsole(true, ConsoleColor.Red, "The specified service already exists.");
+                        }
+
                         break;
 
                     case "U":
                         Console.WriteLine();
-                        WindowsServiceInstaller.RuntimeUninstall(_windowsService.WindowsServiceSetupInfo);
+
+                        if (WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
+                        {
+                            WindowsServiceInstaller.RuntimeUninstall(_windowsService.WindowsServiceSetupInfo);
+                        }
+                        else
+                        {
+                            WriteToConsole(true, ConsoleColor.Red, "The specified service does not exist as an installed service.");
+                        }
+
                         break;
 
                     case "A":

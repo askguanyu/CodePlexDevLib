@@ -101,7 +101,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    //TestDevLibServiceProcess(args);
+                    TestDevLibServiceProcess(args);
                 });
 
                 CodeTimer.Time(delegate

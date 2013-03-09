@@ -15,8 +15,6 @@ namespace DevLib.Net.Ftp
     /// </summary>
     public class FtpClient : MarshalByRefObject
     {
-        public FtpSetup FtpSetupInfo { get; set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpClient" /> class.
         /// </summary>
@@ -28,10 +26,19 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpClient" /> class.
         /// </summary>
-
+        /// <param name="ftpSetup">Instance of FtpSetup.</param>
         public FtpClient(FtpSetup ftpSetup)
         {
             this.FtpSetupInfo = ftpSetup;
+        }
+
+        /// <summary>
+        /// Gets or sets instance of FtpSetup.
+        /// </summary>
+        public FtpSetup FtpSetupInfo
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -695,6 +702,18 @@ namespace DevLib.Net.Ftp
         }
 
         /// <summary>
+        /// Move a file on an FTP server.
+        /// </summary>
+        /// <param name="sourceFullPath">The source full path on an FTP server.</param>
+        /// <param name="destinationFullPath">The destination full path on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public bool MoveFile(string sourceFullPath, string destinationFullPath, bool throwOnError = false)
+        {
+            return this.Rename(sourceFullPath, destinationFullPath, throwOnError);
+        }
+
+        /// <summary>
         /// Method CreateFtpWebRequest.
         /// </summary>
         /// <param name="method">Ftp method.</param>
@@ -726,7 +745,7 @@ namespace DevLib.Net.Ftp
             result.EnableSsl = this.FtpSetupInfo.EnableSSL;
             result.KeepAlive = this.FtpSetupInfo.KeepAlive;
             result.Proxy = this.FtpSetupInfo.Proxy;
-            result.ReadWriteTimeout = this.FtpSetupInfo.ReadWriteTimeout;
+            result.ReadWriteTimeout = this.FtpSetupInfo.ReadWriteTimeoutMilliseconds;
             result.UseBinary = this.FtpSetupInfo.UseBinary;
             result.UsePassive = this.FtpSetupInfo.UsePassive;
 

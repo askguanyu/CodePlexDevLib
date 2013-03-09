@@ -6,6 +6,7 @@
 namespace DevLib.Net.Ftp
 {
     using System;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Class FtpFileInfo.
@@ -34,6 +35,7 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Gets file full path.
         /// </summary>
+        [XmlIgnore]
         public string FullPath
         {
             get

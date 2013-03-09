@@ -7,6 +7,7 @@ namespace DevLib.Net.Ftp
 {
     using System;
     using System.Net;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Class FtpSetup.
@@ -15,26 +16,44 @@ namespace DevLib.Net.Ftp
     public class FtpSetup
     {
         /// <summary>
+        /// Field _ftpCredential.
+        /// </summary>
+        [NonSerialized]
+        private NetworkCredential _ftpCredential;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FtpSetup" /> class.
         /// </summary>
         public FtpSetup()
         {
+            this.UserName = "anonymous";
+            this.Password = "anonymous";
             this.EnableSSL = false;
             this.KeepAlive = true;
             this.Proxy = null;
-            this.ReadWriteTimeout = 300000;
+            this.ReadWriteTimeoutMilliseconds = 300000;
             this.UseBinary = true;
             this.UsePassive = true;
-            this.FtpCredential = new NetworkCredential();
         }
 
         /// <summary>
         /// Gets the credentials used to communicate with the FTP server.
         /// </summary>
+        [XmlIgnore]
         public NetworkCredential FtpCredential
         {
-            get;
-            private set;
+            get
+            {
+                if (this._ftpCredential == null)
+                {
+                    this._ftpCredential = new NetworkCredential();
+                }
+
+                this._ftpCredential.UserName = this.UserName;
+                this._ftpCredential.Password = this.Password;
+
+                return this._ftpCredential;
+            }
         }
 
         /// <summary>
@@ -51,20 +70,8 @@ namespace DevLib.Net.Ftp
         /// </summary>
         public string UserName
         {
-            get
-            {
-                return this.FtpCredential != null ? this.FtpCredential.UserName : string.Empty;
-            }
-
-            set
-            {
-                if (this.FtpCredential == null)
-                {
-                    this.FtpCredential = new NetworkCredential();
-                }
-
-                this.FtpCredential.UserName = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -72,20 +79,8 @@ namespace DevLib.Net.Ftp
         /// </summary>
         public string Password
         {
-            get
-            {
-                return this.FtpCredential != null ? this.FtpCredential.Password : string.Empty;
-            }
-
-            set
-            {
-                if (this.FtpCredential == null)
-                {
-                    this.FtpCredential = new NetworkCredential();
-                }
-
-                this.FtpCredential.Password = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -109,6 +104,7 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Gets or sets the proxy used to communicate with the FTP server.
         /// </summary>
+        [XmlIgnore]
         public IWebProxy Proxy
         {
             get;
@@ -118,7 +114,7 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Gets or sets a time-out when reading from or writing to a stream, in milliseconds.
         /// </summary>
-        public int ReadWriteTimeout
+        public int ReadWriteTimeoutMilliseconds
         {
             get;
             set;

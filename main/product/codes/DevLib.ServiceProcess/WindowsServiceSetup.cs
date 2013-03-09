@@ -8,6 +8,7 @@ namespace DevLib.ServiceProcess
     using System;
     using System.Reflection;
     using System.ServiceProcess;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Class WindowsServiceSetup.
@@ -48,6 +49,7 @@ namespace DevLib.ServiceProcess
         /// <summary>
         /// Gets windows service assembly.
         /// </summary>
+        [XmlIgnore]
         public Assembly ServiceAssembly
         {
             get

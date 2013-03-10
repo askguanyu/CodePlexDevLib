@@ -22,6 +22,11 @@ namespace DevLib.Net.Ftp
         private NetworkCredential _ftpCredential;
 
         /// <summary>
+        /// Field _hostName.
+        /// </summary>
+        private string _hostName;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FtpSetup" /> class.
         /// </summary>
         public FtpSetup()
@@ -61,8 +66,22 @@ namespace DevLib.Net.Ftp
         /// </summary>
         public string HostName
         {
-            get;
-            set;
+            get
+            {
+                return this._hostName;
+            }
+
+            set
+            {
+                if (value.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase))
+                {
+                    this._hostName = value;
+                }
+                else
+                {
+                    this._hostName = string.Format("ftp://{0}", value);
+                }
+            }
         }
 
         /// <summary>

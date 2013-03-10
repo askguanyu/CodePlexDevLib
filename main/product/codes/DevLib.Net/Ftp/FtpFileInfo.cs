@@ -6,6 +6,7 @@
 namespace DevLib.Net.Ftp
 {
     using System;
+    using System.IO;
     using System.Xml.Serialization;
 
     /// <summary>
@@ -40,7 +41,7 @@ namespace DevLib.Net.Ftp
         {
             get
             {
-                return string.Format("{0}/{1}", string.IsNullOrEmpty(this.ParentDirectory) ? string.Empty : this.ParentDirectory.TrimEnd('/'), this.Name ?? string.Empty);
+                return FtpFileInfo.CombinePath(this.ParentDirectory, this.Name);
             }
         }
 
@@ -114,6 +115,27 @@ namespace DevLib.Net.Ftp
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Combines two strings into a path.
+        /// </summary>
+        /// <param name="path1">The first path to combine.</param>
+        /// <param name="path2">The second path to combine.</param>
+        /// <returns>The combined paths.</returns>
+        public static string CombinePath(string path1, string path2)
+        {
+            if (string.IsNullOrEmpty(path2))
+            {
+                return Path.AltDirectorySeparatorChar + path1.Trim(Path.AltDirectorySeparatorChar);
+            }
+
+            if (string.IsNullOrEmpty(path1))
+            {
+                return Path.AltDirectorySeparatorChar + path2.Trim(Path.AltDirectorySeparatorChar);
+            }
+
+            return Path.AltDirectorySeparatorChar + path1.Trim(Path.AltDirectorySeparatorChar) + Path.AltDirectorySeparatorChar + path2.Trim(Path.AltDirectorySeparatorChar);
         }
     }
 }

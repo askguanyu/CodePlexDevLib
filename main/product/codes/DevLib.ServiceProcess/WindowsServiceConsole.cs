@@ -48,7 +48,7 @@ namespace DevLib.ServiceProcess
         /// </summary>
         private static void RunWindowsServiceConsole()
         {
-            WriteToConsole(true, ConsoleColor.Yellow, "[Launch Windows Service...]");
+            WriteToConsole(ConsoleColor.Yellow, "[Launching Windows Service in console...]");
             WriteServiceInfo();
 
             bool canContinue = true;
@@ -62,9 +62,10 @@ namespace DevLib.ServiceProcess
 
             try
             {
-                Console.WriteLine();
+                WriteToConsole(ConsoleColor.Yellow, "[Windows Service is exiting...]");
                 _windowsService.OnStop();
                 _windowsService.OnShutdown();
+                WriteToConsole(ConsoleColor.Yellow, "[Windows Service has exited.]");
             }
             catch (Exception e)
             {
@@ -94,7 +95,7 @@ namespace DevLib.ServiceProcess
                             try
                             {
                                 _serviceStatus = ServiceControllerStatus.StartPending;
-                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
                                 _windowsService.OnStart(_args);
                                 _serviceStatus = ServiceControllerStatus.Running;
                             }
@@ -105,7 +106,7 @@ namespace DevLib.ServiceProcess
                             }
                         }
 
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
                         break;
 
@@ -117,7 +118,7 @@ namespace DevLib.ServiceProcess
                             try
                             {
                                 _serviceStatus = ServiceControllerStatus.StopPending;
-                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
                                 _windowsService.OnStop();
                                 _serviceStatus = ServiceControllerStatus.Stopped;
                             }
@@ -128,7 +129,7 @@ namespace DevLib.ServiceProcess
                             }
                         }
 
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
                         break;
 
@@ -140,7 +141,7 @@ namespace DevLib.ServiceProcess
                             try
                             {
                                 _serviceStatus = ServiceControllerStatus.PausePending;
-                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
                                 _windowsService.OnPause();
                                 _serviceStatus = ServiceControllerStatus.Paused;
                             }
@@ -151,7 +152,7 @@ namespace DevLib.ServiceProcess
                             }
                         }
 
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
                         break;
 
@@ -163,7 +164,7 @@ namespace DevLib.ServiceProcess
                             try
                             {
                                 _serviceStatus = ServiceControllerStatus.ContinuePending;
-                                WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
                                 _windowsService.OnContinue();
                                 _serviceStatus = ServiceControllerStatus.Running;
                             }
@@ -174,7 +175,7 @@ namespace DevLib.ServiceProcess
                             }
                         }
 
-                        WriteToConsole(true, ConsoleColor.Yellow, "[Status:] {0}", _serviceStatus);
+                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
                         break;
 
@@ -187,7 +188,7 @@ namespace DevLib.ServiceProcess
                         }
                         else
                         {
-                            WriteToConsole(true, ConsoleColor.Red, "The specified service already exists.");
+                            WriteToConsole(ConsoleColor.Red, "The specified service already exists.", true, false);
                         }
 
                         break;
@@ -201,7 +202,7 @@ namespace DevLib.ServiceProcess
                         }
                         else
                         {
-                            WriteToConsole(true, ConsoleColor.Red, "The specified service does not exist as an installed service.");
+                            WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
                         }
 
                         break;
@@ -219,7 +220,7 @@ namespace DevLib.ServiceProcess
                         break;
 
                     default:
-                        WriteToConsole(true, ConsoleColor.Red, "\"{0}\" is not recognized as a valid command.", input);
+                        WriteToConsole(ConsoleColor.Red, string.Format("\"{0}\" is not recognized as a valid command.", input), true, false);
                         break;
                 }
             }
@@ -232,9 +233,9 @@ namespace DevLib.ServiceProcess
         /// </summary>
         private static void WriteCommandInfo()
         {
-            WriteToConsole(true, ConsoleColor.White, "[S]tart       S[t]op        [P]ause       [R]esume");
-            WriteToConsole(true, ConsoleColor.White, "[I]nstall     [U]ninstall   St[a]tus      [Q]uit");
-            WriteToConsole(false, ConsoleColor.White, "Enter:");
+            WriteToConsole(ConsoleColor.White, "[S]tart       S[t]op        [P]ause       [R]esume", true, false);
+            WriteToConsole(ConsoleColor.White, "[I]nstall     [U]ninstall   St[a]tus      [Q]uit", true, false);
+            WriteToConsole(ConsoleColor.White, "Enter:", false, false);
         }
 
         /// <summary>
@@ -242,37 +243,56 @@ namespace DevLib.ServiceProcess
         /// </summary>
         private static void WriteServiceInfo()
         {
-            WriteToConsole(true, ConsoleColor.Yellow, new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) ? "[Run as Administrator]" : "[NOT run as Administrator]");
-            WriteToConsole(true, ConsoleColor.Yellow, "[Service Name:] {0}", _windowsService.WindowsServiceSetupInfo.ServiceName);
-            WriteToConsole(true, ConsoleColor.Yellow, "[Display Name:] {0}", _windowsService.WindowsServiceSetupInfo.DisplayName);
-            WriteToConsole(true, ConsoleColor.Yellow, "[Descriptione:] {0}", _windowsService.WindowsServiceSetupInfo.Description);
-            WriteToConsole(true, ConsoleColor.Yellow, "[Status:      ] {0}", _serviceStatus);
-            WriteToConsole(true, ConsoleColor.Yellow, "[Installed:   ] {0}", WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName));
-            WriteToConsole(true, ConsoleColor.Yellow, "[Assembly:    ] {0}", _windowsService.WindowsServiceSetupInfo.ServiceAssembly.FullName);
+            WriteToConsole(ConsoleColor.Yellow, new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) ? "[Run as Administrator]" : "[NOT run as Administrator]", true, false);
+            WriteToConsole(ConsoleColor.Yellow, string.Format("[Service Name:] {0}", _windowsService.WindowsServiceSetupInfo.ServiceName), true, false);
+            WriteToConsole(ConsoleColor.Yellow, string.Format("[Display Name:] {0}", _windowsService.WindowsServiceSetupInfo.DisplayName), true, false);
+            WriteToConsole(ConsoleColor.Yellow, string.Format("[Descriptione:] {0}", _windowsService.WindowsServiceSetupInfo.Description), true, false);
+            WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:      ] {0}", _serviceStatus), true, false);
+            WriteToConsole(ConsoleColor.Yellow, string.Format("[Installed:   ] {0}", WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName)), true, false);
+            WriteToConsole(ConsoleColor.Yellow, string.Format("[Assembly:    ] {0}", _windowsService.WindowsServiceSetupInfo.ServiceAssembly.FullName), true, false);
         }
 
         /// <summary>
         /// Method WriteToConsole.
         /// </summary>
-        /// <param name="withNewLine">Whether followed by the current line terminator.</param>
         /// <param name="foregroundColor">Foreground color of the console.</param>
-        /// <param name="format">A composite format string.</param>
-        /// <param name="formatArguments">An array of objects to write using format.</param>
-        private static void WriteToConsole(bool withNewLine, ConsoleColor foregroundColor, string format, params object[] formatArguments)
+        /// <param name="value">The value to write.</param>
+        /// <param name="withNewLine">Whether followed by the current line terminator.</param>
+        /// <param name="withTimestamp">Whether write timestamp.</param>
+        private static void WriteToConsole(ConsoleColor foregroundColor, string value, bool withNewLine = true, bool withTimestamp = true)
         {
             ConsoleColor originalColor = Console.ForegroundColor;
-            Console.ForegroundColor = foregroundColor;
 
             if (withNewLine)
             {
-                Console.WriteLine(format, formatArguments);
+                if (withTimestamp)
+                {
+                    Console.ForegroundColor = foregroundColor;
+                    Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), value));
+                    Console.ForegroundColor = originalColor;
+                }
+                else
+                {
+                    Console.ForegroundColor = foregroundColor;
+                    Console.WriteLine(value);
+                    Console.ForegroundColor = originalColor;
+                }
             }
             else
             {
-                Console.Write(format, formatArguments);
+                if (withTimestamp)
+                {
+                    Console.ForegroundColor = foregroundColor;
+                    Console.Write(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"), value));
+                    Console.ForegroundColor = originalColor;
+                }
+                else
+                {
+                    Console.ForegroundColor = foregroundColor;
+                    Console.Write(value);
+                    Console.ForegroundColor = originalColor;
+                }
             }
-
-            Console.ForegroundColor = originalColor;
         }
     }
 }

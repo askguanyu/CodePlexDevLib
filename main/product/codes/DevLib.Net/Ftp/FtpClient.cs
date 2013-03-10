@@ -282,7 +282,6 @@ namespace DevLib.Net.Ftp
             {
                 if (throwOnError)
                 {
-                    
                     throw new FileNotFoundException("The specified file does not exist.", fullPath);
                 }
 
@@ -728,7 +727,7 @@ namespace DevLib.Net.Ftp
 
             try
             {
-                uri = new Uri(string.Format("ftp://{0}/{1}", this.FtpSetupInfo.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.Trim('/')));
+                uri = new Uri(string.Format("{0}/{1}", this.FtpSetupInfo.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.Trim('/')));
             }
             catch (Exception e)
             {

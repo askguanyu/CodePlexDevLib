@@ -49,6 +49,11 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo.</returns>
         public static List<FtpFileInfo> GetFullDirectoryList(string rawString, string parentPath)
         {
+            if (string.IsNullOrEmpty(rawString))
+            {
+                return null;
+            }
+
             List<FtpFileInfo> result = null;
 
             string[] rawList = rawString.Split('\n');
@@ -117,6 +122,11 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo.</returns>
         public static List<FtpFileInfo> GetDirectoryList(string rawString, string parentPath)
         {
+            if (string.IsNullOrEmpty(rawString))
+            {
+                return null;
+            }
+
             List<FtpFileInfo> result = null;
 
             string[] rawList = rawString.Split('\n');
@@ -185,6 +195,11 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo.</returns>
         public static List<FtpFileInfo> GetFileList(string rawString, string parentPath)
         {
+            if (string.IsNullOrEmpty(rawString))
+            {
+                return null;
+            }
+
             List<FtpFileInfo> result = null;
 
             string[] rawList = rawString.Split('\n');

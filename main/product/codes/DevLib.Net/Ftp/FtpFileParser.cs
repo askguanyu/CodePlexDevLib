@@ -349,7 +349,7 @@ namespace DevLib.Net.Ftp
             }
 
             DateTime fileTime = DateTime.Now;
-            DateTime.TryParseExact(lastModifiedTimeString, dateFormat, CultureInfo.GetCultureInfo("en-US"), DateTimeStyles.AllowWhiteSpaces, out fileTime);
+            DateTime.TryParseExact(lastModifiedTimeString, dateFormat, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out fileTime);
             result.LastModifiedTime = fileTime;
 
             if (result.IsSymLink && inputString.IndexOf(UnixSymLinkPathSeparator) > 0)

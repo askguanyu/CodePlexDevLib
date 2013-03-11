@@ -7,6 +7,7 @@ namespace DevLib.Net.Ftp
 {
     using System;
     using System.IO;
+    using System.Text;
     using System.Xml.Serialization;
 
     /// <summary>
@@ -118,24 +119,94 @@ namespace DevLib.Net.Ftp
         }
 
         /// <summary>
-        /// Combines two strings into a path.
+        /// Combines an array of strings into a ftp path.
         /// </summary>
-        /// <param name="path1">The first path to combine.</param>
-        /// <param name="path2">The second path to combine.</param>
+        /// <param name="paths">An array of parts of the path.</param>
         /// <returns>The combined paths.</returns>
-        public static string CombinePath(string path1, string path2)
+        public static string CombinePath(params string[] paths)
         {
-            if (string.IsNullOrEmpty(path2))
+            if (paths == null)
             {
-                return Path.AltDirectorySeparatorChar + path1.Trim(Path.AltDirectorySeparatorChar);
+                throw new ArgumentNullException("paths");
             }
 
-            if (string.IsNullOrEmpty(path1))
+            for (int i = 0; i < paths.Length; i++)
             {
-                return Path.AltDirectorySeparatorChar + path2.Trim(Path.AltDirectorySeparatorChar);
+                if (!string.IsNullOrEmpty(paths[i]))
+                {
+                    paths[i] = paths[i].Trim(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    CheckInvalidPathChars(paths[i], false);
+                }
+                else
+                {
+                    paths[i] = string.Empty;
+                }
             }
 
-            return Path.AltDirectorySeparatorChar + path1.Trim(Path.AltDirectorySeparatorChar) + Path.AltDirectorySeparatorChar + path2.Trim(Path.AltDirectorySeparatorChar);
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(Path.AltDirectorySeparatorChar);
+
+            for (int j = 0; j < paths.Length; j++)
+            {
+                if (paths[j].Length != 0)
+                {
+                    char rearChar = stringBuilder[stringBuilder.Length - 1];
+
+                    if (rearChar != Path.DirectorySeparatorChar && rearChar != Path.AltDirectorySeparatorChar && rearChar != Path.VolumeSeparatorChar)
+                    {
+                        stringBuilder.Append(Path.AltDirectorySeparatorChar);
+                    }
+
+                    stringBuilder.Append(paths[j]);
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Static Method CheckInvalidPathChars.
+        /// </summary>
+        /// <param name="path">Path to check.</param>
+        /// <param name="checkAdditional">Whether with additional check.</param>
+        internal static void CheckInvalidPathChars(string path, bool checkAdditional = false)
+        {
+            if (path == null)
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            if (HasIllegalCharacters(path, checkAdditional))
+            {
+                throw new ArgumentException("Illegal characters in path.");
+            }
+        }
+
+        /// <summary>
+        /// Static Method HasIllegalCharacters.
+        /// </summary>
+        /// <param name="path">Path to check.</param>
+        /// <param name="checkAdditional">Whether with additional check.</param>
+        /// <returns>true if the path has illegal characters; otherwise, false.</returns>
+        internal static bool HasIllegalCharacters(string path, bool checkAdditional)
+        {
+            for (int i = 0; i < path.Length; i++)
+            {
+                int num = (int)path[i];
+
+                if (num == 34 || num == 60 || num == 62 || num == 124 || num < 32)
+                {
+                    return true;
+                }
+
+                if (checkAdditional && (num == 63 || num == 42))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

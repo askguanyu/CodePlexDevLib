@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -307,6 +308,25 @@ namespace DevLib.ExtensionMethods
             }
 
             return source.Substring(index + 1);
+        }
+
+        /// <summary>
+        /// Converts the specified string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent using the specified format and InvariantCulture information. The format of the string representation must match the specified format exactly.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="format">The required format of <paramref name="source" />.</param>
+        /// <param name="defaultValue">If convert failed, return default value.</param>
+        /// <returns>An object that is equivalent to the date and time contained in <paramref name="source" />, as specified by <paramref name="format" />.</returns>
+        public static DateTime ToDateTime(this string source, string format, DateTime defaultValue = default(DateTime))
+        {
+            if (source.IsNullOrEmpty())
+            {
+                return default(DateTime);
+            }
+
+            DateTime result = defaultValue;
+            DateTime.TryParseExact(source, format, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result);
+            return result;
         }
     }
 }

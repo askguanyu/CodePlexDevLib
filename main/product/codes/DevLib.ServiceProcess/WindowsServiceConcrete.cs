@@ -56,19 +56,19 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
-        /// When implemented in a derived class, <see cref="M:System.ServiceProcess.ServiceBase.OnContinue" /> runs when a Continue command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service resumes normal functioning after being paused.
-        /// </summary>
-        protected override void OnContinue()
-        {
-            this.WindowsService.OnContinue();
-        }
-
-        /// <summary>
         /// When implemented in a derived class, executes when a Pause command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service pauses.
         /// </summary>
         protected override void OnPause()
         {
             this.WindowsService.OnPause();
+        }
+
+        /// <summary>
+        /// When implemented in a derived class, <see cref="M:System.ServiceProcess.ServiceBase.OnContinue" /> runs when a Continue command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service resumes normal functioning after being paused.
+        /// </summary>
+        protected override void OnContinue()
+        {
+            this.WindowsService.OnContinue();
         }
 
         /// <summary>

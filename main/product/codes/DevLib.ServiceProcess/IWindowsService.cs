@@ -34,14 +34,14 @@ namespace DevLib.ServiceProcess
         void OnStop();
 
         /// <summary>
-        /// When implemented in a derived class, <see cref="M:System.ServiceProcess.ServiceBase.OnContinue" /> runs when a Continue command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service resumes normal functioning after being paused.
-        /// </summary>
-        void OnContinue();
-
-        /// <summary>
         /// When implemented in a derived class, executes when a Pause command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service pauses.
         /// </summary>
         void OnPause();
+
+        /// <summary>
+        /// When implemented in a derived class, <see cref="M:System.ServiceProcess.ServiceBase.OnContinue" /> runs when a Continue command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service resumes normal functioning after being paused.
+        /// </summary>
+        void OnContinue();
 
         /// <summary>
         /// When implemented in a derived class, executes when the system is shutting down. Specifies what should occur immediately prior to the system shutting down.

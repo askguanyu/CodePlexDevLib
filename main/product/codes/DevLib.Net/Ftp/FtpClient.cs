@@ -153,10 +153,10 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="remoteFile">The source file on an FTP server.</param>
         /// <param name="localFile">The local destination file.</param>
-        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool DownloadFile(string remoteFile, string localFile, bool overwritten = true, bool throwOnError = false)
+        public bool DownloadFile(string remoteFile, string localFile, bool overwrite = true, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(localFile))
             {
@@ -171,7 +171,7 @@ namespace DevLib.Net.Ftp
             string fullPath = Path.GetFullPath(localFile);
             string fullDirectoryPath = Path.GetDirectoryName(localFile);
 
-            if (!overwritten && File.Exists(fullPath))
+            if (!overwrite && File.Exists(fullPath))
             {
                 if (throwOnError)
                 {
@@ -260,10 +260,10 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="localFile">The local source file.</param>
         /// <param name="remoteFile">The destination file on an FTP server.</param>
-        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool UploadFile(string localFile, string remoteFile, bool overwritten = true, bool throwOnError = false)
+        public bool UploadFile(string localFile, string remoteFile, bool overwrite = true, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(localFile))
             {
@@ -288,7 +288,7 @@ namespace DevLib.Net.Ftp
                 return false;
             }
 
-            if (!overwritten)
+            if (!overwrite)
             {
                 string checkName = this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectory, string.IsNullOrEmpty(remoteFile) ? fileName : remoteFile));
 

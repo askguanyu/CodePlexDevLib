@@ -21,10 +21,10 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="contents">The string to write to the file.</param>
         /// <param name="fileName">The file to write to.</param>
-        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>Full path of the file name if write file succeeded.</returns>
-        public static string WriteTextFile(this string contents, string fileName, bool overwritten = true, Encoding encoding = null)
+        public static string WriteTextFile(this string contents, string fileName, bool overwrite = true, Encoding encoding = null)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -34,7 +34,7 @@ namespace DevLib.ExtensionMethods
             string fullPath = Path.GetFullPath(fileName);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwritten && fullPath.ExistsFile())
+            if (!overwrite && fullPath.ExistsFile())
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -187,9 +187,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="bytes">The bytes to write to the file.</param>
         /// <param name="fileName">The file to write to.</param>
-        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>Full path of the file name if write file succeeded.</returns>
-        public static string WriteBinaryFile(this byte[] bytes, string fileName, bool overwritten = true)
+        public static string WriteBinaryFile(this byte[] bytes, string fileName, bool overwrite = true)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -204,7 +204,7 @@ namespace DevLib.ExtensionMethods
             string fullPath = Path.GetFullPath(fileName);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwritten && fullPath.ExistsFile())
+            if (!overwrite && fullPath.ExistsFile())
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -268,9 +268,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The stream to write to the file.</param>
         /// <param name="fileName">The file to write to.</param>
-        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>Full path of the file name if write file succeeded.</returns>
-        public static string WriteFile(this Stream source, string fileName, bool overwritten = true)
+        public static string WriteFile(this Stream source, string fileName, bool overwrite = true)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -285,7 +285,7 @@ namespace DevLib.ExtensionMethods
             string fullPath = Path.GetFullPath(fileName);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwritten && fullPath.ExistsFile())
+            if (!overwrite && fullPath.ExistsFile())
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -395,9 +395,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="sourceFileName">The name of the file to move.</param>
         /// <param name="destFileName">The new path for the file.</param>
-        /// <param name="overwritten">Whether overwrite exists file.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>Full path of the destination file name if move file succeeded.</returns>
-        public static string MoveTo(this string sourceFileName, string destFileName, bool overwritten = true)
+        public static string MoveFileTo(this string sourceFileName, string destFileName, bool overwrite = true)
         {
             if (string.IsNullOrEmpty(sourceFileName))
             {
@@ -417,7 +417,7 @@ namespace DevLib.ExtensionMethods
 
             if (destFullPath.ExistsFile())
             {
-                if (overwritten)
+                if (overwrite)
                 {
                     File.Delete(destFullPath);
                 }
@@ -442,6 +442,54 @@ namespace DevLib.ExtensionMethods
             try
             {
                 File.Move(sourceFullPath, destFullPath);
+                return destFullPath;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Copies an existing file to a new file. Overwriting a file of the same name is allowed.
+        /// </summary>
+        /// <param name="sourceFileName">The file to copy.</param>
+        /// <param name="destFileName">The name of the destination file. This cannot be a directory.</param>
+        /// <param name="overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <returns>Full path of the destination file name if move file succeeded.</returns>
+        public static string CopyFileTo(this string sourceFileName, string destFileName, bool overwrite = true)
+        {
+            if (string.IsNullOrEmpty(sourceFileName))
+            {
+                throw new ArgumentNullException("sourceFileName");
+            }
+
+            if (string.IsNullOrEmpty(destFileName))
+            {
+                throw new ArgumentNullException("destFileName");
+            }
+
+            string sourceFullPath = Path.GetFullPath(sourceFileName);
+            string sourceFullDirectoryPath = Path.GetDirectoryName(sourceFullPath);
+
+            string destFullPath = Path.GetFullPath(destFileName);
+            string destFullDirectoryPath = Path.GetDirectoryName(destFileName);
+
+            if (!Directory.Exists(destFullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(destFullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            try
+            {
+                File.Copy(sourceFullPath, destFullPath, overwrite);
                 return destFullPath;
             }
             catch
@@ -503,7 +551,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source stream.</param>
         /// <param name="destinationStream">Destination stream.</param>
         /// <returns>This instance.</returns>
-        public static Stream CopyTo(this Stream source, Stream destinationStream)
+        public static Stream CopyStreamTo(this Stream source, Stream destinationStream)
         {
             if (source == null)
             {

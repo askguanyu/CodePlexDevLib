@@ -227,7 +227,7 @@ namespace DevLib.ServiceProcess
                 this.ServiceAssemblyPath = string.Empty;
                 this.ServiceName = "DefaultServiceName";
                 this.DisplayName = this.ServiceName;
-                this.Description = string.Format("{0} {1}", this.ServiceName, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.ffffUTCzzz"));
+                this.Description = string.Format("{0} {1}", this.ServiceName, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"));
             }
 
             this.StartType = ServiceStartMode.Automatic;

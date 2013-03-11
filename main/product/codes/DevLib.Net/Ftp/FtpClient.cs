@@ -727,7 +727,7 @@ namespace DevLib.Net.Ftp
 
             try
             {
-                uri = new Uri(string.Format("{0}/{1}", this.FtpSetupInfo.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.Trim('/')));
+                uri = new Uri(FtpFileInfo.CombinePath(this.FtpSetupInfo.HostName, path));
             }
             catch (Exception e)
             {

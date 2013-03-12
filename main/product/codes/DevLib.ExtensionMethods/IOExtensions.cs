@@ -24,7 +24,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>Full path of the file name if write file succeeded.</returns>
-        public static string WriteTextFile(this string contents, string fileName, bool overwrite = true, Encoding encoding = null)
+        public static string WriteTextFile(this string contents, string fileName, bool overwrite = false, Encoding encoding = null)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -189,7 +189,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="fileName">The file to write to.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>Full path of the file name if write file succeeded.</returns>
-        public static string WriteBinaryFile(this byte[] bytes, string fileName, bool overwrite = true)
+        public static string WriteBinaryFile(this byte[] bytes, string fileName, bool overwrite = false)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -270,7 +270,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="fileName">The file to write to.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>Full path of the file name if write file succeeded.</returns>
-        public static string WriteFile(this Stream source, string fileName, bool overwrite = true)
+        public static string WriteFile(this Stream source, string fileName, bool overwrite = false)
         {
             if (string.IsNullOrEmpty(fileName))
             {
@@ -397,7 +397,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="destFileName">The new path for the file.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>Full path of the destination file name if move file succeeded.</returns>
-        public static string MoveFileTo(this string sourceFileName, string destFileName, bool overwrite = true)
+        public static string MoveFileTo(this string sourceFileName, string destFileName, bool overwrite = false)
         {
             if (string.IsNullOrEmpty(sourceFileName))
             {
@@ -457,7 +457,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="destFileName">The name of the destination file. This cannot be a directory.</param>
         /// <param name="overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         /// <returns>Full path of the destination file name if move file succeeded.</returns>
-        public static string CopyFileTo(this string sourceFileName, string destFileName, bool overwrite = true)
+        public static string CopyFileTo(this string sourceFileName, string destFileName, bool overwrite = false)
         {
             if (string.IsNullOrEmpty(sourceFileName))
             {
@@ -571,6 +571,46 @@ namespace DevLib.ExtensionMethods
             }
 
             return source;
+        }
+
+        /// <summary>
+        /// Formats the long length of a file to a more friendly string, e.g. "1.23 GB", "456 KB", etc.,
+        /// </summary>
+        /// <param name="fileSize">The file size for which to determine the format.</param>
+        /// <returns>The resulting string.</returns>
+        public static string FileSizeFriendlyString(this long fileSize)
+        {
+            return ((double)fileSize).FileSizeFriendlyString();
+        }
+
+        /// <summary>
+        /// Formats the long length of a file to a more friendly string, e.g. "1.23 GB", "456 KB", etc.,
+        /// </summary>
+        /// <param name="fileSize">The file size for which to determine the format.</param>
+        /// <returns>The resulting string.</returns>
+        public static string FileSizeFriendlyString(this double fileSize)
+        {
+            if (fileSize < 0)
+            {
+                throw new ArgumentOutOfRangeException("fileSize");
+            }
+
+            if (fileSize >= 1073741824)
+            {
+                return string.Format("{0:########0.00} GB", (fileSize) / 1073741824);
+            }
+            else if (fileSize >= 1024 * 1024)
+            {
+                return string.Format("{0:####0.00} MB", (fileSize) / 1048576);
+            }
+            else if (fileSize >= 1024)
+            {
+                return string.Format("{0:####0} KB", (fileSize) / 1024);
+            }
+            else
+            {
+                return string.Format("{0} bytes", fileSize);
+            }
         }
     }
 }

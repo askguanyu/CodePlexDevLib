@@ -19,6 +19,11 @@ namespace DevLib.AddIn
     public sealed class AddInDomain : IDisposable
     {
         /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
         /// Field _addInActivatorProcess.
         /// </summary>
         private AddInActivatorProcess _addInActivatorProcess;
@@ -82,11 +87,6 @@ namespace DevLib.AddIn
         /// Field _addInTypeName.
         /// </summary>
         private string _addInTypeName;
-
-        /// <summary>
-        /// Field _disposed.
-        /// </summary>
-        private bool _disposed = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddInDomain" /> class.

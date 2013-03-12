@@ -17,14 +17,14 @@ namespace DevLib.Net.AsyncSocket
     public class AsyncSocketUdpServer : MarshalByRefObject, IDisposable
     {
         /// <summary>
-        /// The socket used to listen for incoming connection requests.
-        /// </summary>
-        private Socket _listenSocket;
-
-        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
+
+        /// <summary>
+        /// The socket used to listen for incoming connection requests.
+        /// </summary>
+        private Socket _listenSocket;
 
         /// <summary>
         /// Counter of the total bytes received by AsyncSocketUdpServer.
@@ -124,7 +124,7 @@ namespace DevLib.Net.AsyncSocket
         {
             get
             {
-                return this._totalBytesReceived;
+                return Interlocked.Read(ref this._totalBytesReceived);
             }
         }
 

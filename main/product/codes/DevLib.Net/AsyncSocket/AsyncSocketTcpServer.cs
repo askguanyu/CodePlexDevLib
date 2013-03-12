@@ -20,6 +20,11 @@ namespace DevLib.Net.AsyncSocket
     public class AsyncSocketTcpServer : MarshalByRefObject, IDisposable
     {
         /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
         /// The socket used to listen for incoming connection requests.
         /// </summary>
         private Socket _listenSocket;
@@ -27,7 +32,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// The total number of clients connected to the server.
         /// </summary>
-        private int _connectedSocketsCount;
+        private long _connectedSocketsCount;
 
         /// <summary>
         /// Thread-safe dictionary of connected socket client.
@@ -43,11 +48,6 @@ namespace DevLib.Net.AsyncSocket
         /// Field _readerWriterLock.
         /// </summary>
         private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
-
-        /// <summary>
-        /// Field _disposed.
-        /// </summary>
-        private bool _disposed = false;
 
         /// <summary>
         /// Counter of the total bytes received by AsyncSocketTcpServer.
@@ -128,7 +128,7 @@ namespace DevLib.Net.AsyncSocket
         /// <summary>
         /// Gets the maximum amount of connected sockets.
         /// </summary>
-        public int PeakConnectedSocketsCount
+        public long PeakConnectedSocketsCount
         {
             get;
             private set;
@@ -168,7 +168,7 @@ namespace DevLib.Net.AsyncSocket
         {
             get
             {
-                return this._totalBytesReceived;
+                return Interlocked.Read(ref this._totalBytesReceived);
             }
         }
 
@@ -179,20 +179,20 @@ namespace DevLib.Net.AsyncSocket
         {
             get
             {
-                return this._totalBytesSent;
+                return Interlocked.Read(ref this._totalBytesSent);
             }
         }
 
         /// <summary>
         /// Gets current numbers of connected sockets.
         /// </summary>
-        public int ConnectedSocketsCount
+        public long ConnectedSocketsCount
         {
             get
             {
                 this.CheckDisposed();
 
-                return this._connectedSocketsCount;
+                return Interlocked.Read(ref this._connectedSocketsCount);
             }
         }
 
@@ -831,7 +831,7 @@ namespace DevLib.Net.AsyncSocket
 
                         if (this._connectedSocketsCount > this.PeakConnectedSocketsCount)
                         {
-                            this.PeakConnectedSocketsCount = this._connectedSocketsCount;
+                            this.PeakConnectedSocketsCount = Interlocked.Read(ref this._connectedSocketsCount);
                         }
 
                         this.RaiseEvent(this.Connected, new AsyncSocketSessionEventArgs(sessionId, sessionIPEndPoint));

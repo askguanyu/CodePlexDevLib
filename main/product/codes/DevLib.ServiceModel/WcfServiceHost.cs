@@ -21,14 +21,14 @@ namespace DevLib.ServiceModel
     public sealed class WcfServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
-        /// Field _serviceHostList.
-        /// </summary>
-        private List<ServiceHost> _serviceHostList = new List<ServiceHost>();
-
-        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
+
+        /// <summary>
+        /// Field _serviceHostList.
+        /// </summary>
+        private List<ServiceHost> _serviceHostList = new List<ServiceHost>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.

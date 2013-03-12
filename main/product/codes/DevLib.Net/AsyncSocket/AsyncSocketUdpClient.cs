@@ -91,7 +91,7 @@ namespace DevLib.Net.AsyncSocket
         {
             get
             {
-                return this._totalBytesSent;
+                return Interlocked.Read(ref this._totalBytesSent);
             }
         }
 

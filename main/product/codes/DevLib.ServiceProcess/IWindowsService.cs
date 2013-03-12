@@ -11,7 +11,7 @@ namespace DevLib.ServiceProcess
     /// <summary>
     /// Provides an interface for a service that will exist as part of a service application. <see cref="IWindowsService" /> must be derived from when creating a new service class.
     /// </summary>
-    public interface IWindowsService : IDisposable
+    public interface IWindowsService
     {
         /// <summary>
         /// Gets or sets WindowsServiceSetup instance.

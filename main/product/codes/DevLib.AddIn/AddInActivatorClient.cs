@@ -109,7 +109,7 @@ namespace DevLib.AddIn
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-
+                
                 if (this._ipcChannel != null)
                 {
                     try

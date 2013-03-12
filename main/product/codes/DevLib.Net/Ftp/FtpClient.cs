@@ -9,12 +9,23 @@ namespace DevLib.Net.Ftp
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Threading;
 
     /// <summary>
     /// Class FtpClient.
     /// </summary>
     public class FtpClient : MarshalByRefObject
     {
+        /// <summary>
+        /// Counter of the total bytes downloaded by FtpClient.
+        /// </summary>
+        private long _totalBytesDownloaded;
+
+        /// <summary>
+        /// Counter of the total bytes uploaded by FtpClient.
+        /// </summary>
+        private long _totalBytesUploaded;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FtpClient" /> class.
         /// </summary>
@@ -30,6 +41,28 @@ namespace DevLib.Net.Ftp
         public FtpClient(FtpSetup ftpSetup)
         {
             this.FtpSetupInfo = ftpSetup;
+        }
+
+        /// <summary>
+        /// Gets total bytes downloaded by FtpClient.
+        /// </summary>
+        public long TotalBytesDownloaded
+        {
+            get
+            {
+                return Interlocked.Read(ref this._totalBytesDownloaded);
+            }
+        }
+
+        /// <summary>
+        /// Gets total bytes uploaded by FtpClient.
+        /// </summary>
+        public long TotalBytesUploaded
+        {
+            get
+            {
+                return Interlocked.Read(ref this._totalBytesUploaded);
+            }
         }
 
         /// <summary>
@@ -156,7 +189,7 @@ namespace DevLib.Net.Ftp
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool DownloadFile(string remoteFile, string localFile, bool overwrite = true, bool throwOnError = false)
+        public bool DownloadFile(string remoteFile, string localFile, bool overwrite = false, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(localFile))
             {
@@ -218,6 +251,7 @@ namespace DevLib.Net.Ftp
                 while ((count = responseStream.Read(buffer, 0, buffer.Length)) != 0)
                 {
                     fileStream.Write(buffer, 0, count);
+                    Interlocked.Add(ref this._totalBytesDownloaded, count);
                 }
 
                 return true;
@@ -263,7 +297,7 @@ namespace DevLib.Net.Ftp
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool UploadFile(string localFile, string remoteFile, bool overwrite = true, bool throwOnError = false)
+        public bool UploadFile(string localFile, string remoteFile, bool overwrite = false, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(localFile))
             {
@@ -319,6 +353,7 @@ namespace DevLib.Net.Ftp
                 while ((count = fileStream.Read(buffer, 0, buffer.Length)) != 0)
                 {
                     requestStream.Write(buffer, 0, count);
+                    Interlocked.Add(ref this._totalBytesUploaded, count);
                 }
 
                 return true;
@@ -706,10 +741,42 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="sourceFullPath">The source full path on an FTP server.</param>
         /// <param name="destinationFullPath">The destination full path on an FTP server.</param>
+        /// <param name="overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool MoveFile(string sourceFullPath, string destinationFullPath, bool throwOnError = false)
+        public bool MoveFile(string sourceFullPath, string destinationFullPath, bool overwrite = false, bool throwOnError = false)
         {
+            if (this.GetFileSize(destinationFullPath, false) >= 0)
+            {
+                if (overwrite)
+                {
+                    try
+                    {
+                        this.DeleteFile(sourceFullPath, true);
+                    }
+                    catch
+                    {
+                        if (throwOnError)
+                        {
+                            throw;
+                        }
+
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (throwOnError)
+                    {
+                        throw new ArgumentException("The specified file already exists.", destinationFullPath);
+                    }
+
+                    return false;
+                }
+            }
+
+            this.MakeDirectory(FtpFileInfo.GetDirectoryName(destinationFullPath), false);
+
             return this.Rename(sourceFullPath, destinationFullPath, throwOnError);
         }
 
@@ -727,7 +794,7 @@ namespace DevLib.Net.Ftp
 
             try
             {
-                uri = new Uri(string.Format("{0}/{1}", this.FtpSetupInfo.HostName, string.IsNullOrEmpty(path) ? string.Empty : path.Trim(Path.AltDirectorySeparatorChar)));
+                uri = new Uri(string.Format("{0}{1}", this.FtpSetupInfo.HostName, FtpFileInfo.CombinePath("/", path)));
             }
             catch (Exception e)
             {

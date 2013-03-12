@@ -19,6 +19,11 @@ namespace DevLib.ServiceModel
     public sealed class WcfIsolatedServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
         /// Field _appDomain.
         /// </summary>
         [NonSerialized]
@@ -28,11 +33,6 @@ namespace DevLib.ServiceModel
         /// Field _wcfServiceHost.
         /// </summary>
         private WcfServiceHost _wcfServiceHost;
-
-        /// <summary>
-        /// Field _disposed.
-        /// </summary>
-        private bool _disposed = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfIsolatedServiceHost" /> class.

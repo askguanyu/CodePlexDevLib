@@ -127,7 +127,7 @@ namespace DevLib.Net.AsyncSocket
         {
             get
             {
-                return this._totalBytesReceived;
+                return Interlocked.Read(ref this._totalBytesReceived);
             }
         }
 
@@ -138,7 +138,7 @@ namespace DevLib.Net.AsyncSocket
         {
             get
             {
-                return this._totalBytesSent;
+                return Interlocked.Read(ref this._totalBytesSent);
             }
         }
 

@@ -418,7 +418,7 @@ namespace DevLib.AddIn
                 //// args[2] = PID
                 //// args[3] = AddInDomainSetup file
                 //// args[4] = Redirect output or not
-                
+
                 this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\" {4}", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile, this._redirectOutput);
                 this.IsRunning = this._process.Start();
 
@@ -481,7 +481,7 @@ namespace DevLib.AddIn
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-                
+
                 this.DisposeClient();
                 this.Kill();
 
@@ -497,7 +497,7 @@ namespace DevLib.AddIn
             ////    Marshal.FreeHGlobal(nativeResource);
             ////    nativeResource = IntPtr.Zero;
             ////}
-            
+
             this.IsRunning = false;
             this.RaiseEvent(this.Detached);
         }
@@ -654,7 +654,6 @@ namespace DevLib.AddIn
 
                 isCanceled = cancelEvent.WaitOne(0);
             }
-
             while (!isDeleted && !isCanceled);
 
             if (!isDeleted && lastException != null)

@@ -578,9 +578,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="fileSize">The file size for which to determine the format.</param>
         /// <returns>The resulting string.</returns>
-        public static string FileSizeFriendlyString(this long fileSize)
+        public static string ToFileSizeFriendlyString(this long fileSize)
         {
-            return ((double)fileSize).FileSizeFriendlyString();
+            return ((double)fileSize).ToFileSizeFriendlyString();
         }
 
         /// <summary>
@@ -588,24 +588,28 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="fileSize">The file size for which to determine the format.</param>
         /// <returns>The resulting string.</returns>
-        public static string FileSizeFriendlyString(this double fileSize)
+        public static string ToFileSizeFriendlyString(this double fileSize)
         {
             if (fileSize < 0)
             {
                 throw new ArgumentOutOfRangeException("fileSize");
             }
 
-            if (fileSize >= 1073741824)
+            if (fileSize >= 1099511627776)
             {
-                return string.Format("{0:########0.00} GB", (fileSize) / 1073741824);
+                return string.Format("{0:########0.00} TB", fileSize / 1099511627776);
             }
-            else if (fileSize >= 1024 * 1024)
+            else if (fileSize >= 1073741824)
             {
-                return string.Format("{0:####0.00} MB", (fileSize) / 1048576);
+                return string.Format("{0:########0.00} GB", fileSize / 1073741824);
+            }
+            else if (fileSize >= 1048576)
+            {
+                return string.Format("{0:####0.00} MB", fileSize / 1048576);
             }
             else if (fileSize >= 1024)
             {
-                return string.Format("{0:####0} KB", (fileSize) / 1024);
+                return string.Format("{0:####0.00} KB", fileSize / 1024);
             }
             else
             {

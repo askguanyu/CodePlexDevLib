@@ -86,6 +86,7 @@ namespace DevLib.Net.Ftp
                     }
 
                     break;
+
                 case FtpFileStyle.UnixStyle:
 
                     result = new List<FtpFileInfo>();
@@ -105,6 +106,7 @@ namespace DevLib.Net.Ftp
                     }
 
                     break;
+
                 case FtpFileStyle.Unknown:
                     break;
                 default:
@@ -159,6 +161,7 @@ namespace DevLib.Net.Ftp
                     }
 
                     break;
+
                 case FtpFileStyle.UnixStyle:
 
                     result = new List<FtpFileInfo>();
@@ -178,6 +181,7 @@ namespace DevLib.Net.Ftp
                     }
 
                     break;
+
                 case FtpFileStyle.Unknown:
                     break;
                 default:
@@ -232,6 +236,7 @@ namespace DevLib.Net.Ftp
                     }
 
                     break;
+
                 case FtpFileStyle.UnixStyle:
 
                     result = new List<FtpFileInfo>();
@@ -251,6 +256,7 @@ namespace DevLib.Net.Ftp
                     }
 
                     break;
+
                 case FtpFileStyle.Unknown:
                     break;
                 default:

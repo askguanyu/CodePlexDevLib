@@ -89,13 +89,20 @@ namespace DevLib.Diagnostics
 
             // Backup current console color
             ConsoleColor originalForeColor = Console.ForegroundColor;
-            ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(1, 15);
+            ConsoleColor originalBackgroundColor = Console.BackgroundColor;
 
+            ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(9, 15);
+            Console.ResetColor();
             Console.ForegroundColor = consoleRandomColor;
+            Console.BackgroundColor = ConsoleColor.Black;
+
             string beginTitle = string.Format(@"/--Time Begin-->{0}--\", titleName);
             outputAction(beginTitle);
             Debug.WriteLine(beginTitle);
+
+            Console.ResetColor();
             Console.ForegroundColor = originalForeColor;
+            Console.BackgroundColor = originalBackgroundColor;
 
             // Record the latest GC counts
             int gcArrayLength = GC.MaxGeneration + 1;
@@ -143,23 +150,31 @@ namespace DevLib.Diagnostics
             Console.WriteLine();
 
             // Console output recorded times
+            Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
             string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "[Stopwatch]", "[ThreadTime]", "[CPUCycles]", string.Format("[{0}]", string.Join("/", gcTitleArray)));
             outputAction(resultTitle);
             Debug.WriteLine(resultTitle);
 
+            Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Green;
+            Console.BackgroundColor = ConsoleColor.Black;
             string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", stopwatch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, string.Join("/", gcResultArray));
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 
+            Console.ResetColor();
             Console.ForegroundColor = consoleRandomColor;
+            Console.BackgroundColor = ConsoleColor.Black;
             string endTitle = string.Format(@"\--Time End---->{0}--/", titleName);
             outputAction(endTitle);
             Debug.WriteLine(endTitle);
 
             // Restore console color
+            Console.ResetColor();
             Console.ForegroundColor = originalForeColor;
+            Console.BackgroundColor = originalBackgroundColor;
 
             // Restore thread priority
             Process.GetCurrentProcess().PriorityClass = originalPriorityClass;
@@ -236,6 +251,13 @@ namespace DevLib.Diagnostics
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeTimerResult" /> class.
         /// </summary>
+        public CodeTimerResult()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CodeTimerResult" /> class.
+        /// </summary>
         /// <param name="stopwatchElapsedMilliseconds">Stopwatch timespan in milliseconds.</param>
         /// <param name="threadTimeElapsedMilliseconds">ThreadTime timespan in milliseconds.</param>
         /// <param name="cpuCycles">CPU cycles.</param>
@@ -249,39 +271,39 @@ namespace DevLib.Diagnostics
         }
 
         /// <summary>
-        /// Gets stopwatch timespan in milliseconds.
+        /// Gets or sets stopwatch timespan in milliseconds.
         /// </summary>
         public long StopwatchElapsedMilliseconds
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
-        /// Gets threadTime timespan in milliseconds.
+        /// Gets or sets threadTime timespan in milliseconds.
         /// </summary>
         public long ThreadTimeElapsedMilliseconds
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
-        /// Gets CPU cycles.
+        /// Gets or sets CPU cycles.
         /// </summary>
         public ulong CPUCycles
         {
             get;
-            private set;
+            set;
         }
 
         /// <summary>
-        /// Gets GC Count Array.
+        /// Gets or sets GC Count Array.
         /// </summary>
         public int[] GCCountArray
         {
             get;
-            private set;
+            set;
         }
     }
 }

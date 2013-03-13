@@ -261,38 +261,47 @@ namespace DevLib.ServiceProcess
         /// <param name="withTimestamp">Whether write timestamp.</param>
         private static void WriteToConsole(ConsoleColor foregroundColor, string value, bool withNewLine = true, bool withTimestamp = true)
         {
-            ConsoleColor originalColor = Console.ForegroundColor;
+            ConsoleColor originalForeColor = Console.ForegroundColor;
+            ConsoleColor originalBackgroundColor = Console.BackgroundColor;
 
             if (withNewLine)
             {
                 if (withTimestamp)
                 {
+                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
+                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"), value));
-                    Console.ForegroundColor = originalColor;
                 }
                 else
                 {
+                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
+                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.WriteLine(value);
-                    Console.ForegroundColor = originalColor;
                 }
             }
             else
             {
                 if (withTimestamp)
                 {
+                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
+                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.Write(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"), value));
-                    Console.ForegroundColor = originalColor;
                 }
                 else
                 {
+                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
+                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.Write(value);
-                    Console.ForegroundColor = originalColor;
                 }
             }
+
+            Console.ResetColor();
+            Console.ForegroundColor = originalForeColor;
+            Console.BackgroundColor = originalBackgroundColor;
         }
     }
 }

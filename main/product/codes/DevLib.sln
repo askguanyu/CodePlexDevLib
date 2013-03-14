@@ -25,6 +25,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.DesignPatterns", "De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.ServiceProcess", "DevLib.ServiceProcess\DevLib.ServiceProcess.csproj", "{40B2A751-81AA-4873-8477-3025C8CE2795}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevLib.SolutionTemplate", "DevLib.SolutionTemplate", "{FD5FDBEF-C2E7-4DE9-9BED-5AD68B026715}"
+	ProjectSection(SolutionItems) = preProject
+		DevLib.SolutionTemplate\LayeredArchitectureSolutionVS2008.sln = DevLib.SolutionTemplate\LayeredArchitectureSolutionVS2008.sln
+		DevLib.SolutionTemplate\LayeredArchitectureSolutionVS2010.sln = DevLib.SolutionTemplate\LayeredArchitectureSolutionVS2010.sln
+		DevLib.SolutionTemplate\LayeredArchitectureSolutionVS2012.sln = DevLib.SolutionTemplate\LayeredArchitectureSolutionVS2012.sln
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 13

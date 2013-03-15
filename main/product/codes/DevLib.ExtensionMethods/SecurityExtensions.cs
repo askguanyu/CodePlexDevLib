@@ -83,13 +83,14 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
             }
 
+            string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
+            byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, a => Convert.ToByte(byte.Parse(a, NumberStyles.HexNumber)));
+
             using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
                 rsa.PersistKeyInCsp = true;
-                string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
-                byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, a => Convert.ToByte(byte.Parse(a, NumberStyles.HexNumber)));
                 byte[] bytes = rsa.Decrypt(decryptByteArray, true);
-                return System.Text.UTF8Encoding.UTF8.GetString(bytes);
+                return Encoding.UTF8.GetString(bytes);
             }
         }
 
@@ -114,7 +115,7 @@ namespace DevLib.ExtensionMethods
             using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
                 rsa.PersistKeyInCsp = true;
-                byte[] bytes = rsa.Encrypt(System.Text.UTF8Encoding.UTF8.GetBytes(source), true);
+                byte[] bytes = rsa.Encrypt(Encoding.UTF8.GetBytes(source), true);
                 return BitConverter.ToString(bytes);
             }
         }

@@ -11,6 +11,7 @@ namespace DevLib.ExtensionMethods
     using System.IO;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
+    using System.Runtime.Serialization.Formatters.Soap;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -178,6 +179,79 @@ namespace DevLib.ExtensionMethods
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
                 return (T)xmlSerializer.Deserialize(textReader);
+            }
+        }
+
+        /// <summary>
+        /// Serializes object to Soap string.
+        /// </summary>
+        /// <param name="source">The object to serialize.</param>
+        /// <returns>Soap string.</returns>
+        public static string SerializeSoap(this object source)
+        {
+            // Don't serialize a null object, simply return the default for that object
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                SoapFormatter soapFormatter = new SoapFormatter();
+                soapFormatter.Serialize(memoryStream, source);
+                memoryStream.Position = 0;
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.Load(memoryStream);
+                return xmlDocument.InnerXml;
+            }
+        }
+
+        /// <summary>
+        /// Deserializes Soap string to object.
+        /// </summary>
+        /// <param name="source">The Soap string to deserialize.</param>
+        /// <returns>Instance of object.</returns>
+        public static object DeserializeSoap(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(source);
+                xmlDocument.Save(memoryStream);
+                memoryStream.Position = 0;
+
+                SoapFormatter soapFormatter = new SoapFormatter();
+                return soapFormatter.Deserialize(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes Soap string to object.
+        /// </summary>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">The Soap string to deserialize.</param>
+        /// <returns>Instance of T.</returns>
+        public static T DeserializeSoap<T>(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(source);
+                xmlDocument.Save(memoryStream);
+                memoryStream.Position = 0;
+
+                SoapFormatter soapFormatter = new SoapFormatter();
+                return (T)soapFormatter.Deserialize(memoryStream);
             }
         }
 

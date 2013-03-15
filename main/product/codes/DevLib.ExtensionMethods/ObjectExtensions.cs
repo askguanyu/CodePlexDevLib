@@ -137,9 +137,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
                 binaryFormatter.Serialize(memoryStream, source);
                 memoryStream.Seek(0, SeekOrigin.Begin);
                 return (T)binaryFormatter.Deserialize(memoryStream);

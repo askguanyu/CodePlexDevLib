@@ -45,20 +45,20 @@ namespace DevLib.AddIn
 
             CompilerResults results = null;
 
+            List<string> compilerArgs = new List<string> { AddInPlatformTarget.GetPlatformTargetCompilerArgument(addInDomainSetup.Platform) };
+
+            CompilerParameters compilerParameters = new CompilerParameters();
+            compilerParameters.CompilerOptions = string.Join(" ", compilerArgs.ToArray());
+            compilerParameters.GenerateExecutable = true;
+            compilerParameters.GenerateInMemory = false;
+            compilerParameters.OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName));
+            compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
+
+            string assemblySource = DevLib.AddIn.Properties.Resources.Program.Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName).Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
+
             ////using (CSharpCodeProvider provider = new CSharpCodeProvider(providerOptions))
             using (CSharpCodeProvider provider = new CSharpCodeProvider())
             {
-                List<string> compilerArgs = new List<string> { AddInPlatformTarget.GetPlatformTargetCompilerArgument(addInDomainSetup.Platform) };
-
-                CompilerParameters compilerParameters = new CompilerParameters();
-                compilerParameters.CompilerOptions = string.Join(" ", compilerArgs.ToArray());
-                compilerParameters.GenerateExecutable = true;
-                compilerParameters.GenerateInMemory = false;
-                compilerParameters.OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName));
-                compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
-
-                string assemblySource = DevLib.AddIn.Properties.Resources.Program.Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName).Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);
-
                 results = provider.CompileAssemblyFromSource(compilerParameters, assemblySource);
             }
 

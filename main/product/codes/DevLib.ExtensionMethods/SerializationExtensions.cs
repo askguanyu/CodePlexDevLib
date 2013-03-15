@@ -35,9 +35,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
                 binaryFormatter.Serialize(memoryStream, source);
                 return memoryStream.ToArray();
             }
@@ -60,10 +61,11 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentOutOfRangeException("source");
             }
 
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
                 memoryStream.Position = 0;
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
                 return binaryFormatter.Deserialize(memoryStream);
             }
         }
@@ -86,10 +88,11 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentOutOfRangeException("source");
             }
 
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
                 memoryStream.Position = 0;
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
                 return (T)binaryFormatter.Deserialize(memoryStream);
             }
         }
@@ -115,11 +118,10 @@ namespace DevLib.ExtensionMethods
             string result = null;
 
             StringBuilder stringBuilder = new StringBuilder();
+            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
 
             using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
-
                 if (removeDefaultNamespace)
                 {
                     XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
@@ -155,9 +157,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
+            XmlSerializer xmlSerializer = new XmlSerializer(type);
+
             using (TextReader textReader = new StringReader(source))
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(type);
                 return xmlSerializer.Deserialize(textReader);
             }
         }
@@ -175,9 +178,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+
             using (TextReader textReader = new StringReader(source))
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
                 return (T)xmlSerializer.Deserialize(textReader);
             }
         }
@@ -195,9 +199,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            SoapFormatter soapFormatter = new SoapFormatter();
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                SoapFormatter soapFormatter = new SoapFormatter();
                 soapFormatter.Serialize(memoryStream, source);
                 memoryStream.Position = 0;
                 XmlDocument xmlDocument = new XmlDocument();
@@ -218,14 +223,14 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(source);
+            SoapFormatter soapFormatter = new SoapFormatter();
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.LoadXml(source);
                 xmlDocument.Save(memoryStream);
                 memoryStream.Position = 0;
-
-                SoapFormatter soapFormatter = new SoapFormatter();
                 return soapFormatter.Deserialize(memoryStream);
             }
         }
@@ -243,14 +248,14 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(source);
+            SoapFormatter soapFormatter = new SoapFormatter();
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.LoadXml(source);
                 xmlDocument.Save(memoryStream);
                 memoryStream.Position = 0;
-
-                SoapFormatter soapFormatter = new SoapFormatter();
                 return (T)soapFormatter.Deserialize(memoryStream);
             }
         }
@@ -270,9 +275,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 return (encoding ?? Encoding.Default).GetString(memoryStream.ToArray());
             }
@@ -298,9 +304,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
-                DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
                 return dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -320,9 +327,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
-                DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
                 return (T)dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -341,9 +349,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 return memoryStream.ToArray();
             }
@@ -368,9 +377,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
-                DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
                 return dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -389,9 +399,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
-                DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
                 return (T)dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -414,15 +425,12 @@ namespace DevLib.ExtensionMethods
             string result = null;
 
             StringBuilder stringBuilder = new StringBuilder();
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent }))
             {
-                DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
-
                 dataContractSerializer.WriteObject(xmlWriter, source);
-
                 xmlWriter.Flush();
-
                 result = stringBuilder.ToString();
             }
 
@@ -449,9 +457,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
+
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(source)))
             {
-                DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
                 return dataContractSerializer.ReadObject(xmlReader);
             }
         }
@@ -471,9 +480,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
+
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(source)))
             {
-                DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
                 return (T)dataContractSerializer.ReadObject(xmlReader);
             }
         }
@@ -491,12 +501,11 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
-
                 dataContractSerializer.WriteObject(memoryStream, source);
-
                 return memoryStream.ToArray();
             }
         }
@@ -514,10 +523,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
-                DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
-
                 return dataContractSerializer.ReadObject(memoryStream);
             }
         }
@@ -536,10 +545,10 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
+
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
-                DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
-
                 return (T)dataContractSerializer.ReadObject(memoryStream);
             }
         }

@@ -7,15 +7,14 @@ namespace DevLib.ServiceModel
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Reflection;
     using System.Security.Permissions;
-    using System.ServiceModel;
     using System.Threading;
+    using System.Xml;
 
     /// <summary>
-    /// Wcf ServiceHost.
+    /// Class WcfServiceHost.
     /// </summary>
     [Serializable]
     public sealed class WcfServiceHost : MarshalByRefObject, IDisposable
@@ -26,13 +25,29 @@ namespace DevLib.ServiceModel
         private bool _disposed = false;
 
         /// <summary>
-        /// Field _serviceHostList.
+        /// Field _appDomain.
         /// </summary>
-        private List<ServiceHost> _serviceHostList = new List<ServiceHost>();
+        [NonSerialized]
+        private AppDomain _appDomain;
+
+        /// <summary>
+        /// Field _wcfServiceHostProxy.
+        /// </summary>
+        private WcfServiceHostProxy _wcfServiceHostProxy;
+
+        /// <summary>
+        /// Field _baseAddress.
+        /// </summary>
+        private string _baseAddress;
+
+        /// <summary>
+        /// Field _tempConfigFile.
+        /// </summary>
+        private string _tempConfigFile;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
-        /// Default constructor of WcfServiceHost, host Wcf service in current AppDomain. Use Initialize method to initialize Wcf service.
+        /// Default constructor of WcfServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize Wcf service.
         /// </summary>
         public WcfServiceHost()
         {
@@ -42,10 +57,30 @@ namespace DevLib.ServiceModel
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
+        public WcfServiceHost(string assemblyFile)
+        {
+            this.Initialize(assemblyFile);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
-        public WcfServiceHost(string assemblyFile, string configFile = null)
+        public WcfServiceHost(string assemblyFile, string configFile)
         {
             this.Initialize(assemblyFile, configFile);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress)
+        {
+            this.Initialize(assemblyFile, configFile, baseAddress);
         }
 
         /// <summary>
@@ -59,47 +94,71 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Event Created.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Created;
+        public event EventHandler<EventArgs> Created;
 
         /// <summary>
         /// Event Opening.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Opening;
+        public event EventHandler<EventArgs> Opening;
 
         /// <summary>
         /// Event Opened.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Opened;
+        public event EventHandler<EventArgs> Opened;
 
         /// <summary>
         /// Event Closing.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Closing;
+        public event EventHandler<EventArgs> Closing;
 
         /// <summary>
         /// Event Closed.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Closed;
+        public event EventHandler<EventArgs> Closed;
 
         /// <summary>
         /// Event Aborting.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Aborting;
+        public event EventHandler<EventArgs> Aborting;
 
         /// <summary>
         /// Event Aborted.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Aborted;
+        public event EventHandler<EventArgs> Aborted;
 
         /// <summary>
         /// Event Restarting.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Restarting;
+        public event EventHandler<EventArgs> Restarting;
 
         /// <summary>
         /// Event Restarted.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Restarted;
+        public event EventHandler<EventArgs> Restarted;
+
+        /// <summary>
+        /// Event Loaded.
+        /// </summary>
+        public event EventHandler<EventArgs> Loaded;
+
+        /// <summary>
+        /// Event Unloaded.
+        /// </summary>
+        public event EventHandler<EventArgs> Unloaded;
+
+        /// <summary>
+        /// Event Reloaded.
+        /// </summary>
+        public event EventHandler<EventArgs> Reloaded;
+
+        /// <summary>
+        /// Gets a value indicating whether isolated AppDomain is loaded.
+        /// </summary>
+        public bool IsAppDomainLoaded
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Gets current Wcf service assembly file.
@@ -120,12 +179,12 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Initialize Wcf service.
+        /// Create an isolated AppDomain to host Wcf service.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
-        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        public void Initialize(string assemblyFile, string configFile = null)
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(string assemblyFile, string configFile = null, string baseAddress = null)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -142,7 +201,6 @@ namespace DevLib.ServiceModel
             if (string.IsNullOrEmpty(configFile))
             {
                 this.ConfigFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-                this.Init(this.AssemblyFile, this.ConfigFile);
             }
             else
             {
@@ -150,171 +208,163 @@ namespace DevLib.ServiceModel
                 {
                     throw new FileNotFoundException("The specified file does not exist.", configFile);
                 }
-
-                this.ConfigFile = configFile;
-                string originalConfigFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-
-                try
+                else
                 {
-                    AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", this.ConfigFile);
-                    this.Init(this.AssemblyFile, this.ConfigFile);
-                }
-                finally
-                {
-                    AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", originalConfigFile);
+                    this.ConfigFile = configFile;
                 }
             }
+
+            this._baseAddress = baseAddress;
+
+            this.CleanTempWcfConfigFile();
+
+            this._tempConfigFile = this.GetTempWcfConfigFile(this.ConfigFile, this._baseAddress);
+
+            this.CreateDomain();
         }
 
         /// <summary>
-        /// Open Service Host.
+        /// Open Wcf service.
         /// </summary>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public void Open()
         {
             this.CheckDisposed();
 
-            if (this._serviceHostList.Count > 0)
+            if (this._wcfServiceHostProxy != null)
             {
-                for (int i = 0; i < this._serviceHostList.Count; i++)
+                try
                 {
-                    if (this._serviceHostList[i].State != CommunicationState.Opening ||
-                        this._serviceHostList[i].State != CommunicationState.Opened)
-                    {
-                        this.RaiseEvent(this.Opening, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opening);
-                        try
-                        {
-                            if (this._serviceHostList[i].State != CommunicationState.Created)
-                            {
-                                this._serviceHostList[i] = new ServiceHost(this._serviceHostList[i].Description.ServiceType);
-                            }
-
-                            this._serviceHostList[i].Open();
-                            this.RaiseEvent(this.Opened, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-                            throw;
-                        }
-                    }
+                    this._wcfServiceHostProxy.Open();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
                 }
             }
         }
 
         /// <summary>
-        /// Close Service Host.
+        /// Close Wcf service.
         /// </summary>
         public void Close()
         {
             this.CheckDisposed();
 
-            if (this._serviceHostList.Count > 0)
+            if (this._wcfServiceHostProxy != null)
             {
-                foreach (var serviceHost in this._serviceHostList)
+                try
                 {
-                    this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
-                    try
-                    {
-                        serviceHost.Close();
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
-                    }
-                    catch (Exception e)
-                    {
-                        serviceHost.Abort();
-                        ExceptionHandler.Log(e);
-                    }
-
-                    this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
+                    this._wcfServiceHostProxy.Close();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
                 }
             }
         }
 
         /// <summary>
-        /// Abort Service Host.
+        /// Abort Wcf service.
         /// </summary>
         public void Abort()
         {
             this.CheckDisposed();
 
-            if (this._serviceHostList.Count > 0)
+            if (this._wcfServiceHostProxy != null)
             {
-                foreach (var serviceHost in this._serviceHostList)
+                try
                 {
-                    this.RaiseEvent(this.Aborting, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborting);
-                    try
-                    {
-                        serviceHost.Abort();
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-                    }
-
-                    this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
+                    this._wcfServiceHostProxy.Abort();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
                 }
             }
         }
 
         /// <summary>
-        /// Restart Service Host.
+        /// Restart Wcf service.
         /// </summary>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public void Restart()
         {
             this.CheckDisposed();
 
-            if (this._serviceHostList.Count > 0)
+            if (this._wcfServiceHostProxy != null)
             {
-                for (int i = 0; i < this._serviceHostList.Count; i++)
+                try
                 {
-                    this.RaiseEvent(this.Restarting, this._serviceHostList[i].Description.ServiceType.FullName, WcfServiceHostStateEnum.Restarting);
-                    try
-                    {
-                        this._serviceHostList[i].Abort();
-                        this._serviceHostList[i] = new ServiceHost(this._serviceHostList[i].Description.ServiceType);
-                        this._serviceHostList[i].Open();
-                        this.RaiseEvent(this.Restarted, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Restarted);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-                        throw;
-                    }
+                    this._wcfServiceHostProxy.Restart();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
                 }
             }
         }
 
         /// <summary>
-        /// Get service host list.
+        /// Unload current isolated AppDomain.
         /// </summary>
-        /// <returns>Instance of List.</returns>
-        public List<ServiceHost> GetServiceHostList()
+        public void Unload()
         {
             this.CheckDisposed();
 
-            return this._serviceHostList;
+            if (this._wcfServiceHostProxy != null)
+            {
+                this._wcfServiceHostProxy.Dispose();
+                this.UnSubscribeAllWcfServiceHostProxyEvent();
+                this._wcfServiceHostProxy = null;
+            }
+
+            if (this._appDomain != null)
+            {
+                AppDomain.Unload(this._appDomain);
+                this.IsAppDomainLoaded = false;
+                this.UnSubscribeDomainExitEvent();
+                this._appDomain = null;
+                this.RaiseEvent(this.Unloaded, null);
+            }
+
+            this.CleanTempWcfConfigFile();
         }
 
         /// <summary>
-        /// Get service state list.
+        /// Reload current isolated AppDomain.
+        /// </summary>
+        public void Reload()
+        {
+            this.CheckDisposed();
+
+            this.Unload();
+            this.CreateDomain();
+            this.RaiseEvent(this.Reloaded, null);
+        }
+
+        /// <summary>
+        /// Get current isolated AppDomain.
+        /// </summary>
+        /// <returns>Instance of AppDomain.</returns>
+        public AppDomain GetAppDomain()
+        {
+            this.CheckDisposed();
+
+            return this._appDomain;
+        }
+
+        /// <summary>
+        /// Get Wcf service state list.
         /// </summary>
         /// <returns>Instance of List.</returns>
         public List<WcfServiceHostInfo> GetHostInfoList()
         {
             this.CheckDisposed();
 
-            List<WcfServiceHostInfo> result = new List<WcfServiceHostInfo>();
-
-            foreach (var item in this._serviceHostList)
-            {
-                result.Add(new WcfServiceHostInfo() { ServiceType = item.Description.ServiceType.FullName, BaseAddress = item.BaseAddresses[0].AbsoluteUri, State = item.State });
-            }
-
-            return result;
+            return this._wcfServiceHostProxy.GetHostInfoList();
         }
 
         /// <summary>
@@ -338,31 +388,18 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Initialize Wcf service.
+        /// Method RemoveWcfConfigFileBaseAddressNode.
         /// </summary>
-        /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="configFile">Wcf service config file.</param>
-        internal void Init(string assemblyFile, string configFile)
+        /// <param name="sourceFileName">Source wcf config file name.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <returns>Temp Wcf config file full path.</returns>
+        private string GetTempWcfConfigFile(string sourceFileName, string baseAddress)
         {
-            this._serviceHostList.Clear();
+            string result = null;
 
             try
             {
-                // To use config file to setup ServiceHost, wcf service and config file should be in a same domain.
-                foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile))
-                {
-                    try
-                    {
-                        ServiceHost serviceHost = new ServiceHost(serviceType);
-                        this._serviceHostList.Add(serviceHost);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-                        throw;
-                    }
-                }
+                result = Path.GetTempFileName();
             }
             catch (Exception e)
             {
@@ -370,24 +407,45 @@ namespace DevLib.ServiceModel
                 throw;
             }
 
-            this.RaiseEvent(this.Created, assemblyFile, WcfServiceHostStateEnum.Created);
-        }
-
-        /// <summary>
-        /// Method RaiseEvent.
-        /// </summary>
-        /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="wcfServiceName">String of Wcf Service Name.</param>
-        /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostStateEnum state)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
-
-            if (temp != null)
+            if (string.IsNullOrEmpty(baseAddress))
             {
-                temp(this, new WcfServiceHostEventArgs(wcfServiceName, state));
+                try
+                {
+                    File.Copy(sourceFileName, result, true);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
+                }
             }
+            else
+            {
+                try
+                {
+                    XmlDocument xmlDocument = new XmlDocument();
+                    xmlDocument.Load(sourceFileName);
+
+                    var nodeList = xmlDocument.SelectNodes(@"configuration/system.serviceModel/services/service/host");
+
+                    if (nodeList != null && nodeList.Count > 0)
+                    {
+                        foreach (XmlNode item in nodeList)
+                        {
+                            item.RemoveAll();
+                        }
+                    }
+
+                    xmlDocument.Save(result);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -413,26 +471,22 @@ namespace DevLib.ServiceModel
                 ////    managedResource = null;
                 ////}
 
-                if (this._serviceHostList != null && this._serviceHostList.Count > 0)
+                if (this._wcfServiceHostProxy != null)
                 {
-                    foreach (var serviceHost in this._serviceHostList)
-                    {
-                        if (serviceHost != null)
-                        {
-                            try
-                            {
-                                serviceHost.Close();
-                            }
-                            catch
-                            {
-                                serviceHost.Abort();
-                            }
-                        }
-                    }
-
-                    this._serviceHostList.Clear();
-                    this._serviceHostList = null;
+                    this._wcfServiceHostProxy.Dispose();
+                    this.UnSubscribeAllWcfServiceHostProxyEvent();
+                    this._wcfServiceHostProxy = null;
                 }
+
+                if (this._appDomain != null)
+                {
+                    AppDomain.Unload(this._appDomain);
+                    this.IsAppDomainLoaded = false;
+                    this.UnSubscribeDomainExitEvent();
+                    this._appDomain = null;
+                }
+
+                this.CleanTempWcfConfigFile();
             }
 
             // free native resources
@@ -441,6 +495,135 @@ namespace DevLib.ServiceModel
             ////    Marshal.FreeHGlobal(nativeResource);
             ////    nativeResource = IntPtr.Zero;
             ////}
+        }
+
+        /// <summary>
+        /// Method RaiseEvent.
+        /// </summary>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        /// <param name="e">Instance of EventArgs.</param>
+        private void RaiseEvent(EventHandler<EventArgs> eventHandler, EventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<EventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Method CreateDomain.
+        /// </summary>
+        private void CreateDomain()
+        {
+            try
+            {
+                AppDomainSetup appDomainSetup = new AppDomainSetup();
+                appDomainSetup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+                appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
+                appDomainSetup.ConfigurationFile = this._tempConfigFile;
+                appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
+                appDomainSetup.ShadowCopyFiles = "true";
+                appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
+
+                this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
+
+                this.SubscribeDomainExitEvent();
+
+                this._wcfServiceHostProxy = this._appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHostProxy).FullName) as WcfServiceHostProxy;
+                this.IsAppDomainLoaded = true;
+                this.SubscribeAllWcfServiceHostProxyEvent();
+                this._wcfServiceHostProxy.Initialize(this.AssemblyFile, this._tempConfigFile, this._baseAddress);
+                this.RaiseEvent(this.Loaded, null);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                this.Unload();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Method SubscribeDomainExitEvent.
+        /// </summary>
+        private void SubscribeDomainExitEvent()
+        {
+            this._appDomain.DomainUnload += this.DomainExit;
+            this._appDomain.ProcessExit += this.DomainExit;
+            this._appDomain.UnhandledException += this.DomainExit;
+        }
+
+        /// <summary>
+        /// Method UnSubscribeDomainExitEvent.
+        /// </summary>
+        private void UnSubscribeDomainExitEvent()
+        {
+            this._appDomain.DomainUnload -= this.DomainExit;
+            this._appDomain.ProcessExit -= this.DomainExit;
+            this._appDomain.UnhandledException -= this.DomainExit;
+        }
+
+        /// <summary>
+        /// Method DomainExit.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
+        private void DomainExit(object sender, EventArgs e)
+        {
+            this.CleanTempWcfConfigFile();
+        }
+
+        /// <summary>
+        /// Clean up temp wcf config file.
+        /// </summary>
+        private void CleanTempWcfConfigFile()
+        {
+            if (File.Exists(this._tempConfigFile))
+            {
+                try
+                {
+                    File.Delete(this._tempConfigFile);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method SubscribeAllWcfServiceHostProxyEvent.
+        /// </summary>
+        private void SubscribeAllWcfServiceHostProxyEvent()
+        {
+            this._wcfServiceHostProxy.Created += (s, e) => this.RaiseEvent(this.Created, e);
+            this._wcfServiceHostProxy.Opening += (s, e) => this.RaiseEvent(this.Opening, e);
+            this._wcfServiceHostProxy.Opened += (s, e) => this.RaiseEvent(this.Opened, e);
+            this._wcfServiceHostProxy.Closing += (s, e) => this.RaiseEvent(this.Closing, e);
+            this._wcfServiceHostProxy.Closed += (s, e) => this.RaiseEvent(this.Closed, e);
+            this._wcfServiceHostProxy.Aborting += (s, e) => this.RaiseEvent(this.Aborting, e);
+            this._wcfServiceHostProxy.Aborted += (s, e) => this.RaiseEvent(this.Aborted, e);
+            this._wcfServiceHostProxy.Restarting += (s, e) => this.RaiseEvent(this.Restarting, e);
+            this._wcfServiceHostProxy.Restarted += (s, e) => this.RaiseEvent(this.Restarted, e);
+        }
+
+        /// <summary>
+        /// Method UnSubscribeAllWcfServiceHostProxyEvent.
+        /// </summary>
+        private void UnSubscribeAllWcfServiceHostProxyEvent()
+        {
+            this._wcfServiceHostProxy.Created -= (s, e) => this.RaiseEvent(this.Created, e);
+            this._wcfServiceHostProxy.Opening -= (s, e) => this.RaiseEvent(this.Opening, e);
+            this._wcfServiceHostProxy.Opened -= (s, e) => this.RaiseEvent(this.Opened, e);
+            this._wcfServiceHostProxy.Closing -= (s, e) => this.RaiseEvent(this.Closing, e);
+            this._wcfServiceHostProxy.Closed -= (s, e) => this.RaiseEvent(this.Closed, e);
+            this._wcfServiceHostProxy.Aborting -= (s, e) => this.RaiseEvent(this.Aborting, e);
+            this._wcfServiceHostProxy.Aborted -= (s, e) => this.RaiseEvent(this.Aborted, e);
+            this._wcfServiceHostProxy.Restarting -= (s, e) => this.RaiseEvent(this.Restarting, e);
+            this._wcfServiceHostProxy.Restarted -= (s, e) => this.RaiseEvent(this.Restarted, e);
         }
 
         /// <summary>

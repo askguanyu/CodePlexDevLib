@@ -34,7 +34,6 @@ namespace DevLib.ServiceProcess
 
             this.ServiceName = serviceName;
             this.DisplayName = this.ServiceName;
-            this.Description = string.Format("{0} {1}", this.ServiceName, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"));
         }
 
         /// <summary>

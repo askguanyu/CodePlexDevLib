@@ -119,7 +119,6 @@ namespace DevLib.Samples
 
             ServiceProcessTestService testService = new ServiceProcessTestService();
 
-
             WindowsServiceBase.Run(testService, args);
         }
 

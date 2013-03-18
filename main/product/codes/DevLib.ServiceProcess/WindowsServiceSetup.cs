@@ -34,7 +34,7 @@ namespace DevLib.ServiceProcess
 
             this.ServiceName = serviceName;
             this.DisplayName = this.ServiceName;
-            this.Description = this.ServiceName;
+            this.Description = string.Format("{0} {1}", this.ServiceName, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"));
         }
 
         /// <summary>
@@ -204,6 +204,11 @@ namespace DevLib.ServiceProcess
         /// </summary>
         private void InitSetupInfo()
         {
+            this.ServiceAssemblyPath = string.Empty;
+            this.ServiceName = "DefaultServiceName";
+            this.DisplayName = this.ServiceName;
+            this.Description = string.Format("{0} {1}", this.ServiceName, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"));
+
             try
             {
                 Assembly serviceAssembly = Assembly.GetEntryAssembly();
@@ -223,11 +228,6 @@ namespace DevLib.ServiceProcess
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
-
-                this.ServiceAssemblyPath = string.Empty;
-                this.ServiceName = "DefaultServiceName";
-                this.DisplayName = this.ServiceName;
-                this.Description = string.Format("{0} {1}", this.ServiceName, DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"));
             }
 
             this.StartType = ServiceStartMode.Automatic;

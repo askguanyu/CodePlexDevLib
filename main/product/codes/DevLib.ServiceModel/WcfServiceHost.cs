@@ -549,6 +549,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Method SubscribeDomainExitEvent.
         /// </summary>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         private void SubscribeDomainExitEvent()
         {
             this._appDomain.DomainUnload += this.DomainExit;
@@ -559,6 +560,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Method UnSubscribeDomainExitEvent.
         /// </summary>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         private void UnSubscribeDomainExitEvent()
         {
             this._appDomain.DomainUnload -= this.DomainExit;

@@ -172,7 +172,7 @@ namespace DevLib.Samples
             addin.Unloaded += new EventHandler(addin_Stopped);
             addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
 
-            addin.CreateInstance<WcfIsolatedServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            addin.CreateInstance<WcfServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
 
             //using (AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", false))
             //{
@@ -310,7 +310,7 @@ namespace DevLib.Samples
             Console.WriteLine("!!!!!!!!addin_Restarted    ");
             //e.ProcessInfo.RetrieveProperties().ForEach((k, v) => { Console.WriteLine(string.Format("{0} = {1}", k, v)); });
             Debug.WriteLine("!!!!!!!!addin_Restarted    ");
-            var temp = (sender as AddInDomain).AddInObject as WcfIsolatedServiceHost;
+            var temp = (sender as AddInDomain).AddInObject as WcfServiceHost;
             if (temp != null)
             {
                 temp.Open();
@@ -1208,12 +1208,12 @@ namespace DevLib.Samples
             //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
             //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
 
-            WcfIsolatedServiceHost host = new WcfIsolatedServiceHost();
+            WcfServiceHost host = new WcfServiceHost();
             host.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
 
             host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
             host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
-            host.Unloaded += (s, e) => (s as WcfIsolatedServiceHost).AssemblyFile.ConsoleOutput();
+            host.Unloaded += (s, e) => (s as WcfServiceHost).AssemblyFile.ConsoleOutput();
             host.Reloaded += (s, e) => s.ConsoleOutput();
 
             host.Open();

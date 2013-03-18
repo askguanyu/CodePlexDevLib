@@ -216,10 +216,6 @@ namespace DevLib.ServiceModel
 
             this._baseAddress = baseAddress;
 
-            this.CleanTempWcfConfigFile();
-
-            this._tempConfigFile = this.GetTempWcfConfigFile(this.ConfigFile, this._baseAddress);
-
             this.CreateDomain();
         }
 
@@ -518,6 +514,9 @@ namespace DevLib.ServiceModel
         {
             try
             {
+                this.CleanTempWcfConfigFile();
+                this._tempConfigFile = this.GetTempWcfConfigFile(this.ConfigFile, this._baseAddress);
+
                 AppDomainSetup appDomainSetup = new AppDomainSetup();
                 appDomainSetup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);

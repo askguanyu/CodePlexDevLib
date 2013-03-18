@@ -325,7 +325,6 @@ namespace DevLib.ServiceModel
             {
                 AppDomain.Unload(this._appDomain);
                 this.IsAppDomainLoaded = false;
-                this.UnSubscribeDomainExitEvent();
                 this._appDomain = null;
                 this.RaiseEvent(this.Unloaded, null);
             }
@@ -482,7 +481,6 @@ namespace DevLib.ServiceModel
                 {
                     AppDomain.Unload(this._appDomain);
                     this.IsAppDomainLoaded = false;
-                    this.UnSubscribeDomainExitEvent();
                     this._appDomain = null;
                 }
 
@@ -555,17 +553,6 @@ namespace DevLib.ServiceModel
             this._appDomain.DomainUnload += this.DomainExit;
             this._appDomain.ProcessExit += this.DomainExit;
             this._appDomain.UnhandledException += this.DomainExit;
-        }
-
-        /// <summary>
-        /// Method UnSubscribeDomainExitEvent.
-        /// </summary>
-        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        private void UnSubscribeDomainExitEvent()
-        {
-            this._appDomain.DomainUnload -= this.DomainExit;
-            this._appDomain.ProcessExit -= this.DomainExit;
-            this._appDomain.UnhandledException -= this.DomainExit;
         }
 
         /// <summary>

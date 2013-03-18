@@ -319,6 +319,7 @@ namespace DevLib.ServiceModel
 
             if (this._appDomain != null)
             {
+                this.UnSubscribeDomainExitEvent();
                 AppDomain.Unload(this._appDomain);
                 this.IsAppDomainLoaded = false;
                 this._appDomain = null;
@@ -475,6 +476,7 @@ namespace DevLib.ServiceModel
 
                 if (this._appDomain != null)
                 {
+                    this.UnSubscribeDomainExitEvent();
                     AppDomain.Unload(this._appDomain);
                     this.IsAppDomainLoaded = false;
                     this._appDomain = null;
@@ -555,31 +557,14 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method DomainExit.
+        /// Method UnSubscribeDomainExitEvent.
         /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Instance of EventArgs.</param>
-        private void DomainExit(object sender, EventArgs e)
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+        private void UnSubscribeDomainExitEvent()
         {
-            this.CleanTempWcfConfigFile();
-        }
-
-        /// <summary>
-        /// Clean up temp wcf config file.
-        /// </summary>
-        private void CleanTempWcfConfigFile()
-        {
-            if (File.Exists(this._tempConfigFile))
-            {
-                try
-                {
-                    File.Delete(this._tempConfigFile);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
-                }
-            }
+            this._appDomain.DomainUnload -= this.DomainExit;
+            this._appDomain.ProcessExit -= this.DomainExit;
+            this._appDomain.UnhandledException -= this.DomainExit;
         }
 
         /// <summary>
@@ -612,6 +597,34 @@ namespace DevLib.ServiceModel
             this._wcfServiceHostProxy.Aborted -= (s, e) => this.RaiseEvent(this.Aborted, e);
             this._wcfServiceHostProxy.Restarting -= (s, e) => this.RaiseEvent(this.Restarting, e);
             this._wcfServiceHostProxy.Restarted -= (s, e) => this.RaiseEvent(this.Restarted, e);
+        }
+
+        /// <summary>
+        /// Method DomainExit.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
+        private void DomainExit(object sender, EventArgs e)
+        {
+            this.CleanTempWcfConfigFile();
+        }
+
+        /// <summary>
+        /// Clean up temp wcf config file.
+        /// </summary>
+        private void CleanTempWcfConfigFile()
+        {
+            if (File.Exists(this._tempConfigFile))
+            {
+                try
+                {
+                    File.Delete(this._tempConfigFile);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+            }
         }
 
         /// <summary>

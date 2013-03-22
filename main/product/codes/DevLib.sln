@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Samples", "DevLib.Samples\DevLib.Samples.csproj", "{62AAD564-CA47-4847-BE14-5D8BD6633792}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.AddIn", "DevLib.AddIn\DevLib.AddIn.csproj", "{D2B536FD-62D2-46BA-9938-872C120C3FBF}"
@@ -32,9 +32,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevLib.Architecture", "DevL
 		DevLib.Architecture\LayeredArchitectureSolutionVS2012.sln = DevLib.Architecture\LayeredArchitectureSolutionVS2012.sln
 	EndProjectSection
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "DevLib.Architecture.ModelingProject", "DevLib.Architecture.ModelingProject\DevLib.Architecture.ModelingProject.modelproj", "{8FF56378-ECEC-4EEC-A68F-43184B0C388E}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 13
+		SccNumberOfProjects = 14
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -74,6 +76,10 @@ Global
 		SccProjectUniqueName12 = DevLib.ServiceProcess\\DevLib.ServiceProcess.csproj
 		SccProjectName12 = DevLib.ServiceProcess
 		SccLocalPath12 = DevLib.ServiceProcess
+		SccProjectUniqueName13 = DevLib.Architecture.ModelingProject\\DevLib.Architecture.ModelingProject.modelproj
+		SccProjectTopLevelParentUniqueName13 = DevLib.sln
+		SccProjectName13 = DevLib.Architecture.ModelingProject
+		SccLocalPath13 = DevLib.Architecture.ModelingProject
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -212,8 +218,21 @@ Global
 		{40B2A751-81AA-4873-8477-3025C8CE2795}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{40B2A751-81AA-4873-8477-3025C8CE2795}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{40B2A751-81AA-4873-8477-3025C8CE2795}.Release|x86.ActiveCfg = Release|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8FF56378-ECEC-4EEC-A68F-43184B0C388E} = {FD5FDBEF-C2E7-4DE9-9BED-5AD68B026715}
 	EndGlobalSection
 EndGlobal

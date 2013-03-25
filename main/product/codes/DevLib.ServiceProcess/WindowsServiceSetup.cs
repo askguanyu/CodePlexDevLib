@@ -53,21 +53,21 @@ namespace DevLib.ServiceProcess
         {
             get
             {
-                if (string.IsNullOrEmpty(this.ServiceAssemblyPath))
+                try
                 {
-                    return Assembly.GetEntryAssembly();
-                }
-                else
-                {
-                    try
+                    if (!string.IsNullOrEmpty(this.ServiceAssemblyPath))
                     {
                         return Assembly.LoadFrom(this.ServiceAssemblyPath);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        ExceptionHandler.Log(e);
-                        return null;
+                        return Assembly.GetEntryAssembly();
                     }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    return Assembly.LoadFrom(AppDomain.CurrentDomain.SetupInformation.ApplicationName);
                 }
             }
         }

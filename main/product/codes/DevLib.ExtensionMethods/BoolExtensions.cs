@@ -50,7 +50,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if "Yes"; otherwise, false.</returns>
         public static bool ToBool(this string source, bool ignoreCase = true)
         {
-            return string.Compare(source, "Yes", ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0;
+            return "Yes".Equals(source, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
         }
 
         /// <summary>

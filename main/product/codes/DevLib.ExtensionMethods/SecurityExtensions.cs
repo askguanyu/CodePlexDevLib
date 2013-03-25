@@ -25,7 +25,7 @@ namespace DevLib.ExtensionMethods
         {
             string sourceHash = source.ToMD5();
 
-            return string.Compare(sourceHash, hash, StringComparison.OrdinalIgnoreCase) == 0;
+            return sourceHash.Equals(hash, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace DevLib.ExtensionMethods
         {
             string originalHash = original.ToMD5();
 
-            return string.Compare(source, originalHash, StringComparison.OrdinalIgnoreCase) == 0;
+            return source.Equals(originalHash, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

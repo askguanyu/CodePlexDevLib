@@ -250,6 +250,7 @@ namespace DevLib.ServiceProcess
             WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:      ] {0}", _serviceStatus), true, false);
             WriteToConsole(ConsoleColor.Yellow, string.Format("[Installed:   ] {0}", WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName)), true, false);
             WriteToConsole(ConsoleColor.Yellow, string.Format("[Assembly:    ] {0}", _windowsService.WindowsServiceSetupInfo.ServiceAssembly.FullName), true, false);
+            WriteToConsole(ConsoleColor.Yellow, string.Format("[AssemblyFile:] {0}", _windowsService.WindowsServiceSetupInfo.ServiceAssembly.Location), true, false);
         }
 
         /// <summary>

@@ -325,9 +325,9 @@ namespace DevLib.ExtensionMethods
 
             XmlSerializer xmlSerializer = new XmlSerializer(type);
 
-            using (TextReader textReader = new StringReader(source))
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
-                return xmlSerializer.Deserialize(textReader);
+                return xmlSerializer.Deserialize(xmlReader);
             }
         }
 
@@ -358,9 +358,9 @@ namespace DevLib.ExtensionMethods
 
             XmlSerializer xmlSerializer = new XmlSerializer(type);
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
-                return xmlSerializer.Deserialize(fileStream);
+                return xmlSerializer.Deserialize(xmlReader);
             }
         }
 
@@ -379,9 +379,9 @@ namespace DevLib.ExtensionMethods
 
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
 
-            using (TextReader textReader = new StringReader(source))
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
-                return (T)xmlSerializer.Deserialize(textReader);
+                return (T)xmlSerializer.Deserialize(xmlReader);
             }
         }
 
@@ -407,9 +407,9 @@ namespace DevLib.ExtensionMethods
 
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
-                return (T)xmlSerializer.Deserialize(fileStream);
+                return (T)xmlSerializer.Deserialize(xmlReader);
             }
         }
 
@@ -915,9 +915,9 @@ namespace DevLib.ExtensionMethods
 
             DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent }))
             {
-                dataContractSerializer.WriteObject(fileStream, source);
+                dataContractSerializer.WriteObject(xmlWriter, source);
                 return fullPath;
             }
         }
@@ -944,7 +944,7 @@ namespace DevLib.ExtensionMethods
 
             DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source)))
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
                 return dataContractSerializer.ReadObject(xmlReader);
             }
@@ -978,9 +978,9 @@ namespace DevLib.ExtensionMethods
 
             DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
-                return dataContractSerializer.ReadObject(fileStream);
+                return dataContractSerializer.ReadObject(xmlReader);
             }
         }
 
@@ -1001,7 +1001,7 @@ namespace DevLib.ExtensionMethods
 
             DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source)))
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
                 return (T)dataContractSerializer.ReadObject(xmlReader);
             }
@@ -1030,9 +1030,9 @@ namespace DevLib.ExtensionMethods
 
             DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
-                return (T)dataContractSerializer.ReadObject(fileStream);
+                return (T)dataContractSerializer.ReadObject(xmlReader);
             }
         }
 

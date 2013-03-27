@@ -48,7 +48,16 @@ namespace DevLib.ServiceProcess
                 try
                 {
                     serviceController = new ServiceController(serviceName);
-                    serviceController.Start(args);
+
+                    if (args == null || args.Length < 1)
+                    {
+                        serviceController.Start();
+                    }
+                    else
+                    {
+                        serviceController.Start(args);
+                    }
+
                     serviceController.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(60));
                     return serviceController.Status == ServiceControllerStatus.Running;
                 }

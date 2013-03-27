@@ -146,7 +146,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                throw new FileNotFoundException(fullPath);
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
         }
 
@@ -178,7 +178,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                throw new FileNotFoundException(fullPath);
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
         }
 
@@ -259,7 +259,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                throw new FileNotFoundException(fullPath);
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
         }
 

@@ -29,7 +29,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>Byte array.</returns>
         public static byte[] SerializeBinary(this object source)
         {
-            // Don't serialize a null object, simply return the default for that object
             if (source == null)
             {
                 throw new ArgumentNullException("source");
@@ -41,6 +40,54 @@ namespace DevLib.ExtensionMethods
             {
                 binaryFormatter.Serialize(memoryStream, source);
                 return memoryStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Serializes object to bytes, write to file.
+        /// </summary>
+        /// <param name="source">Source object.</param>
+        /// <param name="fileName">File name.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <returns>File full path.</returns>
+        public static string WriteBinary(this object source, string fileName, bool overwrite = false)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwrite && File.Exists(fileName))
+            {
+                throw new ArgumentException("The specified file already exists.", fullPath);
+            }
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                binaryFormatter.Serialize(fileStream, source);
+                return fullPath;
             }
         }
 
@@ -71,6 +118,33 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deserializes bytes to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <returns>Instance object.</returns>
+        public static object ReadBinary(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return binaryFormatter.Deserialize(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Deserializes bytes to object.
         /// </summary>
         /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
@@ -94,6 +168,34 @@ namespace DevLib.ExtensionMethods
             {
                 memoryStream.Position = 0;
                 return (T)binaryFormatter.Deserialize(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes bytes to object, read from file.
+        /// </summary>
+        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">File name.</param>
+        /// <returns>Instance of T.</returns>
+        public static T ReadBinary<T>(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return (T)binaryFormatter.Deserialize(fileStream);
             }
         }
 
@@ -140,6 +242,70 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Serializes object to XML string, write to file.
+        /// </summary>
+        /// <remarks>
+        /// The object to be serialized should be decorated with the <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
+        /// </remarks>
+        /// <param name="source">The object to serialize.</param>
+        /// <param name="fileName">File name.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
+        /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
+        /// <returns>File full path.</returns>
+        public static string WriteXml(this object source, string fileName, bool overwrite = false, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwrite && File.Exists(fileName))
+            {
+                throw new ArgumentException("The specified file already exists.", fullPath);
+            }
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
+            {
+                if (removeDefaultNamespace)
+                {
+                    XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
+                    xmlns.Add(string.Empty, string.Empty);
+                    xmlSerializer.Serialize(xmlWriter, source, xmlns);
+                }
+                else
+                {
+                    xmlSerializer.Serialize(xmlWriter, source);
+                }
+
+                return fullPath;
+            }
+        }
+
+        /// <summary>
         /// Deserializes XML string to object.
         /// </summary>
         /// <param name="source">The XML string to deserialize.</param>
@@ -166,6 +332,39 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deserializes XML string to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <param name="type">Type of object.</param>
+        /// <returns>Instance of object.</returns>
+        public static object ReadXml(this string source, Type type)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            XmlSerializer xmlSerializer = new XmlSerializer(type);
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return xmlSerializer.Deserialize(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Deserializes XML string to object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
@@ -187,13 +386,40 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deserializes XML string to object, read from file.
+        /// </summary>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">File name.</param>
+        /// <returns>Instance of T.</returns>
+        public static T ReadXml<T>(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return (T)xmlSerializer.Deserialize(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Serializes object to Soap string.
         /// </summary>
         /// <param name="source">The object to serialize.</param>
         /// <returns>Soap string.</returns>
         public static string SerializeSoap(this object source)
         {
-            // Don't serialize a null object, simply return the default for that object
             if (source == null)
             {
                 throw new ArgumentNullException("source");
@@ -208,6 +434,49 @@ namespace DevLib.ExtensionMethods
                 XmlDocument xmlDocument = new XmlDocument();
                 xmlDocument.Load(memoryStream);
                 return xmlDocument.InnerXml;
+            }
+        }
+
+        /// <summary>
+        /// Serializes object to Soap string, write to file.
+        /// </summary>
+        /// <param name="source">The object to serialize.</param>
+        /// <param name="fileName">File name.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <returns>File full path.</returns>
+        public static string WriteSoap(this object source, string fileName, bool overwrite = false)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwrite && File.Exists(fileName))
+            {
+                throw new ArgumentException("The specified file already exists.", fullPath);
+            }
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            SoapFormatter soapFormatter = new SoapFormatter();
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                soapFormatter.Serialize(fileStream, source);
+                return fullPath;
             }
         }
 
@@ -232,6 +501,33 @@ namespace DevLib.ExtensionMethods
                 xmlDocument.Save(memoryStream);
                 memoryStream.Position = 0;
                 return soapFormatter.Deserialize(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes Soap string to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <returns>Instance of object.</returns>
+        public static object ReadSoap(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            SoapFormatter soapFormatter = new SoapFormatter();
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return soapFormatter.Deserialize(fileStream);
             }
         }
 
@@ -261,6 +557,34 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deserializes Soap string to object, read from file.
+        /// </summary>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">File name.</param>
+        /// <returns>Instance of T.</returns>
+        public static T ReadSoap<T>(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            SoapFormatter soapFormatter = new SoapFormatter();
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return (T)soapFormatter.Deserialize(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Serializes object to JSON string.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
@@ -269,7 +593,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>JSON string.</returns>
         public static string SerializeJsonString(this object source, Encoding encoding = null, IEnumerable<Type> knownTypes = null)
         {
-            // Don't serialize a null object, simply return the default for that object
             if (source == null)
             {
                 throw new ArgumentNullException("source");
@@ -281,6 +604,55 @@ namespace DevLib.ExtensionMethods
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 return (encoding ?? Encoding.Default).GetString(memoryStream.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Serializes object to JSON string, write to file.
+        /// </summary>
+        /// <param name="source">Object to serialize.</param>
+        /// <param name="fileName">File name.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <returns>File full path.</returns>
+        public static string WriteJson(this object source, string fileName, bool overwrite = false, IEnumerable<Type> knownTypes = null)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwrite && File.Exists(fileName))
+            {
+                throw new ArgumentException("The specified file already exists.", fullPath);
+            }
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                dataContractJsonSerializer.WriteObject(fileStream, source);
+                return fullPath;
             }
         }
 
@@ -313,6 +685,40 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deserializes JSON string to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <param name="type">Type of object.</param>
+        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <returns>Instance of object.</returns>
+        public static object ReadJson(this string source, Type type, IEnumerable<Type> knownTypes = null)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return dataContractJsonSerializer.ReadObject(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Deserializes JSON string to object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
@@ -336,6 +742,35 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deserializes JSON string to object, read from file.
+        /// </summary>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
+        /// <param name="source">File name.</param>
+        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <returns>Instance of object.</returns>
+        public static T ReadJson<T>(this string source, IEnumerable<Type> knownTypes = null)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return (T)dataContractJsonSerializer.ReadObject(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Serializes object to JSON bytes.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
@@ -343,7 +778,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>JSON bytes.</returns>
         public static byte[] SerializeJsonBinary(this object source, IEnumerable<Type> knownTypes = null)
         {
-            // Don't serialize a null object, simply return the default for that object
             if (source == null)
             {
                 throw new ArgumentNullException("source");
@@ -438,6 +872,57 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Serializes DataContract object to XML string, write to file.
+        /// </summary>
+        /// <param name="source">The DataContract object to serialize.</param>
+        /// <param name="fileName">File name.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
+        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <returns>File full path.</returns>
+        public static string WriteDataContract(this object source, string fileName, bool overwrite = false, bool indent = false, bool omitXmlDeclaration = true, IEnumerable<Type> knownTypes = null)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException("fileName");
+            }
+
+            string fullPath = Path.GetFullPath(fileName);
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwrite && File.Exists(fileName))
+            {
+                throw new ArgumentException("The specified file already exists.", fullPath);
+            }
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullDirectoryPath);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                dataContractSerializer.WriteObject(fileStream, source);
+                return fullPath;
+            }
+        }
+
+        /// <summary>
         /// Deserializes DataContract XML string to object.
         /// </summary>
         /// <param name="source">The DataContract XML string to deserialize.</param>
@@ -466,6 +951,40 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deserializes DataContract XML string to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <param name="type">Type of DataContract object.</param>
+        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <returns>Instance of DataContract object.</returns>
+        public static object ReadDataContract(this string source, Type type, IEnumerable<Type> knownTypes = null)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return dataContractSerializer.ReadObject(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Deserializes DataContract XML string to object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
@@ -485,6 +1004,35 @@ namespace DevLib.ExtensionMethods
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(source)))
             {
                 return (T)dataContractSerializer.ReadObject(xmlReader);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes DataContract XML string to object, read from file.
+        /// </summary>
+        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <param name="source">File name.</param>
+        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <returns>Instance of T.</returns>
+        public static T ReadDataContract<T>(this string source, IEnumerable<Type> knownTypes = null)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
+
+            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                return (T)dataContractSerializer.ReadObject(fileStream);
             }
         }
 

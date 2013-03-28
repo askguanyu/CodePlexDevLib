@@ -34,7 +34,7 @@ namespace DevLib.ExtensionMethods
             string fullPath = Path.GetFullPath(fileName);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && fullPath.ExistsFile())
+            if (!overwrite && File.Exists(fullPath))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -204,7 +204,7 @@ namespace DevLib.ExtensionMethods
             string fullPath = Path.GetFullPath(fileName);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && fullPath.ExistsFile())
+            if (!overwrite && File.Exists(fullPath))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -285,7 +285,7 @@ namespace DevLib.ExtensionMethods
             string fullPath = Path.GetFullPath(fileName);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && fullPath.ExistsFile())
+            if (!overwrite && File.Exists(fullPath))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -415,7 +415,7 @@ namespace DevLib.ExtensionMethods
             string destFullPath = Path.GetFullPath(destFileName);
             string destFullDirectoryPath = Path.GetDirectoryName(destFileName);
 
-            if (destFullPath.ExistsFile())
+            if (File.Exists(destFullPath))
             {
                 if (overwrite)
                 {
@@ -590,26 +590,26 @@ namespace DevLib.ExtensionMethods
         /// <returns>The resulting string.</returns>
         public static string ToFileSizeFriendlyString(this double fileSize)
         {
-            if (fileSize < 0)
+            if (fileSize < 0d)
             {
                 throw new ArgumentOutOfRangeException("fileSize");
             }
 
-            if (fileSize >= 1099511627776)
+            if (fileSize >= 1099511627776d)
             {
-                return string.Format("{0:########0.00} TB", fileSize / 1099511627776);
+                return string.Format("{0:########0.00} TB", fileSize / 1099511627776d);
             }
-            else if (fileSize >= 1073741824)
+            else if (fileSize >= 1073741824d)
             {
-                return string.Format("{0:########0.00} GB", fileSize / 1073741824);
+                return string.Format("{0:########0.00} GB", fileSize / 1073741824d);
             }
-            else if (fileSize >= 1048576)
+            else if (fileSize >= 1048576d)
             {
-                return string.Format("{0:####0.00} MB", fileSize / 1048576);
+                return string.Format("{0:####0.00} MB", fileSize / 1048576d);
             }
-            else if (fileSize >= 1024)
+            else if (fileSize >= 1024d)
             {
-                return string.Format("{0:####0.00} KB", fileSize / 1024);
+                return string.Format("{0:####0.00} KB", fileSize / 1024d);
             }
             else
             {

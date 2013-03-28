@@ -590,26 +590,26 @@ namespace DevLib.ExtensionMethods
         /// <returns>The resulting string.</returns>
         public static string ToFileSizeFriendlyString(this double fileSize)
         {
-            if (fileSize < 0d)
+            if (fileSize < 0D)
             {
                 throw new ArgumentOutOfRangeException("fileSize");
             }
 
-            if (fileSize >= 1099511627776d)
+            if (fileSize >= 1099511627776D)
             {
-                return string.Format("{0:########0.00} TB", fileSize / 1099511627776d);
+                return string.Format("{0:########0.00} TB", fileSize / 1099511627776D);
             }
-            else if (fileSize >= 1073741824d)
+            else if (fileSize >= 1073741824D)
             {
-                return string.Format("{0:########0.00} GB", fileSize / 1073741824d);
+                return string.Format("{0:########0.00} GB", fileSize / 1073741824D);
             }
-            else if (fileSize >= 1048576d)
+            else if (fileSize >= 1048576D)
             {
-                return string.Format("{0:####0.00} MB", fileSize / 1048576d);
+                return string.Format("{0:####0.00} MB", fileSize / 1048576D);
             }
-            else if (fileSize >= 1024d)
+            else if (fileSize >= 1024D)
             {
-                return string.Format("{0:####0.00} KB", fileSize / 1024d);
+                return string.Format("{0:####0.00} KB", fileSize / 1024D);
             }
             else
             {

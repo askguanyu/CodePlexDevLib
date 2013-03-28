@@ -122,6 +122,30 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Returns a value indicating whether the specified <see cref="T:System.String" /> object occurs within this string.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="value">The string to seek.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
+        /// <returns>true if the <paramref name="value" /> parameter occurs within this string, or if <paramref name="value" /> is the empty string ("") or null; otherwise, false.</returns>
+        public static bool Contains(this string source, string value, bool ignoreCase = false)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return true;
+            }
+
+            if (ignoreCase)
+            {
+                return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+            else
+            {
+                return source.Contains(value);
+            }
+        }
+
+        /// <summary>
         /// Extracts all digits from a string.
         /// </summary>
         /// <param name="source">String containing digits to extract.</param>

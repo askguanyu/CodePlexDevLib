@@ -160,7 +160,7 @@ namespace DevLib.Diagnostics
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.BackgroundColor = ConsoleColor.Black;
-            string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", stopwatch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, string.Join("/", gcResultArray));
+            string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", stopwatch.ElapsedMilliseconds, threadTime / 10000L, cpuCycles, string.Join("/", gcResultArray));
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 
@@ -182,7 +182,7 @@ namespace DevLib.Diagnostics
 
             Console.WriteLine();
 
-            CodeTimerResult result = new CodeTimerResult(stopwatch.ElapsedMilliseconds, threadTime / 10000, cpuCycles, gcCountArray);
+            CodeTimerResult result = new CodeTimerResult(stopwatch.ElapsedMilliseconds, threadTime / 10000L, cpuCycles, gcCountArray);
             return result;
         }
 

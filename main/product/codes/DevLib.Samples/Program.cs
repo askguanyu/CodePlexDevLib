@@ -101,7 +101,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    TestDevLibServiceProcess(args);
+                    //TestDevLibServiceProcess(args);
                 });
 
                 CodeTimer.Time(delegate
@@ -1207,6 +1207,11 @@ namespace DevLib.Samples
 
             //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
             //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
+
+            //var client = WcfClientBase<IWcfService>.GetReusableFaultUnwrappingInstance();
+
+            //var client1 = WcfClientBase<IWcfService>.GetInstance("");
+
 
             WcfServiceHost host = new WcfServiceHost();
             host.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");

@@ -96,7 +96,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    //TestDevLibServiceModel();
+                    TestDevLibServiceModel();
                 });
 
                 CodeTimer.Time(delegate
@@ -1201,6 +1201,7 @@ namespace DevLib.Samples
             StringUtilities.GetRandomAlphabetString(32).ConsoleOutput();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         private static void TestDevLibServiceModel()
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
@@ -1208,13 +1209,15 @@ namespace DevLib.Samples
             //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
             //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
 
-            //var client = WcfClientBase<IWcfService>.GetReusableFaultUnwrappingInstance();
+            var a = WcfServiceHostType.LoadFile(@"E:\Temp\WcfCalc.dll")[0].GetInterfaces()[0];
+
+            var client = WcfClientBase<IWcfService>.GetReusableFaultUnwrappingInstance();
 
             //var client1 = WcfClientBase<IWcfService>.GetInstance("");
-
+            //var x = new BasicHttpBinding().RetrieveProperties().SerializeBinary();
 
             WcfServiceHost host = new WcfServiceHost();
-            host.Initialize(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            host.Initialize(@"E:\Temp\WcfCalc.dll", typeof(BasicHttpBinding), @"http://localhost:888/abcd");
 
             host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
             host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
@@ -1223,6 +1226,11 @@ namespace DevLib.Samples
 
             host.Open();
             Console.WriteLine("first open");
+
+
+
+            Console.ReadKey();
+
             host.Close();
             Console.WriteLine("first close");
             host.Open();

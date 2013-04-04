@@ -10,6 +10,7 @@ namespace DevLib.ServiceModel
     using System.IO;
     using System.Reflection;
     using System.Security.Permissions;
+    using System.ServiceModel.Channels;
     using System.Threading;
     using System.Xml;
 
@@ -36,9 +37,19 @@ namespace DevLib.ServiceModel
         private WcfServiceHostProxy _wcfServiceHostProxy;
 
         /// <summary>
+        /// Field _serviceType.
+        /// </summary>
+        private Type _serviceType;
+
+        /// <summary>
         /// Field _baseAddress.
         /// </summary>
         private string _baseAddress;
+
+        /// <summary>
+        /// Field _bindingType.
+        /// </summary>
+        private Type _bindingType;
 
         /// <summary>
         /// Field _tempConfigFile.
@@ -57,9 +68,15 @@ namespace DevLib.ServiceModel
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
-        public WcfServiceHost(string assemblyFile)
+        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, bool autoOpen = false)
         {
-            this.Initialize(assemblyFile);
+            this.Initialize(assemblyFile, string.Empty, string.Empty);
+
+            if (autoOpen)
+            {
+                this.Open();
+            }
         }
 
         /// <summary>
@@ -67,9 +84,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
-        public WcfServiceHost(string assemblyFile, string configFile)
+        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, bool autoOpen = false)
         {
-            this.Initialize(assemblyFile, configFile);
+            this.Initialize(assemblyFile, configFile, string.Empty);
+
+            if (autoOpen)
+            {
+                this.Open();
+            }
         }
 
         /// <summary>
@@ -78,9 +101,49 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress)
+        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress, bool autoOpen = false)
         {
             this.Initialize(assemblyFile, configFile, baseAddress);
+
+            if (autoOpen)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="address">Wcf service address.</param>
+        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Type bindingType, string address, bool autoOpen = false)
+        {
+            this.Initialize(assemblyFile, bindingType, address);
+
+            if (autoOpen)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="address">Wcf service address.</param>
+        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Type bindingType, string address, bool autoOpen = false)
+        {
+            this.Initialize(serviceType, bindingType, address);
+
+            if (autoOpen)
+            {
+                this.Open();
+            }
         }
 
         /// <summary>
@@ -184,7 +247,7 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        public void Initialize(string assemblyFile, string configFile = null, string baseAddress = null)
+        public void Initialize(string assemblyFile, string configFile, string baseAddress)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -196,25 +259,123 @@ namespace DevLib.ServiceModel
                 throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
             }
 
+            if (!string.IsNullOrEmpty(configFile) && !File.Exists(configFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", configFile);
+            }
+
+            if (!string.IsNullOrEmpty(baseAddress) && !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            {
+                throw new UriFormatException(baseAddress);
+            }
+
+            this.CleanServiceConfig();
+
             this.AssemblyFile = assemblyFile;
 
-            if (string.IsNullOrEmpty(configFile))
-            {
-                this.ConfigFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-            }
-            else
-            {
-                if (!File.Exists(configFile))
-                {
-                    throw new FileNotFoundException("The specified file does not exist.", configFile);
-                }
-                else
-                {
-                    this.ConfigFile = configFile;
-                }
-            }
+            this._serviceType = null;
+
+            this.ConfigFile = string.IsNullOrEmpty(configFile) ? AppDomain.CurrentDomain.SetupInformation.ConfigurationFile : configFile;
 
             this._baseAddress = baseAddress;
+
+            this._bindingType = null;
+
+            this.CreateDomain();
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="address">The address for the endpoint added.</param>
+        public void Initialize(string assemblyFile, Type bindingType, string address)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (bindingType == null)
+            {
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException("The parameter bindingType is not a Binding type.", "bindingType");
+            }
+
+            if (string.IsNullOrEmpty(address) || !Uri.IsWellFormedUriString(address, UriKind.Absolute))
+            {
+                throw new UriFormatException(address ?? string.Empty);
+            }
+
+            this.CleanServiceConfig();
+
+            this.AssemblyFile = assemblyFile;
+
+            this._serviceType = null;
+
+            this.ConfigFile = null;
+
+            this._baseAddress = address;
+
+            this._bindingType = bindingType;
+
+            this.CreateDomain();
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="address">The address for the endpoint added.</param>
+        public void Initialize(Type serviceType, Type bindingType, string address)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceHostType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (bindingType == null)
+            {
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException("The parameter bindingType is not a Binding type.", "bindingType");
+            }
+
+            if (string.IsNullOrEmpty(address) || !Uri.IsWellFormedUriString(address, UriKind.Absolute))
+            {
+                throw new UriFormatException(address ?? string.Empty);
+            }
+
+            this.CleanServiceConfig();
+
+            this.AssemblyFile = null;
+
+            this._serviceType = serviceType;
+
+            this.ConfigFile = null;
+
+            this._baseAddress = address;
+
+            this._bindingType = bindingType;
 
             this.CreateDomain();
         }
@@ -403,6 +564,11 @@ namespace DevLib.ServiceModel
                 throw;
             }
 
+            if (string.IsNullOrEmpty(sourceFileName))
+            {
+                return result;
+            }
+
             if (string.IsNullOrEmpty(baseAddress))
             {
                 try
@@ -517,12 +683,11 @@ namespace DevLib.ServiceModel
             try
             {
                 this.CleanTempWcfConfigFile();
-                this._tempConfigFile = this.GetTempWcfConfigFile(this.ConfigFile, this._baseAddress);
 
                 AppDomainSetup appDomainSetup = new AppDomainSetup();
                 appDomainSetup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
-                appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile);
-                appDomainSetup.ConfigurationFile = this._tempConfigFile;
+                appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this.AssemblyFile) ?? this._serviceType.FullName;
+                appDomainSetup.ConfigurationFile = this._bindingType == null ? this._tempConfigFile = this.GetTempWcfConfigFile(this.ConfigFile, this._baseAddress) : string.Empty;
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
                 appDomainSetup.ShadowCopyFiles = "true";
                 appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
@@ -534,7 +699,16 @@ namespace DevLib.ServiceModel
                 this._wcfServiceHostProxy = this._appDomain.CreateInstanceAndUnwrap(Assembly.GetExecutingAssembly().FullName, typeof(WcfServiceHostProxy).FullName) as WcfServiceHostProxy;
                 this.IsAppDomainLoaded = true;
                 this.SubscribeAllWcfServiceHostProxyEvent();
-                this._wcfServiceHostProxy.Initialize(this.AssemblyFile, this._tempConfigFile, this._baseAddress);
+
+                if (this._serviceType == null)
+                {
+                    this._wcfServiceHostProxy.Initialize(this.AssemblyFile, this._tempConfigFile, this._bindingType, this._baseAddress);
+                }
+                else
+                {
+                    this._wcfServiceHostProxy.Initialize(this._serviceType, this._bindingType, this._baseAddress);
+                }
+
                 this.RaiseEvent(this.Loaded, null);
             }
             catch (Exception e)
@@ -625,6 +799,18 @@ namespace DevLib.ServiceModel
                     ExceptionHandler.Log(e);
                 }
             }
+        }
+
+        /// <summary>
+        /// Clean up wcf service config.
+        /// </summary>
+        private void CleanServiceConfig()
+        {
+            this._serviceType = null;
+            this._baseAddress = string.Empty;
+            this._bindingType = null;
+            this.AssemblyFile = string.Empty;
+            this.ConfigFile = string.Empty;
         }
 
         /// <summary>

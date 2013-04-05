@@ -127,8 +127,15 @@ namespace DevLib.ServiceProcess
         /// <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after the installation was complete.</param>
         public override void Uninstall(IDictionary savedState)
         {
-            this.InitInstaller();
-            base.Uninstall(savedState);
+            try
+            {
+                this.InitInstaller();
+                base.Uninstall(savedState);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+            }
         }
 
         /// <summary>

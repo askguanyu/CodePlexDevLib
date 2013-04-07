@@ -303,7 +303,12 @@ namespace DevLib.ServiceModel
 
             if (bindingName.Equals("NetTcpBinding", StringComparison.OrdinalIgnoreCase))
             {
-                return new NetTcpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = int.MaxValue };
+                return new NetTcpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = int.MaxValue, PortSharingEnabled = true };
+            }
+
+            if (bindingName.Equals("NetNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new NetNamedPipeBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue };
             }
 
             if (bindingName.Equals("WS2007HttpBinding", StringComparison.OrdinalIgnoreCase))
@@ -326,9 +331,14 @@ namespace DevLib.ServiceModel
                 return new WSFederationHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
             }
 
-            if (bindingName.Equals("NetNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
+            if (bindingName.Equals("NetMsmqBinding", StringComparison.OrdinalIgnoreCase))
             {
-                return new NetNamedPipeBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue };
+                return new NetMsmqBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("NetPeerTcpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new NetPeerTcpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
             }
 
             if (bindingName.Equals("CustomBinding", StringComparison.OrdinalIgnoreCase))

@@ -300,6 +300,7 @@ namespace DevLib.WinForms
                 this._openFileDialog = new OpenFileDialog();
             }
 
+            this._openFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
             this._openFileDialog.Filter = "Configuration files (*.xml)|*.xml|(*.config)|*.config|All files (*.*)|*.*";
 
             if (this._saveFileDialog == null)
@@ -307,6 +308,7 @@ namespace DevLib.WinForms
                 this._saveFileDialog = new SaveFileDialog();
             }
 
+            this._saveFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
             this._saveFileDialog.Filter = "Configuration files (*.xml)|*.xml|(*.config)|*.config|All files (*.*)|*.*";
         }
 

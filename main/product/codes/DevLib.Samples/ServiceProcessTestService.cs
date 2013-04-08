@@ -58,7 +58,7 @@ namespace DevLib.Samples
             Console.WriteLine("OnCustomCommand");
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed.")]
         public void Dispose()
         {
             Console.WriteLine("Dispose");

@@ -96,7 +96,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    TestDevLibServiceModel();
+                    //TestDevLibServiceModel();
                 });
 
                 CodeTimer.Time(delegate
@@ -320,6 +320,20 @@ namespace DevLib.Samples
         private static void TestCodeSnippets()
         {
             PrintMethodName("Test CodeSnippets");
+
+            var form = new WinFormConfigEditor<TestClass>((fileName) => { return ConfigManager.Open(fileName).GetValue<TestClass>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
+            try
+            {
+                form.OpenConfigFile(@"e:\d.xml");
+            }
+            catch
+            {
+            }
+            Application.Run(form);
+
+
+            Console.ReadKey();
+
 
             DateTime a = new DateTime();
             a.IsWeekend().ConsoleOutput();

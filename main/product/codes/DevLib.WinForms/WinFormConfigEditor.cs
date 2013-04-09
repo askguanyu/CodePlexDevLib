@@ -58,11 +58,8 @@ namespace DevLib.WinForms
             this.InitializeComponent();
             this.InitializeFileDialog();
             this.FormTitle = this.Text;
-            this.ConfigFile = string.Empty;
             this.OpenDelegate = openDelegate;
             this.SaveDelegate = saveDelegate;
-            this.RefreshPropertyGrid(new T());
-            this.IsChanged = true;
         }
 
         /// <summary>
@@ -186,6 +183,29 @@ namespace DevLib.WinForms
         }
 
         /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Form.Load" /> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            this.Text = this.FormTitle;
+            this.ConfigFile = string.Empty;
+            this.RefreshPropertyGrid(new T());
+            this.IsChanged = true;
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Form.Closing" /> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the event data.</param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = this.SaveConfigDialog();
+            base.OnClosing(e);
+        }
+
+        /// <summary>
         /// Method OnToolStripButtonNewClick.
         /// </summary>
         /// <param name="sender">Event sender.</param>
@@ -267,16 +287,6 @@ namespace DevLib.WinForms
         private void OnToolStripButtonSaveAsClick(object sender, EventArgs e)
         {
             this.SaveAsConfigDialog();
-        }
-
-        /// <summary>
-        /// Method OnWinFormConfigEditorFormClosing.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Instance of EventArgs.</param>
-        private void OnWinFormConfigEditorFormClosing(object sender, FormClosingEventArgs e)
-        {
-            e.Cancel = this.SaveConfigDialog();
         }
 
         /// <summary>

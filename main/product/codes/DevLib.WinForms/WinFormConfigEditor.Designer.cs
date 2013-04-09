@@ -143,7 +143,6 @@
             this.Name = "WinFormConfigEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Configuration Editor";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnWinFormConfigEditorFormClosing);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);

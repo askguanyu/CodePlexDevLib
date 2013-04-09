@@ -1565,7 +1565,7 @@ namespace DevLib.Samples
 
     }
 
-    [TypeConverterAttribute(typeof(ObjectConverter<SpellingOptions>))]
+    [TypeConverterAttribute(typeof(ExpandableObjectConverter<SpellingOptions>))]
     public class SpellingOptions
     {
         private bool spellCheckWhileTyping = true;

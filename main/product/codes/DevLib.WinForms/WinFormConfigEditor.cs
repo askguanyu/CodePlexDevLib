@@ -181,7 +181,7 @@ namespace DevLib.WinForms
             }
             catch (Exception e)
             {
-                MessageBox.Show(string.Format("Could not save configuration to\r\n{0}\r\n\r\n{1}", fileName, e.ToString()));
+                MessageBox.Show(string.Format("Could not save configuration to\r\n\"{0}\"\r\n\r\n{1}", fileName, e.ToString()));
             }
         }
 
@@ -231,7 +231,7 @@ namespace DevLib.WinForms
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(string.Format("Could not load configuration from\r\n{0}\r\n\r\n{1}", configFile, ex.ToString()));
+                            MessageBox.Show(string.Format("Could not load configuration from\r\n\"{0}\"\r\n\r\n{1}", configFile, ex.ToString()));
                         }
 
                         break;
@@ -330,7 +330,7 @@ namespace DevLib.WinForms
         {
             if (this.IsChanged)
             {
-                switch (MessageBox.Show(string.Format("Do you want to save changes to\r\n{0}", string.IsNullOrEmpty(this.ConfigFile) ? "Untitled" : this.ConfigFile), this.FormTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3))
+                switch (MessageBox.Show(string.Format("Do you want to save changes to\r\n\"{0}\"", string.IsNullOrEmpty(this.ConfigFile) ? "Untitled" : this.ConfigFile), this.FormTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3))
                 {
                     case DialogResult.Yes:
 
@@ -386,7 +386,7 @@ namespace DevLib.WinForms
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show(string.Format("Could not save configuration to\r\n{0}\r\n\r\n{1}", configFile, e.ToString()));
+                        MessageBox.Show(string.Format("Could not save configuration to\r\n\"{0}\"\r\n\r\n{1}", configFile, e.ToString()));
                     }
 
                     break;

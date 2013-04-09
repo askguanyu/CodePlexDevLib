@@ -7,6 +7,8 @@ namespace DevLib.WinForms
 {
     using System;
     using System.Collections;
+    using System.ComponentModel;
+    using System.Globalization;
     using System.Security.Permissions;
     using System.Windows.Forms;
 
@@ -118,7 +120,10 @@ namespace DevLib.WinForms
 
                 if (this._isChanged)
                 {
-                    this.Text = "*" + this.Text;
+                    if (!this.Text.StartsWith("*"))
+                    {
+                        this.Text = "*" + this.Text;
+                    }
                 }
                 else
                 {
@@ -405,6 +410,31 @@ namespace DevLib.WinForms
             /// Gets or sets Items.
             /// </summary>
             public T Items { get; set; }
+        }
+    }
+
+    public class ObjectConverter<T> : ExpandableObjectConverter where T : new()
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            if (sourceType == typeof(string))
+            {
+                return true;
+            }
+
+            return base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            if (value == null || string.IsNullOrEmpty(value as string))
+            {
+                return null;
+            }
+            else
+            {
+                return new T();
+            }
         }
     }
 }

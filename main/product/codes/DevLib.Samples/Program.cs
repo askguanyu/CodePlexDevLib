@@ -41,6 +41,8 @@ namespace DevLib.Samples
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Linq;
+    using System.ComponentModel;
+    using System.Globalization;
 
     public class Program
     {
@@ -56,7 +58,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(delegate
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 CodeTimer.Time(delegate
@@ -321,14 +323,14 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test CodeSnippets");
 
-            var form = new WinFormConfigEditor<TestClass>((fileName) => { return ConfigManager.Open(fileName).GetValue<TestClass>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
-            try
-            {
-                form.OpenConfigFile(@"e:\d.xml");
-            }
-            catch
-            {
-            }
+            var form = new WinFormConfigEditor<TestConfig>((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
+            //try
+            //{
+            //    form.OpenConfigFile(@"e:\d.xml");
+            //}
+            //catch
+            //{
+            //}
             Application.Run(form);
 
 
@@ -1377,11 +1379,27 @@ namespace DevLib.Samples
         }
     }
 
+    public class TestConfig
+    {
+        public TestConfig()
+        {
+            //this.MySpell = new SpellingOptions();
+        }
+
+        public int MyInt { get; set; }
+        public string MyString { get; set; }
+        public SpellingOptions MySpell { get; set; }
+    }
+
     [DataContract()]
     [Serializable]
     public class TestClass
     {
         public event EventHandler<EventArgs> OnTestMe;
+
+        public Person APerson { get; set; }
+
+        public SpellingOptions Spell { get; set; }
 
         [DataMember()]
         public string Name
@@ -1423,6 +1441,7 @@ namespace DevLib.Samples
 
     [DataContract]
     [Serializable]
+    [TypeConverterAttribute(typeof(ExpandableObjectConverter))]
     public class Person
     {
         public Person()
@@ -1442,6 +1461,162 @@ namespace DevLib.Samples
             FirstName = newfName;
             LastName = newLName;
             ID = newID;
+        }
+    }
+
+    public class ProfessionalConverter : ExpandableObjectConverter
+    {
+        public override bool CanConvertTo(ITypeDescriptorContext context, System.Type destinationType)
+        {
+            if (destinationType == typeof(Person))
+                return true;
+            else
+                return base.CanConvertTo(context, destinationType);
+        }
+
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, System.Type destinationType)
+       {
+           if (destinationType == typeof(System.String) && value is Person)
+            {
+                Person so = (Person)value;
+                return "FirstName:" + so.FirstName + ",LastName:" + so.LastName;
+            }
+            return base.ConvertTo(context, culture, value, destinationType);
+        }
+
+
+
+
+
+        //将String重新转换成对象属性（编辑后写回）
+
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, System.Type sourceType)
+        {
+
+
+            if (sourceType == typeof(string))
+
+
+                return true;
+
+
+            else
+
+
+                return base.CanConvertFrom(context, sourceType);
+
+
+        }
+
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+
+
+            if (value is string)
+            {
+
+
+                try
+                {
+
+                    string s = (string)value;
+
+
+                    string[] str = new string[4];
+
+
+                    str = s.Split(new char[] { ':', ',' });
+
+
+                    Person so = new Person();
+                    so.FirstName = s;
+                    so.LastName = s;
+
+
+                    return so;
+
+                }
+
+
+                catch
+                {
+
+
+                    throw new ArgumentException("无法将" + (string)value + "转换为Professional 类型");
+
+
+                }
+
+
+            }
+
+
+            return base.ConvertFrom(context, culture, value);
+
+
+
+
+
+
+        }
+
+
+    }
+
+    [TypeConverterAttribute(typeof(ObjectConverter<SpellingOptions>))]
+    public class SpellingOptions
+    {
+        private bool spellCheckWhileTyping = true;
+        private bool spellCheckCAPS = false;
+        private bool suggestCorrections = true;
+
+        [DefaultValueAttribute(true)]
+        public bool SpellCheckWhileTyping
+        {
+            get { return spellCheckWhileTyping; }
+            set { spellCheckWhileTyping = value; }
+        }
+
+        [DefaultValueAttribute(false)]
+        public bool SpellCheckCAPS
+        {
+            get { return spellCheckCAPS; }
+            set { spellCheckCAPS = value; }
+        }
+        [DefaultValueAttribute(true)]
+        public bool SuggestCorrections
+        {
+            get { return suggestCorrections; }
+            set { suggestCorrections = value; }
+        }
+    }
+
+    public class SpellingOptionsConverter : ExpandableObjectConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context,
+                              System.Type sourceType)
+        {
+            if (sourceType == typeof(string))
+                return true;
+
+            return base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context,
+                              CultureInfo culture, object value)
+        {
+            if (string.IsNullOrWhiteSpace(value as string))
+            {
+                return null;
+            }
+            else
+            {
+                return new SpellingOptions();
+                //return base.ConvertFrom(context, culture, value);
+            }
+
         }
     }
 

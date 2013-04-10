@@ -38,7 +38,8 @@ namespace DevLib.ServiceProcess
         {
             _windowsService = windowsService;
             _args = args;
-            _serviceStatus = WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName) ? WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName) : ServiceControllerStatus.Stopped;
+            ////_serviceStatus = WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName) ? WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName) : ServiceControllerStatus.Stopped;
+            _serviceStatus = ServiceControllerStatus.Stopped;
 
             RunWindowsServiceConsole();
         }
@@ -90,32 +91,32 @@ namespace DevLib.ServiceProcess
                     case "S":
                         Console.WriteLine();
 
-                            if (_serviceStatus == ServiceControllerStatus.Stopped)
+                        if (_serviceStatus == ServiceControllerStatus.Stopped)
+                        {
+                            try
                             {
-                                try
-                                {
-                                    _serviceStatus = ServiceControllerStatus.StartPending;
-                                    WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
+                                _serviceStatus = ServiceControllerStatus.StartPending;
+                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
-                                    if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
-                                    {
-                                        _windowsService.OnStart(_args);
-                                        _serviceStatus = ServiceControllerStatus.Running;
-                                    }
-                                    else
-                                    {
-                                        WindowsServiceBase.Start(_windowsService.WindowsServiceSetupInfo.ServiceName, _args);
-                                        _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                    }
-                                }
-                                catch (Exception e)
+                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
                                 {
-                                    ExceptionHandler.Log(e);
-                                    _serviceStatus = originalStatus;
+                                    _windowsService.OnStart(_args);
+                                    _serviceStatus = ServiceControllerStatus.Running;
                                 }
+                                ////else
+                                ////{
+                                ////    WindowsServiceBase.Start(_windowsService.WindowsServiceSetupInfo.ServiceName, _args);
+                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
+                                ////}
                             }
+                            catch (Exception e)
+                            {
+                                ExceptionHandler.Log(e);
+                                _serviceStatus = originalStatus;
+                            }
+                        }
 
-                            WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
+                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
                         break;
 
@@ -129,16 +130,16 @@ namespace DevLib.ServiceProcess
                                 _serviceStatus = ServiceControllerStatus.StopPending;
                                 WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
-                                if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
+                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
                                 {
                                     _windowsService.OnStop();
                                     _serviceStatus = ServiceControllerStatus.Stopped;
                                 }
-                                else
-                                {
-                                    WindowsServiceBase.Stop(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                }
+                                ////else
+                                ////{
+                                ////    WindowsServiceBase.Stop(_windowsService.WindowsServiceSetupInfo.ServiceName);
+                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
+                                ////}
                             }
                             catch (Exception e)
                             {
@@ -161,16 +162,16 @@ namespace DevLib.ServiceProcess
                                 _serviceStatus = ServiceControllerStatus.PausePending;
                                 WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
-                                if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
+                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
                                 {
                                     _windowsService.OnPause();
                                     _serviceStatus = ServiceControllerStatus.Paused;
                                 }
-                                else
-                                {
-                                    WindowsServiceBase.Pause(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                }
+                                ////else
+                                ////{
+                                ////    WindowsServiceBase.Pause(_windowsService.WindowsServiceSetupInfo.ServiceName);
+                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
+                                ////}
                             }
                             catch (Exception e)
                             {
@@ -193,16 +194,16 @@ namespace DevLib.ServiceProcess
                                 _serviceStatus = ServiceControllerStatus.ContinuePending;
                                 WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
 
-                                if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
+                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
                                 {
                                     _windowsService.OnContinue();
                                     _serviceStatus = ServiceControllerStatus.Running;
                                 }
-                                else
-                                {
-                                    WindowsServiceBase.Continue(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                }
+                                ////else
+                                ////{
+                                ////    WindowsServiceBase.Continue(_windowsService.WindowsServiceSetupInfo.ServiceName);
+                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
+                                ////}
                             }
                             catch (Exception e)
                             {

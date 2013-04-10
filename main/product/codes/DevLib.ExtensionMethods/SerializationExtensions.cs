@@ -311,6 +311,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The XML string to deserialize.</param>
         /// <param name="type">Type of object.</param>
         /// <returns>Instance of object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static object DeserializeXml(this string source, Type type)
         {
             if (string.IsNullOrEmpty(source))
@@ -370,6 +371,7 @@ namespace DevLib.ExtensionMethods
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">The XML string to deserialize.</param>
         /// <returns>Instance of T.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static T DeserializeXml<T>(this string source)
         {
             if (string.IsNullOrEmpty(source))

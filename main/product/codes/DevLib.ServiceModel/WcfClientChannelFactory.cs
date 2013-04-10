@@ -5,9 +5,9 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ServiceModel
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
 
@@ -31,6 +31,7 @@ namespace DevLib.ServiceModel
         /// Creates a channel of a specified type to a specified endpoint address.
         /// </summary>
         /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static TChannel CreateChannel()
         {
             return new ChannelFactory<TChannel>().CreateChannel();

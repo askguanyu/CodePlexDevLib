@@ -6,6 +6,7 @@
 namespace DevLib.ServiceProcess
 {
     using System;
+    using System.Globalization;
     using System.Security.Principal;
     using System.ServiceProcess;
 
@@ -86,9 +87,10 @@ namespace DevLib.ServiceProcess
 
             if (input != null)
             {
-                switch (input.ToUpper())
+                switch (input.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case "S":
+
                         Console.WriteLine();
 
                         if (_serviceStatus == ServiceControllerStatus.Stopped)
@@ -121,6 +123,7 @@ namespace DevLib.ServiceProcess
                         break;
 
                     case "T":
+
                         Console.WriteLine();
 
                         if (_serviceStatus == ServiceControllerStatus.Running || _serviceStatus == ServiceControllerStatus.Paused)
@@ -153,6 +156,7 @@ namespace DevLib.ServiceProcess
                         break;
 
                     case "P":
+
                         Console.WriteLine();
 
                         if (_serviceStatus == ServiceControllerStatus.Running)
@@ -185,6 +189,7 @@ namespace DevLib.ServiceProcess
                         break;
 
                     case "R":
+
                         Console.WriteLine();
 
                         if (_serviceStatus == ServiceControllerStatus.Paused)
@@ -217,6 +222,7 @@ namespace DevLib.ServiceProcess
                         break;
 
                     case "I":
+
                         Console.WriteLine();
 
                         if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
@@ -231,6 +237,7 @@ namespace DevLib.ServiceProcess
                         break;
 
                     case "U":
+
                         Console.WriteLine();
 
                         if (WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
@@ -245,15 +252,19 @@ namespace DevLib.ServiceProcess
                         break;
 
                     case "A":
+
                         Console.WriteLine();
                         WriteServiceInfo();
                         break;
 
                     case "Q":
+
                         canContinue = false;
                         break;
 
                     case "":
+                    case "\n":
+                    case "\r\n":
                         break;
 
                     default:

@@ -91,6 +91,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="SyncDictionary.cs" />
+    <Compile Include="TestConfigEditorPlugin.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DevLib.AddIn\DevLib.AddIn.csproj">

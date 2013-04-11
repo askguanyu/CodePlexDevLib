@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2010
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Samples", "DevLib.Samples\DevLib.Samples.csproj", "{62AAD564-CA47-4847-BE14-5D8BD6633792}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.AddIn", "DevLib.AddIn\DevLib.AddIn.csproj", "{D2B536FD-62D2-46BA-9938-872C120C3FBF}"
@@ -14,8 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Net", "DevLib.Net\DevLib.Net.csproj", "{CF145C2E-642F-4EFA-A03D-96B5082E6650}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.ServiceModel", "DevLib.ServiceModel\DevLib.ServiceModel.csproj", "{61266225-A0B6-4792-A8C2-2B99DD02927A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Settings", "DevLib.Settings\DevLib.Settings.csproj", "{83DFFACE-8534-4C70-BC64-D7989F815009}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Utilities", "DevLib.Utilities\DevLib.Utilities.csproj", "{BDC5A581-6F83-4422-BAC9-BC4FD752579A}"
 EndProject
@@ -33,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevLib.Architecture", "DevL
 	EndProjectSection
 EndProject
 Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "DevLib.Architecture.ModelingProject", "DevLib.Architecture.ModelingProject\DevLib.Architecture.ModelingProject.modelproj", "{8FF56378-ECEC-4EEC-A68F-43184B0C388E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Configuration", "DevLib.Configuration\DevLib.Configuration.csproj", "{29304ED4-092E-4E59-9AE5-36296920D8B5}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -61,25 +61,25 @@ Global
 		SccProjectUniqueName7 = DevLib.ServiceModel\\DevLib.ServiceModel.csproj
 		SccProjectName7 = DevLib.ServiceModel
 		SccLocalPath7 = DevLib.ServiceModel
-		SccProjectUniqueName8 = DevLib.Settings\\DevLib.Settings.csproj
-		SccProjectName8 = DevLib.Settings
-		SccLocalPath8 = DevLib.Settings
-		SccProjectUniqueName9 = DevLib.Utilities\\DevLib.Utilities.csproj
-		SccProjectName9 = DevLib.Utilities
-		SccLocalPath9 = DevLib.Utilities
-		SccProjectUniqueName10 = DevLib.WinForms\\DevLib.WinForms.csproj
-		SccProjectName10 = DevLib.WinForms
-		SccLocalPath10 = DevLib.WinForms
-		SccProjectUniqueName11 = DevLib.DesignPatterns\\DevLib.DesignPatterns.csproj
-		SccProjectName11 = DevLib.DesignPatterns
-		SccLocalPath11 = DevLib.DesignPatterns
-		SccProjectUniqueName12 = DevLib.ServiceProcess\\DevLib.ServiceProcess.csproj
-		SccProjectName12 = DevLib.ServiceProcess
-		SccLocalPath12 = DevLib.ServiceProcess
-		SccProjectUniqueName13 = DevLib.Architecture.ModelingProject\\DevLib.Architecture.ModelingProject.modelproj
-		SccProjectTopLevelParentUniqueName13 = DevLib.sln
-		SccProjectName13 = DevLib.Architecture.ModelingProject
-		SccLocalPath13 = DevLib.Architecture.ModelingProject
+		SccProjectUniqueName8 = DevLib.Utilities\\DevLib.Utilities.csproj
+		SccProjectName8 = DevLib.Utilities
+		SccLocalPath8 = DevLib.Utilities
+		SccProjectUniqueName9 = DevLib.WinForms\\DevLib.WinForms.csproj
+		SccProjectName9 = DevLib.WinForms
+		SccLocalPath9 = DevLib.WinForms
+		SccProjectUniqueName10 = DevLib.DesignPatterns\\DevLib.DesignPatterns.csproj
+		SccProjectName10 = DevLib.DesignPatterns
+		SccLocalPath10 = DevLib.DesignPatterns
+		SccProjectUniqueName11 = DevLib.ServiceProcess\\DevLib.ServiceProcess.csproj
+		SccProjectName11 = DevLib.ServiceProcess
+		SccLocalPath11 = DevLib.ServiceProcess
+		SccProjectUniqueName12 = DevLib.Architecture.ModelingProject\\DevLib.Architecture.ModelingProject.modelproj
+		SccProjectTopLevelParentUniqueName12 = DevLib.sln
+		SccProjectName12 = DevLib.Architecture.ModelingProject
+		SccLocalPath12 = DevLib.Architecture.ModelingProject
+		SccProjectUniqueName13 = DevLib.Configuration\\DevLib.Configuration.csproj
+		SccProjectName13 = DevLib.Configuration
+		SccLocalPath13 = DevLib.Configuration
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,16 +166,6 @@ Global
 		{61266225-A0B6-4792-A8C2-2B99DD02927A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{61266225-A0B6-4792-A8C2-2B99DD02927A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{61266225-A0B6-4792-A8C2-2B99DD02927A}.Release|x86.ActiveCfg = Release|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{83DFFACE-8534-4C70-BC64-D7989F815009}.Release|x86.ActiveCfg = Release|Any CPU
 		{BDC5A581-6F83-4422-BAC9-BC4FD752579A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BDC5A581-6F83-4422-BAC9-BC4FD752579A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDC5A581-6F83-4422-BAC9-BC4FD752579A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -228,6 +218,16 @@ Global
 		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8FF56378-ECEC-4EEC-A68F-43184B0C388E}.Release|x86.ActiveCfg = Release|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{29304ED4-092E-4E59-9AE5-36296920D8B5}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

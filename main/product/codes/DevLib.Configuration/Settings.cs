@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Settings
+namespace DevLib.Configuration
 {
     using System;
     using System.Collections;
@@ -53,7 +53,7 @@ namespace DevLib.Settings
         {
             this.ConfigFile = configFile;
 
-            this.Init();
+            this.Initialize();
 
             try
             {
@@ -70,7 +70,7 @@ namespace DevLib.Settings
         /// </summary>
         internal Settings()
         {
-            this.Init();
+            this.Initialize();
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace DevLib.Settings
                 }
                 else
                 {
-                    throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
+                    throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
                 }
             }
             finally
@@ -308,7 +308,7 @@ namespace DevLib.Settings
                 }
                 else
                 {
-                    throw new KeyNotFoundException(string.Format(SettingsConstants.KeyNotFoundExceptionStringFormat, key));
+                    throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
                 }
             }
             finally
@@ -714,9 +714,9 @@ namespace DevLib.Settings
         }
 
         /// <summary>
-        /// Method Init.
+        /// Method Initialize.
         /// </summary>
-        private void Init()
+        private void Initialize()
         {
             this._settingsItemDictionary = new Dictionary<string, object>();
 

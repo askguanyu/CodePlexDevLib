@@ -246,6 +246,7 @@ namespace DevLib.Diagnostics
     /// Code snippets performance test result.
     /// </summary>
     [Serializable]
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public class CodeTimerResult
     {
         /// <summary>

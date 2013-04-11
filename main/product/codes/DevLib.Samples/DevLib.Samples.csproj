@@ -98,6 +98,10 @@
       <Project>{D2B536FD-62D2-46BA-9938-872C120C3FBF}</Project>
       <Name>DevLib.AddIn</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Configuration\DevLib.Configuration.csproj">
+      <Project>{29304ed4-092e-4e59-9ae5-36296920d8b5}</Project>
+      <Name>DevLib.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.DesignPatterns\DevLib.DesignPatterns.csproj">
       <Project>{fba87267-25f7-4363-a5e2-d12dcb011222}</Project>
       <Name>DevLib.DesignPatterns</Name>
@@ -125,10 +129,6 @@
     <ProjectReference Include="..\DevLib.ServiceProcess\DevLib.ServiceProcess.csproj">
       <Project>{40b2a751-81aa-4873-8477-3025c8ce2795}</Project>
       <Name>DevLib.ServiceProcess</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevLib.Settings\DevLib.Settings.csproj">
-      <Project>{83DFFACE-8534-4C70-BC64-D7989F815009}</Project>
-      <Name>DevLib.Settings</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.Utilities\DevLib.Utilities.csproj">
       <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>

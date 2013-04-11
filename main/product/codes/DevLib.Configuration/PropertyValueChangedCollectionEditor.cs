@@ -3,19 +3,17 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Settings
+namespace DevLib.Configuration
 {
     using System;
     using System.ComponentModel;
     using System.ComponentModel.Design;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
 
     /// <summary>
     /// Provides a user interface that can edit most types of collections at design time. Collection changing can raise PropertyValueChanged.
     /// </summary>
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public class PropertyValueChangedCollectionEditor : CollectionEditor
     {
         /// <summary>

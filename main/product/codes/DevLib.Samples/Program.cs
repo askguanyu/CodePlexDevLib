@@ -15,7 +15,7 @@ namespace DevLib.Samples
     using DevLib.Net.Ftp;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;
-    using DevLib.Settings;
+    using DevLib.Configuration;
     using DevLib.Utilities;
     using DevLib.WinForms;
     using System;
@@ -58,7 +58,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(delegate
                 {
-                    TestCodeSnippets();
+                    //TestCodeSnippets();
                 });
 
                 CodeTimer.Time(delegate
@@ -108,7 +108,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    //TestDevLibSettings();
+                    TestDevLibConfiguration();
                 });
 
                 PrintExitInfo();
@@ -322,23 +322,6 @@ namespace DevLib.Samples
         private static void TestCodeSnippets()
         {
             PrintMethodName("Test CodeSnippets");
-
-            var form = new WinFormConfigEditor();
-            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
-            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); },"haha");
-            
-            //try
-            //{
-            //    form.OpenConfigFile(@"e:\d.xml");
-            //}
-            //catch
-            //{
-            //}
-            Application.Run(form);
-
-
-            Console.ReadKey();
-
 
             DateTime a = new DateTime();
             a.IsWeekend().ConsoleOutput();
@@ -1283,9 +1266,25 @@ namespace DevLib.Samples
             host.Dispose();
         }
 
-        private static void TestDevLibSettings()
+        private static void TestDevLibConfiguration()
         {
             PrintMethodName("Test DevLib.Settings");
+
+            var form = new WinFormConfigEditor();
+            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
+            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); }, "haha");
+
+            //try
+            //{
+            //    form.OpenConfigFile(@"e:\d.xml");
+            //}
+            //catch
+            //{
+            //}
+            Application.Run(form);
+
+
+            Console.ReadKey();
 
             TestClass me = new TestClass() { Name = "Foo", Age = 29 };
 

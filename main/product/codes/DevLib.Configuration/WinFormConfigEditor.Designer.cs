@@ -1,4 +1,4 @@
-﻿namespace DevLib.Settings
+﻿namespace DevLib.Configuration
 {
     partial class WinFormConfigEditor
     {

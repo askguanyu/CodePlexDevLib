@@ -1,14 +1,14 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SettingsConstants.cs" company="YuGuan Corporation">
+// <copyright file="ConfigurationConstants.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Settings
+namespace DevLib.Configuration
 {
     /// <summary>
     /// Settings Constants.
     /// </summary>
-    internal static class SettingsConstants
+    internal static class ConfigurationConstants
     {
         /// <summary>
         /// Field ExceptionStringFormat.

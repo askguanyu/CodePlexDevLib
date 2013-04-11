@@ -3,18 +3,16 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Settings
+namespace DevLib.Configuration
 {
     using System;
     using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
 
     /// <summary>
     /// Provides a type converter to convert expandable objects to and from various other representations.
     /// </summary>
     /// <typeparam name="T">Type of object to convert.</typeparam>
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public class ExpandableObjectConverter<T> : ExpandableObjectConverter where T : new()
     {
         /// <summary>

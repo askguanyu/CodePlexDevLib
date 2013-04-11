@@ -1,6 +1,6 @@
-﻿namespace DevLib.WinForms
+﻿namespace DevLib.Settings
 {
-    partial class WinFormConfigEditor<T>
+    partial class WinFormConfigEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -31,14 +31,17 @@
         {
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonNew = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSaveAs = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonOpenPlugin = new System.Windows.Forms.ToolStripButton();
+            this.toolStripComboBoxConfigEditorPlugin = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -55,10 +58,13 @@
             this.toolStripButtonSave,
             this.toolStripSeparator3,
             this.toolStripButtonSaveAs,
-            this.toolStripSeparator5});
+            this.toolStripSeparator5,
+            this.toolStripButtonOpenPlugin,
+            this.toolStripComboBoxConfigEditorPlugin,
+            this.toolStripSeparator6});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(464, 25);
+            this.toolStrip.Size = new System.Drawing.Size(624, 25);
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -66,20 +72,6 @@
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButtonOpen
-            // 
-            this.toolStripButtonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonOpen.Name = "toolStripButtonOpen";
-            this.toolStripButtonOpen.Size = new System.Drawing.Size(49, 22);
-            this.toolStripButtonOpen.Text = "Open...";
-            this.toolStripButtonOpen.Click += new System.EventHandler(this.OnToolStripButtonOpenClick);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonNew
             // 
@@ -89,6 +81,20 @@
             this.toolStripButtonNew.Size = new System.Drawing.Size(35, 22);
             this.toolStripButtonNew.Text = "New";
             this.toolStripButtonNew.Click += new System.EventHandler(this.OnToolStripButtonNewClick);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonOpen
+            // 
+            this.toolStripButtonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonOpen.Name = "toolStripButtonOpen";
+            this.toolStripButtonOpen.Size = new System.Drawing.Size(49, 22);
+            this.toolStripButtonOpen.Text = "Open...";
+            this.toolStripButtonOpen.Click += new System.EventHandler(this.OnToolStripButtonOpenClick);
             // 
             // toolStripSeparator2
             // 
@@ -123,13 +129,35 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
+            // toolStripButtonOpenPlugin
+            // 
+            this.toolStripButtonOpenPlugin.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonOpenPlugin.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonOpenPlugin.Name = "toolStripButtonOpenPlugin";
+            this.toolStripButtonOpenPlugin.Size = new System.Drawing.Size(86, 22);
+            this.toolStripButtonOpenPlugin.Text = "Open Plugin...";
+            this.toolStripButtonOpenPlugin.Click += new System.EventHandler(this.OnToolStripButtonOpenPluginClick);
+            // 
+            // toolStripComboBoxConfigEditorPlugin
+            // 
+            this.toolStripComboBoxConfigEditorPlugin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripComboBoxConfigEditorPlugin.DropDownWidth = 210;
+            this.toolStripComboBoxConfigEditorPlugin.Name = "toolStripComboBoxConfigEditorPlugin";
+            this.toolStripComboBoxConfigEditorPlugin.Size = new System.Drawing.Size(210, 25);
+            this.toolStripComboBoxConfigEditorPlugin.SelectedIndexChanged += new System.EventHandler(this.OnToolStripComboBoxConfigEditorPluginSelectedIndexChanged);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
             // propertyGrid
             // 
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(0, 25);
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGrid.Size = new System.Drawing.Size(464, 577);
+            this.propertyGrid.Size = new System.Drawing.Size(624, 417);
             this.propertyGrid.TabIndex = 1;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.OnPropertyGridPropertyValueChanged);
             // 
@@ -137,7 +165,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 602);
+            this.ClientSize = new System.Drawing.Size(624, 442);
             this.Controls.Add(this.propertyGrid);
             this.Controls.Add(this.toolStrip);
             this.Name = "WinFormConfigEditor";
@@ -163,6 +191,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.PropertyGrid propertyGrid;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBoxConfigEditorPlugin;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton toolStripButtonOpenPlugin;
 
     }
 }

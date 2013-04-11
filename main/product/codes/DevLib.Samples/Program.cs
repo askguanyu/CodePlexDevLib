@@ -58,7 +58,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(delegate
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 CodeTimer.Time(delegate
@@ -323,7 +323,10 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test CodeSnippets");
 
-            var form = new WinFormConfigEditor<TestConfig>((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
+            var form = new WinFormConfigEditor();
+            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
+            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); },"haha");
+            
             //try
             //{
             //    form.OpenConfigFile(@"e:\d.xml");

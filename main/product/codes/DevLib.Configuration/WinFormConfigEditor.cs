@@ -72,6 +72,11 @@ namespace DevLib.Configuration
             if (autoLoadPlugin)
             {
                 this.LoadPluginFolder(AppDomain.CurrentDomain.SetupInformation.ApplicationBase);
+
+                if (this.toolStripComboBoxConfigEditorPlugin.Items.Count > 0)
+                {
+                    this.toolStripComboBoxConfigEditorPlugin.SelectedIndex = 0;
+                }
             }
         }
 
@@ -85,6 +90,11 @@ namespace DevLib.Configuration
             this.Initialize();
 
             this.AddPlugin(configEditorPluginList);
+
+            if (this.toolStripComboBoxConfigEditorPlugin.Items.Count > 0)
+            {
+                this.toolStripComboBoxConfigEditorPlugin.SelectedIndex = 0;
+            }
         }
 
         /// <summary>
@@ -569,25 +579,28 @@ namespace DevLib.Configuration
             if (this._openConfigFileDialog == null)
             {
                 this._openConfigFileDialog = new OpenFileDialog();
+                this._openConfigFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
             }
 
-            this._openConfigFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+            this._openConfigFileDialog.Reset();
             this._openConfigFileDialog.Filter = "Configuration Files (*.xml;*.config)|*.xml;*.config|All Files (*.*)|*.*";
 
             if (this._openPluginFileDialog == null)
             {
                 this._openPluginFileDialog = new OpenFileDialog();
+                this._openPluginFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
             }
 
-            this._openPluginFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+            this._openPluginFileDialog.Reset();
             this._openPluginFileDialog.Filter = "Plugin Files (*.dll;*.exe)|*.dll;*.exe|All Files (*.*)|*.*";
 
             if (this._saveConfigFileDialog == null)
             {
                 this._saveConfigFileDialog = new SaveFileDialog();
+                this._saveConfigFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
             }
 
-            this._saveConfigFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+            this._saveConfigFileDialog.Reset();
             this._saveConfigFileDialog.Filter = "Configuration Files (*.xml;*.config)|*.xml;*.config|All Files (*.*)|*.*";
 
             this.FormTitle = this.Text;

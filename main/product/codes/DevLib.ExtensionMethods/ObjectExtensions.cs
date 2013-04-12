@@ -154,7 +154,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The value.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
-        /// <returns>The target type.</returns>
+        /// <returns>The target type object.</returns>
         public static T ConvertTo<T>(this object source, T defaultValue = default(T), bool throwOnError = false)
         {
             if (source == null)
@@ -199,6 +199,59 @@ namespace DevLib.ExtensionMethods
                 else
                 {
                     return defaultValue;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Converts an object to the specified target type or returns null if those two types are not convertible.
+        /// </summary>
+        /// <param name="source">The value.</param>
+        /// <param name="targetType">The type of <paramref name="returns"/> object.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>The target type object.</returns>
+        public static object ConvertTo(this object source, Type targetType, bool throwOnError = false)
+        {
+            if (source == null)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("source");
+                }
+
+                return null;
+            }
+
+            try
+            {
+                if (source.GetType() == targetType)
+                {
+                    return source;
+                }
+
+                var converter = TypeDescriptor.GetConverter(source);
+                if (converter != null && converter.CanConvertTo(targetType))
+                {
+                    return converter.ConvertTo(source, targetType);
+                }
+
+                converter = TypeDescriptor.GetConverter(targetType);
+                if (converter != null && converter.CanConvertFrom(source.GetType()))
+                {
+                    return converter.ConvertFrom(source);
+                }
+
+                throw new NotSupportedException();
+            }
+            catch
+            {
+                if (throwOnError)
+                {
+                    throw;
+                }
+                else
+                {
+                    return null;
                 }
             }
         }

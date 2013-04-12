@@ -48,6 +48,7 @@
             // 
             // toolStrip
             // 
+            this.toolStrip.CanOverflow = false;
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator4,
@@ -141,7 +142,6 @@
             // toolStripComboBoxConfigEditorPlugin
             // 
             this.toolStripComboBoxConfigEditorPlugin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBoxConfigEditorPlugin.DropDownWidth = 210;
             this.toolStripComboBoxConfigEditorPlugin.Name = "toolStripComboBoxConfigEditorPlugin";
             this.toolStripComboBoxConfigEditorPlugin.Size = new System.Drawing.Size(210, 25);
             this.toolStripComboBoxConfigEditorPlugin.SelectedIndexChanged += new System.EventHandler(this.OnToolStripComboBoxConfigEditorPluginSelectedIndexChanged);
@@ -171,6 +171,7 @@
             this.Name = "WinFormConfigEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Configuration Editor";
+            this.SizeChanged += new System.EventHandler(this.OnWinFormConfigEditorSizeChanged);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);

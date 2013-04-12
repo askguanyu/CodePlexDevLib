@@ -494,6 +494,11 @@ namespace DevLib.Configuration
                 default:
                     break;
             }
+
+            if (this.toolStripComboBoxConfigEditorPlugin.Items.Count > 0)
+            {
+                this.toolStripComboBoxConfigEditorPlugin.SelectedIndex = 0;
+            }
         }
 
         /// <summary>

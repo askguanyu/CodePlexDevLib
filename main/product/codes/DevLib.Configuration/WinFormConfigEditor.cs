@@ -524,6 +524,16 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
+        /// Method OnToolStripSizeChanged;
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
+        private void OnWinFormConfigEditorSizeChanged(object sender, EventArgs e)
+        {
+            this.toolStripComboBoxConfigEditorPlugin.Size = new System.Drawing.Size(this.Width - 321, 25);
+        }
+
+        /// <summary>
         /// Method OnPropertyGridPropertyValueChanged.
         /// </summary>
         /// <param name="s">Event sender.</param>
@@ -609,7 +619,7 @@ namespace DevLib.Configuration
             this._saveConfigFileDialog.Filter = "Configuration Files (*.xml;*.config)|*.xml;*.config|All Files (*.*)|*.*";
 
             this.FormTitle = this.Text;
-
+            this.toolStripComboBoxConfigEditorPlugin.Size = new System.Drawing.Size(this.Width - 321, 25);
             PropertyValueChangedCollectionEditor.CollectionPropertyValueChanged += this.OnPropertyValueChangedCollectionEditorCollectionPropertyValueChanged;
         }
 

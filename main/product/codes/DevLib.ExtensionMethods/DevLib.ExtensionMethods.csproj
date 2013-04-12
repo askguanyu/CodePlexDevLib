@@ -56,6 +56,7 @@
     <Compile Include="IOExtensions.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="SecurityExtensions.cs" />
     <Compile Include="SerializationExtensions.cs" />
     <Compile Include="StringExtensions.cs" />

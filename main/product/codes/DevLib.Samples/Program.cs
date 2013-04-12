@@ -6,6 +6,7 @@
 namespace DevLib.Samples
 {
     using DevLib.AddIn;
+    using DevLib.Configuration;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
@@ -15,16 +16,17 @@ namespace DevLib.Samples
     using DevLib.Net.Ftp;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;
-    using DevLib.Configuration;
     using DevLib.Utilities;
     using DevLib.WinForms;
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Configuration;
     using System.Diagnostics;
     using System.Dynamic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Management;
@@ -41,8 +43,6 @@ namespace DevLib.Samples
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Linq;
-    using System.ComponentModel;
-    using System.Globalization;
 
     public class Program
     {
@@ -1385,12 +1385,12 @@ namespace DevLib.Samples
     {
         public TestConfig()
         {
-            //this.MySpell = new SpellingOptions();
+            this.MySpell = new List<SpellingOptions>();
         }
 
         public int MyInt { get; set; }
         public string MyString { get; set; }
-        public SpellingOptions MySpell { get; set; }
+        public List<SpellingOptions> MySpell { get; set; }
     }
 
     [DataContract()]

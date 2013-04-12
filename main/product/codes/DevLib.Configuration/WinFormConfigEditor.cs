@@ -67,8 +67,7 @@ namespace DevLib.Configuration
         public WinFormConfigEditor(bool autoLoadPlugin = true)
         {
             this.InitializeComponent();
-            this.InitializeFileDialog();
-            this.FormTitle = this.Text;
+            this.Initialize();
 
             if (autoLoadPlugin)
             {
@@ -83,8 +82,7 @@ namespace DevLib.Configuration
         public WinFormConfigEditor(params IWinFormConfigEditorPlugin[] configEditorPluginList)
         {
             this.InitializeComponent();
-            this.InitializeFileDialog();
-            this.FormTitle = this.Text;
+            this.Initialize();
 
             this.AddPlugin(configEditorPluginList);
         }
@@ -198,11 +196,9 @@ namespace DevLib.Configuration
                     if (!this.ConfigEditorPluginListContainsType(item))
                     {
                         this._configEditorPluginList.Add(item);
-                        this.toolStripComboBoxConfigEditorPlugin.Items.Add(item.PluginName ?? item.GetType().Name);
+                        this.toolStripComboBoxConfigEditorPlugin.Items.Add(!string.IsNullOrEmpty(item.PluginName) ? item.PluginName : item.GetType().Name);
                     }
                 }
-
-                this.toolStripComboBoxConfigEditorPlugin.SelectedIndex = 0;
             }
         }
 
@@ -332,15 +328,18 @@ namespace DevLib.Configuration
         /// <param name="fileName">Configuration file name.</param>
         private void OpenConfigFile(string fileName)
         {
-            try
+            if (this._currentConfigEditorPlugin != null)
             {
-                this.RefreshPropertyGrid(this._currentConfigEditorPlugin.Open(fileName));
-                this.ConfigFile = fileName;
-                this.IsChanged = false;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(string.Format("Could not load configuration from\r\n\"{0}\"\r\n\r\n{1}", fileName, e.ToString()));
+                try
+                {
+                    this.RefreshPropertyGrid(this._currentConfigEditorPlugin.Open(fileName));
+                    this.ConfigFile = fileName;
+                    this.IsChanged = false;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(string.Format("Could not load configuration from\r\n\"{0}\"\r\n\r\n{1}", fileName, e.ToString()));
+                }
             }
         }
 
@@ -351,27 +350,32 @@ namespace DevLib.Configuration
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         private void SaveConfigFile(string fileName)
         {
-            object configObject = null;
-
-            try
+            if (this._currentConfigEditorPlugin != null)
             {
-                if (!(this.propertyGrid.SelectedObject is InnerConfig))
-                {
-                    configObject = this.propertyGrid.SelectedObject;
-                }
-                else
-                {
-                    configObject = (this.propertyGrid.SelectedObject as InnerConfig).Items;
-                }
+                object configObject = null;
 
-                this._currentConfigEditorPlugin.Save(fileName, configObject);
+                try
+                {
+                    Type configObjectType = this.propertyGrid.SelectedObject.GetType();
 
-                this.ConfigFile = fileName;
-                this.IsChanged = false;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(string.Format("Could not save configuration to\r\n\"{0}\"\r\n\r\n{1}", fileName, e.ToString()));
+                    if (configObjectType.IsGenericType && configObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
+                    {
+                        configObject = typeof(InnerConfig<>).MakeGenericType(this._currentConfigEditorPlugin.ConfigObjectType).GetProperty("Items").GetValue(this.propertyGrid.SelectedObject, null);
+                    }
+                    else
+                    {
+                        configObject = this.propertyGrid.SelectedObject;
+                    }
+
+                    this._currentConfigEditorPlugin.Save(fileName, configObject);
+
+                    this.ConfigFile = fileName;
+                    this.IsChanged = false;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(string.Format("Could not save configuration to\r\n\"{0}\"\r\n\r\n{1}", fileName, e.ToString()));
+                }
             }
         }
 
@@ -382,11 +386,14 @@ namespace DevLib.Configuration
         /// <param name="e">Instance of EventArgs.</param>
         private void OnToolStripButtonNewClick(object sender, EventArgs e)
         {
-            if (!this.SaveConfigDialog())
+            if (this._currentConfigEditorPlugin != null)
             {
-                this.ConfigFile = string.Empty;
-                this.RefreshPropertyGrid(Activator.CreateInstance(this._currentConfigEditorPlugin.ConfigObjectType));
-                this.IsChanged = true;
+                if (!this.SaveConfigDialog())
+                {
+                    this.ConfigFile = string.Empty;
+                    this.RefreshPropertyGrid(Activator.CreateInstance(this._currentConfigEditorPlugin.ConfigObjectType));
+                    this.IsChanged = true;
+                }
             }
         }
 
@@ -397,23 +404,26 @@ namespace DevLib.Configuration
         /// <param name="e">Instance of EventArgs.</param>
         private void OnToolStripButtonOpenClick(object sender, EventArgs e)
         {
-            if (!this.SaveConfigDialog())
+            if (this._currentConfigEditorPlugin != null)
             {
-                switch (this._openConfigFileDialog.ShowDialog())
+                if (!this.SaveConfigDialog())
                 {
-                    case DialogResult.Abort:
-                    case DialogResult.Cancel:
-                    case DialogResult.Ignore:
-                    case DialogResult.No:
-                    case DialogResult.None:
-                        break;
-                    case DialogResult.OK:
-                    case DialogResult.Retry:
-                    case DialogResult.Yes:
-                        this.OpenConfigFile(this._openConfigFileDialog.FileName);
-                        break;
-                    default:
-                        break;
+                    switch (this._openConfigFileDialog.ShowDialog())
+                    {
+                        case DialogResult.Abort:
+                        case DialogResult.Cancel:
+                        case DialogResult.Ignore:
+                        case DialogResult.No:
+                        case DialogResult.None:
+                            break;
+                        case DialogResult.OK:
+                        case DialogResult.Retry:
+                        case DialogResult.Yes:
+                            this.OpenConfigFile(this._openConfigFileDialog.FileName);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -425,13 +435,16 @@ namespace DevLib.Configuration
         /// <param name="e">Instance of EventArgs.</param>
         private void OnToolStripButtonSaveClick(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.ConfigFile))
+            if (this._currentConfigEditorPlugin != null)
             {
-                this.SaveAsConfigDialog();
-            }
-            else
-            {
-                this.SaveConfigFile(this.ConfigFile);
+                if (string.IsNullOrEmpty(this.ConfigFile))
+                {
+                    this.SaveAsConfigDialog();
+                }
+                else
+                {
+                    this.SaveConfigFile(this.ConfigFile);
+                }
             }
         }
 
@@ -442,7 +455,35 @@ namespace DevLib.Configuration
         /// <param name="e">Instance of EventArgs.</param>
         private void OnToolStripButtonSaveAsClick(object sender, EventArgs e)
         {
-            this.SaveAsConfigDialog();
+            if (this._currentConfigEditorPlugin != null)
+            {
+                this.SaveAsConfigDialog();
+            }
+        }
+
+        /// <summary>
+        /// Method OnToolStripButtonOpenPluginClick.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
+        private void OnToolStripButtonOpenPluginClick(object sender, EventArgs e)
+        {
+            switch (this._openPluginFileDialog.ShowDialog())
+            {
+                case DialogResult.Abort:
+                case DialogResult.Cancel:
+                case DialogResult.Ignore:
+                case DialogResult.No:
+                case DialogResult.None:
+                    break;
+                case DialogResult.OK:
+                case DialogResult.Retry:
+                case DialogResult.Yes:
+                    this.AddPlugin(this.LoadPluginFile(this._openPluginFileDialog.FileName).ToArray());
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -456,9 +497,8 @@ namespace DevLib.Configuration
             {
                 if (!this.SaveConfigDialog())
                 {
-                    this.propertyGrid.SelectedObject = null;
+                    this.RefreshPropertyGrid(null);
                     this.ConfigFile = null;
-                    this._isChanged = false;
                     this._currentConfigEditorPlugin = this._configEditorPluginList[this.toolStripComboBoxConfigEditorPlugin.SelectedIndex];
                 }
                 else
@@ -479,30 +519,52 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
+        /// Method OnPropertyValueChangedCollectionEditorCollectionPropertyValueChanged.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
+        private void OnPropertyValueChangedCollectionEditorCollectionPropertyValueChanged(object sender, EventArgs e)
+        {
+            this.IsChanged = true;
+        }
+
+        /// <summary>
         /// Method RefreshPropertyGrid.
         /// </summary>
         /// <param name="configObject">Instance of T.</param>
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         private void RefreshPropertyGrid(object configObject)
         {
-            if (!(configObject is ICollection))
+            if (configObject == null)
             {
-                this.propertyGrid.SelectedObject = configObject;
+                this.propertyGrid.SelectedObject = null;
             }
             else
             {
-                this.propertyGrid.SelectedObject = new InnerConfig { Items = configObject };
+                if (this._currentConfigEditorPlugin != null)
+                {
+                    if (!(configObject is ICollection))
+                    {
+                        this.propertyGrid.SelectedObject = configObject;
+                    }
+                    else
+                    {
+                        object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(this._currentConfigEditorPlugin.ConfigObjectType), configObject);
+                        this.propertyGrid.SelectedObject = innerConfig;
+                    }
+                }
             }
 
             this.propertyGrid.PropertySort = PropertySort.NoSort;
             this.propertyGrid.ExpandAllGridItems();
+            this.propertyGrid.Refresh();
             this.IsChanged = false;
         }
 
         /// <summary>
-        /// Method InitializeFileDialog.
+        /// Method Initialize.
         /// </summary>
-        private void InitializeFileDialog()
+        private void Initialize()
         {
             if (this._openConfigFileDialog == null)
             {
@@ -527,6 +589,10 @@ namespace DevLib.Configuration
 
             this._saveConfigFileDialog.InitialDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
             this._saveConfigFileDialog.Filter = "Configuration Files (*.xml;*.config)|*.xml;*.config|All Files (*.*)|*.*";
+
+            this.FormTitle = this.Text;
+
+            PropertyValueChangedCollectionEditor.CollectionPropertyValueChanged += this.OnPropertyValueChangedCollectionEditorCollectionPropertyValueChanged;
         }
 
         /// <summary>
@@ -590,40 +656,25 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
-        /// Method OnToolStripButtonOpenPluginClick.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Instance of EventArgs.</param>
-        private void OnToolStripButtonOpenPluginClick(object sender, EventArgs e)
-        {
-            switch (this._openPluginFileDialog.ShowDialog())
-            {
-                case DialogResult.Abort:
-                case DialogResult.Cancel:
-                case DialogResult.Ignore:
-                case DialogResult.No:
-                case DialogResult.None:
-                    break;
-                case DialogResult.OK:
-                case DialogResult.Retry:
-                case DialogResult.Yes:
-                    this.AddPlugin(this.LoadPluginFile(this._openPluginFileDialog.FileName).ToArray());
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
         /// Inner Class InnerConfig.
         /// </summary>
-        protected class InnerConfig
+        /// <typeparam name="T">Type of configuration object.</typeparam>
+        protected class InnerConfig<T>
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="InnerConfig{T}" /> class.
+            /// </summary>
+            /// <param name="configurationObject">Configuration object.</param>
+            public InnerConfig(T configurationObject)
+            {
+                this.Items = configurationObject;
+            }
+
             /// <summary>
             /// Gets or sets Items.
             /// </summary>
             [Editor(typeof(PropertyValueChangedCollectionEditor), typeof(UITypeEditor))]
-            public object Items
+            public T Items
             {
                 get;
                 set;

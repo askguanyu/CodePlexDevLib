@@ -10,8 +10,8 @@ namespace DevLib.Samples
     {
         public TestConfigEditorPlugin()
         {
-            this.PluginName = "Hello";
-            this.ConfigObjectType = typeof(TestConfig);
+            this.PluginName = "List<TestConfig>";
+            this.ConfigObjectType = typeof(List<TestConfig>);
         }
 
         public string PluginName
@@ -28,7 +28,7 @@ namespace DevLib.Samples
 
         public object Open(string fileName)
         {
-            return new TestConfig();
+            return new List<TestConfig>();
         }
 
         public void Save(string fileName, object configObject)

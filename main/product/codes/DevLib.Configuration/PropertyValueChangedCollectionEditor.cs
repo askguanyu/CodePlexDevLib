@@ -8,8 +8,6 @@ namespace DevLib.Configuration
     using System;
     using System.ComponentModel;
     using System.ComponentModel.Design;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
 
     /// <summary>
     /// Provides a user interface that can edit most types of collections at design time. Collection changing can raise PropertyValueChanged.
@@ -26,6 +24,11 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public static event EventHandler CollectionPropertyValueChanged;
+
+        /// <summary>
         /// Edits the value of the specified object using the specified service provider and context.
         /// </summary>
         /// <param name="context">An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to gain additional context information.</param>
@@ -34,16 +37,14 @@ namespace DevLib.Configuration
         /// <returns>The new value of the object.</returns>
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            object source = base.EditValue(context, provider, value);
+            object result = base.EditValue(context, provider, value);
 
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-            using (MemoryStream memoryStream = new MemoryStream())
+            if (CollectionPropertyValueChanged != null)
             {
-                binaryFormatter.Serialize(memoryStream, source);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                return binaryFormatter.Deserialize(memoryStream);
+                CollectionPropertyValueChanged(this, null);
             }
+
+            return result;
         }
     }
 }

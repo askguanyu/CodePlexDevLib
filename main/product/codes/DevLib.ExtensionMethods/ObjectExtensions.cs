@@ -24,9 +24,23 @@ namespace DevLib.ExtensionMethods
         /// <param name="method">The name of the invoked method.</param>
         /// <param name="parameters">The parameters of the invoked method.</param>
         /// <returns>The return value of the invoked method.</returns>
-        public static object InvokeMethod(this object source, string method, object[] parameters)
+        public static object InvokeMethod(this object source, string method, params object[] parameters)
         {
             MethodInfo methodInfo = source.GetType().GetMethod(method);
+            return methodInfo.Invoke(source, parameters);
+        }
+
+        /// <summary>
+        /// Invokes the generic method by the current instance, using the specified parameters.
+        /// </summary>
+        /// <param name="source">The instance of the invoked method.</param>
+        /// <param name="method">The name of the invoked method.</param>
+        /// <param name="parameters">The parameters of the invoked method.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <returns>The return value of the invoked method.</returns>
+        public static object InvokeGenericMethod(this object source, string method, object[] parameters, params Type[] typeArguments)
+        {
+            MethodInfo methodInfo = source.GetType().GetMethod(method).MakeGenericMethod(typeArguments);
             return methodInfo.Invoke(source, parameters);
         }
 

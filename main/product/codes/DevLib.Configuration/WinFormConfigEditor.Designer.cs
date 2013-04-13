@@ -51,13 +51,13 @@
             this.toolStrip.CanOverflow = false;
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripSeparator4,
-            this.toolStripButtonNew,
             this.toolStripSeparator1,
-            this.toolStripButtonOpen,
+            this.toolStripButtonNew,
             this.toolStripSeparator2,
-            this.toolStripButtonSave,
+            this.toolStripButtonOpen,
             this.toolStripSeparator3,
+            this.toolStripButtonSave,
+            this.toolStripSeparator4,
             this.toolStripButtonSaveAs,
             this.toolStripSeparator5,
             this.toolStripButtonOpenPlugin,

@@ -13,10 +13,35 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+
+                if (this._openConfigFileDialog!=null)
+                {
+                    this._openConfigFileDialog.Dispose();
+                }
+
+                if (this._openPluginFileDialog != null)
+                {
+                    this._openPluginFileDialog.Dispose();
+                }
+
+                if (this._saveConfigFileDialog != null)
+                {
+                    this._saveConfigFileDialog.Dispose();
+                }
+
+                if (this._configEditorPluginList!=null)
+                {
+                    this._configEditorPluginList.Clear();
+                    this._configEditorPluginList = null;
+                }
             }
+
             base.Dispose(disposing);
         }
 
@@ -69,10 +94,10 @@
             this.toolStrip.TabIndex = 0;
             this.toolStrip.Text = "toolStrip";
             // 
-            // toolStripSeparator4
+            // toolStripSeparator1
             // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonNew
             // 
@@ -83,10 +108,10 @@
             this.toolStripButtonNew.Text = "New";
             this.toolStripButtonNew.Click += new System.EventHandler(this.OnToolStripButtonNewClick);
             // 
-            // toolStripSeparator1
+            // toolStripSeparator2
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonOpen
             // 
@@ -97,10 +122,10 @@
             this.toolStripButtonOpen.Text = "Open...";
             this.toolStripButtonOpen.Click += new System.EventHandler(this.OnToolStripButtonOpenClick);
             // 
-            // toolStripSeparator2
+            // toolStripSeparator3
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonSave
             // 
@@ -111,10 +136,10 @@
             this.toolStripButtonSave.Text = "Save";
             this.toolStripButtonSave.Click += new System.EventHandler(this.OnToolStripButtonSaveClick);
             // 
-            // toolStripSeparator3
+            // toolStripSeparator4
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonSaveAs
             // 
@@ -176,7 +201,6 @@
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

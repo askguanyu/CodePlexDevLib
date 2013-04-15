@@ -149,7 +149,7 @@ namespace DevLib.Net.Ftp
         /// Gets a list of the files and folders on an FTP server.
         /// </summary>
         /// <param name="remotePath">The path on an FTP server.</param>
-        /// <returns>List of FtpFileInfo.</returns>
+        /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public List<FtpFileInfo> GetFullDirectoryList(string remotePath = null)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
@@ -161,7 +161,7 @@ namespace DevLib.Net.Ftp
         /// Gets a list of the folders on an FTP server.
         /// </summary>
         /// <param name="remotePath">The path on an FTP server.</param>
-        /// <returns>List of FtpFileInfo.</returns>
+        /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public List<FtpFileInfo> GetDirectoryList(string remotePath = null)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
@@ -173,7 +173,7 @@ namespace DevLib.Net.Ftp
         /// Gets a list of the files on an FTP server.
         /// </summary>
         /// <param name="remotePath">The path on an FTP server.</param>
-        /// <returns>List of FtpFileInfo.</returns>
+        /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public List<FtpFileInfo> GetFileList(string remotePath = null)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath);
@@ -543,37 +543,70 @@ namespace DevLib.Net.Ftp
         /// Creates a directory on an FTP server.
         /// </summary>
         /// <param name="fullDirectoryPath">The full path on an FTP server.</param>
+        /// <param name="recursive">Make recursive directory.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool MakeDirectory(string fullDirectoryPath, bool throwOnError = false)
+        public bool MakeDirectory(string fullDirectoryPath, bool recursive = true, bool throwOnError = false)
         {
             FtpWebResponse response = null;
 
-            try
+            if (recursive)
             {
-                FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.MakeDirectory, fullDirectoryPath);
-                response = request.GetResponse() as FtpWebResponse;
-                this.UpdateFtpInfo(response);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
-
-                if (throwOnError)
+                if (string.IsNullOrEmpty(fullDirectoryPath) || fullDirectoryPath.Equals(Path.AltDirectorySeparatorChar))
                 {
-                    throw;
+                    return true;
                 }
 
-                return false;
+                string input = fullDirectoryPath;
+                this.MakeDirectory(input.Substring(0, input.LastIndexOf(Path.AltDirectorySeparatorChar)), true, throwOnError);
+                return this.MakeDirectory(input, false, throwOnError);
             }
-            finally
+            else
             {
-                if (response != null)
+                try
                 {
-                    response.Close();
-                    response = null;
+                    FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.MakeDirectory, fullDirectoryPath);
+                    response = request.GetResponse() as FtpWebResponse;
+                    this.UpdateFtpInfo(response);
+
+                    return true;
+                }
+                catch (WebException e)
+                {
+                    ExceptionHandler.Log(e);
+
+                    FtpWebResponse ftpWebResponse = e.Response as FtpWebResponse;
+
+                    if (ftpWebResponse != null && !string.IsNullOrEmpty(ftpWebResponse.StatusDescription) && ftpWebResponse.StatusDescription.Contains("file already exists"))
+                    {
+                        return true;
+                    }
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
+                    return false;
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
+                    return false;
+                }
+                finally
+                {
+                    if (response != null)
+                    {
+                        response.Close();
+                        response = null;
+                    }
                 }
             }
         }
@@ -775,7 +808,10 @@ namespace DevLib.Net.Ftp
                 }
             }
 
-            this.MakeDirectory(FtpFileInfo.GetDirectoryName(destinationFullPath), false);
+            if (this.GetDirectoryList(FtpFileInfo.GetDirectoryName(destinationFullPath)) == null)
+            {
+                this.MakeDirectory(FtpFileInfo.GetDirectoryName(destinationFullPath), true, false);
+            }
 
             return this.Rename(sourceFullPath, destinationFullPath, throwOnError);
         }

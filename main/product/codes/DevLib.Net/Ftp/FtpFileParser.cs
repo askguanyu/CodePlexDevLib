@@ -46,21 +46,26 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="rawString">Source string.</param>
         /// <param name="parentPath">Parent path string.</param>
-        /// <returns>List of FtpFileInfo.</returns>
+        /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public static List<FtpFileInfo> GetFullDirectoryList(string rawString, string parentPath)
         {
-            if (string.IsNullOrEmpty(rawString))
+            if (rawString == null)
             {
                 return null;
             }
 
-            List<FtpFileInfo> result = null;
+            List<FtpFileInfo> result = new List<FtpFileInfo>();
+
+            if (rawString == string.Empty)
+            {
+                return result;
+            }
 
             string[] rawList = rawString.Split('\n');
 
             if (rawList == null || rawList.Length < 1)
             {
-                return null;
+                return result;
             }
 
             FtpFileStyle ftpFileStyle = GetFtpFileStyle(rawList);
@@ -69,7 +74,6 @@ namespace DevLib.Net.Ftp
             {
                 case FtpFileStyle.WindowsStyle:
 
-                    result = new List<FtpFileInfo>();
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))
@@ -89,7 +93,6 @@ namespace DevLib.Net.Ftp
 
                 case FtpFileStyle.UnixStyle:
 
-                    result = new List<FtpFileInfo>();
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))
@@ -121,21 +124,26 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="rawString">Source string.</param>
         /// <param name="parentPath">Parent path string.</param>
-        /// <returns>List of FtpFileInfo.</returns>
+        /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public static List<FtpFileInfo> GetDirectoryList(string rawString, string parentPath)
         {
-            if (string.IsNullOrEmpty(rawString))
+            if (rawString == null)
             {
                 return null;
             }
 
-            List<FtpFileInfo> result = null;
+            List<FtpFileInfo> result = new List<FtpFileInfo>();
+
+            if (rawString == string.Empty)
+            {
+                return result;
+            }
 
             string[] rawList = rawString.Split('\n');
 
             if (rawList == null || rawList.Length < 1)
             {
-                return null;
+                return result;
             }
 
             FtpFileStyle ftpFileStyle = GetFtpFileStyle(rawList);
@@ -144,7 +152,6 @@ namespace DevLib.Net.Ftp
             {
                 case FtpFileStyle.WindowsStyle:
 
-                    result = new List<FtpFileInfo>();
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))
@@ -164,7 +171,6 @@ namespace DevLib.Net.Ftp
 
                 case FtpFileStyle.UnixStyle:
 
-                    result = new List<FtpFileInfo>();
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))
@@ -196,21 +202,26 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="rawString">Source string.</param>
         /// <param name="parentPath">Parent path string.</param>
-        /// <returns>List of FtpFileInfo.</returns>
+        /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public static List<FtpFileInfo> GetFileList(string rawString, string parentPath)
         {
-            if (string.IsNullOrEmpty(rawString))
+            if (rawString == null)
             {
                 return null;
             }
 
-            List<FtpFileInfo> result = null;
+            List<FtpFileInfo> result = new List<FtpFileInfo>();
+
+            if (rawString == string.Empty)
+            {
+                return result;
+            }
 
             string[] rawList = rawString.Split('\n');
 
             if (rawList == null || rawList.Length < 1)
             {
-                return null;
+                return result;
             }
 
             FtpFileStyle ftpFileStyle = GetFtpFileStyle(rawList);
@@ -219,7 +230,6 @@ namespace DevLib.Net.Ftp
             {
                 case FtpFileStyle.WindowsStyle:
 
-                    result = new List<FtpFileInfo>();
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))
@@ -239,7 +249,6 @@ namespace DevLib.Net.Ftp
 
                 case FtpFileStyle.UnixStyle:
 
-                    result = new List<FtpFileInfo>();
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))

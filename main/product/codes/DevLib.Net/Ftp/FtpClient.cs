@@ -563,6 +563,11 @@ namespace DevLib.Net.Ftp
             }
             else
             {
+                if (this.GetDirectoryList(fullDirectoryPath) != null)
+                {
+                    return true;
+                }
+
                 try
                 {
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.MakeDirectory, fullDirectoryPath);
@@ -570,24 +575,6 @@ namespace DevLib.Net.Ftp
                     this.UpdateFtpInfo(response);
 
                     return true;
-                }
-                catch (WebException e)
-                {
-                    ExceptionHandler.Log(e);
-
-                    FtpWebResponse ftpWebResponse = e.Response as FtpWebResponse;
-
-                    if (ftpWebResponse != null && !string.IsNullOrEmpty(ftpWebResponse.StatusDescription) && ftpWebResponse.StatusDescription.Contains("file already exists"))
-                    {
-                        return true;
-                    }
-
-                    if (throwOnError)
-                    {
-                        throw;
-                    }
-
-                    return false;
                 }
                 catch (Exception e)
                 {

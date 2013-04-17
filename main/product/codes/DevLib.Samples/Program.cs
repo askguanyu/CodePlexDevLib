@@ -836,7 +836,7 @@ namespace DevLib.Samples
             #region IO
             var a = "   C:\\asdasd\\ \" \"   ";
             var c = Path.GetInvalidPathChars();
-            string b = a.Remove(c);
+            string b = a.RemoveAny(c);
             "hello".WriteTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
 
             //DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();

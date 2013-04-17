@@ -25,7 +25,7 @@ namespace DevLib.ExtensionMethods
         {
             string hexPattern = "^[0-9a-fA-F]+$";
 
-            string temp = source.Remove(' ', '\n', '\r');
+            string temp = source.RemoveAny(' ', '\n', '\r');
 
             if (!Regex.IsMatch(temp, hexPattern))
             {
@@ -65,13 +65,13 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source string.</param>
         /// <param name="removeChar">Chars to remove.</param>
         /// <returns>Result string.</returns>
-        public static string Remove(this string source, params char[] removeChar)
+        public static string RemoveAny(this string source, params char[] removeChar)
         {
             var result = source;
 
             if (!string.IsNullOrEmpty(result) && removeChar != null)
             {
-                Array.ForEach(removeChar, c => result = result.Remove(c.ToString()));
+                Array.ForEach(removeChar, c => result = result.RemoveAny(c.ToString()));
             }
 
             return result;
@@ -83,7 +83,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source string.</param>
         /// <param name="removeString">String to remove.</param>
         /// <returns>Result string.</returns>
-        public static string Remove(this string source, params string[] removeString)
+        public static string RemoveAny(this string source, params string[] removeString)
         {
             return removeString.Aggregate(source, (current, c) => current.Replace(c, string.Empty));
         }

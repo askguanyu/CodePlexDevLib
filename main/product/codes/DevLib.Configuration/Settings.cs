@@ -174,6 +174,8 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("Settings.ConfigFile", "Didn't specify a configuration file.");
             }
 
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
             try
             {
                 this.WriteXmlFile(this.ConfigFile);
@@ -183,6 +185,10 @@ namespace DevLib.Configuration
                 ExceptionHandler.Log(e);
 
                 throw;
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -197,6 +203,8 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("fileName", "Didn't specify a configuration file.");
             }
 
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
             try
             {
                 this.WriteXmlFile(fileName);
@@ -206,6 +214,10 @@ namespace DevLib.Configuration
                 ExceptionHandler.Log(e);
 
                 throw;
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -424,17 +436,17 @@ namespace DevLib.Configuration
                 return;
             }
 
-            using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
                 {
-                    return;
-                }
+                    if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                    {
+                        return;
+                    }
 
-                xmlReader.ReadStartElement("settings");
+                    xmlReader.ReadStartElement("settings");
 
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
-                {
                     this._settingsItemDictionary.Clear();
 
                     while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
@@ -503,17 +515,17 @@ namespace DevLib.Configuration
                 return;
             }
 
-            using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
                 {
-                    return;
-                }
+                    if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                    {
+                        return;
+                    }
 
-                xmlReader.ReadStartElement("settings");
+                    xmlReader.ReadStartElement("settings");
 
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
-                {
                     while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
                     {
                         try
@@ -578,12 +590,12 @@ namespace DevLib.Configuration
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            using (XmlWriter writer = XmlWriter.Create(stringBuilder, this._xmlWriterSettings))
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                writer.WriteStartElement("settings");
-
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                using (XmlWriter writer = XmlWriter.Create(stringBuilder, this._xmlWriterSettings))
                 {
+                    writer.WriteStartElement("settings");
+
                     foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
                     {
                         XmlSerializer valueSerializer = null;
@@ -624,9 +636,9 @@ namespace DevLib.Configuration
                             ExceptionHandler.Log(e);
                         }
                     }
-                }
 
-                writer.WriteEndElement();
+                    writer.WriteEndElement();
+                }
             }
 
             return stringBuilder.ToString();
@@ -644,17 +656,17 @@ namespace DevLib.Configuration
                 return;
             }
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), this._xmlReaderSettings))
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), this._xmlReaderSettings))
                 {
-                    return;
-                }
+                    if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                    {
+                        return;
+                    }
 
-                xmlReader.ReadStartElement("settings");
+                    xmlReader.ReadStartElement("settings");
 
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
-                {
                     this._settingsItemDictionary.Clear();
 
                     while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
@@ -753,12 +765,12 @@ namespace DevLib.Configuration
         /// <param name="fileName"> Xml file name.</param>
         private void WriteXmlFile(string fileName)
         {
-            using (XmlWriter writer = XmlWriter.Create(fileName, this._xmlWriterSettings))
+            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                writer.WriteStartElement("settings");
-
-                lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+                using (XmlWriter writer = XmlWriter.Create(fileName, this._xmlWriterSettings))
                 {
+                    writer.WriteStartElement("settings");
+
                     foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
                     {
                         XmlSerializer valueSerializer = null;
@@ -799,9 +811,9 @@ namespace DevLib.Configuration
                             ExceptionHandler.Log(e);
                         }
                     }
-                }
 
-                writer.WriteEndElement();
+                    writer.WriteEndElement();
+                }
             }
         }
     }

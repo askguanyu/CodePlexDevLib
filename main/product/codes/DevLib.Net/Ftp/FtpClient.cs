@@ -195,6 +195,8 @@ namespace DevLib.Net.Ftp
             try
             {
                 response = request.GetResponse() as FtpWebResponse;
+                this.UpdateFtpInfo(response);
+
                 return true;
             }
             catch (Exception e)
@@ -206,7 +208,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
 
@@ -228,6 +237,8 @@ namespace DevLib.Net.Ftp
             try
             {
                 response = request.GetResponse() as FtpWebResponse;
+                this.UpdateFtpInfo(response);
+
                 return true;
             }
             catch (Exception e)
@@ -239,7 +250,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
 
@@ -275,6 +293,16 @@ namespace DevLib.Net.Ftp
                 if (throwOnError)
                 {
                     throw new ArgumentException("The specified file already exists.", fullPath);
+                }
+
+                return false;
+            }
+
+            if (!this.ExistsFile(remoteFile))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentException("The specified file does not exist.", remoteFile);
                 }
 
                 return false;
@@ -341,16 +369,26 @@ namespace DevLib.Net.Ftp
                     responseStream = null;
                 }
 
+                if (response != null)
+                {
+                    if (response != null)
+                    {
+                        try
+                        {
+                            response.Close();
+                        }
+                        catch
+                        {
+                        }
+
+                        response = null;
+                    }
+                }
+
                 if (fileStream != null)
                 {
                     fileStream.Close();
                     fileStream = null;
-                }
-
-                if (response != null)
-                {
-                    response.Close();
-                    response = null;
                 }
             }
         }
@@ -470,7 +508,14 @@ namespace DevLib.Net.Ftp
                 {
                     if (response != null)
                     {
-                        response.Close();
+                        try
+                        {
+                            response.Close();
+                        }
+                        catch
+                        {
+                        }
+
                         response = null;
                     }
                 }
@@ -577,7 +622,14 @@ namespace DevLib.Net.Ftp
                 {
                     if (response != null)
                     {
-                        response.Close();
+                        try
+                        {
+                            response.Close();
+                        }
+                        catch
+                        {
+                        }
+
                         response = null;
                     }
                 }
@@ -592,6 +644,16 @@ namespace DevLib.Net.Ftp
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool DeleteFile(string remoteFile, bool throwOnError = false)
         {
+            if (!this.ExistsFile(remoteFile))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentException("The specified file does not exist.", remoteFile);
+                }
+
+                return false;
+            }
+
             FtpWebResponse response = null;
 
             try
@@ -617,7 +679,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
             }
@@ -632,6 +701,11 @@ namespace DevLib.Net.Ftp
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool MakeDirectory(string remotePath, bool recursive = true, bool throwOnError = false)
         {
+            if (this.ExistsDirectory(remotePath))
+            {
+                return true;
+            }
+
             FtpWebResponse response = null;
 
             if (recursive)
@@ -647,11 +721,6 @@ namespace DevLib.Net.Ftp
             }
             else
             {
-                if (this.ExistsDirectory(remotePath))
-                {
-                    return true;
-                }
-
                 try
                 {
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.MakeDirectory, remotePath, true);
@@ -675,7 +744,14 @@ namespace DevLib.Net.Ftp
                 {
                     if (response != null)
                     {
-                        response.Close();
+                        try
+                        {
+                            response.Close();
+                        }
+                        catch
+                        {
+                        }
+
                         response = null;
                     }
                 }
@@ -690,6 +766,11 @@ namespace DevLib.Net.Ftp
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool RemoveDirectory(string remotePath, bool throwOnError = false)
         {
+            if (!this.ExistsDirectory(remotePath))
+            {
+                return true;
+            }
+
             FtpWebResponse response = null;
 
             try
@@ -715,7 +796,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
             }
@@ -727,7 +815,7 @@ namespace DevLib.Net.Ftp
         /// <param name="remoteFile">The full path on an FTP server.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public DateTime GetDateTimestamp(string remoteFile, bool throwOnError = false)
+        public DateTime GetFileDateTimestamp(string remoteFile, bool throwOnError = false)
         {
             FtpWebResponse response = null;
 
@@ -754,7 +842,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
             }
@@ -793,7 +888,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
             }
@@ -834,7 +936,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
             }
@@ -850,6 +959,16 @@ namespace DevLib.Net.Ftp
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool MoveFile(string sourceRemoteFile, string destinationRemoteFile, bool overwrite = false, bool throwOnError = false)
         {
+            if (!this.ExistsFile(sourceRemoteFile))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentException("The specified file does not exist.", sourceRemoteFile);
+                }
+
+                return false;
+            }
+
             if (this.ExistsFile(destinationRemoteFile))
             {
                 if (overwrite)
@@ -862,7 +981,7 @@ namespace DevLib.Net.Ftp
                     {
                         if (throwOnError)
                         {
-                            throw;
+                            throw new ArgumentException("Could not overwrite the specified file.", destinationRemoteFile);
                         }
 
                         return false;
@@ -884,7 +1003,136 @@ namespace DevLib.Net.Ftp
                 this.MakeDirectory(FtpFileInfo.GetDirectoryName(destinationRemoteFile), true, throwOnError);
             }
 
-            return this.Rename(sourceRemoteFile, destinationRemoteFile, throwOnError);
+            FtpWebResponse response = null;
+
+            try
+            {
+                FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.Rename, sourceRemoteFile, false);
+                request.RenameTo = destinationRemoteFile;
+                response = request.GetResponse() as FtpWebResponse;
+                this.UpdateFtpInfo(response);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+            finally
+            {
+                if (response != null)
+                {
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
+                    response = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Move a directory on an FTP server.
+        /// </summary>
+        /// <param name="sourceRemotePath">The source full path on an FTP server.</param>
+        /// <param name="destinationRemotePath">The destination full path on an FTP server.</param>
+        /// <param name="overwrite">true if the destination directory can be overwritten; otherwise, false.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public bool MoveDirectory(string sourceRemotePath, string destinationRemotePath, bool overwrite = false, bool throwOnError = false)
+        {
+            if (!this.ExistsDirectory(sourceRemotePath))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentException("The specified directory does not exist.", sourceRemotePath);
+                }
+
+                return false;
+            }
+
+            if (this.ExistsDirectory(destinationRemotePath))
+            {
+                if (overwrite)
+                {
+                    try
+                    {
+                        this.RemoveDirectory(destinationRemotePath, true);
+                    }
+                    catch
+                    {
+                        if (throwOnError)
+                        {
+                            throw new ArgumentException("Could not overwrite the specified directory.", destinationRemotePath);
+                        }
+
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (throwOnError)
+                    {
+                        throw new ArgumentException("The specified directory already exists.", destinationRemotePath);
+                    }
+
+                    return false;
+                }
+            }
+
+            if (!this.ExistsDirectory(FtpFileInfo.GetDirectoryName(destinationRemotePath)))
+            {
+                this.MakeDirectory(FtpFileInfo.GetDirectoryName(destinationRemotePath), true, throwOnError);
+            }
+
+            FtpWebResponse response = null;
+
+            try
+            {
+                FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.Rename, sourceRemotePath, true);
+                request.RenameTo = destinationRemotePath;
+                response = request.GetResponse() as FtpWebResponse;
+                this.UpdateFtpInfo(response);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+            finally
+            {
+                if (response != null)
+                {
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
+                    response = null;
+                }
+            }
         }
 
         /// <summary>
@@ -965,7 +1213,14 @@ namespace DevLib.Net.Ftp
             {
                 if (response != null)
                 {
-                    response.Close();
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch
+                    {
+                    }
+
                     response = null;
                 }
 

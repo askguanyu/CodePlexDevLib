@@ -8,6 +8,7 @@ namespace DevLib.Configuration
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Threading;
 
     /// <summary>
     /// Represents a configuration file that is applicable to a particular application. This class cannot be inherited.
@@ -23,6 +24,11 @@ namespace DevLib.Configuration
         /// Field _settings.
         /// </summary>
         private Settings _settings;
+
+        /// <summary>
+        /// Field _readerWriterLock.
+        /// </summary>
+        private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Config" /> class.
@@ -60,7 +66,16 @@ namespace DevLib.Configuration
         {
             get
             {
-                return this._configuration.AppSettings.Settings.Count + this._settings.Count;
+                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+                try
+                {
+                    return this._configuration.AppSettings.Settings.Count + this._settings.Count;
+                }
+                finally
+                {
+                    this._readerWriterLock.ReleaseReaderLock();
+                }
             }
         }
 
@@ -71,10 +86,19 @@ namespace DevLib.Configuration
         {
             get
             {
-                List<string> result = new List<string>();
-                result.AddRange(this._configuration.AppSettings.Settings.AllKeys);
-                result.AddRange(this._settings.Keys);
-                return result.ToArray();
+                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+                try
+                {
+                    List<string> result = new List<string>();
+                    result.AddRange(this._configuration.AppSettings.Settings.AllKeys);
+                    result.AddRange(this._settings.Keys);
+                    return result.ToArray();
+                }
+                finally
+                {
+                    this._readerWriterLock.ReleaseReaderLock();
+                }
             }
         }
 
@@ -106,6 +130,8 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("Config.ConfigFile", "Didn't specify a configuration file.");
             }
 
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
             try
             {
                 this._configuration.Sections.Remove("settings");
@@ -120,6 +146,10 @@ namespace DevLib.Configuration
 
                 throw;
             }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
         }
 
         /// <summary>
@@ -132,6 +162,8 @@ namespace DevLib.Configuration
             {
                 throw new ArgumentNullException("fileName", "Didn't specify a configuration file.");
             }
+
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
 
             try
             {
@@ -147,6 +179,10 @@ namespace DevLib.Configuration
 
                 throw;
             }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
         }
 
         /// <summary>
@@ -158,26 +194,35 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            if (this.CanConvertible(value.GetType()))
-            {
-                string valueString = Convert.ToString(value);
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
 
-                if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
+            try
+            {
+                if (this.CanConvertible(value.GetType()))
                 {
-                    this._configuration.AppSettings.Settings[key].Value = valueString;
+                    string valueString = Convert.ToString(value);
+
+                    if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
+                    {
+                        this._configuration.AppSettings.Settings[key].Value = valueString;
+                    }
+                    else
+                    {
+                        this._configuration.AppSettings.Settings.Add(key, valueString);
+                    }
+
+                    this._settings.Remove(key);
                 }
                 else
                 {
-                    this._configuration.AppSettings.Settings.Add(key, valueString);
+                    this._settings.SetValue(key, value);
+
+                    this._configuration.AppSettings.Settings.Remove(key);
                 }
-
-                this._settings.Remove(key);
             }
-            else
+            finally
             {
-                this._settings.SetValue(key, value);
-
-                this._configuration.AppSettings.Settings.Remove(key);
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -196,35 +241,44 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
-                try
+                if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
                 {
-                    return this._configuration.AppSettings.Settings[key].Value;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
+                    try
+                    {
+                        return this._configuration.AppSettings.Settings[key].Value;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
 
-                    throw;
+                        throw;
+                    }
                 }
+
+                if (this._settings.Contains(key))
+                {
+                    try
+                    {
+                        return this._settings.GetValue(key, false);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+
+                        throw;
+                    }
+                }
+
+                throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
             }
-
-            if (this._settings.Contains(key))
+            finally
             {
-                try
-                {
-                    return this._settings.GetValue(key, false);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
-
-                    throw;
-                }
+                this._readerWriterLock.ReleaseReaderLock();
             }
-
-            throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
         }
 
         /// <summary>
@@ -243,35 +297,44 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
-                try
+                if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
                 {
-                    return (T)Convert.ChangeType(this._configuration.AppSettings.Settings[key].Value, typeof(T));
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
+                    try
+                    {
+                        return (T)Convert.ChangeType(this._configuration.AppSettings.Settings[key].Value, typeof(T));
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
 
-                    throw;
+                        throw;
+                    }
                 }
+
+                if (this._settings.Contains(key))
+                {
+                    try
+                    {
+                        return this._settings.GetValue<T>(key, false);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+
+                        throw;
+                    }
+                }
+
+                throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
             }
-
-            if (this._settings.Contains(key))
+            finally
             {
-                try
-                {
-                    return this._settings.GetValue<T>(key, false);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
-
-                    throw;
-                }
+                this._readerWriterLock.ReleaseReaderLock();
             }
-
-            throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
         }
 
         /// <summary>
@@ -291,24 +354,33 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
-            {
-                try
-                {
-                    return (T)Convert.ChangeType(this._configuration.AppSettings.Settings[key].Value, typeof(T));
-                }
-                catch
-                {
-                    return defaultValue;
-                }
-            }
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
 
-            if (this._settings.Contains(key))
+            try
             {
-                return this._settings.GetValue<T>(key, defaultValue, false);
-            }
+                if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
+                {
+                    try
+                    {
+                        return (T)Convert.ChangeType(this._configuration.AppSettings.Settings[key].Value, typeof(T));
+                    }
+                    catch
+                    {
+                        return defaultValue;
+                    }
+                }
 
-            return defaultValue;
+                if (this._settings.Contains(key))
+                {
+                    return this._settings.GetValue<T>(key, defaultValue, false);
+                }
+
+                return defaultValue;
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
+            }
         }
 
         /// <summary>
@@ -319,9 +391,18 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            this._configuration.AppSettings.Settings.Remove(key);
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
 
-            this._settings.Remove(key);
+            try
+            {
+                this._configuration.AppSettings.Settings.Remove(key);
+
+                this._settings.Remove(key);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
         }
 
         /// <summary>
@@ -329,8 +410,17 @@ namespace DevLib.Configuration
         /// </summary>
         public void Clear()
         {
-            this._configuration.AppSettings.Settings.Clear();
-            this._settings.Clear();
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
+            {
+                this._configuration.AppSettings.Settings.Clear();
+                this._settings.Clear();
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
         }
 
         /// <summary>
@@ -342,7 +432,16 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            return this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key) || this._settings.Contains(key);
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
+            {
+                return this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key) || this._settings.Contains(key);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
+            }
         }
 
         /// <summary>
@@ -350,18 +449,24 @@ namespace DevLib.Configuration
         /// </summary>
         public void Refresh()
         {
-            this._configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = this.ConfigFile }, ConfigurationUserLevel.None);
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
 
-            if (this._configuration.Sections["settings"] != null)
+            try
             {
-                try
+                this._configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = this.ConfigFile }, ConfigurationUserLevel.None);
+
+                if (this._configuration.Sections["settings"] != null)
                 {
                     this._settings.SetRawXml(this._configuration.Sections["settings"].SectionInformation.GetRawXml());
                 }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
-                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 

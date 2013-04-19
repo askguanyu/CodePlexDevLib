@@ -122,12 +122,13 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Try to connect to ftp.
         /// </summary>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Connect()
+        public bool Connect(bool throwOnError = false)
         {
             try
             {
-                return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, "/", false)) != null;
+                return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, "/", false), throwOnError) != null;
             }
             catch (Exception e)
             {
@@ -139,21 +140,23 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Prints the name of the current working directory.
         /// </summary>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>Current working directory string.</returns>
-        public string PrintWorkingDirectory()
+        public string PrintWorkingDirectory(bool throwOnError = false)
         {
-            return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, null, false));
+            return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, null, false), throwOnError);
         }
 
         /// <summary>
         /// Gets a list of the files and folders on an FTP server.
         /// </summary>
         /// <param name="remotePath">The path on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
-        public List<FtpFileInfo> GetFullDirectoryList(string remotePath = null)
+        public List<FtpFileInfo> GetFullDirectoryList(string remotePath = null, bool throwOnError = false)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath, false);
-            string rawString = this.GetFtpWebResponseRawString(request);
+            string rawString = this.GetFtpWebResponseRawString(request, throwOnError);
             return FtpFileParser.GetFullDirectoryList(rawString, request.RequestUri.LocalPath);
         }
 
@@ -161,11 +164,12 @@ namespace DevLib.Net.Ftp
         /// Gets a list of the folders on an FTP server.
         /// </summary>
         /// <param name="remotePath">The path on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
-        public List<FtpFileInfo> GetDirectoryList(string remotePath = null)
+        public List<FtpFileInfo> GetDirectoryList(string remotePath = null, bool throwOnError = false)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath, false);
-            string rawString = this.GetFtpWebResponseRawString(request);
+            string rawString = this.GetFtpWebResponseRawString(request, throwOnError);
             return FtpFileParser.GetDirectoryList(rawString, request.RequestUri.LocalPath);
         }
 
@@ -173,11 +177,12 @@ namespace DevLib.Net.Ftp
         /// Gets a list of the files on an FTP server.
         /// </summary>
         /// <param name="remotePath">The path on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
-        public List<FtpFileInfo> GetFileList(string remotePath = null)
+        public List<FtpFileInfo> GetFileList(string remotePath = null, bool throwOnError = false)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath, false);
-            string rawString = this.GetFtpWebResponseRawString(request);
+            string rawString = this.GetFtpWebResponseRawString(request, throwOnError);
             return FtpFileParser.GetFileList(rawString, request.RequestUri.LocalPath);
         }
 
@@ -185,8 +190,9 @@ namespace DevLib.Net.Ftp
         /// Determines whether the given path refers to an existing directory on ftp.
         /// </summary>
         /// <param name="remotePath">The path to test.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if path refers to an existing directory on ftp; otherwise, false.</returns>
-        public bool ExistsDirectory(string remotePath)
+        public bool ExistsDirectory(string remotePath, bool throwOnError = false)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectory, remotePath, true);
 
@@ -202,6 +208,12 @@ namespace DevLib.Net.Ftp
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
                 return false;
             }
             finally
@@ -227,8 +239,9 @@ namespace DevLib.Net.Ftp
         /// Determines whether the specified file exists on ftp.
         /// </summary>
         /// <param name="remoteFile">The file to check.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if the specified file exists on ftp; otherwise, false.</returns>
-        public bool ExistsFile(string remoteFile)
+        public bool ExistsFile(string remoteFile, bool throwOnError = false)
         {
             FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.GetFileSize, remoteFile, false);
 
@@ -244,6 +257,12 @@ namespace DevLib.Net.Ftp
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
                 return false;
             }
             finally
@@ -1187,8 +1206,9 @@ namespace DevLib.Net.Ftp
         /// Method GetFtpWebResponseRawString.
         /// </summary>
         /// <param name="request">Instance of FtpWebRequest.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>String from FtpWebResponse's stream.</returns>
-        private string GetFtpWebResponseRawString(FtpWebRequest request)
+        private string GetFtpWebResponseRawString(FtpWebRequest request, bool throwOnError = false)
         {
             string result = null;
 
@@ -1208,6 +1228,11 @@ namespace DevLib.Net.Ftp
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
             }
             finally
             {

@@ -1386,11 +1386,17 @@ namespace DevLib.Samples
         public TestConfig()
         {
             this.MySpell = new List<SpellingOptions>();
+            this.MyString = Guid.NewGuid().ToString();
         }
 
         public int MyInt { get; set; }
         public string MyString { get; set; }
         public List<SpellingOptions> MySpell { get; set; }
+
+        public override string ToString()
+        {
+            return this.MyString;
+        }
     }
 
     [DataContract()]

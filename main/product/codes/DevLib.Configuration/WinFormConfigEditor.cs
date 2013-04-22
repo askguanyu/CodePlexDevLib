@@ -264,7 +264,7 @@ namespace DevLib.Configuration
         /// <param name="path">The directory to search.</param>
         private void LoadPluginFolder(string path)
         {
-            var pluginFileList = Directory.GetFiles(path, "*.dll");
+            string[] pluginFileList = Directory.GetFiles(path, "*.dll");
 
             if (pluginFileList != null && pluginFileList.Length > 0)
             {

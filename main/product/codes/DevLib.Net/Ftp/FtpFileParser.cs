@@ -49,14 +49,9 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public static List<FtpFileInfo> GetFullDirectoryList(string rawString, string parentPath)
         {
-            if (rawString == null)
-            {
-                return null;
-            }
-
             List<FtpFileInfo> result = new List<FtpFileInfo>();
 
-            if (rawString == string.Empty)
+            if (string.IsNullOrEmpty(rawString))
             {
                 return result;
             }
@@ -127,14 +122,9 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public static List<FtpFileInfo> GetDirectoryList(string rawString, string parentPath)
         {
-            if (rawString == null)
-            {
-                return null;
-            }
-
             List<FtpFileInfo> result = new List<FtpFileInfo>();
 
-            if (rawString == string.Empty)
+            if (string.IsNullOrEmpty(rawString))
             {
                 return result;
             }
@@ -205,14 +195,9 @@ namespace DevLib.Net.Ftp
         /// <returns>List of FtpFileInfo, or null if path does not exist.</returns>
         public static List<FtpFileInfo> GetFileList(string rawString, string parentPath)
         {
-            if (rawString == null)
-            {
-                return null;
-            }
-
             List<FtpFileInfo> result = new List<FtpFileInfo>();
 
-            if (rawString == string.Empty)
+            if (string.IsNullOrEmpty(rawString))
             {
                 return result;
             }

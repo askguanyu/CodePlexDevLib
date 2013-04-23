@@ -613,7 +613,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                return string.Format("{0} bytes", fileSize);
+                return string.Format("{0:####0.00} bytes", fileSize);
             }
         }
     }

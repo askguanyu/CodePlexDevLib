@@ -319,11 +319,13 @@ namespace DevLib.Net.Ftp
                         return result;
                     }
 
-                    result.AddRange(input);
-
                     foreach (FtpFileInfo item in input)
                     {
-                        if (item.IsDirectory)
+                        if (!item.IsDirectory)
+                        {
+                            result.Add(item);
+                        }
+                        else
                         {
                             result.AddRange(this.GetFileList(item.FullPath, true, true));
                         }
@@ -349,7 +351,7 @@ namespace DevLib.Net.Ftp
                 {
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath, true);
                     string rawString = this.GetFtpWebResponseRawString(request, true);
-                    result = FtpFileParser.GetFileList(rawString, request.RequestUri.LocalPath);
+                    result = FtpFileParser.GetFullDirectoryList(rawString, request.RequestUri.LocalPath);
 
                     foreach (FtpFileInfo item in result)
                     {

@@ -74,12 +74,12 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Determines whether a sequence is empty.
+        /// Determines whether a sequence is null or empty.
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source">Source IEnumerable.</param>
         /// <returns>true if the source sequence is empty; otherwise, false.</returns>
-        public static bool IsEmpty<T>(this IEnumerable<T> source)
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
         {
             if (source == null)
             {

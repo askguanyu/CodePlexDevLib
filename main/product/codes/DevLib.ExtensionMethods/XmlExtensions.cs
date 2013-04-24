@@ -170,7 +170,7 @@ namespace DevLib.ExtensionMethods
         {
             var value = GetAttribute(source, attributeName);
 
-            return !value.IsEmpty() ? value.ConvertTo<T>(defaultValue) : defaultValue;
+            return !value.IsNullOrEmpty() ? value.ConvertTo<T>(defaultValue) : defaultValue;
         }
 
         /// <summary>

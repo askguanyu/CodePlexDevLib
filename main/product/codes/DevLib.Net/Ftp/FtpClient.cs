@@ -313,20 +313,8 @@ namespace DevLib.Net.Ftp
 
                 try
                 {
-                    List<FtpFileInfo> input = this.GetFullDirectoryList(remotePath, true, true);
-
-                    if (input == null || input.Count < 1)
-                    {
-                        return result;
-                    }
-
-                    foreach (FtpFileInfo item in input)
-                    {
-                        if (!item.IsDirectory)
-                        {
-                            result.Add(item);
-                        }
-                    }
+                    result = this.GetFullDirectoryList(remotePath, true, true);
+                    result.RemoveAll(delegate(FtpFileInfo ftpFileInfo) { return ftpFileInfo.IsDirectory; });
                 }
                 catch (Exception e)
                 {

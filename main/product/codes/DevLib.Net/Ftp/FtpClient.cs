@@ -9,6 +9,7 @@ namespace DevLib.Net.Ftp
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Text;
     using System.Threading;
 
     /// <summary>
@@ -1037,8 +1038,14 @@ namespace DevLib.Net.Ftp
 
             try
             {
+                int upDirectoryConut = sourceRemoteFile.Split(Path.AltDirectorySeparatorChar).Length + destinationRemoteFile.Split(Path.AltDirectorySeparatorChar).Length + 1;
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Insert(0, "../", upDirectoryConut);
+                stringBuilder.Append("..");
+                stringBuilder.Append(FtpFileInfo.CombinePath(destinationRemoteFile));
+
                 FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.Rename, sourceRemoteFile, false);
-                request.RenameTo = destinationRemoteFile;
+                request.RenameTo = stringBuilder.ToString();
                 response = request.GetResponse() as FtpWebResponse;
                 this.UpdateFtpInfo(response);
 
@@ -1573,8 +1580,14 @@ namespace DevLib.Net.Ftp
 
                 try
                 {
+                    int upDirectoryConut = sourceRemotePath.Split(Path.AltDirectorySeparatorChar).Length + destinationRemotePath.Split(Path.AltDirectorySeparatorChar).Length + 1;
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.Insert(0, "../", upDirectoryConut);
+                    stringBuilder.Append("..");
+                    stringBuilder.Append(FtpFileInfo.CombinePath(destinationRemotePath));
+
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.Rename, sourceRemotePath, false);
-                    request.RenameTo = destinationRemotePath;
+                    request.RenameTo = stringBuilder.ToString();
                     response = request.GetResponse() as FtpWebResponse;
                     this.UpdateFtpInfo(response);
 

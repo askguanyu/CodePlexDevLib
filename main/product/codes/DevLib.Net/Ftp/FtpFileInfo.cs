@@ -17,6 +17,11 @@ namespace DevLib.Net.Ftp
     public class FtpFileInfo
     {
         /// <summary>
+        /// Field _parentDirectory.
+        /// </summary>
+        private string _parentDirectory;
+
+        /// <summary>
         /// Gets or sets file name.
         /// </summary>
         public string Name
@@ -30,8 +35,15 @@ namespace DevLib.Net.Ftp
         /// </summary>
         public string ParentDirectory
         {
-            get;
-            set;
+            get
+            {
+                return CombinePath(this._parentDirectory);
+            }
+
+            set
+            {
+                this._parentDirectory = value ?? string.Empty;
+            }
         }
 
         /// <summary>

@@ -1676,7 +1676,7 @@ namespace DevLib.Net.Ftp
         /// <param name="request">Instance of FtpWebRequest.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>String from FtpWebResponse's stream.</returns>
-        private string GetFtpWebResponseRawString(FtpWebRequest request, bool throwOnError = false)
+        private string GetFtpWebResponseRawString(FtpWebRequest request, bool throwOnError)
         {
             string result = null;
 

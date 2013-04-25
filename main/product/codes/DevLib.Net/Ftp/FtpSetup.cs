@@ -31,8 +31,9 @@ namespace DevLib.Net.Ftp
         /// </summary>
         public FtpSetup()
         {
+            this.UseAnonymous = false;
             this.UserName = "anonymous";
-            this.Password = "anonymous";
+            this.Password = "anonymous@anonymous.com";
             this.EnableSSL = false;
             this.KeepAlive = true;
             this.Proxy = null;
@@ -51,11 +52,11 @@ namespace DevLib.Net.Ftp
             {
                 if (this._ftpCredential == null)
                 {
-                    this._ftpCredential = new NetworkCredential();
+                    this._ftpCredential = new NetworkCredential(this.UserName ?? string.Empty, this.Password ?? string.Empty);
                 }
 
-                this._ftpCredential.UserName = this.UserName;
-                this._ftpCredential.Password = this.Password;
+                this._ftpCredential.UserName = this.UseAnonymous ? "anonymous" : this.UserName ?? string.Empty;
+                this._ftpCredential.Password = this.Password ?? string.Empty;
 
                 return this._ftpCredential;
             }
@@ -83,6 +84,11 @@ namespace DevLib.Net.Ftp
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether using anonymous logon.
+        /// </summary>
+        public bool UseAnonymous { get; set; }
 
         /// <summary>
         /// Gets or sets ftp username.

@@ -77,6 +77,7 @@ namespace DevLib.Net.Ftp
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseWindowsStyleFtpFile(item);
                             ftpFileInfo.ParentDirectory = parentPath;
+
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != "..")
                             {
                                 result.Add(ftpFileInfo);
@@ -96,6 +97,7 @@ namespace DevLib.Net.Ftp
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseUnixStyleFtpFile(item);
                             ftpFileInfo.ParentDirectory = parentPath;
+
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != "..")
                             {
                                 result.Add(ftpFileInfo);
@@ -150,6 +152,7 @@ namespace DevLib.Net.Ftp
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseWindowsStyleFtpFile(item);
                             ftpFileInfo.ParentDirectory = parentPath;
+
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);
@@ -169,6 +172,7 @@ namespace DevLib.Net.Ftp
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseUnixStyleFtpFile(item);
                             ftpFileInfo.ParentDirectory = parentPath;
+
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);
@@ -223,6 +227,7 @@ namespace DevLib.Net.Ftp
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseWindowsStyleFtpFile(item);
                             ftpFileInfo.ParentDirectory = parentPath;
+
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && !ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);
@@ -242,6 +247,7 @@ namespace DevLib.Net.Ftp
                             ftpFileInfo.Name = "..";
                             ftpFileInfo = ParseUnixStyleFtpFile(item);
                             ftpFileInfo.ParentDirectory = parentPath;
+
                             if (ftpFileInfo != null && ftpFileInfo.Name != "." && ftpFileInfo.Name != ".." && !ftpFileInfo.IsDirectory)
                             {
                                 result.Add(ftpFileInfo);

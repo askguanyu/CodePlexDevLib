@@ -108,7 +108,6 @@ namespace DevLib.Net.Ftp
                     break;
 
                 case FtpFileStyle.Unknown:
-                    break;
                 default:
                     break;
             }
@@ -131,18 +130,22 @@ namespace DevLib.Net.Ftp
                 return result;
             }
 
-            string[] rawList = rawString.Split('\n');
+            string[] rawArray = rawString.Split('\n');
 
-            if (rawList == null || rawList.Length < 1)
+            if (rawArray == null || rawArray.Length < 1)
             {
                 return result;
             }
 
-            FtpFileStyle ftpFileStyle = GetFtpFileStyle(rawList);
+            FtpFileStyle ftpFileStyle = GetFtpFileStyle(rawArray);
+
+            List<string> rawList = new List<string>(rawArray);
 
             switch (ftpFileStyle)
             {
                 case FtpFileStyle.WindowsStyle:
+
+                    rawList.RemoveAll(delegate(string item) { return !item.Contains("<DIR>"); });
 
                     foreach (string item in rawList)
                     {
@@ -164,6 +167,8 @@ namespace DevLib.Net.Ftp
 
                 case FtpFileStyle.UnixStyle:
 
+                    rawList.RemoveAll(delegate(string item) { return !item.StartsWith("d", StringComparison.OrdinalIgnoreCase); });
+
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))
@@ -183,7 +188,6 @@ namespace DevLib.Net.Ftp
                     break;
 
                 case FtpFileStyle.Unknown:
-                    break;
                 default:
                     break;
             }
@@ -206,18 +210,22 @@ namespace DevLib.Net.Ftp
                 return result;
             }
 
-            string[] rawList = rawString.Split('\n');
+            string[] rawArray = rawString.Split('\n');
 
-            if (rawList == null || rawList.Length < 1)
+            if (rawArray == null || rawArray.Length < 1)
             {
                 return result;
             }
 
-            FtpFileStyle ftpFileStyle = GetFtpFileStyle(rawList);
+            FtpFileStyle ftpFileStyle = GetFtpFileStyle(rawArray);
+
+            List<string> rawList = new List<string>(rawArray);
 
             switch (ftpFileStyle)
             {
                 case FtpFileStyle.WindowsStyle:
+
+                    rawList.RemoveAll(delegate(string item) { return item.Contains("<DIR>"); });
 
                     foreach (string item in rawList)
                     {
@@ -239,6 +247,8 @@ namespace DevLib.Net.Ftp
 
                 case FtpFileStyle.UnixStyle:
 
+                    rawList.RemoveAll(delegate(string item) { return item.StartsWith("d", StringComparison.OrdinalIgnoreCase); });
+
                     foreach (string item in rawList)
                     {
                         if (!string.IsNullOrEmpty(item))
@@ -258,7 +268,6 @@ namespace DevLib.Net.Ftp
                     break;
 
                 case FtpFileStyle.Unknown:
-                    break;
                 default:
                     break;
             }

@@ -256,10 +256,7 @@ namespace DevLib.Net.Ftp
 
                     foreach (FtpFileInfo item in input)
                     {
-                        if (item.IsDirectory)
-                        {
-                            result.AddRange(this.GetDirectoryList(item.FullPath, true, true));
-                        }
+                        result.AddRange(this.GetDirectoryList(item.FullPath, true, true));
                     }
                 }
                 catch (Exception e)
@@ -340,15 +337,12 @@ namespace DevLib.Net.Ftp
 
                     foreach (FtpFileInfo item in result)
                     {
-                        if (!item.IsDirectory)
+                        try
                         {
-                            try
-                            {
-                                item.LastModifiedTime = this.GetFileDateTimestamp(item.FullPath, true);
-                            }
-                            catch
-                            {
-                            }
+                            item.LastModifiedTime = this.GetFileDateTimestamp(item.FullPath, true);
+                        }
+                        catch
+                        {
                         }
                     }
                 }

@@ -671,14 +671,13 @@ namespace DevLib.Net.Ftp
                 return false;
             }
 
-            string fullPath = Path.GetFullPath(localFile);
-            string fileName = Path.GetFileName(localFile);
+            string localFullPath = Path.GetFullPath(localFile);
 
-            if (!File.Exists(fullPath))
+            if (!File.Exists(localFullPath))
             {
                 if (throwOnError)
                 {
-                    throw new FileNotFoundException("The specified file does not exist.", fullPath);
+                    throw new FileNotFoundException("The specified file does not exist.", localFullPath);
                 }
 
                 return false;
@@ -711,7 +710,7 @@ namespace DevLib.Net.Ftp
             {
                 request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.UploadFile, remoteFile, false);
                 requestStream = request.GetRequestStream();
-                fileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read);
+                fileStream = new FileStream(localFullPath, FileMode.Open, FileAccess.Read);
 
                 byte[] buffer = new byte[81920];
                 int count;
@@ -804,14 +803,13 @@ namespace DevLib.Net.Ftp
                 return false;
             }
 
-            string fullPath = Path.GetFullPath(localFile);
-            string fileName = Path.GetFileName(localFile);
+            string localFullPath = Path.GetFullPath(localFile);
 
-            if (!File.Exists(fullPath))
+            if (!File.Exists(localFullPath))
             {
                 if (throwOnError)
                 {
-                    throw new FileNotFoundException("The specified file does not exist.", fullPath);
+                    throw new FileNotFoundException("The specified file does not exist.", localFullPath);
                 }
 
                 return false;
@@ -831,7 +829,7 @@ namespace DevLib.Net.Ftp
             {
                 request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.AppendFile, remoteFile, false);
                 requestStream = request.GetRequestStream();
-                fileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read);
+                fileStream = new FileStream(localFullPath, FileMode.Open, FileAccess.Read);
 
                 byte[] buffer = new byte[81920];
                 int count;

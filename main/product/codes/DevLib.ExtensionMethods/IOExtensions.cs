@@ -410,7 +410,6 @@ namespace DevLib.ExtensionMethods
             }
 
             string sourceFullPath = Path.GetFullPath(sourceFileName);
-            string sourceFullDirectoryPath = Path.GetDirectoryName(sourceFullPath);
 
             string destFullPath = Path.GetFullPath(destFileName);
             string destFullDirectoryPath = Path.GetDirectoryName(destFileName);
@@ -470,7 +469,6 @@ namespace DevLib.ExtensionMethods
             }
 
             string sourceFullPath = Path.GetFullPath(sourceFileName);
-            string sourceFullDirectoryPath = Path.GetDirectoryName(sourceFullPath);
 
             string destFullPath = Path.GetFullPath(destFileName);
             string destFullDirectoryPath = Path.GetDirectoryName(destFileName);

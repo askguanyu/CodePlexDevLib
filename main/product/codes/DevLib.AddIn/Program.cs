@@ -97,7 +97,7 @@
         private static void OpenLogFile(bool redirectOutput)
         {
             string fileName = string.Format("{0}.log", Assembly.GetEntryAssembly().Location);
-            string log = string.Format("[{0}] [PID:{1}] [AddInDomain is started.]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"), Process.GetCurrentProcess().Id.ToString());
+            string log = string.Format("[{0}] [PID:{1}] [AddInDomain is started.]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), Process.GetCurrentProcess().Id.ToString());
 
             if (redirectOutput)
             {
@@ -124,7 +124,7 @@
         /// <param name="message">Message to log.</param>
         private static void Log(bool redirectOutput, string message)
         {
-            string log = string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"), Process.GetCurrentProcess().Id.ToString(), message);
+            string log = string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), Process.GetCurrentProcess().Id.ToString(), message);
 
             if (_logFile == null)
             {

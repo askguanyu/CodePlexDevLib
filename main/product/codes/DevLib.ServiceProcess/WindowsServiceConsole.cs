@@ -320,7 +320,7 @@ namespace DevLib.ServiceProcess
                     Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"), value));
+                    Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), value));
                 }
                 else
                 {
@@ -337,7 +337,7 @@ namespace DevLib.ServiceProcess
                     Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.Write(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"), value));
+                    Console.Write(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), value));
                 }
                 else
                 {

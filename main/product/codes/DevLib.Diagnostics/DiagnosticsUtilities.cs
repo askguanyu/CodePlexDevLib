@@ -23,7 +23,7 @@ namespace DevLib.Diagnostics
         {
             if (exception != null)
             {
-                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffUTCzzz"), DiagnosticsUtilities.GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
+                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), DiagnosticsUtilities.GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
                 Debug.WriteLine(message);
                 Console.WriteLine(message);
             }

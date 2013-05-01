@@ -598,7 +598,7 @@ namespace DevLib.Configuration
             }
 
             this._openConfigFileDialog.Reset();
-            this._openConfigFileDialog.Filter = "Configuration Files (*.xml;*.config)|*.xml;*.config|All Files (*.*)|*.*";
+            this._openConfigFileDialog.Filter = "Xml Files (*.xml)|*.xml|Configuration Files (*.config)|*.config|All Files (*.*)|*.*";
 
             if (this._openPluginFileDialog == null)
             {
@@ -616,7 +616,7 @@ namespace DevLib.Configuration
             }
 
             this._saveConfigFileDialog.Reset();
-            this._saveConfigFileDialog.Filter = "Configuration Files (*.xml;*.config)|*.xml;*.config|All Files (*.*)|*.*";
+            this._saveConfigFileDialog.Filter = "Xml Files (*.xml)|*.xml|Configuration Files (*.config)|*.config|All Files (*.*)|*.*";
 
             this.FormTitle = this.Text;
             this.toolStripComboBoxConfigEditorPlugin.Size = new System.Drawing.Size(this.Width - 321, 25);

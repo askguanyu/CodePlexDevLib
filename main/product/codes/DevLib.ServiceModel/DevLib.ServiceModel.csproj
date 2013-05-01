@@ -61,10 +61,10 @@
     <Compile Include="WcfClientReusableProxy.cs" />
     <Compile Include="WcfClientReusableProxyClassBuilder.cs" />
     <Compile Include="WcfServiceHost.cs" />
-    <Compile Include="WcfServiceHostProxy.cs" />
     <Compile Include="WcfServiceHostConstants.cs" />
     <Compile Include="WcfServiceHostInfo.cs" />
     <Compile Include="WcfServiceHostEventArgs.cs" />
+    <Compile Include="WcfServiceHostProxy.cs" />
     <Compile Include="WcfServiceHostType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

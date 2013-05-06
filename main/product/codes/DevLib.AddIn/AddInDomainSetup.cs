@@ -34,22 +34,12 @@ namespace DevLib.AddIn
             this.Evidence = AppDomain.CurrentDomain.Evidence;
             this.ExeFileDirectory = Path.GetTempPath();
             this.ExternalAssemblies = new Dictionary<AssemblyName, string>();
-            this.FileDeleteTimeout = new TimeSpan(0, 0, 0);
             this.Platform = PlatformTargetEnum.AnyCPU;
             this.ProcessPriority = ProcessPriorityClass.Normal;
             this.ProcessStartTimeout = new TimeSpan(0, 0, 15);
             this.RestartOnProcessExit = true;
             this.TypeFilterLevel = TypeFilterLevel.Full;
             this.WorkingDirectory = Environment.CurrentDirectory;
-        }
-
-        /// <summary>
-        /// Gets or sets maximum time spent trying to delete a assembly from the disk.
-        /// </summary>
-        public TimeSpan FileDeleteTimeout
-        {
-            get;
-            set;
         }
 
         /// <summary>

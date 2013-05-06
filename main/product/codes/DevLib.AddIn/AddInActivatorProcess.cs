@@ -523,46 +523,31 @@ namespace DevLib.AddIn
 
             if (this._addInDomainSetup.DeleteOnUnload)
             {
-                DeleteAssemblyFileDelegate deleteAssemblyFileDelegate = this.DeleteAssemblyFile;
-
-                using (ManualResetEvent cancelEvent = new ManualResetEvent(false))
+                try
                 {
-                    IAsyncResult result = deleteAssemblyFileDelegate.BeginInvoke(cancelEvent, null, null);
+                    File.Delete(this._friendlyName);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
 
-                    if (!result.AsyncWaitHandle.WaitOne(this._addInDomainSetup.FileDeleteTimeout))
-                    {
-                        cancelEvent.Set();
-                    }
+                try
+                {
+                    File.Delete(this._addInDomainSetupFile);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
 
-                    try
-                    {
-                        deleteAssemblyFileDelegate.EndInvoke(result);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-                        throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._friendlyName), e);
-                    }
-
-                    try
-                    {
-                        File.Delete(this._addInDomainSetupFile);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-                        throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainSetupFile), e);
-                    }
-
-                    try
-                    {
-                        File.Delete(this._addInDomainLogFile);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-                        throw new AddInDeleteOnUnloadException(string.Format(AddInConstants.DeleteFileExceptionStringFormat, this._addInDomainLogFile), e);
-                    }
+                try
+                {
+                    File.Delete(this._addInDomainLogFile);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
                 }
             }
         }
@@ -627,39 +612,6 @@ namespace DevLib.AddIn
         private void OnProcessExited(object sender, EventArgs e)
         {
             this.Dispose();
-        }
-
-        /// <summary>
-        /// Method DeleteAssemblyFile.
-        /// </summary>
-        /// <param name="cancelEvent">Instance of ManualResetEvent.</param>
-        private void DeleteAssemblyFile(ManualResetEvent cancelEvent)
-        {
-            bool isDeleted = false;
-            bool isCanceled = false;
-
-            Exception lastException = null;
-
-            do
-            {
-                try
-                {
-                    File.Delete(this._assemblyFile);
-                    isDeleted = true;
-                }
-                catch (Exception e)
-                {
-                    lastException = e;
-                }
-
-                isCanceled = cancelEvent.WaitOne(0);
-            }
-            while (!isDeleted && !isCanceled);
-
-            if (!isDeleted && lastException != null)
-            {
-                throw lastException;
-            }
         }
 
         /// <summary>

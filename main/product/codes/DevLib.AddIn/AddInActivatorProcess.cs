@@ -525,7 +525,7 @@ namespace DevLib.AddIn
             {
                 try
                 {
-                    File.Delete(this._friendlyName);
+                    File.Delete(this._assemblyFile);
                 }
                 catch (Exception e)
                 {

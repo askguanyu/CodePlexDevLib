@@ -525,7 +525,7 @@ namespace DevLib.AddIn
             {
                 try
                 {
-                    File.Delete(this._assemblyFile);
+                    File.Delete(this._addInDomainLogFile);
                 }
                 catch (Exception e)
                 {
@@ -543,7 +543,7 @@ namespace DevLib.AddIn
 
                 try
                 {
-                    File.Delete(this._addInDomainLogFile);
+                    File.Delete(this._assemblyFile);
                 }
                 catch (Exception e)
                 {

@@ -50,7 +50,6 @@
     <Compile Include="AddInActivatorProcessInfo.cs" />
     <Compile Include="AddInAssemblyCompilerException.cs" />
     <Compile Include="AddInConstants.cs" />
-    <Compile Include="AddInDeleteOnUnloadException.cs" />
     <Compile Include="AddInDomain.cs" />
     <Compile Include="AddInDomainSetup.cs" />
     <Compile Include="ExceptionHandler.cs" />

@@ -6,7 +6,6 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
-    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -169,45 +168,6 @@ namespace DevLib.ExtensionMethods
         public static byte[] ToByteArray(this string source, Encoding encoding = null)
         {
             return (encoding ?? Encoding.Default).GetBytes(source);
-        }
-
-        /// <summary>
-        /// Convert string to enum.
-        /// </summary>
-        /// <typeparam name="TEnum">The type of <paramref name="returns"/> enum.</typeparam>
-        /// <param name="source">Source string.</param>
-        /// <param name="defaultValue">Default value of enum.</param>
-        /// <param name="ignoreCase">Whether ignore case.</param>
-        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
-        /// <returns>Instance of TEnum.</returns>
-        public static TEnum ToEnum<TEnum>(this string source, TEnum defaultValue = default(TEnum), bool ignoreCase = false, bool throwOnError = false) where TEnum : struct
-        {
-            try
-            {
-                return (TEnum)Enum.Parse(typeof(TEnum), source, ignoreCase);
-            }
-            catch
-            {
-                if (throwOnError)
-                {
-                    throw;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Whether string is in enum.
-        /// </summary>
-        /// <typeparam name="TEnum">The type of enum.</typeparam>
-        /// <param name="source">Source string.</param>
-        /// <returns>true if string in enum; otherwise, false.</returns>
-        public static bool IsItemInEnum<TEnum>(this string source) where TEnum : struct
-        {
-            return Enum.IsDefined(typeof(TEnum), source);
         }
 
         /// <summary>

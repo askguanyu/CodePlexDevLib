@@ -52,6 +52,7 @@
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="CollectionExtensions.cs" />
     <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="EnumExtensions.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="IOExtensions.cs" />
     <Compile Include="ObjectExtensions.cs" />

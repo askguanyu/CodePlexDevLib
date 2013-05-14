@@ -147,6 +147,23 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="address">Wcf service address.</param>
+        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, string address, bool autoOpen = false)
+        {
+            this.Initialize(serviceType, binding, address);
+
+            if (autoOpen)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
         /// Finalizes an instance of the <see cref="WcfServiceHost" /> class.
         /// </summary>
         ~WcfServiceHost()
@@ -378,6 +395,63 @@ namespace DevLib.ServiceModel
             this._bindingType = bindingType;
 
             this.CreateDomain();
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="address">The address for the endpoint added.</param>
+        public void Initialize(Type serviceType, Binding binding, string address)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceHostType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (string.IsNullOrEmpty(address) || !Uri.IsWellFormedUriString(address, UriKind.Absolute))
+            {
+                throw new UriFormatException(address ?? string.Empty);
+            }
+
+            this.CleanServiceConfig();
+
+            this.AssemblyFile = null;
+
+            this._serviceType = serviceType;
+
+            this.ConfigFile = null;
+
+            this._baseAddress = address;
+
+            this._bindingType = binding.GetType();
+
+            try
+            {
+                this.CleanTempWcfConfigFile();
+
+                this._wcfServiceHostProxy = new WcfServiceHostProxy();
+
+                this.SubscribeAllWcfServiceHostProxyEvent();
+
+                this._wcfServiceHostProxy.Initialize(this._serviceType, binding, this._baseAddress);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
+            }
         }
 
         /// <summary>

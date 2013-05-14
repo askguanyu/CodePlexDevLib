@@ -53,6 +53,12 @@
     <Compile Include="ExpandableObjectConverter.cs" />
     <Compile Include="IWinFormConfigEditorPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyGridUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PropertyGridUserControl.Designer.cs">
+      <DependentUpon>PropertyGridUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="PropertyValueChangedCollectionEditor.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SettingsManager.cs" />

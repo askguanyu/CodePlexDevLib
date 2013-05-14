@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DevLib.Configuration;
+using DevLib.ExtensionMethods;
 
 namespace DevLib.Samples
 {
@@ -33,7 +34,7 @@ namespace DevLib.Samples
 
         public void Save(string fileName, object configObject)
         {
-            //saved
+            configObject.WriteXml(fileName, true, true);
         }
     }
 }

@@ -256,7 +256,7 @@ namespace DevLib.Samples
             //addin.Dispose();
             //addin.Dispose();
             //addin.Reload();
-            
+
 
             //var form = addin.CreateInstance<WinFormRibbon>();
             //form.ShowDialog();
@@ -907,7 +907,7 @@ namespace DevLib.Samples
 
             try
             {
-                throw new Exception();
+                //throw new Exception();
 
                 tcpdomain = new AddInDomain("AsyncSocketTcpServer");
                 staticserver = tcpdomain.CreateInstance<AsyncSocketTcpServer>();
@@ -1483,8 +1483,8 @@ namespace DevLib.Samples
         }
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, System.Type destinationType)
-       {
-           if (destinationType == typeof(System.String) && value is Person)
+        {
+            if (destinationType == typeof(System.String) && value is Person)
             {
                 Person so = (Person)value;
                 return "FirstName:" + so.FirstName + ",LastName:" + so.LastName;

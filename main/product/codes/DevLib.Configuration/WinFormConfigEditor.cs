@@ -6,10 +6,8 @@
 namespace DevLib.Configuration
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Drawing.Design;
     using System.IO;
     using System.Reflection;
     using System.Security.Permissions;
@@ -362,23 +360,10 @@ namespace DevLib.Configuration
         {
             if (this._currentConfigEditorPlugin != null)
             {
-                object configObject = null;
-
                 try
                 {
-                    Type configObjectType = this.propertyGrid.SelectedObject.GetType();
-
-                    if (configObjectType.IsGenericType && configObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
-                    {
-                        configObject = typeof(InnerConfig<>).MakeGenericType(this._currentConfigEditorPlugin.ConfigObjectType).GetProperty("Items").GetValue(this.propertyGrid.SelectedObject, null);
-                    }
-                    else
-                    {
-                        configObject = this.propertyGrid.SelectedObject;
-                    }
-
+                    object configObject = this.propertyGridUserControl.ConfigObject;
                     this._currentConfigEditorPlugin.Save(fileName, configObject);
-
                     this.ConfigFile = fileName;
                     this.IsChanged = false;
                 }
@@ -534,21 +519,11 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
-        /// Method OnPropertyGridPropertyValueChanged.
-        /// </summary>
-        /// <param name="s">Event sender.</param>
-        /// <param name="e">Instance of PropertyValueChangedEventArgs.</param>
-        private void OnPropertyGridPropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            this.IsChanged = true;
-        }
-
-        /// <summary>
-        /// Method OnPropertyValueChangedCollectionEditorCollectionPropertyValueChanged.
+        /// Method OnPropertyGridUserControlPropertyValueChanged.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Instance of EventArgs.</param>
-        private void OnPropertyValueChangedCollectionEditorCollectionPropertyValueChanged(object sender, EventArgs e)
+        private void OnPropertyGridUserControlPropertyValueChanged(object sender, EventArgs e)
         {
             this.IsChanged = true;
         }
@@ -557,32 +532,10 @@ namespace DevLib.Configuration
         /// Method RefreshPropertyGrid.
         /// </summary>
         /// <param name="configObject">Instance of T.</param>
-        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         private void RefreshPropertyGrid(object configObject)
         {
-            if (configObject == null)
-            {
-                this.propertyGrid.SelectedObject = null;
-            }
-            else
-            {
-                if (this._currentConfigEditorPlugin != null)
-                {
-                    if (!(configObject is ICollection))
-                    {
-                        this.propertyGrid.SelectedObject = configObject;
-                    }
-                    else
-                    {
-                        object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(this._currentConfigEditorPlugin.ConfigObjectType), configObject);
-                        this.propertyGrid.SelectedObject = innerConfig;
-                    }
-                }
-            }
+            this.propertyGridUserControl.ConfigObject = configObject;
 
-            this.propertyGrid.PropertySort = PropertySort.NoSort;
-            this.propertyGrid.ExpandAllGridItems();
-            this.propertyGrid.Refresh();
             this.IsChanged = false;
         }
 
@@ -620,7 +573,6 @@ namespace DevLib.Configuration
 
             this.FormTitle = this.Text;
             this.toolStripComboBoxConfigEditorPlugin.Size = new System.Drawing.Size(this.Width - 321, 25);
-            PropertyValueChangedCollectionEditor.CollectionPropertyValueChanged += this.OnPropertyValueChangedCollectionEditorCollectionPropertyValueChanged;
         }
 
         /// <summary>
@@ -680,32 +632,6 @@ namespace DevLib.Configuration
                     break;
                 default:
                     break;
-            }
-        }
-
-        /// <summary>
-        /// Inner Class InnerConfig.
-        /// </summary>
-        /// <typeparam name="T">Type of configuration object.</typeparam>
-        protected class InnerConfig<T>
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="InnerConfig{T}" /> class.
-            /// </summary>
-            /// <param name="configurationObject">Configuration object.</param>
-            public InnerConfig(T configurationObject)
-            {
-                this.Items = configurationObject;
-            }
-
-            /// <summary>
-            /// Gets or sets Items.
-            /// </summary>
-            [Editor(typeof(PropertyValueChangedCollectionEditor), typeof(UITypeEditor))]
-            public T Items
-            {
-                get;
-                set;
             }
         }
 

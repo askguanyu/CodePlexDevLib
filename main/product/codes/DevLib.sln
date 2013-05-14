@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Samples", "DevLib.Samples\DevLib.Samples.csproj", "{62AAD564-CA47-4847-BE14-5D8BD6633792}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.AddIn", "DevLib.AddIn\DevLib.AddIn.csproj", "{D2B536FD-62D2-46BA-9938-872C120C3FBF}"

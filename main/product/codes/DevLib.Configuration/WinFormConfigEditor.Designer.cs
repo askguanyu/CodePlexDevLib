@@ -20,7 +20,12 @@
                     components.Dispose();
                 }
 
-                if (this._openConfigFileDialog!=null)
+                if (this.propertyGridUserControl != null)
+                {
+                    this.propertyGridUserControl.Dispose();
+                }
+
+                if (this._openConfigFileDialog != null)
                 {
                     this._openConfigFileDialog.Dispose();
                 }
@@ -35,7 +40,7 @@
                     this._saveConfigFileDialog.Dispose();
                 }
 
-                if (this._configEditorPluginList!=null)
+                if (this._configEditorPluginList != null)
                 {
                     this._configEditorPluginList.Clear();
                     this._configEditorPluginList = null;
@@ -55,19 +60,19 @@
         private void InitializeComponent()
         {
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonNew = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSaveAs = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonOpenPlugin = new System.Windows.Forms.ToolStripButton();
             this.toolStripComboBoxConfigEditorPlugin = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.propertyGridUserControl = new DevLib.Configuration.PropertyGridUserControl();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -176,22 +181,22 @@
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
             // 
-            // propertyGrid
+            // propertyGridUserControl
             // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(0, 25);
-            this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGrid.Size = new System.Drawing.Size(624, 417);
-            this.propertyGrid.TabIndex = 1;
-            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.OnPropertyGridPropertyValueChanged);
+            this.propertyGridUserControl.ConfigObject = null;
+            this.propertyGridUserControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridUserControl.Location = new System.Drawing.Point(0, 25);
+            this.propertyGridUserControl.Name = "propertyGridUserControl";
+            this.propertyGridUserControl.Size = new System.Drawing.Size(624, 417);
+            this.propertyGridUserControl.TabIndex = 1;
+            this.propertyGridUserControl.PropertyValueChanged += new System.EventHandler(this.OnPropertyGridUserControlPropertyValueChanged);
             // 
             // WinFormConfigEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 442);
-            this.Controls.Add(this.propertyGrid);
+            this.Controls.Add(this.propertyGridUserControl);
             this.Controls.Add(this.toolStrip);
             this.Name = "WinFormConfigEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -215,10 +220,10 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxConfigEditorPlugin;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton toolStripButtonOpenPlugin;
+        private PropertyGridUserControl propertyGridUserControl;
 
     }
 }

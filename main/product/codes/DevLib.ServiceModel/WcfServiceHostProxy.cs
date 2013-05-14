@@ -198,6 +198,39 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Initialize Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="address">Wcf service base address.</param>
+        public void Initialize(Type serviceType, Binding binding, string address)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceHostType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (string.IsNullOrEmpty(address) || !Uri.IsWellFormedUriString(address, UriKind.Absolute))
+            {
+                throw new UriFormatException(address ?? string.Empty);
+            }
+
+            this._baseAddress = address;
+
+            this.Init(serviceType, binding, this._baseAddress);
+        }
+
+        /// <summary>
         /// Open Service Host.
         /// </summary>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -453,6 +486,46 @@ namespace DevLib.ServiceModel
                     ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
                     serviceHost.Description.Endpoints.Clear();
                     serviceHost.AddServiceEndpoint(serviceContract, WcfServiceHostType.GetBinding(bindingType), address);
+
+                    if (baseAddress.Scheme.Equals(Uri.UriSchemeHttp))
+                    {
+                        serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
+                        serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true, HttpsGetEnabled = true });
+                    }
+
+                    this._serviceHostList.Add(serviceHost);
+                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
+            }
+
+            this.RaiseEvent(this.Created, serviceType.FullName, WcfServiceHostStateEnum.Created);
+        }
+
+        /// <summary>
+        /// Initialize Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="address">Wcf service base address.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        private void Init(Type serviceType, Binding binding, string address)
+        {
+            this._serviceHostList.Clear();
+
+            try
+            {
+                Uri baseAddress = new Uri(address);
+
+                foreach (Type serviceContract in WcfServiceHostType.GetServiceContract(serviceType))
+                {
+                    ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
+                    serviceHost.Description.Endpoints.Clear();
+                    serviceHost.AddServiceEndpoint(serviceContract, binding, address);
 
                     if (baseAddress.Scheme.Equals(Uri.UriSchemeHttp))
                     {

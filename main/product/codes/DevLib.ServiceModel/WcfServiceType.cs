@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfServiceHostType.cs" company="YuGuan Corporation">
+// <copyright file="WcfServiceType.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -16,9 +16,9 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Description;
 
     /// <summary>
-    /// Wcf ServiceHost Type.
+    /// Class WcfServiceType.
     /// </summary>
-    public static class WcfServiceHostType
+    public static class WcfServiceType
     {
         /// <summary>
         /// Get the type list of hosted services from assembly file.
@@ -192,6 +192,93 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Static Method GetBinding.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <returns>Instance of Binding.</returns>
+        public static Binding GetBinding(Type bindingType)
+        {
+            string bindingName = bindingType.Name;
+
+            if (bindingName.Equals("BasicHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new BasicHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("WSHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WSHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("NetTcpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new NetTcpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = int.MaxValue, PortSharingEnabled = true };
+            }
+
+            if (bindingName.Equals("NetNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new NetNamedPipeBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue };
+            }
+
+            if (bindingName.Equals("WS2007HttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WS2007HttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("WS2007FederationHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WS2007FederationHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("WSDualHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WSDualHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("WSFederationHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WSFederationHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("NetMsmqBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new NetMsmqBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("NetPeerTcpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new NetPeerTcpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingName.Equals("CustomBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new CustomBinding() { SendTimeout = TimeSpan.FromMinutes(10) };
+            }
+
+            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
+            {
+                return MetadataExchangeBindings.CreateMexNamedPipeBinding();
+            }
+
+            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
+            {
+                return MetadataExchangeBindings.CreateMexTcpBinding();
+            }
+
+            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
+            {
+                return MetadataExchangeBindings.CreateMexHttpBinding();
+            }
+
+            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
+            {
+                return MetadataExchangeBindings.CreateMexHttpsBinding();
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Static Method IsWcfServiceClass.
         /// </summary>
         /// <param name="type">Source Type.</param>
@@ -277,93 +364,6 @@ namespace DevLib.ServiceModel
                 {
                     return new WSFederationHttpBinding();
                 }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Static Method GetBinding.
-        /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <returns>Instance of Binding.</returns>
-        internal static Binding GetBinding(Type bindingType)
-        {
-            string bindingName = bindingType.Name;
-
-            if (bindingName.Equals("BasicHttpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new BasicHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("WSHttpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new WSHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("NetTcpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new NetTcpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = int.MaxValue, PortSharingEnabled = true };
-            }
-
-            if (bindingName.Equals("NetNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new NetNamedPipeBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue };
-            }
-
-            if (bindingName.Equals("WS2007HttpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new WS2007HttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("WS2007FederationHttpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new WS2007FederationHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("WSDualHttpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new WSDualHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("WSFederationHttpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new WSFederationHttpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("NetMsmqBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new NetMsmqBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("NetPeerTcpBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new NetPeerTcpBinding() { SendTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue };
-            }
-
-            if (bindingName.Equals("CustomBinding", StringComparison.OrdinalIgnoreCase))
-            {
-                return new CustomBinding() { SendTimeout = TimeSpan.FromMinutes(10) };
-            }
-
-            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
-            {
-                return MetadataExchangeBindings.CreateMexNamedPipeBinding();
-            }
-
-            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
-            {
-                return MetadataExchangeBindings.CreateMexTcpBinding();
-            }
-
-            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
-            {
-                return MetadataExchangeBindings.CreateMexHttpBinding();
-            }
-
-            if (bindingName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
-            {
-                return MetadataExchangeBindings.CreateMexHttpsBinding();
             }
 
             return null;

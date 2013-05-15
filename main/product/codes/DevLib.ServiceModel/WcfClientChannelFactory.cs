@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ServiceModel
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
@@ -105,6 +106,38 @@ namespace DevLib.ServiceModel
             EndpointAddress endpointAddress = new EndpointAddress(remoteAddress);
 
             string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, binding.GetHashCode(), endpointAddress.GetHashCode());
+
+            ChannelFactory<TChannel> result;
+
+            lock (((ICollection)ChannelFactoryDictionary).SyncRoot)
+            {
+                if (ChannelFactoryDictionary.ContainsKey(key))
+                {
+                    result = ChannelFactoryDictionary[key];
+                }
+                else
+                {
+                    ChannelFactoryDictionary.Add(key, new ChannelFactory<TChannel>(binding, endpointAddress));
+                    result = ChannelFactoryDictionary[key];
+                }
+            }
+
+            return result.CreateChannel();
+        }
+
+        /// <summary>
+        /// Creates a channel of a specified type that is used to send messages to a service endpoint that is configured with a specified binding.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteAddress">The address that provides the location of the service.</param>
+        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        public static TChannel CreateChannel(Type bindingType, string remoteAddress)
+        {
+            EndpointAddress endpointAddress = new EndpointAddress(remoteAddress);
+
+            Binding binding = WcfServiceType.GetBinding(bindingType);
+
+            string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, bindingType.GetHashCode(), endpointAddress.GetHashCode());
 
             ChannelFactory<TChannel> result;
 

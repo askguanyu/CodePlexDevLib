@@ -73,6 +73,21 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Get Wcf client instance.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetInstance(Type bindingType, string remoteAddress)
+        {
+            Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
+
+            TChannel instance = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+
+            return instance;
+        }
+
+        /// <summary>
         /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted.
         /// </summary>
         /// <returns>Instance of a ClientBase derived class.</returns>
@@ -130,6 +145,21 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetReusableInstance(Type bindingType, string remoteAddress)
+        {
+            Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
+
+            TChannel instance = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+
+            return instance;
+        }
+
+        /// <summary>
         /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
         /// </summary>
         /// <returns>Instance of a ClientBase derived class.</returns>
@@ -182,6 +212,21 @@ namespace DevLib.ServiceModel
             Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
 
             TChannel instance = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
+
+            return instance;
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetReusableFaultUnwrappingInstance(Type bindingType, string remoteAddress)
+        {
+            Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
+
+            TChannel instance = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
 
             return instance;
         }

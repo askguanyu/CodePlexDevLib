@@ -172,7 +172,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceHostType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -210,7 +210,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceHostType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -417,7 +417,7 @@ namespace DevLib.ServiceModel
             {
                 if (bindingType == null)
                 {
-                    foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile, configFile))
+                    foreach (Type serviceType in WcfServiceType.LoadFile(assemblyFile, configFile))
                     {
                         try
                         {
@@ -434,15 +434,15 @@ namespace DevLib.ServiceModel
                 }
                 else
                 {
-                    foreach (Type serviceType in WcfServiceHostType.LoadFile(assemblyFile))
+                    foreach (Type serviceType in WcfServiceType.LoadFile(assemblyFile))
                     {
                         try
                         {
-                            foreach (Type serviceContract in WcfServiceHostType.GetServiceContract(serviceType))
+                            foreach (Type serviceContract in WcfServiceType.GetServiceContract(serviceType))
                             {
                                 ServiceHost serviceHost = new ServiceHost(serviceType, new Uri(baseAddress));
                                 serviceHost.Description.Endpoints.Clear();
-                                serviceHost.AddServiceEndpoint(serviceContract, WcfServiceHostType.GetBinding(bindingType), baseAddress);
+                                serviceHost.AddServiceEndpoint(serviceContract, WcfServiceType.GetBinding(bindingType), baseAddress);
                                 serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
                                 serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true, HttpsGetEnabled = true });
                                 this._serviceHostList.Add(serviceHost);
@@ -481,11 +481,11 @@ namespace DevLib.ServiceModel
             {
                 Uri baseAddress = new Uri(address);
 
-                foreach (Type serviceContract in WcfServiceHostType.GetServiceContract(serviceType))
+                foreach (Type serviceContract in WcfServiceType.GetServiceContract(serviceType))
                 {
                     ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
                     serviceHost.Description.Endpoints.Clear();
-                    serviceHost.AddServiceEndpoint(serviceContract, WcfServiceHostType.GetBinding(bindingType), address);
+                    serviceHost.AddServiceEndpoint(serviceContract, WcfServiceType.GetBinding(bindingType), address);
 
                     if (baseAddress.Scheme.Equals(Uri.UriSchemeHttp))
                     {
@@ -521,7 +521,7 @@ namespace DevLib.ServiceModel
             {
                 Uri baseAddress = new Uri(address);
 
-                foreach (Type serviceContract in WcfServiceHostType.GetServiceContract(serviceType))
+                foreach (Type serviceContract in WcfServiceType.GetServiceContract(serviceType))
                 {
                     ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
                     serviceHost.Description.Endpoints.Clear();

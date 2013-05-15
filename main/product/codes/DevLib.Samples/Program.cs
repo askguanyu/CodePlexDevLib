@@ -5,19 +5,6 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Samples
 {
-    using DevLib.AddIn;
-    using DevLib.Configuration;
-    using DevLib.DesignPatterns;
-    using DevLib.Diagnostics;
-    using DevLib.ExtensionMethods;
-    using DevLib.Main;
-    using DevLib.Net;
-    using DevLib.Net.AsyncSocket;
-    using DevLib.Net.Ftp;
-    using DevLib.ServiceModel;
-    using DevLib.ServiceProcess;
-    using DevLib.Utilities;
-    using DevLib.WinForms;
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -25,6 +12,7 @@ namespace DevLib.Samples
     using System.ComponentModel;
     using System.Configuration;
     using System.Diagnostics;
+    using System.Drawing.Design;
     using System.Dynamic;
     using System.Globalization;
     using System.IO;
@@ -43,6 +31,19 @@ namespace DevLib.Samples
     using System.Windows.Forms;
     using System.Xml;
     using System.Xml.Linq;
+    using DevLib.AddIn;
+    using DevLib.Configuration;
+    using DevLib.DesignPatterns;
+    using DevLib.Diagnostics;
+    using DevLib.ExtensionMethods;
+    using DevLib.Main;
+    using DevLib.Net;
+    using DevLib.Net.AsyncSocket;
+    using DevLib.Net.Ftp;
+    using DevLib.ServiceModel;
+    using DevLib.ServiceProcess;
+    using DevLib.Utilities;
+    using DevLib.WinForms;
 
     public class Program
     {
@@ -1211,10 +1212,10 @@ namespace DevLib.Samples
             //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
             //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
 
-            var a = WcfServiceHostType.LoadFile(@"E:\Temp\WcfCalc.dll")[0].GetInterfaces()[0];
+            var a = WcfServiceType.LoadFile(@"E:\Temp\WcfCalc.dll")[0].GetInterfaces()[0];
 
-            var client = WcfClientBase<IWcfService>.GetReusableFaultUnwrappingInstance();
-
+            var wcfclient = WcfClientBase<IWcfService>.GetReusableFaultUnwrappingInstance();
+            
             //var client1 = WcfClientBase<IWcfService>.GetInstance("");
             //var x = new BasicHttpBinding().RetrieveProperties().SerializeBinary();
 
@@ -1391,6 +1392,8 @@ namespace DevLib.Samples
 
         public int MyInt { get; set; }
         public string MyString { get; set; }
+
+        [Editor(typeof(PropertyValueChangedCollectionEditor), typeof(UITypeEditor))]
         public List<SpellingOptions> MySpell { get; set; }
 
         public override string ToString()
@@ -1472,107 +1475,6 @@ namespace DevLib.Samples
         }
     }
 
-    public class ProfessionalConverter : ExpandableObjectConverter
-    {
-        public override bool CanConvertTo(ITypeDescriptorContext context, System.Type destinationType)
-        {
-            if (destinationType == typeof(Person))
-                return true;
-            else
-                return base.CanConvertTo(context, destinationType);
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, System.Type destinationType)
-        {
-            if (destinationType == typeof(System.String) && value is Person)
-            {
-                Person so = (Person)value;
-                return "FirstName:" + so.FirstName + ",LastName:" + so.LastName;
-            }
-            return base.ConvertTo(context, culture, value, destinationType);
-        }
-
-
-
-
-
-        //将String重新转换成对象属性（编辑后写回）
-
-
-        public override bool CanConvertFrom(ITypeDescriptorContext context, System.Type sourceType)
-        {
-
-
-            if (sourceType == typeof(string))
-
-
-                return true;
-
-
-            else
-
-
-                return base.CanConvertFrom(context, sourceType);
-
-
-        }
-
-
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-        {
-
-
-            if (value is string)
-            {
-
-
-                try
-                {
-
-                    string s = (string)value;
-
-
-                    string[] str = new string[4];
-
-
-                    str = s.Split(new char[] { ':', ',' });
-
-
-                    Person so = new Person();
-                    so.FirstName = s;
-                    so.LastName = s;
-
-
-                    return so;
-
-                }
-
-
-                catch
-                {
-
-
-                    throw new ArgumentException("无法将" + (string)value + "转换为Professional 类型");
-
-
-                }
-
-
-            }
-
-
-            return base.ConvertFrom(context, culture, value);
-
-
-
-
-
-
-        }
-
-
-    }
-
     [TypeConverterAttribute(typeof(ExpandableObjectConverter<SpellingOptions>))]
     public class SpellingOptions
     {
@@ -1598,33 +1500,6 @@ namespace DevLib.Samples
         {
             get { return suggestCorrections; }
             set { suggestCorrections = value; }
-        }
-    }
-
-    public class SpellingOptionsConverter : ExpandableObjectConverter
-    {
-        public override bool CanConvertFrom(ITypeDescriptorContext context,
-                              System.Type sourceType)
-        {
-            if (sourceType == typeof(string))
-                return true;
-
-            return base.CanConvertFrom(context, sourceType);
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context,
-                              CultureInfo culture, object value)
-        {
-            if (string.IsNullOrWhiteSpace(value as string))
-            {
-                return null;
-            }
-            else
-            {
-                return new SpellingOptions();
-                //return base.ConvertFrom(context, culture, value);
-            }
-
         }
     }
 

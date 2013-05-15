@@ -362,7 +362,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceHostType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -410,7 +410,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceHostType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }

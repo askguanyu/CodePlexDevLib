@@ -444,7 +444,7 @@ namespace DevLib.ServiceModel
                                 serviceHost.Description.Endpoints.Clear();
                                 serviceHost.AddServiceEndpoint(serviceContract, WcfServiceType.GetBinding(bindingType), baseAddress);
                                 serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
-                                serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true, HttpsGetEnabled = true });
+                                serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
                                 this._serviceHostList.Add(serviceHost);
                                 Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                             }
@@ -490,7 +490,7 @@ namespace DevLib.ServiceModel
                     if (baseAddress.Scheme.Equals(Uri.UriSchemeHttp))
                     {
                         serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
-                        serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true, HttpsGetEnabled = true });
+                        serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
                     }
 
                     this._serviceHostList.Add(serviceHost);

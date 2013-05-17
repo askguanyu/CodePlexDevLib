@@ -1224,7 +1224,6 @@ namespace DevLib.Samples
 
             host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
             host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
-            host.Unloaded += (s, e) => (s as WcfServiceHost).AssemblyFile.ConsoleOutput();
             host.Reloaded += (s, e) => s.ConsoleOutput();
 
             host.Open();

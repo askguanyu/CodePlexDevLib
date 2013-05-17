@@ -23,6 +23,37 @@ namespace DevLib.ServiceModel
     internal sealed class WcfServiceHostProxy : MarshalByRefObject, IDisposable
     {
         /// <summary>
+        /// Field _baseAddress.
+        /// </summary>
+        private readonly string _assemblyFile;
+
+        /// <summary>
+        /// Field _serviceType.
+        /// </summary>
+        private readonly Type _serviceType;
+
+        /// <summary>
+        /// Field _binding.
+        /// </summary>
+        [NonSerialized]
+        private readonly Binding _binding;
+
+        /// <summary>
+        /// Field _bindingType.
+        /// </summary>
+        private readonly Type _bindingType;
+
+        /// <summary>
+        /// Field _configFile.
+        /// </summary>
+        private readonly string _configFile;
+
+        /// <summary>
+        /// Field _baseAddress.
+        /// </summary>
+        private readonly string _baseAddress;
+
+        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
@@ -33,16 +64,40 @@ namespace DevLib.ServiceModel
         private List<ServiceHost> _serviceHostList = new List<ServiceHost>();
 
         /// <summary>
-        /// Field _baseAddress.
+        /// Field _isOpened.
         /// </summary>
-        private string _baseAddress;
+        private bool _isOpened = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHostProxy" /> class.
-        /// Default constructor of WcfServiceHost, host Wcf service in current AppDomain. Use Initialize method to initialize Wcf service.
         /// </summary>
-        public WcfServiceHostProxy()
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public WcfServiceHostProxy(string assemblyFile, Type serviceType, Type bindingType, string configFile, string baseAddress)
+            : this(assemblyFile, serviceType, null, bindingType, configFile, baseAddress)
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHostProxy" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public WcfServiceHostProxy(string assemblyFile, Type serviceType, Binding binding, Type bindingType, string configFile, string baseAddress)
+        {
+            this._assemblyFile = assemblyFile;
+            this._serviceType = serviceType;
+            this._binding = binding;
+            this._bindingType = bindingType;
+            this._configFile = configFile;
+            this._baseAddress = baseAddress;
         }
 
         /// <summary>
@@ -99,172 +154,42 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfServiceHostEventArgs> Restarted;
 
         /// <summary>
-        /// Gets current Wcf service assembly file.
-        /// </summary>
-        public string AssemblyFile
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets current Wcf service config file.
-        /// </summary>
-        public string ConfigFile
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Initialize Wcf service.
-        /// </summary>
-        /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="configFile">Wcf service config file.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="baseAddress">Wcf service base address.</param>
-        public void Initialize(string assemblyFile, string configFile, Type bindingType, string baseAddress)
-        {
-            if (string.IsNullOrEmpty(assemblyFile))
-            {
-                throw new ArgumentNullException("assemblyFile");
-            }
-
-            if (!File.Exists(assemblyFile))
-            {
-                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
-            }
-
-            if (!string.IsNullOrEmpty(configFile) && !File.Exists(configFile))
-            {
-                throw new FileNotFoundException("The specified file does not exist.", configFile);
-            }
-
-            if (bindingType != null && !bindingType.IsSubclassOf(typeof(Binding)))
-            {
-                throw new ArgumentException("The parameter bindingType is not a Binding type.", "bindingType");
-            }
-
-            if (!string.IsNullOrEmpty(baseAddress) && !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
-            {
-                throw new UriFormatException(baseAddress);
-            }
-
-            this.AssemblyFile = assemblyFile;
-
-            this.ConfigFile = string.IsNullOrEmpty(configFile) ? AppDomain.CurrentDomain.SetupInformation.ConfigurationFile : configFile;
-
-            this._baseAddress = baseAddress;
-
-            this.Init(this.AssemblyFile, this.ConfigFile, bindingType, this._baseAddress);
-        }
-
-        /// <summary>
-        /// Initialize Wcf service.
-        /// </summary>
-        /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="address">Wcf service base address.</param>
-        public void Initialize(Type serviceType, Type bindingType, string address)
-        {
-            if (serviceType == null)
-            {
-                throw new ArgumentNullException("serviceType");
-            }
-
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
-            {
-                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
-            }
-
-            if (bindingType == null)
-            {
-                throw new ArgumentNullException("bindingType");
-            }
-
-            if (!bindingType.IsSubclassOf(typeof(Binding)))
-            {
-                throw new ArgumentException("The parameter bindingType is not a Binding type.", "bindingType");
-            }
-
-            if (string.IsNullOrEmpty(address) || !Uri.IsWellFormedUriString(address, UriKind.Absolute))
-            {
-                throw new UriFormatException(address ?? string.Empty);
-            }
-
-            this._baseAddress = address;
-
-            this.Init(serviceType, bindingType, this._baseAddress);
-        }
-
-        /// <summary>
-        /// Initialize Wcf service.
-        /// </summary>
-        /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
-        /// <param name="address">Wcf service base address.</param>
-        public void Initialize(Type serviceType, Binding binding, string address)
-        {
-            if (serviceType == null)
-            {
-                throw new ArgumentNullException("serviceType");
-            }
-
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
-            {
-                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
-            }
-
-            if (binding == null)
-            {
-                throw new ArgumentNullException("binding");
-            }
-
-            if (string.IsNullOrEmpty(address) || !Uri.IsWellFormedUriString(address, UriKind.Absolute))
-            {
-                throw new UriFormatException(address ?? string.Empty);
-            }
-
-            this._baseAddress = address;
-
-            this.Init(serviceType, binding, this._baseAddress);
-        }
-
-        /// <summary>
         /// Open Service Host.
         /// </summary>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public void Open()
         {
             this.CheckDisposed();
 
+            if (this._isOpened)
+            {
+                return;
+            }
+
+            this.Initialize();
+
             if (this._serviceHostList.Count > 0)
             {
-                for (int i = 0; i < this._serviceHostList.Count; i++)
+                try
                 {
-                    if (this._serviceHostList[i].State != CommunicationState.Opening ||
-                        this._serviceHostList[i].State != CommunicationState.Opened)
+                    foreach (ServiceHost serviceHost in this._serviceHostList)
                     {
-                        this.RaiseEvent(this.Opening, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opening);
-                        try
+                        if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
                         {
-                            if (this._serviceHostList[i].State != CommunicationState.Created)
-                            {
-                                this._serviceHostList[i] = new ServiceHost(this._serviceHostList[i].Description.ServiceType);
-                            }
-
-                            this._serviceHostList[i].Open();
-                            this.RaiseEvent(this.Opened, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Opened);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Open", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-                            throw;
+                            this.RaiseEvent(this.Opening, serviceHost.Description.Name, WcfServiceHostStateEnum.Opening);
+                            serviceHost.Open();
+                            this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostStateEnum.Opened);
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Open", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
+                }
             }
+
+            this._isOpened = true;
         }
 
         /// <summary>
@@ -279,6 +204,7 @@ namespace DevLib.ServiceModel
                 foreach (var serviceHost in this._serviceHostList)
                 {
                     this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
+
                     try
                     {
                         serviceHost.Close();
@@ -293,6 +219,8 @@ namespace DevLib.ServiceModel
                     this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
                 }
             }
+
+            this._isOpened = false;
         }
 
         /// <summary>
@@ -307,6 +235,7 @@ namespace DevLib.ServiceModel
                 foreach (var serviceHost in this._serviceHostList)
                 {
                     this.RaiseEvent(this.Aborting, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborting);
+
                     try
                     {
                         serviceHost.Abort();
@@ -320,36 +249,42 @@ namespace DevLib.ServiceModel
                     this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
                 }
             }
+
+            this._isOpened = false;
         }
 
         /// <summary>
         /// Restart Service Host.
         /// </summary>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public void Restart()
         {
             this.CheckDisposed();
 
+            this.Initialize();
+
             if (this._serviceHostList.Count > 0)
             {
-                for (int i = 0; i < this._serviceHostList.Count; i++)
+                try
                 {
-                    this.RaiseEvent(this.Restarting, this._serviceHostList[i].Description.ServiceType.FullName, WcfServiceHostStateEnum.Restarting);
-                    try
+                    foreach (ServiceHost serviceHost in this._serviceHostList)
                     {
-                        this._serviceHostList[i].Abort();
-                        this._serviceHostList[i] = new ServiceHost(this._serviceHostList[i].Description.ServiceType);
-                        this._serviceHostList[i].Open();
-                        this.RaiseEvent(this.Restarted, this._serviceHostList[i].Description.Name, WcfServiceHostStateEnum.Restarted);
-                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Restart", this._serviceHostList[i].Description.ServiceType.FullName, this._serviceHostList[i].BaseAddresses.Count > 0 ? this._serviceHostList[i].BaseAddresses[0].AbsoluteUri : string.Empty));
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-                        throw;
+                        if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
+                        {
+                            this.RaiseEvent(this.Restarting, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarting);
+                            serviceHost.Open();
+                            this.RaiseEvent(this.Restarted, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarted);
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Restart", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                        }
                     }
                 }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    throw;
+                }
             }
+
+            this._isOpened = true;
         }
 
         /// <summary>
@@ -386,7 +321,6 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <exception cref="T:System.AppDomainUnloadedException">The operation is attempted on an unloaded application domain.</exception>
         /// <returns>Always null.</returns>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
         public override object InitializeLifetimeService()
         {
             return null;
@@ -404,146 +338,125 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Initialize Wcf service.
         /// </summary>
-        /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="configFile">Wcf service config file.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="baseAddress">Wcf service base address.</param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        private void Init(string assemblyFile, string configFile, Type bindingType, string baseAddress)
+        private void Initialize()
         {
+            if (this._serviceHostList.Count > 0)
+            {
+                foreach (ServiceHost serviceHost in this._serviceHostList)
+                {
+                    try
+                    {
+                        serviceHost.Abort();
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                    }
+                }
+            }
+
             this._serviceHostList.Clear();
 
-            try
+            if (File.Exists(this._assemblyFile))
             {
-                if (bindingType == null)
+                if (File.Exists(this._configFile))
                 {
-                    foreach (Type serviceType in WcfServiceType.LoadFile(assemblyFile, configFile))
+                    try
                     {
-                        try
+                        foreach (Type serviceType in WcfServiceType.LoadFile(this._assemblyFile, this._configFile))
                         {
-                            ServiceHost serviceHost = string.IsNullOrEmpty(baseAddress) ? new ServiceHost(serviceType) : new ServiceHost(serviceType, new Uri(baseAddress));
+                            ServiceHost serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new ServiceHost(serviceType) : new ServiceHost(serviceType, new Uri(this._baseAddress));
                             this._serviceHostList.Add(serviceHost);
-                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Initialize", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-                            throw;
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                        throw;
                     }
                 }
                 else
                 {
-                    foreach (Type serviceType in WcfServiceType.LoadFile(assemblyFile))
+                    Uri baseAddressUri = new Uri(this._baseAddress);
+                    Binding binding = this._binding ?? WcfServiceType.GetBinding(this._bindingType);
+
+                    try
                     {
-                        try
+                        foreach (Type serviceType in WcfServiceType.LoadFile(this._assemblyFile))
                         {
                             foreach (Type serviceContract in WcfServiceType.GetServiceContract(serviceType))
                             {
-                                ServiceHost serviceHost = new ServiceHost(serviceType, new Uri(baseAddress));
+                                ServiceHost serviceHost = new ServiceHost(serviceType, baseAddressUri);
                                 serviceHost.Description.Endpoints.Clear();
-                                serviceHost.AddServiceEndpoint(serviceContract, WcfServiceType.GetBinding(bindingType), baseAddress);
-                                serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
-                                serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
+                                serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+
+                                if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
+                                {
+                                    serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
+                                    serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
+                                }
+
                                 this._serviceHostList.Add(serviceHost);
-                                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Initialize", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                             }
                         }
-                        catch (Exception e)
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                        throw;
+                    }
+                }
+            }
+            else
+            {
+                if (File.Exists(this._configFile))
+                {
+                    try
+                    {
+                        ServiceHost serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new ServiceHost(this._serviceType) : new ServiceHost(this._serviceType, new Uri(this._baseAddress));
+                        this._serviceHostList.Add(serviceHost);
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Initialize", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                        throw;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        Uri baseAddressUri = new Uri(this._baseAddress);
+                        Binding binding = this._binding ?? WcfServiceType.GetBinding(this._bindingType);
+
+                        foreach (Type serviceContract in WcfServiceType.GetServiceContract(this._serviceType))
                         {
-                            ExceptionHandler.Log(e);
-                            throw;
+                            ServiceHost serviceHost = new ServiceHost(this._serviceType, baseAddressUri);
+                            serviceHost.Description.Endpoints.Clear();
+                            serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+
+                            if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
+                            {
+                                serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
+                                serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
+                            }
+
+                            this._serviceHostList.Add(serviceHost);
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Initialize", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
                     }
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
-                throw;
-            }
-
-            this.RaiseEvent(this.Created, assemblyFile, WcfServiceHostStateEnum.Created);
-        }
-
-        /// <summary>
-        /// Initialize Wcf service.
-        /// </summary>
-        /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="address">Wcf service base address.</param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        private void Init(Type serviceType, Type bindingType, string address)
-        {
-            this._serviceHostList.Clear();
-
-            try
-            {
-                Uri baseAddress = new Uri(address);
-
-                foreach (Type serviceContract in WcfServiceType.GetServiceContract(serviceType))
-                {
-                    ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
-                    serviceHost.Description.Endpoints.Clear();
-                    serviceHost.AddServiceEndpoint(serviceContract, WcfServiceType.GetBinding(bindingType), address);
-
-                    if (baseAddress.Scheme.Equals(Uri.UriSchemeHttp))
+                    catch (Exception e)
                     {
-                        serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
-                        serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
+                        ExceptionHandler.Log(e);
+                        throw;
                     }
-
-                    this._serviceHostList.Add(serviceHost);
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                 }
             }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
-                throw;
-            }
 
-            this.RaiseEvent(this.Created, serviceType.FullName, WcfServiceHostStateEnum.Created);
-        }
-
-        /// <summary>
-        /// Initialize Wcf service.
-        /// </summary>
-        /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
-        /// <param name="address">Wcf service base address.</param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        private void Init(Type serviceType, Binding binding, string address)
-        {
-            this._serviceHostList.Clear();
-
-            try
-            {
-                Uri baseAddress = new Uri(address);
-
-                foreach (Type serviceContract in WcfServiceType.GetServiceContract(serviceType))
-                {
-                    ServiceHost serviceHost = new ServiceHost(serviceType, baseAddress);
-                    serviceHost.Description.Endpoints.Clear();
-                    serviceHost.AddServiceEndpoint(serviceContract, binding, address);
-
-                    if (baseAddress.Scheme.Equals(Uri.UriSchemeHttp))
-                    {
-                        serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
-                        serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true, HttpsGetEnabled = true });
-                    }
-
-                    this._serviceHostList.Add(serviceHost);
-                    Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Init", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
-                throw;
-            }
-
-            this.RaiseEvent(this.Created, serviceType.FullName, WcfServiceHostStateEnum.Created);
+            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
         }
 
         /// <summary>

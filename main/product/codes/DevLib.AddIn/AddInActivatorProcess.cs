@@ -125,7 +125,8 @@ namespace DevLib.AddIn
         /// </summary>
         ~AddInActivatorProcess()
         {
-            this.Dispose(false);
+            this.IsFinalized = true;
+            this.Dispose(true);
         }
 
         /// <summary>
@@ -164,6 +165,15 @@ namespace DevLib.AddIn
         /// Gets a value indicating whether the process is started and running.
         /// </summary>
         public bool IsRunning
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance of the <see cref="AddInActivatorProcess" /> class is finalized.
+        /// </summary>
+        public bool IsFinalized
         {
             get;
             private set;
@@ -512,6 +522,7 @@ namespace DevLib.AddIn
             {
                 if (this._process != null && !this._process.HasExited)
                 {
+                    this._process.Exited -= this.OnProcessExited;
                     this._process.Kill();
                     this._process.WaitForExit(1000);
                 }

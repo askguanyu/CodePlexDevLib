@@ -510,7 +510,7 @@ namespace DevLib.AddIn
         {
             this.RaiseEvent(this.Unloaded);
 
-            if (this.AddInDomainSetupInfo.RestartOnProcessExit && this._canRestart)
+            if (!this._addInActivatorProcess.IsFinalized && this.AddInDomainSetupInfo.RestartOnProcessExit && this._canRestart)
             {
                 this.RestartAddInActivatorProcess();
             }

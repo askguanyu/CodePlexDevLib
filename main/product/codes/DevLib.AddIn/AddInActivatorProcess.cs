@@ -493,6 +493,7 @@ namespace DevLib.AddIn
                 ////}
 
                 this.DisposeClient();
+
                 this.Kill();
 
                 if (this._process != null)

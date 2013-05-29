@@ -57,7 +57,7 @@ namespace DevLib.Samples
             {
                 PrintStartInfo();
 
-                var result = CodeTimer.Time(delegate
+                var result = CodeTimer.Time(()=>
                 {
                     //TestCodeSnippets();
                 });
@@ -109,7 +109,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    TestDevLibConfiguration();
+                    //TestDevLibConfiguration();
                 });
 
                 PrintExitInfo();
@@ -167,15 +167,18 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.AddIn");
 
-            var info = new AddInActivatorProcessInfo();
+            var addin = new AddInDomain();
+            addin.CreateInstance<DateTime>();
 
-            var addin = new AddInDomain("DevLib.AddIn.Sample");
-            addin.Loaded += new EventHandler(addin_Started);
-            addin.Reloaded += new EventHandler(addin_Restarted);
-            addin.Unloaded += new EventHandler(addin_Stopped);
-            addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
+            //var info = new AddInActivatorProcessInfo();
 
-            addin.CreateInstance<WcfServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
+            //var addin = new AddInDomain("DevLib.AddIn.Sample");
+            //addin.Loaded += new EventHandler(addin_Started);
+            //addin.Reloaded += new EventHandler(addin_Restarted);
+            //addin.Unloaded += new EventHandler(addin_Stopped);
+            //addin.DataReceived += new DataReceivedEventHandler(addin_DataReceived);
+
+            //addin.CreateInstance<WcfServiceHost>(@"E:\Temp\WcfCalc.dll", @"E:\Temp\WcfCalc.dll.config");
 
             //using (AddInDomain domain = new AddInDomain("DevLib.AddIn.Sample1", false))
             //{
@@ -227,8 +230,8 @@ namespace DevLib.Samples
             //    //remoteObj1.Send(DateTime.Now.ToString()+"  ", Encoding.Default);
             //}
 
-            Console.WriteLine("next1");
-            Console.ReadKey();
+            //Console.WriteLine("next1");
+            //Console.ReadKey();
 
             //Task.Factory.StartNew(() =>
             //{
@@ -240,7 +243,7 @@ namespace DevLib.Samples
             //remoteObj1.SendOnce("127.0.0.1", 9999, "!!!!!!!!!!!!!!!!hello555555555555", Encoding.Default);
 
 
-            Console.ReadKey();
+            //Console.ReadKey();
             //domain1.AddInDomainSetupInfo.DllDirectory.ConsoleOutput();
 
             //domain.Dispose();

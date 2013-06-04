@@ -576,16 +576,6 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="fileSize">The file size for which to determine the format.</param>
         /// <returns>The resulting string.</returns>
-        public static string ToFileSizeFriendlyString(this long fileSize)
-        {
-            return ((double)fileSize).ToFileSizeFriendlyString();
-        }
-
-        /// <summary>
-        /// Formats the long length of a file to a more friendly string, e.g. "1.23 GB", "456 KB", etc.,
-        /// </summary>
-        /// <param name="fileSize">The file size for which to determine the format.</param>
-        /// <returns>The resulting string.</returns>
         public static string ToFileSizeFriendlyString(this double fileSize)
         {
             if (fileSize < 0D)
@@ -613,6 +603,36 @@ namespace DevLib.ExtensionMethods
             {
                 return string.Format("{0:####0.00} bytes", fileSize);
             }
+        }
+
+        /// <summary>
+        /// Formats the long length of a file to a more friendly string, e.g. "1.23 GB", "456 KB", etc.,
+        /// </summary>
+        /// <param name="fileSize">The file size for which to determine the format.</param>
+        /// <returns>The resulting string.</returns>
+        public static string ToFileSizeFriendlyString(this float fileSize)
+        {
+            return ((double)fileSize).ToFileSizeFriendlyString();
+        }
+
+        /// <summary>
+        /// Formats the long length of a file to a more friendly string, e.g. "1.23 GB", "456 KB", etc.,
+        /// </summary>
+        /// <param name="fileSize">The file size for which to determine the format.</param>
+        /// <returns>The resulting string.</returns>
+        public static string ToFileSizeFriendlyString(this long fileSize)
+        {
+            return ((double)fileSize).ToFileSizeFriendlyString();
+        }
+
+        /// <summary>
+        /// Formats the long length of a file to a more friendly string, e.g. "1.23 GB", "456 KB", etc.,
+        /// </summary>
+        /// <param name="fileSize">The file size for which to determine the format.</param>
+        /// <returns>The resulting string.</returns>
+        public static string ToFileSizeFriendlyString(this int fileSize)
+        {
+            return ((double)fileSize).ToFileSizeFriendlyString();
         }
     }
 }

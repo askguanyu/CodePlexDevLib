@@ -7,6 +7,7 @@ namespace DevLib.AddIn
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using System.Reflection;
     using System.Text;
 
@@ -16,6 +17,11 @@ namespace DevLib.AddIn
     internal static class ExceptionHandler
     {
         /// <summary>
+        /// Field SyncRoot.
+        /// </summary>
+        private static readonly object SyncRoot = new object();
+
+        /// <summary>
         /// Log Exception.
         /// </summary>
         /// <param name="exception">Exception instance.</param>
@@ -24,8 +30,21 @@ namespace DevLib.AddIn
             if (exception != null)
             {
                 string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
+
                 Debug.WriteLine(message);
+
                 Console.WriteLine(message);
+
+                lock (SyncRoot)
+                {
+                    try
+                    {
+                        File.AppendAllText("DevLib.AddIn.log", message + Environment.NewLine);
+                    }
+                    catch
+                    {
+                    }
+                }
             }
         }
 

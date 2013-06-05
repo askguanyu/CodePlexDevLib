@@ -126,6 +126,7 @@ namespace DevLib.AddIn
         ~AddInActivatorProcess()
         {
             this.IsFinalized = true;
+            this.Kill();
             this.Dispose(false);
         }
 

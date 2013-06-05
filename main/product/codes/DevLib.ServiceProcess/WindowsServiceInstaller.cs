@@ -62,6 +62,7 @@ namespace DevLib.ServiceProcess
         public static void RuntimeInstall(WindowsServiceSetup windowsServiceSetup)
         {
             TransactedInstaller transactedInstaller = null;
+
             try
             {
                 transactedInstaller = new TransactedInstaller();
@@ -90,6 +91,7 @@ namespace DevLib.ServiceProcess
         public static void RuntimeUninstall(WindowsServiceSetup windowsServiceSetup)
         {
             TransactedInstaller transactedInstaller = null;
+
             try
             {
                 transactedInstaller = new TransactedInstaller();
@@ -117,8 +119,16 @@ namespace DevLib.ServiceProcess
         /// <param name="stateSaver">An <see cref="T:System.Collections.IDictionary" /> used to save information needed to perform a commit, rollback, or uninstall operation.</param>
         public override void Install(IDictionary stateSaver)
         {
-            this.InitInstaller();
-            base.Install(stateSaver);
+            try
+            {
+                this.InitInstaller();
+                base.Install(stateSaver);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -144,8 +154,16 @@ namespace DevLib.ServiceProcess
         /// <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer.</param>
         public override void Rollback(IDictionary savedState)
         {
-            this.InitInstaller();
-            base.Rollback(savedState);
+            try
+            {
+                this.InitInstaller();
+                base.Rollback(savedState);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+                throw;
+            }
         }
 
         /// <summary>

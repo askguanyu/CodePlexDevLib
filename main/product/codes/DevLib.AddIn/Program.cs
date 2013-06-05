@@ -13,9 +13,9 @@
     class Program
     {
         /// <summary>
-        /// Static Field _logFile.
+        /// Field SyncRoot.
         /// </summary>
-        private static StreamWriter _logFile;
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Method Main, entry point.
@@ -47,6 +47,7 @@
 
             try
             {
+                Log(redirectOutput, "AddInDomain is started");
                 Log(redirectOutput, Environment.CommandLine);
 
                 Dictionary<AssemblyName, string> resolveDict = new Dictionary<AssemblyName, string>();
@@ -91,33 +92,6 @@
         }
 
         /// <summary>
-        /// Static Method OpenLogFile.
-        /// </summary>
-        /// <param name="redirectOutput">Whether redirect console output.</param>
-        private static void OpenLogFile(bool redirectOutput)
-        {
-            string fileName = string.Format("{0}.log", Assembly.GetEntryAssembly().Location);
-            string log = string.Format("[{0}] [PID:{1}] [AddInDomain is started.]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), Process.GetCurrentProcess().Id.ToString());
-
-            if (redirectOutput)
-            {
-                Console.WriteLine(log);
-            }
-
-            try
-            {
-                _logFile = new StreamWriter(fileName, true);
-                _logFile.WriteLine();
-                _logFile.WriteLine(log);
-                _logFile.Flush();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Failed to open AddInDomain bootstrap log: {0}", e.ToString());
-            }
-        }
-
-        /// <summary>
         /// Static Method Log.
         /// </summary>
         /// <param name="redirectOutput">Whether redirect console output.</param>
@@ -126,20 +100,20 @@
         {
             string log = string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), Process.GetCurrentProcess().Id.ToString(), message);
 
-            if (_logFile == null)
-            {
-                OpenLogFile(redirectOutput);
-            }
-
             if (redirectOutput)
             {
                 Console.WriteLine(log);
             }
 
-            if (_logFile != null)
+            lock (SyncRoot)
             {
-                _logFile.WriteLine(log);
-                _logFile.Flush();
+                try
+                {
+                    File.AppendAllText(string.Format("{0}.log", Assembly.GetEntryAssembly().Location), log + Environment.NewLine);
+                }
+                catch
+                {
+                }
             }
         }
     }

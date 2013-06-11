@@ -88,7 +88,11 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Gets or sets a value indicating whether using anonymous logon.
         /// </summary>
-        public bool UseAnonymous { get; set; }
+        public bool UseAnonymous
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets or sets ftp username.
@@ -161,6 +165,22 @@ namespace DevLib.Net.Ftp
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A hash code for the current <see cref="FtpSetup" />.</returns>
+        public override int GetHashCode()
+        {
+            if (object.ReferenceEquals(this, null))
+            {
+                return 0;
+            }
+
+            return this.UseAnonymous ?
+                (this.HostName ?? string.Empty).ToLowerInvariant().GetHashCode() :
+                (this.HostName ?? string.Empty).ToLowerInvariant().GetHashCode() ^ (this.UserName ?? string.Empty).GetHashCode() ^ (this.Password ?? string.Empty).GetHashCode();
         }
     }
 }

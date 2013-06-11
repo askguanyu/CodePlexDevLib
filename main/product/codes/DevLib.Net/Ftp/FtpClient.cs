@@ -1639,6 +1639,7 @@ namespace DevLib.Net.Ftp
                 result.Credentials = this.FtpSetupInfo.FtpCredential;
             }
 
+            result.ConnectionGroupName = this.FtpSetupInfo.GetHashCode().ToString();
             result.Method = method;
             result.EnableSsl = this.FtpSetupInfo.EnableSSL;
             result.KeepAlive = this.FtpSetupInfo.KeepAlive;

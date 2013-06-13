@@ -129,11 +129,17 @@ namespace DevLib.Net.Ftp
         {
             try
             {
-                return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, "/", false), throwOnError) != null;
+                return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, "/", false)) != null;
             }
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
                 return false;
             }
         }
@@ -145,7 +151,21 @@ namespace DevLib.Net.Ftp
         /// <returns>Current working directory string.</returns>
         public string PrintWorkingDirectory(bool throwOnError = false)
         {
-            return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, null, false), throwOnError);
+            try
+            {
+                return this.GetFtpWebResponseRawString(this.CreateFtpWebRequest(WebRequestMethods.Ftp.PrintWorkingDirectory, null, false));
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return null;
+            }
         }
 
         /// <summary>
@@ -199,7 +219,7 @@ namespace DevLib.Net.Ftp
                 try
                 {
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath, true);
-                    string rawString = this.GetFtpWebResponseRawString(request, true);
+                    string rawString = this.GetFtpWebResponseRawString(request);
                     result = FtpFileParser.GetFullDirectoryList(rawString, request.RequestUri.LocalPath);
 
                     foreach (FtpFileInfo item in result)
@@ -278,7 +298,7 @@ namespace DevLib.Net.Ftp
                 try
                 {
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath, true);
-                    string rawString = this.GetFtpWebResponseRawString(request, true);
+                    string rawString = this.GetFtpWebResponseRawString(request);
                     result = FtpFileParser.GetDirectoryList(rawString, request.RequestUri.LocalPath);
                 }
                 catch (Exception e)
@@ -332,7 +352,7 @@ namespace DevLib.Net.Ftp
                 try
                 {
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.ListDirectoryDetails, remotePath, true);
-                    string rawString = this.GetFtpWebResponseRawString(request, true);
+                    string rawString = this.GetFtpWebResponseRawString(request);
                     result = FtpFileParser.GetFileList(rawString, request.RequestUri.LocalPath);
 
                     foreach (FtpFileInfo item in result)
@@ -691,6 +711,8 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
+                                    ExceptionHandler.Log(e);
+
                                     if (throwOnError)
                                     {
                                         throw;
@@ -711,6 +733,8 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
+                                    ExceptionHandler.Log(e);
+
                                     if (throwOnError)
                                     {
                                         throw;
@@ -722,6 +746,8 @@ namespace DevLib.Net.Ftp
                         }
                     }
                 }
+
+                ExceptionHandler.Log(e);
 
                 if (throwOnError)
                 {
@@ -803,6 +829,8 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
+                                    ExceptionHandler.Log(e);
+
                                     if (throwOnError)
                                     {
                                         throw;
@@ -814,6 +842,8 @@ namespace DevLib.Net.Ftp
                         }
                     }
                 }
+
+                ExceptionHandler.Log(e);
 
                 if (throwOnError)
                 {
@@ -862,6 +892,8 @@ namespace DevLib.Net.Ftp
                     }
                 }
 
+                ExceptionHandler.Log(e);
+
                 if (throwOnError)
                 {
                     throw;
@@ -898,7 +930,7 @@ namespace DevLib.Net.Ftp
         {
             try
             {
-                this.MoveFileHelper(sourceRemoteFile, destinationRemoteFile);
+                this.MoveHelper(sourceRemoteFile, destinationRemoteFile);
 
                 return true;
             }
@@ -920,12 +952,14 @@ namespace DevLib.Net.Ftp
 
                                 try
                                 {
-                                    this.MoveFileHelper(sourceRemoteFile, destinationRemoteFile);
+                                    this.MoveHelper(sourceRemoteFile, destinationRemoteFile);
 
                                     return true;
                                 }
                                 catch
                                 {
+                                    ExceptionHandler.Log(e);
+
                                     if (throwOnError)
                                     {
                                         throw;
@@ -940,12 +974,14 @@ namespace DevLib.Net.Ftp
 
                                 try
                                 {
-                                    this.MoveFileHelper(sourceRemoteFile, destinationRemoteFile);
+                                    this.MoveHelper(sourceRemoteFile, destinationRemoteFile);
 
                                     return true;
                                 }
                                 catch
                                 {
+                                    ExceptionHandler.Log(e);
+
                                     if (throwOnError)
                                     {
                                         throw;
@@ -957,6 +993,8 @@ namespace DevLib.Net.Ftp
                         }
                     }
                 }
+
+                ExceptionHandler.Log(e);
 
                 if (throwOnError)
                 {
@@ -1096,7 +1134,23 @@ namespace DevLib.Net.Ftp
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool MakeDirectory(string remotePath, bool throwOnError = false)
         {
-            return this.MakeDirectoryHelper(remotePath, true, throwOnError);
+            try
+            {
+                this.MakeDirectoryHelper(remotePath, true);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
         }
 
         /// <summary>
@@ -1107,7 +1161,23 @@ namespace DevLib.Net.Ftp
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool RemoveDirectory(string remotePath, bool throwOnError = false)
         {
-            return this.RemoveDirectoryHelper(remotePath, true, throwOnError);
+            try
+            {
+                this.RemoveDirectoryHelper(remotePath, true);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
         }
 
         /// <summary>
@@ -1120,7 +1190,23 @@ namespace DevLib.Net.Ftp
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool MoveDirectory(string sourceRemotePath, string destinationRemotePath, bool overwrite = true, bool throwOnError = false)
         {
-            return this.MoveDirectoryHelper(sourceRemotePath, destinationRemotePath, true, overwrite, throwOnError);
+            try
+            {
+                this.MoveDirectoryHelper(sourceRemotePath, destinationRemotePath, true, overwrite);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
         }
 
         /// <summary>
@@ -1197,10 +1283,8 @@ namespace DevLib.Net.Ftp
                     Interlocked.Add(ref this._totalBytesUploaded, count);
                 }
             }
-            catch (Exception e)
+            catch
             {
-                ExceptionHandler.Log(e);
-
                 throw;
             }
             finally
@@ -1222,9 +1306,8 @@ namespace DevLib.Net.Ftp
                     response = request.GetResponse() as FtpWebResponse;
                     this.UpdateFtpInfo(response);
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Log(e);
                 }
                 finally
                 {
@@ -1269,10 +1352,8 @@ namespace DevLib.Net.Ftp
                     requestStream.Write(buffer, 0, count);
                 }
             }
-            catch (Exception e)
+            catch
             {
-                ExceptionHandler.Log(e);
-
                 throw;
             }
             finally
@@ -1294,9 +1375,8 @@ namespace DevLib.Net.Ftp
                     response = request.GetResponse() as FtpWebResponse;
                     this.UpdateFtpInfo(response);
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Log(e);
                 }
                 finally
                 {
@@ -1321,7 +1401,7 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="sourceRemoteFile">The source full path on an FTP server.</param>
         /// <param name="destinationRemoteFile">The destination full path on an FTP server.</param>
-        private void MoveFileHelper(string sourceRemoteFile, string destinationRemoteFile)
+        private void MoveHelper(string sourceRemoteFile, string destinationRemoteFile)
         {
             FtpWebResponse response = null;
 
@@ -1338,10 +1418,8 @@ namespace DevLib.Net.Ftp
                 response = request.GetResponse() as FtpWebResponse;
                 this.UpdateFtpInfo(response);
             }
-            catch (Exception e)
+            catch
             {
-                ExceptionHandler.Log(e);
-
                 throw;
             }
             finally
@@ -1366,15 +1444,8 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="remotePath">The full path on an FTP server.</param>
         /// <param name="recursive">true to make recursive directory; otherwise, false.</param>
-        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private bool MakeDirectoryHelper(string remotePath, bool recursive, bool throwOnError)
+        private void MakeDirectoryHelper(string remotePath, bool recursive)
         {
-            if (this.ExistsDirectory(remotePath))
-            {
-                return true;
-            }
-
             FtpWebResponse response = null;
 
             if (recursive)
@@ -1383,23 +1454,16 @@ namespace DevLib.Net.Ftp
                 {
                     if (string.IsNullOrEmpty(remotePath) || remotePath.Equals(Path.AltDirectorySeparatorChar))
                     {
-                        return true;
+                        return;
                     }
 
                     string input = remotePath;
-                    this.MakeDirectoryHelper(input.Substring(0, input.LastIndexOf(Path.AltDirectorySeparatorChar)), true, true);
-                    return this.MakeDirectoryHelper(input, false, true);
+                    this.MakeDirectoryHelper(input.Substring(0, input.LastIndexOf(Path.AltDirectorySeparatorChar)), true);
+                    this.MakeDirectoryHelper(input, false);
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Log(e);
-
-                    if (throwOnError)
-                    {
-                        throw;
-                    }
-
-                    return false;
+                    throw;
                 }
             }
             else
@@ -1409,13 +1473,9 @@ namespace DevLib.Net.Ftp
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.MakeDirectory, remotePath, true);
                     response = request.GetResponse() as FtpWebResponse;
                     this.UpdateFtpInfo(response);
-
-                    return true;
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
-
                     WebException webException = e as WebException;
 
                     if (webException != null)
@@ -1426,17 +1486,12 @@ namespace DevLib.Net.Ftp
                         {
                             if (ftpWebResponse.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable && ftpWebResponse.StatusDescription.Contains("already exists"))
                             {
-                                return true;
+                                return;
                             }
                         }
                     }
 
-                    if (throwOnError)
-                    {
-                        throw;
-                    }
-
-                    return false;
+                    throw;
                 }
                 finally
                 {
@@ -1461,9 +1516,7 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="remotePath">The full path on an FTP server.</param>
         /// <param name="recursive">true to delete directories, subdirectories, and files in <paramref name="remotePath" />; otherwise, false.</param>
-        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private bool RemoveDirectoryHelper(string remotePath, bool recursive, bool throwOnError)
+        private void RemoveDirectoryHelper(string remotePath, bool recursive)
         {
             if (recursive)
             {
@@ -1475,7 +1528,7 @@ namespace DevLib.Net.Ftp
                     {
                         if (item.IsDirectory)
                         {
-                            this.RemoveDirectoryHelper(item.FullPath, true, true);
+                            this.RemoveDirectoryHelper(item.FullPath, true);
                         }
                         else
                         {
@@ -1483,29 +1536,15 @@ namespace DevLib.Net.Ftp
                         }
                     }
 
-                    this.RemoveDirectoryHelper(remotePath, false, true);
-
-                    return true;
+                    this.RemoveDirectoryHelper(remotePath, false);
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Log(e);
-
-                    if (throwOnError)
-                    {
-                        throw;
-                    }
-
-                    return false;
+                    throw;
                 }
             }
             else
             {
-                if (!this.ExistsDirectory(remotePath))
-                {
-                    return true;
-                }
-
                 FtpWebResponse response = null;
 
                 try
@@ -1513,13 +1552,9 @@ namespace DevLib.Net.Ftp
                     FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.RemoveDirectory, remotePath, true);
                     response = request.GetResponse() as FtpWebResponse;
                     this.UpdateFtpInfo(response);
-
-                    return true;
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
-
                     WebException webException = e as WebException;
 
                     if (webException != null)
@@ -1530,17 +1565,12 @@ namespace DevLib.Net.Ftp
                         {
                             if (ftpWebResponse.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable && ftpWebResponse.StatusDescription.Contains("cannot find the file specified"))
                             {
-                                return true;
+                                return;
                             }
                         }
                     }
 
-                    if (throwOnError)
-                    {
-                        throw;
-                    }
-
-                    return false;
+                    throw;
                 }
                 finally
                 {
@@ -1567,9 +1597,7 @@ namespace DevLib.Net.Ftp
         /// <param name="destinationRemotePath">The destination full path on an FTP server.</param>
         /// <param name="recursive">true to move directories, subdirectories, and files in <paramref name="remotePath" />; otherwise, false.</param>
         /// <param name="overwrite">true if the destination directory can be overwritten; otherwise, false.</param>
-        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private bool MoveDirectoryHelper(string sourceRemotePath, string destinationRemotePath, bool recursive, bool overwrite, bool throwOnError)
+        private void MoveDirectoryHelper(string sourceRemotePath, string destinationRemotePath, bool recursive, bool overwrite)
         {
             if (recursive)
             {
@@ -1581,7 +1609,7 @@ namespace DevLib.Net.Ftp
                     {
                         if (item.IsDirectory)
                         {
-                            this.MoveDirectoryHelper(item.FullPath, item.FullPath.Replace(sourceRemotePath, destinationRemotePath), true, overwrite, true);
+                            this.MoveDirectoryHelper(item.FullPath, item.FullPath.Replace(sourceRemotePath, destinationRemotePath), true, overwrite);
                         }
                         else
                         {
@@ -1589,113 +1617,55 @@ namespace DevLib.Net.Ftp
                         }
                     }
 
-                    this.MoveDirectoryHelper(sourceRemotePath, destinationRemotePath, false, overwrite, true);
-
-                    return true;
+                    this.MoveDirectoryHelper(sourceRemotePath, destinationRemotePath, false, overwrite);
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Log(e);
-
-                    if (throwOnError)
-                    {
-                        throw;
-                    }
-
-                    return false;
+                    throw;
                 }
             }
             else
             {
-                if (!this.ExistsDirectory(sourceRemotePath))
-                {
-                    if (throwOnError)
-                    {
-                        throw new ArgumentException("The specified directory does not exist.", sourceRemotePath);
-                    }
-
-                    return false;
-                }
-
-                if (this.ExistsDirectory(destinationRemotePath))
-                {
-                    try
-                    {
-                        this.RemoveDirectory(sourceRemotePath, true);
-                        return true;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-
-                        if (throwOnError)
-                        {
-                            throw;
-                        }
-
-                        return false;
-                    }
-                }
-
-                if (!this.ExistsDirectory(FtpFileInfo.GetDirectoryName(destinationRemotePath)))
-                {
-                    try
-                    {
-                        this.MakeDirectory(FtpFileInfo.GetDirectoryName(destinationRemotePath), true);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Log(e);
-
-                        if (throwOnError)
-                        {
-                            throw;
-                        }
-                    }
-                }
-
-                FtpWebResponse response = null;
-
                 try
                 {
-                    int upDirectoryConut = sourceRemotePath.Split(Path.AltDirectorySeparatorChar).Length + destinationRemotePath.Split(Path.AltDirectorySeparatorChar).Length + 1;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.Insert(0, "../", upDirectoryConut);
-                    stringBuilder.Append("..");
-                    stringBuilder.Append(FtpFileInfo.CombinePath(destinationRemotePath));
-
-                    FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.Rename, sourceRemotePath, false);
-                    request.RenameTo = stringBuilder.ToString();
-                    response = request.GetResponse() as FtpWebResponse;
-                    this.UpdateFtpInfo(response);
-
-                    return true;
+                    this.MoveHelper(sourceRemotePath, destinationRemotePath);
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    WebException webException = e as WebException;
 
-                    if (throwOnError)
+                    if (webException != null)
                     {
-                        throw;
+                        FtpWebResponse ftpWebResponse = webException.Response as FtpWebResponse;
+
+                        if (ftpWebResponse != null)
+                        {
+                            if (ftpWebResponse.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                            {
+                                if (ftpWebResponse.StatusDescription.Contains("cannot find the path specified"))
+                                {
+                                    this.MakeDirectory(FtpFileInfo.GetDirectoryName(destinationRemotePath), false);
+
+                                    try
+                                    {
+                                        this.MoveHelper(sourceRemotePath, destinationRemotePath);
+                                        return;
+                                    }
+                                    catch
+                                    {
+                                        throw;
+                                    }
+                                }
+                                else if (ftpWebResponse.StatusDescription.Contains("file already exists"))
+                                {
+                                    this.RemoveDirectory(sourceRemotePath, true);
+                                    return;
+                                }
+                            }
+                        }
                     }
 
-                    return false;
-                }
-                finally
-                {
-                    if (response != null)
-                    {
-                        try
-                        {
-                            response.Close();
-                        }
-                        catch
-                        {
-                        }
-
-                        response = null;
-                    }
+                    throw;
                 }
             }
         }
@@ -1724,9 +1694,8 @@ namespace DevLib.Net.Ftp
                     uri = new Uri(string.Format("{0}{1}", this.FtpSetupInfo.HostName, FtpFileInfo.CombinePath(remotePath)));
                 }
             }
-            catch (Exception e)
+            catch
             {
-                ExceptionHandler.Log(e);
                 throw;
             }
 
@@ -1753,9 +1722,8 @@ namespace DevLib.Net.Ftp
         /// Method GetFtpWebResponseRawString.
         /// </summary>
         /// <param name="request">Instance of FtpWebRequest.</param>
-        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>String from FtpWebResponse's stream.</returns>
-        private string GetFtpWebResponseRawString(FtpWebRequest request, bool throwOnError)
+        private string GetFtpWebResponseRawString(FtpWebRequest request)
         {
             string result = null;
 
@@ -1772,14 +1740,9 @@ namespace DevLib.Net.Ftp
 
                 this.UpdateFtpInfo(response);
             }
-            catch (Exception e)
+            catch
             {
-                ExceptionHandler.Log(e);
-
-                if (throwOnError)
-                {
-                    throw;
-                }
+                throw;
             }
             finally
             {

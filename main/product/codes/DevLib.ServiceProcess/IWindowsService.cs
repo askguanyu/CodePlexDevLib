@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ServiceProcess
 {
-    using System;
     using System.ServiceProcess;
 
     /// <summary>

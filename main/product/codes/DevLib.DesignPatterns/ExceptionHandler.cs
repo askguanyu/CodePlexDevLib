@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceModel
+namespace DevLib.DesignPatterns
 {
     using System;
     using System.Diagnostics;
@@ -39,7 +39,7 @@ namespace DevLib.ServiceModel
                 {
                     try
                     {
-                        File.AppendAllText("DevLib.ServiceModel.log", message + Environment.NewLine);
+                        File.AppendAllText("DevLib.DesignPatterns.log", message + Environment.NewLine);
                     }
                     catch
                     {

@@ -32,7 +32,7 @@ namespace DevLib.ServiceProcess
                 string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
 
                 Debug.WriteLine(message);
-
+#if DEBUG
                 Console.WriteLine(message);
 
                 lock (SyncRoot)
@@ -45,6 +45,7 @@ namespace DevLib.ServiceProcess
                     {
                     }
                 }
+#endif
             }
         }
 

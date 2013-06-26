@@ -11,13 +11,13 @@ namespace DevLib.DesignPatterns
     using System.Threading;
 
     /// <summary>
-    /// Producers Consumer Pattern.
+    /// Producer Consumer Pattern.
     /// </summary>
     /// <typeparam name="T">The type of item to be produced and consumed.</typeparam>
     public class ProducerConsumer<T> : IDisposable
     {
         /// <summary>
-        /// The <see cref="Action{T}"/> that is executed in the consumer thread.
+        /// The <see cref="Action{T}" /> that is executed in the consumer thread.
         /// </summary>
         private readonly Action<T> _consumerAction;
 
@@ -32,22 +32,27 @@ namespace DevLib.DesignPatterns
         private readonly List<Thread> _consumerThreadList;
 
         /// <summary>
-        /// Prevents more than one thread from modifying <see cref="IsRunning"/> at a time.
+        /// Prevents more than one thread from modifying <see cref="IsRunning" /> at a time.
         /// </summary>
         private readonly object _isRunningSyncRoot = new object();
 
         /// <summary>
-        /// The <see cref="Queue{T}"/> that contains the data items.
+        /// Synchronizes access to <see cref="_queue" />.
         /// </summary>
-        private readonly Queue<T> _queue = new Queue<T>();
+        private readonly object _queueSyncRoot = new object();
 
         /// <summary>
-        /// Allows the consumer thread to block when no items are available in the <see cref="_queue"/>.
+        /// The <see cref="IProducerConsumerQueue{T}" /> that contains the data items.
+        /// </summary>
+        private readonly IProducerConsumerQueue<T> _queue;
+
+        /// <summary>
+        /// Allows the consumer thread to block when no items are available in the <see cref="_queue" />.
         /// </summary>
         private readonly ManualResetEvent _queueWaitHandle = new ManualResetEvent(false);
 
         /// <summary>
-        /// Allows the consumer thread to block when <see cref="IsRunning"/> is false.
+        /// Allows the consumer thread to block when <see cref="IsRunning" /> is false.
         /// </summary>
         private readonly ManualResetEvent _isRunningWaitHandle = new ManualResetEvent(false);
 
@@ -57,12 +62,12 @@ namespace DevLib.DesignPatterns
         private bool _disposed = false;
 
         /// <summary>
-        /// Whether <see cref="Enqueue"/> should add data items when <see cref="IsRunning"/> is false.
+        /// Whether <see cref="Enqueue" /> should add data items when <see cref="IsRunning" /> is false.
         /// </summary>
         private bool _enqueueWhenStopped = true;
 
         /// <summary>
-        /// Whether to call <see cref="Clear"/> when <see cref="IsRunning"/> is set to false.
+        /// Whether to call <see cref="Clear" /> when <see cref="IsRunning" /> is set to false.
         /// </summary>
         private bool _clearQueueOnStop = false;
 
@@ -72,9 +77,9 @@ namespace DevLib.DesignPatterns
         private volatile bool _isRunning;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProducerConsumer{T}"/> class.
+        /// Initializes a new instance of the <see cref="ProducerConsumer{T}" /> class.
         /// </summary>
-        /// <param name="consumerAction">The <see cref="Action{T}"/> that will be executed when the consumer thread processes a data item.</param>
+        /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
         /// <param name="consumerThreads">Number of consumer threads.</param>
         /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
         public ProducerConsumer(Action<T> consumerAction, int consumerThreads = 1, bool startImmediately = true)
@@ -88,6 +93,50 @@ namespace DevLib.DesignPatterns
             {
                 throw new ArgumentOutOfRangeException("consumerThreads", consumerThreads, "Must be greater than 0");
             }
+
+            this._queue = new ProducerConsumerQueue<T>();
+
+            this._consumerAction = consumerAction;
+
+            this._consumerThreads = consumerThreads;
+
+            this.IsRunning = startImmediately;
+
+            this._consumerThreadList = new List<Thread>(consumerThreads);
+
+            for (int i = 0; i < this._consumerThreads; i++)
+            {
+                Thread worker = new Thread(this.ConsumeThread);
+                worker.IsBackground = true;
+                this._consumerThreadList.Add(worker);
+            }
+
+            foreach (Thread item in this._consumerThreadList)
+            {
+                item.Start();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProducerConsumer{T}" /> class.
+        /// </summary>
+        /// <param name="queue">An instance of <see cref="IProducerConsumerQueue{T}" />.</param>
+        /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
+        /// <param name="consumerThreads">Number of consumer threads.</param>
+        /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
+        public ProducerConsumer(IProducerConsumerQueue<T> queue, Action<T> consumerAction, int consumerThreads = 1, bool startImmediately = true)
+        {
+            if (consumerAction == null)
+            {
+                throw new ArgumentNullException("consumerAction");
+            }
+
+            if (consumerThreads < 1)
+            {
+                throw new ArgumentOutOfRangeException("consumerThreads", consumerThreads, "Must be greater than 0");
+            }
+
+            this._queue = queue;
 
             this._consumerAction = consumerAction;
 
@@ -125,7 +174,7 @@ namespace DevLib.DesignPatterns
         {
             get
             {
-                lock (((ICollection)this._queue).SyncRoot)
+                lock (this._queueSyncRoot)
                 {
                     return this._queue.Count;
                 }
@@ -151,7 +200,7 @@ namespace DevLib.DesignPatterns
                     return false;
                 }
 
-                lock (((ICollection)this._queue).SyncRoot)
+                lock (this._queueSyncRoot)
                 {
                     if (this._queue.Count < 1)
                     {
@@ -225,8 +274,8 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Stop the consumer thread.
         /// </summary>
-        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue"/> is able to add data items when stopped.</param>
-        /// <param name="clearQueueOnStop">Whether to call <see cref="Clear"/> when stopped.</param>
+        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue" /> is able to add data items when stopped.</param>
+        /// <param name="clearQueueOnStop">Whether to call <see cref="Clear" /> when stopped.</param>
         public void Stop(bool enqueueWhenStopped = true, bool clearQueueOnStop = false)
         {
             this.CheckDisposed();
@@ -243,7 +292,7 @@ namespace DevLib.DesignPatterns
         /// </summary>
         public void Clear()
         {
-            lock (((ICollection)this._queue).SyncRoot)
+            lock (this._queueSyncRoot)
             {
                 this._queue.Clear();
             }
@@ -257,7 +306,7 @@ namespace DevLib.DesignPatterns
         {
             this.CheckDisposed();
 
-            lock (((ICollection)this._queue).SyncRoot)
+            lock (this._queueSyncRoot)
             {
                 if (this.IsRunning || this._enqueueWhenStopped)
                 {
@@ -299,7 +348,7 @@ namespace DevLib.DesignPatterns
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-                
+
                 if (this._consumerThreadList != null)
                 {
                     foreach (Thread item in this._consumerThreadList)
@@ -338,7 +387,7 @@ namespace DevLib.DesignPatterns
 
                     bool itemExists;
 
-                    lock (((ICollection)this._queue).SyncRoot)
+                    lock (this._queueSyncRoot)
                     {
                         itemExists = this._queue.Count > 0;
 

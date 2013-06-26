@@ -43,7 +43,9 @@
     </Compile>
     <Compile Include="DisposePattern.cs" />
     <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="IProducerConsumerQueue.cs" />
     <Compile Include="ProducerConsumer.cs" />
+    <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Singleton.cs" />
   </ItemGroup>

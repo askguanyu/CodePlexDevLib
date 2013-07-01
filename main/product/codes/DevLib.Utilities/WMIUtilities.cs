@@ -75,14 +75,29 @@ namespace DevLib.Utilities
         public const string LOGICALDISK_SN = @"SELECT VolumeSerialNumber FROM Win32_LogicalDisk";
 
         /// <summary>
+        /// Const Field GPU.
+        /// </summary>
+        public const string GPU = @"SELECT VideoProcessor FROM Win32_VideoController";
+
+        /// <summary>
         /// Const Field PC_MODEL.
         /// </summary>
         public const string PC_MODEL = @"SELECT Model FROM Win32_ComputerSystem";
 
         /// <summary>
-        /// Const Field GPU.
+        /// Const Field PC_IDENTIFYINGNUMBER.
         /// </summary>
-        public const string GPU = @"SELECT VideoProcessor FROM Win32_VideoController";
+        public const string PC_IDENTIFYINGNUMBER = "SELECT IdentifyingNumber FROM Win32_ComputerSystemProduct";
+
+        /// <summary>
+        /// Const Field PC_UUID.
+        /// </summary>
+        public const string PC_UUID = "SELECT UUID FROM Win32_ComputerSystemProduct";
+
+        /// <summary>
+        /// Const Field PC_OEMSTRINGARRAY.
+        /// </summary>
+        public const string PC_OEMSTRINGARRAY = "SELECT OEMStringArray FROM Win32_ComputerSystem";
 
         /// <summary>
         /// Query a WMI class and associated property.

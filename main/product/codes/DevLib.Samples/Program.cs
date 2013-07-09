@@ -44,6 +44,7 @@ namespace DevLib.Samples
     using DevLib.ServiceProcess;
     using DevLib.Utilities;
     using DevLib.WinForms;
+    using DevLib.Compression;
 
     public class Program
     {
@@ -57,7 +58,7 @@ namespace DevLib.Samples
             {
                 PrintStartInfo();
 
-                var result = CodeTimer.Time(()=>
+                var result = CodeTimer.Time(() =>
                 {
                     //TestCodeSnippets();
                 });
@@ -65,6 +66,11 @@ namespace DevLib.Samples
                 CodeTimer.Time(delegate
                 {
                     //TestDevLibAddIn();
+                });
+
+                CodeTimer.Time(() =>
+                {
+                    TestCompression();
                 });
 
                 CodeTimer.Time(delegate
@@ -114,6 +120,27 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestCompression()
+        {
+            PrintMethodName("Test DevLib.Compression");
+
+            var zip = ZipFile.OpenRead("c:\\22.zip");
+            foreach (ZipArchiveEntry item in zip.Entries)
+            {
+                Console.WriteLine(item.Name);
+            }
+
+            zip.ExtractToDirectory("c:\\3\\4", true);
+
+            ZipFile.CreateFromDirectory("c:\\1", "c:\\1.zip", true, true);
+            ZipFile.CreateFromDirectory("c:\\1", "c:\\2.zip", true, false);
+            ZipFile.CreateFromDirectory("c:\\1", "c:\\3.zip", false, true);
+            ZipFile.CreateFromDirectory("c:\\1", "c:\\4.zip", false, false);
+            var zip1 = ZipFile.Open("c:\\4.zip", ZipArchiveMode.Update);
+            zip1.CreateEntryFromFile("c:\\22.zip", "22.zip");
+            zip1.Dispose();
         }
 
         private static void TestDevLibServiceProcess(string[] args)
@@ -1218,7 +1245,7 @@ namespace DevLib.Samples
             var a = WcfServiceType.LoadFile(@"E:\Temp\WcfCalc.dll")[0].GetInterfaces()[0];
 
             var wcfclient = WcfClientBase<IWcfService>.GetReusableFaultUnwrappingInstance();
-            
+
             //var client1 = WcfClientBase<IWcfService>.GetInstance("");
             //var x = new BasicHttpBinding().RetrieveProperties().SerializeBinary();
 

@@ -99,6 +99,10 @@
       <Project>{D2B536FD-62D2-46BA-9938-872C120C3FBF}</Project>
       <Name>DevLib.AddIn</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Compression\DevLib.Compression.csproj">
+      <Project>{D43C60CD-B4EE-4589-B3FB-DE4CEEF85A61}</Project>
+      <Name>DevLib.Compression</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Configuration\DevLib.Configuration.csproj">
       <Project>{29304ed4-092e-4e59-9ae5-36296920d8b5}</Project>
       <Name>DevLib.Configuration</Name>

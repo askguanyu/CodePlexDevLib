@@ -251,6 +251,72 @@ namespace DevLib.Compression
         }
 
         /// <summary>
+        /// Archives the files and directories from the specified directory, uses the specified compression level, and optionally includes the base directory.
+        /// </summary>
+        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="includeBaseDirectory">true to include the directory name from <paramref name="sourceDirectoryName"/> at the root of the archive; false to include only the contents of the directory.</param>
+        /// <param name="includeSubDirectories">true to include all subdirectories from <paramref name="sourceDirectoryName"/>; false to include only the contents of the top directory.</param>
+        /// <exception cref="T:System.ArgumentException"><paramref name="sourceDirectoryName"/> is <see cref="F:System.String.Empty"/>, contains only white space, or contains at least one invalid character.</exception>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="sourceDirectoryName"/> is null.</exception>
+        /// <exception cref="T:System.IO.PathTooLongException">In <paramref name="sourceDirectoryName"/> the specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters.</exception>
+        /// <exception cref="T:System.IO.DirectoryNotFoundException"><paramref name="sourceDirectoryName"/> is invalid or does not exist (for example, it is on an unmapped drive).</exception>
+        /// <exception cref="T:System.NotSupportedException"><paramref name="sourceDirectoryName"/> contains an invalid format.-or-The zip archive does not support writing.</exception>
+        public void CreateEntryFromDirectory(string sourceDirectoryName, bool includeBaseDirectory, bool includeSubDirectories)
+        {
+            sourceDirectoryName = Path.GetFullPath(sourceDirectoryName);
+            bool flag = true;
+            DirectoryInfo directoryInfo = new DirectoryInfo(sourceDirectoryName);
+            string fullName = directoryInfo.FullName;
+            if (includeBaseDirectory && directoryInfo.Parent != null)
+            {
+                fullName = directoryInfo.Parent.FullName;
+            }
+
+            List<FileSystemInfo> list = new List<FileSystemInfo>();
+
+            if (includeSubDirectories)
+            {
+                list.AddRange(directoryInfo.GetDirectories("*", SearchOption.AllDirectories));
+
+                list.AddRange(directoryInfo.GetFiles("*", SearchOption.AllDirectories));
+            }
+            else
+            {
+                list.AddRange(directoryInfo.GetFiles("*", SearchOption.TopDirectoryOnly));
+            }
+
+            foreach (FileSystemInfo current in list)
+            {
+                flag = false;
+                int length = current.FullName.Length - fullName.Length;
+                string text = current.FullName.Substring(fullName.Length, length);
+                text = text.TrimStart(new char[]
+                    {
+                        Path.DirectorySeparatorChar,
+                        Path.AltDirectorySeparatorChar
+                    });
+
+                if (current is FileInfo)
+                {
+                    this.CreateEntryFromFile(current.FullName, text);
+                }
+                else
+                {
+                    DirectoryInfo directoryInfo2 = current as DirectoryInfo;
+                    if (directoryInfo2 != null && ZipFile.IsDirEmpty(directoryInfo2))
+                    {
+                        this.CreateEntry(text + Path.DirectorySeparatorChar);
+                    }
+                }
+            }
+
+            if (includeBaseDirectory && flag)
+            {
+                this.CreateEntry(directoryInfo.Name + Path.DirectorySeparatorChar);
+            }
+        }
+
+        /// <summary>
         /// Retrieves a wrapper for the specified entry in the zip archive.
         /// </summary>
         /// <param name="entryName">A path, relative to the root of the archive, that identifies the entry to retrieve.</param>

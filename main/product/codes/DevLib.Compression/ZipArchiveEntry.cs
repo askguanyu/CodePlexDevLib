@@ -603,7 +603,7 @@ namespace DevLib.Compression
             bool flag = true;
             bool leaveOpenOnClose = leaveBackingStreamOpen && !flag;
 
-            return new CheckSumAndSizeWriteStream(baseStream, backingStream, leaveOpenOnClose, (Action<long, long, uint>)((initialPosition, currentPosition, checkSum) =>
+            return new CheckSumAndSizeWriteStream(baseStream, backingStream, leaveOpenOnClose, (ActionHelper<long, long, uint>)((initialPosition, currentPosition, checkSum) =>
             {
                 this._crc32 = checkSum;
                 this._uncompressedSize = currentPosition;

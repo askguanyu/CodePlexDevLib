@@ -391,8 +391,36 @@ namespace DevLib.ServiceModel
 
                                 if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
                                 {
-                                    serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
-                                    serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
+                                    ServiceMetadataBehavior serviceMetadataBehavior = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+
+                                    if (serviceMetadataBehavior == null)
+                                    {
+                                        serviceMetadataBehavior = new ServiceMetadataBehavior();
+
+                                        serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
+                                    }
+
+                                    serviceMetadataBehavior.HttpGetEnabled = true;
+                                }
+
+                                foreach (var endpoint in serviceHost.Description.Endpoints)
+                                {
+                                    ContractDescription contractDescription = endpoint.Contract;
+
+                                    foreach (var operationDescription in contractDescription.Operations)
+                                    {
+                                        DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                                        if (serializerBehavior == null)
+                                        {
+                                            serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+
+                                            operationDescription.Behaviors.Add(serializerBehavior);
+                                        }
+
+                                        serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                                        serializerBehavior.IgnoreExtensionDataObject = true;
+                                    }
                                 }
 
                                 this._serviceHostList.Add(serviceHost);
@@ -438,8 +466,36 @@ namespace DevLib.ServiceModel
 
                             if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
                             {
-                                serviceHost.Description.Behaviors.Remove(typeof(ServiceMetadataBehavior));
-                                serviceHost.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true });
+                                ServiceMetadataBehavior serviceMetadataBehavior = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+
+                                if (serviceMetadataBehavior == null)
+                                {
+                                    serviceMetadataBehavior = new ServiceMetadataBehavior();
+
+                                    serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
+                                }
+
+                                serviceMetadataBehavior.HttpGetEnabled = true;
+                            }
+
+                            foreach (var endpoint in serviceHost.Description.Endpoints)
+                            {
+                                ContractDescription contractDescription = endpoint.Contract;
+
+                                foreach (var operationDescription in contractDescription.Operations)
+                                {
+                                    DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                                    if (serializerBehavior == null)
+                                    {
+                                        serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+
+                                        operationDescription.Behaviors.Add(serializerBehavior);
+                                    }
+
+                                    serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                                    serializerBehavior.IgnoreExtensionDataObject = true;
+                                }
                             }
 
                             this._serviceHostList.Add(serviceHost);

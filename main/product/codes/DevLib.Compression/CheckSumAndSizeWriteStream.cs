@@ -16,7 +16,7 @@ namespace DevLib.Compression
 
         private readonly bool _leaveOpenOnClose;
 
-        private readonly Action<long, long, uint> _saveCrcAndSizes;
+        private readonly ActionHelper<long, long, uint> _saveCrcAndSizes;
 
         private long _position;
 
@@ -30,7 +30,7 @@ namespace DevLib.Compression
 
         private long _initialPosition;
 
-        public CheckSumAndSizeWriteStream(Stream baseStream, Stream baseBaseStream, bool leaveOpenOnClose, Action<long, long, uint> saveCrcAndSizes)
+        public CheckSumAndSizeWriteStream(Stream baseStream, Stream baseBaseStream, bool leaveOpenOnClose, ActionHelper<long, long, uint> saveCrcAndSizes)
         {
             this._baseStream = baseStream;
             this._baseBaseStream = baseBaseStream;

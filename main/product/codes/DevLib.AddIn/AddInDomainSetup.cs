@@ -22,6 +22,11 @@ namespace DevLib.AddIn
     public sealed class AddInDomainSetup
     {
         /// <summary>
+        /// Field _appDomainSetup.
+        /// </summary>
+        private AppDomainSetup _appDomainSetup;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AddInDomainSetup" /> class.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
@@ -102,8 +107,16 @@ namespace DevLib.AddIn
         /// </summary>
         public AppDomainSetup AppDomainSetup
         {
-            get;
-            set;
+            get
+            {
+                return this._appDomainSetup;
+            }
+
+            set
+            {
+                this._appDomainSetup = value;
+                this._appDomainSetup.ShadowCopyFiles = "true";
+            }
         }
 
         /// <summary>

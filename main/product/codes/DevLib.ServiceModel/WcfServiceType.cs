@@ -284,7 +284,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="type">Source Type.</param>
         /// <returns>true if type is WcfService Class; otherwise, false.</returns>
-        internal static bool IsWcfServiceClass(Type type)
+        public static bool IsWcfServiceClass(Type type)
         {
             if (type == null)
             {
@@ -292,6 +292,31 @@ namespace DevLib.ServiceModel
             }
 
             return type.IsClass && HasServiceContractAttribute(type) && !IsDerivedFrom(type, typeof(ClientBase<>));
+        }
+
+        /// <summary>
+        /// Static Method HasServiceContractAttribute.
+        /// </summary>
+        /// <param name="type">Source Type.</param>
+        /// <returns>true if has ServiceContractAttribute; otherwise, false.</returns>
+        public static bool HasServiceContractAttribute(Type type)
+        {
+            if (type.IsDefined(typeof(ServiceContractAttribute), false))
+            {
+                return true;
+            }
+
+            Type[] interfaces = type.GetInterfaces();
+            for (int i = 0; i < interfaces.Length; i++)
+            {
+                Type type2 = interfaces[i];
+                if (type2.IsDefined(typeof(ServiceContractAttribute), false))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -373,31 +398,6 @@ namespace DevLib.ServiceModel
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Static Method HasServiceContractAttribute.
-        /// </summary>
-        /// <param name="type">Source Type.</param>
-        /// <returns>true if has ServiceContractAttribute; otherwise, false.</returns>
-        private static bool HasServiceContractAttribute(Type type)
-        {
-            if (type.IsDefined(typeof(ServiceContractAttribute), false))
-            {
-                return true;
-            }
-
-            Type[] interfaces = type.GetInterfaces();
-            for (int i = 0; i < interfaces.Length; i++)
-            {
-                Type type2 = interfaces[i];
-                if (type2.IsDefined(typeof(ServiceContractAttribute), false))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         /// <summary>

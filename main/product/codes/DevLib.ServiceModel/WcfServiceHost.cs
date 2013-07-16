@@ -814,6 +814,7 @@ namespace DevLib.ServiceModel
                 appDomainSetup.ConfigurationFile = this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
                 appDomainSetup.ShadowCopyFiles = "true";
+                appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
 
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
 

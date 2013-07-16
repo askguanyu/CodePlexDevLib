@@ -116,6 +116,23 @@ namespace DevLib.AddIn
             {
                 this._appDomainSetup = value;
                 this._appDomainSetup.ShadowCopyFiles = "true";
+                this._appDomainSetup.ShadowCopyDirectories = this._appDomainSetup.ApplicationBase;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of directories under the application base directory that are probed for private assemblies.
+        /// </summary>
+        public string PrivateBinPath
+        {
+            get
+            {
+                return this.AppDomainSetup.PrivateBinPath;
+            }
+
+            set
+            {
+                this.AppDomainSetup.PrivateBinPath = value;
             }
         }
 

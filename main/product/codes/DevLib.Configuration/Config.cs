@@ -134,9 +134,12 @@ namespace DevLib.Configuration
 
             try
             {
-                this._configuration.Sections.Remove("settings");
-                this._configuration.Sections.Add("settings", new DefaultSection());
-                this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+                if (this._settings.Count > 0)
+                {
+                    this._configuration.Sections.Remove("settings");
+                    this._configuration.Sections.Add("settings", new DefaultSection());
+                    this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+                }
 
                 this._configuration.Save(ConfigurationSaveMode.Minimal, false);
             }
@@ -167,9 +170,12 @@ namespace DevLib.Configuration
 
             try
             {
-                this._configuration.Sections.Remove("settings");
-                this._configuration.Sections.Add("settings", new DefaultSection());
-                this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+                if (this._settings.Count > 0)
+                {
+                    this._configuration.Sections.Remove("settings");
+                    this._configuration.Sections.Add("settings", new DefaultSection());
+                    this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+                }
 
                 this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, false);
             }
@@ -375,6 +381,10 @@ namespace DevLib.Configuration
                     return this._settings.GetValue<T>(key, defaultValue, false);
                 }
 
+                return defaultValue;
+            }
+            catch
+            {
                 return defaultValue;
             }
             finally

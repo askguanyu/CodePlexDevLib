@@ -767,7 +767,22 @@ namespace DevLib.Configuration
         {
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                using (XmlWriter writer = XmlWriter.Create(fileName, this._xmlWriterSettings))
+                string fullPath = Path.GetFullPath(fileName);
+
+                string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+                if (!Directory.Exists(fullDirectoryPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(fullDirectoryPath);
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                using (XmlWriter writer = XmlWriter.Create(fullPath, this._xmlWriterSettings))
                 {
                     writer.WriteStartElement("settings");
 

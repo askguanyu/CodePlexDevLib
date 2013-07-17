@@ -368,6 +368,10 @@ namespace DevLib.Configuration
                     return defaultValue;
                 }
             }
+            catch
+            {
+                return defaultValue;
+            }
             finally
             {
                 this._readerWriterLock.ReleaseReaderLock();

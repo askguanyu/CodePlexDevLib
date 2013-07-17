@@ -42,8 +42,9 @@ namespace DevLib.Configuration
                 }
                 else
                 {
-                    _configDictionary.Add(key, new Config(key));
-                    return _configDictionary[key];
+                    Config result = new Config(key);
+                    _configDictionary.Add(key, result);
+                    return result;
                 }
             }
         }

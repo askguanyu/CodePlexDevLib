@@ -191,14 +191,51 @@ namespace DevLib.Compression
         /// Creates an empty entry that has the specified path and entry name in the zip archive.
         /// </summary>
         /// <param name="entryName">A path, relative to the root of the archive, that specifies the name of the entry to be created.</param>
+        /// <param name="isIsDirectory">true to include this entry is a directory; false to include this entry is a file.</param>
         /// <returns>An empty entry in the zip archive.</returns>
         /// <exception cref="T:System.ArgumentException"><paramref name="entryName"/> is <see cref="F:System.String.Empty"/>.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="entryName"/> is null.</exception>
         /// <exception cref="T:System.NotSupportedException">The zip archive does not support writing.</exception>
         /// <exception cref="T:System.ObjectDisposedException">The zip archive has been disposed.</exception>
-        public ZipArchiveEntry CreateEntry(string entryName)
+        public ZipArchiveEntry CreateEntry(string entryName, bool isIsDirectory)
         {
-            return this.DoCreateEntry(entryName);
+            return this.CreateEntry(entryName, isIsDirectory ? FileAttributes.Directory : FileAttributes.Normal);
+        }
+
+        /// <summary>
+        /// Creates an empty entry that has the specified path and entry name in the zip archive.
+        /// </summary>
+        /// <param name="entryName">A path, relative to the root of the archive, that specifies the name of the entry to be created.</param>
+        /// <param name="entryFileAttributes">The <see cref="T:System.IO.FileAttributes"/> of this entry.</param>
+        /// <returns>An empty entry in the zip archive.</returns>
+        /// <exception cref="T:System.ArgumentException"><paramref name="entryName"/> is <see cref="F:System.String.Empty"/>.</exception>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="entryName"/> is null.</exception>
+        /// <exception cref="T:System.NotSupportedException">The zip archive does not support writing.</exception>
+        /// <exception cref="T:System.ObjectDisposedException">The zip archive has been disposed.</exception>
+        public ZipArchiveEntry CreateEntry(string entryName, FileAttributes entryFileAttributes)
+        {
+            this.ThrowIfDisposed();
+
+            if (entryName == null)
+            {
+                throw new ArgumentNullException("entryName");
+            }
+
+            if (string.IsNullOrEmpty(entryName))
+            {
+                throw new ArgumentException(CompressionConstants.CannotBeEmpty, "entryName");
+            }
+
+            if (this._mode == ZipArchiveMode.Read)
+            {
+                throw new NotSupportedException(CompressionConstants.CreateInReadMode);
+            }
+
+            ZipArchiveEntry entry = new ZipArchiveEntry(this, entryName, entryFileAttributes);
+
+            this.AddEntry(entry);
+
+            return entry;
         }
 
         /// <summary>
@@ -218,6 +255,8 @@ namespace DevLib.Compression
         /// <exception cref="T:System.ObjectDisposedException">The zip archive has been disposed.</exception>
         public ZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName)
         {
+            this.ThrowIfDisposed();
+
             if (sourceFileName == null)
             {
                 throw new ArgumentNullException("sourceFileName");
@@ -228,26 +267,86 @@ namespace DevLib.Compression
                 throw new ArgumentNullException("entryName");
             }
 
+            if (this._mode == ZipArchiveMode.Read)
+            {
+                throw new NotSupportedException(CompressionConstants.CreateInReadMode);
+            }
+
             ZipArchiveEntry result;
+
             using (Stream stream = File.Open(sourceFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                ZipArchiveEntry zipArchiveEntry = this.CreateEntry(entryName);
+                FileAttributes fileAttributes = File.GetAttributes(sourceFileName);
+
                 DateTime lastWriteTime = File.GetLastWriteTime(sourceFileName);
+
+                ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(this, entryName, fileAttributes);
+
                 if (lastWriteTime.Year < 1980 || lastWriteTime.Year > 2107)
                 {
                     lastWriteTime = new DateTime(1980, 1, 1, 0, 0, 0);
                 }
 
                 zipArchiveEntry.LastWriteTime = lastWriteTime;
+
                 using (Stream stream2 = zipArchiveEntry.Open())
                 {
                     StreamHelper.Copy(stream, stream2);
                 }
 
+                this.AddEntry(zipArchiveEntry);
+
                 result = zipArchiveEntry;
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Archives a directory by compressing it and adding it to the zip archive.
+        /// </summary>
+        /// <param name="sourceDirectoryName">The path to the file to be archived. You can specify either a relative or an absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="entryName">The name of the entry to create in the zip archive.</param>
+        /// <returns>A wrapper for the new entry in the zip archive.</returns>
+        /// <exception cref="T:System.ArgumentException"><paramref name="sourceDirectoryName"/> is <see cref="F:System.String.Empty"/>, contains only white space, or contains at least one invalid character.-or-<paramref name="entryName"/> is <see cref="F:System.String.Empty"/>.</exception>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="sourceDirectoryName"/> or <paramref name="entryName"/> is null.</exception>
+        /// <exception cref="T:System.IO.PathTooLongException">In <paramref name="sourceDirectoryName"/>, the specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters.</exception>
+        /// <exception cref="T:System.IO.DirectoryNotFoundException"><paramref name="sourceDirectoryName"/> is invalid (for example, it is on an unmapped drive).</exception>
+        /// <exception cref="T:System.IO.IOException">The file specified by <paramref name="sourceDirectoryName"/> cannot be opened.</exception>
+        /// <exception cref="T:System.UnauthorizedAccessException"><paramref name="sourceDirectoryName"/> specifies a directory.-or-The caller does not have the required permission to access the file specified by <paramref name="sourceDirectoryName"/>.</exception>
+        /// <exception cref="T:System.IO.FileNotFoundException">The file specified by <paramref name="sourceDirectoryName"/> is not found.</exception>
+        /// <exception cref="T:System.NotSupportedException">The <paramref name="sourceDirectoryName"/> parameter is in an invalid format.-or-The zip archive does not support writing.</exception>
+        /// <exception cref="T:System.ObjectDisposedException">The zip archive has been disposed.</exception>
+        public ZipArchiveEntry CreateEntryFromDirectory(string sourceDirectoryName, string entryName)
+        {
+            this.ThrowIfDisposed();
+
+            if (sourceDirectoryName == null)
+            {
+                throw new ArgumentNullException("sourceDirectoryName");
+            }
+
+            if (entryName == null)
+            {
+                throw new ArgumentNullException("entryName");
+            }
+
+            if (this._mode == ZipArchiveMode.Read)
+            {
+                throw new NotSupportedException(CompressionConstants.CreateInReadMode);
+            }
+
+            FileAttributes fileAttributes = File.GetAttributes(sourceDirectoryName);
+
+            DateTime lastWriteTime = File.GetLastWriteTime(sourceDirectoryName);
+
+            ZipArchiveEntry entry = new ZipArchiveEntry(this, entryName, fileAttributes);
+
+            entry.LastWriteTime = lastWriteTime;
+
+            this.AddEntry(entry);
+
+            return entry;
         }
 
         /// <summary>
@@ -261,12 +360,33 @@ namespace DevLib.Compression
         /// <exception cref="T:System.IO.PathTooLongException">In <paramref name="sourceDirectoryName"/> the specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters.</exception>
         /// <exception cref="T:System.IO.DirectoryNotFoundException"><paramref name="sourceDirectoryName"/> is invalid or does not exist (for example, it is on an unmapped drive).</exception>
         /// <exception cref="T:System.NotSupportedException"><paramref name="sourceDirectoryName"/> contains an invalid format.-or-The zip archive does not support writing.</exception>
-        public void CreateEntryFromDirectory(string sourceDirectoryName, bool includeBaseDirectory, bool includeSubDirectories)
+        public void CreateEntriesFromDirectory(string sourceDirectoryName, bool includeBaseDirectory, bool includeSubDirectories)
         {
+            this.ThrowIfDisposed();
+
+            if (sourceDirectoryName == null)
+            {
+                throw new ArgumentNullException("sourceDirectoryName");
+            }
+
+            if (this._mode == ZipArchiveMode.Read)
+            {
+                throw new NotSupportedException(CompressionConstants.CreateInReadMode);
+            }
+
             sourceDirectoryName = Path.GetFullPath(sourceDirectoryName);
+
+            if (Directory.Exists(sourceDirectoryName))
+            {
+                throw new DirectoryNotFoundException(sourceDirectoryName);
+            }
+
             bool flag = true;
+
             DirectoryInfo directoryInfo = new DirectoryInfo(sourceDirectoryName);
+
             string fullName = directoryInfo.FullName;
+
             if (includeBaseDirectory && directoryInfo.Parent != null)
             {
                 fullName = directoryInfo.Parent.FullName;
@@ -285,35 +405,33 @@ namespace DevLib.Compression
                 list.AddRange(directoryInfo.GetFiles("*", SearchOption.TopDirectoryOnly));
             }
 
-            foreach (FileSystemInfo current in list)
+            foreach (FileSystemInfo fileSystemInfo in list)
             {
                 flag = false;
-                int length = current.FullName.Length - fullName.Length;
-                string text = current.FullName.Substring(fullName.Length, length);
-                text = text.TrimStart(new char[]
-                    {
-                        Path.DirectorySeparatorChar,
-                        Path.AltDirectorySeparatorChar
-                    });
+                int length = fileSystemInfo.FullName.Length - fullName.Length;
+                string entryName = fileSystemInfo.FullName.Substring(fullName.Length, length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-                if (current is FileInfo)
+                if (fileSystemInfo is FileInfo)
                 {
-                    this.CreateEntryFromFile(current.FullName, text);
+                    this.CreateEntryFromFile(fileSystemInfo.FullName, entryName);
                 }
                 else
                 {
-                    DirectoryInfo directoryInfo2 = current as DirectoryInfo;
-                    if (directoryInfo2 != null && ZipFile.IsDirEmpty(directoryInfo2))
+                    DirectoryInfo possiblyEmptyDir = fileSystemInfo as DirectoryInfo;
+
+                    if (possiblyEmptyDir != null && ZipFile.IsDirEmpty(possiblyEmptyDir))
                     {
-                        this.CreateEntry(text + Path.DirectorySeparatorChar);
+                        this.CreateEntryFromDirectory(possiblyEmptyDir.FullName, entryName + Path.DirectorySeparatorChar);
                     }
                 }
             }
 
-            if (includeBaseDirectory && flag)
+            if (!includeBaseDirectory || !flag)
             {
-                this.CreateEntry(directoryInfo.Name + Path.DirectorySeparatorChar);
+                return;
             }
+
+            this.CreateEntryFromDirectory(directoryInfo.FullName, directoryInfo.Name + Path.DirectorySeparatorChar);
         }
 
         /// <summary>
@@ -381,7 +499,7 @@ namespace DevLib.Compression
                         throw new IOException(CompressionConstants.DirectoryNameWithData);
                     }
 
-                    Directory.CreateDirectory(fullPath);
+                    current.ExtractToDirectory(fullPath, overwrite);
                 }
                 else
                 {
@@ -469,29 +587,6 @@ namespace DevLib.Compression
                         throw;
                     }
             }
-        }
-
-        private ZipArchiveEntry DoCreateEntry(string entryName)
-        {
-            if (entryName == null)
-            {
-                throw new ArgumentNullException("entryName");
-            }
-
-            if (string.IsNullOrEmpty(entryName))
-            {
-                throw new ArgumentException(CompressionConstants.CannotBeEmpty, "entryName");
-            }
-
-            if (this._mode == ZipArchiveMode.Read)
-            {
-                throw new NotSupportedException(CompressionConstants.CreateInReadMode);
-            }
-
-            this.ThrowIfDisposed();
-            ZipArchiveEntry entry = new ZipArchiveEntry(this, entryName);
-            this.AddEntry(entry);
-            return entry;
         }
 
         private void AddEntry(ZipArchiveEntry entry)

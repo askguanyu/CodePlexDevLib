@@ -83,7 +83,12 @@ namespace DevLib.Compression
 
         internal static uint DateTimeToDosTime(DateTime dateTime)
         {
-            return (uint)(((((((dateTime.Year - 1980 & (int)sbyte.MaxValue) << 4) + dateTime.Month << 5) + dateTime.Day << 5) + dateTime.Hour << 6) + dateTime.Minute << 5) + dateTime.Second / 2);
+            int num = dateTime.Year - 1980 & 127;
+            num = (num << 4) + dateTime.Month;
+            num = (num << 5) + dateTime.Day;
+            num = (num << 5) + dateTime.Hour;
+            num = (num << 6) + dateTime.Minute;
+            return (uint)((num << 5) + (dateTime.Second / 2));
         }
 
         internal static bool SeekBackwardsToSignature(Stream stream, uint signatureToFind)

@@ -70,7 +70,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(() =>
                 {
-                    TestCompression();
+                    //TestCompression();
                 });
 
                 CodeTimer.Time(delegate
@@ -126,21 +126,26 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.Compression");
 
-            var zip = ZipFile.OpenRead("c:\\22.zip");
-            foreach (ZipArchiveEntry item in zip.Entries)
-            {
-                Console.WriteLine(item.Name);
-            }
+            ZipFile.CreateFromDirectory("E:\\A", "E:\\1.zip", false, true);
 
-            zip.ExtractToDirectory("c:\\3\\4", true);
+            Console.ReadLine();
 
-            ZipFile.CreateFromDirectory("c:\\1", "c:\\1.zip", true, true);
-            ZipFile.CreateFromDirectory("c:\\1", "c:\\2.zip", true, false);
-            ZipFile.CreateFromDirectory("c:\\1", "c:\\3.zip", false, true);
-            ZipFile.CreateFromDirectory("c:\\1", "c:\\4.zip", false, false);
-            var zip1 = ZipFile.Open("c:\\4.zip", ZipArchiveMode.Update);
-            zip1.CreateEntryFromFile("c:\\22.zip", "22.zip");
-            zip1.Dispose();
+            ZipFile.OpenRead("E:\\1.zip").ExtractToDirectory("E:\\B", true);
+            //var zip = ZipFile.OpenRead("c:\\22.zip");
+            //foreach (ZipArchiveEntry item in zip.Entries)
+            //{
+            //    Console.WriteLine(item.Name);
+            //}
+
+            //zip.ExtractToDirectory("c:\\3\\4", true);
+
+            //ZipFile.CreateFromDirectory("c:\\1", "c:\\1.zip", true, true);
+            //ZipFile.CreateFromDirectory("c:\\1", "c:\\2.zip", true, false);
+            //ZipFile.CreateFromDirectory("c:\\1", "c:\\3.zip", false, true);
+            //ZipFile.CreateFromDirectory("c:\\1", "c:\\4.zip", false, false);
+            //var zip1 = ZipFile.Open("c:\\4.zip", ZipArchiveMode.Update);
+            //zip1.CreateEntryFromFile("c:\\22.zip", "22.zip");
+            //zip1.Dispose();
         }
 
         private static void TestDevLibServiceProcess(string[] args)

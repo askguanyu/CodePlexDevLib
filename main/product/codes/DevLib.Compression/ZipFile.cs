@@ -241,13 +241,33 @@ namespace DevLib.Compression
 
         private static void DoCreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, bool includeBaseDirectory, bool includeSubDirectories, Encoding entryNameEncoding)
         {
+            if (sourceDirectoryName == null)
+            {
+                throw new ArgumentNullException("sourceDirectoryName");
+            }
+
+            if (destinationArchiveFileName == null)
+            {
+                throw new ArgumentNullException("destinationArchiveFileName");
+            }
+
             sourceDirectoryName = Path.GetFullPath(sourceDirectoryName);
+
+            if (!Directory.Exists(sourceDirectoryName))
+            {
+                throw new DirectoryNotFoundException(sourceDirectoryName);
+            }
+
             destinationArchiveFileName = Path.GetFullPath(destinationArchiveFileName);
-            using (ZipArchive zipArchive = ZipFile.Open(destinationArchiveFileName, ZipArchiveMode.Create, entryNameEncoding))
+
+            using (ZipArchive destination = ZipFile.Open(destinationArchiveFileName, ZipArchiveMode.Create, entryNameEncoding))
             {
                 bool flag = true;
+
                 DirectoryInfo directoryInfo = new DirectoryInfo(sourceDirectoryName);
+
                 string fullName = directoryInfo.FullName;
+
                 if (includeBaseDirectory && directoryInfo.Parent != null)
                 {
                     fullName = directoryInfo.Parent.FullName;
@@ -266,35 +286,33 @@ namespace DevLib.Compression
                     list.AddRange(directoryInfo.GetFiles("*", SearchOption.TopDirectoryOnly));
                 }
 
-                foreach (FileSystemInfo current in list)
+                foreach (FileSystemInfo fileSystemInfo in list)
                 {
                     flag = false;
-                    int length = current.FullName.Length - fullName.Length;
-                    string text = current.FullName.Substring(fullName.Length, length);
-                    text = text.TrimStart(new char[]
-                    {
-                        Path.DirectorySeparatorChar,
-                        Path.AltDirectorySeparatorChar
-                    });
+                    int length = fileSystemInfo.FullName.Length - fullName.Length;
+                    string entryName = fileSystemInfo.FullName.Substring(fullName.Length, length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-                    if (current is FileInfo)
+                    if (fileSystemInfo is FileInfo)
                     {
-                        zipArchive.CreateEntryFromFile(current.FullName, text);
+                        destination.CreateEntryFromFile(fileSystemInfo.FullName, entryName);
                     }
                     else
                     {
-                        DirectoryInfo directoryInfo2 = current as DirectoryInfo;
-                        if (directoryInfo2 != null && ZipFile.IsDirEmpty(directoryInfo2))
+                        DirectoryInfo possiblyEmptyDir = fileSystemInfo as DirectoryInfo;
+
+                        if (possiblyEmptyDir != null && ZipFile.IsDirEmpty(possiblyEmptyDir))
                         {
-                            zipArchive.CreateEntry(text + Path.DirectorySeparatorChar);
+                            destination.CreateEntryFromDirectory(possiblyEmptyDir.FullName, entryName + Path.DirectorySeparatorChar);
                         }
                     }
                 }
 
-                if (includeBaseDirectory && flag)
+                if (!includeBaseDirectory || !flag)
                 {
-                    zipArchive.CreateEntry(directoryInfo.Name + Path.DirectorySeparatorChar);
+                    return;
                 }
+
+                destination.CreateEntryFromDirectory(directoryInfo.FullName, directoryInfo.Name + Path.DirectorySeparatorChar);
             }
         }
     }

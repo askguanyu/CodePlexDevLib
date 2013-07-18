@@ -64,6 +64,8 @@ namespace DevLib.Compression
 
         private byte[] _fileComment;
 
+        private uint _externalFileAttributes;
+
         internal ZipArchiveEntry(ZipArchive archive, ZipCentralDirectoryFileHeader cd)
         {
             this._archive = archive;
@@ -87,9 +89,10 @@ namespace DevLib.Compression
             this._lhUnknownExtraFields = (List<ZipGenericExtraField>)null;
             this._cdUnknownExtraFields = cd.ExtraFields;
             this._fileComment = cd.FileComment;
+            this._externalFileAttributes = cd.ExternalFileAttributes;
         }
 
-        internal ZipArchiveEntry(ZipArchive archive, string entryName)
+        internal ZipArchiveEntry(ZipArchive archive, string entryName, FileAttributes entryFileAttributes)
         {
             this._archive = archive;
             this._originallyInArchive = false;
@@ -112,6 +115,7 @@ namespace DevLib.Compression
             this._cdUnknownExtraFields = (List<ZipGenericExtraField>)null;
             this._lhUnknownExtraFields = (List<ZipGenericExtraField>)null;
             this._fileComment = (byte[])null;
+            this._externalFileAttributes = (uint)entryFileAttributes;
 
             if (this._storedEntryNameBytes.Length > (int)ushort.MaxValue)
             {
@@ -252,6 +256,17 @@ namespace DevLib.Compression
                 }
 
                 this._lastModified = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this entry is directory or not.
+        /// </summary>
+        public bool IsDirectory
+        {
+            get
+            {
+                return ((FileAttributes)this._externalFileAttributes & FileAttributes.Directory) != 0;
             }
         }
 
@@ -450,6 +465,40 @@ namespace DevLib.Compression
             }
 
             File.SetLastWriteTime(destinationFileName, this.LastWriteTime.DateTime);
+
+            File.SetAttributes(destinationFileName, (FileAttributes)this._externalFileAttributes);
+        }
+
+        /// <summary>
+        /// Extracts an entry in the zip archive to a directory, and optionally overwrites an existing directory attributes that has the same name.
+        /// </summary>
+        /// <param name="destinationDirectoryName">The path of the directory to create from the contents of the entry. You can specify either a relative or an absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="overwrite">true to overwrite an existing directory attributes that has the same name as the destination directory; otherwise, false.</param>
+        public void ExtractToDirectory(string destinationDirectoryName, bool overwrite)
+        {
+            if (destinationDirectoryName == null)
+            {
+                throw new ArgumentNullException("destinationDirectoryName");
+            }
+
+            if (!this.IsDirectory)
+            {
+                throw new InvalidOperationException(CompressionConstants.NotDirectory);
+            }
+
+            Directory.CreateDirectory(destinationDirectoryName);
+
+            if (overwrite)
+            {
+                try
+                {
+                    File.SetAttributes(destinationDirectoryName, (FileAttributes)this._externalFileAttributes);
+                    Directory.SetLastWriteTime(destinationDirectoryName, this.LastWriteTime.DateTime);
+                }
+                catch
+                {
+                }
+            }
         }
 
         /// <summary>
@@ -535,7 +584,7 @@ namespace DevLib.Compression
             binaryWriter.Write(this._fileComment != null ? (ushort)this._fileComment.Length : (ushort)0);
             binaryWriter.Write((ushort)0);
             binaryWriter.Write((ushort)0);
-            binaryWriter.Write(0U);
+            binaryWriter.Write(this._externalFileAttributes);
             binaryWriter.Write(num3);
             binaryWriter.Write(this._storedEntryNameBytes);
 
@@ -549,12 +598,10 @@ namespace DevLib.Compression
                 ZipGenericExtraField.WriteAllBlocks(this._cdUnknownExtraFields, this._archive.ArchiveStream);
             }
 
-            if (this._fileComment == null)
+            if (this._fileComment != null)
             {
-                return;
+                binaryWriter.Write(this._fileComment);
             }
-
-            binaryWriter.Write(this._fileComment);
         }
 
         internal bool LoadLocalHeaderExtraFieldAndCompressedBytesIfNeeded()
@@ -963,13 +1010,13 @@ namespace DevLib.Compression
 
         private class DirectToArchiveWriterStream : Stream
         {
+            private bool _isDisposed;
+
             private long _position;
 
             private CheckSumAndSizeWriteStream _crcSizeStream;
 
             private bool _everWritten;
-
-            private bool _isDisposed;
 
             private ZipArchiveEntry _entry;
 

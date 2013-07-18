@@ -52,5 +52,6 @@ namespace DevLib.Compression
         internal const string Zip64EOCDNotWhereExpected = "Zip 64 End of Central Directory Record not where indicated.";
         internal const string ExtractingResultsInOutside = "Extracting Zip entry would have resulted in a file outside the specified destination directory.";
         internal const string DirectoryNameWithData = "Zip entry name ends in directory separator character but contains data.";
+        internal const string NotDirectory = "Zip entry is not a directory.";
     }
 }

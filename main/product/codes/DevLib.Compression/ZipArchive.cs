@@ -376,7 +376,7 @@ namespace DevLib.Compression
 
             sourceDirectoryName = Path.GetFullPath(sourceDirectoryName);
 
-            if (Directory.Exists(sourceDirectoryName))
+            if (!Directory.Exists(sourceDirectoryName))
             {
                 throw new DirectoryNotFoundException(sourceDirectoryName);
             }

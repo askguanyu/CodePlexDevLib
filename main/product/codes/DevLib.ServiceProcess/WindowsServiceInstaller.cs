@@ -149,6 +149,29 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
+        /// When overridden in a derived class, completes the install transaction.
+        /// </summary>
+        /// <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the state of the computer after all the installers in the collection have run.</param>
+        public override void Commit(IDictionary savedState)
+        {
+            try
+            {
+                this.InitInstaller();
+
+                base.Commit(savedState);
+
+                if (this.InstallerSetupInfo.StartAfterInstall)
+                {
+                    WindowsServiceBase.Start(this.InstallerSetupInfo.ServiceName);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+            }
+        }
+
+        /// <summary>
         /// When overridden in a derived class, restores the pre-installation state of the computer.
         /// </summary>
         /// <param name="savedState">An <see cref="T:System.Collections.IDictionary" /> that contains the pre-installation state of the computer.</param>

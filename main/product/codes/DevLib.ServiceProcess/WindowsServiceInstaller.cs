@@ -15,6 +15,7 @@ namespace DevLib.ServiceProcess
     /// Class WindowsServiceInstaller.
     /// </summary>
     [RunInstaller(true)]
+    [ToolboxItem(false)]
     public class WindowsServiceInstaller : Installer
     {
         /// <summary>

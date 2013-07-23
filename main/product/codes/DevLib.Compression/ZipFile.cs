@@ -180,6 +180,7 @@ namespace DevLib.Compression
         /// <param name="sourceArchiveFileName">The path to the archive that is to be extracted.</param>
         /// <param name="destinationDirectoryName">The path to the directory in which to place the extracted files, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="overwrite">true to overwrite an existing file that has the same name as the destination file; otherwise, false.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <exception cref="T:System.ArgumentException"><paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> is <see cref="F:System.String.Empty"/>, contains only white space, or contains at least one invalid character.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> is null.</exception>
         /// <exception cref="T:System.IO.PathTooLongException">The specified path in <paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters.</exception>
@@ -189,9 +190,9 @@ namespace DevLib.Compression
         /// <exception cref="T:System.NotSupportedException"><paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> contains an invalid format.</exception>
         /// <exception cref="T:System.IO.FileNotFoundException"><paramref name="sourceArchiveFileName"/> was not found.</exception>
         /// <exception cref="T:System.IO.InvalidDataException">The archive specified by <paramref name="sourceArchiveFileName"/> is not a valid zip archive.-or-An archive entry was not found or was corrupt.-or-An archive entry was compressed by using a compression method that is not supported.</exception>
-        public static void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwrite)
+        public static void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwrite, bool throwOnError = false)
         {
-            ZipFile.ExtractToDirectory(sourceArchiveFileName, destinationDirectoryName, overwrite, null);
+            ZipFile.ExtractToDirectory(sourceArchiveFileName, destinationDirectoryName, overwrite, null, throwOnError);
         }
 
         /// <summary>
@@ -201,6 +202,7 @@ namespace DevLib.Compression
         /// <param name="destinationDirectoryName">The path to the directory in which to place the extracted files, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="overwrite">true to overwrite an existing file that has the same name as the destination file; otherwise, false.</param>
         /// <param name="entryNameEncoding">The encoding to use when reading or writing entry names in this archive. Specify a value for this parameter only when required for interoperability with ZIP archive tools and libraries that do not support UTF-8 encoding for entry names.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <exception cref="T:System.ArgumentException"><paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> is <see cref="F:System.String.Empty"/>, contains only white space, or contains at least one invalid character.-or-<paramref name="entryNameEncoding"/> is set to a Unicode encoding other than UTF-8.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> is null.</exception>
         /// <exception cref="T:System.IO.PathTooLongException">The specified path in <paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters.</exception>
@@ -210,7 +212,7 @@ namespace DevLib.Compression
         /// <exception cref="T:System.NotSupportedException"><paramref name="destinationDirectoryName"/> or <paramref name="sourceArchiveFileName"/> contains an invalid format.</exception>
         /// <exception cref="T:System.IO.FileNotFoundException"><paramref name="sourceArchiveFileName"/> was not found.</exception>
         /// <exception cref="T:System.IO.InvalidDataException">The archive specified by <paramref name="sourceArchiveFileName"/> is not a valid zip archive.-or-An archive entry was not found or was corrupt.-or-An archive entry was compressed by using a compression method that is not supported.</exception>
-        public static void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwrite, Encoding entryNameEncoding)
+        public static void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwrite, Encoding entryNameEncoding, bool throwOnError = false)
         {
             if (sourceArchiveFileName == null)
             {
@@ -219,7 +221,7 @@ namespace DevLib.Compression
 
             using (ZipArchive zipArchive = ZipFile.Open(sourceArchiveFileName, ZipArchiveMode.Read, entryNameEncoding))
             {
-                zipArchive.ExtractToDirectory(destinationDirectoryName, overwrite);
+                zipArchive.ExtractToDirectory(destinationDirectoryName, overwrite, throwOnError);
             }
         }
 

@@ -467,6 +467,7 @@ namespace DevLib.Compression
         /// </summary>
         /// <param name="destinationDirectoryName">The path to the directory to place the extracted files in. You can specify either a relative or an absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="overwrite">true to overwrite an existing file that has the same name as the destination file; otherwise, false.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <exception cref="T:System.ArgumentException"><paramref name="destinationDirectoryName"/> is <see cref="F:System.String.Empty"/>, contains only white space, or contains at least one invalid character.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="destinationDirectoryName"/> is null.</exception>
         /// <exception cref="T:System.IO.PathTooLongException">The specified path exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters.</exception>
@@ -475,7 +476,7 @@ namespace DevLib.Compression
         /// <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission to write to the destination directory.</exception>
         /// <exception cref="T:System.NotSupportedException"><paramref name="destinationDirectoryName"/> contains an invalid format.</exception>
         /// <exception cref="T:System.IO.InvalidDataException">An archive entry cannot be found or is corrupt.-or-An archive entry was compressed by using a compression method that is not supported.</exception>
-        public void ExtractToDirectory(string destinationDirectoryName, bool overwrite)
+        public void ExtractToDirectory(string destinationDirectoryName, bool overwrite, bool throwOnError = false)
         {
             if (destinationDirectoryName == null)
             {
@@ -489,22 +490,49 @@ namespace DevLib.Compression
                 string fullPath = Path.GetFullPath(Path.Combine(fullName, current.FullName));
                 if (!fullPath.StartsWith(fullName, StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new IOException(CompressionConstants.ExtractingResultsInOutside);
+                    if (throwOnError)
+                    {
+                        throw new IOException(CompressionConstants.ExtractingResultsInOutside);
+                    }
                 }
 
                 if (Path.GetFileName(fullPath).Length == 0)
                 {
                     if (current.Length != 0L)
                     {
-                        throw new IOException(CompressionConstants.DirectoryNameWithData);
+                        if (throwOnError)
+                        {
+                            throw new IOException(CompressionConstants.DirectoryNameWithData);
+                        }
                     }
 
-                    current.ExtractToDirectory(fullPath, overwrite);
+                    try
+                    {
+                        current.ExtractToDirectory(fullPath, overwrite);
+                    }
+                    catch
+                    {
+                        if (throwOnError)
+                        {
+                            throw;
+                        }
+                    }
                 }
                 else
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-                    current.ExtractToFile(fullPath, overwrite);
+
+                    try
+                    {
+                        current.ExtractToFile(fullPath, overwrite);
+                    }
+                    catch
+                    {
+                        if (throwOnError)
+                        {
+                            throw;
+                        }
+                    }
                 }
             }
         }

@@ -100,11 +100,6 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
-                });
-
-                CodeTimer.Time(delegate
-                {
                     //TestDevLibServiceModel();
                 });
 
@@ -116,6 +111,11 @@ namespace DevLib.Samples
                 CodeTimer.Time(delegate
                 {
                     //TestDevLibConfiguration();
+                });
+
+                CodeTimer.Time(delegate
+                {
+                    new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
                 });
 
                 PrintExitInfo();

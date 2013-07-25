@@ -638,17 +638,26 @@ namespace DevLib.ExtensionMethods
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static void ExecuteCmdLine(this string sourceCmd, int milliseconds)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
-            startInfo.Arguments = string.Format(" /c  {0}", sourceCmd);
-            startInfo.CreateNoWindow = true;
-            startInfo.ErrorDialog = false;
-            startInfo.UseShellExecute = true;
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            Process process = Process.Start(startInfo);
-
-            if (milliseconds > 0)
+            try
             {
-                process.WaitForExit(milliseconds);
+                ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
+                startInfo.Arguments = string.Format(" /c  {0}", sourceCmd);
+                startInfo.CreateNoWindow = true;
+                startInfo.ErrorDialog = false;
+                startInfo.UseShellExecute = true;
+                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                Process process = Process.Start(startInfo);
+
+                if (milliseconds > 0)
+                {
+                    if (process.WaitForExit(milliseconds))
+                    {
+                        process.Dispose();
+                    }
+                }
+            }
+            catch
+            {
             }
         }
 

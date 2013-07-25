@@ -9,6 +9,8 @@ namespace DevLib.ServiceProcess
     using System.Collections;
     using System.ComponentModel;
     using System.Configuration.Install;
+    using System.Diagnostics;
+    using System.IO;
     using System.ServiceProcess;
 
     /// <summary>
@@ -205,6 +207,28 @@ namespace DevLib.ServiceProcess
         /// <param name="e">Instance of InstallEventArgs.</param>
         private void OnWindowsServiceInstallerCommitted(object sender, InstallEventArgs e)
         {
+            if (this.InstallerSetupInfo.RestartOnFailure)
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
+                    startInfo.Arguments = string.Format(" /c  {0}", string.Format("sc failure \"{0}\" reset= 30 actions= restart/60000", this.InstallerSetupInfo.ServiceName));
+                    startInfo.CreateNoWindow = true;
+                    startInfo.ErrorDialog = false;
+                    startInfo.UseShellExecute = true;
+                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    Process process = Process.Start(startInfo);
+
+                    if (process.WaitForExit(5000))
+                    {
+                        process.Dispose();
+                    }
+                }
+                catch
+                {
+                }
+            }
+
             if (this.InstallerSetupInfo.StartAfterInstall)
             {
                 WindowsServiceBase.Start(this.InstallerSetupInfo.ServiceName);

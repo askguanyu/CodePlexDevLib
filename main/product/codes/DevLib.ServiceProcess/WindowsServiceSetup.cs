@@ -127,6 +127,15 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to restart service after failure.
+        /// </summary>
+        public bool RestartOnFailure
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether to report Start, Stop, Pause, and Continue commands in the event log.
         /// </summary>
         public bool AutoLog
@@ -240,6 +249,7 @@ namespace DevLib.ServiceProcess
 
             this.StartType = ServiceStartMode.Automatic;
             this.StartAfterInstall = true;
+            this.RestartOnFailure = true;
             this.AutoLog = true;
             this.CanHandlePowerEvent = true;
             this.CanHandleSessionChangeEvent = true;

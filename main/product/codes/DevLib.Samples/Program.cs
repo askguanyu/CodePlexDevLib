@@ -60,7 +60,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(() =>
                 {
-                    TestCodeSnippets();
+                    //TestCodeSnippets();
                 });
 
                 CodeTimer.Time(delegate

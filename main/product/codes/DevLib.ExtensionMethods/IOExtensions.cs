@@ -32,6 +32,7 @@ namespace DevLib.ExtensionMethods
             }
 
             string fullPath = Path.GetFullPath(fileName);
+
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
             if (!overwrite && File.Exists(fullPath))
@@ -85,6 +86,7 @@ namespace DevLib.ExtensionMethods
             }
 
             string fullPath = Path.GetFullPath(fileName);
+
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
             if (!Directory.Exists(fullDirectoryPath))
@@ -202,6 +204,7 @@ namespace DevLib.ExtensionMethods
             }
 
             string fullPath = Path.GetFullPath(fileName);
+
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
             if (!overwrite && File.Exists(fullPath))
@@ -224,6 +227,7 @@ namespace DevLib.ExtensionMethods
             try
             {
                 File.WriteAllBytes(fullPath, bytes);
+
                 return fullPath;
             }
             catch
@@ -283,6 +287,7 @@ namespace DevLib.ExtensionMethods
             }
 
             string fullPath = Path.GetFullPath(fileName);
+
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
             if (!overwrite && File.Exists(fullPath))
@@ -329,11 +334,13 @@ namespace DevLib.ExtensionMethods
             }
 
             string fullPath = Path.GetFullPath(fileName);
+
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
             try
             {
                 Process.Start("explorer.exe", fullDirectoryPath);
+
                 return fullPath;
             }
             catch
@@ -412,6 +419,7 @@ namespace DevLib.ExtensionMethods
             string sourceFullPath = Path.GetFullPath(sourceFileName);
 
             string destFullPath = Path.GetFullPath(destFileName);
+
             string destFullDirectoryPath = Path.GetDirectoryName(destFileName);
 
             if (File.Exists(destFullPath))
@@ -441,6 +449,7 @@ namespace DevLib.ExtensionMethods
             try
             {
                 File.Move(sourceFullPath, destFullPath);
+
                 return destFullPath;
             }
             catch
@@ -455,7 +464,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="sourceFileName">The file to copy.</param>
         /// <param name="destFileName">The name of the destination file. This cannot be a directory.</param>
         /// <param name="overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        /// <returns>Full path of the destination file name if move file succeeded.</returns>
+        /// <returns>Full path of the destination file name if copy file succeeded.</returns>
         public static string CopyFileTo(this string sourceFileName, string destFileName, bool overwrite = false)
         {
             if (string.IsNullOrEmpty(sourceFileName))
@@ -471,6 +480,7 @@ namespace DevLib.ExtensionMethods
             string sourceFullPath = Path.GetFullPath(sourceFileName);
 
             string destFullPath = Path.GetFullPath(destFileName);
+
             string destFullDirectoryPath = Path.GetDirectoryName(destFileName);
 
             if (!Directory.Exists(destFullDirectoryPath))
@@ -488,11 +498,157 @@ namespace DevLib.ExtensionMethods
             try
             {
                 File.Copy(sourceFullPath, destFullPath, overwrite);
+
                 return destFullPath;
             }
             catch
             {
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Copies a directory to a new directory. Overwriting a file of the same name is allowed.
+        /// </summary>
+        /// <param name="sourceDirectory">The directory to copy.</param>
+        /// <param name="destDirectory">The name of the destination directory.</param>
+        /// <param name="overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>Full path of the destination directory if copy succeeded; otherwise, String.Empty.</returns>
+        public static string CopyDirectoryTo(this string sourceDirectory, string destDirectory, bool overwrite = true, bool throwOnError = false)
+        {
+            if (string.IsNullOrEmpty(sourceDirectory))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("sourceFileName");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+            if (string.IsNullOrEmpty(destDirectory))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("destFileName");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+            string sourceFullPath = Path.GetFullPath(sourceDirectory);
+
+            string destFullPath = Path.GetFullPath(destDirectory);
+
+            if (sourceFullPath.Equals(destFullPath, StringComparison.OrdinalIgnoreCase))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentException("Source directory and destination directory are the same.");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+            if (!Directory.Exists(sourceDirectory))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentException(string.Format("{0} does not exist.", sourceFullPath), "sourceDirectory");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+
+            try
+            {
+                string[] files = Directory.GetFiles(sourceFullPath, "*.*", SearchOption.AllDirectories);
+
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        file.CopyFileTo(file.Replace(sourceFullPath, destFullPath), overwrite);
+                    }
+                    catch
+                    {
+                        if (throwOnError)
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                return destFullPath;
+            }
+            catch
+            {
+                if (throwOnError)
+                {
+                    throw;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the given path is a directory or not.
+        /// </summary>
+        /// <param name="sourcePath">The path to test.</param>
+        /// <returns>true if path is a directory; otherwise, false.</returns>
+        public static bool IsDirectory(this string sourcePath)
+        {
+            FileInfo fileInfo = new FileInfo(sourcePath);
+            return fileInfo.Attributes != (FileAttributes)(-1) && (fileInfo.Attributes & FileAttributes.Directory) != 0;
+        }
+
+        /// <summary>
+        /// Determines whether the given path refers to an existing directory or a file on disk.
+        /// </summary>
+        /// <param name="source">The path to test.</param>
+        /// <returns>true if path refers to an existing directory or a file; otherwise, false.</returns>
+        public static bool ExistsFileSystem(this string source)
+        {
+            FileInfo fileInfo = new FileInfo(source);
+            bool isDirectory = fileInfo.Attributes != (FileAttributes)(-1) && (fileInfo.Attributes & FileAttributes.Directory) != 0;
+            return isDirectory ? true : fileInfo.Exists;
+        }
+
+        /// <summary>
+        /// Execute a command line.
+        /// </summary>
+        /// <param name="sourceCmd">A command line to execute.</param>
+        /// <param name="milliseconds">
+        /// The amount of time, in milliseconds, to wait for the command to exit.
+        /// The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.
+        /// Less than or equal to Zero if do not wait for the command to exit.
+        /// </param>
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+        public static void ExecuteCmdLine(this string sourceCmd, int milliseconds)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
+            startInfo.Arguments = string.Format(" /c  {0}", sourceCmd);
+            startInfo.CreateNoWindow = true;
+            startInfo.ErrorDialog = false;
+            startInfo.UseShellExecute = true;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            Process process = Process.Start(startInfo);
+
+            if (milliseconds > 0)
+            {
+                process.WaitForExit(milliseconds);
             }
         }
 

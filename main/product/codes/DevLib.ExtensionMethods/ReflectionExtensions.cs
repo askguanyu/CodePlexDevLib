@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Linq;
     using System.Reflection;
 
     /// <summary>
@@ -45,7 +46,41 @@ namespace DevLib.ExtensionMethods
         /// <returns>The return value of the invoked method.</returns>
         public static object InvokeMethod(this object source, string method, params object[] parameters)
         {
-            MethodInfo methodInfo = source.GetType().GetMethod(method);
+            MethodInfo methodInfo = null;
+
+            Type[] parameterTypes = parameters.Select(p => p.GetType()).ToArray();
+
+            try
+            {
+                methodInfo = source.GetType().GetMethod(method, parameterTypes);
+            }
+            catch (AmbiguousMatchException)
+            {
+                var methods = source.GetType().GetMethods().Where(p => p.Name.Equals(method, StringComparison.OrdinalIgnoreCase) && !p.IsGenericMethod);
+
+                foreach (MethodInfo item in methods)
+                {
+                    var methodParameters = item.GetParameters();
+
+                    if (methodParameters.Length != parameters.Length)
+                    {
+                        continue;
+                    }
+
+                    for (int i = 0; i < methodParameters.Length; i++)
+                    {
+                        if (methodParameters[i].ParameterType != parameterTypes[i])
+                        {
+                            break;
+                        }
+                    }
+
+                    methodInfo = item;
+
+                    break;
+                }
+            }
+
             return methodInfo.Invoke(source, parameters);
         }
 
@@ -59,8 +94,58 @@ namespace DevLib.ExtensionMethods
         /// <returns>The return value of the invoked method.</returns>
         public static object InvokeMethodGeneric(this object source, string method, object[] parameters = null, params Type[] typeArguments)
         {
-            MethodInfo methodInfo = source.GetType().GetMethod(method).MakeGenericMethod(typeArguments);
-            return methodInfo.Invoke(source, parameters);
+            MethodInfo methodInfo = null;
+
+            Type[] parameterTypes;
+
+            if (parameters == null)
+            {
+                parameterTypes = Type.EmptyTypes;
+            }
+            else
+            {
+                parameterTypes = parameters.Select(p => p.GetType()).ToArray();
+            }
+
+            try
+            {
+                methodInfo = source.GetType().GetMethod(method, parameterTypes).MakeGenericMethod(typeArguments);
+            }
+            catch (AmbiguousMatchException)
+            {
+                var methods = source.GetType().GetMethods().Where(p => p.Name.Equals(method, StringComparison.OrdinalIgnoreCase) && p.IsGenericMethod);
+
+                foreach (MethodInfo item in methods)
+                {
+                    var typeArgs = item.GetGenericArguments();
+
+                    if (typeArgs.Length != typeArguments.Length)
+                    {
+                        continue;
+                    }
+
+                    var methodParameters = item.GetParameters();
+
+                    if (methodParameters.Length != parameterTypes.Length)
+                    {
+                        continue;
+                    }
+
+                    for (int i = 0; i < methodParameters.Length; i++)
+                    {
+                        if (methodParameters[i].ParameterType != parameterTypes[i])
+                        {
+                            break;
+                        }
+                    }
+
+                    methodInfo = item;
+
+                    break;
+                }
+            }
+
+            return methodInfo.MakeGenericMethod(typeArguments).Invoke(source, parameters);
         }
 
         /// <summary>

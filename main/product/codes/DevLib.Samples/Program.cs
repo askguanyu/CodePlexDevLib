@@ -60,7 +60,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(() =>
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 CodeTimer.Time(delegate
@@ -358,6 +358,11 @@ namespace DevLib.Samples
         private static void TestCodeSnippets()
         {
             PrintMethodName("Test CodeSnippets");
+
+            object aPerson = new Person();
+            aPerson.InvokeMethod("ShowName");
+            aPerson.InvokeMethodGeneric("ShowName", null, typeof(string));
+
 
             DateTime a = new DateTime();
             a.IsWeekend().ConsoleOutput();
@@ -1489,6 +1494,8 @@ namespace DevLib.Samples
     [TypeConverterAttribute(typeof(ExpandableObjectConverter))]
     public class Person
     {
+        public string Foo { get; set; }
+
         public Person()
         {
 
@@ -1506,6 +1513,31 @@ namespace DevLib.Samples
             FirstName = newfName;
             LastName = newLName;
             ID = newID;
+        }
+
+        public void ShowName()
+        {
+            Console.WriteLine("Normal Method");
+        }
+
+        public void ShowName(string a)
+        {
+            Console.WriteLine("Normal Method a");
+        }
+
+        public void ShowName<T>()
+        {
+            Console.WriteLine("Generic Method");
+        }
+
+        public void ShowName<T>(string a)
+        {
+            Console.WriteLine("Generic Method a");
+        }
+
+        public void ShowName<T0, T1>()
+        {
+            Console.WriteLine("Generic Method");
         }
     }
 

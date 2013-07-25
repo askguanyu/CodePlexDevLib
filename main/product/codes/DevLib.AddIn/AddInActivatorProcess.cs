@@ -602,7 +602,7 @@ namespace DevLib.AddIn
         /// <param name="e">Instance of DataReceivedEventArgs.</param>
         private void OnProcessDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.Data))
+            if (e.Data != null)
             {
                 string output = string.Format(AddInConstants.ProcessOutputStringFormat, this._friendlyName, e.Data);
 

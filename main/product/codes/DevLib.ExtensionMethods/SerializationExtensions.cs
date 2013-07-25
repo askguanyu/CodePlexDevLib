@@ -254,7 +254,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <returns>File full path.</returns>
-        public static string WriteXml(this object source, string fileName, bool overwrite = false, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true)
+        public static string WriteXml(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true)
         {
             if (source == null)
             {

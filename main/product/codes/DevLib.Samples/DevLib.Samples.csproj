@@ -58,12 +58,18 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.DirectoryServices.Protocols" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -135,6 +141,10 @@
       <Project>{40b2a751-81aa-4873-8477-3025c8ce2795}</Project>
       <Name>DevLib.ServiceProcess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.TerminalServices\DevLib.TerminalServices.csproj">
+      <Project>{254E792E-ECFC-4617-9286-77609816B773}</Project>
+      <Name>DevLib.TerminalServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Utilities\DevLib.Utilities.csproj">
       <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>
       <Name>DevLib.Utilities</Name>
@@ -168,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

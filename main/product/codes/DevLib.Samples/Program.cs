@@ -32,6 +32,7 @@ namespace DevLib.Samples
     using System.Xml;
     using System.Xml.Linq;
     using DevLib.AddIn;
+    using DevLib.Compression;
     using DevLib.Configuration;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
@@ -42,9 +43,9 @@ namespace DevLib.Samples
     using DevLib.Net.Ftp;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;
+    using DevLib.TerminalServices;
     using DevLib.Utilities;
     using DevLib.WinForms;
-    using DevLib.Compression;
 
     public class Program
     {
@@ -110,6 +111,11 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
+                    //TestDevLibTerminalServices();
+                });
+
+                CodeTimer.Time(delegate
+                {
                     //TestDevLibConfiguration();
                 });
 
@@ -120,6 +126,57 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestDevLibTerminalServices()
+        {
+            PrintMethodName("Test DevLib.TerminalServices");
+
+            //string domainname = string.Empty;
+
+            //SelectQuery query = new SelectQuery("Win32_ComputerSystem");
+
+            //using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+            //{
+            //    foreach (ManagementObject mo in searcher.Get())
+            //    {
+            //        if ((bool)mo["partofdomain"])
+            //        {
+            //            domainname = mo["domain"].ToString();
+            //            break;
+            //        }
+            //    }
+            //}
+
+            Console.WriteLine(SystemInformation.UserDomainName);
+
+            foreach (var item in TerminalServicesManager.GetServers(SystemInformation.UserDomainName))
+            {
+                item.Open();
+                Console.WriteLine(item.ServerName);
+                item.Dispose();
+            }
+
+
+
+            //DevLib.TerminalServices.RemoteServerHandle
+            foreach (var item in TerminalServicesManager.GetLocalServer().GetSessions())
+            {
+                Console.WriteLine(@"/--------\");
+                try
+                {
+                    Console.WriteLine(item.MessageBox("Hello", "123456789", false, 5, RemoteMessageBoxButtons.YesNoCancel, RemoteMessageBoxIcon.Exclamation));
+                }
+                catch
+                {
+                    //Console.WriteLine(e);
+                }
+                Console.WriteLine(item.SessionId);
+                Console.WriteLine(item.UserName);
+                Console.WriteLine(item.WindowStationName);
+                Console.WriteLine(item.ConnectState);
+                Console.WriteLine(@"\--------/");
+            }
         }
 
         private static void TestCompression()

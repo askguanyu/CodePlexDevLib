@@ -36,9 +36,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Configuration", "Dev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Compression", "DevLib.Compression\DevLib.Compression.csproj", "{D43C60CD-B4EE-4589-B3FB-DE4CEEF85A61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.TerminalServices", "DevLib.TerminalServices\DevLib.TerminalServices.csproj", "{254E792E-ECFC-4617-9286-77609816B773}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 15
+		SccNumberOfProjects = 16
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -85,6 +87,9 @@ Global
 		SccProjectUniqueName14 = DevLib.Compression\\DevLib.Compression.csproj
 		SccProjectName14 = DevLib.Compression
 		SccLocalPath14 = DevLib.Compression
+		SccProjectUniqueName15 = DevLib.TerminalServices\\DevLib.TerminalServices.csproj
+		SccProjectName15 = DevLib.TerminalServices
+		SccLocalPath15 = DevLib.TerminalServices
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -243,6 +248,16 @@ Global
 		{D43C60CD-B4EE-4589-B3FB-DE4CEEF85A61}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D43C60CD-B4EE-4589-B3FB-DE4CEEF85A61}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D43C60CD-B4EE-4589-B3FB-DE4CEEF85A61}.Release|x86.ActiveCfg = Release|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{254E792E-ECFC-4617-9286-77609816B773}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

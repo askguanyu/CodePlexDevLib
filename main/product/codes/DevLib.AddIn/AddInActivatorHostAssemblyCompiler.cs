@@ -36,9 +36,9 @@ namespace DevLib.AddIn
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static string CreateRemoteHostAssembly(string friendlyName, AddInDomainSetup addInDomainSetup)
         {
-            if (!Directory.Exists(addInDomainSetup.ExeFileDirectory))
+            if (!Directory.Exists(addInDomainSetup.TempFilesDirectory))
             {
-                Directory.CreateDirectory(addInDomainSetup.ExeFileDirectory);
+                Directory.CreateDirectory(addInDomainSetup.TempFilesDirectory);
             }
 
             ////Dictionary<string, string> providerOptions = new Dictionary<string, string> { { "CompilerVersion", "v2.0" } };
@@ -51,7 +51,7 @@ namespace DevLib.AddIn
             compilerParameters.CompilerOptions = string.Join(" ", compilerArgs.ToArray());
             compilerParameters.GenerateExecutable = true;
             compilerParameters.GenerateInMemory = false;
-            compilerParameters.OutputAssembly = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName));
+            compilerParameters.OutputAssembly = Path.Combine(addInDomainSetup.TempFilesDirectory, string.Format(OutputAssemblyFileStringFormat, friendlyName));
             compilerParameters.ReferencedAssemblies.AddRange(ReferencedAssemblies);
 
             string assemblySource = DevLib.AddIn.Properties.Resources.Program.Replace("$[AddInActivatorHostTypeName]", typeof(AddInActivatorHost).AssemblyQualifiedName).Replace("$[AddInAssemblyName]", typeof(AddInActivatorHost).Assembly.FullName);

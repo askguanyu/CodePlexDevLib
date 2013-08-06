@@ -27,6 +27,11 @@ namespace DevLib.AddIn
         private AppDomainSetup _appDomainSetup;
 
         /// <summary>
+        /// Field _tempFilesDirectory.
+        /// </summary>
+        private string _tempFilesDirectory;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AddInDomainSetup" /> class.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
@@ -37,7 +42,7 @@ namespace DevLib.AddIn
             this.DllDirectory = Directory.GetCurrentDirectory();
             this.EnvironmentVariables = new Dictionary<string, string>();
             this.Evidence = AppDomain.CurrentDomain.Evidence;
-            this.ExeFileDirectory = Path.GetTempPath();
+            this.TempFilesDirectory = Path.GetTempPath();
             this.ExternalAssemblies = new Dictionary<AssemblyName, string>();
             this.Platform = PlatformTargetEnum.AnyCPU;
             this.ProcessPriority = ProcessPriorityClass.Normal;
@@ -48,12 +53,24 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets or sets where the temporary remote process executable file will be created.
+        /// Gets or sets where the temporary remote process executable file and shadow copy files will be created.
         /// </summary>
-        public string ExeFileDirectory
+        public string TempFilesDirectory
         {
-            get;
-            set;
+            get
+            {
+                return this._tempFilesDirectory;
+            }
+
+            set
+            {
+                this._tempFilesDirectory = value;
+
+                if (this._appDomainSetup != null)
+                {
+                    this._appDomainSetup.ShadowCopyDirectories = this._tempFilesDirectory;
+                }
+            }
         }
 
         /// <summary>
@@ -66,7 +83,7 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets or sets a directory to invoke SetDllDirectory with to redirect DLL probing to the working directory.
+        /// Gets or sets a directory to redirect DLL probing to the working directory.
         /// </summary>
         public string DllDirectory
         {
@@ -115,8 +132,10 @@ namespace DevLib.AddIn
             set
             {
                 this._appDomainSetup = value;
+
                 this._appDomainSetup.ShadowCopyFiles = "true";
-                this._appDomainSetup.ShadowCopyDirectories = this._appDomainSetup.ApplicationBase;
+
+                this._appDomainSetup.ShadowCopyDirectories = this._tempFilesDirectory ?? Path.GetTempPath();
             }
         }
 
@@ -127,12 +146,12 @@ namespace DevLib.AddIn
         {
             get
             {
-                return this.AppDomainSetup.PrivateBinPath;
+                return this._appDomainSetup.PrivateBinPath;
             }
 
             set
             {
-                this.AppDomainSetup.PrivateBinPath = value;
+                this._appDomainSetup.PrivateBinPath = value;
             }
         }
 

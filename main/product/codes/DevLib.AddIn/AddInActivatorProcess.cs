@@ -92,8 +92,8 @@ namespace DevLib.AddIn
             this._redirectOutput = redirectOutput;
             this._addInDomainSetup = addInDomainSetup;
             this._assemblyFile = AddInActivatorHostAssemblyCompiler.CreateRemoteHostAssembly(friendlyName, addInDomainSetup);
-            this._addInDomainSetupFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(ConfigFileStringFormat, friendlyName));
-            this._addInDomainLogFile = Path.Combine(addInDomainSetup.ExeFileDirectory, string.Format(LogFileStringFormat, friendlyName));
+            this._addInDomainSetupFile = Path.Combine(addInDomainSetup.TempFilesDirectory, string.Format(ConfigFileStringFormat, friendlyName));
+            this._addInDomainLogFile = Path.Combine(addInDomainSetup.TempFilesDirectory, string.Format(LogFileStringFormat, friendlyName));
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.CreateNoWindow = true;

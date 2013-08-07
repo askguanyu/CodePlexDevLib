@@ -419,7 +419,7 @@ namespace DevLib.Compression
                 {
                     DirectoryInfo possiblyEmptyDir = fileSystemInfo as DirectoryInfo;
 
-                    if (possiblyEmptyDir != null && ZipFile.IsDirEmpty(possiblyEmptyDir))
+                    if (possiblyEmptyDir != null && ZipHelper.IsDirEmpty(possiblyEmptyDir))
                     {
                         this.CreateEntryFromDirectory(possiblyEmptyDir.FullName, entryName + Path.DirectorySeparatorChar);
                     }

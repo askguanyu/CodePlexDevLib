@@ -68,7 +68,7 @@ namespace DevLib.AddIn
 
                 if (this._appDomainSetup != null)
                 {
-                    this._appDomainSetup.ShadowCopyDirectories = this._tempFilesDirectory;
+                    this._appDomainSetup.CachePath = this._tempFilesDirectory ?? Path.GetTempPath();
                 }
             }
         }
@@ -135,7 +135,7 @@ namespace DevLib.AddIn
 
                 this._appDomainSetup.ShadowCopyFiles = "true";
 
-                this._appDomainSetup.ShadowCopyDirectories = this._tempFilesDirectory ?? Path.GetTempPath();
+                this._appDomainSetup.CachePath = this._tempFilesDirectory ?? Path.GetTempPath();
             }
         }
 

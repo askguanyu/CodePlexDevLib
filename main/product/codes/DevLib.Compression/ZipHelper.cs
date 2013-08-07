@@ -27,6 +27,11 @@ namespace DevLib.Compression
             return Path.GetFileName(test) == string.Empty;
         }
 
+        internal static bool IsDirEmpty(DirectoryInfo possiblyEmptyDir)
+        {
+            return possiblyEmptyDir.GetFileSystemInfos("*").Length == 0;
+        }
+
         internal static bool RequiresUnicode(string test)
         {
             foreach (int num in test)
@@ -93,32 +98,25 @@ namespace DevLib.Compression
 
         internal static bool SeekBackwardsToSignature(Stream stream, uint signatureToFind)
         {
-            int bufferPointer = 0;
-            uint num = 0U;
-            byte[] buffer = new byte[32];
-            bool flag1 = false;
+            int num = 0;
+            uint num2 = 0u;
+            byte[] array = new byte[32];
+            bool flag = false;
             bool flag2 = false;
-        label_6:
-            while (!flag2 && !flag1)
+
+            while (!flag2 && !flag)
             {
-                flag1 = ZipHelper.SeekBackwardsAndRead(stream, buffer, out bufferPointer);
-                while (true)
+                flag = ZipHelper.SeekBackwardsAndRead(stream, array, out num);
+                while (num >= 0 && !flag2)
                 {
-                    if (bufferPointer >= 0 && !flag2)
+                    num2 = num2 << 8 | (uint)array[num];
+                    if (num2 == signatureToFind)
                     {
-                        num = num << 8 | (uint)buffer[bufferPointer];
-                        if ((int)num == (int)signatureToFind)
-                        {
-                            flag2 = true;
-                        }
-                        else
-                        {
-                            --bufferPointer;
-                        }
+                        flag2 = true;
                     }
                     else
                     {
-                        goto label_6;
+                        num--;
                     }
                 }
             }
@@ -128,7 +126,7 @@ namespace DevLib.Compression
                 return false;
             }
 
-            stream.Seek((long)bufferPointer, SeekOrigin.Current);
+            stream.Seek((long)num, SeekOrigin.Current);
 
             return true;
         }

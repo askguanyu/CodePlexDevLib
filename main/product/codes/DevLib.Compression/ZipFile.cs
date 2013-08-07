@@ -225,22 +225,6 @@ namespace DevLib.Compression
             }
         }
 
-        internal static bool IsDirEmpty(DirectoryInfo possiblyEmptyDir)
-        {
-            List<FileSystemInfo> list = new List<FileSystemInfo>();
-
-            list.AddRange(possiblyEmptyDir.GetDirectories("*", SearchOption.AllDirectories));
-
-            list.AddRange(possiblyEmptyDir.GetFiles("*", SearchOption.AllDirectories));
-
-            if (list.Count < 1)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         private static void DoCreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, bool includeBaseDirectory, bool includeSubDirectories, Encoding entryNameEncoding)
         {
             if (sourceDirectoryName == null)
@@ -302,7 +286,7 @@ namespace DevLib.Compression
                     {
                         DirectoryInfo possiblyEmptyDir = fileSystemInfo as DirectoryInfo;
 
-                        if (possiblyEmptyDir != null && ZipFile.IsDirEmpty(possiblyEmptyDir))
+                        if (possiblyEmptyDir != null && ZipHelper.IsDirEmpty(possiblyEmptyDir))
                         {
                             destination.CreateEntryFromDirectory(possiblyEmptyDir.FullName, entryName + Path.DirectorySeparatorChar);
                         }

@@ -27,11 +27,6 @@ namespace DevLib.AddIn
         private AppDomainSetup _appDomainSetup;
 
         /// <summary>
-        /// Field _tempFilesDirectory.
-        /// </summary>
-        private string _tempFilesDirectory;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AddInDomainSetup" /> class.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
@@ -53,24 +48,12 @@ namespace DevLib.AddIn
         }
 
         /// <summary>
-        /// Gets or sets where the temporary remote process executable file and shadow copy files will be created.
+        /// Gets or sets where the temporary remote process executable file and other files will be created.
         /// </summary>
         public string TempFilesDirectory
         {
-            get
-            {
-                return this._tempFilesDirectory;
-            }
-
-            set
-            {
-                this._tempFilesDirectory = value;
-
-                if (this._appDomainSetup != null)
-                {
-                    this._appDomainSetup.CachePath = this._tempFilesDirectory ?? Path.GetTempPath();
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -134,8 +117,6 @@ namespace DevLib.AddIn
                 this._appDomainSetup = value;
 
                 this._appDomainSetup.ShadowCopyFiles = "true";
-
-                this._appDomainSetup.CachePath = this._tempFilesDirectory ?? Path.GetTempPath();
             }
         }
 

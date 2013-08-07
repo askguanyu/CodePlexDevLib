@@ -22,17 +22,12 @@ namespace DevLib.AddIn
     public sealed class AddInDomainSetup
     {
         /// <summary>
-        /// Field _appDomainSetup.
-        /// </summary>
-        private AppDomainSetup _appDomainSetup;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AddInDomainSetup" /> class.
         /// </summary>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public AddInDomainSetup()
         {
-            this.AppDomainSetup = AppDomain.CurrentDomain.SetupInformation;
+            this.AppDomainSetup = this.CloneDeep(AppDomain.CurrentDomain.SetupInformation);
             this.DeleteOnUnload = true;
             this.DllDirectory = Directory.GetCurrentDirectory();
             this.EnvironmentVariables = new Dictionary<string, string>();
@@ -42,8 +37,10 @@ namespace DevLib.AddIn
             this.ProcessPriority = ProcessPriorityClass.Normal;
             this.ProcessStartTimeout = new TimeSpan(0, 0, 15);
             this.RestartOnProcessExit = true;
+            this.ShadowCopyDirectories = this.AppDomainSetup.ApplicationBase;
             this.TempFilesDirectory = Path.GetTempPath();
             this.TypeFilterLevel = TypeFilterLevel.Full;
+            this.UseShadowCopy = true;
             this.WorkingDirectory = Environment.CurrentDirectory;
         }
 
@@ -107,19 +104,8 @@ namespace DevLib.AddIn
         /// </summary>
         public AppDomainSetup AppDomainSetup
         {
-            get
-            {
-                return this._appDomainSetup;
-            }
-
-            set
-            {
-                this._appDomainSetup = value;
-
-                this._appDomainSetup.ShadowCopyFiles = "true";
-
-                this._appDomainSetup.ShadowCopyDirectories = this._appDomainSetup.ApplicationBase;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -132,14 +118,14 @@ namespace DevLib.AddIn
         {
             get
             {
-                return this._appDomainSetup != null ? this._appDomainSetup.PrivateBinPath : string.Empty;
+                return this.AppDomainSetup != null ? this.AppDomainSetup.PrivateBinPath : string.Empty;
             }
 
             set
             {
-                if (this._appDomainSetup != null)
+                if (this.AppDomainSetup != null)
                 {
-                    this._appDomainSetup.PrivateBinPath = value;
+                    this.AppDomainSetup.PrivateBinPath = value;
                 }
             }
         }
@@ -154,14 +140,38 @@ namespace DevLib.AddIn
         {
             get
             {
-                return this._appDomainSetup != null ? this._appDomainSetup.ShadowCopyDirectories : string.Empty;
+                return this.AppDomainSetup != null ? this.AppDomainSetup.ShadowCopyDirectories : string.Empty;
             }
 
             set
             {
-                if (this._appDomainSetup != null)
+                if (this.AppDomainSetup != null)
                 {
-                    this._appDomainSetup.ShadowCopyDirectories = value;
+                    this.AppDomainSetup.ShadowCopyDirectories = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether shadow copying is turned on or off.
+        /// </summary>
+        public bool UseShadowCopy
+        {
+            get
+            {
+                if (this.AppDomainSetup != null)
+                {
+                    return this.AppDomainSetup.ShadowCopyFiles.Equals("true", StringComparison.OrdinalIgnoreCase) ? true : false;
+                }
+
+                return false;
+            }
+
+            set
+            {
+                if (this.AppDomainSetup != null)
+                {
+                    this.AppDomainSetup.ShadowCopyDirectories = value ? "true" : "false";
                 }
             }
         }
@@ -247,6 +257,29 @@ namespace DevLib.AddIn
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {
                 return (AddInDomainSetup)formatter.Deserialize(fileStream);
+            }
+        }
+
+        /// <summary>
+        /// Perform a deep Copy of the object.
+        /// </summary>
+        /// <typeparam name="T">The type of input object.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        private T CloneDeep<T>(T source)
+        {
+            if (source == null)
+            {
+                return default(T);
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                binaryFormatter.Serialize(memoryStream, source);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                return (T)binaryFormatter.Deserialize(memoryStream);
             }
         }
     }

@@ -118,23 +118,51 @@ namespace DevLib.AddIn
 
                 this._appDomainSetup.ShadowCopyFiles = "true";
 
-                this._appDomainSetup.ShadowCopyDirectories = null;
+                this._appDomainSetup.ShadowCopyDirectories = this._appDomainSetup.ApplicationBase;
             }
         }
 
         /// <summary>
         /// Gets or sets the list of directories under the application base directory that are probed for private assemblies.
         /// </summary>
+        /// <remarks>
+        /// The list of directory names, where each name is separated by a semicolon.
+        /// </remarks>
         public string PrivateBinPath
         {
             get
             {
-                return this._appDomainSetup.PrivateBinPath;
+                return this._appDomainSetup != null ? this._appDomainSetup.PrivateBinPath : string.Empty;
             }
 
             set
             {
-                this._appDomainSetup.PrivateBinPath = value;
+                if (this._appDomainSetup != null)
+                {
+                    this._appDomainSetup.PrivateBinPath = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the names of the directories containing assemblies to be shadow copied.
+        /// </summary>
+        /// <remarks>
+        /// The list of directory names, where each name is separated by a semicolon.
+        /// </remarks>
+        public string ShadowCopyDirectories
+        {
+            get
+            {
+                return this._appDomainSetup != null ? this._appDomainSetup.ShadowCopyDirectories : string.Empty;
+            }
+
+            set
+            {
+                if (this._appDomainSetup != null)
+                {
+                    this._appDomainSetup.ShadowCopyDirectories = value;
+                }
             }
         }
 

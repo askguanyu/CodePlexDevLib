@@ -117,6 +117,8 @@ namespace DevLib.AddIn
                 this._appDomainSetup = value;
 
                 this._appDomainSetup.ShadowCopyFiles = "true";
+
+                this._appDomainSetup.ShadowCopyDirectories = null;
             }
         }
 

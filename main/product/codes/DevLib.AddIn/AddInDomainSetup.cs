@@ -42,12 +42,12 @@ namespace DevLib.AddIn
             this.DllDirectory = Directory.GetCurrentDirectory();
             this.EnvironmentVariables = new Dictionary<string, string>();
             this.Evidence = AppDomain.CurrentDomain.Evidence;
-            this.TempFilesDirectory = Path.GetTempPath();
             this.ExternalAssemblies = new Dictionary<AssemblyName, string>();
             this.Platform = PlatformTargetEnum.AnyCPU;
             this.ProcessPriority = ProcessPriorityClass.Normal;
             this.ProcessStartTimeout = new TimeSpan(0, 0, 15);
             this.RestartOnProcessExit = true;
+            this.TempFilesDirectory = Path.GetTempPath();
             this.TypeFilterLevel = TypeFilterLevel.Full;
             this.WorkingDirectory = Environment.CurrentDirectory;
         }

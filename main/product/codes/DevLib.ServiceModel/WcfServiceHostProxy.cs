@@ -31,6 +31,11 @@ namespace DevLib.ServiceModel
         private readonly Type _serviceType;
 
         /// <summary>
+        /// Field _contractType.
+        /// </summary>
+        private readonly Type _contractType;
+
+        /// <summary>
         /// Field _binding.
         /// </summary>
         [NonSerialized]
@@ -71,27 +76,16 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="configFile">Wcf service config file.</param>
-        /// <param name="baseAddress">Wcf service base address.</param>
-        public WcfServiceHostProxy(string assemblyFile, Type serviceType, Type bindingType, string configFile, string baseAddress)
-            : this(assemblyFile, serviceType, null, bindingType, configFile, baseAddress)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WcfServiceHostProxy" /> class.
-        /// </summary>
-        /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="contractType">Wcf contract type.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        public WcfServiceHostProxy(string assemblyFile, Type serviceType, Binding binding, Type bindingType, string configFile, string baseAddress)
+        public WcfServiceHostProxy(string assemblyFile, Type serviceType, Type contractType, Binding binding, Type bindingType, string configFile, string baseAddress)
         {
             this._assemblyFile = assemblyFile;
             this._serviceType = serviceType;
+            this._contractType = contractType;
             this._binding = binding;
             this._bindingType = bindingType;
             this._configFile = configFile;
@@ -377,17 +371,41 @@ namespace DevLib.ServiceModel
                 else
                 {
                     Uri baseAddressUri = new Uri(this._baseAddress);
+
                     Binding binding = this._binding ?? WcfServiceType.GetBinding(this._bindingType);
 
                     try
                     {
+                        IList<Type> contractList = null;
+
+                        if (this._contractType != null)
+                        {
+                            contractList = new Type[1] { this._contractType };
+                        }
+
                         foreach (Type serviceType in WcfServiceType.LoadFile(this._assemblyFile))
                         {
-                            foreach (Type serviceContract in WcfServiceType.GetServiceContract(serviceType))
+                            if (this._contractType == null)
+                            {
+                                contractList = WcfServiceType.GetServiceContract(this._serviceType);
+                            }
+
+                            foreach (Type serviceContract in contractList)
                             {
                                 ServiceHost serviceHost = new ServiceHost(serviceType, baseAddressUri);
                                 serviceHost.Description.Endpoints.Clear();
                                 serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+
+                                ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
+
+                                if (serviceDebugBehavior == null)
+                                {
+                                    serviceDebugBehavior = new ServiceDebugBehavior();
+
+                                    serviceHost.Description.Behaviors.Add(serviceDebugBehavior);
+                                }
+
+                                serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
 
                                 if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
                                 {
@@ -456,13 +474,36 @@ namespace DevLib.ServiceModel
                     try
                     {
                         Uri baseAddressUri = new Uri(this._baseAddress);
+
                         Binding binding = this._binding ?? WcfServiceType.GetBinding(this._bindingType);
 
-                        foreach (Type serviceContract in WcfServiceType.GetServiceContract(this._serviceType))
+                        IList<Type> contractList;
+
+                        if (this._contractType != null)
+                        {
+                            contractList = new Type[1] { this._contractType };
+                        }
+                        else
+                        {
+                            contractList = WcfServiceType.GetServiceContract(this._serviceType);
+                        }
+
+                        foreach (Type serviceContract in contractList)
                         {
                             ServiceHost serviceHost = new ServiceHost(this._serviceType, baseAddressUri);
                             serviceHost.Description.Endpoints.Clear();
                             serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+
+                            ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
+
+                            if (serviceDebugBehavior == null)
+                            {
+                                serviceDebugBehavior = new ServiceDebugBehavior();
+
+                                serviceHost.Description.Behaviors.Add(serviceDebugBehavior);
+                            }
+
+                            serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
 
                             if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
                             {

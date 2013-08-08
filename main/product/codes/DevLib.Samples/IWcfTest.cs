@@ -6,8 +6,8 @@ using System.Text;
 
 namespace DevLib.Samples
 {
-    [ServiceContract()]
-    public interface IWcfService
+    [ServiceContract]
+    public interface IWcfTest
     {
         [OperationContract]
         [FaultContract(typeof(InvalidOperationException))]

@@ -46,6 +46,7 @@ namespace DevLib.Samples
     using DevLib.TerminalServices;
     using DevLib.Utilities;
     using DevLib.WinForms;
+    using System.ServiceModel.Routing;
 
     public class Program
     {
@@ -1306,61 +1307,82 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
 
-            //WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
-            //host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
+            new WcfServiceHost(typeof(RoutingService), "DevLib.Samples.exe.config", null, true);
 
-            var a = WcfServiceType.LoadFile(@"E:\Temp\WcfCalc.dll")[0].GetInterfaces()[0];
-
-            var wcfclient = WcfClientBase<IWcfService>.GetReusableFaultUnwrappingInstance();
-
-            //var client1 = WcfClientBase<IWcfService>.GetInstance("");
-            //var x = new BasicHttpBinding().RetrieveProperties().SerializeBinary();
-
-            WcfServiceHost host = new WcfServiceHost();
-            host.Initialize(@"E:\Temp\WcfCalc.dll", typeof(BasicHttpBinding), @"http://localhost:888/abcd");
-
-            host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
-            host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
-            host.Reloaded += (s, e) => s.ConsoleOutput();
-
-            host.Open();
-            Console.WriteLine("first open");
+            new WcfServiceHost(typeof(WcfTest), typeof(WSHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
 
 
+            var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(WSHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
 
-            Console.ReadKey();
+            string a = string.Empty;
+            try
+            {
+                a = client.MyOperation1("a", 1);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
-            host.Close();
-            Console.WriteLine("first close");
-            host.Open();
-            Console.WriteLine("2 open");
-            host.Close();
-            Console.WriteLine("2 close");
-            host.Open();
-            Console.WriteLine("3 open");
-            host.Abort();
-            Console.WriteLine("Abort");
-            host.Open();
-            Console.WriteLine("4 open");
-            //host.Restart();
-            host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
-            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
-            //var a = host.GetStateList();
-            Console.ReadKey();
+            Console.WriteLine(a);
 
-            host.Unload();
-            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
-            host.Unload();
-            host.Unload();
-            host.Reload();
-            host.Reload();
-            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
-            host.Open();
-            //host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
-            host.GetAppDomain().FriendlyName.ConsoleOutput("|after reload AppDomain");
+            Console.ReadLine();
 
-            Console.ReadKey();
-            host.Dispose();
+            ////WcfServiceHost host = WcfServiceHost.Create(@"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll", @"C:\YuGuan\Document\DevLib\DevLib.Samples\bin\Debug\Service1.dll.config");
+            ////host.CurrentAppDomain.FriendlyName.ConsoleOutput("AppDomain");
+
+            //var a = WcfServiceType.LoadFile(@"E:\Temp\WcfCalc.dll")[0].GetInterfaces()[0];
+
+            //var wcfclient = WcfClientBase<IWcfTest>.GetReusableFaultUnwrappingInstance();
+
+            ////var client1 = WcfClientBase<IWcfService>.GetInstance("");
+            ////var x = new BasicHttpBinding().RetrieveProperties().SerializeBinary();
+
+            //WcfServiceHost host = new WcfServiceHost();
+            //host.Initialize(@"E:\Temp\WcfCalc.dll", typeof(BasicHttpBinding), @"http://localhost:888/abcd");
+
+            //host.Opened += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Opened");
+            //host.Closed += (s, e) => (e as WcfServiceHostEventArgs).WcfServiceName.ConsoleOutput("|Closed");
+            //host.Reloaded += (s, e) => s.ConsoleOutput();
+
+            //host.Open();
+            //Console.WriteLine("first open");
+
+
+
+            //Console.ReadKey();
+
+            //host.Close();
+            //Console.WriteLine("first close");
+            //host.Open();
+            //Console.WriteLine("2 open");
+            //host.Close();
+            //Console.WriteLine("2 close");
+            //host.Open();
+            //Console.WriteLine("3 open");
+            //host.Abort();
+            //Console.WriteLine("Abort");
+            //host.Open();
+            //Console.WriteLine("4 open");
+            ////host.Restart();
+            //host.GetAppDomain().FriendlyName.ConsoleOutput("|AppDomain");
+            ////host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            ////var a = host.GetStateList();
+            //Console.ReadKey();
+
+            //host.Unload();
+            ////host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            //host.Unload();
+            //host.Unload();
+            //host.Reload();
+            //host.Reload();
+            ////host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            //host.Open();
+            ////host.GetStateList().Values.ToList().ForEach(p => p.ConsoleOutput());
+            //host.GetAppDomain().FriendlyName.ConsoleOutput("|after reload AppDomain");
+
+            //Console.ReadKey();
+            //host.Dispose();
         }
 
         private static void TestDevLibConfiguration()

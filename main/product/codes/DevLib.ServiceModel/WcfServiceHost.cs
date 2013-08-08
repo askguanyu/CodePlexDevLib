@@ -882,7 +882,7 @@ namespace DevLib.ServiceModel
             this.CheckDisposed();
 
             this.Unload();
-            this.CreateDomain();
+            this.InitWcfServiceHostProxy();
             this.RaiseEvent(this.Reloaded, null);
         }
 
@@ -929,21 +929,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method InitWcfServiceHostProxy.
-        /// </summary>
-        private void InitWcfServiceHostProxy()
-        {
-            if (File.Exists(this._configFile) && this._binding == null)
-            {
-                this.CreateDomain();
-            }
-            else
-            {
-                this._wcfServiceHostProxy = new WcfServiceHostProxy(this._assemblyFile, this._serviceType, this._contractType, this._binding, this._bindingType, this._configFile, this._baseAddress);
-            }
-        }
-
-        /// <summary>
         /// Method RemoveWcfConfigFileBaseAddressNode.
         /// </summary>
         /// <param name="sourceFileName">Source wcf config file name.</param>
@@ -965,6 +950,8 @@ namespace DevLib.ServiceModel
 
             if (string.IsNullOrEmpty(sourceFileName))
             {
+                File.WriteAllText(result, @"<configuration></configuration>");
+
                 return result;
             }
 
@@ -1077,7 +1064,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Method CreateDomain.
         /// </summary>
-        private void CreateDomain()
+        private void InitWcfServiceHostProxy()
         {
             try
             {

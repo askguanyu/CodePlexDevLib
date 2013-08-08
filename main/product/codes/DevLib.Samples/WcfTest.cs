@@ -16,5 +16,11 @@
         public void MyOperation2(string value)
         {
         }
+
+
+        public object Foo(string value)
+        {
+            return value;
+        }
     }
 }

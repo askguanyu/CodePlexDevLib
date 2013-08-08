@@ -16,5 +16,8 @@ namespace DevLib.Samples
 
         [OperationContract]
         void MyOperation2(string value);
+
+        [OperationContract]
+        object Foo(string value);
     }
 }

@@ -1307,17 +1307,20 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
 
-            new WcfServiceHost(typeof(RoutingService), "DevLib.Samples.exe.config", null, true);
+            //new WcfServiceHost(typeof(RoutingService), "DevLib.Samples.exe.config", null, true);
 
-            new WcfServiceHost(typeof(WcfTest), typeof(WSHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
+            new WcfServiceHost(typeof(WcfTest), typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
 
 
-            var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(WSHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
+            var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
 
             string a = string.Empty;
+            object b = new object();
+
             try
             {
                 a = client.MyOperation1("a", 1);
+                b = client.Foo("aaa");
             }
             catch (Exception e)
             {
@@ -1325,6 +1328,7 @@ namespace DevLib.Samples
             }
 
             Console.WriteLine(a);
+            Console.WriteLine(b);
 
             Console.ReadLine();
 

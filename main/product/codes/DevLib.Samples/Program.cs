@@ -849,6 +849,8 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ExtensionMethods");
 
+            var aa = "abcd".ContainsAny(true);
+
             #region SerializationExtensions
 
             Person person = new Person("foo", "好的", 1);

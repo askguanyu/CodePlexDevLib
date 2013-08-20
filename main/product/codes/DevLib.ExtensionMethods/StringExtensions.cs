@@ -88,6 +88,35 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Replace any instance of the given string from the current string.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="newValue">A string to replace all occurrences of oldValue.</param>
+        /// <param name="oldStrings">String to replace.</param>
+        /// <returns>Result string.</returns>
+        public static string ReplaceAny(this string source, string newValue, params string[] oldStrings)
+        {
+            return oldStrings.Aggregate(source, (current, c) => current.Replace(c, newValue));
+        }
+
+        /// <summary>
+        /// Contains any instance of the given string from the current string.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
+        /// <param name="containStrings">Strings to check.</param>
+        /// <returns>true if the <paramref name="containStrings" /> parameter occurs within this string, or if <paramref name="containStrings" /> is the empty string ("") or null; otherwise, false.</returns>
+        public static bool ContainsAny(this string source, bool ignoreCase = true, params string[] containStrings)
+        {
+            if (containStrings == null || containStrings.Length < 1)
+            {
+                return true;
+            }
+
+            return containStrings.Any(p => source.Contains(p, ignoreCase));
+        }
+
+        /// <summary>
         /// Indicates whether the specified string is null or an System.String.Empty string.
         /// </summary>
         /// <param name="source">The string to test.</param>

@@ -9,6 +9,7 @@ namespace DevLib.ServiceModel
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Security.Permissions;
     using System.ServiceModel.Channels;
     using System.Threading;
@@ -1070,13 +1071,10 @@ namespace DevLib.ServiceModel
             {
                 this.CleanTempWcfConfigFile();
 
-                AppDomainSetup appDomainSetup = new AppDomainSetup();
-                appDomainSetup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+                AppDomainSetup appDomainSetup = this.CloneDeep(AppDomain.CurrentDomain.SetupInformation);
                 appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this._assemblyFile) ?? this._serviceType.FullName;
                 appDomainSetup.ConfigurationFile = this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
                 appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
-                appDomainSetup.ShadowCopyFiles = "true";
-                appDomainSetup.ShadowCopyDirectories = appDomainSetup.ApplicationBase;
 
                 this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
 
@@ -1184,6 +1182,29 @@ namespace DevLib.ServiceModel
                 {
                     ExceptionHandler.Log(e);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Perform a deep Copy of the object.
+        /// </summary>
+        /// <typeparam name="T">The type of input object.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        private T CloneDeep<T>(T source)
+        {
+            if (source == null)
+            {
+                return default(T);
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                binaryFormatter.Serialize(memoryStream, source);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                return (T)binaryFormatter.Deserialize(memoryStream);
             }
         }
 

@@ -387,7 +387,7 @@ namespace DevLib.ServiceModel
                         {
                             if (this._contractType == null)
                             {
-                                contractList = WcfServiceType.GetServiceContract(this._serviceType);
+                                contractList = WcfServiceType.GetServiceContract(serviceType);
                             }
 
                             foreach (Type serviceContract in contractList)

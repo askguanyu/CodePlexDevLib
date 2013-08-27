@@ -322,5 +322,25 @@ namespace DevLib.ExtensionMethods
 
             return source.Substring(index + 1);
         }
+
+        /// <summary>
+        /// Remove any invalid characters from Xml string and returns a clean Xml string.
+        /// </summary>
+        /// <param name="source">Xml string to check.</param>
+        /// <returns>Clean Xml string.</returns>
+        public static string ToCleanXmlString(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return source;
+            }
+
+            return new string(source.Where(p =>
+                (p >= 0x0020 && p <= 0xD7FF) ||
+                (p >= 0xE000 && p <= 0xFFFD) ||
+                p == 0x0009 ||
+                p == 0x000A ||
+                p == 0x000D).ToArray());
+        }
     }
 }

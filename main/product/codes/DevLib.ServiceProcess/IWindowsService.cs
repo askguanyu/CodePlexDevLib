@@ -54,16 +54,16 @@ namespace DevLib.ServiceProcess
         void OnCustomCommand(int command);
 
         /// <summary>
+        /// Executes when a change event is received from a Terminal Server session.
+        /// </summary>
+        /// <param name="changeDescription">A <see cref="T:System.ServiceProcess.SessionChangeDescription" /> structure that identifies the change type.</param>
+        void OnSessionChange(SessionChangeDescription changeDescription);
+
+        /// <summary>
         /// When implemented in a derived class, executes when the computer's power status has changed. This applies to laptop computers when they go into suspended mode, which is not the same as a system shutdown.
         /// </summary>
         /// <param name="powerStatus">A <see cref="T:System.ServiceProcess.PowerBroadcastStatus" /> that indicates a notification from the system about its power status.</param>
         /// <returns>When implemented in a derived class, the needs of your application determine what value to return. For example, if a QuerySuspend broadcast status is passed, you could cause your application to reject the query by returning false.</returns>
         bool OnPowerEvent(PowerBroadcastStatus powerStatus);
-
-        /// <summary>
-        /// Executes when a change event is received from a Terminal Server session.
-        /// </summary>
-        /// <param name="changeDescription">A <see cref="T:System.ServiceProcess.SessionChangeDescription" /> structure that identifies the change type.</param>
-        void OnSessionChange(SessionChangeDescription changeDescription);
     }
 }

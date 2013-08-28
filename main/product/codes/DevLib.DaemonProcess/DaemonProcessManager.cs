@@ -48,13 +48,15 @@ namespace DevLib.DaemonProcess
 
                             break;
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            ExceptionHandler.Log(e);
                         }
                     }
                 }
-                catch
+                catch (Exception e)
                 {
+                    ExceptionHandler.Log(e);
                 }
                 finally
                 {
@@ -124,18 +126,21 @@ namespace DevLib.DaemonProcess
                                                 if (Regex.Match(managementObject["CommandLine"].ToString(), string.Format("{0}\" {1}", daemonProcessFileName, daemonProcessGuid.ToString()), RegexOptions.IgnoreCase).Success)
                                                 {
                                                     daemonProcess = item;
+
                                                     break;
                                                 }
                                             }
-                                            catch
+                                            catch (Exception e)
                                             {
+                                                ExceptionHandler.Log(e);
                                             }
                                         }
                                     }
                                 }
                             }
-                            catch
+                            catch (Exception e)
                             {
+                                ExceptionHandler.Log(e);
                             }
 
                             if (daemonProcess != null)
@@ -170,8 +175,9 @@ namespace DevLib.DaemonProcess
                     {
                         daemonProcess = Process.Start(startInfo);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        ExceptionHandler.Log(e);
                     }
                 }
 
@@ -188,8 +194,9 @@ namespace DevLib.DaemonProcess
             {
                 thread.Start();
             }
-            catch
+            catch (Exception e)
             {
+                ExceptionHandler.Log(e);
             }
         }
 
@@ -234,18 +241,21 @@ namespace DevLib.DaemonProcess
                                     if (Regex.Match(managementObject["CommandLine"].ToString(), string.Format("{0}\" {1}", daemonProcessFileName, daemonProcessGuid.ToString()), RegexOptions.IgnoreCase).Success)
                                     {
                                         daemonProcess = item;
+
                                         break;
                                     }
                                 }
-                                catch
+                                catch (Exception e)
                                 {
+                                    ExceptionHandler.Log(e);
                                 }
                             }
                         }
                     }
                 }
-                catch
+                catch (Exception e)
                 {
+                    ExceptionHandler.Log(e);
                 }
 
                 if (daemonProcess != null)
@@ -260,8 +270,9 @@ namespace DevLib.DaemonProcess
                 {
                     daemonProcess.Kill();
                 }
-                catch
+                catch (Exception e)
                 {
+                    ExceptionHandler.Log(e);
                 }
                 finally
                 {

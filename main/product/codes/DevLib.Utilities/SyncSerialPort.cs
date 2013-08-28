@@ -10,7 +10,7 @@ namespace DevLib.Utilities
     using System.Threading;
 
     /// <summary>
-    /// SerialState Enum
+    /// Enum SerialState.
     /// </summary>
     public enum SerialStateEnum
     {

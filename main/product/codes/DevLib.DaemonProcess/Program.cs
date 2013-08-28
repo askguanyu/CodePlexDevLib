@@ -114,8 +114,9 @@ namespace DevLib.DaemonProcess
                                 }
                             }
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            ExceptionHandler.Log(e);
                         }
                     }
 
@@ -145,6 +146,7 @@ namespace DevLib.DaemonProcess
                                     if (item.MainModule.FileName.Equals(protectedProcessEntryPoint, StringComparison.OrdinalIgnoreCase))
                                     {
                                         protectedProcess = item;
+
                                         break;
                                     }
                                 }
@@ -172,8 +174,9 @@ namespace DevLib.DaemonProcess
                                 protectedProcess = Process.Start(protectedProcessEntryPoint, string.Join(" ", protectedProcessArgs));
                             }
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            ExceptionHandler.Log(e);
                         }
                     }
 

@@ -1,8 +1,14 @@
-﻿namespace DevLib.AddIn
+﻿//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace DevLib.AddIn
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
     using System.Security.Permissions;
@@ -10,6 +16,8 @@
     /// <summary>
     /// Class Program.
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed.")]
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed.")]
     class Program
     {
         /// <summary>
@@ -121,6 +129,7 @@
     /// <summary>
     /// Class AssemblyResolver.
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public class AssemblyResolver : MarshalByRefObject
     {
         /// <summary>

@@ -15,6 +15,7 @@ namespace DevLib.DaemonProcess
     /// <summary>
     /// Class Program.
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed.")]
     class Program
     {
         /// <summary>
@@ -25,13 +26,46 @@ namespace DevLib.DaemonProcess
         static void Main(string[] args)
         {
             //// args[0] = guid                       : daemon process guid
-            //// args[1] = process id                 : protected process id
+            //// args[1] = process id | -stop         : protected process id / stop protecting
             //// args[2] = service | process          : protected process mode
             //// args[3] = entry file | service name  : protected process entry point / protected process service name
             //// args[4] = delay seconds              : protected process delay start seconds
             //// args[5] = args                       : protected process args
 
-            if (args == null || args.Length < 4)
+            if (args == null)
+            {
+                return;
+            }
+
+            if (args.Length == 2)
+            {
+                string daemonProcessGuidString = args[0];
+                string daemonProcessStopString = args[1];
+
+                if (!daemonProcessStopString.Equals("-stop", StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+
+                try
+                {
+                    Guid daemonProcessGuid = new Guid(daemonProcessGuidString);
+
+                    DaemonProcessManager.StopProtect(daemonProcessGuid);
+
+                    Console.WriteLine("Stop protecting {0}", daemonProcessGuidString);
+
+                    return;
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+
+                    return;
+                }
+            }
+
+            if (args.Length < 4)
             {
                 return;
             }

@@ -38,7 +38,7 @@ namespace DevLib.DaemonProcess
 
                 try
                 {
-                    managementObjectSearcher = new ManagementObjectSearcher(string.Format("SELECT Name FROM Win32_Service WHERE PathName LIKE \"%{0}%\" ", entryPoint));
+                    managementObjectSearcher = new ManagementObjectSearcher(string.Format("SELECT Name FROM Win32_Service WHERE PathName LIKE \"%{0}%\"", entryPoint.Replace(@"\", @"\\")));
 
                     foreach (ManagementObject managementObject in managementObjectSearcher.Get())
                     {

@@ -6,6 +6,7 @@
 namespace DevLib.DaemonProcess
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
@@ -27,14 +28,14 @@ namespace DevLib.DaemonProcess
         {
             //// args[0] = guid                       : daemon process guid
             //// args[1] = process id | -stop         : protected process id / stop protecting
-            //// args[2] = service | process          : protected process mode
-            //// args[3] = entry file | service name  : protected process entry point / protected process service name
-            //// args[4] = delay seconds              : protected process delay start seconds
+            //// args[2] = delay seconds              : protected process delay start seconds
+            //// args[3] = service | process          : protected process mode
+            //// args[4] = entry file | service name  : protected process entry point / protected process service name
             //// args[5] = args                       : protected process args
 
             if (args == null)
             {
-                return;
+                Environment.Exit(-1);
             }
 
             if (args.Length == 2)
@@ -44,7 +45,7 @@ namespace DevLib.DaemonProcess
 
                 if (!daemonProcessStopString.Equals("-stop", StringComparison.OrdinalIgnoreCase))
                 {
-                    return;
+                    Environment.Exit(-1);
                 }
 
                 try
@@ -55,34 +56,30 @@ namespace DevLib.DaemonProcess
 
                     Console.WriteLine("Stop protecting {0}", daemonProcessGuidString);
 
-                    return;
+                    Environment.Exit(-1);
                 }
                 catch (Exception e)
                 {
                     ExceptionHandler.Log(e);
 
-                    return;
+                    Environment.Exit(-1);
                 }
             }
 
             if (args.Length < 4)
             {
-                return;
+                Environment.Exit(-1);
             }
 
             int protectedProcessId = -1;
 
             int.TryParse(args[1], NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out protectedProcessId);
 
-            string protectedProcessMode = args[2];
-
-            string protectedProcessEntryPoint = args[3];
-
-            int protectedProcessDelaySeconds = 3;
+            int protectedProcessDelaySeconds = 5;
 
             try
             {
-                int.TryParse(args[4], NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out protectedProcessDelaySeconds);
+                int.TryParse(args[2], NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out protectedProcessDelaySeconds);
 
                 if (protectedProcessDelaySeconds < 0)
                 {
@@ -92,6 +89,10 @@ namespace DevLib.DaemonProcess
             catch
             {
             }
+
+            string protectedProcessMode = args[3];
+
+            string protectedProcessEntryPoint = args[4];
 
             string[] protectedProcessArgs = null;
 
@@ -106,34 +107,61 @@ namespace DevLib.DaemonProcess
             {
                 case "service":
 
-                    ServiceController[] services = ServiceController.GetServices();
-
-                    bool isServiceExist = false;
-
-                    foreach (var item in services)
+                    try
                     {
-                        if (protectedProcessEntryPoint.Equals(item.ServiceName, StringComparison.OrdinalIgnoreCase))
+                        ServiceController[] services = ServiceController.GetServices();
+
+                        bool serviceExist = false;
+
+                        foreach (var item in services)
                         {
-                            isServiceExist = true;
-                            break;
+                            try
+                            {
+                                if (protectedProcessEntryPoint.Equals(item.ServiceName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    serviceExist = true;
+
+                                    break;
+                                }
+                            }
+                            catch
+                            {
+                            }
+                        }
+
+                        if (!serviceExist)
+                        {
+                            Environment.Exit(-1);
                         }
                     }
-
-                    if (!isServiceExist)
+                    catch (Exception e)
                     {
-                        break;
+                        ExceptionHandler.Log(e);
+
+                        Environment.Exit(-1);
                     }
 
-                    ServiceController serviceController = new ServiceController(protectedProcessEntryPoint);
+                    ServiceController serviceController = null;
+
+                    try
+                    {
+                        serviceController = new ServiceController(protectedProcessEntryPoint);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+
+                        Environment.Exit(-1);
+                    }
 
                     while (true)
                     {
-                        serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-
-                        Thread.Sleep(TimeSpan.FromSeconds(protectedProcessDelaySeconds));
-
                         try
                         {
+                            serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
+
+                            Thread.Sleep(TimeSpan.FromSeconds(protectedProcessDelaySeconds));
+
                             serviceController.Refresh();
 
                             if (serviceController.Status == ServiceControllerStatus.Stopped)
@@ -144,7 +172,7 @@ namespace DevLib.DaemonProcess
                                 }
                                 else
                                 {
-                                    serviceController.Start(args);
+                                    serviceController.Start(protectedProcessArgs);
                                 }
                             }
                         }
@@ -155,6 +183,14 @@ namespace DevLib.DaemonProcess
                     }
 
                 case "process":
+
+                    if (protectedProcessArgs != null && protectedProcessArgs.Length > 0)
+                    {
+                        for (int i = 0; i < protectedProcessArgs.Length; i++)
+                        {
+                            protectedProcessArgs[i] = string.Format("\"{0}\"", protectedProcessArgs[i]);
+                        }
+                    }
 
                     Process protectedProcess = null;
 
@@ -171,50 +207,77 @@ namespace DevLib.DaemonProcess
 
                     while (true)
                     {
-                        if (protectedProcess == null)
+                        if (protectedProcess != null && !protectedProcess.HasExited)
                         {
-                            foreach (Process item in Process.GetProcesses())
+                            try
                             {
-                                try
+                                protectedProcess.WaitForExit();
+
+                                Thread.Sleep(TimeSpan.FromSeconds(protectedProcessDelaySeconds));
+
+                                protectedProcess = null;
+                            }
+                            catch (Exception e)
+                            {
+                                ExceptionHandler.Log(e);
+                            }
+                        }
+
+                        foreach (Process item in Process.GetProcesses())
+                        {
+                            try
+                            {
+                                if (item.MainModule.FileName.Equals(protectedProcessEntryPoint, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    if (item.MainModule.FileName.Equals(protectedProcessEntryPoint, StringComparison.OrdinalIgnoreCase))
+                                    if (protectedProcessArgs == null || protectedProcessArgs.Length < 1)
                                     {
                                         protectedProcess = item;
+                                    }
+                                    else
+                                    {
+                                        List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
 
+                                        if (DaemonProcessHelper.CommandLineArgumentsEquals(commandLineArguments, protectedProcessArgs, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            protectedProcess = item;
+
+                                            break;
+                                        }
+                                    }
+
+                                    if (protectedProcess != null)
+                                    {
                                         break;
                                     }
                                 }
-                                catch
+                            }
+                            catch
+                            {
+                            }
+                        }
+
+                        if (protectedProcess == null)
+                        {
+                            try
+                            {
+                                if (protectedProcessArgs == null || protectedProcessArgs.Length < 1)
                                 {
+                                    protectedProcess = Process.Start(protectedProcessEntryPoint);
+                                }
+                                else
+                                {
+                                    protectedProcess = Process.Start(protectedProcessEntryPoint, string.Join(" ", protectedProcessArgs));
                                 }
                             }
-                        }
-
-                        if (protectedProcess != null && !protectedProcess.HasExited)
-                        {
-                            protectedProcess.WaitForExit();
-                        }
-
-                        Thread.Sleep(TimeSpan.FromSeconds(protectedProcessDelaySeconds));
-
-                        try
-                        {
-                            if (protectedProcessArgs == null || protectedProcessArgs.Length < 1)
+                            catch (Exception e)
                             {
-                                protectedProcess = Process.Start(protectedProcessEntryPoint);
+                                ExceptionHandler.Log(e);
                             }
-                            else
-                            {
-                                protectedProcess = Process.Start(protectedProcessEntryPoint, string.Join(" ", protectedProcessArgs));
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
                         }
                     }
 
                 default:
+                    Environment.Exit(-1);
                     break;
             }
         }

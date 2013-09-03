@@ -116,6 +116,10 @@
       <Project>{29304ed4-092e-4e59-9ae5-36296920d8b5}</Project>
       <Name>DevLib.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.DaemonProcess\DevLib.DaemonProcess.csproj">
+      <Project>{5E84B29E-5E05-47D8-B8E3-9A9D2972BC26}</Project>
+      <Name>DevLib.DaemonProcess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.DesignPatterns\DevLib.DesignPatterns.csproj">
       <Project>{fba87267-25f7-4363-a5e2-d12dcb011222}</Project>
       <Name>DevLib.DesignPatterns</Name>

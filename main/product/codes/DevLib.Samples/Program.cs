@@ -25,6 +25,7 @@ namespace DevLib.Samples
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters;
     using System.ServiceModel;
+    using System.ServiceModel.Routing;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace DevLib.Samples
     using DevLib.AddIn;
     using DevLib.Compression;
     using DevLib.Configuration;
+    using DevLib.DaemonProcess;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
@@ -46,7 +48,6 @@ namespace DevLib.Samples
     using DevLib.TerminalServices;
     using DevLib.Utilities;
     using DevLib.WinForms;
-    using System.ServiceModel.Routing;
 
     public class Program
     {
@@ -73,6 +74,11 @@ namespace DevLib.Samples
                 CodeTimer.Time(() =>
                 {
                     //TestCompression();
+                });
+
+                CodeTimer.Time(delegate
+                {
+                    //TestDevLibDaemonProcess();
                 });
 
                 CodeTimer.Time(delegate
@@ -127,6 +133,19 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestDevLibDaemonProcess()
+        {
+            PrintMethodName("Test DevLib.DaemonProcess");
+
+
+
+            //DaemonProcessManager.StartProtect(Guid.Parse("8C0CD469-3C7B-4F7A-80D1-2987456877AA"), 1, 1, ProcessMode.Service, "AMD External Events Utility");
+
+            //DaemonProcessManager.StartSelfProtect(Guid.Parse("8C0CD469-3C7B-4F7A-80D1-2987456877AA"), ProcessMode.Process, 0, "a", "b c ", "d", "e", " f g ");
+
+            //DaemonProcessHelper.GetCommandLineArguments("\"C:\\addin_DataReceived.exe\" a b c d e \"f g\"");
         }
 
         private static void TestDevLibTerminalServices()

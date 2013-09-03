@@ -12,7 +12,6 @@ namespace DevLib.DaemonProcess
     using System.Management;
     using System.Reflection;
     using System.Security.Permissions;
-    using System.Text.RegularExpressions;
     using System.Threading;
 
     /// <summary>
@@ -68,7 +67,7 @@ namespace DevLib.DaemonProcess
                 }
             }
 
-            StartProtect(daemonProcessGuid, Process.GetCurrentProcess().Id, processMode, entryPoint, delaySeconds, args);
+            StartProtect(daemonProcessGuid, Process.GetCurrentProcess().Id, delaySeconds, processMode, entryPoint, args);
         }
 
         /// <summary>
@@ -76,80 +75,42 @@ namespace DevLib.DaemonProcess
         /// </summary>
         /// <param name="daemonProcessGuid">Daemon process Guid.</param>
         /// <param name="protectedProcessId">Protected process Id.</param>
+        /// <param name="delaySeconds">Restart delay time in seconds.</param>
         /// <param name="processMode">Protected process mode.</param>
         /// <param name="entryPoint">Protected process entry point. Executable file or windows service name.</param>
-        /// <param name="delaySeconds">Restart delay time in seconds.</param>
         /// <param name="args">Arguments for restart protected process.</param>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public static void StartProtect(Guid daemonProcessGuid, int protectedProcessId, ProcessMode processMode, string entryPoint, int delaySeconds = 0, params string[] args)
+        public static void StartProtect(Guid daemonProcessGuid, int protectedProcessId, int delaySeconds, ProcessMode processMode, string entryPoint, params string[] args)
         {
-            string daemonProcessFullPath = Assembly.GetExecutingAssembly().Location;
-            string daemonProcessName = Assembly.GetExecutingAssembly().GetName().Name;
-            string daemonProcessFileName = Path.GetFileName(daemonProcessFullPath);
-
-            List<string> daemonProcessArgs = new List<string>();
-            daemonProcessArgs.Add(daemonProcessGuid.ToString());
-            daemonProcessArgs.Add(protectedProcessId.ToString());
-            daemonProcessArgs.Add(processMode.ToString());
-            daemonProcessArgs.Add(entryPoint);
-            daemonProcessArgs.Add(delaySeconds.ToString());
-            daemonProcessArgs.AddRange(args);
-
-            ProcessStartInfo startInfo = new ProcessStartInfo(daemonProcessFullPath);
-            startInfo.Arguments = string.Join(" ", daemonProcessArgs.ToArray());
-            startInfo.CreateNoWindow = true;
-            startInfo.ErrorDialog = false;
-            startInfo.UseShellExecute = false;
-
-            Process daemonProcess = null;
-
-            int exitCode = 0;
-
             Thread thread = new Thread(() =>
             {
+                string daemonProcessFullPath = Assembly.GetExecutingAssembly().Location;
+                string daemonProcessName = Assembly.GetExecutingAssembly().GetName().Name;
+                string daemonProcessFileName = Path.GetFileName(daemonProcessFullPath);
+
+                List<string> daemonProcessArgs = new List<string>();
+                daemonProcessArgs.Add(string.Format("\"{0}\"", daemonProcessGuid.ToString()));
+                daemonProcessArgs.Add(string.Format("\"{0}\"", protectedProcessId.ToString()));
+                daemonProcessArgs.Add(string.Format("\"{0}\"", delaySeconds.ToString()));
+                daemonProcessArgs.Add(string.Format("\"{0}\"", processMode.ToString()));
+                daemonProcessArgs.Add(string.Format("\"{0}\"", entryPoint));
+                foreach (string item in args)
+                {
+                    daemonProcessArgs.Add(string.Format("\"{0}\"", item));
+                }
+
+                ProcessStartInfo startInfo = new ProcessStartInfo(daemonProcessFullPath);
+                startInfo.Arguments = string.Join(" ", daemonProcessArgs.ToArray());
+                startInfo.CreateNoWindow = true;
+                startInfo.ErrorDialog = false;
+                startInfo.UseShellExecute = false;
+
+                int exitCode = 0;
+
+                Process daemonProcess = null;
+
                 while (true)
                 {
-                    if (daemonProcess == null)
-                    {
-                        foreach (Process item in Process.GetProcesses())
-                        {
-                            try
-                            {
-                                if (item.ProcessName.Equals(daemonProcessName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher(string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", item.Id)))
-                                    {
-                                        foreach (ManagementObject managementObject in managementObjectSearcher.Get())
-                                        {
-                                            try
-                                            {
-                                                if (Regex.Match(managementObject["CommandLine"].ToString(), string.Format("{0}\" {1}", daemonProcessFileName, daemonProcessGuid.ToString()), RegexOptions.IgnoreCase).Success)
-                                                {
-                                                    daemonProcess = item;
-
-                                                    break;
-                                                }
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                ExceptionHandler.Log(e);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionHandler.Log(e);
-                            }
-
-                            if (daemonProcess != null)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
                     if (daemonProcess != null)
                     {
                         if (!daemonProcess.HasExited)
@@ -169,15 +130,49 @@ namespace DevLib.DaemonProcess
                         {
                             break;
                         }
+
+                        daemonProcess = null;
                     }
 
-                    try
+                    foreach (Process item in Process.GetProcesses())
                     {
-                        daemonProcess = Process.Start(startInfo);
+                        try
+                        {
+                            if (item.ProcessName.Equals(daemonProcessName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
+
+                                if (commandLineArguments != null && commandLineArguments.Count > 0 && commandLineArguments[0].Trim('\"').Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    daemonProcess = item;
+
+                                    break;
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+                        }
+
+                        if (daemonProcess != null)
+                        {
+                            break;
+                        }
                     }
-                    catch (Exception e)
+
+                    if (daemonProcess == null)
                     {
-                        ExceptionHandler.Log(e);
+                        try
+                        {
+                            daemonProcess = Process.Start(startInfo);
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+
+                            break;
+                        }
                     }
                 }
 
@@ -232,24 +227,13 @@ namespace DevLib.DaemonProcess
                 {
                     if (item.ProcessName.Equals(daemonProcessName, StringComparison.OrdinalIgnoreCase))
                     {
-                        using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher(string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", item.Id)))
-                        {
-                            foreach (ManagementObject managementObject in managementObjectSearcher.Get())
-                            {
-                                try
-                                {
-                                    if (Regex.Match(managementObject["CommandLine"].ToString(), string.Format("{0}\" {1}", daemonProcessFileName, daemonProcessGuid.ToString()), RegexOptions.IgnoreCase).Success)
-                                    {
-                                        daemonProcess = item;
+                        List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
 
-                                        break;
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    ExceptionHandler.Log(e);
-                                }
-                            }
+                        if (commandLineArguments != null && commandLineArguments.Count > 0 && commandLineArguments[0].Trim('\"').Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
+                        {
+                            daemonProcess = item;
+
+                            break;
                         }
                     }
                 }

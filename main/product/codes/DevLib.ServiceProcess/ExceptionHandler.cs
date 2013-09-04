@@ -39,7 +39,7 @@ namespace DevLib.ServiceProcess
                 {
                     try
                     {
-                        File.AppendAllText(Path.Combine(Path.GetTempPath(), "DevLib.ServiceProcess.log"), message + Environment.NewLine);
+                        File.AppendAllText("DevLib.ServiceProcess.log", message + Environment.NewLine);
                     }
                     catch
                     {

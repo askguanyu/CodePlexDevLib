@@ -352,7 +352,13 @@ namespace DevLib.DesignPatterns
                 {
                     foreach (Thread item in this._consumerThreadList)
                     {
-                        item.Abort();
+                        try
+                        {
+                            item.Abort();
+                        }
+                        catch
+                        {
+                        }
                     }
 
                     this._consumerThreadList.Clear();

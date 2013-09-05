@@ -39,6 +39,7 @@ namespace DevLib.Samples
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
+    using DevLib.Ioc;
     using DevLib.Main;
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
@@ -98,6 +99,11 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
+                    //TestDevLibIoc();
+                });
+
+                CodeTimer.Time(delegate
+                {
                     //TestDevLibNet();
                 });
 
@@ -133,6 +139,16 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestDevLibIoc()
+        {
+            PrintMethodName("Test DevLib.Ioc");
+
+            IocContainer container = new IocContainer();
+            container.Register<Person>(new Person("a", "b", 1));
+
+            Console.WriteLine(container.Resolve<Person>());
         }
 
         private static void TestDevLibDaemonProcess()
@@ -1643,6 +1659,12 @@ namespace DevLib.Samples
         {
             Console.WriteLine("Generic Method");
         }
+
+        public override string ToString()
+        {
+            return string.Format("FirstName= {0} LastName= {1} Id= {2}", this.FirstName, this.LastName, this.ID);
+        }
+
     }
 
     [TypeConverterAttribute(typeof(ExpandableObjectConverter<SpellingOptions>))]

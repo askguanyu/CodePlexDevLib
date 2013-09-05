@@ -9,7 +9,7 @@ namespace DevLib.Compression
 
     internal static class Crc32Helper
     {
-        private static readonly uint[] crcTable = new uint[256]
+        private static readonly uint[] CrcTable = new uint[256]
         {
             0U,
             1996959894U,
@@ -275,7 +275,7 @@ namespace DevLib.Compression
 
             while (--length >= 0)
             {
-                crc32 = Crc32Helper.crcTable[(int)(IntPtr)(uint)(((int)crc32 ^ (int)buffer[offset++]) & (int)byte.MaxValue)] ^ crc32 >> 8;
+                crc32 = Crc32Helper.CrcTable[(int)(IntPtr)(uint)(((int)crc32 ^ (int)buffer[offset++]) & (int)byte.MaxValue)] ^ crc32 >> 8;
             }
 
             crc32 ^= uint.MaxValue;

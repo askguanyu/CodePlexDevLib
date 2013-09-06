@@ -22,6 +22,11 @@ namespace DevLib.ServiceProcess
         /// <param name="args">Command line arguments.</param>
         public static void Run(IWindowsService windowsService, string[] args = null)
         {
+            if (windowsService == null)
+            {
+                throw new ArgumentNullException("windowsService");
+            }
+
             if (Environment.UserInteractive)
             {
                 WindowsServiceConsole.Run(windowsService, args);
@@ -41,6 +46,11 @@ namespace DevLib.ServiceProcess
         /// <returns>true if succeeded; otherwise, false.</returns>
         public static bool Start(string serviceName, string[] args = null)
         {
+            if (string.IsNullOrEmpty(serviceName))
+            {
+                return false;
+            }
+
             ServiceController serviceController = null;
 
             if (ServiceExists(serviceName))
@@ -88,6 +98,11 @@ namespace DevLib.ServiceProcess
         /// <returns>true if succeeded; otherwise, false.</returns>
         public static bool Stop(string serviceName)
         {
+            if (string.IsNullOrEmpty(serviceName))
+            {
+                return false;
+            }
+
             ServiceController serviceController = null;
 
             if (ServiceExists(serviceName))
@@ -134,6 +149,11 @@ namespace DevLib.ServiceProcess
         /// <returns>true if succeeded; otherwise, false.</returns>
         public static bool Pause(string serviceName)
         {
+            if (string.IsNullOrEmpty(serviceName))
+            {
+                return false;
+            }
+
             ServiceController serviceController = null;
 
             if (ServiceExists(serviceName))
@@ -180,6 +200,11 @@ namespace DevLib.ServiceProcess
         /// <returns>true if succeeded; otherwise, false.</returns>
         public static bool Continue(string serviceName)
         {
+            if (string.IsNullOrEmpty(serviceName))
+            {
+                return false;
+            }
+
             ServiceController serviceController = null;
 
             if (ServiceExists(serviceName))
@@ -227,6 +252,11 @@ namespace DevLib.ServiceProcess
         /// <returns>true if succeeded; otherwise, false.</returns>
         public static bool ExecuteCommand(string serviceName, int command)
         {
+            if (string.IsNullOrEmpty(serviceName))
+            {
+                return false;
+            }
+
             ServiceController serviceController = null;
 
             if (ServiceExists(serviceName))
@@ -264,6 +294,11 @@ namespace DevLib.ServiceProcess
         /// <returns>One of the <see cref="T:System.ServiceProcess.ServiceControllerStatus" /> values that indicates whether the service is running, stopped, or paused, or whether a start, stop, pause, or continue command is pending.</returns>
         public static ServiceControllerStatus GetServiceStatus(string serviceName)
         {
+            if (string.IsNullOrEmpty(serviceName))
+            {
+                return ServiceControllerStatus.Stopped;
+            }
+
             ServiceController serviceController = null;
 
             if (ServiceExists(serviceName))
@@ -300,6 +335,11 @@ namespace DevLib.ServiceProcess
         /// <returns>true if the specified service exists; otherwise, false.</returns>
         public static bool ServiceExists(string serviceName)
         {
+            if (string.IsNullOrEmpty(serviceName))
+            {
+                return false;
+            }
+
             ServiceController[] services = ServiceController.GetServices();
 
             foreach (ServiceController item in services)

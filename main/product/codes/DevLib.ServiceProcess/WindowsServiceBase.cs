@@ -306,6 +306,7 @@ namespace DevLib.ServiceProcess
                 try
                 {
                     serviceController = new ServiceController(serviceName);
+                    serviceController.Refresh();
                     return serviceController.Status;
                 }
                 catch (Exception e)

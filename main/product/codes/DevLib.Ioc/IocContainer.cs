@@ -58,6 +58,8 @@ namespace DevLib.Ioc
         /// <returns>The current IocContainer instance.</returns>
         public IocContainer Register<T>(T instance, string label = "")
         {
+            this.CheckDisposed();
+
             if (instance == null)
             {
                 throw new ArgumentNullException("instance");
@@ -128,6 +130,8 @@ namespace DevLib.Ioc
         /// <returns>The current IocContainer instance.</returns>
         public IocContainer Register<T>(CreationFunc creation, string label = "")
         {
+            this.CheckDisposed();
+
             if (creation == null)
             {
                 throw new ArgumentNullException("creation");
@@ -198,6 +202,8 @@ namespace DevLib.Ioc
         /// <returns>The retrieved object.</returns>
         public T Resolve<T>(bool createNew = false, string label = "")
         {
+            this.CheckDisposed();
+
             if (string.IsNullOrEmpty(label))
             {
                 label = DefaultLabel;
@@ -263,6 +269,8 @@ namespace DevLib.Ioc
         /// <returns>true if can resolve; otherwise, false.</returns>
         public bool CanResolve<T>(bool createNew = false, string label = "")
         {
+            this.CheckDisposed();
+
             if (string.IsNullOrEmpty(label))
             {
                 label = DefaultLabel;
@@ -302,6 +310,8 @@ namespace DevLib.Ioc
         /// <returns>true if resolve successfully; otherwise, false.</returns>
         public bool TryResolve<T>(out T instance, bool createNew = false, string label = "")
         {
+            this.CheckDisposed();
+
             if (string.IsNullOrEmpty(label))
             {
                 label = DefaultLabel;
@@ -379,6 +389,8 @@ namespace DevLib.Ioc
         /// <returns>true if unregister successfully; otherwise, false.</returns>
         public bool Unregister<T>(bool instance = true, string label = "")
         {
+            this.CheckDisposed();
+
             if (string.IsNullOrEmpty(label))
             {
                 label = DefaultLabel;
@@ -430,6 +442,8 @@ namespace DevLib.Ioc
         /// <returns>true if destroy successfully; otherwise, false.</returns>
         public bool Destroy<T>()
         {
+            this.CheckDisposed();
+
             Type instanceType = typeof(T);
 
             this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);

@@ -8,8 +8,9 @@ namespace DevLib.Logging
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
-    using System.Reflection;
+    using System.Security.Permissions;
 
     /// <summary>
     /// Provides access to log for applications. This class cannot be inherited.
@@ -29,7 +30,15 @@ namespace DevLib.Logging
         /// <summary>
         /// Field _defaultLogFile.
         /// </summary>
-        private static string _defaultLogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "log"));
+        private static string _defaultLogFile;
+
+        /// <summary>
+        /// Initializes static members of the <see cref="LogManager" /> class.
+        /// </summary>
+        static LogManager()
+        {
+            DefaultLogFile = null;
+        }
 
         /// <summary>
         /// Gets the default logger setup.
@@ -52,11 +61,12 @@ namespace DevLib.Logging
                 return _defaultLogFile;
             }
 
+            [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    _defaultLogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "log"));
+                    _defaultLogFile = Path.GetFullPath(Path.ChangeExtension(Process.GetCurrentProcess().MainModule.FileName, "log"));
                 }
                 else
                 {

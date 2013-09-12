@@ -28,7 +28,6 @@ namespace DevLib.Logging
             result.AppendFormat("[{0}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
             result.AppendFormat(" [{0}]", logLevel.ToString());
             result.AppendFormat(" [{0}]", Environment.UserName);
-            result.AppendFormat(" [{0}]", ExceptionHandler.GetStackFrameInfo(skipFrames < 0 ? 3 : skipFrames + 3));
 
             if (objs != null && objs.Length > 0)
             {
@@ -47,6 +46,8 @@ namespace DevLib.Logging
                     }
                 }
             }
+
+            result.AppendFormat(" [{0}]", ExceptionHandler.GetStackFrameInfo(skipFrames < 0 ? 3 : skipFrames + 3));
 
             result.Append(Environment.NewLine);
 

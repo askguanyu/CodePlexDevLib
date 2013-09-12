@@ -29,15 +29,7 @@ namespace DevLib.Logging
         /// <summary>
         /// Field _defaultLogFile.
         /// </summary>
-        private static string _defaultLogFile;
-
-        /// <summary>
-        /// Initializes static members of the <see cref="LogManager" /> class.
-        /// </summary>
-        static LogManager()
-        {
-            DefaultLogFile = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "log");
-        }
+        private static string _defaultLogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "log"));
 
         /// <summary>
         /// Gets the default logger setup.

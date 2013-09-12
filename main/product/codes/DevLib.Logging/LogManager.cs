@@ -17,14 +17,27 @@ namespace DevLib.Logging
     public static class LogManager
     {
         /// <summary>
+        /// Field LoggerDictionary.
+        /// </summary>
+        private static readonly Dictionary<string, Logger> LoggerDictionary = new Dictionary<string, Logger>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
         /// Field LoggerSetupInfo.
         /// </summary>
         private static readonly LoggerSetup LoggerSetupInfo = new LoggerSetup();
 
         /// <summary>
-        /// Field LoggerDictionary.
+        /// Field _defaultLogFile.
         /// </summary>
-        private static readonly Dictionary<string, Logger> LoggerDictionary = new Dictionary<string, Logger>(StringComparer.OrdinalIgnoreCase);
+        private static string _defaultLogFile;
+
+        /// <summary>
+        /// Initializes static members of the <see cref="LogManager" /> class.
+        /// </summary>
+        static LogManager()
+        {
+            DefaultLogFile = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "log");
+        }
 
         /// <summary>
         /// Gets the default logger setup.
@@ -38,6 +51,29 @@ namespace DevLib.Logging
         }
 
         /// <summary>
+        /// Gets or sets default log file.
+        /// </summary>
+        public static string DefaultLogFile
+        {
+            get
+            {
+                return _defaultLogFile;
+            }
+
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    _defaultLogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "log"));
+                }
+                else
+                {
+                    _defaultLogFile = Path.GetFullPath(value);
+                }
+            }
+        }
+
+        /// <summary>
         /// Opens the log file for the current application.
         /// </summary>
         /// <param name="logFile">Log file for the current application; if null or string.Empty use the default log file.</param>
@@ -47,7 +83,7 @@ namespace DevLib.Logging
         {
             if (string.IsNullOrEmpty(logFile))
             {
-                logFile = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, "log");
+                logFile = DefaultLogFile;
             }
 
             string key = Path.GetFullPath(logFile);

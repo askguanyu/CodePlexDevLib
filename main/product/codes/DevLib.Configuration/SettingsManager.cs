@@ -16,9 +16,9 @@ namespace DevLib.Configuration
     public static class SettingsManager
     {
         /// <summary>
-        /// Field _settingsDictionary.
+        /// Field SettingsDictionary.
         /// </summary>
-        private static Dictionary<string, Settings> _settingsDictionary = new Dictionary<string, Settings>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Settings> SettingsDictionary = new Dictionary<string, Settings>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Opens the configuration file for the current application.
@@ -34,16 +34,16 @@ namespace DevLib.Configuration
 
             string key = Path.GetFullPath(configFile);
 
-            lock (((ICollection)_settingsDictionary).SyncRoot)
+            lock (((ICollection)SettingsDictionary).SyncRoot)
             {
-                if (_settingsDictionary.ContainsKey(key))
+                if (SettingsDictionary.ContainsKey(key))
                 {
-                    return _settingsDictionary[key];
+                    return SettingsDictionary[key];
                 }
                 else
                 {
                     Settings result = new Settings(key);
-                    _settingsDictionary.Add(key, result);
+                    SettingsDictionary.Add(key, result);
                     return result;
                 }
             }

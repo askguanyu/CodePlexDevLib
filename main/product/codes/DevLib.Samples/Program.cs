@@ -149,6 +149,8 @@ namespace DevLib.Samples
 
         private static void TestDevLibLogging()
         {
+            var a = LogManager.DefaultLogFile;
+
             LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Process.GetCurrentProcess().Id);
             LogManager.Open(@"C:\\AAA.log").Log(LogLevel.INFO, Process.GetCurrentProcess().Id);
             LogManager.Open(@"C:\\AAA.log").Log(LogLevel.EXCP, Process.GetCurrentProcess().Id);

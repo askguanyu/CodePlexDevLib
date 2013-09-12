@@ -35,9 +35,9 @@ namespace DevLib.ServiceModel
         private const MethodAttributes DefaultMethodAttributes = MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.NewSlot;
 
         /// <summary>
-        /// Field saveGeneratedAssembly.
+        /// Field _saveGeneratedAssembly.
         /// </summary>
-        private static bool saveGeneratedAssembly = false;
+        private static bool _saveGeneratedAssembly = false;
 
         /// <summary>
         /// Field _baseClassType.
@@ -87,7 +87,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void SaveGeneratedAssembly()
         {
-            if (saveGeneratedAssembly)
+            if (_saveGeneratedAssembly)
             {
                 this._assemblyBuilder.Save(string.Format(AssemblyFileStringFormat, this._generatedAssemblyName));
                 this._assemblyBuilder = null;
@@ -215,9 +215,9 @@ namespace DevLib.ServiceModel
                 {
                     this._assemblyName = new AssemblyName();
                     this._assemblyName.Name = this._generatedAssemblyName;
-                    this._assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(this._assemblyName, saveGeneratedAssembly ? AssemblyBuilderAccess.RunAndSave : AssemblyBuilderAccess.Run);
+                    this._assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(this._assemblyName, _saveGeneratedAssembly ? AssemblyBuilderAccess.RunAndSave : AssemblyBuilderAccess.Run);
 
-                    if (saveGeneratedAssembly)
+                    if (_saveGeneratedAssembly)
                     {
                         this._moduleBuilder = this._assemblyBuilder.DefineDynamicModule(this._generatedAssemblyName, string.Format(AssemblyFileStringFormat, this._generatedAssemblyName));
                     }

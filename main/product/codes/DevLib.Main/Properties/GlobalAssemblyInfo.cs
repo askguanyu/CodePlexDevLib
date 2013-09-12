@@ -11,8 +11,8 @@ using System.Reflection;
 [assembly: AssemblyDescription(".Net Development Library")]
 [assembly: AssemblyCompany("YuGuan")]
 [assembly: AssemblyProduct("DevLib")]
-[assembly: AssemblyCopyright("YuGuan Copyright © 2013")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("YuGuan Copyright © 2014")]
+[assembly: AssemblyTrademark("DevLib")]
 [assembly: AssemblyCulture("")]
 
 #if DEBUG

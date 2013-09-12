@@ -88,7 +88,7 @@ namespace DevLib.Diagnostics
             ThreadPriority originalThreadPriority = Thread.CurrentThread.Priority;
 
             // Backup current console color
-            ConsoleColor originalForeColor = Console.ForegroundColor;
+            ConsoleColor originalForegroundColor = Console.ForegroundColor;
             ConsoleColor originalBackgroundColor = Console.BackgroundColor;
 
             ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(9, 15);
@@ -101,7 +101,7 @@ namespace DevLib.Diagnostics
             Debug.WriteLine(beginTitle);
 
             Console.ResetColor();
-            Console.ForegroundColor = originalForeColor;
+            Console.ForegroundColor = originalForegroundColor;
             Console.BackgroundColor = originalBackgroundColor;
 
             // Record the latest GC counts
@@ -173,7 +173,7 @@ namespace DevLib.Diagnostics
 
             // Restore console color
             Console.ResetColor();
-            Console.ForegroundColor = originalForeColor;
+            Console.ForegroundColor = originalForegroundColor;
             Console.BackgroundColor = originalBackgroundColor;
 
             // Restore thread priority

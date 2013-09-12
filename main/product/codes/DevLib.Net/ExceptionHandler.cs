@@ -29,7 +29,13 @@ namespace DevLib.Net
         {
             if (exception != null)
             {
-                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
+                string message = string.Format(
+                    "[{0}] [{1}] [{2}] [{3}] [{4}]",
+                    DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"),
+                    "EXCP",
+                    Environment.UserName,
+                    GetStackFrameInfo(1),
+                    exception.ToString());
 
                 Debug.WriteLine(message);
 #if DEBUG
@@ -50,37 +56,32 @@ namespace DevLib.Net
         }
 
         /// <summary>
-        /// Builds a readable representation of the method in which the frame is executing.
+        /// Builds a readable representation of the stack trace.
         /// </summary>
-        /// <param name="stackFrame">Instance of <see cref="T:System.Diagnostics.StackFrame" />, which represents a function call on the call stack for the current thread.</param>
-        /// <returns>A readable representation of the method in which the frame is executing.</returns>
-        public static string GetStackFrameMethodInfo(StackFrame stackFrame)
+        /// <param name="skipFrames">The number of frames up the stack to skip.</param>
+        /// <returns>A readable representation of the stack trace.</returns>
+        public static string GetStackFrameInfo(int skipFrames)
         {
-            if (stackFrame == null)
+            StackFrame stackFrame = new StackFrame(skipFrames < 0 ? 1 : skipFrames + 1, true);
+
+            MethodBase method = stackFrame.GetMethod();
+
+            if (method != null)
             {
-                return string.Empty;
-            }
+                StringBuilder stringBuilder = new StringBuilder();
 
-            MethodBase methodBase = stackFrame.GetMethod();
-            if (methodBase != null)
-            {
-                StringBuilder stringBuilder = new StringBuilder(255);
+                stringBuilder.Append(method.Name);
 
-                Type declaringType = methodBase.DeclaringType;
-                if (declaringType != null)
+                if (method is MethodInfo && ((MethodInfo)method).IsGenericMethod)
                 {
-                    stringBuilder.Append(declaringType.FullName.Replace('+', '.'));
-                    stringBuilder.Append(".");
-                }
+                    Type[] genericArguments = ((MethodInfo)method).GetGenericArguments();
 
-                stringBuilder.Append(methodBase.Name);
+                    stringBuilder.Append("<");
 
-                if (methodBase is MethodInfo && ((MethodInfo)methodBase).IsGenericMethod)
-                {
-                    Type[] genericArguments = ((MethodInfo)methodBase).GetGenericArguments();
-                    stringBuilder.Append("[");
                     int i = 0;
+
                     bool flag = true;
+
                     while (i < genericArguments.Length)
                     {
                         if (!flag)
@@ -93,43 +94,26 @@ namespace DevLib.Net
                         }
 
                         stringBuilder.Append(genericArguments[i].Name);
+
                         i++;
                     }
 
-                    stringBuilder.Append("]");
+                    stringBuilder.Append(">");
                 }
 
-                stringBuilder.Append("(");
+                stringBuilder.Append(" in ");
 
-                ParameterInfo[] parameters = methodBase.GetParameters();
-                bool flag2 = true;
-                for (int j = 0; j < parameters.Length; j++)
-                {
-                    if (!flag2)
-                    {
-                        stringBuilder.Append(", ");
-                    }
-                    else
-                    {
-                        flag2 = false;
-                    }
+                stringBuilder.Append(Path.GetFileName(stackFrame.GetFileName()) ?? "<unknown>");
 
-                    string parameterTypeName = "<UnknownType>";
-                    if (parameters[j].ParameterType != null)
-                    {
-                        parameterTypeName = parameters[j].ParameterType.Name;
-                    }
+                stringBuilder.Append(":");
 
-                    stringBuilder.Append(parameterTypeName + " " + parameters[j].Name);
-                }
-
-                stringBuilder.Append(")");
+                stringBuilder.Append(stackFrame.GetFileLineNumber());
 
                 return stringBuilder.ToString();
             }
             else
             {
-                return string.Empty;
+                return "<null>";
             }
         }
     }

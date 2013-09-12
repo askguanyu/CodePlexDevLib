@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceProcess
+namespace DevLib.Logging
 {
     using System;
     using System.Diagnostics;
@@ -45,7 +45,7 @@ namespace DevLib.ServiceProcess
                 {
                     try
                     {
-                        File.AppendAllText("DevLib.ServiceProcess.log", message + Environment.NewLine);
+                        File.AppendAllText("DevLib.Logging.log", message + Environment.NewLine);
                     }
                     catch
                     {

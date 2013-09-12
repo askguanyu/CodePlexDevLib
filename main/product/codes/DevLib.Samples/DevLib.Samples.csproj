@@ -136,6 +136,10 @@
       <Project>{E13B019D-05DA-4E49-8611-8AC4E1D62775}</Project>
       <Name>DevLib.Ioc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Logging\DevLib.Logging.csproj">
+      <Project>{D7BA9F42-E97C-403A-B022-744E367A11F1}</Project>
+      <Name>DevLib.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Main\DevLib.Main.csproj">
       <Project>{56028A80-F71B-4C0A-9B8B-0FDC6630E570}</Project>
       <Name>DevLib.Main</Name>

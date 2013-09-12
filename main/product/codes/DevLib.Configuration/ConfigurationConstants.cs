@@ -6,7 +6,7 @@
 namespace DevLib.Configuration
 {
     /// <summary>
-    /// Settings Constants.
+    /// Configuration Constants.
     /// </summary>
     internal static class ConfigurationConstants
     {

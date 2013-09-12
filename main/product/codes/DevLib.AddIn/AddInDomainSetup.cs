@@ -171,7 +171,7 @@ namespace DevLib.AddIn
             {
                 if (this.AppDomainSetup != null)
                 {
-                    this.AppDomainSetup.ShadowCopyDirectories = value ? "true" : "false";
+                    this.AppDomainSetup.ShadowCopyFiles = value ? "true" : "false";
                 }
             }
         }

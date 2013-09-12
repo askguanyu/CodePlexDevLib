@@ -40,6 +40,7 @@ namespace DevLib.Samples
     using DevLib.Diagnostics;
     using DevLib.ExtensionMethods;
     using DevLib.Ioc;
+    using DevLib.Logging;
     using DevLib.Main;
     using DevLib.Net;
     using DevLib.Net.AsyncSocket;
@@ -104,6 +105,11 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
+                    //TestDevLibLogging();
+                });
+
+                CodeTimer.Time(delegate
+                {
                     //TestDevLibNet();
                 });
 
@@ -139,6 +145,51 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestDevLibLogging()
+        {
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Process.GetCurrentProcess().Id);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.INFO, Process.GetCurrentProcess().Id);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.EXCP, Process.GetCurrentProcess().Id);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.WARN, Process.GetCurrentProcess().Id);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.ERRO, Process.GetCurrentProcess().Id);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.FAIL, Process.GetCurrentProcess().Id);
+
+            Console.ReadLine();
+            
+            //var a = new Uri(Path.GetFullPath(@"C:\a b\b c\c d e\1 3 4.5")).AbsolutePath;
+
+            //LogManager.Open(@"c:\a\b\c\d.log").Log(LogLevel.DBUG, "hello", new Exception());
+
+            Random random = new Random();
+
+            LogManager.DefaultLoggerSetup.RollingByDate = true;
+
+            while (true)
+            {
+                LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Process.GetCurrentProcess().Id);
+
+                Thread.Sleep(random.Next(5, 100));
+            }
+
+            for (int i = 0; i < 100; i++)
+            {
+                LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, i.ToString(),DateTime.Now,Environment.UserName);
+            }
+
+            //Task.Factory.StartNew(() => 
+            //{
+            //    for (int i = 0; i < 100; i++)
+            //    {
+            //        LogManager.Open().Log(LogLevel.DBUG, i.ToString());
+            //    }
+                
+
+            //    Thread.Sleep(10000);
+
+            //    LogManager.Open().Log(LogLevel.DBUG, "b");
+            //});
         }
 
         private static void TestDevLibIoc()

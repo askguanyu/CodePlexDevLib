@@ -7,6 +7,7 @@ namespace DevLib.Diagnostics
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using System.Reflection;
     using System.Text;
 
@@ -23,7 +24,14 @@ namespace DevLib.Diagnostics
         {
             if (exception != null)
             {
-                string message = string.Format("[{0}] [EXCEPTION] [{1}] [{2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), DiagnosticsUtilities.GetStackFrameMethodInfo(new StackFrame(1)), exception.ToString());
+                string message = string.Format(
+                    "[{0}] [{1}] [{2}] [{3}] [{4}]",
+                    DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"),
+                    "EXCP",
+                    Environment.UserName,
+                    GetStackFrameInfo(1),
+                    exception.ToString());
+
                 Debug.WriteLine(message);
                 Console.WriteLine(message);
             }
@@ -42,11 +50,13 @@ namespace DevLib.Diagnostics
             }
 
             MethodBase methodBase = stackFrame.GetMethod();
+
             if (methodBase != null)
             {
                 StringBuilder stringBuilder = new StringBuilder(255);
 
                 Type declaringType = methodBase.DeclaringType;
+
                 if (declaringType != null)
                 {
                     stringBuilder.Append(declaringType.FullName.Replace('+', '.'));
@@ -58,9 +68,13 @@ namespace DevLib.Diagnostics
                 if (methodBase is MethodInfo && ((MethodInfo)methodBase).IsGenericMethod)
                 {
                     Type[] genericArguments = ((MethodInfo)methodBase).GetGenericArguments();
+
                     stringBuilder.Append("[");
+
                     int i = 0;
+
                     bool flag = true;
+
                     while (i < genericArguments.Length)
                     {
                         if (!flag)
@@ -73,6 +87,7 @@ namespace DevLib.Diagnostics
                         }
 
                         stringBuilder.Append(genericArguments[i].Name);
+
                         i++;
                     }
 
@@ -82,7 +97,9 @@ namespace DevLib.Diagnostics
                 stringBuilder.Append("(");
 
                 ParameterInfo[] parameters = methodBase.GetParameters();
+
                 bool flag2 = true;
+
                 for (int j = 0; j < parameters.Length; j++)
                 {
                     if (!flag2)
@@ -95,6 +112,7 @@ namespace DevLib.Diagnostics
                     }
 
                     string parameterTypeName = "<UnknownType>";
+
                     if (parameters[j].ParameterType != null)
                     {
                         parameterTypeName = parameters[j].ParameterType.Name;
@@ -110,6 +128,68 @@ namespace DevLib.Diagnostics
             else
             {
                 return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Builds a readable representation of the stack trace.
+        /// </summary>
+        /// <param name="skipFrames">The number of frames up the stack to skip.</param>
+        /// <returns>A readable representation of the stack trace.</returns>
+        public static string GetStackFrameInfo(int skipFrames)
+        {
+            StackFrame stackFrame = new StackFrame(skipFrames < 0 ? 1 : skipFrames + 1, true);
+
+            MethodBase method = stackFrame.GetMethod();
+
+            if (method != null)
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                stringBuilder.Append(method.Name);
+
+                if (method is MethodInfo && ((MethodInfo)method).IsGenericMethod)
+                {
+                    Type[] genericArguments = ((MethodInfo)method).GetGenericArguments();
+
+                    stringBuilder.Append("<");
+
+                    int i = 0;
+
+                    bool flag = true;
+
+                    while (i < genericArguments.Length)
+                    {
+                        if (!flag)
+                        {
+                            stringBuilder.Append(",");
+                        }
+                        else
+                        {
+                            flag = false;
+                        }
+
+                        stringBuilder.Append(genericArguments[i].Name);
+
+                        i++;
+                    }
+
+                    stringBuilder.Append(">");
+                }
+
+                stringBuilder.Append(" in ");
+
+                stringBuilder.Append(Path.GetFileName(stackFrame.GetFileName()) ?? "<unknown>");
+
+                stringBuilder.Append(":");
+
+                stringBuilder.Append(stackFrame.GetFileLineNumber());
+
+                return stringBuilder.ToString();
+            }
+            else
+            {
+                return "<null>";
             }
         }
     }

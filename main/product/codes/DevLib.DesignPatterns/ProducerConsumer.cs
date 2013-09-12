@@ -48,12 +48,12 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Allows the consumer thread to block when no items are available in the <see cref="_queue" />.
         /// </summary>
-        private readonly ManualResetEvent _queueWaitHandle = new ManualResetEvent(false);
+        private readonly EventWaitHandle _queueWaitHandle = new AutoResetEvent(false);
 
         /// <summary>
         /// Allows the consumer thread to block when <see cref="IsRunning" /> is false.
         /// </summary>
-        private readonly ManualResetEvent _isRunningWaitHandle = new ManualResetEvent(false);
+        private readonly EventWaitHandle _isRunningWaitHandle = new ManualResetEvent(false);
 
         /// <summary>
         /// Field _disposed.
@@ -105,9 +105,9 @@ namespace DevLib.DesignPatterns
 
             for (int i = 0; i < this._consumerThreads; i++)
             {
-                Thread worker = new Thread(this.ConsumeThread);
-                worker.IsBackground = true;
-                this._consumerThreadList.Add(worker);
+                Thread consumerThread = new Thread(this.ConsumerThread);
+                consumerThread.IsBackground = true;
+                this._consumerThreadList.Add(consumerThread);
             }
 
             foreach (Thread item in this._consumerThreadList)
@@ -147,7 +147,7 @@ namespace DevLib.DesignPatterns
 
             for (int i = 0; i < this._consumerThreads; i++)
             {
-                Thread worker = new Thread(this.ConsumeThread);
+                Thread worker = new Thread(this.ConsumerThread);
                 worker.IsBackground = true;
                 this._consumerThreadList.Add(worker);
             }
@@ -382,7 +382,7 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// The consumer thread.
         /// </summary>
-        private void ConsumeThread()
+        private void ConsumerThread()
         {
             while (!this._disposed)
             {
@@ -415,7 +415,6 @@ namespace DevLib.DesignPatterns
                     }
                     else
                     {
-                        this._queueWaitHandle.Reset();
                         this._queueWaitHandle.WaitOne();
                     }
                 }

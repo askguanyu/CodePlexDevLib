@@ -149,6 +149,10 @@ namespace DevLib.Samples
 
         private static void TestDevLibLogging()
         {
+            //new LogConfig().WriteXml("a.xml",true);
+
+            LogManager.OpenConfig("a.xml");
+
             var a = LogManager.DefaultLogFile;
 
             LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Process.GetCurrentProcess().Id);

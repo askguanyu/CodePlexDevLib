@@ -45,6 +45,8 @@
     </Compile>
     <Compile Include="ColoredConsoleAppender.cs" />
     <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="LogConfig.cs" />
+    <Compile Include="LogConfigManager.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LoggerSetup.cs" />
     <Compile Include="LoggingConstants.cs" />

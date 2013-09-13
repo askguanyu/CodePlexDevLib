@@ -92,7 +92,7 @@ namespace DevLib.Logging
 
             if (loggerSetup == null)
             {
-                loggerSetup = LoggerSetupInfo;
+                loggerSetup = DefaultLoggerSetup;
             }
 
             lock (((ICollection)LoggerDictionary).SyncRoot)
@@ -104,6 +104,37 @@ namespace DevLib.Logging
                 else
                 {
                     Logger result = new Logger(key, loggerSetup);
+                    LoggerDictionary.Add(key, result);
+                    return result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the log config file for the current application.
+        /// </summary>
+        /// <param name="logConfigFile">Log config file for the current application; if null or string.Empty use the default config.</param>
+        /// <returns>Logger instance.</returns>
+        public static Logger OpenConfig(string logConfigFile = null)
+        {
+            if (string.IsNullOrEmpty(logConfigFile))
+            {
+                return Open();
+            }
+
+            LogConfig logConfig = LogConfigManager.GetConfig(logConfigFile);
+
+            string key = Path.GetFullPath(logConfig.LogFile);
+
+            lock (((ICollection)LoggerDictionary).SyncRoot)
+            {
+                if (LoggerDictionary.ContainsKey(key))
+                {
+                    return LoggerDictionary[key];
+                }
+                else
+                {
+                    Logger result = new Logger(key, logConfig.LoggerSetup);
                     LoggerDictionary.Add(key, result);
                     return result;
                 }

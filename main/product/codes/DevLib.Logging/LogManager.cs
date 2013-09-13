@@ -122,9 +122,9 @@ namespace DevLib.Logging
                 return Open();
             }
 
-            LogConfig logConfig = LogConfigManager.GetConfig(logConfigFile);
+            string key = Path.GetFullPath(logConfigFile);
 
-            string key = Path.GetFullPath(logConfig.LogFile);
+            LogConfig logConfig = LogConfigManager.GetConfig(logConfigFile);
 
             lock (((ICollection)LoggerDictionary).SyncRoot)
             {
@@ -134,7 +134,7 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(key, logConfig.LoggerSetup);
+                    Logger result = new Logger(logConfig.LogFile, logConfig.LoggerSetup);
                     LoggerDictionary.Add(key, result);
                     return result;
                 }

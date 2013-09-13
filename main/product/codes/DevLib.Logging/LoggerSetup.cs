@@ -5,9 +5,12 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Logging
 {
+    using System;
+
     /// <summary>
     /// Class LoggerSetup.
     /// </summary>
+    [Serializable]
     public class LoggerSetup
     {
         /// <summary>

@@ -136,7 +136,7 @@ namespace DevLib.Logging
         }
 
         /// <summary>
-        /// Opens the log config file for the current application.
+        /// Opens the log configuration file for the current application.
         /// </summary>
         /// <param name="logConfigFile">Log configuration file for the current application; if null or string.Empty use the default configuration file.</param>
         /// <returns>Logger instance.</returns>

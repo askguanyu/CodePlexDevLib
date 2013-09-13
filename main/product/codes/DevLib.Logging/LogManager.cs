@@ -90,11 +90,6 @@ namespace DevLib.Logging
 
             string key = Path.GetFullPath(logFile);
 
-            if (loggerSetup == null)
-            {
-                loggerSetup = DefaultLoggerSetup;
-            }
-
             lock (((ICollection)LoggerDictionary).SyncRoot)
             {
                 if (LoggerDictionary.ContainsKey(key))
@@ -103,7 +98,7 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(key, loggerSetup);
+                    Logger result = new Logger(key, loggerSetup ?? DefaultLoggerSetup);
                     LoggerDictionary.Add(key, result);
                     return result;
                 }
@@ -124,8 +119,6 @@ namespace DevLib.Logging
 
             string key = Path.GetFullPath(logConfigFile);
 
-            LogConfig logConfig = LogConfigManager.GetConfig(logConfigFile);
-
             lock (((ICollection)LoggerDictionary).SyncRoot)
             {
                 if (LoggerDictionary.ContainsKey(key))
@@ -134,6 +127,7 @@ namespace DevLib.Logging
                 }
                 else
                 {
+                    LogConfig logConfig = LogConfigManager.GetConfig(logConfigFile);
                     Logger result = new Logger(logConfig.LogFile, logConfig.LoggerSetup);
                     LoggerDictionary.Add(key, result);
                     return result;

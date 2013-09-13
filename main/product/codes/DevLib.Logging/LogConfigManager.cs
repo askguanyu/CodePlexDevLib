@@ -17,9 +17,9 @@ namespace DevLib.Logging
     internal static class LogConfigManager
     {
         /// <summary>
-        /// Get log config from config file.
+        /// Get log config from configuration file.
         /// </summary>
-        /// <param name="logConfigFile">Log config file.</param>
+        /// <param name="logConfigFile">Log configuration file.</param>
         /// <returns>Instance of LogConfig.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static LogConfig GetConfig(string logConfigFile)

@@ -29,7 +29,7 @@ namespace DevLib.DaemonProcess
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static void StartSelfProtect(Guid daemonProcessGuid, ProcessMode processMode, int delaySeconds = 0, params string[] args)
         {
-            string entryPoint = Assembly.GetEntryAssembly().Location;
+            string entryPoint = Path.GetFullPath(Process.GetCurrentProcess().MainModule.FileName);
 
             if (processMode == ProcessMode.Service)
             {

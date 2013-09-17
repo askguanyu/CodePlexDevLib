@@ -7,11 +7,13 @@ namespace DevLib.ServiceModel
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.Reflection;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Security.Permissions;
+    using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.ServiceModel.Description;
     using System.Threading;
     using System.Xml;
 
@@ -22,20 +24,14 @@ namespace DevLib.ServiceModel
     public sealed class WcfServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
+        /// Field ServiceHostSyncRoot.
+        /// </summary>
+        private static readonly object ServiceHostSyncRoot = new object();
+
+        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
-
-        /// <summary>
-        /// Field _appDomain.
-        /// </summary>
-        [NonSerialized]
-        private AppDomain _appDomain;
-
-        /// <summary>
-        /// Field _wcfServiceHostProxy.
-        /// </summary>
-        private WcfServiceHostProxy _wcfServiceHostProxy;
 
         /// <summary>
         /// Field _assemblyFile.
@@ -79,8 +75,18 @@ namespace DevLib.ServiceModel
         private string _tempConfigFile;
 
         /// <summary>
+        /// Field _isInitialized.
+        /// </summary>
+        private bool _isInitialized;
+
+        /// <summary>
+        /// Field _serviceHostList.
+        /// </summary>
+        private List<ServiceHost> _serviceHostList = new List<ServiceHost>();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
-        /// Default constructor of WcfServiceHost, create an isolated AppDomain to host Wcf service. Use Initialize method to initialize Wcf service.
+        /// Default constructor of WcfServiceHost. Use Initialize method to initialize Wcf service.
         /// </summary>
         public WcfServiceHost()
         {
@@ -271,67 +277,52 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Event Created.
         /// </summary>
-        public event EventHandler<EventArgs> Created;
+        public event EventHandler<WcfServiceHostEventArgs> Created;
 
         /// <summary>
         /// Event Opening.
         /// </summary>
-        public event EventHandler<EventArgs> Opening;
+        public event EventHandler<WcfServiceHostEventArgs> Opening;
 
         /// <summary>
         /// Event Opened.
         /// </summary>
-        public event EventHandler<EventArgs> Opened;
+        public event EventHandler<WcfServiceHostEventArgs> Opened;
 
         /// <summary>
         /// Event Closing.
         /// </summary>
-        public event EventHandler<EventArgs> Closing;
+        public event EventHandler<WcfServiceHostEventArgs> Closing;
 
         /// <summary>
         /// Event Closed.
         /// </summary>
-        public event EventHandler<EventArgs> Closed;
+        public event EventHandler<WcfServiceHostEventArgs> Closed;
 
         /// <summary>
         /// Event Aborting.
         /// </summary>
-        public event EventHandler<EventArgs> Aborting;
+        public event EventHandler<WcfServiceHostEventArgs> Aborting;
 
         /// <summary>
         /// Event Aborted.
         /// </summary>
-        public event EventHandler<EventArgs> Aborted;
+        public event EventHandler<WcfServiceHostEventArgs> Aborted;
 
         /// <summary>
         /// Event Restarting.
         /// </summary>
-        public event EventHandler<EventArgs> Restarting;
+        public event EventHandler<WcfServiceHostEventArgs> Restarting;
 
         /// <summary>
         /// Event Restarted.
         /// </summary>
-        public event EventHandler<EventArgs> Restarted;
+        public event EventHandler<WcfServiceHostEventArgs> Restarted;
 
         /// <summary>
-        /// Event Loaded.
+        /// Gets a value indicating whether service host is opened or not.
         /// </summary>
-        public event EventHandler<EventArgs> Loaded;
-
-        /// <summary>
-        /// Event Unloaded.
-        /// </summary>
-        public event EventHandler<EventArgs> Unloaded;
-
-        /// <summary>
-        /// Event Reloaded.
-        /// </summary>
-        public event EventHandler<EventArgs> Reloaded;
-
-        /// <summary>
-        /// Gets a value indicating whether isolated AppDomain is loaded.
-        /// </summary>
-        public bool IsAppDomainLoaded
+        public bool IsOpened
         {
             get;
             private set;
@@ -370,11 +361,12 @@ namespace DevLib.ServiceModel
                 throw new UriFormatException(baseAddress);
             }
 
-            this._assemblyFile = assemblyFile;
-            this._configFile = configFile;
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
+            this._configFile = Path.GetFullPath(configFile);
             this._baseAddress = baseAddress;
+            this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -410,11 +402,11 @@ namespace DevLib.ServiceModel
                 throw new UriFormatException(baseAddress ?? string.Empty);
             }
 
-            this._assemblyFile = assemblyFile;
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._bindingType = bindingType;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -461,12 +453,12 @@ namespace DevLib.ServiceModel
                 throw new UriFormatException(baseAddress ?? string.Empty);
             }
 
-            this._assemblyFile = assemblyFile;
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._contractType = contractType;
             this._bindingType = bindingType;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -497,11 +489,11 @@ namespace DevLib.ServiceModel
                 throw new UriFormatException(baseAddress ?? string.Empty);
             }
 
-            this._assemblyFile = assemblyFile;
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._binding = binding;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -543,12 +535,12 @@ namespace DevLib.ServiceModel
                 throw new UriFormatException(baseAddress ?? string.Empty);
             }
 
-            this._assemblyFile = assemblyFile;
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._contractType = contractType;
             this._binding = binding;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -585,10 +577,10 @@ namespace DevLib.ServiceModel
             }
 
             this._serviceType = serviceType;
-            this._configFile = configFile;
+            this._configFile = Path.GetFullPath(configFile);
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -628,7 +620,7 @@ namespace DevLib.ServiceModel
             this._bindingType = bindingType;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -680,7 +672,7 @@ namespace DevLib.ServiceModel
             this._bindingType = bindingType;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -715,7 +707,7 @@ namespace DevLib.ServiceModel
             this._binding = binding;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -762,7 +754,7 @@ namespace DevLib.ServiceModel
             this._binding = binding;
             this._baseAddress = baseAddress;
 
-            this.InitWcfServiceHostProxy();
+            this._isInitialized = true;
         }
 
         /// <summary>
@@ -772,17 +764,47 @@ namespace DevLib.ServiceModel
         {
             this.CheckDisposed();
 
-            if (this._wcfServiceHostProxy != null)
+            this.CheckInitialized();
+
+            if (this.IsOpened)
+            {
+                return;
+            }
+
+            this.InitWcfServiceHostProxy();
+
+            if (this._serviceHostList.Count > 0)
             {
                 try
                 {
-                    this._wcfServiceHostProxy.Open();
+                    foreach (ServiceHost serviceHost in this._serviceHostList)
+                    {
+                        if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
+                        {
+                            this.RaiseEvent(this.Opening, serviceHost.Description.Name, WcfServiceHostStateEnum.Opening);
+
+                            serviceHost.Open();
+
+                            this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostStateEnum.Opened);
+
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                        }
+                    }
+
+                    this.IsOpened = true;
                 }
                 catch (Exception e)
                 {
+                    this.IsOpened = false;
+
                     ExceptionHandler.Log(e);
+
                     throw;
                 }
+            }
+            else
+            {
+                this.IsOpened = false;
             }
         }
 
@@ -793,18 +815,32 @@ namespace DevLib.ServiceModel
         {
             this.CheckDisposed();
 
-            if (this._wcfServiceHostProxy != null)
+            this.CheckInitialized();
+
+            if (this._serviceHostList.Count > 0)
             {
-                try
+                foreach (var serviceHost in this._serviceHostList)
                 {
-                    this._wcfServiceHostProxy.Close();
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
-                    throw;
+                    this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
+
+                    try
+                    {
+                        serviceHost.Close();
+
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Close", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                    }
+                    catch (Exception e)
+                    {
+                        serviceHost.Abort();
+
+                        ExceptionHandler.Log(e);
+                    }
+
+                    this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
                 }
             }
+
+            this.IsOpened = false;
         }
 
         /// <summary>
@@ -814,18 +850,30 @@ namespace DevLib.ServiceModel
         {
             this.CheckDisposed();
 
-            if (this._wcfServiceHostProxy != null)
+            this.CheckInitialized();
+
+            if (this._serviceHostList.Count > 0)
             {
-                try
+                foreach (var serviceHost in this._serviceHostList)
                 {
-                    this._wcfServiceHostProxy.Abort();
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Log(e);
-                    throw;
+                    this.RaiseEvent(this.Aborting, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborting);
+
+                    try
+                    {
+                        serviceHost.Abort();
+
+                        Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Abort", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                    }
+
+                    this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
                 }
             }
+
+            this.IsOpened = false;
         }
 
         /// <summary>
@@ -835,67 +883,43 @@ namespace DevLib.ServiceModel
         {
             this.CheckDisposed();
 
-            if (this._wcfServiceHostProxy != null)
+            this.CheckInitialized();
+
+            this.InitWcfServiceHostProxy();
+
+            if (this._serviceHostList.Count > 0)
             {
                 try
                 {
-                    this._wcfServiceHostProxy.Restart();
+                    foreach (ServiceHost serviceHost in this._serviceHostList)
+                    {
+                        if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
+                        {
+                            this.RaiseEvent(this.Restarting, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarting);
+
+                            serviceHost.Open();
+
+                            this.RaiseEvent(this.Restarted, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarted);
+
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHostProxy.Restart", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                        }
+                    }
+
+                    this.IsOpened = true;
                 }
                 catch (Exception e)
                 {
+                    this.IsOpened = false;
+
                     ExceptionHandler.Log(e);
+
                     throw;
                 }
             }
-        }
-
-        /// <summary>
-        /// Unload current isolated AppDomain.
-        /// </summary>
-        public void Unload()
-        {
-            this.CheckDisposed();
-
-            if (this._wcfServiceHostProxy != null)
+            else
             {
-                this._wcfServiceHostProxy.Dispose();
-                this.UnSubscribeAllWcfServiceHostProxyEvent();
-                this._wcfServiceHostProxy = null;
+                this.IsOpened = false;
             }
-
-            if (this._appDomain != null)
-            {
-                this.UnSubscribeDomainExitEvent();
-                AppDomain.Unload(this._appDomain);
-                this.IsAppDomainLoaded = false;
-                this._appDomain = null;
-                this.RaiseEvent(this.Unloaded, null);
-            }
-
-            this.CleanTempWcfConfigFile();
-        }
-
-        /// <summary>
-        /// Reload current isolated AppDomain.
-        /// </summary>
-        public void Reload()
-        {
-            this.CheckDisposed();
-
-            this.Unload();
-            this.InitWcfServiceHostProxy();
-            this.RaiseEvent(this.Reloaded, null);
-        }
-
-        /// <summary>
-        /// Get current isolated AppDomain.
-        /// </summary>
-        /// <returns>Instance of AppDomain.</returns>
-        public AppDomain GetAppDomain()
-        {
-            this.CheckDisposed();
-
-            return this._appDomain;
         }
 
         /// <summary>
@@ -906,7 +930,14 @@ namespace DevLib.ServiceModel
         {
             this.CheckDisposed();
 
-            return this._wcfServiceHostProxy.GetHostInfoList();
+            List<WcfServiceHostInfo> result = new List<WcfServiceHostInfo>();
+
+            foreach (var item in this._serviceHostList)
+            {
+                result.Add(new WcfServiceHostInfo() { ServiceType = item.Description.ServiceType.FullName, BaseAddress = item.BaseAddresses[0].AbsoluteUri, State = item.State });
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -939,37 +970,24 @@ namespace DevLib.ServiceModel
         {
             string result = null;
 
-            try
-            {
-                result = Path.GetTempFileName();
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
-                throw;
-            }
-
             if (string.IsNullOrEmpty(sourceFileName))
             {
-                File.WriteAllText(result, @"<configuration></configuration>");
-
                 return result;
             }
 
-            if (string.IsNullOrEmpty(baseAddress))
+            if (!string.IsNullOrEmpty(baseAddress))
             {
                 try
                 {
-                    File.Copy(sourceFileName, result, true);
+                    result = Path.GetTempFileName();
                 }
                 catch (Exception e)
                 {
                     ExceptionHandler.Log(e);
+
                     throw;
                 }
-            }
-            else
-            {
+
                 try
                 {
                     XmlDocument xmlDocument = new XmlDocument();
@@ -990,6 +1008,7 @@ namespace DevLib.ServiceModel
                 catch (Exception e)
                 {
                     ExceptionHandler.Log(e);
+
                     throw;
                 }
             }
@@ -1020,19 +1039,26 @@ namespace DevLib.ServiceModel
                 ////    managedResource = null;
                 ////}
 
-                if (this._wcfServiceHostProxy != null)
+                if (this._serviceHostList != null && this._serviceHostList.Count > 0)
                 {
-                    this._wcfServiceHostProxy.Dispose();
-                    this.UnSubscribeAllWcfServiceHostProxyEvent();
-                    this._wcfServiceHostProxy = null;
-                }
+                    foreach (var serviceHost in this._serviceHostList)
+                    {
+                        if (serviceHost != null)
+                        {
+                            try
+                            {
+                                serviceHost.Close();
+                            }
+                            catch
+                            {
+                                serviceHost.Abort();
+                            }
+                        }
+                    }
 
-                if (this._appDomain != null)
-                {
-                    this.UnSubscribeDomainExitEvent();
-                    AppDomain.Unload(this._appDomain);
-                    this.IsAppDomainLoaded = false;
-                    this._appDomain = null;
+                    this._serviceHostList.Clear();
+
+                    this._serviceHostList = null;
                 }
 
                 this.CleanTempWcfConfigFile();
@@ -1050,121 +1076,211 @@ namespace DevLib.ServiceModel
         /// Method RaiseEvent.
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="e">Instance of EventArgs.</param>
-        private void RaiseEvent(EventHandler<EventArgs> eventHandler, EventArgs e)
+        /// <param name="wcfServiceName">String of Wcf Service Name.</param>
+        /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostStateEnum state)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<EventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, e);
+                temp(this, new WcfServiceHostEventArgs(wcfServiceName, state));
             }
         }
 
         /// <summary>
-        /// Method CreateDomain.
+        /// Method InitWcfServiceHostProxy.
         /// </summary>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         private void InitWcfServiceHostProxy()
         {
-            try
+            if (this._serviceHostList.Count > 0)
             {
-                this.CleanTempWcfConfigFile();
-
-                AppDomainSetup appDomainSetup = this.CloneDeep(AppDomain.CurrentDomain.SetupInformation);
-                appDomainSetup.ApplicationName = Path.GetFileNameWithoutExtension(this._assemblyFile) ?? this._serviceType.FullName;
-                appDomainSetup.ConfigurationFile = this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
-                appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
-
-                this._appDomain = AppDomain.CreateDomain(appDomainSetup.ApplicationName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
-
-                this.SubscribeDomainExitEvent();
-
-                this._wcfServiceHostProxy = this._appDomain.CreateInstanceAndUnwrap(
-                                                                                    Assembly.GetExecutingAssembly().FullName,
-                                                                                    typeof(WcfServiceHostProxy).FullName,
-                                                                                    true,
-                                                                                    BindingFlags.Default,
-                                                                                    null,
-                                                                                    new object[] { this._assemblyFile, this._serviceType, this._contractType, this._binding, this._bindingType, this._configFile, this._baseAddress },
-                                                                                    null,
-                                                                                    null,
-                                                                                    null) as WcfServiceHostProxy;
-
-                this.IsAppDomainLoaded = true;
-                this.SubscribeAllWcfServiceHostProxyEvent();
-                this.RaiseEvent(this.Loaded, null);
+                foreach (ServiceHost serviceHost in this._serviceHostList)
+                {
+                    try
+                    {
+                        serviceHost.Abort();
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                    }
+                }
             }
-            catch (Exception e)
+
+            this._serviceHostList.Clear();
+
+            IList<Type> serviceTypeList = null;
+
+            if (File.Exists(this._configFile))
             {
-                ExceptionHandler.Log(e);
-                this.Unload();
-                throw;
+                if (File.Exists(this._assemblyFile))
+                {
+                    serviceTypeList = WcfServiceType.LoadFile(this._assemblyFile, this._configFile);
+                }
+                else
+                {
+                    serviceTypeList = new Type[1] { this._serviceType };
+                }
+
+                lock (ServiceHostSyncRoot)
+                {
+                    if (string.IsNullOrEmpty(this._baseAddress))
+                    {
+                        WcfServiceHostProxy.ConfigFile = this._configFile;
+
+                        try
+                        {
+                            foreach (Type serviceType in serviceTypeList)
+                            {
+                                WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType);
+
+                                this._serviceHostList.Add(serviceHost);
+
+                                this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
+
+                                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+
+                            throw;
+                        }
+                        finally
+                        {
+                            WcfServiceHostProxy.ConfigFile = null;
+                        }
+                    }
+                    else
+                    {
+                        WcfServiceHostProxy.ConfigFile = this._tempConfigFile;
+
+                        try
+                        {
+                            foreach (Type serviceType in serviceTypeList)
+                            {
+                                WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
+
+                                this._serviceHostList.Add(serviceHost);
+
+                                this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
+
+                                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionHandler.Log(e);
+
+                            throw;
+                        }
+                        finally
+                        {
+                            WcfServiceHostProxy.ConfigFile = null;
+                        }
+                    }
+                }
             }
-        }
+            else
+            {
+                if (File.Exists(this._assemblyFile))
+                {
+                    serviceTypeList = WcfServiceType.LoadFile(this._assemblyFile);
+                }
+                else
+                {
+                    serviceTypeList = new Type[1] { this._serviceType };
+                }
 
-        /// <summary>
-        /// Method SubscribeDomainExitEvent.
-        /// </summary>
-        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        private void SubscribeDomainExitEvent()
-        {
-            this._appDomain.DomainUnload += this.DomainExit;
-            this._appDomain.ProcessExit += this.DomainExit;
-            this._appDomain.UnhandledException += this.DomainExit;
-        }
+                Uri baseAddressUri = new Uri(this._baseAddress);
 
-        /// <summary>
-        /// Method UnSubscribeDomainExitEvent.
-        /// </summary>
-        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        private void UnSubscribeDomainExitEvent()
-        {
-            this._appDomain.DomainUnload -= this.DomainExit;
-            this._appDomain.ProcessExit -= this.DomainExit;
-            this._appDomain.UnhandledException -= this.DomainExit;
-        }
+                Binding binding = this._binding ?? WcfServiceType.GetBinding(this._bindingType);
 
-        /// <summary>
-        /// Method SubscribeAllWcfServiceHostProxyEvent.
-        /// </summary>
-        private void SubscribeAllWcfServiceHostProxyEvent()
-        {
-            this._wcfServiceHostProxy.Created += (s, e) => this.RaiseEvent(this.Created, e);
-            this._wcfServiceHostProxy.Opening += (s, e) => this.RaiseEvent(this.Opening, e);
-            this._wcfServiceHostProxy.Opened += (s, e) => this.RaiseEvent(this.Opened, e);
-            this._wcfServiceHostProxy.Closing += (s, e) => this.RaiseEvent(this.Closing, e);
-            this._wcfServiceHostProxy.Closed += (s, e) => this.RaiseEvent(this.Closed, e);
-            this._wcfServiceHostProxy.Aborting += (s, e) => this.RaiseEvent(this.Aborting, e);
-            this._wcfServiceHostProxy.Aborted += (s, e) => this.RaiseEvent(this.Aborted, e);
-            this._wcfServiceHostProxy.Restarting += (s, e) => this.RaiseEvent(this.Restarting, e);
-            this._wcfServiceHostProxy.Restarted += (s, e) => this.RaiseEvent(this.Restarted, e);
-        }
+                IList<Type> contractList = null;
 
-        /// <summary>
-        /// Method UnSubscribeAllWcfServiceHostProxyEvent.
-        /// </summary>
-        private void UnSubscribeAllWcfServiceHostProxyEvent()
-        {
-            this._wcfServiceHostProxy.Created -= (s, e) => this.RaiseEvent(this.Created, e);
-            this._wcfServiceHostProxy.Opening -= (s, e) => this.RaiseEvent(this.Opening, e);
-            this._wcfServiceHostProxy.Opened -= (s, e) => this.RaiseEvent(this.Opened, e);
-            this._wcfServiceHostProxy.Closing -= (s, e) => this.RaiseEvent(this.Closing, e);
-            this._wcfServiceHostProxy.Closed -= (s, e) => this.RaiseEvent(this.Closed, e);
-            this._wcfServiceHostProxy.Aborting -= (s, e) => this.RaiseEvent(this.Aborting, e);
-            this._wcfServiceHostProxy.Aborted -= (s, e) => this.RaiseEvent(this.Aborted, e);
-            this._wcfServiceHostProxy.Restarting -= (s, e) => this.RaiseEvent(this.Restarting, e);
-            this._wcfServiceHostProxy.Restarted -= (s, e) => this.RaiseEvent(this.Restarted, e);
-        }
+                if (this._contractType != null)
+                {
+                    contractList = new Type[1] { this._contractType };
+                }
 
-        /// <summary>
-        /// Method DomainExit.
-        /// </summary>
-        /// <param name="sender">Event sender.</param>
-        /// <param name="e">Instance of EventArgs.</param>
-        private void DomainExit(object sender, EventArgs e)
-        {
-            this.CleanTempWcfConfigFile();
+                lock (ServiceHostSyncRoot)
+                {
+                    WcfServiceHostProxy.ConfigFile = null;
+
+                    foreach (var serviceType in serviceTypeList)
+                    {
+                        if (this._contractType == null)
+                        {
+                            contractList = WcfServiceType.GetServiceContract(serviceType);
+                        }
+
+                        foreach (Type serviceContract in contractList)
+                        {
+                            WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType, baseAddressUri);
+
+                            serviceHost.Description.Endpoints.Clear();
+
+                            serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+
+                            ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
+
+                            if (serviceDebugBehavior == null)
+                            {
+                                serviceDebugBehavior = new ServiceDebugBehavior();
+
+                                serviceHost.Description.Behaviors.Add(serviceDebugBehavior);
+                            }
+
+                            serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
+
+                            if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
+                            {
+                                ServiceMetadataBehavior serviceMetadataBehavior = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+
+                                if (serviceMetadataBehavior == null)
+                                {
+                                    serviceMetadataBehavior = new ServiceMetadataBehavior();
+
+                                    serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
+                                }
+
+                                serviceMetadataBehavior.HttpGetEnabled = true;
+                            }
+
+                            foreach (var endpoint in serviceHost.Description.Endpoints)
+                            {
+                                ContractDescription contractDescription = endpoint.Contract;
+
+                                foreach (var operationDescription in contractDescription.Operations)
+                                {
+                                    DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                                    if (serializerBehavior == null)
+                                    {
+                                        serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+
+                                        operationDescription.Behaviors.Add(serializerBehavior);
+                                    }
+
+                                    serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+
+                                    serializerBehavior.IgnoreExtensionDataObject = true;
+                                }
+                            }
+
+                            this._serviceHostList.Add(serviceHost);
+
+                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
+
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -1186,29 +1302,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Perform a deep Copy of the object.
-        /// </summary>
-        /// <typeparam name="T">The type of input object.</typeparam>
-        /// <param name="source">The object instance to copy.</param>
-        /// <returns>The copied object.</returns>
-        private T CloneDeep<T>(T source)
-        {
-            if (source == null)
-            {
-                return default(T);
-            }
-
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                binaryFormatter.Serialize(memoryStream, source);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                return (T)binaryFormatter.Deserialize(memoryStream);
-            }
-        }
-
-        /// <summary>
         /// Method CheckDisposed.
         /// </summary>
         private void CheckDisposed()
@@ -1216,6 +1309,17 @@ namespace DevLib.ServiceModel
             if (this._disposed)
             {
                 throw new ObjectDisposedException("DevLib.ServiceModel.WcfServiceHost");
+            }
+        }
+
+        /// <summary>
+        /// Method CheckInitialized.
+        /// </summary>
+        private void CheckInitialized()
+        {
+            if (!this._isInitialized)
+            {
+                throw new InvalidOperationException("WcfServiceHost is not initialized.");
             }
         }
     }

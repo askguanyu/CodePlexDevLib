@@ -134,30 +134,22 @@ namespace DevLib.DaemonProcess
                         daemonProcess = null;
                     }
 
-                    foreach (Process item in Process.GetProcesses())
+                    foreach (Process item in Process.GetProcessesByName(daemonProcessName))
                     {
                         try
                         {
-                            if (item.ProcessName.Equals(daemonProcessName, StringComparison.OrdinalIgnoreCase))
+                            List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
+
+                            if (commandLineArguments != null && commandLineArguments.Count > 0 && commandLineArguments[0].Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
                             {
-                                List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
+                                daemonProcess = item;
 
-                                if (commandLineArguments != null && commandLineArguments.Count > 0 && commandLineArguments[0].Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
-                                {
-                                    daemonProcess = item;
-
-                                    break;
-                                }
+                                break;
                             }
                         }
                         catch (Exception e)
                         {
                             ExceptionHandler.Log(e);
-                        }
-
-                        if (daemonProcess != null)
-                        {
-                            break;
                         }
                     }
 
@@ -221,30 +213,22 @@ namespace DevLib.DaemonProcess
 
             Process daemonProcess = null;
 
-            foreach (Process item in Process.GetProcesses())
+            foreach (Process item in Process.GetProcessesByName(daemonProcessName))
             {
                 try
                 {
-                    if (item.ProcessName.Equals(daemonProcessName, StringComparison.OrdinalIgnoreCase))
+                    List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
+
+                    if (commandLineArguments != null && commandLineArguments.Count > 0 && commandLineArguments[0].Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
-                        List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
+                        daemonProcess = item;
 
-                        if (commandLineArguments != null && commandLineArguments.Count > 0 && commandLineArguments[0].Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
-                        {
-                            daemonProcess = item;
-
-                            break;
-                        }
+                        break;
                     }
                 }
                 catch (Exception e)
                 {
                     ExceptionHandler.Log(e);
-                }
-
-                if (daemonProcess != null)
-                {
-                    break;
                 }
             }
 

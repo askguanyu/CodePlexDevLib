@@ -111,7 +111,7 @@ namespace DevLib.DaemonProcess
                     {
                         ServiceController[] services = ServiceController.GetServices();
 
-                        bool serviceExist = false;
+                        bool isServiceExist = false;
 
                         foreach (var item in services)
                         {
@@ -119,7 +119,7 @@ namespace DevLib.DaemonProcess
                             {
                                 if (protectedProcessEntryPoint.Equals(item.ServiceName, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    serviceExist = true;
+                                    isServiceExist = true;
 
                                     break;
                                 }
@@ -129,7 +129,7 @@ namespace DevLib.DaemonProcess
                             }
                         }
 
-                        if (!serviceExist)
+                        if (!isServiceExist)
                         {
                             Environment.Exit(-1);
                         }
@@ -232,6 +232,8 @@ namespace DevLib.DaemonProcess
                                     if (protectedProcessArgs == null || protectedProcessArgs.Length < 1)
                                     {
                                         protectedProcess = item;
+
+                                        break;
                                     }
                                     else
                                     {
@@ -243,11 +245,6 @@ namespace DevLib.DaemonProcess
 
                                             break;
                                         }
-                                    }
-
-                                    if (protectedProcess != null)
-                                    {
-                                        break;
                                     }
                                 }
                             }

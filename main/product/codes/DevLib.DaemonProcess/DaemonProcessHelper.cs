@@ -9,6 +9,7 @@ namespace DevLib.DaemonProcess
     using System.Collections.Generic;
     using System.Management;
     using System.Text;
+    using DevLib.DaemonProcess.NativeAPI;
 
     /// <summary>
     /// Class DaemonProcessHelper.
@@ -47,6 +48,8 @@ namespace DevLib.DaemonProcess
             catch (Exception e)
             {
                 ExceptionHandler.Log(e);
+
+                result = NativeMethodsHelper.GetCommandLine(processId);
             }
             finally
             {

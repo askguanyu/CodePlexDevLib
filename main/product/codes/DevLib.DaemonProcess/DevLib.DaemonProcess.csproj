@@ -53,6 +53,12 @@
     <Compile Include="DaemonProcessHelper.cs" />
     <Compile Include="DaemonProcessManager.cs" />
     <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="NativeAPI\NativeMethods.cs" />
+    <Compile Include="NativeAPI\NativeMethodsHelper.cs" />
+    <Compile Include="NativeAPI\PEB.cs" />
+    <Compile Include="NativeAPI\PROCESSINFOCLASS.cs" />
+    <Compile Include="NativeAPI\PROCESS_BASIC_INFORMATION.cs" />
+    <Compile Include="NativeAPI\RTL_USER_PROCESS_PARAMETERS.cs" />
     <Compile Include="ProcessMode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +66,7 @@
   <ItemGroup>
     <None Include="app.manifest" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

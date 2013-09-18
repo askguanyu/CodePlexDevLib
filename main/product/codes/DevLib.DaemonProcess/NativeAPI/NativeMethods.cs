@@ -16,7 +16,7 @@ namespace DevLib.DaemonProcess.NativeAPI
         [DllImport("ntdll.dll", SetLastError = true)]
         public static extern int NtQueryInformationProcess(IntPtr processHandle, int processInformationClass, IntPtr processInformation, uint processInformationLength, IntPtr returnLength);
 
-        [DllImport("NTDLL.DLL", SetLastError = true)]
+        [DllImport("ntdll.dll", SetLastError = true)]
         public static extern int NtQueryInformationProcess(IntPtr hProcess, PROCESSINFOCLASS pic, ref PROCESS_BASIC_INFORMATION pbi, int cb, out int pSize);
     }
 }

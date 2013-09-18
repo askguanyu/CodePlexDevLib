@@ -212,6 +212,7 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.DaemonProcess");
 
+            //var a = DaemonProcess.NativeAPI.NativeMethodsHelper.GetCommandLine(Process.GetCurrentProcess().Id);
 
 
             //DaemonProcessManager.StartProtect(Guid.Parse("8C0CD469-3C7B-4F7A-80D1-2987456877AA"), 1, 1, ProcessMode.Service, "AMD External Events Utility");

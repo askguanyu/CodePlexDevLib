@@ -56,6 +56,8 @@ namespace DevLib.DaemonProcess
                 catch (Exception e)
                 {
                     ExceptionHandler.Log(e);
+
+                    return;
                 }
                 finally
                 {
@@ -147,9 +149,8 @@ namespace DevLib.DaemonProcess
                                 break;
                             }
                         }
-                        catch (Exception e)
+                        catch
                         {
-                            ExceptionHandler.Log(e);
                         }
                     }
 
@@ -226,9 +227,8 @@ namespace DevLib.DaemonProcess
                         break;
                     }
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Log(e);
                 }
             }
 
@@ -238,9 +238,8 @@ namespace DevLib.DaemonProcess
                 {
                     daemonProcess.Kill();
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Log(e);
                 }
                 finally
                 {

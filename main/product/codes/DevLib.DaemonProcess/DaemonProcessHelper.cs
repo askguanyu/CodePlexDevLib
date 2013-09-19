@@ -45,10 +45,8 @@ namespace DevLib.DaemonProcess
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
-                ExceptionHandler.Log(e);
-
                 result = NativeMethodsHelper.GetCommandLine(processId);
             }
             finally

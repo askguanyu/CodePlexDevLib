@@ -288,7 +288,6 @@ namespace DevLib.Net.AsyncSocket
                     this.CloseListenSocket();
                     this.ClearSessionDictionary();
                     this._readerWriterLock.ReleaseLock();
-                    this._connectedSocketsCount = 0;
 
                     Debug.WriteLine(AsyncSocketTcpServerConstants.TcpServerStopSucceeded);
 
@@ -711,6 +710,8 @@ namespace DevLib.Net.AsyncSocket
         /// </summary>
         private void ClearSessionDictionary()
         {
+            Interlocked.Exchange(ref this._connectedSocketsCount, 0);
+
             if (this._sessionDictionary != null)
             {
                 lock (((ICollection)this._sessionDictionary).SyncRoot)
@@ -724,7 +725,6 @@ namespace DevLib.Net.AsyncSocket
                     }
 
                     this._sessionDictionary.Clear();
-                    this._connectedSocketsCount = 0;
                 }
             }
         }

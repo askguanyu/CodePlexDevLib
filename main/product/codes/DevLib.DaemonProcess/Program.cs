@@ -176,9 +176,8 @@ namespace DevLib.DaemonProcess
                                 }
                             }
                         }
-                        catch (Exception e)
+                        catch
                         {
-                            ExceptionHandler.Log(e);
                         }
                     }
 
@@ -217,9 +216,8 @@ namespace DevLib.DaemonProcess
 
                                 protectedProcess = null;
                             }
-                            catch (Exception e)
+                            catch
                             {
-                                ExceptionHandler.Log(e);
                             }
                         }
 
@@ -266,9 +264,8 @@ namespace DevLib.DaemonProcess
                                     protectedProcess = Process.Start(protectedProcessEntryPoint, string.Join(" ", protectedProcessArgs));
                                 }
                             }
-                            catch (Exception e)
+                            catch
                             {
-                                ExceptionHandler.Log(e);
                             }
                         }
                     }

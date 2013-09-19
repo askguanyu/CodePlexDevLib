@@ -132,7 +132,10 @@ namespace DevLib.Logging
 
                 lock (this._queueSyncRoot)
                 {
-                    ColoredConsoleAppender.Write(logLevel, message);
+                    if (this._loggerSetup.WriteToConsole)
+                    {
+                        ColoredConsoleAppender.Write(logLevel, message);
+                    }
 
                     if (this._fileAppender != null)
                     {

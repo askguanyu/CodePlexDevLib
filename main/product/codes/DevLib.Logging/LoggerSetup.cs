@@ -30,6 +30,7 @@ namespace DevLib.Logging
         {
             this.RollingFileSizeLimitKB = 10240;
             this.RollingByDate = false;
+            this.WriteToConsole = true;
             this.UseBracket = true;
         }
 
@@ -70,6 +71,15 @@ namespace DevLib.Logging
         /// Gets or sets a value indicating whether split log file by date.
         /// </summary>
         public bool RollingByDate
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether write log message to console.
+        /// </summary>
+        public bool WriteToConsole
         {
             get;
             set;

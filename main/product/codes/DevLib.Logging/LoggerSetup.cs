@@ -19,40 +19,40 @@ namespace DevLib.Logging
         private long _rollingFileSizeLimit;
 
         /// <summary>
-        /// Field _rollingFileSizeLimitKB.
+        /// Field _rollingFileSizeLimitMB.
         /// </summary>
-        private long _rollingFileSizeLimitKB;
+        private long _rollingFileSizeLimitMB;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggerSetup" /> class.
         /// </summary>
         public LoggerSetup()
         {
-            this.RollingFileSizeLimitKB = 10240;
+            this.RollingFileSizeLimitMB = 10;
             this.RollingByDate = false;
             this.WriteToConsole = true;
             this.UseBracket = true;
         }
 
         /// <summary>
-        /// Gets or sets rolling log file size limit in KB. If less than or equal to zero, there is no limit.
+        /// Gets or sets rolling log file size limit in MB. If less than or equal to zero, there is no limit.
         /// </summary>
-        public long RollingFileSizeLimitKB
+        public long RollingFileSizeLimitMB
         {
             get
             {
-                return this._rollingFileSizeLimitKB;
+                return this._rollingFileSizeLimitMB;
             }
 
             set
             {
                 if (value > 0)
                 {
-                    this._rollingFileSizeLimitKB = value;
+                    this._rollingFileSizeLimitMB = value;
 
                     try
                     {
-                        this._rollingFileSizeLimit = value * 1024;
+                        this._rollingFileSizeLimit = value * 1024 * 1024;
                     }
                     catch
                     {
@@ -61,7 +61,7 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    this._rollingFileSizeLimitKB = -1;
+                    this._rollingFileSizeLimitMB = -1;
                     this._rollingFileSizeLimit = -1;
                 }
             }

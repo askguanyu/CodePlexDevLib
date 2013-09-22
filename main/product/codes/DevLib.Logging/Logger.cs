@@ -62,22 +62,25 @@ namespace DevLib.Logging
 
             this._loggerSetup = loggerSetup;
 
-            try
+            if (this._loggerSetup.WriteToFile)
             {
-                this._fileAppender = new MutexMultiProcessFileAppender(this._logFile, this._loggerSetup);
+                try
+                {
+                    this._fileAppender = new MutexMultiProcessFileAppender(this._logFile, this._loggerSetup);
 
-                this._queueWaitHandle = new AutoResetEvent(false);
+                    this._queueWaitHandle = new AutoResetEvent(false);
 
-                this._queue = new Queue<string>();
+                    this._queue = new Queue<string>();
 
-                this._consumerThread = new Thread(this.ConsumerThread);
+                    this._consumerThread = new Thread(this.ConsumerThread);
 
-                this._consumerThread.IsBackground = true;
+                    this._consumerThread.IsBackground = true;
 
-                this._consumerThread.Start();
-            }
-            catch
-            {
+                    this._consumerThread.Start();
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -128,10 +131,10 @@ namespace DevLib.Logging
         {
             try
             {
-                string message = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, objs);
-
-                lock (this._queueSyncRoot)
+                if (this._loggerSetup.WriteToConsole || this._fileAppender != null)
                 {
+                    string message = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, objs);
+
                     if (this._loggerSetup.WriteToConsole)
                     {
                         ColoredConsoleAppender.Write(logLevel, message);
@@ -139,9 +142,12 @@ namespace DevLib.Logging
 
                     if (this._fileAppender != null)
                     {
-                        this._queue.Enqueue(message);
+                        lock (this._queueSyncRoot)
+                        {
+                            this._queue.Enqueue(message);
 
-                        this._queueWaitHandle.Set();
+                            this._queueWaitHandle.Set();
+                        }
                     }
                 }
             }

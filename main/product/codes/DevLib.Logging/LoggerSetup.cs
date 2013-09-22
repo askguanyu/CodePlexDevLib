@@ -28,10 +28,38 @@ namespace DevLib.Logging
         /// </summary>
         public LoggerSetup()
         {
+            this.WriteToConsole = true;
+            this.WriteToFile = true;
+            this.UseBracket = true;
             this.RollingFileSizeLimitMB = 10;
             this.RollingByDate = false;
-            this.WriteToConsole = true;
-            this.UseBracket = true;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether write log message to console.
+        /// </summary>
+        public bool WriteToConsole
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether write log message to log file.
+        /// </summary>
+        public bool WriteToFile
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether use square brackets ([ ]) around log message.
+        /// </summary>
+        public bool UseBracket
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -71,24 +99,6 @@ namespace DevLib.Logging
         /// Gets or sets a value indicating whether split log file by date.
         /// </summary>
         public bool RollingByDate
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether write log message to console.
-        /// </summary>
-        public bool WriteToConsole
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether use square brackets ([ ]) around log message.
-        /// </summary>
-        public bool UseBracket
         {
             get;
             set;

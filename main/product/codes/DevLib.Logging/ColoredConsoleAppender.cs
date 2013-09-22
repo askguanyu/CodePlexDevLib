@@ -14,6 +14,11 @@ namespace DevLib.Logging
     internal static class ColoredConsoleAppender
     {
         /// <summary>
+        /// Field ConsoleSyncRoot.
+        /// </summary>
+        private static readonly object ConsoleSyncRoot = new object();
+
+        /// <summary>
         /// Field ConsoleColorDictionary.
         /// </summary>
         private static readonly Dictionary<LogLevel, ConsoleColor> ConsoleColorDictionary = new Dictionary<LogLevel, ConsoleColor>();
@@ -38,13 +43,16 @@ namespace DevLib.Logging
         /// <param name="message">Message to write.</param>
         public static void Write(LogLevel logLevel, string message)
         {
-            ConsoleColor originalForeColor = Console.ForegroundColor;
+            lock (ConsoleSyncRoot)
+            {
+                ConsoleColor originalForeColor = Console.ForegroundColor;
 
-            Console.ForegroundColor = ConsoleColorDictionary[logLevel];
+                Console.ForegroundColor = ConsoleColorDictionary[logLevel];
 
-            Console.WriteLine(message);
+                Console.WriteLine(message);
 
-            Console.ForegroundColor = originalForeColor;
+                Console.ForegroundColor = originalForeColor;
+            }
         }
     }
 }

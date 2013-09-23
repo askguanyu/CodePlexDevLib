@@ -31,23 +31,16 @@ namespace DevLib.Repository
         /// <summary>
         /// Deletes entity in the storage.
         /// </summary>
-        /// <param name="entity">Entity instance.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        bool Delete(TEntity entity);
-
-        /// <summary>
-        /// Deletes entity in the storage.
-        /// </summary>
         /// <param name="id">Entity id.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
         bool DeleteById(TPrimaryKey id);
 
         /// <summary>
-        /// Determines whether the specified entity exists.
+        /// Deletes entity in the storage.
         /// </summary>
         /// <param name="entity">Entity instance.</param>
-        /// <returns>true if the specified entity exists; otherwise, false.</returns>
-        bool Exists(TEntity entity);
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        bool Delete(TEntity entity);
 
         /// <summary>
         /// Determines whether the specified entity exists.
@@ -55,6 +48,13 @@ namespace DevLib.Repository
         /// <param name="id">Entity id.</param>
         /// <returns>true if the specified entity exists; otherwise, false.</returns>
         bool ExistsById(TPrimaryKey id);
+
+        /// <summary>
+        /// Determines whether the specified entity exists.
+        /// </summary>
+        /// <param name="entity">Entity instance.</param>
+        /// <returns>true if the specified entity exists; otherwise, false.</returns>
+        bool Exists(TEntity entity);
 
         /// <summary>
         /// Gets entity from the storage by entity id.

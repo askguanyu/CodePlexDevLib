@@ -33,6 +33,13 @@ namespace DevLib.Repository
         void Delete(TEntity entity);
 
         /// <summary>
+        /// Determines whether the specified entity exists.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <returns>true if the specified entity exists; otherwise, false.</returns>
+        bool Exists(TPrimaryKey id);
+
+        /// <summary>
         /// Gets entity from the storage by entity id.
         /// </summary>
         /// <param name="id">Entity id.</param>

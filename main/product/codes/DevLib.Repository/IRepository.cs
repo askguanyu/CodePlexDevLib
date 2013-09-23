@@ -18,19 +18,22 @@ namespace DevLib.Repository
         /// Inserts entity to the storage.
         /// </summary>
         /// <param name="entity">Entity instance.</param>
-        void Insert(TEntity entity);
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        bool Insert(TEntity entity);
 
         /// <summary>
         /// Updates entity in the storage.
         /// </summary>
         /// <param name="entity">Entity instance.</param>
-        void Update(TEntity entity);
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        bool Update(TEntity entity);
 
         /// <summary>
         /// Deletes entity in the storage.
         /// </summary>
         /// <param name="entity">Entity instance.</param>
-        void Delete(TEntity entity);
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        bool Delete(TEntity entity);
 
         /// <summary>
         /// Determines whether the specified entity exists.

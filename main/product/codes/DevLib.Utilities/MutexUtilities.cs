@@ -35,13 +35,20 @@ namespace DevLib.Utilities
         /// <returns>Instance of Mutex.</returns>
         public static Mutex CreateSharedMutex(string mutexName)
         {
-            MutexSecurity mutexSecurity = new MutexSecurity();
+            try
+            {
+                MutexSecurity mutexSecurity = new MutexSecurity();
 
-            mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow));
+                mutexSecurity.AddAccessRule(new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow));
 
-            bool createdNew;
+                bool createdNew;
 
-            return new Mutex(false, mutexName, out createdNew, mutexSecurity);
+                return new Mutex(false, mutexName, out createdNew, mutexSecurity);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>

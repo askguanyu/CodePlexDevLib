@@ -169,7 +169,7 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Gets the number of items contained in the queue.
         /// </summary>
-        public int QueueCount
+        public long QueueCount
         {
             get
             {

@@ -21,17 +21,39 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Gets the number of elements contained in the <see cref="ProducerConsumerQueue{T}" />.
         /// </summary>
-        public int Count
+        public long Count
         {
-            get { return this._queue.Count; }
+            get
+            {
+                return this._queue.Count;
+            }
         }
 
         /// <summary>
-        /// Removes all objects from the <see cref="ProducerConsumerQueue{T}" />.
+        /// Adds an object to the end of the <see cref="ProducerConsumerQueue{T}" />.
         /// </summary>
-        public void Clear()
+        /// <param name="item">The object to add to the <see cref="ProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
+        public void Enqueue(T item)
         {
-            this._queue.Clear();
+            this._queue.Enqueue(item);
+        }
+
+        /// <summary>
+        /// Removes and returns the object at the beginning of the <see cref="ProducerConsumerQueue{T}" />.
+        /// </summary>
+        /// <returns>The object that is removed from the beginning of the <see cref="ProducerConsumerQueue{T}" />.</returns>
+        public T Dequeue()
+        {
+            return this._queue.Dequeue();
+        }
+
+        /// <summary>
+        /// Returns the object at the beginning of the <see cref="ProducerConsumerQueue{T}" /> without removing it.
+        /// </summary>
+        /// <returns>The object at the beginning of the <see cref="ProducerConsumerQueue{T}" />.</returns>
+        public T Peek()
+        {
+            return this._queue.Peek();
         }
 
         /// <summary>
@@ -45,30 +67,11 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
-        /// Removes and returns the object at the beginning of the <see cref="ProducerConsumerQueue{T}" />.
+        /// Removes all objects from the <see cref="ProducerConsumerQueue{T}" />.
         /// </summary>
-        /// <returns>The object that is removed from the beginning of the <see cref="ProducerConsumerQueue{T}" />.</returns>
-        public T Dequeue()
+        public void Clear()
         {
-            return this._queue.Dequeue();
-        }
-
-        /// <summary>
-        /// Adds an object to the end of the <see cref="ProducerConsumerQueue{T}" />.
-        /// </summary>
-        /// <param name="item">The object to add to the <see cref="ProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
-        public void Enqueue(T item)
-        {
-            this._queue.Enqueue(item);
-        }
-
-        /// <summary>
-        /// Returns the object at the beginning of the <see cref="ProducerConsumerQueue{T}" /> without removing it.
-        /// </summary>
-        /// <returns>The object at the beginning of the <see cref="ProducerConsumerQueue{T}" />.</returns>
-        public T Peek()
-        {
-            return this._queue.Peek();
+            this._queue.Clear();
         }
     }
 }

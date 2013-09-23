@@ -14,15 +14,28 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Gets the number of elements contained in the <see cref="IProducerConsumerQueue{T}" />.
         /// </summary>
-        int Count
+        long Count
         {
             get;
         }
 
         /// <summary>
-        /// Removes all objects from the <see cref="IProducerConsumerQueue{T}" />.
+        /// Adds an object to the end of the <see cref="IProducerConsumerQueue{T}" />.
         /// </summary>
-        void Clear();
+        /// <param name="item">The object to add to the <see cref="IProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
+        void Enqueue(T item);
+
+        /// <summary>
+        /// Removes and returns the object at the beginning of the <see cref="IProducerConsumerQueue{T}" />.
+        /// </summary>
+        /// <returns>The object that is removed from the beginning of the <see cref="IProducerConsumerQueue{T}" />.</returns>
+        T Dequeue();
+
+        /// <summary>
+        /// Returns the object at the beginning of the <see cref="IProducerConsumerQueue{T}" /> without removing it.
+        /// </summary>
+        /// <returns>The object at the beginning of the <see cref="IProducerConsumerQueue{T}" />.</returns>
+        T Peek();
 
         /// <summary>
         /// Determines whether an element is in the <see cref="IProducerConsumerQueue{T}" />.
@@ -32,21 +45,8 @@ namespace DevLib.DesignPatterns
         bool Contains(T item);
 
         /// <summary>
-        /// Removes and returns the object at the beginning of the <see cref="IProducerConsumerQueue{T}" />.
+        /// Removes all objects from the <see cref="IProducerConsumerQueue{T}" />.
         /// </summary>
-        /// <returns>The object that is removed from the beginning of the <see cref="IProducerConsumerQueue{T}" />.</returns>
-        T Dequeue();
-
-        /// <summary>
-        /// Adds an object to the end of the <see cref="IProducerConsumerQueue{T}" />.
-        /// </summary>
-        /// <param name="item">The object to add to the <see cref="IProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
-        void Enqueue(T item);
-
-        /// <summary>
-        /// Returns the object at the beginning of the <see cref="IProducerConsumerQueue{T}" /> without removing it.
-        /// </summary>
-        /// <returns>The object at the beginning of the <see cref="IProducerConsumerQueue{T}" />.</returns>
-        T Peek();
+        void Clear();
     }
 }

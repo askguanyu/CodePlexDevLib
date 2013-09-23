@@ -131,11 +131,11 @@ namespace DevLib.Logging
         {
             try
             {
-                if (this._loggerSetup.WriteToConsole || this._fileAppender != null)
+                if ((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || this._fileAppender != null)
                 {
                     string message = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, objs);
 
-                    if (this._loggerSetup.WriteToConsole)
+                    if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                     {
                         ColoredConsoleAppender.Write(logLevel, message);
                     }

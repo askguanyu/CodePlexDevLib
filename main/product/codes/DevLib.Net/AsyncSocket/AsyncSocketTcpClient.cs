@@ -209,7 +209,7 @@ namespace DevLib.Net.AsyncSocket
                     this.CloseReceiveSocketAsyncEventArgs();
 
                     this._clientSocket = new Socket(remoteIPEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                    ////this._clientSocket.NoDelay = true;
+                    this._clientSocket.UseOnlyOverlappedIO = true;
 
                     this._connectSocketAsyncEventArgs = new SocketAsyncEventArgs();
                     this._connectSocketAsyncEventArgs.RemoteEndPoint = remoteIPEndPoint;

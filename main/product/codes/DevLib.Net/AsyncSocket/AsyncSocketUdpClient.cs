@@ -180,6 +180,8 @@ namespace DevLib.Net.AsyncSocket
 
                     this._clientSocket = new Socket(this._remoteIPEndPoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
 
+                    this._clientSocket.UseOnlyOverlappedIO = true;
+
                     this.SessionId = this._clientSocket.GetHashCode();
 
                     Debug.WriteLine(AsyncSocketUdpClientConstants.UdpClientStartSucceeded);

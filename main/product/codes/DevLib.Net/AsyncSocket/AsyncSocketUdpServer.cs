@@ -167,6 +167,7 @@ namespace DevLib.Net.AsyncSocket
                     this.CloseReceiveSocketAsyncEventArgs();
 
                     this._listenSocket = new Socket(localIPEndPoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+                    this._listenSocket.UseOnlyOverlappedIO = true;
                     this._listenSocket.Bind(localIPEndPoint);
 
                     this.SessionId = this._listenSocket.GetHashCode();

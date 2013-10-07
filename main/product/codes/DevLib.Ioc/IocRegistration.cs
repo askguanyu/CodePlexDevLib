@@ -14,7 +14,7 @@ namespace DevLib.Ioc
     /// <summary>
     /// Represents the registration of a resolution.
     /// </summary>
-    internal class IocRegistration
+    public class IocRegistration
     {
         /// <summary>
         /// Gets or sets a shared instance.

@@ -275,6 +275,52 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
+        /// Resolve all from the container.
+        /// </summary>
+        /// <returns>The retrieved IocRegistration list.</returns>
+        public List<IocRegistration> ResolveAll()
+        {
+            this.CheckDisposed();
+
+            List<IocRegistration> result = new List<IocRegistration>();
+
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
+            {
+                foreach (var itemType in this._container)
+                {
+                    try
+                    {
+                        foreach (var item in itemType.Value)
+                        {
+                            try
+                            {
+                                result.Add(item.Value);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Check whether it is possible to resolve a type.
         /// </summary>
         /// <typeparam name="T">Type to resolve.</typeparam>

@@ -645,6 +645,7 @@ namespace DevLib.ExtensionMethods
                 startInfo.CreateNoWindow = true;
                 startInfo.ErrorDialog = false;
                 startInfo.UseShellExecute = true;
+                startInfo.Verb = "runas";
                 startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 Process process = Process.Start(startInfo);
 

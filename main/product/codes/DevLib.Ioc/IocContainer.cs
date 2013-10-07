@@ -489,6 +489,40 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
+        /// Removes all values from container.
+        /// </summary>
+        public void Clear()
+        {
+            this.CheckDisposed();
+
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
+            {
+                foreach (var item in this._container)
+                {
+                    try
+                    {
+                        item.Value.Clear();
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                this._container.Clear();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
+        }
+
+        /// <summary>
         /// Releases all resources used by the current instance of the <see cref="IocContainer" /> class.
         /// </summary>
         public void Close()

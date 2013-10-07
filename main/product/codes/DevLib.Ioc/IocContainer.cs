@@ -30,6 +30,11 @@ namespace DevLib.Ioc
         private bool _disposed = false;
 
         /// <summary>
+        /// Field _ignoreCase.
+        /// </summary>
+        private bool _ignoreCase = false;
+
+        /// <summary>
         /// Field _readerWriterLock.
         /// </summary>
         private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
@@ -39,6 +44,15 @@ namespace DevLib.Ioc
         /// </summary>
         public IocContainer()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IocContainer" /> class.
+        /// </summary>
+        /// <param name="ignoreCase">true to ignore case when resolve object by label; otherwise, false.</param>
+        public IocContainer(bool ignoreCase)
+        {
+            this._ignoreCase = ignoreCase;
         }
 
         /// <summary>
@@ -96,7 +110,7 @@ namespace DevLib.Ioc
                 {
                     if (!this._container.ContainsKey(instanceType) || this._container[instanceType] == null)
                     {
-                        this._container.Add(instanceType, new Dictionary<string, IocRegistration>());
+                        this._container.Add(instanceType, new Dictionary<string, IocRegistration>(this._ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.CurrentCulture));
                     }
 
                     if (!this._container[instanceType].ContainsKey(label) || this._container[instanceType][label] == null)
@@ -168,7 +182,7 @@ namespace DevLib.Ioc
                 {
                     if (!this._container.ContainsKey(instanceType) || this._container[instanceType] == null)
                     {
-                        this._container.Add(instanceType, new Dictionary<string, IocRegistration>());
+                        this._container.Add(instanceType, new Dictionary<string, IocRegistration>(this._ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.CurrentCulture));
                     }
 
                     if (!this._container[instanceType].ContainsKey(label) || this._container[instanceType][label] == null)

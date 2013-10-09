@@ -12,6 +12,7 @@ namespace DevLib.AddIn
     using System.IO;
     using System.Reflection;
     using System.Security.Permissions;
+    using System.Text;
 
     /// <summary>
     /// Class Program.
@@ -106,7 +107,13 @@ namespace DevLib.AddIn
         /// <param name="message">Message to log.</param>
         private static void Log(bool redirectOutput, string message)
         {
-            string log = string.Format("[{0}] [PID:{1}] [Message: {2}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), Process.GetCurrentProcess().Id.ToString(), message);
+            string log = string.Format(
+                "[{0}] [{1}] [{2}] [PID:{3}] [{4}]",
+                DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"),
+                "INFO",
+                Environment.UserName,
+                Process.GetCurrentProcess().Id.ToString(),
+                message);
 
             if (redirectOutput)
             {
@@ -115,12 +122,33 @@ namespace DevLib.AddIn
 
             lock (SyncRoot)
             {
+                FileStream fileStream = null;
+
                 try
                 {
-                    File.AppendAllText(string.Format("{0}.log", Assembly.GetEntryAssembly().Location), log + Environment.NewLine);
+                    fileStream = File.Open(string.Format("{0}.log", Assembly.GetEntryAssembly().Location), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+                    if (fileStream.Length > 10485760)
+                    {
+                        fileStream.SetLength(0);
+                    }
+
+                    byte[] bytes = Encoding.Default.GetBytes(log + Environment.NewLine);
+
+                    fileStream.Seek(0, SeekOrigin.End);
+                    fileStream.Write(bytes, 0, bytes.Length);
+                    fileStream.Flush();
                 }
                 catch
                 {
+                }
+                finally
+                {
+                    if (fileStream != null)
+                    {
+                        fileStream.Dispose();
+                        fileStream = null;
+                    }
                 }
             }
         }

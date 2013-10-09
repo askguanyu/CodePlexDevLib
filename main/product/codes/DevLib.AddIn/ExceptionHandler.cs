@@ -34,8 +34,8 @@ namespace DevLib.AddIn
                     DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"),
                     "EXCP",
                     Environment.UserName,
-                    GetStackFrameInfo(1),
-                    exception.ToString());
+                    exception.ToString(),
+                    GetStackFrameInfo(1));
 
                 Debug.WriteLine(message);
 #if DEBUG
@@ -43,12 +43,33 @@ namespace DevLib.AddIn
 
                 lock (SyncRoot)
                 {
+                    FileStream fileStream = null;
+
                     try
                     {
-                        File.AppendAllText("DevLib.AddIn.log", message + Environment.NewLine);
+                        fileStream = File.Open("DevLib.AddIn.log", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+                        if (fileStream.Length > 10485760)
+                        {
+                            fileStream.SetLength(0);
+                        }
+
+                        byte[] bytes = Encoding.Default.GetBytes(message + Environment.NewLine);
+
+                        fileStream.Seek(0, SeekOrigin.End);
+                        fileStream.Write(bytes, 0, bytes.Length);
+                        fileStream.Flush();
                     }
                     catch
                     {
+                    }
+                    finally
+                    {
+                        if (fileStream != null)
+                        {
+                            fileStream.Dispose();
+                            fileStream = null;
+                        }
                     }
                 }
 #endif

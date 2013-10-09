@@ -51,12 +51,11 @@ namespace DevLib.ServiceProcess
 
                         if (fileStream.Length > 10485760)
                         {
-                            fileStream.SetLength(0);
+                            fileStream.SetLength(10485760);
                         }
 
+                        fileStream.Seek(0, SeekOrigin.Begin);
                         byte[] bytes = Encoding.Default.GetBytes(message + Environment.NewLine);
-
-                        fileStream.Seek(0, SeekOrigin.End);
                         fileStream.Write(bytes, 0, bytes.Length);
                         fileStream.Flush();
                     }

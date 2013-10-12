@@ -883,7 +883,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
         /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
         /// <returns>File full path.</returns>
-        public static string WriteDataContract(this object source, string fileName, bool overwrite = false, bool indent = false, bool omitXmlDeclaration = true, IEnumerable<Type> knownTypes = null)
+        public static string WriteDataContract(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, IEnumerable<Type> knownTypes = null)
         {
             if (source == null)
             {

@@ -947,6 +947,9 @@ namespace DevLib.Samples
             #region SerializationExtensions
 
             Person person = new Person("foo", "好的", 1);
+            person.WriteXml("1.xml",true);
+            person.SerializeXml().DeserializeXml(new Type[] { typeof(Person) });
+            Console.ReadLine();
             //person.SerializeJson().ConsoleOutput().DeserializeJson<Person>();
             //var aperson = person.SerializeJson(Encoding.UTF8).ConsoleOutput().DeserializeJson<Person>(Encoding.UTF8);
             var aperson = person.SerializeXml().DeserializeXml<Person>().LastName.ConsoleOutput();

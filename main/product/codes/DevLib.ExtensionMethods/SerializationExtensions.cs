@@ -6,15 +6,16 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Runtime.Serialization.Formatters.Soap;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
+    using System.Xml.Linq;
     using System.Xml.Serialization;
 
     /// <summary>
@@ -84,7 +85,7 @@ namespace DevLib.ExtensionMethods
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream fileStream = File.OpenWrite(fullPath))
             {
                 binaryFormatter.Serialize(fileStream, source);
                 return fullPath;
@@ -138,7 +139,7 @@ namespace DevLib.ExtensionMethods
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
                 return binaryFormatter.Deserialize(fileStream);
             }
@@ -193,7 +194,7 @@ namespace DevLib.ExtensionMethods
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
                 return (T)binaryFormatter.Deserialize(fileStream);
             }
@@ -209,8 +210,9 @@ namespace DevLib.ExtensionMethods
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
         /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
+        /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>An XML encoded string representation of the source object.</returns>
-        public static string SerializeXml(this object source, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true)
+        public static string SerializeXml(this object source, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
             {
@@ -220,7 +222,7 @@ namespace DevLib.ExtensionMethods
             string result = null;
 
             StringBuilder stringBuilder = new StringBuilder();
-            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
+            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
@@ -253,8 +255,9 @@ namespace DevLib.ExtensionMethods
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
         /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
+        /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>File full path.</returns>
-        public static string WriteXml(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true)
+        public static string WriteXml(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
             {
@@ -286,7 +289,7 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
+            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
@@ -310,9 +313,10 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The XML string to deserialize.</param>
         /// <param name="type">Type of object.</param>
+        /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of object.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static object DeserializeXml(this string source, Type type)
+        public static object DeserializeXml(this string source, Type type, Type[] extraTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -324,11 +328,51 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(type);
+            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+            using (StringReader stringReader = new StringReader(source))
             {
-                return xmlSerializer.Deserialize(xmlReader);
+                return xmlSerializer.Deserialize(stringReader);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes XML string to object.
+        /// </summary>
+        /// <param name="source">The XML string to deserialize.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <returns>Instance of object.</returns>
+        public static object DeserializeXml(this string source, Type[] knownTypes)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            Type sourceType = null;
+
+            using (StringReader stringReader = new StringReader(source))
+            {
+                string rootNodeName = XElement.Load(stringReader).Name.LocalName;
+
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                if (sourceType == null)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
+            XmlSerializer xmlSerializer = new XmlSerializer(sourceType, knownTypes);
+
+            using (StringReader stringReader = new StringReader(source))
+            {
+                return xmlSerializer.Deserialize(stringReader);
             }
         }
 
@@ -337,8 +381,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="type">Type of object.</param>
+        /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object ReadXml(this string source, Type type)
+        public static object ReadXml(this string source, Type type, Type[] extraTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -357,11 +402,55 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(type);
+            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
-                return xmlSerializer.Deserialize(xmlReader);
+                return xmlSerializer.Deserialize(fileStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes XML string to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <returns>Instance of object.</returns>
+        public static object ReadXml(this string source, Type[] knownTypes)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            Type sourceType = null;
+
+            string rootNodeName = XElement.Load(fullPath).Name.LocalName;
+
+            sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+            if (sourceType == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            XmlSerializer xmlSerializer = new XmlSerializer(sourceType, knownTypes);
+
+            using (FileStream fileStream = File.OpenRead(fullPath))
+            {
+                return xmlSerializer.Deserialize(fileStream);
             }
         }
 
@@ -370,20 +459,21 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">The XML string to deserialize.</param>
+        /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static T DeserializeXml<T>(this string source)
+        public static T DeserializeXml<T>(this string source, Type[] extraTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+            using (StringReader stringReader = new StringReader(source))
             {
-                return (T)xmlSerializer.Deserialize(xmlReader);
+                return (T)xmlSerializer.Deserialize(stringReader);
             }
         }
 
@@ -392,8 +482,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">File name.</param>
+        /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
-        public static T ReadXml<T>(this string source)
+        public static T ReadXml<T>(this string source, Type[] extraTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -407,11 +498,11 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
-                return (T)xmlSerializer.Deserialize(xmlReader);
+                return (T)xmlSerializer.Deserialize(fileStream);
             }
         }
 
@@ -475,7 +566,7 @@ namespace DevLib.ExtensionMethods
 
             SoapFormatter soapFormatter = new SoapFormatter();
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream fileStream = File.OpenWrite(fullPath))
             {
                 soapFormatter.Serialize(fileStream, source);
                 return fullPath;
@@ -527,7 +618,7 @@ namespace DevLib.ExtensionMethods
 
             SoapFormatter soapFormatter = new SoapFormatter();
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
                 return soapFormatter.Deserialize(fileStream);
             }
@@ -580,7 +671,7 @@ namespace DevLib.ExtensionMethods
 
             SoapFormatter soapFormatter = new SoapFormatter();
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
                 return (T)soapFormatter.Deserialize(fileStream);
             }
@@ -591,16 +682,16 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">Object to serialize.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>JSON string.</returns>
-        public static string SerializeJsonString(this object source, Encoding encoding = null, IEnumerable<Type> knownTypes = null)
+        public static string SerializeJsonString(this object source, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -615,9 +706,9 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Object to serialize.</param>
         /// <param name="fileName">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>File full path.</returns>
-        public static string WriteJson(this object source, string fileName, bool overwrite = false, IEnumerable<Type> knownTypes = null)
+        public static string WriteJson(this object source, string fileName, bool overwrite = false, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -649,9 +740,9 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream fileStream = File.OpenWrite(fullPath))
             {
                 dataContractJsonSerializer.WriteObject(fileStream, source);
                 return fullPath;
@@ -664,9 +755,9 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">JSON string object.</param>
         /// <param name="type">Type of object.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeJsonString(this string source, Type type, Encoding encoding = null, IEnumerable<Type> knownTypes = null)
+        public static object DeserializeJsonString(this string source, Type type, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -678,7 +769,48 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(type, knownTypes);
+
+            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
+            {
+                return dataContractJsonSerializer.ReadObject(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes JSON string to object.
+        /// </summary>
+        /// <param name="source">JSON string object.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <param name="encoding">The encoding to apply to the string.</param>
+        /// <returns>Instance of object.</returns>
+        public static object DeserializeJsonString(this string source, Type[] knownTypes, Encoding encoding = null)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            Type sourceType = null;
+
+            using (StringReader stringReader = new StringReader(source))
+            {
+                string rootNodeName = XElement.Load(stringReader).Name.LocalName;
+
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                if (sourceType == null)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
@@ -691,9 +823,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="type">Type of object.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static object ReadJson(this string source, Type type, IEnumerable<Type> knownTypes = null)
+        public static object ReadJson(this string source, Type type, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -712,9 +844,53 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(type, knownTypes);
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream fileStream = File.OpenRead(fullPath))
+            {
+                return dataContractJsonSerializer.ReadObject(fileStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes JSON string to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <returns>Instance of object.</returns>
+        public static object ReadJson(this string source, Type[] knownTypes = null)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            Type sourceType = null;
+
+            string rootNodeName = XElement.Load(fullPath).Name.LocalName;
+
+            sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+            if (sourceType == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
+
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
                 return dataContractJsonSerializer.ReadObject(fileStream);
             }
@@ -726,16 +902,16 @@ namespace DevLib.ExtensionMethods
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
         /// <param name="source">JSON string object.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static T DeserializeJsonString<T>(this string source, Encoding encoding = null, IEnumerable<Type> knownTypes = null)
+        public static T DeserializeJsonString<T>(this string source, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(typeof(T), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
@@ -748,9 +924,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
         /// <param name="source">File name.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static T ReadJson<T>(this string source, IEnumerable<Type> knownTypes = null)
+        public static T ReadJson<T>(this string source, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -764,9 +940,9 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(typeof(T), knownTypes);
 
-            using (Stream fileStream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
                 return (T)dataContractJsonSerializer.ReadObject(fileStream);
             }
@@ -776,16 +952,16 @@ namespace DevLib.ExtensionMethods
         /// Serializes object to JSON bytes.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>JSON bytes.</returns>
-        public static byte[] SerializeJsonBinary(this object source, IEnumerable<Type> knownTypes = null)
+        public static byte[] SerializeJsonBinary(this object source, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -799,9 +975,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">JSON string object.</param>
         /// <param name="type">Type of object.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeJsonBinary(this byte[] source, Type type, IEnumerable<Type> knownTypes = null)
+        public static object DeserializeJsonBinary(this byte[] source, Type type, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -813,7 +989,48 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(type, knownTypes);
+
+            using (MemoryStream memoryStream = new MemoryStream(source))
+            {
+                return dataContractJsonSerializer.ReadObject(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes JSON bytes to object.
+        /// </summary>
+        /// <param name="source">JSON string object.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <returns>Instance of object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public static object DeserializeJsonBinary(this byte[] source, Type[] knownTypes)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            Type sourceType = null;
+
+            using (XmlReader xmlReader = XmlReader.Create(new MemoryStream(source)))
+            {
+                string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
+
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                if (sourceType == null)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
@@ -826,16 +1043,16 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
         /// <param name="source">JSON string object.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static T DeserializeJsonBinary<T>(this byte[] source, IEnumerable<Type> knownTypes = null)
+        public static T DeserializeJsonBinary<T>(this byte[] source, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = knownTypes == null ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(typeof(T), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
@@ -849,9 +1066,9 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The DataContract object to serialize.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
         /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>An XML encoded string representation of the source DataContract object.</returns>
-        public static string SerializeDataContractXml(this object source, bool indent = false, bool omitXmlDeclaration = true, IEnumerable<Type> knownTypes = null)
+        public static string SerializeDataContractXml(this object source, bool indent = false, bool omitXmlDeclaration = true, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -861,7 +1078,7 @@ namespace DevLib.ExtensionMethods
             string result = null;
 
             StringBuilder stringBuilder = new StringBuilder();
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(source.GetType(), knownTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent }))
             {
@@ -881,9 +1098,9 @@ namespace DevLib.ExtensionMethods
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
         /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>File full path.</returns>
-        public static string WriteDataContract(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, IEnumerable<Type> knownTypes = null)
+        public static string WriteDataContract(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -915,7 +1132,7 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(source.GetType(), knownTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent }))
             {
@@ -929,10 +1146,10 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The DataContract XML string to deserialize.</param>
         /// <param name="type">Type of DataContract object.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static object DeserializeDataContractXml(this string source, Type type, IEnumerable<Type> knownTypes = null)
+        public static object DeserializeDataContractXml(this string source, Type type, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -944,7 +1161,48 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(type, knownTypes);
+
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+            {
+                return dataContractSerializer.ReadObject(xmlReader);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes DataContract XML string to object.
+        /// </summary>
+        /// <param name="source">The DataContract XML string to deserialize.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <returns>Instance of DataContract object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public static object DeserializeDataContractXml(this string source, Type[] knownTypes)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            Type sourceType = null;
+
+            using (StringReader stringReader = new StringReader(source))
+            {
+                string rootNodeName = XElement.Load(stringReader).Name.LocalName;
+
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                if (sourceType == null)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(sourceType, knownTypes);
 
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
@@ -957,9 +1215,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="type">Type of DataContract object.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
-        public static object ReadDataContract(this string source, Type type, IEnumerable<Type> knownTypes = null)
+        public static object ReadDataContract(this string source, Type type, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -978,11 +1236,55 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(type, knownTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
-                return dataContractSerializer.ReadObject(xmlReader);
+                return dataContractSerializer.ReadObject(fileStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes DataContract XML string to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <returns>Instance of DataContract object.</returns>
+        public static object ReadDataContract(this string source, Type[] knownTypes)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            Type sourceType = null;
+
+            string rootNodeName = XElement.Load(fullPath).Name.LocalName;
+
+            sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+            if (sourceType == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(sourceType, knownTypes);
+
+            using (FileStream fileStream = File.OpenRead(fullPath))
+            {
+                return dataContractSerializer.ReadObject(fileStream);
             }
         }
 
@@ -991,17 +1293,17 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">The DataContract XML string to deserialize.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of T.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static T DeserializeDataContractXml<T>(this string source, IEnumerable<Type> knownTypes = null)
+        public static T DeserializeDataContractXml<T>(this string source, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(T), knownTypes);
 
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
@@ -1014,9 +1316,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">File name.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of T.</returns>
-        public static T ReadDataContract<T>(this string source, IEnumerable<Type> knownTypes = null)
+        public static T ReadDataContract<T>(this string source, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -1030,11 +1332,11 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(T), knownTypes);
 
-            using (XmlReader xmlReader = XmlReader.Create(fullPath, new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+            using (FileStream fileStream = File.OpenRead(fullPath))
             {
-                return (T)dataContractSerializer.ReadObject(xmlReader);
+                return (T)dataContractSerializer.ReadObject(fileStream);
             }
         }
 
@@ -1042,16 +1344,16 @@ namespace DevLib.ExtensionMethods
         /// Serializes DataContract object to bytes.
         /// </summary>
         /// <param name="source">The DataContract object to serialize.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Bytes representation of the source DataContract object.</returns>
-        public static byte[] SerializeDataContractBinary(this object source, IEnumerable<Type> knownTypes = null)
+        public static byte[] SerializeDataContractBinary(this object source, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(source.GetType(), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -1064,16 +1366,63 @@ namespace DevLib.ExtensionMethods
         /// Deserializes DataContract bytes to object.
         /// </summary>
         /// <param name="source">The bytes to deserialize.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="type">Type of DataContract object.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
-        public static object DeserializeDataContractBinary(this byte[] source, IEnumerable<Type> knownTypes = null)
+        public static object DeserializeDataContractBinary(this byte[] source, Type type, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(type, knownTypes);
+
+            using (MemoryStream memoryStream = new MemoryStream(source))
+            {
+                return dataContractSerializer.ReadObject(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes DataContract bytes to object.
+        /// </summary>
+        /// <param name="source">The bytes to deserialize.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
+        /// <returns>Instance of DataContract object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public static object DeserializeDataContractBinary(this byte[] source, Type[] knownTypes = null)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (knownTypes == null || knownTypes.Length < 1)
+            {
+                throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
+            }
+
+            Type sourceType = null;
+
+            using (XmlReader xmlReader = XmlReader.Create(new MemoryStream(source)))
+            {
+                string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
+
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                if (sourceType == null)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(sourceType, knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
@@ -1086,16 +1435,16 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">The bytes to deserialize.</param>
-        /// <param name="knownTypes">An IEnumerable of known types. Useful for complex objects.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
-        public static T DeserializeDataContractBinary<T>(this byte[] source, IEnumerable<Type> knownTypes = null)
+        public static T DeserializeDataContractBinary<T>(this byte[] source, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            DataContractSerializer dataContractSerializer = knownTypes == null ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(T), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {

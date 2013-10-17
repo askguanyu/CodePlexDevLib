@@ -377,7 +377,7 @@ namespace DevLib.TerminalServices.NativeAPI
 
                 startupInfo.cb = Marshal.SizeOf(startupInfo);
 
-                NativeMethods.CreateProcessAsUser(
+                bool result = NativeMethods.CreateProcessAsUser(
                     userTokenHandle,
                     fileName,
                     commandLine,
@@ -390,7 +390,7 @@ namespace DevLib.TerminalServices.NativeAPI
                     ref startupInfo,
                     out processInfo);
 
-                return true;
+                return result;
             }
             catch
             {

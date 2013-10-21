@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Net.AsyncSocket
+namespace DevLib.Net.Sockets
 {
     /// <summary>
     /// AsyncSocketTcpClient constant and default value.

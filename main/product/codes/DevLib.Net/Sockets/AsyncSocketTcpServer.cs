@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Net.AsyncSocket
+namespace DevLib.Net.Sockets
 {
     using System;
     using System.Collections;
@@ -1226,7 +1226,7 @@ namespace DevLib.Net.AsyncSocket
         {
             if (this._disposed)
             {
-                throw new ObjectDisposedException("DevLib.Net.AsyncSocket.AsyncSocketTcpServer");
+                throw new ObjectDisposedException("DevLib.Net.Sockets.AsyncSocketTcpServer");
             }
         }
     }

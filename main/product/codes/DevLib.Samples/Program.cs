@@ -43,7 +43,7 @@ namespace DevLib.Samples
     using DevLib.Logging;
     using DevLib.Main;
     using DevLib.Net;
-    using DevLib.Net.AsyncSocket;
+    using DevLib.Net.Sockets;
     using DevLib.Net.Ftp;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;

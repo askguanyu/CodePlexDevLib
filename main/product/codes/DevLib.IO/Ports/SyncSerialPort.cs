@@ -3,67 +3,11 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Utilities
+namespace DevLib.IO.Ports
 {
     using System;
     using System.IO.Ports;
     using System.Threading;
-
-    /// <summary>
-    /// Enum SerialState.
-    /// </summary>
-    public enum SerialStateEnum
-    {
-        /// <summary>
-        /// Represents Init.
-        /// </summary>
-        Init = 0,
-
-        /// <summary>
-        /// Represents Operate OK.
-        /// </summary>
-        OperateOK,
-
-        /// <summary>
-        /// Represents Not Found Port.
-        /// </summary>
-        NotFoundPort,
-
-        /// <summary>
-        /// Represents Not Exist Port.
-        /// </summary>
-        NotExistPort,
-
-        /// <summary>
-        /// Represents Serial Port Null.
-        /// </summary>
-        SerialPortNull,
-
-        /// <summary>
-        /// Represents Open Exception.
-        /// </summary>
-        OpenException,
-
-        /// <summary>
-        /// Represents Send Exception.
-        /// </summary>
-        SendException,
-
-        /// <summary>
-        /// Represents Send Data Empty.
-        /// </summary>
-        SendDataEmpty,
-
-        /// <summary>
-        /// Represents Read Timeout.
-        /// </summary>
-        ReadTimeout,
-
-        /// <summary>
-        /// Represents Read Exception.
-        /// </summary>
-        ReadException
-    }
 
     /// <summary>
     /// Represents a sync serial port resource.
@@ -83,7 +27,7 @@ namespace DevLib.Utilities
         /// <summary>
         /// Field _currentState.
         /// </summary>
-        private SerialStateEnum _currentState = SerialStateEnum.Init;
+        private SerialPortState _currentState = SerialPortState.Init;
 
         /// <summary>
         /// Field _receiveBuffer.
@@ -122,7 +66,7 @@ namespace DevLib.Utilities
         {
             if (_portNames == null || _portNames.Length == 0)
             {
-                this._currentState = SerialStateEnum.NotExistPort;
+                this._currentState = SerialPortState.NotExistPort;
             }
             else
             {
@@ -140,11 +84,11 @@ namespace DevLib.Utilities
                 if (isExistPort)
                 {
                     this._serialPort = new SerialPort(portName, baudRate, partity, dataBits, stopBits);
-                    this._currentState = SerialStateEnum.OperateOK;
+                    this._currentState = SerialPortState.OperateOK;
                 }
                 else
                 {
-                    this._currentState = SerialStateEnum.NotFoundPort;
+                    this._currentState = SerialPortState.NotFoundPort;
                 }
             }
         }
@@ -168,7 +112,7 @@ namespace DevLib.Utilities
         /// <summary>
         /// Gets current serial state.
         /// </summary>
-        public SerialStateEnum CurrentState
+        public SerialPortState CurrentState
         {
             get { return this._currentState; }
         }
@@ -202,13 +146,13 @@ namespace DevLib.Utilities
                 }
                 catch
                 {
-                    this._currentState = SerialStateEnum.OpenException;
+                    this._currentState = SerialPortState.OpenException;
                     return false;
                 }
             }
             else
             {
-                this._currentState = SerialStateEnum.SerialPortNull;
+                this._currentState = SerialPortState.SerialPortNull;
                 return false;
             }
         }
@@ -232,7 +176,7 @@ namespace DevLib.Utilities
             }
             else
             {
-                this._currentState = SerialStateEnum.SerialPortNull;
+                this._currentState = SerialPortState.SerialPortNull;
                 return false;
             }
         }
@@ -255,14 +199,14 @@ namespace DevLib.Utilities
                 if (sendData == null || sendData.Length == 0)
                 {
                     receivedData = new byte[0];
-                    this._currentState = SerialStateEnum.SendDataEmpty;
+                    this._currentState = SerialPortState.SendDataEmpty;
                     return false;
                 }
 
                 if (this._serialPort == null)
                 {
                     receivedData = new byte[0];
-                    this._currentState = SerialStateEnum.SerialPortNull;
+                    this._currentState = SerialPortState.SerialPortNull;
                     return false;
                 }
 
@@ -288,7 +232,7 @@ namespace DevLib.Utilities
                         threadReceive.Abort();
                     }
 
-                    if (this._currentState == SerialStateEnum.OperateOK)
+                    if (this._currentState == SerialPortState.OperateOK)
                     {
                         receivedData = this._receiveBuffer;
                         return true;
@@ -302,7 +246,7 @@ namespace DevLib.Utilities
                 catch
                 {
                     receivedData = new byte[0];
-                    this._currentState = SerialStateEnum.SendException;
+                    this._currentState = SerialPortState.SendException;
                     return false;
                 }
             }
@@ -339,7 +283,7 @@ namespace DevLib.Utilities
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-
+                
                 if (this._autoResetEvent != null)
                 {
                     this._autoResetEvent.Close();
@@ -368,7 +312,7 @@ namespace DevLib.Utilities
         private void SyncReceiveData(object serialPortobj)
         {
             SerialPort serialPort = serialPortobj as SerialPort;
-            System.Threading.Thread.Sleep(0);
+            Thread.Sleep(0);
             serialPort.ReadTimeout = this._readTimeout;
 
             try
@@ -383,11 +327,11 @@ namespace DevLib.Utilities
                     this._receiveBuffer[i] = Convert.ToByte(serialPort.ReadByte());
                 }
 
-                this._currentState = SerialStateEnum.OperateOK;
+                this._currentState = SerialPortState.OperateOK;
             }
             catch
             {
-                this._currentState = SerialStateEnum.ReadTimeout;
+                this._currentState = SerialPortState.ReadTimeout;
             }
             finally
             {
@@ -403,7 +347,7 @@ namespace DevLib.Utilities
         {
             if (this._disposed)
             {
-                throw new ObjectDisposedException("DevLib.Utilities.SyncSerialPort");
+                throw new ObjectDisposedException("DevLib.IO.Ports.SyncSerialPort");
             }
         }
     }

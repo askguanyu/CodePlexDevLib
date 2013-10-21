@@ -46,9 +46,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Logging", "DevLib.Lo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Repository", "DevLib.Repository\DevLib.Repository.csproj", "{09460512-082E-468B-B505-9B4C353C5FF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.IO", "DevLib.IO\DevLib.IO.csproj", "{BB64005D-AA1A-4F60-B1B0-7295D56750A8}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 20
+		SccNumberOfProjects = 21
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -110,6 +112,9 @@ Global
 		SccProjectUniqueName19 = DevLib.Repository\\DevLib.Repository.csproj
 		SccProjectName19 = DevLib.Repository
 		SccLocalPath19 = DevLib.Repository
+		SccProjectUniqueName20 = DevLib.IO\\DevLib.IO.csproj
+		SccProjectName20 = DevLib.IO
+		SccLocalPath20 = DevLib.IO
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -320,6 +325,16 @@ Global
 		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|x86.ActiveCfg = Release|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

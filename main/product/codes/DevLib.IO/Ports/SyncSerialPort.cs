@@ -114,7 +114,10 @@ namespace DevLib.IO.Ports
         /// </summary>
         public SerialPortState CurrentState
         {
-            get { return this._currentState; }
+            get
+            {
+                return this._currentState;
+            }
         }
 
         /// <summary>
@@ -122,7 +125,10 @@ namespace DevLib.IO.Ports
         /// </summary>
         public bool IsOpen
         {
-            get { return this._serialPort.IsOpen; }
+            get
+            {
+                return this._serialPort.IsOpen;
+            }
         }
 
         /// <summary>
@@ -144,8 +150,9 @@ namespace DevLib.IO.Ports
 
                     return true;
                 }
-                catch
+                catch (Exception e)
                 {
+                    ExceptionHandler.Log(e);
                     this._currentState = SerialPortState.OpenException;
                     return false;
                 }
@@ -283,7 +290,7 @@ namespace DevLib.IO.Ports
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-                
+
                 if (this._autoResetEvent != null)
                 {
                     this._autoResetEvent.Close();
@@ -329,8 +336,9 @@ namespace DevLib.IO.Ports
 
                 this._currentState = SerialPortState.OperateOK;
             }
-            catch
+            catch (Exception e)
             {
+                ExceptionHandler.Log(e);
                 this._currentState = SerialPortState.ReadTimeout;
             }
             finally

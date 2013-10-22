@@ -62,9 +62,9 @@ namespace DevLib.IO.Ports
         /// <param name="partity">One of the System.IO.Ports.SerialPort.Parity values.</param>
         /// <param name="dataBits">The data bits value.</param>
         /// <param name="stopBits">One of the System.IO.Ports.SerialPort.StopBits values.</param>
-        public SyncSerialPort(string portName, int baudRate, Parity partity, int dataBits, StopBits stopBits)
+        public SyncSerialPort(string portName = "COM1", int baudRate = 9600, Parity partity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
         {
-            if (_portNames == null || _portNames.Length == 0)
+            if (string.IsNullOrEmpty(portName))
             {
                 this._currentState = SerialPortState.NotExistPort;
             }
@@ -74,7 +74,7 @@ namespace DevLib.IO.Ports
 
                 for (int i = 0; i < _portNames.Length; i++)
                 {
-                    if (_portNames[i].Equals(portName))
+                    if (_portNames[i].Equals(portName, StringComparison.OrdinalIgnoreCase))
                     {
                         isExistPort = true;
                         break;

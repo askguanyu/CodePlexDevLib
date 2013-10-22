@@ -195,7 +195,7 @@ namespace DevLib.IO.Ports
         /// <param name="receivedData">The byte array to write the received data.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Send(byte[] sendData, out byte[] receivedData, int timeout)
+        public bool Send(byte[] sendData, out byte[] receivedData, int timeout = 1000)
         {
             this.CheckDisposed();
 

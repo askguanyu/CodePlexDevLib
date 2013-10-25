@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevLib.Architecture", "DevL
 		DevLib.Architecture\LayeredArchitectureSolutionVS2008.sln = DevLib.Architecture\LayeredArchitectureSolutionVS2008.sln
 		DevLib.Architecture\LayeredArchitectureSolutionVS2010.sln = DevLib.Architecture\LayeredArchitectureSolutionVS2010.sln
 		DevLib.Architecture\LayeredArchitectureSolutionVS2012.sln = DevLib.Architecture\LayeredArchitectureSolutionVS2012.sln
+		DevLib.Architecture\LayeredArchitectureSolutionVS2013.sln = DevLib.Architecture\LayeredArchitectureSolutionVS2013.sln
 	EndProjectSection
 EndProject
 Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "DevLib.Architecture.ModelingProject", "DevLib.Architecture.ModelingProject\DevLib.Architecture.ModelingProject.modelproj", "{8FF56378-ECEC-4EEC-A68F-43184B0C388E}"

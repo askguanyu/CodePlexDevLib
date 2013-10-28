@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
     using System.IO.Compression;
@@ -38,37 +39,23 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Byte array.</param>
         /// <param name="addSpace">Whether add space between Hex.</param>
         /// <returns>Hex string.</returns>
-        public static string ToHexString(this byte[] source, bool addSpace = true)
+        public static string ToHexString(this IEnumerable<byte> source, bool addSpace = true)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (source.Length == 0)
+            IEnumerator<byte> enumerator = source.GetEnumerator();
+
+            List<string> result = new List<string>();
+
+            while (enumerator.MoveNext())
             {
-                return string.Empty;
+                result.Add(string.Format("{0:X2}", enumerator.Current));
             }
 
-            StringBuilder result = new StringBuilder(source.Length * 2);
-
-            if (addSpace)
-            {
-                foreach (byte hex in source)
-                {
-                    result.AppendFormat("{0:X2}", hex);
-                    result.Append(" ");
-                }
-            }
-            else
-            {
-                foreach (byte hex in source)
-                {
-                    result.AppendFormat("{0:X2}", hex);
-                }
-            }
-
-            return result.ToString().Trim();
+            return string.Join(addSpace ? " " : string.Empty, result.ToArray());
         }
 
         /// <summary>

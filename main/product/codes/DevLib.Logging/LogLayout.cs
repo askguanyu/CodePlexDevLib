@@ -47,7 +47,7 @@ namespace DevLib.Logging
                 }
             }
 
-            result.AppendFormat(" [{0}]", ExceptionHandler.GetStackFrameInfo(skipFrames < 0 ? 3 : skipFrames + 3));
+            result.AppendFormat(" [{0}]", ExceptionHandler.GetStackFrameInfo(skipFrames < 1 ? 2 : skipFrames + 2));
 
             result.Append(Environment.NewLine);
 

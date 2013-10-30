@@ -222,7 +222,7 @@ namespace DevLib.ExtensionMethods
             string result = null;
 
             StringBuilder stringBuilder = new StringBuilder();
-            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes);
+            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes ?? Type.EmptyTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
@@ -289,7 +289,7 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes);
+            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes ?? Type.EmptyTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
@@ -328,7 +328,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes);
+            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes ?? Type.EmptyTypes);
 
             using (StringReader stringReader = new StringReader(source))
             {
@@ -402,7 +402,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes);
+            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes ?? Type.EmptyTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {
@@ -469,7 +469,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes ?? Type.EmptyTypes);
 
             using (StringReader stringReader = new StringReader(source))
             {
@@ -498,7 +498,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes ?? Type.EmptyTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {

@@ -82,7 +82,7 @@ namespace DevLib.DesignPatterns
         /// <returns>A readable representation of the stack trace.</returns>
         public static string GetStackFrameInfo(int skipFrames)
         {
-            StackFrame stackFrame = new StackFrame(skipFrames < 0 ? 1 : skipFrames + 1, true);
+            StackFrame stackFrame = new StackFrame(skipFrames < 1 ? 1 : skipFrames + 1, true);
 
             MethodBase method = stackFrame.GetMethod();
 

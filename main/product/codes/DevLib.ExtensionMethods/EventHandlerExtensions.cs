@@ -30,5 +30,22 @@ namespace DevLib.ExtensionMethods
                 safeHandler(sender, e);
             }
         }
+
+        /// <summary>
+        /// Thread safety raise event.
+        /// </summary>
+        /// <param name="source">Source EventHandler.</param>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">An System.EventArgs that contains the event data.</param>
+        public static void RaiseEvent(this EventHandler source, object sender, EventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler safeHandler = Interlocked.CompareExchange(ref source, null, null);
+
+            if (safeHandler != null)
+            {
+                safeHandler(sender, e);
+            }
+        }
     }
 }

@@ -222,7 +222,8 @@ namespace DevLib.ExtensionMethods
             string result = null;
 
             StringBuilder stringBuilder = new StringBuilder();
-            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes ?? Type.EmptyTypes);
+
+            XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
@@ -289,7 +290,7 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType(), extraTypes ?? Type.EmptyTypes);
+            XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
@@ -328,7 +329,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes ?? Type.EmptyTypes);
+            XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(type) : new XmlSerializer(type, extraTypes);
 
             using (StringReader stringReader = new StringReader(source))
             {
@@ -402,7 +403,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(type, extraTypes ?? Type.EmptyTypes);
+            XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(type) : new XmlSerializer(type, extraTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {
@@ -469,7 +470,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes ?? Type.EmptyTypes);
+            XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(typeof(T)) : new XmlSerializer(typeof(T), extraTypes);
 
             using (StringReader stringReader = new StringReader(source))
             {
@@ -498,7 +499,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T), extraTypes ?? Type.EmptyTypes);
+            XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(typeof(T)) : new XmlSerializer(typeof(T), extraTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {
@@ -691,7 +692,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -740,7 +741,7 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
 
             using (FileStream fileStream = File.OpenWrite(fullPath))
             {
@@ -769,7 +770,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(type, knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
@@ -844,7 +845,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(type, knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {
@@ -911,7 +912,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(typeof(T), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
@@ -940,7 +941,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(typeof(T), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {
@@ -961,7 +962,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(source.GetType(), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -989,7 +990,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(type, knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
@@ -1052,7 +1053,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(typeof(T), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
@@ -1078,7 +1079,8 @@ namespace DevLib.ExtensionMethods
             string result = null;
 
             StringBuilder stringBuilder = new StringBuilder();
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(source.GetType(), knownTypes);
+
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent }))
             {
@@ -1132,7 +1134,7 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(source.GetType(), knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
 
             using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent }))
             {
@@ -1161,7 +1163,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(type, knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
 
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
@@ -1236,7 +1238,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(type, knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {
@@ -1303,7 +1305,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
 
             using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
             {
@@ -1332,7 +1334,7 @@ namespace DevLib.ExtensionMethods
                 throw new FileNotFoundException("The specified file does not exist.", fullPath);
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
 
             using (FileStream fileStream = File.OpenRead(fullPath))
             {
@@ -1353,7 +1355,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(source.GetType(), knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -1381,7 +1383,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("type");
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(type, knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(type) : new DataContractSerializer(type, knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
@@ -1444,7 +1446,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(T), knownTypes);
+            DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(typeof(T)) : new DataContractSerializer(typeof(T), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {

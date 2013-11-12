@@ -912,7 +912,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {

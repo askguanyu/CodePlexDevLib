@@ -6,6 +6,7 @@
 namespace DevLib.IO.Ports
 {
     using System;
+    using System.IO;
     using System.IO.Ports;
     using System.Threading;
 
@@ -15,9 +16,9 @@ namespace DevLib.IO.Ports
     public class SyncSerialPort : IDisposable
     {
         /// <summary>
-        /// Static Field _portNames.
+        /// Field _syncRoot.
         /// </summary>
-        private static string[] _portNames = SerialPort.GetPortNames();
+        private readonly object _syncRoot = new object();
 
         /// <summary>
         /// Field _disposed.
@@ -25,39 +26,14 @@ namespace DevLib.IO.Ports
         private bool _disposed = false;
 
         /// <summary>
-        /// Field _isReading.
+        /// Field _isSendingSync.
         /// </summary>
-        private bool _isRunning = false;
+        private bool _isSendingSync = false;
 
         /// <summary>
         /// Field _serialPort.
         /// </summary>
         private SerialPort _serialPort = null;
-
-        /// <summary>
-        /// Field _currentState.
-        /// </summary>
-        private SerialPortState _currentState = SerialPortState.Init;
-
-        /// <summary>
-        /// Field _receiveBuffer.
-        /// </summary>
-        private byte[] _receiveBuffer = null;
-
-        /// <summary>
-        /// Field _readTimeout.
-        /// </summary>
-        private int _readTimeout = 1000;
-
-        /// <summary>
-        /// Field _autoResetEvent.
-        /// </summary>
-        private AutoResetEvent _autoResetEvent = new AutoResetEvent(false);
-
-        /// <summary>
-        /// Field _syncRoot.
-        /// </summary>
-        private object _syncRoot = new object();
 
         /// <summary>
         /// Initializes a new instance of the SyncSerialPort class using the specified port name, baud rate, parity bit, data bits, and stop bit.
@@ -71,31 +47,22 @@ namespace DevLib.IO.Ports
         {
             if (string.IsNullOrEmpty(portName))
             {
-                this._currentState = SerialPortState.NotExistPort;
+                throw new ArgumentNullException("portName");
             }
             else
             {
-                bool isExistPort = false;
-
-                for (int i = 0; i < _portNames.Length; i++)
-                {
-                    if (_portNames[i].Equals(portName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        isExistPort = true;
-                        break;
-                    }
-                }
-
-                if (isExistPort)
+                try
                 {
                     this._serialPort = new SerialPort(portName, baudRate, partity, dataBits, stopBits);
+                    this._serialPort.ReadTimeout = SerialPort.InfiniteTimeout;
+                    this._serialPort.WriteTimeout = SerialPort.InfiniteTimeout;
                     this._serialPort.DataReceived += this.SerialPortDataReceived;
                     this._serialPort.ErrorReceived += this.SerialPortErrorReceived;
-                    this._currentState = SerialPortState.OperateOK;
                 }
-                else
+                catch (Exception e)
                 {
-                    this._currentState = SerialPortState.NotFoundPort;
+                    ExceptionHandler.Log(e);
+                    throw;
                 }
             }
         }
@@ -123,17 +90,9 @@ namespace DevLib.IO.Ports
         /// </summary>
         public static string[] PortNames
         {
-            get { return _portNames; }
-        }
-
-        /// <summary>
-        /// Gets current serial state.
-        /// </summary>
-        public SerialPortState CurrentState
-        {
             get
             {
-                return this._currentState;
+                return SerialPort.GetPortNames();
             }
         }
 
@@ -170,13 +129,12 @@ namespace DevLib.IO.Ports
                 catch (Exception e)
                 {
                     ExceptionHandler.Log(e);
-                    this._currentState = SerialPortState.OpenException;
+
                     return false;
                 }
             }
             else
             {
-                this._currentState = SerialPortState.SerialPortNull;
                 return false;
             }
         }
@@ -200,7 +158,6 @@ namespace DevLib.IO.Ports
             }
             else
             {
-                this._currentState = SerialPortState.SerialPortNull;
                 return false;
             }
         }
@@ -211,77 +168,98 @@ namespace DevLib.IO.Ports
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
         /// <param name="receivedData">The byte array to write the received data.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Send(byte[] sendData, out byte[] receivedData, int timeout = 1000)
+        /// <returns>The number of bytes read.</returns>
+        public int SendSync(byte[] sendData, out byte[] receivedData, int timeout = 1000)
         {
             this.CheckDisposed();
 
+            if (sendData == null || sendData.Length == 0)
+            {
+                throw new ArgumentNullException("sendData");
+            }
+
+            if (this._serialPort == null || !this.Open())
+            {
+                throw new IOException("The specified port could not be found or opened.");
+            }
+
+            if (timeout < 1)
+            {
+                timeout = 1;
+            }
+
             lock (this._syncRoot)
             {
-                this._isRunning = true;
-
-                this._autoResetEvent.Reset();
-
-                if (sendData == null || sendData.Length == 0)
-                {
-                    this._isRunning = false;
-                    receivedData = new byte[0];
-                    this._currentState = SerialPortState.SendDataEmpty;
-                    return false;
-                }
-
-                if (this._serialPort == null)
-                {
-                    this._isRunning = false;
-                    receivedData = new byte[0];
-                    this._currentState = SerialPortState.SerialPortNull;
-                    return false;
-                }
-
-                this._readTimeout = timeout;
+                int bytesRead = -1;
 
                 try
                 {
-                    if (!this.Open())
-                    {
-                        receivedData = new byte[0];
-                        return false;
-                    }
+                    this._isSendingSync = true;
+
+                    this._serialPort.DiscardInBuffer();
+
+                    this._serialPort.DiscardOutBuffer();
 
                     this._serialPort.Write(sendData, 0, sendData.Length);
-                    Thread threadReceive = new Thread(new ParameterizedThreadStart(this.SyncReceiveData));
-                    threadReceive.IsBackground = true;
-                    ////threadReceive.Name = "ReadSerialPortData";
-                    threadReceive.Start(this._serialPort);
-                    this._autoResetEvent.WaitOne();
 
-                    if (threadReceive.IsAlive)
-                    {
-                        threadReceive.Abort();
-                    }
+                    Thread.Sleep(timeout);
 
-                    if (this._currentState == SerialPortState.OperateOK)
+                    if (this._serialPort.BytesToRead >= 0)
                     {
-                        receivedData = this._receiveBuffer;
-                        return true;
+                        byte[] result = new byte[this._serialPort.BytesToRead];
+
+                        bytesRead = this._serialPort.Read(result, 0, result.Length);
+
+                        receivedData = result;
                     }
                     else
                     {
                         receivedData = new byte[0];
-                        return false;
                     }
                 }
-                catch
+                catch (Exception e)
                 {
+                    ExceptionHandler.Log(e);
+
                     receivedData = new byte[0];
-                    this._currentState = SerialPortState.SendException;
-                    return false;
                 }
                 finally
                 {
-                    this._isRunning = false;
+                    this._isSendingSync = false;
                 }
+
+                return bytesRead;
             }
+        }
+
+        /// <summary>
+        /// Writes a specified number of bytes to the serial port using data from a buffer.
+        /// </summary>
+        /// <param name="data">The byte array that contains the data to write to the port.</param>
+        public void Send(byte[] data)
+        {
+            if (this._serialPort == null || !this.Open())
+            {
+                throw new IOException("The specified port could not be found or opened.");
+            }
+
+            this._serialPort.Write(data, 0, data.Length);
+        }
+
+        /// <summary>
+        /// Writes a specified number of bytes to the serial port using data from a buffer.
+        /// </summary>
+        /// <param name="data">The byte array that contains the data to write to the port.</param>
+        /// <param name="offset">The zero-based byte offset in the data parameter at which to begin copying bytes to the port.</param>
+        /// <param name="count">The number of bytes to write.</param>
+        public void Send(byte[] data, int offset, int count)
+        {
+            if (this._serialPort == null || !this.Open())
+            {
+                throw new IOException("The specified port could not be found or opened.");
+            }
+
+            this._serialPort.Write(data, offset, count);
         }
 
         /// <summary>
@@ -316,12 +294,6 @@ namespace DevLib.IO.Ports
                 ////    managedResource = null;
                 ////}
 
-                if (this._autoResetEvent != null)
-                {
-                    this._autoResetEvent.Close();
-                    this._autoResetEvent = null;
-                }
-
                 if (this._serialPort != null)
                 {
                     this._serialPort.Dispose();
@@ -344,9 +316,9 @@ namespace DevLib.IO.Ports
         /// <param name="e">Instance of SerialDataReceivedEventArgs.</param>
         private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            if (!this._isRunning)
+            if (!this._isSendingSync)
             {
-                byte[] receivedData = new byte[this._serialPort.ReadBufferSize];
+                byte[] receivedData = new byte[this._serialPort.BytesToRead];
 
                 this._serialPort.Read(receivedData, 0, receivedData.Length);
 
@@ -379,43 +351,6 @@ namespace DevLib.IO.Ports
             if (safeHandler != null)
             {
                 safeHandler(sender, e);
-            }
-        }
-
-        /// <summary>
-        /// Sync receive data.
-        /// </summary>
-        /// <param name="serialPortobj">Instance of SerialPort.</param>
-        private void SyncReceiveData(object serialPortobj)
-        {
-            SerialPort serialPort = serialPortobj as SerialPort;
-            Thread.Sleep(0);
-            serialPort.ReadTimeout = this._readTimeout;
-
-            try
-            {
-                byte firstByte = Convert.ToByte(serialPort.ReadByte());
-                int bytesToRead = serialPort.BytesToRead;
-                this._receiveBuffer = new byte[bytesToRead + 1];
-                this._receiveBuffer[0] = firstByte;
-
-                for (int i = 1; i <= bytesToRead; i++)
-                {
-                    this._receiveBuffer[i] = Convert.ToByte(serialPort.ReadByte());
-                }
-
-                this._currentState = SerialPortState.OperateOK;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
-                this._currentState = SerialPortState.ReadTimeout;
-            }
-            finally
-            {
-                this._autoResetEvent.Set();
-                serialPort.ReadTimeout = SerialPort.InfiniteTimeout;
-                this.Close();
             }
         }
 

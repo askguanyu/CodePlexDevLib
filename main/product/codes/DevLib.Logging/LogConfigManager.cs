@@ -52,9 +52,9 @@ namespace DevLib.Logging
                 {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(LoggerSetup));
 
-                    using (XmlReader xmlReader = XmlReader.Create(new StringReader(loggerSetupNode.OuterXml), new XmlReaderSettings { CheckCharacters = false, IgnoreComments = true, IgnoreWhitespace = true, IgnoreProcessingInstructions = true }))
+                    using (StringReader stringReader = new StringReader(loggerSetupNode.OuterXml))
                     {
-                        result.LoggerSetup = (LoggerSetup)xmlSerializer.Deserialize(xmlReader);
+                        result.LoggerSetup = (LoggerSetup)xmlSerializer.Deserialize(stringReader);
                     }
                 }
             }

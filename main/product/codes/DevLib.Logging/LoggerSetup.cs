@@ -28,11 +28,21 @@ namespace DevLib.Logging
         /// </summary>
         public LoggerSetup()
         {
+            this.Level = LogLevel.DBUG;
             this.WriteToConsole = true;
             this.WriteToFile = true;
             this.UseBracket = true;
             this.RollingFileSizeLimitMB = 10;
             this.RollingByDate = false;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating log level hierarchy write to log file.
+        /// </summary>
+        public LogLevel Level
+        {
+            get;
+            set;
         }
 
         /// <summary>

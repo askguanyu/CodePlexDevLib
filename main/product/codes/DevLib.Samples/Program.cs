@@ -43,11 +43,12 @@ namespace DevLib.Samples
     using DevLib.Logging;
     using DevLib.Main;
     using DevLib.Net;
-    using DevLib.Net.Sockets;
     using DevLib.Net.Ftp;
+    using DevLib.Net.Sockets;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;
     using DevLib.TerminalServices;
+    using DevLib.Timers;
     using DevLib.Utilities;
     using DevLib.WinForms;
 
@@ -135,6 +136,11 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
+                    //TestDevLibTimer();
+                });
+
+                CodeTimer.Time(delegate
+                {
                     //TestDevLibConfiguration();
                 });
 
@@ -145,6 +151,17 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestDevLibTimer()
+        {
+            var idleTimer = new IdleTimer(3000, true, false);
+            idleTimer.IdleOccurred += new EventHandler(idleTimer_IdleOccurred);
+        }
+
+        static void idleTimer_IdleOccurred(object sender, EventArgs e)
+        {
+            Console.WriteLine("idle");
         }
 
         private static void TestDevLibLogging()
@@ -163,7 +180,7 @@ namespace DevLib.Samples
             LogManager.Open(@"C:\\AAA.log").Log(LogLevel.FAIL, Process.GetCurrentProcess().Id);
 
             Console.ReadLine();
-            
+
             //var a = new Uri(Path.GetFullPath(@"C:\a b\b c\c d e\1 3 4.5")).AbsolutePath;
 
             //LogManager.Open(@"c:\a\b\c\d.log").Log(LogLevel.DBUG, "hello", new Exception());
@@ -181,7 +198,7 @@ namespace DevLib.Samples
 
             for (int i = 0; i < 100; i++)
             {
-                LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, i.ToString(),DateTime.Now,Environment.UserName);
+                LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, i.ToString(), DateTime.Now, Environment.UserName);
             }
 
             //Task.Factory.StartNew(() => 
@@ -190,7 +207,7 @@ namespace DevLib.Samples
             //    {
             //        LogManager.Open().Log(LogLevel.DBUG, i.ToString());
             //    }
-                
+
 
             //    Thread.Sleep(10000);
 
@@ -947,7 +964,7 @@ namespace DevLib.Samples
             #region SerializationExtensions
 
             Person person = new Person("foo", "好的", 1);
-            person.WriteXml("1.xml",true);
+            person.WriteXml("1.xml", true);
             person.SerializeXml().DeserializeXml(new Type[] { typeof(Person) });
             Console.ReadLine();
             //person.SerializeJson().ConsoleOutput().DeserializeJson<Person>();

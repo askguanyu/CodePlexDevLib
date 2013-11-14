@@ -36,7 +36,7 @@ namespace DevLib.IO.Ports
         private SerialPort _serialPort = null;
 
         /// <summary>
-        /// Initializes a new instance of the SyncSerialPort class using the specified port name, baud rate, parity bit, data bits, and stop bit.
+        /// Initializes a new instance of the <see cref="SyncSerialPort" /> class.
         /// </summary>
         /// <param name="portName">The port to use (for example, COM1).</param>
         /// <param name="baudRate">The baud rate.</param>

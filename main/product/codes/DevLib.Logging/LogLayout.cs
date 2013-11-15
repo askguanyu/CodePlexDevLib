@@ -35,14 +35,14 @@ namespace DevLib.Logging
                 {
                     foreach (var item in objs)
                     {
-                        result.AppendFormat(" [{0}]", item.ToString());
+                        result.AppendFormat(" [{0}]", item == null ? string.Empty : item.ToString());
                     }
                 }
                 else
                 {
                     foreach (var item in objs)
                     {
-                        result.AppendFormat(" {0}", item.ToString());
+                        result.AppendFormat(" {0}", item == null ? string.Empty : item.ToString());
                     }
                 }
             }

@@ -130,46 +130,6 @@ namespace DevLib.Timers
         }
 
         /// <summary>
-        /// Restart IdleTimer.
-        /// </summary>
-        public void Restart()
-        {
-            this.CheckDisposed();
-
-            try
-            {
-                if (this._timer == null)
-                {
-                    this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, 0, PollingInterval);
-
-                    this.IsRunning = true;
-                }
-                else
-                {
-                    if (this._timer.Change(0, PollingInterval))
-                    {
-                        this.IsRunning = true;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
-
-                if (this._timer != null)
-                {
-                    this._timer.Dispose();
-
-                    this._timer = null;
-                }
-
-                this.IsRunning = false;
-
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Stop IdleTimer.
         /// </summary>
         public void Stop()

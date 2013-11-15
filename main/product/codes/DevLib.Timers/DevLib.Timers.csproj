@@ -49,6 +49,7 @@
     <Compile Include="NativeAPI\NativeMethods.cs" />
     <Compile Include="NativeAPI\NativeMethodsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThreadTimer.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

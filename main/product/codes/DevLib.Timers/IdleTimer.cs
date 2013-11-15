@@ -12,12 +12,12 @@ namespace DevLib.Timers
     /// <summary>
     /// Represents a timer to detect user idle state of an application.
     /// </summary>
-    public class IdleTimer : IDisposable
+    public class IdleTimer : MarshalByRefObject, IDisposable
     {
         /// <summary>
         /// Field PollingInterval.
         /// </summary>
-        private const long PollingInterval = 250;
+        private const int PollingInterval = 250;
 
         /// <summary>
         /// Field _disposed.
@@ -30,11 +30,6 @@ namespace DevLib.Timers
         private System.Threading.Timer _timer;
 
         /// <summary>
-        /// Field _idleTimeout.
-        /// </summary>
-        private long _idleTimeout;
-
-        /// <summary>
         /// Field _autoStop.
         /// </summary>
         private bool _autoStop;
@@ -42,17 +37,20 @@ namespace DevLib.Timers
         /// <summary>
         /// Initializes a new instance of the <see cref="IdleTimer" /> class.
         /// </summary>
-        /// <param name="timeout">The timeout in milliseconds when user is idle state.</param>
+        public IdleTimer()
+            : this(0)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdleTimer" /> class.
+        /// </summary>
+        /// <param name="idleTimeout">The timeout in milliseconds when user is idle state. IdleTimer is disabled if timeout is zero.</param>
         /// <param name="autoStart">true if immediately start IdleTimer; otherwise, false.</param>
         /// <param name="autoStop">Whether stop current IdleTimer when IdleOccurred event raised.</param>
-        public IdleTimer(long timeout, bool autoStart = false, bool autoStop = true)
+        public IdleTimer(uint idleTimeout, bool autoStart = false, bool autoStop = true)
         {
-            if (timeout < 1)
-            {
-                throw new ArgumentOutOfRangeException("timeout", "The value of the timeout parameter is less than or equal to zero");
-            }
-
-            this._idleTimeout = timeout;
+            this.IdleTimeout = idleTimeout;
 
             this._autoStop = autoStop;
 
@@ -78,6 +76,15 @@ namespace DevLib.Timers
         public event EventHandler IdleOccurred;
 
         /// <summary>
+        /// Gets or sets user idle state timeout in milliseconds.
+        /// </summary>
+        public uint IdleTimeout
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether current IdleTimer is running or not.
         /// </summary>
         public bool IsRunning
@@ -93,7 +100,7 @@ namespace DevLib.Timers
         {
             this.CheckDisposed();
 
-            if (!this.IsRunning)
+            if (!this.IsRunning && this.IdleTimeout > 0)
             {
                 try
                 {
@@ -105,9 +112,13 @@ namespace DevLib.Timers
                     }
                     else
                     {
-                        if (this._timer.Change(0, PollingInterval))
+                        if (!this._timer.Change(0, PollingInterval))
                         {
-                            this.IsRunning = true;
+                            this._timer.Dispose();
+
+                            this._timer = null;
+
+                            this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, 0, PollingInterval);
                         }
                     }
                 }
@@ -161,8 +172,6 @@ namespace DevLib.Timers
 
                             this._timer = null;
                         }
-
-                        throw;
                     }
                 }
             }
@@ -229,7 +238,7 @@ namespace DevLib.Timers
         /// <param name="obj">An object containing application-specific information relevant to the method invoked by this delegate, or null.</param>
         private void OnTimerElapsed(object obj)
         {
-            if (NativeMethodsHelper.GetLastInputTime() >= this._idleTimeout)
+            if (NativeMethodsHelper.GetLastInputTime() >= this.IdleTimeout)
             {
                 if (this._autoStop)
                 {

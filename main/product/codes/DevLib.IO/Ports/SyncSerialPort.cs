@@ -13,7 +13,7 @@ namespace DevLib.IO.Ports
     /// <summary>
     /// Represents a sync serial port resource.
     /// </summary>
-    public class SyncSerialPort : IDisposable
+    public class SyncSerialPort : MarshalByRefObject, IDisposable
     {
         /// <summary>
         /// Field _syncRoot.

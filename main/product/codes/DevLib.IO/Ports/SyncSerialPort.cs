@@ -58,6 +58,7 @@ namespace DevLib.IO.Ports
                     this._serialPort.WriteTimeout = SerialPort.InfiniteTimeout;
                     this._serialPort.DataReceived += this.SerialPortDataReceived;
                     this._serialPort.ErrorReceived += this.SerialPortErrorReceived;
+                    this.CurrentPort = portName;
                 }
                 catch (Exception e)
                 {
@@ -94,6 +95,15 @@ namespace DevLib.IO.Ports
             {
                 return SerialPort.GetPortNames();
             }
+        }
+
+        /// <summary>
+        /// Gets current using serial port name.
+        /// </summary>
+        public string CurrentPort
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -293,7 +303,7 @@ namespace DevLib.IO.Ports
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-
+                
                 if (this._serialPort != null)
                 {
                     this._serialPort.Dispose();

@@ -58,6 +58,7 @@ namespace DevLib.IO.Ports
                     this._serialPort.WriteTimeout = SerialPort.InfiniteTimeout;
                     this._serialPort.DataReceived += this.SerialPortDataReceived;
                     this._serialPort.ErrorReceived += this.SerialPortErrorReceived;
+                    this._serialPort.PinChanged += this.SerialPortPinChanged;
                     this.CurrentPort = portName;
                 }
                 catch (Exception e)
@@ -85,6 +86,11 @@ namespace DevLib.IO.Ports
         /// Represents the method that handles the error event of this SerialPort.
         /// </summary>
         public event EventHandler<SerialErrorReceivedEventArgs> ErrorReceived;
+
+        /// <summary>
+        /// Represents the method that will handle the serial pin changed event of this SerialPort.
+        /// </summary>
+        public event EventHandler<SerialPinChangedEventArgs> PinChanged;
 
         /// <summary>
         /// Gets an array of serial port names for the current computer.
@@ -303,7 +309,7 @@ namespace DevLib.IO.Ports
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-                
+
                 if (this._serialPort != null)
                 {
                     this._serialPort.Dispose();
@@ -344,6 +350,16 @@ namespace DevLib.IO.Ports
         private void SerialPortErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
             this.RaiseEvent<SerialErrorReceivedEventArgs>(this.ErrorReceived, sender, e);
+        }
+
+        /// <summary>
+        /// Method SerialPortPinChanged
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of SerialPinChangedEventArgs.</param>
+        private void SerialPortPinChanged(object sender, SerialPinChangedEventArgs e)
+        {
+            this.RaiseEvent<SerialPinChangedEventArgs>(this.PinChanged, sender, e);
         }
 
         /// <summary>

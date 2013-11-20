@@ -80,7 +80,7 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Represents the method that will handle the data received event of this SerialPort.
         /// </summary>
-        public event EventHandler<SyncSerialPortDataReceivedEventArgs> DataReceived;
+        public event EventHandler<SerialDataReceivedEventArgs> DataReceived;
 
         /// <summary>
         /// Represents the method that handles the error event of this SerialPort.
@@ -184,8 +184,9 @@ namespace DevLib.IO.Ports
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
         /// <param name="receivedData">The byte array to write the received data.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
         /// <returns>The number of bytes read.</returns>
-        public int SendSync(byte[] sendData, out byte[] receivedData, int timeout = 1000)
+        public int SendSync(byte[] sendData, out byte[] receivedData, int timeout = 1000, bool waitTimeout = false)
         {
             this.CheckDisposed();
 
@@ -218,9 +219,26 @@ namespace DevLib.IO.Ports
 
                     this._serialPort.Write(sendData, 0, sendData.Length);
 
-                    Thread.Sleep(timeout);
+                    if (waitTimeout)
+                    {
+                        Thread.Sleep(timeout);
+                    }
+                    else
+                    {
+                        int timeoutCount = 0;
 
-                    if (this._serialPort.BytesToRead >= 0)
+                        while (timeoutCount <= timeout)
+                        {
+                            if (this._serialPort.BytesToRead <= 0)
+                            {
+                                Thread.Sleep(1);
+                            }
+
+                            timeoutCount++;
+                        }
+                    }
+
+                    if (this._serialPort.BytesToRead > 0)
                     {
                         byte[] result = new byte[this._serialPort.BytesToRead];
 
@@ -254,6 +272,8 @@ namespace DevLib.IO.Ports
         /// <param name="data">The byte array that contains the data to write to the port.</param>
         public void Send(byte[] data)
         {
+            this.CheckDisposed();
+
             if (this._serialPort == null || !this.Open())
             {
                 throw new IOException("The specified port could not be found or opened.");
@@ -270,6 +290,8 @@ namespace DevLib.IO.Ports
         /// <param name="count">The number of bytes to write.</param>
         public void Send(byte[] data, int offset, int count)
         {
+            this.CheckDisposed();
+
             if (this._serialPort == null || !this.Open())
             {
                 throw new IOException("The specified port could not be found or opened.");
@@ -281,17 +303,52 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Reads all bytes from the serial port input buffer.
         /// </summary>
+        /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
         /// <returns>The byte array of the receive buffer.</returns>
-        public byte[] Read()
+        public byte[] Read(int timeout = 1000, bool waitTimeout = false)
         {
+            this.CheckDisposed();
+
             if (this._serialPort == null || !this.Open())
             {
                 throw new IOException("The specified port could not be found or opened.");
             }
 
-            byte[] result = new byte[this._serialPort.BytesToRead];
+            if (timeout < 1)
+            {
+                timeout = 1;
+            }
 
-            this._serialPort.Read(result, 0, result.Length);
+            if (waitTimeout)
+            {
+                Thread.Sleep(timeout);
+            }
+            else
+            {
+                int timeoutCount = 0;
+
+                while (timeoutCount <= timeout)
+                {
+                    if (this._serialPort.BytesToRead <= 0)
+                    {
+                        Thread.Sleep(1);
+                    }
+
+                    timeoutCount++;
+                }
+            }
+
+            byte[] result = null;
+
+            if (this._serialPort.BytesToRead > 0)
+            {
+                result = new byte[this._serialPort.BytesToRead];
+            }
+            else
+            {
+                result = new byte[0];
+            }
 
             return result;
         }
@@ -352,11 +409,7 @@ namespace DevLib.IO.Ports
         {
             if (!this._isSendingSync)
             {
-                byte[] receivedData = new byte[this._serialPort.BytesToRead];
-
-                this._serialPort.Read(receivedData, 0, receivedData.Length);
-
-                this.RaiseEvent<SyncSerialPortDataReceivedEventArgs>(this.DataReceived, sender, new SyncSerialPortDataReceivedEventArgs(e.EventType, receivedData));
+                this.RaiseEvent<SerialDataReceivedEventArgs>(this.DataReceived, this, e);
             }
         }
 
@@ -367,7 +420,7 @@ namespace DevLib.IO.Ports
         /// <param name="e">Instance of SerialErrorReceivedEventArgs.</param>
         private void SerialPortErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
-            this.RaiseEvent<SerialErrorReceivedEventArgs>(this.ErrorReceived, sender, e);
+            this.RaiseEvent<SerialErrorReceivedEventArgs>(this.ErrorReceived, this, e);
         }
 
         /// <summary>
@@ -377,7 +430,7 @@ namespace DevLib.IO.Ports
         /// <param name="e">Instance of SerialPinChangedEventArgs.</param>
         private void SerialPortPinChanged(object sender, SerialPinChangedEventArgs e)
         {
-            this.RaiseEvent<SerialPinChangedEventArgs>(this.PinChanged, sender, e);
+            this.RaiseEvent<SerialPinChangedEventArgs>(this.PinChanged, this, e);
         }
 
         /// <summary>

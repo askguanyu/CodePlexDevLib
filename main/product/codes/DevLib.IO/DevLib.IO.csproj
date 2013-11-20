@@ -43,7 +43,6 @@
     </Compile>
     <Compile Include="ExceptionHandler.cs" />
     <Compile Include="Ports\SyncSerialPort.cs" />
-    <Compile Include="Ports\SyncSerialPortDataReceivedEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

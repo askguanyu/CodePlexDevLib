@@ -279,6 +279,24 @@ namespace DevLib.IO.Ports
         }
 
         /// <summary>
+        /// Reads all bytes from the serial port input buffer.
+        /// </summary>
+        /// <returns>The byte array of the receive buffer.</returns>
+        public byte[] Read()
+        {
+            if (this._serialPort == null || !this.Open())
+            {
+                throw new IOException("The specified port could not be found or opened.");
+            }
+
+            byte[] result = new byte[this._serialPort.BytesToRead];
+
+            this._serialPort.Read(result, 0, result.Length);
+
+            return result;
+        }
+
+        /// <summary>
         /// Releases all resources used by the current instance of the <see cref="SyncSerialPort" /> class.
         /// </summary>
         public void Dispose()

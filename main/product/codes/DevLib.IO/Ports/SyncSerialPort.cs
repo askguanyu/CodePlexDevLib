@@ -238,6 +238,8 @@ namespace DevLib.IO.Ports
                         }
                     }
 
+                    Thread.Sleep(1);
+
                     if (this._serialPort.BytesToRead > 0)
                     {
                         byte[] result = new byte[this._serialPort.BytesToRead];

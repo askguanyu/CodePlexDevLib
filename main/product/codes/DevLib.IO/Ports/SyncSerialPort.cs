@@ -312,44 +312,45 @@ namespace DevLib.IO.Ports
         {
             this.CheckDisposed();
 
-            if (this._serialPort == null || !this.Open())
-            {
-                throw new IOException("The specified port could not be found or opened.");
-            }
+            byte[] result = new byte[0];
 
-            if (timeout < 1)
+            if (!this._isSendingSync)
             {
-                timeout = 1;
-            }
-
-            if (waitTimeout)
-            {
-                Thread.Sleep(timeout);
-            }
-            else
-            {
-                int timeoutCount = 0;
-
-                while (timeoutCount <= timeout)
+                if (this._serialPort == null || !this.Open())
                 {
-                    if (this._serialPort.BytesToRead <= 0)
-                    {
-                        Thread.Sleep(1);
-                    }
-
-                    timeoutCount++;
+                    throw new IOException("The specified port could not be found or opened.");
                 }
-            }
 
-            byte[] result = null;
+                if (timeout < 1)
+                {
+                    timeout = 1;
+                }
 
-            if (this._serialPort.BytesToRead > 0)
-            {
-                result = new byte[this._serialPort.BytesToRead];
-            }
-            else
-            {
-                result = new byte[0];
+                if (waitTimeout)
+                {
+                    Thread.Sleep(timeout);
+                }
+                else
+                {
+                    int timeoutCount = 0;
+
+                    while (timeoutCount <= timeout)
+                    {
+                        if (this._serialPort.BytesToRead <= 0)
+                        {
+                            Thread.Sleep(1);
+                        }
+
+                        timeoutCount++;
+                    }
+                }
+
+                Thread.Sleep(1);
+
+                if (this._serialPort.BytesToRead > 0)
+                {
+                    result = new byte[this._serialPort.BytesToRead];
+                }
             }
 
             return result;

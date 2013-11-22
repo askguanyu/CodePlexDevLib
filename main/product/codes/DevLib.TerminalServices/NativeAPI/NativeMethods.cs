@@ -40,7 +40,7 @@ namespace DevLib.TerminalServices.NativeAPI
             out IntPtr sessionInfo,
             out int count);
 
-        [DllImport("wtsapi32.dll")]
+        [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern void WTSFreeMemory(IntPtr memory);
 
         [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "0", Justification = "Reviewed.")]
@@ -50,13 +50,13 @@ namespace DevLib.TerminalServices.NativeAPI
         [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern void WTSCloseServer(IntPtr hServer);
 
-        [DllImport("wtsapi32.dll", SetLastError = true)]
+        [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int WTSLogoffSession(
             IntPtr hServer,
             int sessionId,
             bool wait);
 
-        [DllImport("wtsapi32.dll", SetLastError = true)]
+        [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int WTSDisconnectSession(
             IntPtr hServer,
             int sessionId,
@@ -73,7 +73,7 @@ namespace DevLib.TerminalServices.NativeAPI
             ref int returnedLength);
 
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "return", Justification = "Reviewed.")]
-        [DllImport("winsta.dll", CharSet = CharSet.Unicode, EntryPoint = "WinStationQueryInformationW", SetLastError = true)]
+        [DllImport("winsta.dll", CharSet = CharSet.Auto, SetLastError = true, EntryPoint = "WinStationQueryInformationW")]
         public static extern int WinStationQueryInformationRemoteAddress(
             IntPtr hServer,
             int sessionId,
@@ -114,26 +114,26 @@ namespace DevLib.TerminalServices.NativeAPI
             out IntPtr ppProcessInfo,
             out int count);
 
-        [DllImport("wtsapi32.dll", SetLastError = true)]
+        [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int WTSShutdownSystem(
             IntPtr hServer,
             int shutdownFlag);
 
-        [DllImport("wtsapi32.dll", SetLastError = true)]
+        [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int WTSTerminateProcess(
             IntPtr hServer,
             int processId,
             int exitCode);
 
-        [DllImport("ws2_32.dll")]
+        [DllImport("ws2_32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern ushort ntohs(ushort netValue);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int FileTimeToSystemTime(
             ref System.Runtime.InteropServices.ComTypes.FILETIME fileTime,
             ref SYSTEMTIME systemTime);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int WTSGetActiveConsoleSessionId();
 
         [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "0", Justification = "Reviewed.")]
@@ -147,7 +147,7 @@ namespace DevLib.TerminalServices.NativeAPI
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "return", Justification = "Reviewed.")]
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "3", Justification = "Reviewed.")]
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "4", Justification = "Reviewed.")]
-        [DllImport("winsta.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [DllImport("winsta.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         public static extern int WinStationShadow(
             IntPtr hServer,
             string serverName,
@@ -157,7 +157,7 @@ namespace DevLib.TerminalServices.NativeAPI
 
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "return", Justification = "Reviewed.")]
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "2", Justification = "Reviewed.")]
-        [DllImport("winsta.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [DllImport("winsta.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int WinStationShadowStop(
             IntPtr hServer,
             int targetSessionId,
@@ -165,7 +165,7 @@ namespace DevLib.TerminalServices.NativeAPI
 
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "return", Justification = "Reviewed.")]
         [SuppressMessage("Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "4", Justification = "Reviewed.")]
-        [DllImport("winsta.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [DllImport("winsta.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         public static extern int WinStationConnectW(
             IntPtr hServer,
             int targetSessionId,
@@ -181,19 +181,19 @@ namespace DevLib.TerminalServices.NativeAPI
             string password,
             bool wait);
 
-        [DllImport("wtsapi32.dll", SetLastError = true)]
+        [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern int WTSStopRemoteControlSession(int targetSessionId);
 
-        [DllImport("Wtsapi32.dll", SetLastError = true)]
+        [DllImport("Wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool WTSQueryUserToken(int SessionId, ref IntPtr phToken);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool CloseHandle(IntPtr hObject);
 
         [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "1", Justification = "Reviewed.")]
         [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "2", Justification = "Reviewed.")]
         [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "8", Justification = "Reviewed.")]
-        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool CreateProcessAsUser(
             IntPtr hToken,
             string lpApplicationName,

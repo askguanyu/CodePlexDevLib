@@ -118,7 +118,7 @@ namespace DevLib.Logging
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public void Log(LogLevel logLevel, params object[] objs)
         {
-            this.Log(0, logLevel, objs);
+            this.Log(1, logLevel, objs);
         }
 
         /// <summary>

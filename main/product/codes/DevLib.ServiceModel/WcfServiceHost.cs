@@ -1129,12 +1129,12 @@ namespace DevLib.ServiceModel
                 {
                     if (string.IsNullOrEmpty(this._baseAddress))
                     {
-                        WcfServiceHostProxy.ConfigFile = this._configFile;
-
                         try
                         {
                             foreach (Type serviceType in serviceTypeList)
                             {
+                                WcfServiceHostProxy.SetConfigFile(this._configFile);
+
                                 WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType);
 
                                 this._serviceHostList.Add(serviceHost);
@@ -1150,19 +1150,15 @@ namespace DevLib.ServiceModel
 
                             throw;
                         }
-                        finally
-                        {
-                            WcfServiceHostProxy.ConfigFile = null;
-                        }
                     }
                     else
                     {
-                        WcfServiceHostProxy.ConfigFile = this._tempConfigFile;
-
                         try
                         {
                             foreach (Type serviceType in serviceTypeList)
                             {
+                                WcfServiceHostProxy.SetConfigFile(this._tempConfigFile);
+
                                 WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
 
                                 this._serviceHostList.Add(serviceHost);
@@ -1177,10 +1173,6 @@ namespace DevLib.ServiceModel
                             ExceptionHandler.Log(e);
 
                             throw;
-                        }
-                        finally
-                        {
-                            WcfServiceHostProxy.ConfigFile = null;
                         }
                     }
                 }
@@ -1209,7 +1201,7 @@ namespace DevLib.ServiceModel
 
                 lock (ServiceHostSyncRoot)
                 {
-                    WcfServiceHostProxy.ConfigFile = null;
+                    WcfServiceHostProxy.SetConfigFile(null);
 
                     foreach (var serviceType in serviceTypeList)
                     {

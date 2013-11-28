@@ -25,6 +25,11 @@ namespace DevLib.ServiceModel
         private static readonly object ConfigSyncRoot = new object();
 
         /// <summary>
+        /// Field ConfigFile.
+        /// </summary>
+        private static string ConfigFile;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHostProxy" /> class.
         /// </summary>
         /// <param name="serviceType">The type of hosted service.</param>
@@ -35,12 +40,15 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets or sets configuration file.
+        /// Set wcf configuration file for host.
         /// </summary>
-        public static string ConfigFile
+        /// <param name="configFile">Wcf configuration file.</param>
+        public static void SetConfigFile(string configFile)
         {
-            get;
-            set;
+            lock (ConfigSyncRoot)
+            {
+                ConfigFile = configFile;
+            }
         }
 
         /// <summary>
@@ -63,6 +71,8 @@ namespace DevLib.ServiceModel
                     this.ApplySectionInfo(this.Description.ServiceType.FullName, serviceModelSectionGroup);
 
                     this.ApplyMultiBehaviors(serviceModelSectionGroup);
+
+                    ConfigFile = null;
                 }
             }
         }

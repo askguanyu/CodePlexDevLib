@@ -175,7 +175,7 @@ namespace DevLib.ExtensionMethods
                     return (T)converter.ConvertFrom(source);
                 }
 
-                throw new NotSupportedException();
+                throw new InvalidOperationException();
             }
             catch
             {
@@ -228,7 +228,7 @@ namespace DevLib.ExtensionMethods
                     return converter.ConvertFrom(source);
                 }
 
-                throw new NotSupportedException();
+                throw new InvalidOperationException();
             }
             catch
             {

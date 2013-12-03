@@ -269,6 +269,82 @@ namespace DevLib.IO.Ports
         }
 
         /// <summary>
+        /// Sync send a specified number of bytes to the serial port using data from a buffer.
+        /// </summary>
+        /// <param name="sendData">The byte array that contains the data to write to the port.</param>
+        /// <param name="receivedData">The byte array to write the received data.</param>
+        /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <returns>The number of bytes read.</returns>
+        public int SendSync(byte[] sendData, ref byte[] receivedData, int timeout = 1000)
+        {
+            this.CheckDisposed();
+
+            if (sendData == null || sendData.Length == 0)
+            {
+                throw new ArgumentNullException("sendData");
+            }
+
+            if (this._serialPort == null || !this.Open())
+            {
+                throw new IOException("The specified port could not be found or opened.");
+            }
+
+            if (timeout < 1)
+            {
+                timeout = 1;
+            }
+
+            lock (this._syncRoot)
+            {
+                int bytesRead = -1;
+
+                try
+                {
+                    this._isSendingSync = true;
+
+                    this._serialPort.DiscardInBuffer();
+
+                    this._serialPort.DiscardOutBuffer();
+
+                    this._serialPort.Write(sendData, 0, sendData.Length);
+
+                    int timeoutCount = 0;
+
+                    while (timeoutCount <= timeout)
+                    {
+                        if (this._serialPort.BytesToRead >= receivedData.Length)
+                        {
+                            break;
+                        }
+
+                        timeoutCount++;
+
+                        Thread.Sleep(1);
+                    }
+
+                    if (this._serialPort.BytesToRead >= receivedData.Length)
+                    {
+                        bytesRead = this._serialPort.Read(receivedData, 0, receivedData.Length);
+                    }
+                    else if (this._serialPort.BytesToRead > 0)
+                    {
+                        bytesRead = this._serialPort.Read(receivedData, 0, this._serialPort.BytesToRead);
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+                finally
+                {
+                    this._isSendingSync = false;
+                }
+
+                return bytesRead;
+            }
+        }
+
+        /// <summary>
         /// Writes a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
         /// <param name="data">The byte array that contains the data to write to the port.</param>
@@ -308,7 +384,7 @@ namespace DevLib.IO.Ports
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
         /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
         /// <returns>The byte array of the receive buffer.</returns>
-        public byte[] Read(int timeout = 1000, bool waitTimeout = false)
+        public byte[] ReadSync(int timeout = 1000, bool waitTimeout = false)
         {
             this.CheckDisposed();
 
@@ -326,34 +402,99 @@ namespace DevLib.IO.Ports
                     timeout = 1;
                 }
 
-                if (waitTimeout)
+                try
                 {
-                    Thread.Sleep(timeout);
-                }
-                else
-                {
-                    int timeoutCount = 0;
-
-                    while (timeoutCount <= timeout)
+                    if (waitTimeout)
                     {
-                        if (this._serialPort.BytesToRead <= 0)
-                        {
-                            Thread.Sleep(1);
-                        }
+                        Thread.Sleep(timeout);
+                    }
+                    else
+                    {
+                        int timeoutCount = 0;
 
-                        timeoutCount++;
+                        while (timeoutCount <= timeout)
+                        {
+                            if (this._serialPort.BytesToRead <= 0)
+                            {
+                                Thread.Sleep(1);
+                            }
+
+                            timeoutCount++;
+                        }
+                    }
+
+                    Thread.Sleep(1);
+
+                    if (this._serialPort.BytesToRead > 0)
+                    {
+                        result = new byte[this._serialPort.BytesToRead];
                     }
                 }
-
-                Thread.Sleep(1);
-
-                if (this._serialPort.BytesToRead > 0)
+                catch (Exception e)
                 {
-                    result = new byte[this._serialPort.BytesToRead];
+                    ExceptionHandler.Log(e);
                 }
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Reads all bytes from the serial port input buffer.
+        /// </summary>
+        /// <param name="receivedData">The byte array to write the received data.</param>
+        /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <returns>The number of bytes read.</returns>
+        public int ReadSync(ref byte[] receivedData, int timeout = 1000)
+        {
+            this.CheckDisposed();
+
+            int bytesRead = -1;
+
+            if (!this._isSendingSync)
+            {
+                if (this._serialPort == null || !this.Open())
+                {
+                    throw new IOException("The specified port could not be found or opened.");
+                }
+
+                if (timeout < 1)
+                {
+                    timeout = 1;
+                }
+
+                int timeoutCount = 0;
+
+                try
+                {
+                    while (timeoutCount <= timeout)
+                    {
+                        if (this._serialPort.BytesToRead >= receivedData.Length)
+                        {
+                            break;
+                        }
+
+                        timeoutCount++;
+
+                        Thread.Sleep(1);
+                    }
+
+                    if (this._serialPort.BytesToRead >= receivedData.Length)
+                    {
+                        bytesRead = this._serialPort.Read(receivedData, 0, receivedData.Length);
+                    }
+                    else if (this._serialPort.BytesToRead > 0)
+                    {
+                        bytesRead = this._serialPort.Read(receivedData, 0, this._serialPort.BytesToRead);
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+            }
+
+            return bytesRead;
         }
 
         /// <summary>

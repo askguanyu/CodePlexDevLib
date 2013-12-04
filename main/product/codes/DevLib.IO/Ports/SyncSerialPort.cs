@@ -180,11 +180,10 @@ namespace DevLib.IO.Ports
         /// Sync send a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
-        /// <param name="receivedData">The byte array to write the received data.</param>
-        /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
         /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
-        /// <returns>The number of bytes read.</returns>
-        public int SendSync(byte[] sendData, out byte[] receivedData, int timeout = 1000, bool waitTimeout = false)
+        /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <returns>The byte array of received data.</returns>
+        public byte[] SendSync(byte[] sendData, bool waitTimeout = false, int timeout = 1000)
         {
             this.CheckDisposed();
 
@@ -205,7 +204,7 @@ namespace DevLib.IO.Ports
 
             lock (this._syncRoot)
             {
-                int bytesRead = -1;
+                byte[] result = new byte[0];
 
                 try
                 {
@@ -240,29 +239,21 @@ namespace DevLib.IO.Ports
 
                     if (this._serialPort.BytesToRead > 0)
                     {
-                        byte[] result = new byte[this._serialPort.BytesToRead];
+                        result = new byte[this._serialPort.BytesToRead];
 
-                        bytesRead = this._serialPort.Read(result, 0, result.Length);
-
-                        receivedData = result;
-                    }
-                    else
-                    {
-                        receivedData = new byte[0];
+                        this._serialPort.Read(result, 0, result.Length);
                     }
                 }
                 catch (Exception e)
                 {
                     ExceptionHandler.Log(e);
-
-                    receivedData = new byte[0];
                 }
                 finally
                 {
                     this._isSendingSync = false;
                 }
 
-                return bytesRead;
+                return result;
             }
         }
 
@@ -270,10 +261,10 @@ namespace DevLib.IO.Ports
         /// Sync send a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
-        /// <param name="receivedData">The byte array to write the received data.</param>
+        /// <param name="bytesToReceive">The number of bytes to read.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
-        /// <returns>The number of bytes read.</returns>
-        public int SendSync(byte[] sendData, ref byte[] receivedData, int timeout = 1000)
+        /// <returns>The byte array of received data.</returns>
+        public byte[] SendSync(byte[] sendData, int bytesToReceive, int timeout = 1000)
         {
             this.CheckDisposed();
 
@@ -294,7 +285,7 @@ namespace DevLib.IO.Ports
 
             lock (this._syncRoot)
             {
-                int bytesRead = -1;
+                byte[] result = new byte[0];
 
                 try
                 {
@@ -310,7 +301,7 @@ namespace DevLib.IO.Ports
 
                     while (timeoutCount <= timeout)
                     {
-                        if (this._serialPort.BytesToRead >= receivedData.Length)
+                        if (this._serialPort.BytesToRead >= bytesToReceive)
                         {
                             break;
                         }
@@ -320,13 +311,17 @@ namespace DevLib.IO.Ports
                         Thread.Sleep(1);
                     }
 
-                    if (this._serialPort.BytesToRead >= receivedData.Length)
+                    if (this._serialPort.BytesToRead >= bytesToReceive)
                     {
-                        bytesRead = this._serialPort.Read(receivedData, 0, receivedData.Length);
+                        result = new byte[bytesToReceive];
+
+                        this._serialPort.Read(result, 0, result.Length);
                     }
                     else if (this._serialPort.BytesToRead > 0)
                     {
-                        bytesRead = this._serialPort.Read(receivedData, 0, this._serialPort.BytesToRead);
+                        result = new byte[this._serialPort.BytesToRead];
+
+                        this._serialPort.Read(result, 0, result.Length);
                     }
                 }
                 catch (Exception e)
@@ -338,7 +333,7 @@ namespace DevLib.IO.Ports
                     this._isSendingSync = false;
                 }
 
-                return bytesRead;
+                return result;
             }
         }
 
@@ -379,10 +374,10 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Reads all bytes from the serial port input buffer.
         /// </summary>
-        /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
         /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
-        /// <returns>The byte array of the receive buffer.</returns>
-        public byte[] ReadSync(int timeout = 1000, bool waitTimeout = false)
+        /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <returns>The byte array of received data.</returns>
+        public byte[] ReadSync(bool waitTimeout = false, int timeout = 1000)
         {
             this.CheckDisposed();
 
@@ -442,14 +437,14 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Reads all bytes from the serial port input buffer.
         /// </summary>
-        /// <param name="receivedData">The byte array to write the received data.</param>
+        /// <param name="bytesToReceive">The number of bytes to read.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
-        /// <returns>The number of bytes read.</returns>
-        public int ReadSync(ref byte[] receivedData, int timeout = 1000)
+        /// <returns>The byte array of received data.</returns>
+        public byte[] ReadSync(int bytesToReceive, int timeout = 1000)
         {
             this.CheckDisposed();
 
-            int bytesRead = -1;
+            byte[] result = new byte[0];
 
             if (!this._isSendingSync)
             {
@@ -469,7 +464,7 @@ namespace DevLib.IO.Ports
                 {
                     while (timeoutCount <= timeout)
                     {
-                        if (this._serialPort.BytesToRead >= receivedData.Length)
+                        if (this._serialPort.BytesToRead >= bytesToReceive)
                         {
                             break;
                         }
@@ -479,13 +474,17 @@ namespace DevLib.IO.Ports
                         Thread.Sleep(1);
                     }
 
-                    if (this._serialPort.BytesToRead >= receivedData.Length)
+                    if (this._serialPort.BytesToRead >= bytesToReceive)
                     {
-                        bytesRead = this._serialPort.Read(receivedData, 0, receivedData.Length);
+                        result = new byte[bytesToReceive];
+
+                        this._serialPort.Read(result, 0, result.Length);
                     }
                     else if (this._serialPort.BytesToRead > 0)
                     {
-                        bytesRead = this._serialPort.Read(receivedData, 0, this._serialPort.BytesToRead);
+                        result = new byte[this._serialPort.BytesToRead];
+
+                        this._serialPort.Read(result, 0, result.Length);
                     }
                 }
                 catch (Exception e)
@@ -494,7 +493,7 @@ namespace DevLib.IO.Ports
                 }
             }
 
-            return bytesRead;
+            return result;
         }
 
         /// <summary>

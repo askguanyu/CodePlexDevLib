@@ -426,6 +426,8 @@ namespace DevLib.IO.Ports
                     if (this._serialPort.BytesToRead > 0)
                     {
                         result = new byte[this._serialPort.BytesToRead];
+
+                        this._serialPort.Read(result, 0, result.Length);
                     }
                 }
                 catch (Exception e)

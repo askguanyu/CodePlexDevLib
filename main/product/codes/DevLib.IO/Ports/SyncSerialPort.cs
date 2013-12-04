@@ -54,8 +54,6 @@ namespace DevLib.IO.Ports
                 try
                 {
                     this._serialPort = new SerialPort(portName, baudRate, partity, dataBits, stopBits);
-                    this._serialPort.ReadTimeout = SerialPort.InfiniteTimeout;
-                    this._serialPort.WriteTimeout = SerialPort.InfiniteTimeout;
                     this._serialPort.DataReceived += this.SerialPortDataReceived;
                     this._serialPort.ErrorReceived += this.SerialPortErrorReceived;
                     this._serialPort.PinChanged += this.SerialPortPinChanged;
@@ -119,7 +117,7 @@ namespace DevLib.IO.Ports
         {
             get
             {
-                return this._serialPort.IsOpen;
+                return this._serialPort == null ? false : this._serialPort.IsOpen;
             }
         }
 
@@ -495,6 +493,42 @@ namespace DevLib.IO.Ports
             }
 
             return bytesRead;
+        }
+
+        /// <summary>
+        /// Discards data from the serial driver's receive buffer.
+        /// </summary>
+        public void DiscardInBuffer()
+        {
+            if (this.IsOpen)
+            {
+                try
+                {
+                    this._serialPort.DiscardInBuffer();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Discards data from the serial driver's transmit buffer.
+        /// </summary>
+        public void DiscardOutBuffer()
+        {
+            if (this.IsOpen)
+            {
+                try
+                {
+                    this._serialPort.DiscardOutBuffer();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+            }
         }
 
         /// <summary>

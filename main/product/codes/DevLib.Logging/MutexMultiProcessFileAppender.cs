@@ -44,6 +44,11 @@ namespace DevLib.Logging
         private string _fileName;
 
         /// <summary>
+        /// Field _fileDirectory.
+        /// </summary>
+        private DirectoryInfo _fileDirectory;
+
+        /// <summary>
         /// Field _fileInfo.
         /// </summary>
         private FileInfo _fileInfo;
@@ -68,6 +73,8 @@ namespace DevLib.Logging
             try
             {
                 this._fileName = Path.GetFullPath(fileName);
+
+                this._fileDirectory = new DirectoryInfo(Path.GetDirectoryName(this._fileName));
 
                 this._fileInfo = new FileInfo(this._fileName);
 
@@ -249,7 +256,7 @@ namespace DevLib.Logging
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-                
+
                 if (this._mutex != null)
                 {
                     this._mutex.Close();
@@ -290,20 +297,7 @@ namespace DevLib.Logging
 
                 if ((DateTime.Now.Subtract(this._fileInfo.LastWriteTime).Days > 0) || (this._loggerSetup.RollingFileSizeLimit > 0 && this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit))
                 {
-                    int count = 1;
-
-                    while (File.Exists(string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000"))))
-                    {
-                        count++;
-                    }
-
-                    try
-                    {
-                        File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000")));
-                    }
-                    catch
-                    {
-                    }
+                    this.ProcessRollingByDateFile();
 
                     this._fileStream.SetLength(0);
                 }
@@ -316,20 +310,7 @@ namespace DevLib.Logging
 
                     if (this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit)
                     {
-                        int count = 1;
-
-                        while (File.Exists(string.Format("{0}.{1}", this._fileName, count.ToString("0000"))))
-                        {
-                            count++;
-                        }
-
-                        try
-                        {
-                            File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, count.ToString("0000")));
-                        }
-                        catch
-                        {
-                        }
+                        this.ProcessRollingFile();
 
                         this._fileStream.SetLength(0);
                     }
@@ -340,6 +321,186 @@ namespace DevLib.Logging
             this._fileStream.Write(bytes, 0, bytes.Length);
             this._fileStream.Flush();
             this.LastWriteTime = DateTime.Now;
+        }
+
+        /// <summary>
+        /// Method ProcessRollingByDateFile.
+        /// </summary>
+        private void ProcessRollingByDateFile()
+        {
+            if (this._loggerSetup.RollingFileCountLimit == 0)
+            {
+                try
+                {
+                    File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), "0"), true);
+                }
+                catch
+                {
+                }
+
+                return;
+            }
+
+            if (this._loggerSetup.RollingFileCountLimit < 0)
+            {
+                int count = 1;
+
+                while (File.Exists(string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000"))))
+                {
+                    count++;
+                }
+
+                try
+                {
+                    File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000")), true);
+                }
+                catch
+                {
+                }
+            }
+            else if (this._loggerSetup.RollingFileCountLimit > 0)
+            {
+                int count = 1;
+
+                while (File.Exists(string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000"))))
+                {
+                    count++;
+                }
+
+                if (count <= this._loggerSetup.RollingFileCountLimit)
+                {
+                    try
+                    {
+                        File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000")), true);
+                    }
+                    catch
+                    {
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i < this._loggerSetup.RollingFileCountLimit; i++)
+                    {
+                        string sourceFile = string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), (i + 1).ToString("0000"));
+
+                        string destFile = string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), i.ToString("0000"));
+
+                        try
+                        {
+                            File.Delete(destFile);
+                        }
+                        catch
+                        {
+                        }
+
+                        try
+                        {
+                            File.Move(sourceFile, destFile);
+                        }
+                        catch
+                        {
+                        }
+                    }
+
+                    try
+                    {
+                        File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), this._loggerSetup.RollingFileCountLimit.ToString("0000")), true);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method ProcessRollingFile.
+        /// </summary>
+        private void ProcessRollingFile()
+        {
+            if (this._loggerSetup.RollingFileCountLimit == 0)
+            {
+                try
+                {
+                    File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, "0"), true);
+                }
+                catch
+                {
+                }
+
+                return;
+            }
+
+            if (this._loggerSetup.RollingFileCountLimit < 0)
+            {
+                int count = 1;
+
+                while (File.Exists(string.Format("{0}.{1}", this._fileName, count.ToString("0000"))))
+                {
+                    count++;
+                }
+
+                try
+                {
+                    File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, count.ToString("0000")), true);
+                }
+                catch
+                {
+                }
+            }
+            else if (this._loggerSetup.RollingFileCountLimit > 0)
+            {
+                int count = 1;
+
+                while (File.Exists(string.Format("{0}.{1}", this._fileName, count.ToString("0000"))))
+                {
+                    count++;
+                }
+
+                if (count <= this._loggerSetup.RollingFileCountLimit)
+                {
+                    try
+                    {
+                        File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, count.ToString("0000")), true);
+                    }
+                    catch
+                    {
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i < this._loggerSetup.RollingFileCountLimit; i++)
+                    {
+                        string sourceFile = string.Format("{0}.{1}", this._fileName, (i + 1).ToString("0000"));
+
+                        string destFile = string.Format("{0}.{1}", this._fileName, i.ToString("0000"));
+
+                        try
+                        {
+                            File.Delete(destFile);
+                        }
+                        catch
+                        {
+                        }
+
+                        try
+                        {
+                            File.Move(sourceFile, destFile);
+                        }
+                        catch
+                        {
+                        }
+                    }
+
+                    try
+                    {
+                        File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, this._loggerSetup.RollingFileCountLimit.ToString("0000")), true);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
         }
 
         /// <summary>

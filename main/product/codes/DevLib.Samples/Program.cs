@@ -66,7 +66,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(() =>
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 CodeTimer.Time(delegate
@@ -526,6 +526,13 @@ namespace DevLib.Samples
         private static void TestCodeSnippets()
         {
             PrintMethodName("Test CodeSnippets");
+
+            for (int i = 0; i < 100000; i++)
+            {
+                LogManager.Open("AAA.log", "LoggingConfig.xml").Log(LogLevel.ERRO, i, DateTime.Now.ToLongDateString(), DateTime.Now.ToLongTimeString());
+            }
+
+            Console.ReadLine();
 
             object aPerson = new Person();
             aPerson.InvokeMethod("ShowName");

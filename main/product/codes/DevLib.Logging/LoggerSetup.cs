@@ -19,9 +19,9 @@ namespace DevLib.Logging
         private long _rollingFileSizeLimit;
 
         /// <summary>
-        /// Field _rollingFileSizeLimitMB.
+        /// Field _rollingFileSizeMBLimit.
         /// </summary>
-        private long _rollingFileSizeLimitMB;
+        private long _rollingFileSizeMBLimit;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggerSetup" /> class.
@@ -32,7 +32,8 @@ namespace DevLib.Logging
             this.WriteToConsole = true;
             this.WriteToFile = true;
             this.UseBracket = true;
-            this.RollingFileSizeLimitMB = 10;
+            this.RollingFileSizeMBLimit = 10;
+            this.RollingFileCountLimit = 10;
             this.RollingByDate = false;
         }
 
@@ -75,18 +76,18 @@ namespace DevLib.Logging
         /// <summary>
         /// Gets or sets rolling log file size limit in MB. If less than or equal to zero, there is no limit.
         /// </summary>
-        public long RollingFileSizeLimitMB
+        public long RollingFileSizeMBLimit
         {
             get
             {
-                return this._rollingFileSizeLimitMB;
+                return this._rollingFileSizeMBLimit;
             }
 
             set
             {
                 if (value > 0)
                 {
-                    this._rollingFileSizeLimitMB = value;
+                    this._rollingFileSizeMBLimit = value;
 
                     try
                     {
@@ -99,10 +100,19 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    this._rollingFileSizeLimitMB = -1;
+                    this._rollingFileSizeMBLimit = -1;
                     this._rollingFileSizeLimit = -1;
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets or sets rolling log file count limit. If less than zero, there is no limit. If equal to zero, there is no rolling log file.
+        /// </summary>
+        public long RollingFileCountLimit
+        {
+            get;
+            set;
         }
 
         /// <summary>

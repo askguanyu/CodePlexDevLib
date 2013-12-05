@@ -44,11 +44,6 @@ namespace DevLib.Logging
         private string _fileName;
 
         /// <summary>
-        /// Field _fileDirectory.
-        /// </summary>
-        private DirectoryInfo _fileDirectory;
-
-        /// <summary>
         /// Field _fileInfo.
         /// </summary>
         private FileInfo _fileInfo;
@@ -73,8 +68,6 @@ namespace DevLib.Logging
             try
             {
                 this._fileName = Path.GetFullPath(fileName);
-
-                this._fileDirectory = new DirectoryInfo(Path.GetDirectoryName(this._fileName));
 
                 this._fileInfo = new FileInfo(this._fileName);
 

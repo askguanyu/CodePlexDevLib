@@ -1,0 +1,12 @@
+﻿<LogConfig>
+    <LogFile>C:\test.log</LogFile>
+    <LoggerSetup>
+        <Level>DBUG</Level>
+        <WriteToConsole>true</WriteToConsole>
+        <WriteToFile>true</WriteToFile>
+        <UseBracket>true</UseBracket>
+        <RollingFileSizeMBLimit>1</RollingFileSizeMBLimit>
+        <RollingFileCountLimit>5</RollingFileCountLimit>
+        <RollingByDate>false</RollingByDate>
+    </LoggerSetup>
+</LogConfig>

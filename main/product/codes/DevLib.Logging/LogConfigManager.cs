@@ -14,53 +14,95 @@ namespace DevLib.Logging
     /// <summary>
     /// Class LogConfigManager.
     /// </summary>
-    internal static class LogConfigManager
+    public static class LogConfigManager
     {
+        /// <summary>
+        /// Get logger setup from configuration file.
+        /// </summary>
+        /// <param name="configFile">Configuration file which contains LoggerSetup info.</param>
+        /// <returns>Instance of LoggerSetup.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public static LoggerSetup GetLoggerSetup(string configFile)
+        {
+            LoggerSetup result = new LoggerSetup();
+
+            if (File.Exists(configFile))
+            {
+                try
+                {
+                    XmlDocument xmlDocument = new XmlDocument();
+
+                    xmlDocument.Load(configFile);
+
+                    XmlNode loggerSetupNode = xmlDocument.SelectSingleNode("descendant-or-self::LoggerSetup");
+
+                    if (loggerSetupNode != null)
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(LoggerSetup));
+
+                        using (StringReader stringReader = new StringReader(loggerSetupNode.OuterXml))
+                        {
+                            result = (LoggerSetup)xmlSerializer.Deserialize(stringReader);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Get log config from configuration file.
         /// </summary>
-        /// <param name="logConfigFile">Log configuration file.</param>
+        /// <param name="configFile">Configuration file which contains LogConfig info.</param>
         /// <returns>Instance of LogConfig.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static LogConfig GetConfig(string logConfigFile)
+        internal static LogConfig GetLogConfig(string configFile)
         {
             LogConfig result = new LogConfig();
 
-            try
+            if (File.Exists(configFile))
             {
-                XmlDocument xmlDocument = new XmlDocument();
-
-                xmlDocument.Load(logConfigFile);
-
-                XmlNode logConfigNode = xmlDocument.SelectSingleNode("descendant-or-self::LogConfig");
-
-                if (logConfigNode == null)
+                try
                 {
-                    return result;
-                }
+                    XmlDocument xmlDocument = new XmlDocument();
 
-                XmlNode logFileNode = logConfigNode.SelectSingleNode("descendant::LogFile");
+                    xmlDocument.Load(configFile);
 
-                if (logFileNode != null)
-                {
-                    result.LogFile = logFileNode.InnerText;
-                }
+                    XmlNode logConfigNode = xmlDocument.SelectSingleNode("descendant-or-self::LogConfig");
 
-                XmlNode loggerSetupNode = logConfigNode.SelectSingleNode("descendant::LoggerSetup");
-
-                if (loggerSetupNode != null)
-                {
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(LoggerSetup));
-
-                    using (StringReader stringReader = new StringReader(loggerSetupNode.OuterXml))
+                    if (logConfigNode == null)
                     {
-                        result.LoggerSetup = (LoggerSetup)xmlSerializer.Deserialize(stringReader);
+                        return result;
+                    }
+
+                    XmlNode logFileNode = logConfigNode.SelectSingleNode("descendant::LogFile");
+
+                    if (logFileNode != null)
+                    {
+                        result.LogFile = logFileNode.InnerText;
+                    }
+
+                    XmlNode loggerSetupNode = logConfigNode.SelectSingleNode("descendant::LoggerSetup");
+
+                    if (loggerSetupNode != null)
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(LoggerSetup));
+
+                        using (StringReader stringReader = new StringReader(loggerSetupNode.OuterXml))
+                        {
+                            result.LoggerSetup = (LoggerSetup)xmlSerializer.Deserialize(stringReader);
+                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Log(e);
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                }
             }
 
             return result;

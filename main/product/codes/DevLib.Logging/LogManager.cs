@@ -109,9 +109,38 @@ namespace DevLib.Logging
         /// Opens the log file for the current application.
         /// </summary>
         /// <param name="logFile">Log file for the current application; if null or string.Empty use the default log file.</param>
-        /// <param name="loggerSetup">Logger setup for the logger instance; if null use the default logger setup.</param>
         /// <returns>Logger instance.</returns>
-        public static Logger Open(string logFile = null, LoggerSetup loggerSetup = null)
+        public static Logger Open(string logFile = null)
+        {
+            if (string.IsNullOrEmpty(logFile))
+            {
+                logFile = DefaultLogFile;
+            }
+
+            string key = Path.GetFullPath(logFile);
+
+            lock (((ICollection)LoggerDictionary).SyncRoot)
+            {
+                if (LoggerDictionary.ContainsKey(key))
+                {
+                    return LoggerDictionary[key];
+                }
+                else
+                {
+                    Logger result = new Logger(key, DefaultLoggerSetup);
+                    LoggerDictionary.Add(key, result);
+                    return result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the log file for the current application.
+        /// </summary>
+        /// <param name="logFile">Log file for the current application; if null or string.Empty use the default log file.</param>
+        /// <param name="loggerSetup">LoggerSetup info for the logger instance; if null use the default LoggerSetup info.</param>
+        /// <returns>Logger instance.</returns>
+        public static Logger Open(string logFile, LoggerSetup loggerSetup)
         {
             if (string.IsNullOrEmpty(logFile))
             {
@@ -136,18 +165,19 @@ namespace DevLib.Logging
         }
 
         /// <summary>
-        /// Opens the log configuration file for the current application.
+        /// Opens the log file for the current application.
         /// </summary>
-        /// <param name="logConfigFile">Log configuration file for the current application; if null or string.Empty use the default configuration file.</param>
+        /// <param name="logFile">Log file for the current application; if null or string.Empty use the default log file.</param>
+        /// <param name="configFile">Configuration file which contains LoggerSetup info; if null or string.Empty use the default configuration file.</param>
         /// <returns>Logger instance.</returns>
-        public static Logger OpenConfig(string logConfigFile = null)
+        public static Logger Open(string logFile, string configFile)
         {
-            if (string.IsNullOrEmpty(logConfigFile))
+            if (string.IsNullOrEmpty(logFile))
             {
-                logConfigFile = DefaultLogConfigFile;
+                logFile = DefaultLogFile;
             }
 
-            string key = Path.GetFullPath(logConfigFile);
+            string key = Path.GetFullPath(logFile);
 
             lock (((ICollection)LoggerDictionary).SyncRoot)
             {
@@ -157,7 +187,36 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    LogConfig logConfig = LogConfigManager.GetConfig(logConfigFile);
+                    Logger result = new Logger(key, LogConfigManager.GetLoggerSetup(configFile));
+                    LoggerDictionary.Add(key, result);
+                    return result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the log configuration file for the current application.
+        /// </summary>
+        /// <param name="configFile">Configuration file which contains LogConfig info; if null or string.Empty use the default configuration file.</param>
+        /// <returns>Logger instance.</returns>
+        public static Logger OpenConfig(string configFile = null)
+        {
+            if (!File.Exists(configFile))
+            {
+                configFile = DefaultLogConfigFile;
+            }
+
+            string key = Path.GetFullPath(configFile);
+
+            lock (((ICollection)LoggerDictionary).SyncRoot)
+            {
+                if (LoggerDictionary.ContainsKey(key))
+                {
+                    return LoggerDictionary[key];
+                }
+                else
+                {
+                    LogConfig logConfig = LogConfigManager.GetLogConfig(configFile);
                     Logger result = new Logger(logConfig.LogFile, logConfig.LoggerSetup);
                     LoggerDictionary.Add(key, result);
                     return result;

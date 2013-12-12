@@ -29,10 +29,10 @@ namespace DevLib.ExtensionMethods
         /// Creates an instance of the specified type using the generic constructor that best matches the specified parameters.
         /// </summary>
         /// <param name="source">The type of object to create.</param>
-        /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
         /// <returns>A reference to the newly created object.</returns>
-        public static object CreateInstanceGeneric(this Type source, object[] args = null, params Type[] typeArguments)
+        public static object CreateInstanceGeneric(this Type source, Type[] typeArguments, params object[] args)
         {
             return Activator.CreateInstance(source.MakeGenericType(typeArguments), args);
         }
@@ -89,10 +89,10 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The instance of the invoked method.</param>
         /// <param name="method">The name of the invoked method.</param>
-        /// <param name="parameters">The parameters of the invoked method.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="parameters">The parameters of the invoked method.</param>
         /// <returns>The return value of the invoked method.</returns>
-        public static object InvokeMethodGeneric(this object source, string method, object[] parameters = null, params Type[] typeArguments)
+        public static object InvokeMethodGeneric(this object source, string method, Type[] typeArguments, params object[] parameters)
         {
             MethodInfo methodInfo = null;
 
@@ -155,7 +155,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="propertyName">The string containing the name of the public property to get.</param>
         /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The property value for the <paramref name="source" /> parameter.</returns>
-        public static object GetProperty(this object source, string propertyName, params object[] index)
+        public static object GetPropertyValue(this object source, string propertyName, params object[] index)
         {
             return source.GetType().GetProperty(propertyName).GetValue(source, index);
         }
@@ -165,10 +165,10 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The object whose property value will be returned.</param>
         /// <param name="propertyName">The string containing the name of the public property to get.</param>
-        /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The property value for the <paramref name="source" /> parameter.</returns>
-        public static object GetPropertyGeneric(this object source, string propertyName, object[] index = null, params Type[] typeArguments)
+        public static object GetPropertyValueGeneric(this object source, string propertyName, Type[] typeArguments, params object[] index)
         {
             return source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName).GetValue(source, index);
         }
@@ -181,7 +181,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="value">The new value for this property.</param>
         /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The source object.</returns>
-        public static object SetProperty(this object source, string propertyName, object value, params object[] index)
+        public static object SetPropertyValue(this object source, string propertyName, object value, params object[] index)
         {
             source.GetType().GetProperty(propertyName).SetValue(source, value, index);
             return source;
@@ -193,12 +193,12 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The object whose property value will be set.</param>
         /// <param name="propertyName">The string containing the name of the public property to set.</param>
         /// <param name="value">The new value for this property.</param>
-        /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The source object.</returns>
-        public static object SetPropertyGeneric(this object source, string propertyName, object value, object[] index = null, params Type[] typeArguments)
+        public static object SetPropertyValueGeneric(this object source, string propertyName, object value, Type[] typeArguments, params object[] index)
         {
-            source.GetType().GetProperty(propertyName).SetValue(source, value, index);
+            source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName).SetValue(source, value, index);
             return source;
         }
     }

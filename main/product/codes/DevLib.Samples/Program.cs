@@ -66,7 +66,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(() =>
                 {
-                    TestCodeSnippets();
+                    //TestCodeSnippets();
                 });
 
                 CodeTimer.Time(delegate
@@ -526,6 +526,21 @@ namespace DevLib.Samples
         private static void TestCodeSnippets()
         {
             PrintMethodName("Test CodeSnippets");
+
+            RetryAction.Execute(i =>
+            {
+                try
+                {
+                    throw new Exception();
+                }
+                catch
+                {
+                    Console.WriteLine(i);
+                    throw;
+                }
+            }, 9, 250);
+
+            Console.ReadLine();
 
             for (int i = 0; i < 100000; i++)
             {

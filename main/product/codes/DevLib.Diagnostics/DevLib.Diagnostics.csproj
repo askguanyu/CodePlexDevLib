@@ -42,6 +42,7 @@
     <Compile Include="CodeTimer.cs" />
     <Compile Include="DiagnosticsUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RetryAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

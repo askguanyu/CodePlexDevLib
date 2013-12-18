@@ -103,7 +103,7 @@ namespace DevLib.Diagnostics
 
             stopwatch.Start();
 
-            for (int i = 0; i < iteration; i++)
+            for (int i = 1; i <= iteration; i++)
             {
                 action(i);
             }

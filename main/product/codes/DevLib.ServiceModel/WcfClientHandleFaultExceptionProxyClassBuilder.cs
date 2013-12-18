@@ -93,7 +93,9 @@ namespace DevLib.ServiceModel
                 }
             }
 
-            this.GenerateStandardCatch(ilGenerator);
+            this.GenerateStandardBeginCatchBlock(ilGenerator);
+
+            ilGenerator.Emit(OpCodes.Rethrow);
 
             ilGenerator.EndExceptionBlock();
 

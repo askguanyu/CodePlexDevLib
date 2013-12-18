@@ -240,7 +240,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted.
+        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
         /// </summary>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
@@ -279,7 +279,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted.
+        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
@@ -319,7 +319,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted.
+        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="remoteAddress">The address of the service.</param>
@@ -360,7 +360,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted.
+        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteAddress">The address of the service endpoint.</param>
@@ -401,7 +401,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted.
+        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteAddress">The address of the service endpoint.</param>

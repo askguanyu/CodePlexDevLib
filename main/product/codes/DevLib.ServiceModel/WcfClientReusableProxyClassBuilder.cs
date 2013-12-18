@@ -67,7 +67,7 @@ namespace DevLib.ServiceModel
                 }
             }
 
-            this.GenerateStandardCatch(ilGenerator);
+            this.GenerateStandardBeginCatchBlock(ilGenerator);
 
             ilGenerator.EndExceptionBlock();
 
@@ -80,17 +80,16 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method GenerateStandardCatch.
+        /// Method GenerateStandardBeginCatchBlock.
         /// </summary>
         /// <param name="ilGenerator">Instance of ILGenerator.</param>
-        protected void GenerateStandardCatch(ILGenerator ilGenerator)
+        protected void GenerateStandardBeginCatchBlock(ILGenerator ilGenerator)
         {
             ilGenerator.BeginCatchBlock(typeof(object));
             ilGenerator.Emit(OpCodes.Pop);
             ilGenerator.Emit(OpCodes.Ldarg_0);
             MethodInfo closeProxyMethod = GetMethodFromBaseClass(WcfClientConstants.CloseProxyMethodName);
             ilGenerator.Emit(OpCodes.Call, closeProxyMethod);
-            ilGenerator.Emit(OpCodes.Rethrow);
         }
     }
 }

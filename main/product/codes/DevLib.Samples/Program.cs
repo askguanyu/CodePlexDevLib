@@ -64,7 +64,7 @@ namespace DevLib.Samples
             {
                 PrintStartInfo();
 
-                var result = CodeTimer.Time(() =>
+                var result = CodeTimer.Time(i =>
                 {
                     //TestCodeSnippets();
                 });
@@ -74,7 +74,7 @@ namespace DevLib.Samples
                     //TestDevLibAddIn();
                 });
 
-                CodeTimer.Time(() =>
+                CodeTimer.Time(i =>
                 {
                     //TestCompression();
                 });
@@ -920,7 +920,9 @@ namespace DevLib.Samples
             object[] parameters = new object[] { 1, 2 };
             MethodInfo methodInfo = typeof(TestClass).GetMethod("TestAdd");
 
-            CodeTimer.Time(delegate() { testClass.TestAdd(1, 2); }, times);
+            CodeTimer.Time(delegate { }, 1, string.Empty, delegate { });
+
+            CodeTimer.Time(delegate { testClass.TestAdd(1, 2); }, times);
 
             //methodInfo.Invoke(testClass, parameters).ConsoleOutput();
             //CodeTimer.Time(new Action(() =>

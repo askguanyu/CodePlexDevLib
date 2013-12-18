@@ -23,27 +23,6 @@ namespace DevLib.Diagnostics
         /// </summary>
         private static Random _random = new Random();
 
-        /*
-        /// <summary>
-        /// Run code snippets and give a performance test result. Extension Method for .Net 3.5 or above.
-        /// </summary>
-        /// <param name="action">Code snippets to run.</param>
-        /// <param name="iteration">Repeat times.</param>
-        /// <param name="name">The name of current performance.</param>
-        /// <param name="outputAction">The action to handle the performance test result string.
-        /// <example>Default: <code>Console.WriteLine</code></example>
-        /// </param>
-        public static void CodeTime(this Action action, int iteration = 1, string name = null, Action<string> outputAction = null)
-        {
-            DevLib.Diagnostics.CodeTimer.Time(action, iteration, name, outputAction);
-        }
-        */
-
-        /// <summary>
-        /// Encapsulates a method that has no parameters and does not return a value.
-        /// </summary>
-        public delegate void ActionDelegate();
-
         /// <summary>
         /// Initialize code snippets performance timer.
         /// </summary>
@@ -64,7 +43,7 @@ namespace DevLib.Diagnostics
         /// <example>Default: <code>Console.WriteLine</code></example>
         /// </param>
         /// <returns>CodeTimer result.</returns>
-        public static CodeTimerResult Time(ActionDelegate action, int iteration = 1, string name = null, Action<string> outputAction = null)
+        public static CodeTimerResult Time(Action<int> action, int iteration = 1, string name = null, Action<string> outputAction = null)
         {
             if ((action == null) || (iteration < 1))
             {
@@ -126,7 +105,7 @@ namespace DevLib.Diagnostics
 
             for (int i = 0; i < iteration; i++)
             {
-                action();
+                action(i);
             }
 
             stopwatch.Stop();

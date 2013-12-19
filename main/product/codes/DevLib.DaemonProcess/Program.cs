@@ -27,14 +27,22 @@ namespace DevLib.DaemonProcess
         static void Main(string[] args)
         {
             //// args[0] = guid                       : daemon process guid
-            //// args[1] = process id | -stop         : protected process id / stop protecting
+            //// args[1] = process id | -stop         : protected process id | stop protecting
             //// args[2] = delay seconds              : protected process delay start seconds
             //// args[3] = service | process          : protected process mode
-            //// args[4] = entry file | service name  : protected process entry point / protected process service name
+            //// args[4] = entry file | service name  : protected process entry point
             //// args[5] = args                       : protected process args
 
-            if (args == null)
+            if (args == null || args.Length == 0)
             {
+                Console.WriteLine(
+@"args[0] = guid                       : daemon process guid
+args[1] = process id | -stop         : protected process id | stop protecting
+args[2] = delay seconds              : protected process delay start seconds
+args[3] = service | process          : protected process mode
+args[4] = entry file | service name  : protected process entry point
+args[5] = args                       : protected process args");
+
                 Environment.Exit(-1);
             }
 
@@ -52,9 +60,9 @@ namespace DevLib.DaemonProcess
                 {
                     Guid daemonProcessGuid = new Guid(daemonProcessGuidString);
 
-                    DaemonProcessManager.StopProtect(daemonProcessGuid);
-
                     Console.WriteLine("Stop protecting {0}", daemonProcessGuidString);
+
+                    DaemonProcessManager.StopProtect(daemonProcessGuid);
 
                     Environment.Exit(-1);
                 }

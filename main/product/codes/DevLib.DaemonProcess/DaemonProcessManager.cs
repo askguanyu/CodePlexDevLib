@@ -220,7 +220,7 @@ namespace DevLib.DaemonProcess
                 {
                     List<string> commandLineArguments = DaemonProcessHelper.GetCommandLineArguments(DaemonProcessHelper.GetCommandLineByProcessId(item.Id));
 
-                    if (commandLineArguments != null && commandLineArguments.Count > 0 && commandLineArguments[0].Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
+                    if (commandLineArguments != null && commandLineArguments.Count > 2 && commandLineArguments[0].Equals(daemonProcessGuid.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         daemonProcess = item;
 

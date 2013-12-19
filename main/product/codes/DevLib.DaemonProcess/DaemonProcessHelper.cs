@@ -141,6 +141,11 @@ namespace DevLib.DaemonProcess
                 }
             }
 
+            if (stringBuilder.Length > 0)
+            {
+                result.Add(stringBuilder.ToString());
+            }
+
             return result;
         }
 

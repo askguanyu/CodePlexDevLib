@@ -60,9 +60,11 @@ args[5] = args                       : protected process args");
                 {
                     Guid daemonProcessGuid = new Guid(daemonProcessGuidString);
 
-                    Console.WriteLine("Stop protecting {0}", daemonProcessGuidString);
+                    Console.WriteLine("Stopping protecting {0}", daemonProcessGuidString);
 
                     DaemonProcessManager.StopProtect(daemonProcessGuid);
+
+                    Console.WriteLine("Stopped protecting {0}", daemonProcessGuidString);
 
                     Environment.Exit(-1);
                 }

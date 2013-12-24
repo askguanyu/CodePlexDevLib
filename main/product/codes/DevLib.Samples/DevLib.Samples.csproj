@@ -120,6 +120,10 @@
       <Project>{5E84B29E-5E05-47D8-B8E3-9A9D2972BC26}</Project>
       <Name>DevLib.DaemonProcess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Data\DevLib.Data.csproj">
+      <Project>{B4D3C579-7EF9-4FC1-894C-6DCC403EC4F1}</Project>
+      <Name>DevLib.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.DesignPatterns\DevLib.DesignPatterns.csproj">
       <Project>{fba87267-25f7-4363-a5e2-d12dcb011222}</Project>
       <Name>DevLib.DesignPatterns</Name>
@@ -151,10 +155,6 @@
     <ProjectReference Include="..\DevLib.Net\DevLib.Net.csproj">
       <Project>{CF145C2E-642F-4EFA-A03D-96B5082E6650}</Project>
       <Name>DevLib.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevLib.Repository\DevLib.Repository.csproj">
-      <Project>{09460512-082E-468B-B505-9B4C353C5FF6}</Project>
-      <Name>DevLib.Repository</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.ServiceModel\DevLib.ServiceModel.csproj">
       <Project>{61266225-A0B6-4792-A8C2-2B99DD02927A}</Project>

@@ -45,8 +45,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Ioc", "DevLib.Ioc\De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Logging", "DevLib.Logging\DevLib.Logging.csproj", "{D7BA9F42-E97C-403A-B022-744E367A11F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Repository", "DevLib.Repository\DevLib.Repository.csproj", "{09460512-082E-468B-B505-9B4C353C5FF6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.IO", "DevLib.IO\DevLib.IO.csproj", "{BB64005D-AA1A-4F60-B1B0-7295D56750A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Timers", "DevLib.Timers\DevLib.Timers.csproj", "{7FBD602E-F982-47C4-A7E1-54FFB24C35C0}"
@@ -55,7 +53,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Data", "DevLib.Data\
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 23
+		SccNumberOfProjects = 22
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -114,18 +112,15 @@ Global
 		SccProjectUniqueName18 = DevLib.Logging\\DevLib.Logging.csproj
 		SccProjectName18 = DevLib.Logging
 		SccLocalPath18 = DevLib.Logging
-		SccProjectUniqueName19 = DevLib.Repository\\DevLib.Repository.csproj
-		SccProjectName19 = DevLib.Repository
-		SccLocalPath19 = DevLib.Repository
-		SccProjectUniqueName20 = DevLib.IO\\DevLib.IO.csproj
-		SccProjectName20 = DevLib.IO
-		SccLocalPath20 = DevLib.IO
-		SccProjectUniqueName21 = DevLib.Timers\\DevLib.Timers.csproj
-		SccProjectName21 = DevLib.Timers
-		SccLocalPath21 = DevLib.Timers
-		SccProjectUniqueName22 = DevLib.Data\\DevLib.Data.csproj
-		SccProjectName22 = DevLib.Data
-		SccLocalPath22 = DevLib.Data
+		SccProjectUniqueName19 = DevLib.IO\\DevLib.IO.csproj
+		SccProjectName19 = DevLib.IO
+		SccLocalPath19 = DevLib.IO
+		SccProjectUniqueName20 = DevLib.Timers\\DevLib.Timers.csproj
+		SccProjectName20 = DevLib.Timers
+		SccLocalPath20 = DevLib.Timers
+		SccProjectUniqueName21 = DevLib.Data\\DevLib.Data.csproj
+		SccProjectName21 = DevLib.Data
+		SccLocalPath21 = DevLib.Data
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -326,16 +321,6 @@ Global
 		{D7BA9F42-E97C-403A-B022-744E367A11F1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{D7BA9F42-E97C-403A-B022-744E367A11F1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D7BA9F42-E97C-403A-B022-744E367A11F1}.Release|x86.ActiveCfg = Release|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{09460512-082E-468B-B505-9B4C353C5FF6}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB64005D-AA1A-4F60-B1B0-7295D56750A8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

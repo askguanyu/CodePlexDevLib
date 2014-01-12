@@ -21,29 +21,49 @@ namespace DevLib.Configuration
     public sealed class Settings
     {
         /// <summary>
+        /// Field ReaderSettings.
+        /// </summary>
+        private static readonly XmlReaderSettings ReaderSettings;
+
+        /// <summary>
+        /// Field WriterSettings.
+        /// </summary>
+        private static readonly XmlWriterSettings WriterSettings;
+
+        /// <summary>
+        /// Field EmptyXmlSerializerNamespaces.
+        /// </summary>
+        private static readonly XmlSerializerNamespaces EmptyXmlSerializerNamespaces;
+
+        /// <summary>
         /// Field _settingsItemDictionary.
         /// </summary>
-        private Dictionary<string, object> _settingsItemDictionary;
-
-        /// <summary>
-        /// Field _xmlReaderSettings.
-        /// </summary>
-        private XmlReaderSettings _xmlReaderSettings;
-
-        /// <summary>
-        /// Field _xmlWriterSettings.
-        /// </summary>
-        private XmlWriterSettings _xmlWriterSettings;
-
-        /// <summary>
-        /// Field _xmlNamespaces.
-        /// </summary>
-        private XmlSerializerNamespaces _xmlNamespaces;
+        private Dictionary<string, object> _settingsItemDictionary = new Dictionary<string, object>();
 
         /// <summary>
         /// Field _readerWriterLock.
         /// </summary>
         private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
+
+        /// <summary>
+        /// Initializes static members of the <see cref="Settings" /> class.
+        /// </summary>
+        static Settings()
+        {
+            WriterSettings = new XmlWriterSettings();
+            WriterSettings.ConformanceLevel = ConformanceLevel.Auto;
+            WriterSettings.OmitXmlDeclaration = true;
+            WriterSettings.Indent = true;
+
+            ReaderSettings = new XmlReaderSettings();
+            ReaderSettings.IgnoreComments = true;
+            ReaderSettings.IgnoreProcessingInstructions = true;
+            ReaderSettings.IgnoreWhitespace = true;
+            ReaderSettings.ConformanceLevel = ConformanceLevel.Auto;
+
+            EmptyXmlSerializerNamespaces = new XmlSerializerNamespaces();
+            EmptyXmlSerializerNamespaces.Add(string.Empty, string.Empty);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Settings" /> class.
@@ -52,8 +72,6 @@ namespace DevLib.Configuration
         internal Settings(string configFile)
         {
             this.ConfigFile = configFile;
-
-            this.Initialize();
 
             try
             {
@@ -70,7 +88,6 @@ namespace DevLib.Configuration
         /// </summary>
         internal Settings()
         {
-            this.Initialize();
         }
 
         /// <summary>
@@ -442,7 +459,7 @@ namespace DevLib.Configuration
 
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
+                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
                 {
                     if (xmlReader.IsEmptyElement || !xmlReader.Read())
                     {
@@ -458,6 +475,7 @@ namespace DevLib.Configuration
                         try
                         {
                             string key = xmlReader.GetAttribute("key");
+
                             object value = null;
 
                             try
@@ -465,11 +483,13 @@ namespace DevLib.Configuration
                                 xmlReader.ReadStartElement("item");
 
                                 string valueTypeName = xmlReader.GetAttribute("type");
+
                                 XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
 
                                 try
                                 {
                                     xmlReader.ReadStartElement("value");
+
                                     value = valueSerializer.Deserialize(xmlReader);
 
                                     if (!string.IsNullOrEmpty(key))
@@ -489,6 +509,7 @@ namespace DevLib.Configuration
                             catch (Exception e)
                             {
                                 xmlReader.Skip();
+
                                 ExceptionHandler.Log(e);
                             }
                             finally
@@ -521,7 +542,7 @@ namespace DevLib.Configuration
 
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, this._xmlReaderSettings))
+                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
                 {
                     if (xmlReader.IsEmptyElement || !xmlReader.Read())
                     {
@@ -535,6 +556,7 @@ namespace DevLib.Configuration
                         try
                         {
                             string key = xmlReader.GetAttribute("key");
+
                             object value = null;
 
                             try
@@ -542,11 +564,13 @@ namespace DevLib.Configuration
                                 xmlReader.ReadStartElement("item");
 
                                 string valueTypeName = xmlReader.GetAttribute("type");
+
                                 XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
 
                                 try
                                 {
                                     xmlReader.ReadStartElement("value");
+
                                     value = valueSerializer.Deserialize(xmlReader);
 
                                     if (!string.IsNullOrEmpty(key))
@@ -566,6 +590,7 @@ namespace DevLib.Configuration
                             catch (Exception e)
                             {
                                 xmlReader.Skip();
+
                                 ExceptionHandler.Log(e);
                             }
                             finally
@@ -596,7 +621,7 @@ namespace DevLib.Configuration
 
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                using (XmlWriter writer = XmlWriter.Create(stringBuilder, this._xmlWriterSettings))
+                using (XmlWriter writer = XmlWriter.Create(stringBuilder, WriterSettings))
                 {
                     writer.WriteStartElement("settings");
 
@@ -616,16 +641,17 @@ namespace DevLib.Configuration
                             writer.WriteEndAttribute();
 
                             writer.WriteStartElement("value");
+
                             writer.WriteStartAttribute("type");
                             writer.WriteValue(valueType.AssemblyQualifiedName);
                             writer.WriteEndAttribute();
+
                             try
                             {
-                                valueSerializer.Serialize(writer, item.Value, this._xmlNamespaces);
+                                valueSerializer.Serialize(writer, item.Value, EmptyXmlSerializerNamespaces);
                             }
                             catch (Exception e)
                             {
-                                writer.WriteString(e.Message);
                                 ExceptionHandler.Log(e);
                             }
                             finally
@@ -662,7 +688,7 @@ namespace DevLib.Configuration
 
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), this._xmlReaderSettings))
+                using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), ReaderSettings))
                 {
                     if (xmlReader.IsEmptyElement || !xmlReader.Read())
                     {
@@ -685,11 +711,13 @@ namespace DevLib.Configuration
                                 xmlReader.ReadStartElement("item");
 
                                 string valueTypeName = xmlReader.GetAttribute("type");
+
                                 XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
 
                                 try
                                 {
                                     xmlReader.ReadStartElement("value");
+
                                     value = valueSerializer.Deserialize(xmlReader);
 
                                     if (!string.IsNullOrEmpty(key))
@@ -709,6 +737,7 @@ namespace DevLib.Configuration
                             catch (Exception e)
                             {
                                 xmlReader.Skip();
+
                                 ExceptionHandler.Log(e);
                             }
                             finally
@@ -726,40 +755,6 @@ namespace DevLib.Configuration
                         }
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Method Initialize.
-        /// </summary>
-        private void Initialize()
-        {
-            this._settingsItemDictionary = new Dictionary<string, object>();
-
-            this._xmlWriterSettings = new XmlWriterSettings();
-            this._xmlWriterSettings.ConformanceLevel = ConformanceLevel.Auto;
-            this._xmlWriterSettings.OmitXmlDeclaration = true;
-            this._xmlWriterSettings.Indent = true;
-
-            this._xmlReaderSettings = new XmlReaderSettings();
-            this._xmlReaderSettings.IgnoreComments = true;
-            this._xmlReaderSettings.IgnoreProcessingInstructions = true;
-            this._xmlReaderSettings.IgnoreWhitespace = true;
-            this._xmlReaderSettings.ConformanceLevel = ConformanceLevel.Auto;
-
-            this._xmlNamespaces = new XmlSerializerNamespaces();
-            this._xmlNamespaces.Add(string.Empty, string.Empty);
-        }
-
-        /// <summary>
-        /// Method CheckNullKey.
-        /// </summary>
-        /// <param name="key">Key to check.</param>
-        private void CheckNullKey(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentNullException("key");
             }
         }
 
@@ -786,7 +781,7 @@ namespace DevLib.Configuration
                     }
                 }
 
-                using (XmlWriter writer = XmlWriter.Create(fullPath, this._xmlWriterSettings))
+                using (XmlWriter writer = XmlWriter.Create(fullPath, WriterSettings))
                 {
                     writer.WriteStartElement("settings");
 
@@ -806,16 +801,17 @@ namespace DevLib.Configuration
                             writer.WriteEndAttribute();
 
                             writer.WriteStartElement("value");
+
                             writer.WriteStartAttribute("type");
                             writer.WriteValue(valueType.AssemblyQualifiedName);
                             writer.WriteEndAttribute();
+
                             try
                             {
-                                valueSerializer.Serialize(writer, item.Value, this._xmlNamespaces);
+                                valueSerializer.Serialize(writer, item.Value, EmptyXmlSerializerNamespaces);
                             }
                             catch (Exception e)
                             {
-                                writer.WriteString(e.Message);
                                 ExceptionHandler.Log(e);
                             }
                             finally
@@ -833,6 +829,18 @@ namespace DevLib.Configuration
 
                     writer.WriteEndElement();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Method CheckNullKey.
+        /// </summary>
+        /// <param name="key">Key to check.</param>
+        private void CheckNullKey(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException("key");
             }
         }
     }

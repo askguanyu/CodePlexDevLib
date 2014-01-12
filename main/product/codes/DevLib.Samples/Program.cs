@@ -1596,7 +1596,11 @@ namespace DevLib.Samples
             config.SetValue("hello", "a");
             config.SetValue("hello", blist);
             config.SetValue("hello", "b");
+            config.SetValue("hello2", Guid.NewGuid());
+            config["g1"] = Guid.NewGuid();
             config.Save();
+            config.Values.ForEach(p => p.ToString().ConsoleOutput());
+
 
 
             Settings setting = SettingsManager.Open("zzz.xml");
@@ -1612,11 +1616,11 @@ namespace DevLib.Samples
 
             setting1["key3"] = DateTime.Now;
             setting1["key2"] = "hello string123";
+            setting1["key4"] = Guid.NewGuid();
             setting1.Save();
             setting.Reload();
             setting.ConfigFile.ConsoleOutput();
             setting.Values.ForEach(p => p.ToString().ConsoleOutput());
-
         }
 
         private static void PrintMethodName(string name)

@@ -23,12 +23,12 @@ namespace DevLib.Reflection
         /// <summary>
         /// Field _getFunctionDictionary.
         /// </summary>
-        private Dictionary<string, GetFunction<object, object>> _getFunctionDictionary = new Dictionary<string, GetFunction<object, object>>();
+        private Dictionary<string, GetFunction<object, object>> _getFunctionDictionary;
 
         /// <summary>
         /// Field _setActionDictionary.
         /// </summary>
-        private Dictionary<string, SetAction<object, object>> _setActionDictionary = new Dictionary<string, SetAction<object, object>>();
+        private Dictionary<string, SetAction<object, object>> _setActionDictionary;
 
         /// <summary>
         /// Initializes static members of the <see cref="PropertyAccessor" /> class.
@@ -53,7 +53,8 @@ namespace DevLib.Reflection
         /// Initializes a new instance of the <see cref="PropertyAccessor"/> class.
         /// </summary>
         /// <param name="targetType">Target type.</param>
-        public PropertyAccessor(Type targetType)
+        /// <param name="ignoreCase">true to ignore case of property name; otherwise, false.</param>
+        public PropertyAccessor(Type targetType, bool ignoreCase = true)
         {
             if (targetType == null)
             {
@@ -61,6 +62,10 @@ namespace DevLib.Reflection
             }
 
             this.TargetType = targetType;
+
+            this._getFunctionDictionary = new Dictionary<string, GetFunction<object, object>>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+
+            this._setActionDictionary = new Dictionary<string, SetAction<object, object>>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
 
             foreach (var item in this.TargetType.GetProperties())
             {
@@ -244,8 +249,9 @@ namespace DevLib.Reflection
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyAccessor{T}"/> class.
         /// </summary>
-        public PropertyAccessor()
-            : base(typeof(T))
+        /// <param name="ignoreCase">true to ignore case of property name; otherwise, false.</param>
+        public PropertyAccessor(bool ignoreCase = true)
+            : base(typeof(T), ignoreCase)
         {
         }
     }

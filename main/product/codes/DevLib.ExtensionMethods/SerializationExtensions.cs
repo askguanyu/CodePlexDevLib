@@ -201,17 +201,17 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes object to XML string.
+        /// Serializes object to Xml string.
         /// </summary>
         /// <remarks>
         /// The object to be serialized should be decorated with the <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
         /// </remarks>
         /// <param name="source">The object to serialize.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
-        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
-        /// <returns>An XML encoded string representation of the source object.</returns>
+        /// <returns>An Xml encoded string representation of the source object.</returns>
         public static string SerializeXml(this object source, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
@@ -245,7 +245,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes object to XML string, write to file.
+        /// Serializes object to Xml string, write to file.
         /// </summary>
         /// <remarks>
         /// The object to be serialized should be decorated with the <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
@@ -254,7 +254,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="fileName">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
-        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>File full path.</returns>
@@ -310,9 +310,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes XML string to object.
+        /// Deserializes Xml string to object.
         /// </summary>
-        /// <param name="source">The XML string to deserialize.</param>
+        /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="type">Type of object.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of object.</returns>
@@ -338,9 +338,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes XML string to object.
+        /// Deserializes Xml string to object.
         /// </summary>
-        /// <param name="source">The XML string to deserialize.</param>
+        /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of object.</returns>
         public static object DeserializeXml(this string source, Type[] knownTypes)
@@ -378,7 +378,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes XML string to object, read from file.
+        /// Deserializes Xml string to object, read from file.
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="type">Type of object.</param>
@@ -412,7 +412,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes XML string to object, read from file.
+        /// Deserializes Xml string to object, read from file.
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
@@ -456,10 +456,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes XML string to object.
+        /// Deserializes Xml string to object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
-        /// <param name="source">The XML string to deserialize.</param>
+        /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -479,7 +479,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes XML string to object, read from file.
+        /// Deserializes Xml string to object, read from file.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">File name.</param>
@@ -679,12 +679,12 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes object to JSON string.
+        /// Serializes object to Json string.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
-        /// <returns>JSON string.</returns>
+        /// <returns>Json string.</returns>
         public static string SerializeJsonString(this object source, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (source == null)
@@ -702,7 +702,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes object to JSON string, write to file.
+        /// Serializes object to Json string, write to file.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
         /// <param name="fileName">File name.</param>
@@ -751,9 +751,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON string to object.
+        /// Deserializes Json string to object.
         /// </summary>
-        /// <param name="source">JSON string object.</param>
+        /// <param name="source">Json string object.</param>
         /// <param name="type">Type of object.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
@@ -779,9 +779,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON string to object.
+        /// Deserializes Json string to object.
         /// </summary>
-        /// <param name="source">JSON string object.</param>
+        /// <param name="source">Json string object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>Instance of object.</returns>
@@ -820,7 +820,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON string to object, read from file.
+        /// Deserializes Json string to object, read from file.
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="type">Type of object.</param>
@@ -854,7 +854,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON string to object, read from file.
+        /// Deserializes Json string to object, read from file.
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
@@ -898,10 +898,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON string to object.
+        /// Deserializes Json string to object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
-        /// <param name="source">JSON string object.</param>
+        /// <param name="source">Json string object.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
@@ -921,7 +921,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON string to object, read from file.
+        /// Deserializes Json string to object, read from file.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
         /// <param name="source">File name.</param>
@@ -950,11 +950,11 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes object to JSON bytes.
+        /// Serializes object to Json bytes.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
-        /// <returns>JSON bytes.</returns>
+        /// <returns>Json bytes.</returns>
         public static byte[] SerializeJsonBinary(this object source, Type[] knownTypes = null)
         {
             if (source == null)
@@ -972,9 +972,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON bytes to object.
+        /// Deserializes Json bytes to object.
         /// </summary>
-        /// <param name="source">JSON string object.</param>
+        /// <param name="source">Json string object.</param>
         /// <param name="type">Type of object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
@@ -999,9 +999,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON bytes to object.
+        /// Deserializes Json bytes to object.
         /// </summary>
-        /// <param name="source">JSON string object.</param>
+        /// <param name="source">Json string object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of object.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -1040,10 +1040,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes JSON bytes to object.
+        /// Deserializes Json bytes to object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
-        /// <param name="source">JSON string object.</param>
+        /// <param name="source">Json string object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
         public static T DeserializeJsonBinary<T>(this byte[] source, Type[] knownTypes = null)
@@ -1062,13 +1062,13 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes DataContract object to XML string.
+        /// Serializes DataContract object to Xml string.
         /// </summary>
         /// <param name="source">The DataContract object to serialize.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
-        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
-        /// <returns>An XML encoded string representation of the source DataContract object.</returns>
+        /// <returns>An Xml encoded string representation of the source DataContract object.</returns>
         public static string SerializeDataContractXml(this object source, bool indent = false, bool omitXmlDeclaration = true, Type[] knownTypes = null)
         {
             if (source == null)
@@ -1093,13 +1093,13 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Serializes DataContract object to XML string, write to file.
+        /// Serializes DataContract object to Xml string, write to file.
         /// </summary>
         /// <param name="source">The DataContract object to serialize.</param>
         /// <param name="fileName">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
-        /// <param name="omitXmlDeclaration">Whether to write an XML declaration.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>File full path.</returns>
         public static string WriteDataContract(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, Type[] knownTypes = null)
@@ -1144,9 +1144,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes DataContract XML string to object.
+        /// Deserializes DataContract Xml string to object.
         /// </summary>
-        /// <param name="source">The DataContract XML string to deserialize.</param>
+        /// <param name="source">The DataContract Xml string to deserialize.</param>
         /// <param name="type">Type of DataContract object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
@@ -1172,9 +1172,9 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes DataContract XML string to object.
+        /// Deserializes DataContract Xml string to object.
         /// </summary>
-        /// <param name="source">The DataContract XML string to deserialize.</param>
+        /// <param name="source">The DataContract Xml string to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of DataContract object.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -1213,7 +1213,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes DataContract XML string to object, read from file.
+        /// Deserializes DataContract Xml string to object, read from file.
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="type">Type of DataContract object.</param>
@@ -1247,7 +1247,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes DataContract XML string to object, read from file.
+        /// Deserializes DataContract Xml string to object, read from file.
         /// </summary>
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
@@ -1291,10 +1291,10 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes DataContract XML string to object.
+        /// Deserializes DataContract Xml string to object.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
-        /// <param name="source">The DataContract XML string to deserialize.</param>
+        /// <param name="source">The DataContract Xml string to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of T.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -1314,7 +1314,7 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Deserializes DataContract XML string to object, read from file.
+        /// Deserializes DataContract Xml string to object, read from file.
         /// </summary>
         /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
         /// <param name="source">File name.</param>

@@ -21,7 +21,7 @@ namespace DevLib.Dynamic
     /// <summary>
     /// Provides a class for specifying dynamic Json behavior at run time.
     /// </summary>
-    public class DynamicJson : DynamicObject
+    public class DynamicJson : DynamicObject, IEnumerable
     {
         /// <summary>
         /// Field _xElement.
@@ -360,6 +360,15 @@ namespace DevLib.Dynamic
             }
 
             return CreateJsonString(new XStreamingElement("root", CreateTypeAttribute(this._jsonType), this._xElement.Elements()));
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An System.Collections.IEnumerator object that can be used to iterate through the collection.</returns>
+        public IEnumerator GetEnumerator()
+        {
+            return this._xElement.Elements().Select(i => ToValue(i)).GetEnumerator();
         }
 
         /// <summary>

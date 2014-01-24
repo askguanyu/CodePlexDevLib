@@ -81,7 +81,7 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            return (encoding ?? Encoding.Default).GetString(source);
+            return (encoding ?? Encoding.Unicode).GetString(source);
         }
 
         /// <summary>

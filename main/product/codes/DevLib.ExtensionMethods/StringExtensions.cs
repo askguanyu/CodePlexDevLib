@@ -196,7 +196,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>Byte array.</returns>
         public static byte[] ToByteArray(this string source, Encoding encoding = null)
         {
-            return (encoding ?? Encoding.Default).GetBytes(source);
+            return (encoding ?? Encoding.Unicode).GetBytes(source);
         }
 
         /// <summary>

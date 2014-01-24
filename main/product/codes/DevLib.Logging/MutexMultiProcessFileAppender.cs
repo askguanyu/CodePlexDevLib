@@ -187,7 +187,7 @@ namespace DevLib.Logging
                 return;
             }
 
-            byte[] bytes = (encoding ?? Encoding.Default).GetBytes(text);
+            byte[] bytes = (encoding ?? Encoding.Unicode).GetBytes(text);
 
             try
             {

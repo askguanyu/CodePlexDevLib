@@ -13,6 +13,7 @@ namespace DevLib.Dynamic
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.Serialization;
     using System.Runtime.Serialization.Json;
     using System.Text;
     using System.Xml;
@@ -21,8 +22,13 @@ namespace DevLib.Dynamic
     /// <summary>
     /// Provides a class for specifying dynamic Json behavior at run time.
     /// </summary>
-    public class DynamicJson : DynamicObject, IEnumerable
+    public class DynamicJson : DynamicObject, IEnumerable<KeyValuePair<string, DynamicJson>>, IEnumerable
     {
+        /// <summary>
+        /// Field XmlConverters.
+        /// </summary>
+        private static readonly Dictionary<Type, Func<string, object>> XmlConverters;
+
         /// <summary>
         /// Field _xElement.
         /// </summary>
@@ -31,15 +37,42 @@ namespace DevLib.Dynamic
         /// <summary>
         /// Field _jsonType.
         /// </summary>
-        private readonly JsonType _jsonType;
+        private JsonType _jsonType;
+
+        /// <summary>
+        /// Initializes static members of the <see cref="DynamicJson" /> class.
+        /// </summary>
+        static DynamicJson()
+        {
+            XmlConverters = new Dictionary<Type, Func<string, object>>
+            {
+                { typeof(bool), s => XmlConvert.ToBoolean(s) },
+                { typeof(byte), s => XmlConvert.ToByte(s) },
+                { typeof(char), s => XmlConvert.ToChar(s) },
+                { typeof(DateTime), s => XmlConvert.ToDateTime(s, XmlDateTimeSerializationMode.RoundtripKind) },
+                { typeof(DateTimeOffset), s => XmlConvert.ToDateTimeOffset(s) },
+                { typeof(decimal), s => XmlConvert.ToDecimal(s) },
+                { typeof(double), s => XmlConvert.ToDouble(s) },
+                { typeof(Guid), s => XmlConvert.ToGuid(s) },
+                { typeof(short), s => XmlConvert.ToInt16(s) },
+                { typeof(int), s => XmlConvert.ToInt32(s) },
+                { typeof(long), s => XmlConvert.ToInt64(s) },
+                { typeof(sbyte), s => XmlConvert.ToSByte(s) },
+                { typeof(float), s => XmlConvert.ToSingle(s) },
+                { typeof(TimeSpan), s => XmlConvert.ToTimeSpan(s) },
+                { typeof(ushort), s => XmlConvert.ToUInt16(s) },
+                { typeof(uint), s => XmlConvert.ToUInt32(s) },
+                { typeof(ulong), s => XmlConvert.ToUInt64(s) },
+            };
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DynamicJson" /> class.
         /// </summary>
         public DynamicJson()
         {
-            this._xElement = new XElement("root", CreateTypeAttribute(JsonType.@Object));
-            this._jsonType = JsonType.@Object;
+            this._xElement = new XElement("root", this.CreateTypeAttribute(JsonType.@object));
+            this._jsonType = JsonType.@object;
         }
 
         /// <summary>
@@ -61,43 +94,32 @@ namespace DevLib.Dynamic
             /// <summary>
             /// Represents string type.
             /// </summary>
-            @String,
+            @string,
 
             /// <summary>
             /// Represents number type.
             /// </summary>
-            @Number,
+            @number,
 
             /// <summary>
             /// Represents bool type.
             /// </summary>
-            @Bool,
+            @boolean,
 
             /// <summary>
             /// Represents complex object.
             /// </summary>
-            @Object,
+            @object,
 
             /// <summary>
             /// Represents array.
             /// </summary>
-            @Array,
+            @array,
 
             /// <summary>
             /// Represents null.
             /// </summary>
-            @Null
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this DynamicJson is complex object or not.
-        /// </summary>
-        public bool IsObject
-        {
-            get
-            {
-                return this._jsonType == JsonType.@Object;
-            }
+            @null
         }
 
         /// <summary>
@@ -107,7 +129,7 @@ namespace DevLib.Dynamic
         {
             get
             {
-                return this._jsonType == JsonType.@Array;
+                return this._jsonType == JsonType.@array;
             }
         }
 
@@ -121,7 +143,7 @@ namespace DevLib.Dynamic
         {
             using (var reader = JsonReaderWriterFactory.CreateJsonReader((encoding ?? Encoding.Unicode).GetBytes(jsonString), XmlDictionaryReaderQuotas.Max))
             {
-                return ToValue(XElement.Load(reader));
+                return CreateDynamicJson(XElement.Load(reader));
             }
         }
 
@@ -131,11 +153,11 @@ namespace DevLib.Dynamic
         /// <param name="stream">Source Json string stream.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>DynamicJson object.</returns>
-        public static dynamic Parse(Stream stream, Encoding encoding = null)
+        public static dynamic Load(Stream stream, Encoding encoding = null)
         {
             using (var reader = JsonReaderWriterFactory.CreateJsonReader(stream, encoding ?? Encoding.Unicode, XmlDictionaryReaderQuotas.Max, _ => { }))
             {
-                return ToValue(XElement.Load(reader));
+                return CreateDynamicJson(XElement.Load(reader));
             }
         }
 
@@ -150,18 +172,36 @@ namespace DevLib.Dynamic
         {
             using (var reader = JsonReaderWriterFactory.CreateJsonReader(File.OpenRead(jsonFile), encoding ?? Encoding.Unicode, XmlDictionaryReaderQuotas.Max, _ => { }))
             {
-                return ToValue(XElement.Load(reader));
+                return CreateDynamicJson(XElement.Load(reader));
             }
         }
 
         /// <summary>
-        /// Serializes object to Json string.
+        /// Load Json from an object to DynamicJson.
         /// </summary>
-        /// <param name="obj">Object to serialize.</param>
-        /// <returns>Json string.</returns>
-        public static string Serialize(object obj)
+        /// <param name="source">Source object.</param>
+        /// <param name="encoding">The encoding to apply to the string.</param>
+        /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
+        /// <returns>DynamicJson object.</returns>
+        public static dynamic LoadFrom(object source, Encoding encoding = null, Type[] knownTypes = null)
         {
-            return CreateJsonString(new XStreamingElement("root", CreateTypeAttribute(GetJsonType(obj)), CreateJsonNode(obj)));
+            DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                dataContractJsonSerializer.WriteObject(memoryStream, source);
+
+                return Load(memoryStream, encoding);
+            }
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An System.Collections.IEnumerator object that can be used to iterate through the collection.</returns>
+        public IEnumerator<KeyValuePair<string, DynamicJson>> GetEnumerator()
+        {
+            return this._xElement.Elements().ToDictionary(k => k.Name.LocalName, v => CreateDynamicJson(v)).GetEnumerator();
         }
 
         /// <summary>
@@ -169,9 +209,9 @@ namespace DevLib.Dynamic
         /// </summary>
         /// <param name="name">Property name.</param>
         /// <returns>true if the current DynamicJson has specified property name; otherwise, false.</returns>
-        public bool IsDefined(string name)
+        public bool Has(string name)
         {
-            return this.IsObject && (this._xElement.Element(name) != null);
+            return !this.IsArray && this._xElement.Element(name) != null;
         }
 
         /// <summary>
@@ -179,9 +219,9 @@ namespace DevLib.Dynamic
         /// </summary>
         /// <param name="index">Index of the property.</param>
         /// <returns>true if the current DynamicJson has specified property index; otherwise, false.</returns>
-        public bool IsDefined(int index)
+        public bool Has(int index)
         {
-            return this.IsArray && (this._xElement.Elements().ElementAtOrDefault(index) != null);
+            return this._xElement.Elements().ElementAtOrDefault(index) != null;
         }
 
         /// <summary>
@@ -189,13 +229,13 @@ namespace DevLib.Dynamic
         /// </summary>
         /// <param name="name">Property name.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Delete(string name)
+        public bool Remove(string name)
         {
-            var elem = this._xElement.Element(name);
+            var element = this._xElement.Element(name);
 
-            if (elem != null)
+            if (element != null)
             {
-                elem.Remove();
+                element.Remove();
 
                 return true;
             }
@@ -210,13 +250,13 @@ namespace DevLib.Dynamic
         /// </summary>
         /// <param name="index">Index of the property.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Delete(int index)
+        public bool Remove(int index)
         {
-            var elem = this._xElement.Elements().ElementAtOrDefault(index);
+            var element = this._xElement.Elements().ElementAtOrDefault(index);
 
-            if (elem != null)
+            if (element != null)
             {
-                elem.Remove();
+                element.Remove();
 
                 return true;
             }
@@ -227,116 +267,12 @@ namespace DevLib.Dynamic
         }
 
         /// <summary>
-        /// Deserializes DynamicJson to object.
+        /// Returns a string that represents the current object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
-        /// <returns>Instance of object.</returns>
-        public T Deserialize<T>()
+        /// <returns>A Json string that represents the current object.</returns>
+        public override string ToString()
         {
-            return (T)this.Deserialize(typeof(T));
-        }
-
-        /// <summary>
-        /// Provides the implementation for operations that invoke an object.
-        /// </summary>
-        /// <param name="binder">Provides information about the invoke operation.</param>
-        /// <param name="args">The arguments that are passed to the object during the invoke operation.</param>
-        /// <param name="result">The result of the object invocation.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        public override bool TryInvoke(InvokeBinder binder, object[] args, out object result)
-        {
-            result = this.IsArray ? this.Delete((int)args[0]) : this.Delete((string)args[0]);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Provides the implementation for operations that invoke a member.
-        /// </summary>
-        /// <param name="binder">Provides information about the dynamic operation.</param>
-        /// <param name="args">The arguments that are passed to the object member during the invoke operation.</param>
-        /// <param name="result">The result of the member invocation.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
-        {
-            if (args.Length > 0)
-            {
-                result = null;
-
-                return false;
-            }
-
-            result = this.IsDefined(binder.Name);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Provides implementation for type conversion operations.
-        /// </summary>
-        /// <param name="binder">Provides information about the conversion operation.</param>
-        /// <param name="result">The result of the type conversion operation.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        public override bool TryConvert(ConvertBinder binder, out object result)
-        {
-            if (binder.Type == typeof(IEnumerable) || binder.Type == typeof(object[]))
-            {
-                var enumerable = this.IsArray ? this._xElement.Elements().Select(i => ToValue(i)) : this._xElement.Elements().Select(i => (dynamic)new KeyValuePair<string, object>(i.Name.LocalName, ToValue(i)));
-
-                result = (binder.Type == typeof(object[])) ? enumerable.ToArray() : enumerable;
-            }
-            else
-            {
-                result = this.Deserialize(binder.Type);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Provides the implementation for operations that get a value by index.
-        /// </summary>
-        /// <param name="binder">Provides information about the operation.</param>
-        /// <param name="indexes">The indexes that are used in the operation.</param>
-        /// <param name="result">The result of the index operation.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
-        {
-            return this.IsArray ? this.TryGet(this._xElement.Elements().ElementAtOrDefault((int)indexes[0]), out result) : this.TryGet(this._xElement.Element((string)indexes[0]), out result);
-        }
-
-        /// <summary>
-        /// Provides the implementation for operations that get member values.
-        /// </summary>
-        /// <param name="binder">Provides information about the object that called the dynamic operation.</param>
-        /// <param name="result">The result of the get operation.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            return this.IsArray ? this.TryGet(this._xElement.Elements().ElementAtOrDefault(int.Parse(binder.Name)), out result) : this.TryGet(this._xElement.Element(binder.Name), out result);
-        }
-
-        /// <summary>
-        /// Provides the implementation for operations that set a value by index.
-        /// </summary>
-        /// <param name="binder">Provides information about the operation.</param>
-        /// <param name="indexes">The indexes that are used in the operation.</param>
-        /// <param name="value">The value to set to the object that has the specified index.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
-        {
-            return this.IsArray ? this.TrySet((int)indexes[0], value) : this.TrySet((string)indexes[0], value);
-        }
-
-        /// <summary>
-        /// Provides the implementation for operations that set member values.
-        /// </summary>
-        /// <param name="binder">Provides information about the object that called the dynamic operation.</param>
-        /// <param name="value">The value to set to the member.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            return this.IsArray ? this.TrySet(int.Parse(binder.Name), value) : this.TrySet(binder.Name, value);
+            return this.CreateJsonString(new XStreamingElement("root", this.CreateTypeAttribute(this._jsonType), this._xElement.Elements()));
         }
 
         /// <summary>
@@ -349,74 +285,310 @@ namespace DevLib.Dynamic
         }
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        /// Provides implementation for type conversion operations.
         /// </summary>
-        /// <returns>A Json string that represents the current object.</returns>
-        public override string ToString()
+        /// <param name="binder">Provides information about the conversion operation.</param>
+        /// <param name="result">The result of the type conversion operation.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            foreach (var item in this._xElement.Descendants().Where(x => x.Attribute("type").Value == "null"))
+            if (binder.ReturnType == typeof(XElement))
             {
-                item.RemoveNodes();
+                result = this._xElement;
+
+                return true;
+            }
+            else if (binder.ReturnType == typeof(IEnumerable))
+            {
+                result = this._xElement.Elements().Select(i => CreateDynamicJson(i)).ToList();
+
+                return true;
+            }
+            else if (this.TryXmlConvert(this._xElement.Value, binder.ReturnType, out result))
+            {
+                return true;
             }
 
-            return CreateJsonString(new XStreamingElement("root", CreateTypeAttribute(this._jsonType), this._xElement.Elements()));
+            return base.TryConvert(binder, out result);
+        }
+
+        /// <summary>
+        /// Provides the implementation for operations that get a value by index.
+        /// </summary>
+        /// <param name="binder">Provides information about the operation.</param>
+        /// <param name="indexes">The indexes that are used in the operation.</param>
+        /// <param name="result">The result of the index operation.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
+        {
+            if (this.IsArray && indexes[0] is string)
+            {
+                result = null;
+
+                return false;
+            }
+
+            XElement element = null;
+
+            object indexer = indexes[0];
+
+            if (indexer is string)
+            {
+                element = this._xElement.Element((string)indexer);
+            }
+            else if (indexer is int)
+            {
+                element = this._xElement.Elements().ElementAtOrDefault((int)indexer);
+            }
+
+            if (element != null)
+            {
+                result = CreateDynamicJson(element);
+
+                return true;
+            }
+            else
+            {
+                result = null;
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Provides the implementation for operations that get member values.
+        /// </summary>
+        /// <param name="binder">Provides information about the object that called the dynamic operation.</param>
+        /// <param name="result">The result of the get operation.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            if (this.IsArray)
+            {
+                result = null;
+
+                return false;
+            }
+
+            var element = this._xElement.Element(binder.Name);
+
+            if (element != null)
+            {
+                result = CreateDynamicJson(element);
+
+                return true;
+            }
+
+            result = null;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Provides the implementation for operations that set a value by index.
+        /// </summary>
+        /// <param name="binder">Provides information about the operation.</param>
+        /// <param name="indexes">The indexes that are used in the operation.</param>
+        /// <param name="value">The value to set to the object that has the specified index.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
+        {
+            if (this.IsArray && indexes[0] is string)
+            {
+                return false;
+            }
+
+            XElement element = null;
+
+            var jsonType = this.GetJsonType(value);
+
+            object indexer = indexes[0];
+
+            bool isIndexerString = false;
+
+            if (indexer is string)
+            {
+                isIndexerString = true;
+
+                element = this._xElement.Element((string)indexer);
+            }
+            else if (indexer is int)
+            {
+                isIndexerString = false;
+
+                element = this._xElement.Elements().ElementAtOrDefault((int)indexer);
+            }
+            else
+            {
+                return false;
+            }
+
+            if (element == null)
+            {
+                if (this.IsArray)
+                {
+                    this._xElement.Add(new XElement("item", this.CreateTypeAttribute(jsonType), this.CreateXContent(value)));
+                }
+                else if (isIndexerString)
+                {
+                    this._jsonType = JsonType.@object;
+
+                    this._xElement.Attribute("type").Value = JsonType.@object.ToString();
+
+                    this._xElement.Add(new XElement((string)indexer, this.CreateTypeAttribute(jsonType), this.CreateXContent(value)));
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                element.Attribute("type").Value = jsonType.ToString();
+
+                element.ReplaceNodes(this.CreateXContent(value));
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Provides the implementation for operations that set member values.
+        /// </summary>
+        /// <param name="binder">Provides information about the object that called the dynamic operation.</param>
+        /// <param name="value">The value to set to the member.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            if (this.IsArray)
+            {
+                return false;
+            }
+
+            var jsonType = this.GetJsonType(value);
+
+            var element = this._xElement.Element(binder.Name);
+
+            if (element == null)
+            {
+                this._jsonType = JsonType.@object;
+
+                this._xElement.Attribute("type").Value = JsonType.@object.ToString();
+
+                this._xElement.Add(new XElement(binder.Name, this.CreateTypeAttribute(jsonType), this.CreateXContent(value)));
+            }
+            else
+            {
+                element.Attribute("type").Value = jsonType.ToString();
+
+                element.ReplaceNodes(this.CreateXContent(value));
+            }
+
+            return true;
         }
 
         /// <summary>
         /// Returns an enumerator that iterates through a collection.
         /// </summary>
         /// <returns>An System.Collections.IEnumerator object that can be used to iterate through the collection.</returns>
-        public IEnumerator GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            return this._xElement.Elements().Select(i => ToValue(i)).GetEnumerator();
+            return this._xElement.Elements().ToDictionary(k => k.Name.LocalName, v => CreateDynamicJson(v)).GetEnumerator();
         }
 
         /// <summary>
-        /// Method ToValue.
+        /// Method CreateDynamicJson.
         /// </summary>
         /// <param name="xElement">Source XElement.</param>
-        /// <returns>Value represents DynamicJson.</returns>
-        private static dynamic ToValue(XElement xElement)
+        /// <returns>DynamicJson object.</returns>
+        private static DynamicJson CreateDynamicJson(XElement xElement)
         {
-            var type = (JsonType)Enum.Parse(typeof(JsonType), xElement.Attribute("type").Value);
+            JsonType type = (JsonType)Enum.Parse(typeof(JsonType), xElement.Attribute("type").Value);
 
-            switch (type)
+            return new DynamicJson(xElement, type);
+        }
+
+        /// <summary>
+        /// Method CreateTypeAttribute.
+        /// </summary>
+        /// <param name="jsonType">Target JsonType.</param>
+        /// <returns>Instance of XAttribute.</returns>
+        private XAttribute CreateTypeAttribute(JsonType jsonType)
+        {
+            return new XAttribute("type", jsonType.ToString());
+        }
+
+        /// <summary>
+        /// Method CreateXContent.
+        /// </summary>
+        /// <param name="obj">Source object.</param>
+        /// <returns>XElement content object.</returns>
+        private object CreateXContent(object obj)
+        {
+            if (obj == null)
             {
-                case JsonType.@Bool:
-                    return (bool)xElement;
-                case JsonType.@Number:
-                    return (double)xElement;
-                case JsonType.@String:
-                    return (string)xElement;
-                case JsonType.@Object:
-                case JsonType.@Array:
-                    return new DynamicJson(xElement, type);
-                case JsonType.@Null:
-                default:
-                    return null;
+                return null;
             }
+
+            switch (Type.GetTypeCode(obj.GetType()))
+            {
+                case TypeCode.Object:
+                    return (obj is IEnumerable) ? this.CreateXArray(obj as IEnumerable) : this.CreateXObject(obj);
+                case TypeCode.DBNull:
+                case TypeCode.Empty:
+                    return null;
+                default:
+                    return obj;
+            }
+        }
+
+        /// <summary>
+        /// Method CreateXObject.
+        /// </summary>
+        /// <param name="obj">Source object.</param>
+        /// <returns>Instance of IEnumerable{XStreamingElement}.</returns>
+        private IEnumerable<XStreamingElement> CreateXObject(object obj)
+        {
+            return obj
+                .GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Select(i => new { Name = i.Name, Value = i.GetValue(obj, null) })
+                .Select(i => new XStreamingElement(i.Name, this.CreateTypeAttribute(this.GetJsonType(i.Value)), this.CreateXContent(i.Value)));
+        }
+
+        /// <summary>
+        /// Method CreateXArray.
+        /// </summary>
+        /// <typeparam name="T">Type of the <paramref name="obj"/>.</typeparam>
+        /// <param name="obj">Source object.</param>
+        /// <returns>Instance of IEnumerable{XStreamingElement}.</returns>
+        private IEnumerable<XStreamingElement> CreateXArray<T>(T obj) where T : IEnumerable
+        {
+            return obj
+                .Cast<object>()
+                .Select(i => new XStreamingElement("item", this.CreateTypeAttribute(this.GetJsonType(i)), this.CreateXContent(i)));
         }
 
         /// <summary>
         /// Method GetJsonType.
         /// </summary>
         /// <param name="obj">Source object.</param>
-        /// <returns>JsonType of source object.</returns>
-        private static JsonType GetJsonType(object obj)
+        /// <returns>Json type.</returns>
+        private JsonType GetJsonType(object obj)
         {
             if (obj == null)
             {
-                return JsonType.@Null;
+                return JsonType.@null;
             }
 
             switch (Type.GetTypeCode(obj.GetType()))
             {
                 case TypeCode.Boolean:
-                    return JsonType.@Bool;
+                    return JsonType.@boolean;
                 case TypeCode.String:
                 case TypeCode.Char:
                 case TypeCode.DateTime:
-                    return JsonType.@String;
+                    return JsonType.@string;
                 case TypeCode.Int16:
                 case TypeCode.Int32:
                 case TypeCode.Int64:
@@ -428,74 +600,156 @@ namespace DevLib.Dynamic
                 case TypeCode.Decimal:
                 case TypeCode.SByte:
                 case TypeCode.Byte:
-                    return JsonType.@Number;
+                    return JsonType.@number;
                 case TypeCode.Object:
-                    return (obj is IEnumerable) ? JsonType.@Array : JsonType.@Object;
+                    return (obj is IEnumerable) ? JsonType.@array : JsonType.@object;
                 case TypeCode.DBNull:
                 case TypeCode.Empty:
                 default:
-                    return JsonType.@Null;
+                    return JsonType.@null;
             }
         }
 
         /// <summary>
-        /// Method CreateTypeAttribute.
+        /// Method TryXmlConvert.
         /// </summary>
-        /// <param name="jsonType">Source JsonType.</param>
-        /// <returns>Instance of XAttribute.</returns>
-        private static XAttribute CreateTypeAttribute(JsonType jsonType)
+        /// <param name="value">Source value.</param>
+        /// <param name="returnType">Target type.</param>
+        /// <param name="result">Result object.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private bool TryXmlConvert(string value, Type returnType, out object result)
         {
-            return new XAttribute("type", jsonType.ToString());
-        }
-
-        /// <summary>
-        /// Method CreateJsonNode.
-        /// </summary>
-        /// <param name="obj">Source object.</param>
-        /// <returns>JsonNode object.</returns>
-        private static object CreateJsonNode(object obj)
-        {
-            var type = GetJsonType(obj);
-
-            switch (type)
+            if (returnType == typeof(string))
             {
-                case JsonType.@String:
-                case JsonType.@Number:
-                    return obj;
-                case JsonType.@Bool:
-                    return obj.ToString().ToLowerInvariant();
-                case JsonType.@Object:
-                    return CreateXObject(obj);
-                case JsonType.@Array:
-                    return CreateXArray(obj as IEnumerable);
-                case JsonType.@Null:
-                default:
-                    return null;
+                result = value;
+
+                return true;
+            }
+            else if (returnType.IsEnum)
+            {
+                if (Enum.IsDefined(returnType, value))
+                {
+                    result = Enum.Parse(returnType, value);
+
+                    return true;
+                }
+
+                var enumType = Enum.GetUnderlyingType(returnType);
+
+                var rawValue = XmlConverters[enumType].Invoke(value);
+
+                result = Enum.ToObject(returnType, rawValue);
+
+                return true;
+            }
+            else
+            {
+                var converter = default(Func<string, object>);
+
+                if (XmlConverters.TryGetValue(returnType, out converter))
+                {
+                    result = converter(value);
+
+                    return true;
+                }
+                else
+                {
+                    result = this.Deserialize(value, returnType);
+
+                    return true;
+                }
             }
         }
 
         /// <summary>
-        /// Method CreateXArray.
+        /// Method Deserialize.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="obj"/>.</typeparam>
-        /// <param name="obj">Source object.</param>
-        /// <returns>Instance of IEnumerable{XStreamingElement}.</returns>
-        private static IEnumerable<XStreamingElement> CreateXArray<T>(T obj) where T : IEnumerable
+        /// <param name="value">Source value.</param>
+        /// <param name="targetType">Target Type.</param>
+        /// <returns>Instance of object.</returns>
+        private object Deserialize(string value, Type targetType)
         {
-            return obj.Cast<object>().Select(i => new XStreamingElement("item", CreateTypeAttribute(GetJsonType(i)), CreateJsonNode(i)));
+            return this.IsArray ? this.DeserializeArray(value, targetType) : this.DeserializeObject(value, targetType);
         }
 
         /// <summary>
-        /// Method CreateXObject.
+        /// Method DeserializeArray.
         /// </summary>
-        /// <param name="obj">Source object.</param>
-        /// <returns>Instance of IEnumerable{XStreamingElement}.</returns>
-        private static IEnumerable<XStreamingElement> CreateXObject(object obj)
+        /// <param name="value">Source value.</param>
+        /// <param name="targetType">Target Type.</param>
+        /// <returns>Instance of object.</returns>
+        private object DeserializeArray(string value, Type targetType)
         {
-            return obj.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Select(i => new { Name = i.Name, Value = i.GetValue(obj, null) })
-                .Select(i => new XStreamingElement(i.Name, CreateTypeAttribute(GetJsonType(i.Value)), CreateJsonNode(i.Value)));
+            Type elementType = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
+
+            IList list = (IList)Activator.CreateInstance(targetType);
+
+            foreach (var item in this._xElement.Elements())
+            {
+                object result = null;
+
+                if (this.TryXmlConvert(value, targetType, out result))
+                {
+                    if (result != null)
+                    {
+                        list.Add(result);
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Method DeserializeObject.
+        /// </summary>
+        /// <param name="value">Source value.</param>
+        /// <param name="targetType">Target Type.</param>
+        /// <returns>Instance of object.</returns>
+        private object DeserializeObject(string value, Type targetType)
+        {
+            object result = null;
+
+            try
+            {
+                result = Activator.CreateInstance(targetType, true);
+            }
+            catch
+            {
+                try
+                {
+                    result = FormatterServices.GetUninitializedObject(targetType);
+                }
+                catch
+                {
+                }
+            }
+
+            if (result == null)
+            {
+                return result;
+            }
+
+            var properties = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(i => i.CanWrite).ToDictionary(i => i.Name, i => i);
+
+            foreach (var item in this._xElement.Elements())
+            {
+                PropertyInfo propertyInfo;
+
+                if (!properties.TryGetValue(item.Name.LocalName, out propertyInfo))
+                {
+                    continue;
+                }
+
+                object itemValue = null;
+
+                if (this.TryXmlConvert(item.Value, propertyInfo.PropertyType, out itemValue))
+                {
+                    propertyInfo.SetValue(result, itemValue, null);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -503,181 +757,17 @@ namespace DevLib.Dynamic
         /// </summary>
         /// <param name="element">Source XStreamingElement.</param>
         /// <returns>Json string.</returns>
-        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
-        private static string CreateJsonString(XStreamingElement element)
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        private string CreateJsonString(XStreamingElement element)
         {
-            using (var memoryStream = new MemoryStream())
+            MemoryStream memoryStream = new MemoryStream();
+
             using (var writer = JsonReaderWriterFactory.CreateJsonWriter(memoryStream, Encoding.Unicode))
             {
                 element.WriteTo(writer);
                 writer.Flush();
                 return Encoding.Unicode.GetString(memoryStream.ToArray());
             }
-        }
-
-        /// <summary>
-        /// Method Deserialize.
-        /// </summary>
-        /// <param name="targetType">Target Type.</param>
-        /// <returns>Instance of object.</returns>
-        private object Deserialize(Type targetType)
-        {
-            return this.IsArray ? this.DeserializeArray(targetType) : this.DeserializeObject(targetType);
-        }
-
-        /// <summary>
-        /// Method DeserializeValue.
-        /// </summary>
-        /// <param name="xElement">Source XElement.</param>
-        /// <param name="elementType">Element type.</param>
-        /// <returns>Element value.</returns>
-        private dynamic DeserializeValue(XElement xElement, Type elementType)
-        {
-            var value = ToValue(xElement);
-
-            if (value is DynamicJson)
-            {
-                value = ((DynamicJson)value).Deserialize(elementType);
-            }
-
-            return Convert.ChangeType(value, elementType);
-        }
-
-        /// <summary>
-        /// Method DeserializeObject.
-        /// </summary>
-        /// <param name="targetType">Target Type.</param>
-        /// <returns>Instance of object.</returns>
-        private object DeserializeObject(Type targetType)
-        {
-            var result = Activator.CreateInstance(targetType);
-
-            var dict = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(i => i.CanWrite).ToDictionary(i => i.Name, i => i);
-
-            foreach (var item in this._xElement.Elements())
-            {
-                PropertyInfo propertyInfo;
-
-                if (!dict.TryGetValue(item.Name.LocalName, out propertyInfo))
-                {
-                    continue;
-                }
-
-                var value = this.DeserializeValue(item, propertyInfo.PropertyType);
-
-                propertyInfo.SetValue(result, value, null);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Method DeserializeArray.
-        /// </summary>
-        /// <param name="targetType">Target Type.</param>
-        /// <returns>Instance of object.</returns>
-        private object DeserializeArray(Type targetType)
-        {
-            if (targetType.IsArray)
-            {
-                var elementType = targetType.GetElementType();
-
-                dynamic array = Array.CreateInstance(elementType, this._xElement.Elements().Count());
-
-                var index = 0;
-
-                foreach (var item in this._xElement.Elements())
-                {
-                    array[index++] = this.DeserializeValue(item, elementType);
-                }
-
-                return array;
-            }
-            else
-            {
-                var elementType = targetType.GetGenericArguments()[0];
-
-                dynamic list = Activator.CreateInstance(targetType);
-
-                foreach (var item in this._xElement.Elements())
-                {
-                    list.Add(this.DeserializeValue(item, elementType));
-                }
-
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// Method TryGet.
-        /// </summary>
-        /// <param name="xElement">Source XElement.</param>
-        /// <param name="result">Value of XElement.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        private bool TryGet(XElement xElement, out object result)
-        {
-            if (xElement == null)
-            {
-                result = null;
-
-                return false;
-            }
-
-            result = ToValue(xElement);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Method TrySet.
-        /// </summary>
-        /// <param name="name">Property name.</param>
-        /// <param name="value">Value for property.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        private bool TrySet(string name, object value)
-        {
-            var type = GetJsonType(value);
-
-            var element = this._xElement.Element(name);
-
-            if (element == null)
-            {
-                this._xElement.Add(new XElement(name, CreateTypeAttribute(type), CreateJsonNode(value)));
-            }
-            else
-            {
-                element.Attribute("type").Value = type.ToString();
-
-                element.ReplaceNodes(CreateJsonNode(value));
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Method TrySet.
-        /// </summary>
-        /// <param name="index">Property index.</param>
-        /// <param name="value">Value for index.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        private bool TrySet(int index, object value)
-        {
-            var type = GetJsonType(value);
-
-            var element = this._xElement.Elements().ElementAtOrDefault(index);
-
-            if (element == null)
-            {
-                this._xElement.Add(new XElement("item", CreateTypeAttribute(type), CreateJsonNode(value)));
-            }
-            else
-            {
-                element.Attribute("type").Value = type.ToString();
-
-                element.ReplaceNodes(CreateJsonNode(value));
-            }
-
-            return true;
         }
     }
 }

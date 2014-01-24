@@ -52,7 +52,7 @@ namespace DevLib.ExtensionMethods
 
             using (MD5 hasher = MD5.Create())
             {
-                data = hasher.ComputeHash(Encoding.Default.GetBytes(source));
+                data = hasher.ComputeHash(Encoding.Unicode.GetBytes(source));
             }
 
             if (data != null)

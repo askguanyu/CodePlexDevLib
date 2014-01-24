@@ -51,6 +51,8 @@ namespace DevLib.Samples
     using DevLib.Timers;
     using DevLib.Utilities;
     using DevLib.WinForms;
+    using DevLib.Dynamic;
+    using DevLib.Reflection;
 
     public class Program
     {
@@ -67,6 +69,16 @@ namespace DevLib.Samples
                 var result = CodeTimer.Time(i =>
                 {
                     //TestCodeSnippets();
+                });
+
+                CodeTimer.Time(i =>
+                {
+                    //TestDynamic();
+                });
+
+                CodeTimer.Time(i =>
+                {
+                    //TestReflection();
                 });
 
                 CodeTimer.Time(delegate
@@ -151,6 +163,48 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestDynamic()
+        {
+            Person aPerson = new Person { FirstName = "A", LastName = "B", Foo = new SpellingOptions(), ID = 2 };
+            //dynamic jsonObj = DynamicJson.Parse(aPerson.SerializeJsonString());
+            dynamic xmlObj = DynamicXml.Parse(aPerson.SerializeXml(true));
+
+            int id = xmlObj.ID;
+
+            xmlObj.ID = 4;
+
+            xmlObj.Foo["att"] = DateTime.Now;
+            //jsonObj[9] = new SpellingOptions();
+
+            //var foo = jsonObj[2];
+
+            //jsonObj.Remove1(0);
+            //xmlObj.ID = 3;
+            //int xa = xmlObj.ID;
+
+            //jsonObj.A = new List<object>();
+
+            //jsonObj.A[0] = 1;
+            //jsonObj.A[1] = "a";
+            //jsonObj.A[2] = true;
+
+            //var a = jsonObj.A.B;
+
+            //foreach (var item in jsonObj)
+            //{
+                
+            //    var aa=item.Key;
+            //    var b = item.ToString();
+            //}
+
+            //jsonObj["ID"] = 1;
+
+            
+
+            Console.WriteLine("done");
+
         }
 
         private static void TestDevLibTimer()
@@ -1723,19 +1777,20 @@ namespace DevLib.Samples
     [TypeConverterAttribute(typeof(ExpandableObjectConverter))]
     public class Person
     {
-        public string Foo { get; set; }
+        [DataMember]
+        public SpellingOptions Foo { get; set; }
 
         public Person()
         {
 
         }
 
-        [DataMember()]
-        public string FirstName;
         [DataMember]
-        public string LastName;
-        [DataMember()]
-        public int ID;
+        public string FirstName { get; set; }
+        [DataMember]
+        public string LastName { get; set; }
+        [DataMember]
+        public int ID { get; set; }
 
         public Person(string newfName, string newLName, int newID)
         {
@@ -1777,31 +1832,28 @@ namespace DevLib.Samples
     }
 
     [TypeConverterAttribute(typeof(ExpandableObjectConverter<SpellingOptions>))]
+    [DataContract]
+    [Serializable]
     public class SpellingOptions
     {
-        private bool spellCheckWhileTyping = true;
-        private bool spellCheckCAPS = false;
-        private bool suggestCorrections = true;
+        public SpellingOptions()
+        {
+            this.SpellCheckCAPS = false;
+            this.SpellCheckWhileTyping = true;
+            this.SuggestCorrections = true;
+        }
 
-        [DefaultValueAttribute(true)]
+        [DataMember]
         public bool SpellCheckWhileTyping
-        {
-            get { return spellCheckWhileTyping; }
-            set { spellCheckWhileTyping = value; }
-        }
+        { get; set; }
 
-        [DefaultValueAttribute(false)]
+        [DataMember]
         public bool SpellCheckCAPS
-        {
-            get { return spellCheckCAPS; }
-            set { spellCheckCAPS = value; }
-        }
-        [DefaultValueAttribute(true)]
+        { get; set; }
+
+        [DataMember]
         public bool SuggestCorrections
-        {
-            get { return suggestCorrections; }
-            set { suggestCorrections = value; }
-        }
+        { get; set; }
     }
 
 }

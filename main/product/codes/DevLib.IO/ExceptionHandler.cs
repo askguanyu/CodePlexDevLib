@@ -55,7 +55,7 @@ namespace DevLib.IO
                         }
 
                         fileStream.Seek(0, SeekOrigin.Begin);
-                        byte[] bytes = Encoding.Default.GetBytes(message + Environment.NewLine);
+                        byte[] bytes = Encoding.Unicode.GetBytes(message + Environment.NewLine);
                         fileStream.Write(bytes, 0, bytes.Length);
                         fileStream.Flush();
                     }

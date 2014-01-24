@@ -134,7 +134,7 @@ namespace DevLib.AddIn
                     }
 
                     fileStream.Seek(0, SeekOrigin.Begin);
-                    byte[] bytes = Encoding.Default.GetBytes(log + Environment.NewLine);
+                    byte[] bytes = Encoding.Unicode.GetBytes(log + Environment.NewLine);
                     fileStream.Write(bytes, 0, bytes.Length);
                     fileStream.Flush();
                 }

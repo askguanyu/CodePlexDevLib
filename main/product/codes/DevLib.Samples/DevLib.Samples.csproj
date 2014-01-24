@@ -132,6 +132,10 @@
       <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
       <Name>DevLib.Diagnostics</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Dynamic\DevLib.Dynamic.csproj">
+      <Project>{7AC78159-7869-4615-B918-DC5E410FBB44}</Project>
+      <Name>DevLib.Dynamic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ExtensionMethods\DevLib.ExtensionMethods.csproj">
       <Project>{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}</Project>
       <Name>DevLib.ExtensionMethods</Name>
@@ -155,6 +159,10 @@
     <ProjectReference Include="..\DevLib.Net\DevLib.Net.csproj">
       <Project>{CF145C2E-642F-4EFA-A03D-96B5082E6650}</Project>
       <Name>DevLib.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Reflection\DevLib.Reflection.csproj">
+      <Project>{80EDAB7E-57DA-4995-A42C-74D09BDEF78F}</Project>
+      <Name>DevLib.Reflection</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.ServiceModel\DevLib.ServiceModel.csproj">
       <Project>{61266225-A0B6-4792-A8C2-2B99DD02927A}</Project>

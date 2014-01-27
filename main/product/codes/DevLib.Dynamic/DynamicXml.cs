@@ -387,17 +387,17 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var matches = this._xElement.Elements(binder.Name);
+            var elements = this._xElement.Elements(binder.Name);
 
-            if (matches.Count() > 1)
+            if (elements.Count() > 1)
             {
-                result = matches.Select(i => new DynamicXml(i));
+                result = elements.Select(i => new DynamicXml(i));
 
                 return true;
             }
-            else if (matches.Count() == 1)
+            else if (elements.Count() == 1)
             {
-                result = new DynamicXml(matches.FirstOrDefault());
+                result = new DynamicXml(elements.FirstOrDefault());
 
                 return true;
             }

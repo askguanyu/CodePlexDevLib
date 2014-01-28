@@ -1590,7 +1590,51 @@ namespace DevLib.Data
         /// </summary>
         /// <remarks>
         /// e.g.:
-        ///  UpdateDataset(conn, insertCommand, deleteCommand, updateCommand, dataSet, "Order");
+        ///  UpdateDataset(insertCommand, deleteCommand, updateCommand, dataSet);
+        /// </remarks>
+        /// <param name="insertCommand">A valid transact-SQL statement or stored procedure to insert new records into the data source.</param>
+        /// <param name="deleteCommand">A valid transact-SQL statement or stored procedure to delete records from the data source.</param>
+        /// <param name="updateCommand">A valid transact-SQL statement or stored procedure used to update records in the data source.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        public static void UpdateDataset(SqlCommand insertCommand, SqlCommand deleteCommand, SqlCommand updateCommand, DataSet dataSet)
+        {
+            if (insertCommand == null)
+            {
+                throw new ArgumentNullException("insertCommand");
+            }
+
+            if (deleteCommand == null)
+            {
+                throw new ArgumentNullException("deleteCommand");
+            }
+
+            if (updateCommand == null)
+            {
+                throw new ArgumentNullException("updateCommand");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter())
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                sqlDataAdapter.UpdateCommand = updateCommand;
+
+                sqlDataAdapter.InsertCommand = insertCommand;
+
+                sqlDataAdapter.DeleteCommand = deleteCommand;
+
+                sqlDataAdapter.Update(dataSet);
+
+                dataSet.AcceptChanges();
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <remarks>
+        /// e.g.:
+        ///  UpdateDataset(insertCommand, deleteCommand, updateCommand, dataSet, "Order");
         /// </remarks>
         /// <param name="insertCommand">A valid transact-SQL statement or stored procedure to insert new records into the data source.</param>
         /// <param name="deleteCommand">A valid transact-SQL statement or stored procedure to delete records from the data source.</param>
@@ -1621,6 +1665,8 @@ namespace DevLib.Data
 
             using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter())
             {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
                 sqlDataAdapter.UpdateCommand = updateCommand;
 
                 sqlDataAdapter.InsertCommand = insertCommand;
@@ -1631,6 +1677,392 @@ namespace DevLib.Data
 
                 dataSet.AcceptChanges();
             }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connection">A valid SqlConnection.</param>
+        /// <param name="selectCommandText">A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public static void UpdateDataset(SqlConnection connection, string selectCommandText, DataSet dataSet)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+
+            if (string.IsNullOrEmpty(selectCommandText))
+            {
+                throw new ArgumentNullException("selectCommandText");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(selectCommandText, connection))
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                using (SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(sqlDataAdapter))
+                {
+                    sqlDataAdapter.Update(dataSet);
+
+                    dataSet.AcceptChanges();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connection">A valid SqlConnection.</param>
+        /// <param name="selectCommandText">A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        /// <param name="tableName">The DataTable used to update the data source.</param>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public static void UpdateDataset(SqlConnection connection, string selectCommandText, DataSet dataSet, string tableName)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+
+            if (string.IsNullOrEmpty(selectCommandText))
+            {
+                throw new ArgumentNullException("selectCommandText");
+            }
+
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(selectCommandText, connection))
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                using (SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(sqlDataAdapter))
+                {
+                    sqlDataAdapter.Update(dataSet, tableName);
+
+                    dataSet.AcceptChanges();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connectionString">A valid connection string for a SqlConnection.</param>
+        /// <param name="selectCommandText">A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public static void UpdateDataset(string connectionString, string selectCommandText, DataSet dataSet)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException("connectionString");
+            }
+
+            if (string.IsNullOrEmpty(selectCommandText))
+            {
+                throw new ArgumentNullException("selectCommandText");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(selectCommandText, connectionString))
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                using (SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(sqlDataAdapter))
+                {
+                    sqlDataAdapter.Update(dataSet);
+
+                    dataSet.AcceptChanges();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connectionString">A valid connection string for a SqlConnection.</param>
+        /// <param name="selectCommandText">A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        /// <param name="tableName">The DataTable used to update the data source.</param>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public static void UpdateDataset(string connectionString, string selectCommandText, DataSet dataSet, string tableName)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException("connectionString");
+            }
+
+            if (string.IsNullOrEmpty(selectCommandText))
+            {
+                throw new ArgumentNullException("selectCommandText");
+            }
+
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(selectCommandText, connectionString))
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                using (SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(sqlDataAdapter))
+                {
+                    sqlDataAdapter.Update(dataSet, tableName);
+
+                    dataSet.AcceptChanges();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connection">A valid SqlConnection.</param>
+        /// <param name="selectCommand">A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is a Transact-SQL SELECT statement or stored procedure and is set as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        public static void UpdateDataset(SqlConnection connection, SqlCommand selectCommand, DataSet dataSet)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+
+            if (selectCommand == null)
+            {
+                throw new ArgumentNullException("selectCommand");
+            }
+
+            UpdateDataset(connection, selectCommand.CommandText, dataSet);
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connection">A valid SqlConnection.</param>
+        /// <param name="selectCommand">A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is a Transact-SQL SELECT statement or stored procedure and is set as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        /// <param name="tableName">The DataTable used to update the data source.</param>
+        public static void UpdateDataset(SqlConnection connection, SqlCommand selectCommand, DataSet dataSet, string tableName)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+
+            if (selectCommand == null)
+            {
+                throw new ArgumentNullException("selectCommand");
+            }
+
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            UpdateDataset(connection, selectCommand.CommandText, dataSet, tableName);
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connectionString">A valid connection string for a SqlConnection.</param>
+        /// <param name="selectCommand">A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is a Transact-SQL SELECT statement or stored procedure and is set as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        public static void UpdateDataset(string connectionString, SqlCommand selectCommand, DataSet dataSet)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException("connectionString");
+            }
+
+            if (selectCommand == null)
+            {
+                throw new ArgumentNullException("selectCommand");
+            }
+
+            UpdateDataset(connectionString, selectCommand.CommandText, dataSet);
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataSet.
+        /// </summary>
+        /// <param name="connectionString">A valid connection string for a SqlConnection.</param>
+        /// <param name="selectCommand">A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is a Transact-SQL SELECT statement or stored procedure and is set as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataSet">The DataSet used to update the data source.</param>
+        /// <param name="tableName">The DataTable used to update the data source.</param>
+        public static void UpdateDataset(string connectionString, SqlCommand selectCommand, DataSet dataSet, string tableName)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException("connectionString");
+            }
+
+            if (selectCommand == null)
+            {
+                throw new ArgumentNullException("selectCommand");
+            }
+
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            UpdateDataset(connectionString, selectCommand.CommandText, dataSet, tableName);
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataTable.
+        /// </summary>
+        /// <remarks>
+        /// e.g.:
+        ///  UpdateDataTable(insertCommand, deleteCommand, updateCommand, dataTable);
+        /// </remarks>
+        /// <param name="insertCommand">A valid transact-SQL statement or stored procedure to insert new records into the data source.</param>
+        /// <param name="deleteCommand">A valid transact-SQL statement or stored procedure to delete records from the data source.</param>
+        /// <param name="updateCommand">A valid transact-SQL statement or stored procedure used to update records in the data source.</param>
+        /// <param name="dataTable">The DataTable used to update the data source.</param>
+        public static void UpdateDataTable(SqlCommand insertCommand, SqlCommand deleteCommand, SqlCommand updateCommand, DataTable dataTable)
+        {
+            if (insertCommand == null)
+            {
+                throw new ArgumentNullException("insertCommand");
+            }
+
+            if (deleteCommand == null)
+            {
+                throw new ArgumentNullException("deleteCommand");
+            }
+
+            if (updateCommand == null)
+            {
+                throw new ArgumentNullException("updateCommand");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter())
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                sqlDataAdapter.UpdateCommand = updateCommand;
+
+                sqlDataAdapter.InsertCommand = insertCommand;
+
+                sqlDataAdapter.DeleteCommand = deleteCommand;
+
+                sqlDataAdapter.Update(dataTable);
+
+                dataTable.AcceptChanges();
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataTable.
+        /// </summary>
+        /// <param name="connection">A valid SqlConnection.</param>
+        /// <param name="selectCommandText">A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataTable">The DataTable used to update the data source.</param>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public static void UpdateDataTable(SqlConnection connection, string selectCommandText, DataTable dataTable)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+
+            if (string.IsNullOrEmpty(selectCommandText))
+            {
+                throw new ArgumentNullException("selectCommandText");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(selectCommandText, connection))
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                using (SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(sqlDataAdapter))
+                {
+                    sqlDataAdapter.Update(dataTable);
+
+                    dataTable.AcceptChanges();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataTable.
+        /// </summary>
+        /// <param name="connectionString">A valid connection string for a SqlConnection.</param>
+        /// <param name="selectCommandText">A <see cref="T:System.String" /> that is a Transact-SQL SELECT statement or stored procedure to be used by the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataTable">The DataTable used to update the data source.</param>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public static void UpdateDataTable(string connectionString, string selectCommandText, DataTable dataTable)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException("connectionString");
+            }
+
+            if (string.IsNullOrEmpty(selectCommandText))
+            {
+                throw new ArgumentNullException("selectCommandText");
+            }
+
+            using (SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(selectCommandText, connectionString))
+            {
+                sqlDataAdapter.ContinueUpdateOnError = true;
+
+                using (SqlCommandBuilder sqlCommandBuilder = new SqlCommandBuilder(sqlDataAdapter))
+                {
+                    sqlDataAdapter.Update(dataTable);
+
+                    dataTable.AcceptChanges();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataTable.
+        /// </summary>
+        /// <param name="connection">A valid SqlConnection.</param>
+        /// <param name="selectCommand">A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is a Transact-SQL SELECT statement or stored procedure and is set as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataTable">The DataTable used to update the data source.</param>
+        public static void UpdateDataTable(SqlConnection connection, SqlCommand selectCommand, DataTable dataTable)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+
+            if (selectCommand == null)
+            {
+                throw new ArgumentNullException("selectCommand");
+            }
+
+            UpdateDataTable(connection, selectCommand.CommandText, dataTable);
+        }
+
+        /// <summary>
+        /// Executes the respective command for each inserted, updated, or deleted row in the DataTable.
+        /// </summary>
+        /// <param name="connectionString">A valid connection string for a SqlConnection.</param>
+        /// <param name="selectCommand">A <see cref="T:System.Data.SqlClient.SqlCommand" /> that is a Transact-SQL SELECT statement or stored procedure and is set as the <see cref="P:System.Data.SqlClient.SqlDataAdapter.SelectCommand" /> property of the <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</param>
+        /// <param name="dataTable">The DataTable used to update the data source.</param>
+        public static void UpdateDataTable(string connectionString, SqlCommand selectCommand, DataTable dataTable)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException("connectionString");
+            }
+
+            if (selectCommand == null)
+            {
+                throw new ArgumentNullException("selectCommand");
+            }
+
+            UpdateDataTable(connectionString, selectCommand.CommandText, dataTable);
         }
 
         /// <summary>

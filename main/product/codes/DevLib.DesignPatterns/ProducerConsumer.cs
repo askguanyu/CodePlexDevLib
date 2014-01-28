@@ -317,6 +317,25 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
+        /// Enqueue data items.
+        /// </summary>
+        /// <param name="items">The data items to enqueue.</param>
+        public void Enqueue(IEnumerable<T> items)
+        {
+            this.CheckDisposed();
+
+            lock (this._queueSyncRoot)
+            {
+                if (this.IsRunning || this._enqueueWhenStopped)
+                {
+                    this._queue.Enqueue(items);
+
+                    this._queueWaitHandle.Set();
+                }
+            }
+        }
+
+        /// <summary>
         /// Releases all resources used by the current instance of the <see cref="ProducerConsumer{T}" /> class.
         /// </summary>
         public void Dispose()

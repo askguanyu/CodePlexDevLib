@@ -39,6 +39,18 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
+        /// Adds objects to the end of the <see cref="ProducerConsumerQueue{T}" />.
+        /// </summary>
+        /// <param name="items">The objects to add to the <see cref="ProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
+        public void Enqueue(IEnumerable<T> items)
+        {
+            foreach (var item in items)
+            {
+                this._queue.Enqueue(item);
+            }
+        }
+
+        /// <summary>
         /// Removes and returns the object at the beginning of the <see cref="ProducerConsumerQueue{T}" />.
         /// </summary>
         /// <returns>The object that is removed from the beginning of the <see cref="ProducerConsumerQueue{T}" />.</returns>

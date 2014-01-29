@@ -12,6 +12,7 @@ namespace DevLib.Dynamic
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.Serialization;
     using System.Text;
     using System.Xml;
     using System.Xml.Linq;
@@ -314,7 +315,7 @@ namespace DevLib.Dynamic
 
                     return true;
                 }
-                else if (this.TryXmlConvert(this._xElement.Value, binder.ReturnType, out result))
+                else if (this.TryXmlConvert(this._xElement, binder.ReturnType, out result))
                 {
                     return true;
                 }
@@ -576,7 +577,58 @@ namespace DevLib.Dynamic
                 }
                 else
                 {
-                    result = this.Deserialize(value, returnType);
+                    result = null;
+
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method TryXmlConvert.
+        /// </summary>
+        /// <param name="xElement">Source element.</param>
+        /// <param name="returnType">Target type.</param>
+        /// <param name="result">Result object.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private bool TryXmlConvert(XElement xElement, Type returnType, out object result)
+        {
+            if (returnType == typeof(string))
+            {
+                result = xElement.Value;
+
+                return true;
+            }
+            else if (returnType.IsEnum)
+            {
+                if (Enum.IsDefined(returnType, xElement.Value))
+                {
+                    result = Enum.Parse(returnType, xElement.Value);
+
+                    return true;
+                }
+
+                var enumType = Enum.GetUnderlyingType(returnType);
+
+                var rawValue = XmlConverters[enumType].Invoke(xElement.Value);
+
+                result = Enum.ToObject(returnType, rawValue);
+
+                return true;
+            }
+            else
+            {
+                var converter = default(Func<string, object>);
+
+                if (XmlConverters.TryGetValue(returnType, out converter))
+                {
+                    result = converter(xElement.Value);
+
+                    return true;
+                }
+                else
+                {
+                    result = this.Deserialize(xElement, returnType);
 
                     return true;
                 }
@@ -586,17 +638,102 @@ namespace DevLib.Dynamic
         /// <summary>
         /// Method Deserialize.
         /// </summary>
-        /// <param name="value">Source value.</param>
+        /// <param name="xElement">Source element.</param>
         /// <param name="targetType">Target Type.</param>
         /// <returns>Instance of object.</returns>
-        private object Deserialize(string value, Type targetType)
+        private object Deserialize(XElement xElement, Type targetType)
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(targetType);
+            return this.CanEnumerable(targetType) ? this.DeserializeArray(xElement, targetType) : this.DeserializeObject(xElement, targetType);
+        }
 
-            using (StringReader stringReader = new StringReader(value))
+        /// <summary>
+        /// Method DeserializeArray.
+        /// </summary>
+        /// <param name="xElement">Source element.</param>
+        /// <param name="targetType">Target Type.</param>
+        /// <returns>Instance of object.</returns>
+        private object DeserializeArray(XElement xElement, Type targetType)
+        {
+            Type elementType = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
+
+            IList list = (IList)Activator.CreateInstance(targetType);
+
+            foreach (var item in this._xElement.Elements())
             {
-                return xmlSerializer.Deserialize(stringReader);
+                object result = null;
+
+                if (this.TryXmlConvert(item, targetType, out result))
+                {
+                    if (result != null)
+                    {
+                        list.Add(result);
+                    }
+                }
             }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Method DeserializeObject.
+        /// </summary>
+        /// <param name="xElement">Source element.</param>
+        /// <param name="targetType">Target Type.</param>
+        /// <returns>Instance of object.</returns>
+        private object DeserializeObject(XElement xElement, Type targetType)
+        {
+            object result = null;
+
+            try
+            {
+                result = Activator.CreateInstance(targetType, true);
+            }
+            catch
+            {
+                try
+                {
+                    result = FormatterServices.GetUninitializedObject(targetType);
+                }
+                catch
+                {
+                }
+            }
+
+            if (result == null)
+            {
+                return result;
+            }
+
+            var properties = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(i => i.CanWrite).ToDictionary(i => i.Name, i => i);
+
+            foreach (var item in this._xElement.Elements())
+            {
+                PropertyInfo propertyInfo;
+
+                if (!properties.TryGetValue(item.Name.LocalName, out propertyInfo))
+                {
+                    continue;
+                }
+
+                object itemValue = null;
+
+                if (this.TryXmlConvert(item, propertyInfo.PropertyType, out itemValue))
+                {
+                    propertyInfo.SetValue(result, itemValue, null);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Method CanEnumerable.
+        /// </summary>
+        /// <param name="source">Source Type.</param>
+        /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
+        private bool CanEnumerable(Type source)
+        {
+            return !source.Equals(typeof(string)) && source.GetInterface("IEnumerable") != null;
         }
     }
 }

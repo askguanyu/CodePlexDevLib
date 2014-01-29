@@ -38,6 +38,7 @@ namespace DevLib.Samples
     using DevLib.DaemonProcess;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
+    using DevLib.Dynamic;
     using DevLib.ExtensionMethods;
     using DevLib.Ioc;
     using DevLib.Logging;
@@ -45,14 +46,13 @@ namespace DevLib.Samples
     using DevLib.Net;
     using DevLib.Net.Ftp;
     using DevLib.Net.Sockets;
+    using DevLib.Reflection;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;
     using DevLib.TerminalServices;
     using DevLib.Timers;
     using DevLib.Utilities;
     using DevLib.WinForms;
-    using DevLib.Dynamic;
-    using DevLib.Reflection;
 
     public class Program
     {
@@ -168,8 +168,10 @@ namespace DevLib.Samples
         private static void TestDynamic()
         {
             Person aPerson = new Person { FirstName = "A", LastName = "B", Foo = new SpellingOptions(), ID = 2 };
-            //dynamic jsonObj = DynamicJson.Parse(aPerson.SerializeJsonString());
+            dynamic jsonObj = DynamicJson.Parse(aPerson.SerializeJsonString());
             dynamic xmlObj = DynamicXml.Parse(aPerson.SerializeXml(true));
+
+            SpellingOptions foo = xmlObj.Foo;
 
             int id = xmlObj.ID;
 

@@ -304,7 +304,7 @@ namespace DevLib.Dynamic
 
                 return true;
             }
-            else if (this.TryXmlConvert(this._xElement.Value, binder.ReturnType, out result))
+            else if (this.TryXmlConvert(this._xElement, binder.ReturnType, out result))
             {
                 return true;
             }
@@ -613,30 +613,30 @@ namespace DevLib.Dynamic
         /// <summary>
         /// Method TryXmlConvert.
         /// </summary>
-        /// <param name="value">Source value.</param>
+        /// <param name="xElement">Source element.</param>
         /// <param name="returnType">Target type.</param>
         /// <param name="result">Result object.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        private bool TryXmlConvert(string value, Type returnType, out object result)
+        private bool TryXmlConvert(XElement xElement, Type returnType, out object result)
         {
             if (returnType == typeof(string))
             {
-                result = value;
+                result = xElement.Value;
 
                 return true;
             }
             else if (returnType.IsEnum)
             {
-                if (Enum.IsDefined(returnType, value))
+                if (Enum.IsDefined(returnType, xElement.Value))
                 {
-                    result = Enum.Parse(returnType, value);
+                    result = Enum.Parse(returnType, xElement.Value);
 
                     return true;
                 }
 
                 var enumType = Enum.GetUnderlyingType(returnType);
 
-                var rawValue = XmlConverters[enumType].Invoke(value);
+                var rawValue = XmlConverters[enumType].Invoke(xElement.Value);
 
                 result = Enum.ToObject(returnType, rawValue);
 
@@ -648,13 +648,13 @@ namespace DevLib.Dynamic
 
                 if (XmlConverters.TryGetValue(returnType, out converter))
                 {
-                    result = converter(value);
+                    result = converter(xElement.Value);
 
                     return true;
                 }
                 else
                 {
-                    result = this.Deserialize(value, returnType);
+                    result = this.Deserialize(xElement, returnType);
 
                     return true;
                 }
@@ -664,21 +664,21 @@ namespace DevLib.Dynamic
         /// <summary>
         /// Method Deserialize.
         /// </summary>
-        /// <param name="value">Source value.</param>
+        /// <param name="xElement">Source element.</param>
         /// <param name="targetType">Target Type.</param>
         /// <returns>Instance of object.</returns>
-        private object Deserialize(string value, Type targetType)
+        private object Deserialize(XElement xElement, Type targetType)
         {
-            return this.IsArray ? this.DeserializeArray(value, targetType) : this.DeserializeObject(value, targetType);
+            return this.IsArray ? this.DeserializeArray(xElement, targetType) : this.DeserializeObject(xElement, targetType);
         }
 
         /// <summary>
         /// Method DeserializeArray.
         /// </summary>
-        /// <param name="value">Source value.</param>
+        /// <param name="xElement">Source element.</param>
         /// <param name="targetType">Target Type.</param>
         /// <returns>Instance of object.</returns>
-        private object DeserializeArray(string value, Type targetType)
+        private object DeserializeArray(XElement xElement, Type targetType)
         {
             Type elementType = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
 
@@ -688,7 +688,7 @@ namespace DevLib.Dynamic
             {
                 object result = null;
 
-                if (this.TryXmlConvert(value, targetType, out result))
+                if (this.TryXmlConvert(item, targetType, out result))
                 {
                     if (result != null)
                     {
@@ -703,10 +703,10 @@ namespace DevLib.Dynamic
         /// <summary>
         /// Method DeserializeObject.
         /// </summary>
-        /// <param name="value">Source value.</param>
+        /// <param name="xElement">Source element.</param>
         /// <param name="targetType">Target Type.</param>
         /// <returns>Instance of object.</returns>
-        private object DeserializeObject(string value, Type targetType)
+        private object DeserializeObject(XElement xElement, Type targetType)
         {
             object result = null;
 
@@ -743,7 +743,7 @@ namespace DevLib.Dynamic
 
                 object itemValue = null;
 
-                if (this.TryXmlConvert(item.Value, propertyInfo.PropertyType, out itemValue))
+                if (this.TryXmlConvert(item, propertyInfo.PropertyType, out itemValue))
                 {
                     propertyInfo.SetValue(result, itemValue, null);
                 }

@@ -1127,53 +1127,26 @@ namespace DevLib.ServiceModel
 
                 lock (ServiceHostSyncRoot)
                 {
-                    if (string.IsNullOrEmpty(this._baseAddress))
+                    try
                     {
-                        try
+                        foreach (Type serviceType in serviceTypeList)
                         {
-                            foreach (Type serviceType in serviceTypeList)
-                            {
-                                WcfServiceHostProxy.SetConfigFile(this._configFile);
+                            WcfServiceHostProxy.SetConfigFile(this._configFile);
 
-                                WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType);
+                            WcfServiceHostProxy serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new WcfServiceHostProxy(serviceType) : new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
 
-                                this._serviceHostList.Add(serviceHost);
+                            this._serviceHostList.Add(serviceHost);
 
-                                this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
+                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
 
-                                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-
-                            throw;
+                            Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        try
-                        {
-                            foreach (Type serviceType in serviceTypeList)
-                            {
-                                WcfServiceHostProxy.SetConfigFile(this._tempConfigFile);
+                        ExceptionHandler.Log(e);
 
-                                WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
-
-                                this._serviceHostList.Add(serviceHost);
-
-                                this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
-
-                                Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionHandler.Log(e);
-
-                            throw;
-                        }
+                        throw;
                     }
                 }
             }

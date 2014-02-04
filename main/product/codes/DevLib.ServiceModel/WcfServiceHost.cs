@@ -72,12 +72,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field _tempConfigFile.
         /// </summary>
-        private string _tempConfigFile;
+        private string _tempConfigFile = null;
 
         /// <summary>
         /// Field _isInitialized.
         /// </summary>
-        private bool _isInitialized;
+        private bool _isInitialized = false;
 
         /// <summary>
         /// Field _serviceHostList.
@@ -579,6 +579,7 @@ namespace DevLib.ServiceModel
             this._serviceType = serviceType;
             this._configFile = Path.GetFullPath(configFile);
             this._baseAddress = baseAddress;
+            this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
 
             this._isInitialized = true;
         }
@@ -970,12 +971,7 @@ namespace DevLib.ServiceModel
         {
             string result = null;
 
-            if (string.IsNullOrEmpty(sourceFileName))
-            {
-                return result;
-            }
-
-            if (!string.IsNullOrEmpty(baseAddress))
+            if (File.Exists(sourceFileName) && !string.IsNullOrEmpty(baseAddress))
             {
                 try
                 {
@@ -1131,7 +1127,7 @@ namespace DevLib.ServiceModel
                     {
                         foreach (Type serviceType in serviceTypeList)
                         {
-                            WcfServiceHostProxy.SetConfigFile(this._configFile);
+                            WcfServiceHostProxy.SetConfigFile(this._tempConfigFile ?? this._configFile);
 
                             WcfServiceHostProxy serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new WcfServiceHostProxy(serviceType) : new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
 
@@ -1267,17 +1263,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method CheckDisposed.
-        /// </summary>
-        private void CheckDisposed()
-        {
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException("DevLib.ServiceModel.WcfServiceHost");
-            }
-        }
-
-        /// <summary>
         /// Method CheckInitialized.
         /// </summary>
         private void CheckInitialized()
@@ -1285,6 +1270,17 @@ namespace DevLib.ServiceModel
             if (!this._isInitialized)
             {
                 throw new InvalidOperationException("WcfServiceHost is not initialized.");
+            }
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.ServiceModel.WcfServiceHost");
             }
         }
     }

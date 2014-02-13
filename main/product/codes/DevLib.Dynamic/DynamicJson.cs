@@ -684,11 +684,11 @@ namespace DevLib.Dynamic
 
             IList list = (IList)Activator.CreateInstance(targetType);
 
-            foreach (var item in this._xElement.Elements())
+            foreach (var item in xElement.Elements())
             {
                 object result = null;
 
-                if (this.TryXmlConvert(item, targetType, out result))
+                if (this.TryXmlConvert(item, elementType, out result))
                 {
                     if (result != null)
                     {
@@ -730,22 +730,22 @@ namespace DevLib.Dynamic
                 return result;
             }
 
-            var properties = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(i => i.CanWrite).ToDictionary(i => i.Name, i => i);
+            var properties = targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(i => i.CanWrite);
 
-            foreach (var item in this._xElement.Elements())
+            foreach (var item in properties)
             {
-                PropertyInfo propertyInfo;
+                var elements = xElement.Elements(item.Name);
 
-                if (!properties.TryGetValue(item.Name.LocalName, out propertyInfo))
+                if (elements.Count() >= 1)
                 {
-                    continue;
-                }
+                    object itemValue = null;
 
-                object itemValue = null;
+                    if (this.TryXmlConvert(elements.First(), item.PropertyType, out itemValue))
+                    {
+                        item.SetValue(result, itemValue, null);
 
-                if (this.TryXmlConvert(item, propertyInfo.PropertyType, out itemValue))
-                {
-                    propertyInfo.SetValue(result, itemValue, null);
+                        continue;
+                    }
                 }
             }
 

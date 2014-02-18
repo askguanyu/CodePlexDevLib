@@ -12,7 +12,7 @@ namespace DevLib.Expressions
     /// <summary>
     /// Performs bottom-up analysis to determine which nodes can possibly be part of an evaluated sub-tree.
     /// </summary>
-    public class Nominator : ExpressionVisitor
+    public class NominatorExpressionVisitor : ExpressionVisitor
     {
         /// <summary>
         /// Field _fnCanBeEvaluated.
@@ -30,10 +30,10 @@ namespace DevLib.Expressions
         private bool _cannotBeEvaluated;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Nominator" /> class.
+        /// Initializes a new instance of the <see cref="NominatorExpressionVisitor" /> class.
         /// </summary>
         /// <param name="fnCanBeEvaluated">A function that decides whether a given expression node can be part of the local function.</param>
-        internal Nominator(Func<Expression, bool> fnCanBeEvaluated)
+        internal NominatorExpressionVisitor(Func<Expression, bool> fnCanBeEvaluated)
         {
             this._fnCanBeEvaluated = fnCanBeEvaluated;
         }

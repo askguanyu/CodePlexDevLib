@@ -12,7 +12,7 @@ namespace DevLib.Expressions
     /// <summary>
     /// Evaluates and replaces sub-trees when first candidate is reached (top-down).
     /// </summary>
-    public class SubtreeEvaluator : ExpressionVisitor
+    public class SubtreeExpressionVisitor : ExpressionVisitor
     {
         /// <summary>
         /// Field _candidates.
@@ -20,10 +20,10 @@ namespace DevLib.Expressions
         private HashSet<Expression> _candidates;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubtreeEvaluator" /> class.
+        /// Initializes a new instance of the <see cref="SubtreeExpressionVisitor" /> class.
         /// </summary>
         /// <param name="candidates">Expression candidates.</param>
-        internal SubtreeEvaluator(HashSet<Expression> candidates)
+        internal SubtreeExpressionVisitor(HashSet<Expression> candidates)
         {
             this._candidates = candidates;
         }

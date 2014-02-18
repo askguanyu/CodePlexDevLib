@@ -9,9 +9,9 @@ namespace DevLib.Expressions
     using System.Linq.Expressions;
 
     /// <summary>
-    /// Class Evaluator to perform partial evaluation of an expression tree.
+    /// Class ExpressionEvaluator to perform partial evaluation of an expression tree.
     /// </summary>
-    public static class Evaluator
+    public static class ExpressionEvaluator
     {
         /// <summary>
         /// Performs evaluation and replacement of independent sub-trees.
@@ -21,7 +21,7 @@ namespace DevLib.Expressions
         /// <returns>A new tree with sub-trees evaluated and replaced.</returns>
         public static Expression PartialEval(this Expression expression, Func<Expression, bool> fnCanBeEvaluated)
         {
-            return new SubtreeEvaluator(new Nominator(fnCanBeEvaluated).Nominate(expression)).Eval(expression);
+            return new SubtreeExpressionVisitor(new NominatorExpressionVisitor(fnCanBeEvaluated).Nominate(expression)).Eval(expression);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace DevLib.Expressions
         /// <returns>A new tree with sub-trees evaluated and replaced.</returns>
         public static Expression PartialEval(this Expression expression)
         {
-            return PartialEval(expression, Evaluator.CanBeEvaluatedLocally);
+            return PartialEval(expression, ExpressionEvaluator.CanBeEvaluatedLocally);
         }
 
         /// <summary>

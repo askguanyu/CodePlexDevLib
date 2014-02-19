@@ -136,6 +136,10 @@
       <Project>{7AC78159-7869-4615-B918-DC5E410FBB44}</Project>
       <Name>DevLib.Dynamic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Expressions\DevLib.Expressions.csproj">
+      <Project>{27578DA1-4CA9-4AC8-BBC4-C5A5C6584427}</Project>
+      <Name>DevLib.Expressions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ExtensionMethods\DevLib.ExtensionMethods.csproj">
       <Project>{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}</Project>
       <Name>DevLib.ExtensionMethods</Name>

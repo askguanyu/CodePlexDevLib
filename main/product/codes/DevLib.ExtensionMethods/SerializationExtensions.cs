@@ -361,7 +361,7 @@ namespace DevLib.ExtensionMethods
             {
                 string rootNodeName = XElement.Load(stringReader).Name.LocalName;
 
-                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+                sourceType = knownTypes.FirstOrDefault(p => p.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase));
 
                 if (sourceType == null)
                 {
@@ -440,7 +440,7 @@ namespace DevLib.ExtensionMethods
 
             string rootNodeName = XElement.Load(fullPath).Name.LocalName;
 
-            sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+            sourceType = knownTypes.FirstOrDefault(p => p.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase));
 
             if (sourceType == null)
             {

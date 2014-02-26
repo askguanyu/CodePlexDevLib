@@ -168,6 +168,10 @@
       <Project>{80EDAB7E-57DA-4995-A42C-74D09BDEF78F}</Project>
       <Name>DevLib.Reflection</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Serialization\DevLib.Serialization.csproj">
+      <Project>{E263E10B-9DF6-44F8-9E58-34338316F08E}</Project>
+      <Name>DevLib.Serialization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ServiceModel\DevLib.ServiceModel.csproj">
       <Project>{61266225-A0B6-4792-A8C2-2B99DD02927A}</Project>
       <Name>DevLib.ServiceModel</Name>
@@ -191,6 +195,10 @@
     <ProjectReference Include="..\DevLib.WinForms\DevLib.WinForms.csproj">
       <Project>{73AF4976-0D28-4EB8-852E-2B375B6EBC33}</Project>
       <Name>DevLib.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Xml\DevLib.Xml.csproj">
+      <Project>{2D70BC07-DC9D-4B2A-901A-7BBD53988B21}</Project>
+      <Name>DevLib.Xml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

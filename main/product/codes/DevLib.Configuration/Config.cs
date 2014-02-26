@@ -234,9 +234,9 @@ namespace DevLib.Configuration
 
             try
             {
-                if (this.CanConvertible(value.GetType()))
+                if (XmlConverter.CanConvert(value.GetType()))
                 {
-                    string valueString = Convert.ToString(value);
+                    string valueString = XmlConverter.ToString(value);
 
                     if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
                     {
@@ -341,7 +341,7 @@ namespace DevLib.Configuration
                 {
                     try
                     {
-                        return this.ConvertTo<T>(this._configuration.AppSettings.Settings[key].Value);
+                        return XmlConverter.ToObject<T>(this._configuration.AppSettings.Settings[key].Value);
                     }
                     catch (Exception e)
                     {
@@ -398,7 +398,7 @@ namespace DevLib.Configuration
                 {
                     try
                     {
-                        return (T)Convert.ChangeType(this._configuration.AppSettings.Settings[key].Value, typeof(T));
+                        return XmlConverter.ToObject<T>(this._configuration.AppSettings.Settings[key].Value);
                     }
                     catch
                     {
@@ -519,72 +519,6 @@ namespace DevLib.Configuration
         private bool ArrayContains(string[] array, string item)
         {
             return Array.IndexOf(array, item) >= array.GetLowerBound(0);
-        }
-
-        /// <summary>
-        /// Method CanConvertible.
-        /// </summary>
-        /// <param name="source">Source Type.</param>
-        /// <returns>true if the source Type inherit IConvertible interface; otherwise, false.</returns>
-        private bool CanConvertible(Type source)
-        {
-            return source.GetInterface("IConvertible") != null || source.Equals(typeof(Guid));
-        }
-
-        /// <summary>
-        /// Converts an object to the specified target type or returns the default value if those two types are not convertible.
-        /// </summary>
-        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
-        /// <param name="source">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
-        /// <returns>The target type object.</returns>
-        private T ConvertTo<T>(object source, T defaultValue = default(T), bool throwOnError = false)
-        {
-            if (source == null)
-            {
-                if (throwOnError)
-                {
-                    throw new ArgumentNullException("source");
-                }
-
-                return default(T);
-            }
-
-            try
-            {
-                var targetType = typeof(T);
-
-                if (source.GetType() == targetType)
-                {
-                    return (T)source;
-                }
-
-                var converter = TypeDescriptor.GetConverter(source);
-                if (converter != null && converter.CanConvertTo(targetType))
-                {
-                    return (T)converter.ConvertTo(source, targetType);
-                }
-
-                converter = TypeDescriptor.GetConverter(targetType);
-                if (converter != null && converter.CanConvertFrom(source.GetType()))
-                {
-                    return (T)converter.ConvertFrom(source);
-                }
-
-                throw new InvalidOperationException();
-            }
-            catch
-            {
-                if (throwOnError)
-                {
-                    throw;
-                }
-                else
-                {
-                    return defaultValue;
-                }
-            }
         }
 
         /// <summary>

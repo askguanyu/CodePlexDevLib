@@ -39,6 +39,7 @@ namespace DevLib.Samples
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
     using DevLib.Dynamic;
+    using DevLib.Expressions;
     using DevLib.ExtensionMethods;
     using DevLib.Ioc;
     using DevLib.Logging;
@@ -47,12 +48,14 @@ namespace DevLib.Samples
     using DevLib.Net.Ftp;
     using DevLib.Net.Sockets;
     using DevLib.Reflection;
+    using DevLib.Serialization;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;
     using DevLib.TerminalServices;
     using DevLib.Timers;
     using DevLib.Utilities;
     using DevLib.WinForms;
+    using DevLib.Xml;
 
     public class Program
     {
@@ -171,6 +174,8 @@ namespace DevLib.Samples
             dynamic jsonObj = DynamicJson.Parse(aPerson.SerializeJsonString());
             dynamic xmlObj = DynamicXml.Parse(aPerson.SerializeXml(true));
 
+            xmlObj.C = DateTime.Now;
+
             SpellingOptions foo = xmlObj.Foo;
 
             int id = xmlObj.ID;
@@ -196,14 +201,14 @@ namespace DevLib.Samples
 
             //foreach (var item in jsonObj)
             //{
-                
+
             //    var aa=item.Key;
             //    var b = item.ToString();
             //}
 
             //jsonObj["ID"] = 1;
 
-            
+
 
             Console.WriteLine("done");
 

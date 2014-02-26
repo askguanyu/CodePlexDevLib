@@ -8,7 +8,7 @@ using System.Reflection;
 /// <summary>
 /// This file contains common AssemblyVersion data to be shared across all projects in solution.
 /// </summary>
-[assembly: AssemblyDescription(".Net Development Library")]
+[assembly: AssemblyDescription("dot Net Development Library")]
 [assembly: AssemblyCompany("YuGuan")]
 [assembly: AssemblyProduct("DevLib")]
 [assembly: AssemblyCopyright("YuGuan Copyright © 2014")]

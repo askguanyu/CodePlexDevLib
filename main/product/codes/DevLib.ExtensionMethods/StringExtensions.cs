@@ -180,12 +180,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>All digits contained within the input string.</returns>
         public static string ExtractDigits(this string source)
         {
-            if (source.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
-
-            return source.Where(char.IsDigit).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+            return source.ExtractChars(char.IsDigit);
         }
 
         /// <summary>
@@ -195,12 +190,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>All letters contained within the input string.</returns>
         public static string ExtractLetters(this string source)
         {
-            if (source.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
-
-            return source.Where(char.IsLetter).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+            return source.ExtractChars(char.IsLetter);
         }
 
         /// <summary>
@@ -210,12 +200,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>All symbols contained within the input string.</returns>
         public static string ExtractSymbols(this string source)
         {
-            if (source.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
-
-            return source.Where(char.IsSymbol).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+            return source.ExtractChars(char.IsSymbol);
         }
 
         /// <summary>
@@ -225,12 +210,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>All control chars contained within the input string.</returns>
         public static string ExtractControlChars(this string source)
         {
-            if (source.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
-
-            return source.Where(char.IsControl).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+            return source.ExtractChars(char.IsControl);
         }
 
         /// <summary>
@@ -240,12 +220,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>All letters and digits contained within the input string.</returns>
         public static string ExtractLettersDigits(this string source)
         {
-            if (source.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
-
-            return source.Where(char.IsLetterOrDigit).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+            return source.ExtractChars(char.IsLetterOrDigit);
         }
 
         /// <summary>

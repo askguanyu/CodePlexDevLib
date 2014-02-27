@@ -185,7 +185,83 @@ namespace DevLib.ExtensionMethods
                 return string.Empty;
             }
 
-            return source.Where(char.IsDigit).Aggregate(new StringBuilder(source.Length), (stringBuilder, digi) => stringBuilder.Append(digi)).ToString();
+            return source.Where(char.IsDigit).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+        }
+
+        /// <summary>
+        /// Extracts all letters from a string.
+        /// </summary>
+        /// <param name="source">String containing letters to extract.</param>
+        /// <returns>All letters contained within the input string.</returns>
+        public static string ExtractLetters(this string source)
+        {
+            if (source.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+
+            return source.Where(char.IsLetter).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+        }
+
+        /// <summary>
+        /// Extracts all symbols from a string.
+        /// </summary>
+        /// <param name="source">String containing symbols to extract.</param>
+        /// <returns>All symbols contained within the input string.</returns>
+        public static string ExtractSymbols(this string source)
+        {
+            if (source.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+
+            return source.Where(char.IsSymbol).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+        }
+
+        /// <summary>
+        /// Extracts all control chars from a string.
+        /// </summary>
+        /// <param name="source">String containing control chars to extract.</param>
+        /// <returns>All control chars contained within the input string.</returns>
+        public static string ExtractControlChars(this string source)
+        {
+            if (source.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+
+            return source.Where(char.IsControl).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+        }
+
+        /// <summary>
+        /// Extracts all letters and digits from a string.
+        /// </summary>
+        /// <param name="source">String containing letters and digits to extract.</param>
+        /// <returns>All letters and digits contained within the input string.</returns>
+        public static string ExtractLettersDigits(this string source)
+        {
+            if (source.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+
+            return source.Where(char.IsLetterOrDigit).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
+        }
+
+        /// <summary>
+        /// Extracts all chars satisfy the condition from a string.
+        /// </summary>
+        /// <param name="source">String containing satisfied chars to extract.</param>
+        /// <param name="predicate">A function to test char for a condition.</param>
+        /// <returns>All satisfied chars contained within the input string.</returns>
+        public static string ExtractChars(this string source, Func<char, bool> predicate)
+        {
+            if (source.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+
+            return source.Where(predicate).Aggregate(new StringBuilder(source.Length), (stringBuilder, item) => stringBuilder.Append(item)).ToString();
         }
 
         /// <summary>

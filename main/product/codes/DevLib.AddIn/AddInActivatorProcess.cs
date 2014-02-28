@@ -102,6 +102,7 @@ namespace DevLib.AddIn
             processStartInfo.RedirectStandardError = true;
             processStartInfo.RedirectStandardOutput = true;
             processStartInfo.UseShellExecute = false;
+            processStartInfo.Verb = "runas";
             processStartInfo.WorkingDirectory = this._addInDomainSetup.WorkingDirectory;
 
             if (this._addInDomainSetup.EnvironmentVariables != null)

@@ -106,6 +106,7 @@ namespace DevLib.DaemonProcess
                 startInfo.CreateNoWindow = true;
                 startInfo.ErrorDialog = false;
                 startInfo.UseShellExecute = false;
+                startInfo.Verb = "runas";
 
                 int exitCode = 0;
 

@@ -97,8 +97,9 @@ args[5] = args                       : protected process args");
                     protectedProcessDelaySeconds = 0;
                 }
             }
-            catch
+            catch(Exception e)
             {
+                ExceptionHandler.Log(e);
             }
 
             string protectedProcessMode = args[3];
@@ -135,8 +136,9 @@ args[5] = args                       : protected process args");
                                     break;
                                 }
                             }
-                            catch
+                            catch (Exception e)
                             {
+                                ExceptionHandler.Log(e);
                             }
                         }
 
@@ -187,8 +189,9 @@ args[5] = args                       : protected process args");
                                 }
                             }
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            ExceptionHandler.Log(e);
                         }
                     }
 
@@ -210,8 +213,9 @@ args[5] = args                       : protected process args");
                         {
                             protectedProcess = Process.GetProcessById(protectedProcessId);
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            ExceptionHandler.Log(e);
                         }
                     }
 
@@ -227,8 +231,9 @@ args[5] = args                       : protected process args");
 
                                 protectedProcess = null;
                             }
-                            catch
+                            catch (Exception e)
                             {
+                                ExceptionHandler.Log(e);
                             }
                         }
 
@@ -257,8 +262,9 @@ args[5] = args                       : protected process args");
                                     }
                                 }
                             }
-                            catch
+                            catch (Exception e)
                             {
+                                ExceptionHandler.Log(e);
                             }
                         }
 
@@ -273,8 +279,9 @@ args[5] = args                       : protected process args");
                                 startInfo.WorkingDirectory = Path.GetDirectoryName(Path.GetFullPath(protectedProcessEntryPoint));
                                 protectedProcess = Process.Start(startInfo);
                             }
-                            catch
+                            catch (Exception e)
                             {
+                                ExceptionHandler.Log(e);
                             }
                         }
                     }

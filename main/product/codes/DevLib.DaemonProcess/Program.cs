@@ -7,6 +7,7 @@ namespace DevLib.DaemonProcess
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
@@ -261,6 +262,9 @@ args[5] = args                       : protected process args");
                                         }
                                     }
                                 }
+                            }
+                            catch (Win32Exception)
+                            {
                             }
                             catch (Exception e)
                             {

@@ -37,6 +37,8 @@ namespace DevLib.DaemonProcess
 
             if (args == null || args.Length == 0)
             {
+                ExceptionHandler.Log(new ArgumentNullException("args"));
+
                 Console.WriteLine(
 @"args[0] = guid                       : daemon process guid
 args[1] = process id | -stop         : protected process id | stop protecting
@@ -80,6 +82,8 @@ args[5] = args                       : protected process args");
 
             if (args.Length < 4)
             {
+                ExceptionHandler.Log(new ArgumentOutOfRangeException("args"));
+
                 Environment.Exit(-1);
             }
 
@@ -98,7 +102,7 @@ args[5] = args                       : protected process args");
                     protectedProcessDelaySeconds = 0;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 ExceptionHandler.Log(e);
             }
@@ -238,7 +242,7 @@ args[5] = args                       : protected process args");
                             }
                         }
 
-                        foreach (Process item in Process.GetProcesses())
+                        foreach (Process item in Process.GetProcessesByName(Path.GetFileNameWithoutExtension(protectedProcessEntryPoint)))
                         {
                             try
                             {

@@ -14,10 +14,10 @@ namespace DevLib.DaemonProcess
     /// <summary>
     /// Class DaemonProcessHelper.
     /// </summary>
-    internal static class DaemonProcessHelper
+    public static class DaemonProcessHelper
     {
         /// <summary>
-        /// Method GetCommandLineByProcessId.
+        /// Get command line string by process Id.
         /// </summary>
         /// <param name="processId">Process id.</param>
         /// <returns>Command line string.</returns>
@@ -62,10 +62,78 @@ namespace DevLib.DaemonProcess
         }
 
         /// <summary>
-        /// Method GetCommandLineArguments.
+        /// Get argument list.
+        /// </summary>
+        /// <param name="args">Arguments string.</param>
+        /// <returns>Argument list.</returns>
+        public static List<string> GetArguments(string args)
+        {
+            List<string> result = new List<string>();
+
+            if (string.IsNullOrEmpty(args))
+            {
+                return result;
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            uint splitSwitch = 0;
+
+            foreach (char item in args.Trim())
+            {
+                if (splitSwitch % 2 == 1)
+                {
+                    if (!item.Equals('\"'))
+                    {
+                        stringBuilder.Append(item);
+                        continue;
+                    }
+                    else
+                    {
+                        splitSwitch += 1;
+                        result.Add(stringBuilder.ToString());
+                        stringBuilder.Remove(0, stringBuilder.Length);
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (item.Equals('\"'))
+                    {
+                        splitSwitch += 1;
+                        continue;
+                    }
+
+                    if (!item.Equals(' '))
+                    {
+                        stringBuilder.Append(item);
+                        continue;
+                    }
+                    else
+                    {
+                        if (stringBuilder.Length > 0)
+                        {
+                            result.Add(stringBuilder.ToString());
+                            stringBuilder.Remove(0, stringBuilder.Length);
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            if (stringBuilder.Length > 0)
+            {
+                result.Add(stringBuilder.ToString());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get argument list from command line.
         /// </summary>
         /// <param name="commandLine">Command line string.</param>
-        /// <returns>Command line arguments</returns>
+        /// <returns>Command line argument list.</returns>
         public static List<string> GetCommandLineArguments(string commandLine)
         {
             List<string> result = new List<string>();
@@ -150,14 +218,16 @@ namespace DevLib.DaemonProcess
         }
 
         /// <summary>
-        /// Method IsCommandLineArgumentsEquals.
+        /// Compare if two argument lists are equal or not.
         /// </summary>
-        /// <param name="argsA">The first CommandLineArguments.</param>
-        /// <param name="argsB">The second CommandLineArguments.</param>
-        /// <param name="stringComparison">One of the System.StringComparison values.</param>
-        /// <returns>true if two command line arguments are same;otherwise, false.</returns>
-        public static bool CommandLineArgumentsEquals(IList<string> argsA, IList<string> argsB, StringComparison stringComparison)
+        /// <param name="argsA">The first argument list.</param>
+        /// <param name="argsB">The second argument list.</param>
+        /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparison.</param>
+        /// <returns>true if two command line arguments are equal;otherwise, false.</returns>
+        public static bool CommandLineArgumentsEquals(IList<string> argsA, IList<string> argsB, StringComparison comparisonType)
         {
+            string.Compare("", "", StringComparison.OrdinalIgnoreCase);
+
             if (object.ReferenceEquals(argsA, argsB))
             {
                 return true;
@@ -175,7 +245,7 @@ namespace DevLib.DaemonProcess
 
             for (int i = 0; i < argsA.Count; i++)
             {
-                if (!argsA[i].Trim('\"').Equals(argsB[i].Trim('\"'), stringComparison))
+                if (!argsA[i].Trim('\"').Equals(argsB[i].Trim('\"'), comparisonType))
                 {
                     return false;
                 }

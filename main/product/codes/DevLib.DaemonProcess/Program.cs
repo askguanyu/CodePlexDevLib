@@ -10,6 +10,7 @@ namespace DevLib.DaemonProcess
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.IO;
     using System.ServiceProcess;
     using System.Threading;
 
@@ -265,14 +266,12 @@ args[5] = args                       : protected process args");
                         {
                             try
                             {
-                                if (protectedProcessArgs == null || protectedProcessArgs.Length < 1)
-                                {
-                                    protectedProcess = Process.Start(protectedProcessEntryPoint);
-                                }
-                                else
-                                {
-                                    protectedProcess = Process.Start(protectedProcessEntryPoint, string.Join(" ", protectedProcessArgs));
-                                }
+                                ProcessStartInfo startInfo = new ProcessStartInfo();
+                                startInfo.FileName = Path.GetFullPath(protectedProcessEntryPoint);
+                                startInfo.Arguments = (protectedProcessArgs == null || protectedProcessArgs.Length < 1) ? string.Empty : string.Join(" ", protectedProcessArgs);
+                                startInfo.Verb = "runas";
+                                startInfo.WorkingDirectory = Path.GetDirectoryName(Path.GetFullPath(protectedProcessEntryPoint));
+                                protectedProcess = Process.Start(startInfo);
                             }
                             catch
                             {

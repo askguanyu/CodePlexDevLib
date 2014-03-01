@@ -1202,6 +1202,44 @@ namespace DevLib.Samples
             //Console.WriteLine("udp client sent.");
             //Console.ReadKey();
 
+            AsyncSocketUdpServer s1 = new AsyncSocketUdpServer(999);
+            AsyncSocketUdpServer s2 = new AsyncSocketUdpServer(999);
+            AsyncSocketUdpServer s3 = new AsyncSocketUdpServer(999);
+
+            s1.DataReceived += (s, e) => { Console.WriteLine("s1 " + e.DataTransferred.ToEncodingString()); };
+            s2.DataReceived += (s, e) => { Console.WriteLine("s2 " + e.DataTransferred.ToEncodingString()); };
+            s3.DataReceived += (s, e) => { Console.WriteLine("s3 " + e.DataTransferred.ToEncodingString()); };
+
+            s1.Start(true);
+            s2.Start(true);
+            s3.Start(true);
+
+
+
+            AsyncSocketUdpClient c1 = new AsyncSocketUdpClient("127.0.0.1", 999);
+            c1.Start();
+            for (int i = 0; i < 9; i++)
+            {
+                c1.Send(i.ToString().ToByteArray());
+                Thread.Sleep(100);
+            }
+            s1.Stop();
+            c1.Stop();
+            c1.Start();
+            for (int i = 9; i < 19; i++)
+            {
+                c1.Send(i.ToString().ToByteArray());
+                Thread.Sleep(100);
+            }
+            s2.Stop();
+            for (int i = 99; i < 109; i++)
+            {
+                c1.Send(i.ToString().ToByteArray());
+                Thread.Sleep(100);
+            }
+            Console.ReadLine();
+
+
             AddInDomain tcpdomain = null;
 
             try

@@ -236,6 +236,7 @@ namespace DevLib.Net.Sockets
                     this.ClearSessionDictionary();
 
                     this._listenSocket = new Socket(localIPEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    this._listenSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                     this._listenSocket.UseOnlyOverlappedIO = true;
                     this._listenSocket.Bind(localIPEndPoint);
                     this._listenSocket.Listen(AsyncSocketTcpServerConstants.Backlog);

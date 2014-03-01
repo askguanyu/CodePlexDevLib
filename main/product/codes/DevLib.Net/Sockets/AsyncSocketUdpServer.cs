@@ -167,6 +167,7 @@ namespace DevLib.Net.Sockets
                     this.CloseReceiveSocketAsyncEventArgs();
 
                     this._listenSocket = new Socket(localIPEndPoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+                    this._listenSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                     this._listenSocket.UseOnlyOverlappedIO = true;
                     this._listenSocket.Bind(localIPEndPoint);
 

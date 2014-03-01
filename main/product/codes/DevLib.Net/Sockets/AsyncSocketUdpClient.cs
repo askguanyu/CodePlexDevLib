@@ -172,6 +172,8 @@ namespace DevLib.Net.Sockets
 
             if (!this.IsRunning)
             {
+                this.IsRunning = true;
+
                 try
                 {
                     this._remoteIPEndPoint = new IPEndPoint(IPAddress.Parse(this.RemoteIP), this.RemotePort);
@@ -179,16 +181,12 @@ namespace DevLib.Net.Sockets
                     this.CloseClientSocket();
 
                     this._clientSocket = new Socket(this._remoteIPEndPoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
-
+                    this._clientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                     this._clientSocket.UseOnlyOverlappedIO = true;
 
                     this.SessionId = this._clientSocket.GetHashCode();
-
                     Debug.WriteLine(AsyncSocketUdpClientConstants.UdpClientStartSucceeded);
-
                     this.RaiseEvent(this.Started);
-
-                    this.IsRunning = true;
 
                     return true;
                 }
@@ -228,6 +226,8 @@ namespace DevLib.Net.Sockets
 
             if (this.IsRunning)
             {
+                this.IsRunning = false;
+
                 try
                 {
                     this.CloseClientSocket();
@@ -262,8 +262,6 @@ namespace DevLib.Net.Sockets
                     GC.WaitForPendingFinalizers();
                     GC.Collect();
                 }
-
-                this.IsRunning = false;
             }
 
             return false;

@@ -15,7 +15,7 @@ namespace DevLib.ServiceProcess
         /// <summary>
         /// Gets or sets WindowsServiceSetup instance.
         /// </summary>
-        WindowsServiceSetup WindowsServiceSetupInfo
+        WindowsServiceSetup SetupInfo
         {
             get;
             set;

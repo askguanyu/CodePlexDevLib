@@ -13,61 +13,101 @@ namespace DevLib.ServiceProcess
     /// <summary>
     /// Class WindowsServiceConsole.
     /// </summary>
-    internal static class WindowsServiceConsole
+    internal class WindowsServiceConsole
     {
         /// <summary>
         /// Field _args.
         /// </summary>
-        private static string[] _args;
+        private string[] _args;
 
         /// <summary>
-        /// Field _serviceStatus.
+        /// Field _isConsoleMode.
         /// </summary>
-        private static ServiceControllerStatus _serviceStatus;
+        private bool _isConsoleMode = true;
+
+        /// <summary>
+        /// Field _setupInfo.
+        /// </summary>
+        private WindowsServiceSetup _setupInfo;
+
+        /// <summary>
+        /// Field _consoleStatus.
+        /// </summary>
+        private ServiceControllerStatus _consoleStatus;
 
         /// <summary>
         /// Field _windowsService.
         /// </summary>
-        private static IWindowsService _windowsService;
+        private IWindowsService _windowsService;
+
+        /// <summary>
+        /// Gets the status of the service.
+        /// </summary>
+        public ServiceControllerStatus ServiceStatus
+        {
+            get
+            {
+                return WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName) ? WindowsServiceBase.GetServiceStatus(this._setupInfo.ServiceName) : ServiceControllerStatus.Stopped;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether run service in console mode or not.
+        /// </summary>
+        public bool IsConsoleMode
+        {
+            get
+            {
+                return this._isConsoleMode;
+            }
+
+            private set
+            {
+                this._isConsoleMode = value;
+                Console.ResetColor();
+                Console.BackgroundColor = value ? ConsoleColor.Black : ConsoleColor.DarkBlue;
+            }
+        }
 
         /// <summary>
         /// Method Run.
         /// </summary>
         /// <param name="windowsService">IWindowsService instance.</param>
+        /// <param name="isConsoleMode">true to start in console mode; otherwise, start in windows service mode.</param>
         /// <param name="args">Command line arguments.</param>
-        public static void Run(IWindowsService windowsService, string[] args)
+        public void Run(IWindowsService windowsService, bool isConsoleMode, string[] args)
         {
-            _windowsService = windowsService;
-            _args = args;
-            ////_serviceStatus = WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName) ? WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName) : ServiceControllerStatus.Stopped;
-            _serviceStatus = ServiceControllerStatus.Stopped;
-
-            RunWindowsServiceConsole();
+            this._windowsService = windowsService;
+            this.IsConsoleMode = isConsoleMode;
+            this._args = args;
+            this._consoleStatus = ServiceControllerStatus.Stopped;
+            this._setupInfo = windowsService.WindowsServiceSetupInfo.Clone() as WindowsServiceSetup;
+            this.RunWindowsServiceConsole();
         }
 
         /// <summary>
         /// Method RunWindowsServiceConsole.
         /// </summary>
-        private static void RunWindowsServiceConsole()
+        private void RunWindowsServiceConsole()
         {
-            WriteToConsole(ConsoleColor.Yellow, "[Launching Windows Service in console...]");
-            WriteServiceInfo();
+            this.WriteToConsole(ConsoleColor.Yellow, "[Launching Windows Service in console...]");
+            this.WriteServiceInfo();
 
             bool canContinue = true;
 
             while (canContinue)
             {
                 Console.WriteLine();
-                WriteCommandInfo();
-                canContinue = HandleConsoleInput(Console.ReadLine());
+                this.WriteCommandInfo();
+                canContinue = this.HandleConsoleInput(Console.ReadLine());
             }
 
             try
             {
-                WriteToConsole(ConsoleColor.Yellow, "[Windows Service is exiting...]");
-                _windowsService.OnStop();
-                _windowsService.OnShutdown();
-                WriteToConsole(ConsoleColor.Yellow, "[Windows Service has exited.]");
+                this.WriteToConsole(ConsoleColor.Yellow, "[Windows Service is exiting...]");
+                this._windowsService.OnStop();
+                this._windowsService.OnShutdown();
+                this.WriteToConsole(ConsoleColor.Yellow, "[Windows Service has exited.]");
             }
             catch (Exception e)
             {
@@ -80,196 +120,80 @@ namespace DevLib.ServiceProcess
         /// </summary>
         /// <param name="input">Console input.</param>
         /// <returns>true if can continue; otherwise, false.</returns>
-        private static bool HandleConsoleInput(string input)
+        private bool HandleConsoleInput(string input)
         {
             bool canContinue = true;
-            ServiceControllerStatus originalStatus = _serviceStatus;
 
-            if (input != null)
+            Console.WriteLine();
+
+            if (!string.IsNullOrEmpty(input))
             {
-                switch (input.ToUpper(CultureInfo.InvariantCulture))
+                if (input.StartsWith("n ", true, CultureInfo.InvariantCulture) && input.Length > 2)
                 {
-                    case "S":
-
-                        Console.WriteLine();
-
-                        if (_serviceStatus == ServiceControllerStatus.Stopped)
-                        {
-                            try
-                            {
-                                _serviceStatus = ServiceControllerStatus.StartPending;
-                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
-                                {
-                                    _windowsService.OnStart(_args);
-                                    _serviceStatus = ServiceControllerStatus.Running;
-                                }
-                                ////else
-                                ////{
-                                ////    WindowsServiceBase.Start(_windowsService.WindowsServiceSetupInfo.ServiceName, _args);
-                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                ////}
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionHandler.Log(e);
-                                _serviceStatus = originalStatus;
-                            }
-                        }
-
-                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                        break;
-
-                    case "T":
-
-                        Console.WriteLine();
-
-                        if (_serviceStatus == ServiceControllerStatus.Running || _serviceStatus == ServiceControllerStatus.Paused)
-                        {
-                            try
-                            {
-                                _serviceStatus = ServiceControllerStatus.StopPending;
-                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
-                                {
-                                    _windowsService.OnStop();
-                                    _serviceStatus = ServiceControllerStatus.Stopped;
-                                }
-                                ////else
-                                ////{
-                                ////    WindowsServiceBase.Stop(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                ////}
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionHandler.Log(e);
-                                _serviceStatus = originalStatus;
-                            }
-                        }
-
-                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                        break;
-
-                    case "P":
-
-                        Console.WriteLine();
-
-                        if (_serviceStatus == ServiceControllerStatus.Running)
-                        {
-                            try
-                            {
-                                _serviceStatus = ServiceControllerStatus.PausePending;
-                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
-                                {
-                                    _windowsService.OnPause();
-                                    _serviceStatus = ServiceControllerStatus.Paused;
-                                }
-                                ////else
-                                ////{
-                                ////    WindowsServiceBase.Pause(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                ////}
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionHandler.Log(e);
-                                _serviceStatus = originalStatus;
-                            }
-                        }
-
-                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                        break;
-
-                    case "R":
-
-                        Console.WriteLine();
-
-                        if (_serviceStatus == ServiceControllerStatus.Paused)
-                        {
-                            try
-                            {
-                                _serviceStatus = ServiceControllerStatus.ContinuePending;
-                                WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                                ////if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
-                                {
-                                    _windowsService.OnContinue();
-                                    _serviceStatus = ServiceControllerStatus.Running;
-                                }
-                                ////else
-                                ////{
-                                ////    WindowsServiceBase.Continue(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                ////    _serviceStatus = WindowsServiceBase.GetServiceStatus(_windowsService.WindowsServiceSetupInfo.ServiceName);
-                                ////}
-                            }
-                            catch (Exception e)
-                            {
-                                ExceptionHandler.Log(e);
-                                _serviceStatus = originalStatus;
-                            }
-                        }
-
-                        WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", _serviceStatus));
-
-                        break;
-
-                    case "I":
-
-                        Console.WriteLine();
-
-                        if (!WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
-                        {
-                            WindowsServiceInstaller.RuntimeInstall(_windowsService.WindowsServiceSetupInfo);
-                        }
-                        else
-                        {
-                            WriteToConsole(ConsoleColor.Red, "The specified service already exists.", true, false);
-                        }
-
-                        break;
-
-                    case "U":
-
-                        Console.WriteLine();
-
-                        if (WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName))
-                        {
-                            WindowsServiceInstaller.RuntimeUninstall(_windowsService.WindowsServiceSetupInfo);
-                        }
-                        else
-                        {
-                            WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
-                        }
-
-                        break;
-
-                    case "A":
-
-                        Console.WriteLine();
-                        WriteServiceInfo();
-                        break;
-
-                    case "Q":
-
-                        canContinue = false;
-                        break;
-
-                    case "":
-                    case "\n":
-                    case "\r\n":
-                        break;
-
-                    default:
-                        WriteToConsole(ConsoleColor.Red, string.Format("\"{0}\" is not recognized as a valid command.", input), true, false);
-                        break;
+                    this._setupInfo.ServiceName = input.Substring(2);
+                    this._setupInfo.DisplayName = this._setupInfo.ServiceName;
+                }
+                else if (input.StartsWith("i ", true, CultureInfo.InvariantCulture) && input.Length > 2)
+                {
+                    this._setupInfo.ServiceName = input.Substring(2);
+                    this._setupInfo.DisplayName = this._setupInfo.ServiceName;
+                    this.Install();
+                }
+                else if (input.StartsWith("u ", true, CultureInfo.InvariantCulture) && input.Length > 2)
+                {
+                    this._setupInfo.ServiceName = input.Substring(2);
+                    this._setupInfo.DisplayName = this._setupInfo.ServiceName;
+                    this.Uninstall();
+                }
+                else
+                {
+                    switch (input.ToLowerInvariant())
+                    {
+                        case "o":
+                            this._setupInfo.ServiceName = this._windowsService.WindowsServiceSetupInfo.ServiceName;
+                            this._setupInfo.DisplayName = this._windowsService.WindowsServiceSetupInfo.DisplayName;
+                            break;
+                        case "s":
+                            this.Start();
+                            break;
+                        case "t":
+                            this.Stop();
+                            break;
+                        case "p":
+                            this.Pause();
+                            break;
+                        case "r":
+                            this.Resume();
+                            break;
+                        case "e":
+                            this.Restart();
+                            break;
+                        case "c":
+                            this.IsConsoleMode = true;
+                            break;
+                        case "v":
+                            this.IsConsoleMode = false;
+                            break;
+                        case "i":
+                            this.Install();
+                            break;
+                        case "u":
+                            this.Uninstall();
+                            break;
+                        case "a":
+                            this.WriteServiceInfo();
+                            break;
+                        case "q":
+                            canContinue = false;
+                            break;
+                        case "\r":
+                        case "\n":
+                        case "\r\n":
+                            break;
+                        default:
+                            this.WriteToConsole(ConsoleColor.Red, string.Format("\"{0}\" is not recognized as a valid command.", input), true, false);
+                            break;
+                    }
                 }
             }
 
@@ -277,28 +201,301 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
+        /// Method Start.
+        /// </summary>
+        private void Start()
+        {
+            ServiceControllerStatus originalConsoleStatus = this._consoleStatus;
+
+            if (this.IsConsoleMode)
+            {
+                if (this._consoleStatus == ServiceControllerStatus.Stopped)
+                {
+                    this._consoleStatus = ServiceControllerStatus.StartPending;
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+
+                    try
+                    {
+                        this._windowsService.OnStart(this._args);
+                        this._consoleStatus = ServiceControllerStatus.Running;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                        this._consoleStatus = originalConsoleStatus;
+                    }
+                }
+
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+            }
+            else
+            {
+                if (WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
+                {
+                    if (this.ServiceStatus == ServiceControllerStatus.Stopped)
+                    {
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        WindowsServiceBase.Start(this._setupInfo.ServiceName, this._args);
+                    }
+
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                }
+                else
+                {
+                    this.WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method Stop.
+        /// </summary>
+        private void Stop()
+        {
+            ServiceControllerStatus originalConsoleStatus = this._consoleStatus;
+
+            if (this.IsConsoleMode)
+            {
+                if (this._consoleStatus == ServiceControllerStatus.Running || this._consoleStatus == ServiceControllerStatus.Paused)
+                {
+                    this._consoleStatus = ServiceControllerStatus.StopPending;
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+
+                    try
+                    {
+                        this._windowsService.OnStop();
+                        this._consoleStatus = ServiceControllerStatus.Stopped;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                        this._consoleStatus = originalConsoleStatus;
+                    }
+                }
+
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+            }
+            else
+            {
+                if (WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
+                {
+                    if (this.ServiceStatus == ServiceControllerStatus.Running || this.ServiceStatus == ServiceControllerStatus.Paused)
+                    {
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        WindowsServiceBase.Stop(this._setupInfo.ServiceName);
+                    }
+
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                }
+                else
+                {
+                    this.WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method Pause.
+        /// </summary>
+        private void Pause()
+        {
+            ServiceControllerStatus originalConsoleStatus = this._consoleStatus;
+
+            if (this.IsConsoleMode)
+            {
+                if (this._consoleStatus == ServiceControllerStatus.Running)
+                {
+                    this._consoleStatus = ServiceControllerStatus.PausePending;
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+
+                    try
+                    {
+                        this._windowsService.OnPause();
+                        this._consoleStatus = ServiceControllerStatus.Paused;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                        this._consoleStatus = originalConsoleStatus;
+                    }
+                }
+
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+            }
+            else
+            {
+                if (WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
+                {
+                    if (this.ServiceStatus == ServiceControllerStatus.Running)
+                    {
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        WindowsServiceBase.Pause(this._setupInfo.ServiceName);
+                    }
+
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                }
+                else
+                {
+                    this.WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method Resume.
+        /// </summary>
+        private void Resume()
+        {
+            ServiceControllerStatus originalConsoleStatus = this._consoleStatus;
+
+            if (this.IsConsoleMode)
+            {
+                if (this._consoleStatus == ServiceControllerStatus.Paused)
+                {
+                    this._consoleStatus = ServiceControllerStatus.ContinuePending;
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+
+                    try
+                    {
+                        this._windowsService.OnContinue();
+                        this._consoleStatus = ServiceControllerStatus.Running;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Log(e);
+                        this._consoleStatus = originalConsoleStatus;
+                    }
+                }
+
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+            }
+            else
+            {
+                if (WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
+                {
+                    if (this.ServiceStatus == ServiceControllerStatus.Paused)
+                    {
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        WindowsServiceBase.Continue(this._setupInfo.ServiceName);
+                    }
+
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                }
+                else
+                {
+                    this.WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method Restart.
+        /// </summary>
+        private void Restart()
+        {
+            ServiceControllerStatus originalConsoleStatus = this._consoleStatus;
+
+            if (this.IsConsoleMode)
+            {
+                this._consoleStatus = ServiceControllerStatus.StartPending;
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+
+                try
+                {
+                    this._windowsService.OnStop();
+                    originalConsoleStatus = ServiceControllerStatus.Stopped;
+
+                    this._windowsService.OnStart(this._args);
+                    this._consoleStatus = ServiceControllerStatus.Running;
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Log(e);
+                    this._consoleStatus = originalConsoleStatus;
+                }
+
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+            }
+            else
+            {
+                if (WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
+                {
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                    WindowsServiceBase.Stop(this._setupInfo.ServiceName);
+                    WindowsServiceBase.Start(this._setupInfo.ServiceName, this._args);
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                }
+                else
+                {
+                    this.WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method Install.
+        /// </summary>
+        private void Install()
+        {
+            if (!WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
+            {
+                WindowsServiceInstaller.RuntimeInstall(this._setupInfo);
+            }
+            else
+            {
+                this.WriteToConsole(ConsoleColor.Red, "The specified service already exists.", true, false);
+            }
+        }
+
+        /// <summary>
+        /// Method Uninstall.
+        /// </summary>
+        private void Uninstall()
+        {
+            if (WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
+            {
+                WindowsServiceInstaller.RuntimeUninstall(this._setupInfo);
+            }
+            else
+            {
+                this.WriteToConsole(ConsoleColor.Red, "The specified service does not exist as an installed service.", true, false);
+            }
+        }
+
+        /// <summary>
         /// Method WriteCommandInfo.
         /// </summary>
-        private static void WriteCommandInfo()
+        private void WriteCommandInfo()
         {
-            WriteToConsole(ConsoleColor.White, "[S]tart       S[t]op        [P]ause       [R]esume", true, false);
-            WriteToConsole(ConsoleColor.White, "[I]nstall     [U]ninstall   St[a]tus      [Q]uit", true, false);
-            WriteToConsole(ConsoleColor.White, "Enter:", false, false);
+            this.WriteToConsole(ConsoleColor.White, string.Format("[O]riginal: {0}", this._windowsService.WindowsServiceSetupInfo.ServiceName).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, string.Format("[N]ame:     {0}", this._setupInfo.ServiceName).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, string.Format("Mode:       {0}", this.IsConsoleMode ? "Console" : "Service").PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, string.Format("Status:     {0}", this.IsConsoleMode ? this._consoleStatus : this.ServiceStatus).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, string.Format("Installed:  {0}", WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName)).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, " ".PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, "[S]tart       S[t]op        [P]ause       [R]esume      R[e]start     ", true, false);
+            this.WriteToConsole(ConsoleColor.White, string.Format("{0}[I]nstall     [U]ninstall   St[a]tus      [Q]uit        ", this.IsConsoleMode ? "Ser[v]ice     " : "[C]onsole     "), true, false);
+            this.WriteToConsole(ConsoleColor.White, " ".PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, "Enter:", false, false);
         }
 
         /// <summary>
         /// Method WriteServiceInfo.
         /// </summary>
-        private static void WriteServiceInfo()
+        private void WriteServiceInfo()
         {
-            WriteToConsole(ConsoleColor.Yellow, new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) ? "[Run as Administrator]" : "[NOT run as Administrator]", true, false);
-            WriteToConsole(ConsoleColor.Yellow, string.Format("[Service Name:] {0}", _windowsService.WindowsServiceSetupInfo.ServiceName), true, false);
-            WriteToConsole(ConsoleColor.Yellow, string.Format("[Display Name:] {0}", _windowsService.WindowsServiceSetupInfo.DisplayName), true, false);
-            WriteToConsole(ConsoleColor.Yellow, string.Format("[Descriptione:] {0}", _windowsService.WindowsServiceSetupInfo.Description), true, false);
-            WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:      ] {0}", _serviceStatus), true, false);
-            WriteToConsole(ConsoleColor.Yellow, string.Format("[Installed:   ] {0}", WindowsServiceBase.ServiceExists(_windowsService.WindowsServiceSetupInfo.ServiceName)), true, false);
-            WriteToConsole(ConsoleColor.Yellow, string.Format("[Assembly:    ] {0}", _windowsService.WindowsServiceSetupInfo.ServiceAssembly.FullName), true, false);
-            WriteToConsole(ConsoleColor.Yellow, string.Format("[AssemblyFile:] {0}", _windowsService.WindowsServiceSetupInfo.ServiceAssembly.Location), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, string.Format("Administrator: {0}", new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator)).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, string.Format("Service Name:  {0}", this._setupInfo.ServiceName).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, string.Format("Display Name:  {0}", this._setupInfo.DisplayName).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, string.Format("Mode:          {0}", this.IsConsoleMode ? "Console" : "Service").PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, string.Format("Status:        {0}", this.IsConsoleMode ? this._consoleStatus : this.ServiceStatus).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, string.Format("Installed:     {0}", WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName)).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "Description:".PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "  " + this._setupInfo.Description.PadRight(68), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "Assembly:".PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "  " + this._setupInfo.ServiceAssembly.FullName.PadRight(68), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "Assembly File: ".PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "  " + this._setupInfo.ServiceAssembly.Location.PadRight(68), true, false);
         }
 
         /// <summary>
@@ -308,25 +505,20 @@ namespace DevLib.ServiceProcess
         /// <param name="value">The value to write.</param>
         /// <param name="withNewLine">Whether followed by the current line terminator.</param>
         /// <param name="withTimestamp">Whether write timestamp.</param>
-        private static void WriteToConsole(ConsoleColor foregroundColor, string value, bool withNewLine = true, bool withTimestamp = true)
+        private void WriteToConsole(ConsoleColor foregroundColor, string value, bool withNewLine = true, bool withTimestamp = true)
         {
             ConsoleColor originalForeColor = Console.ForegroundColor;
-            ConsoleColor originalBackgroundColor = Console.BackgroundColor;
 
             if (withNewLine)
             {
                 if (withTimestamp)
                 {
-                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
-                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), value));
                 }
                 else
                 {
-                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
-                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.WriteLine(value);
                 }
             }
@@ -334,23 +526,17 @@ namespace DevLib.ServiceProcess
             {
                 if (withTimestamp)
                 {
-                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
-                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.Write(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), value));
                 }
                 else
                 {
-                    Console.ResetColor();
                     Console.ForegroundColor = foregroundColor;
-                    Console.BackgroundColor = ConsoleColor.Black;
                     Console.Write(value);
                 }
             }
 
-            Console.ResetColor();
             Console.ForegroundColor = originalForeColor;
-            Console.BackgroundColor = originalBackgroundColor;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace DevLib.ServiceProcess
     /// Class WindowsServiceSetup.
     /// </summary>
     [Serializable]
-    public class WindowsServiceSetup
+    public class WindowsServiceSetup : ICloneable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowsServiceSetup" /> class.
@@ -217,6 +217,35 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
+        /// Creates a new object that is a deep copy of the current instance.
+        /// </summary>
+        /// <returns>A new object that is a deep copy of this instance.</returns>
+        public object Clone()
+        {
+            WindowsServiceSetup result = new WindowsServiceSetup();
+
+            result.Account = this.Account;
+            result.AutoLog = this.AutoLog;
+            result.CanHandlePowerEvent = this.CanHandlePowerEvent;
+            result.CanHandleSessionChangeEvent = this.CanHandleSessionChangeEvent;
+            result.CanPauseAndContinue = this.CanPauseAndContinue;
+            result.CanShutdown = this.CanShutdown;
+            result.CanStop = this.CanStop;
+            result.Description = this.Description;
+            result.DisplayName = this.DisplayName;
+            result.Password = this.Password;
+            result.RestartOnFailure = this.RestartOnFailure;
+            result.ServiceAssemblyPath = this.ServiceAssemblyPath;
+            result.ServiceName = this.ServiceName;
+            result.ServicesDependedOn = this.ServicesDependedOn;
+            result.StartAfterInstall = this.StartAfterInstall;
+            result.StartType = this.StartType;
+            result.Username = this.Username;
+
+            return result;
+        }
+
+        /// <summary>
         /// Method InitSetupInfo.
         /// </summary>
         private void InitSetupInfo()
@@ -224,7 +253,7 @@ namespace DevLib.ServiceProcess
             this.ServiceAssemblyPath = string.Empty;
             this.ServiceName = "DefaultServiceName";
             this.DisplayName = this.ServiceName;
-            this.Description = string.Format("{0} {1}", "Installed on", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
+            this.Description = string.Format("Installed on {0}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
 
             try
             {

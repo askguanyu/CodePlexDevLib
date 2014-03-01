@@ -257,10 +257,10 @@ namespace DevLib.Samples
                 Thread.Sleep(random.Next(5, 100));
             }
 
-            for (int i = 0; i < 100; i++)
-            {
-                LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, i.ToString(), DateTime.Now, Environment.UserName);
-            }
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, i.ToString(), DateTime.Now, Environment.UserName);
+            //}
 
             //Task.Factory.StartNew(() => 
             //{

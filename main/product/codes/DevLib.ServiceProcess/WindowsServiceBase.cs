@@ -29,7 +29,7 @@ namespace DevLib.ServiceProcess
 
             if (Environment.UserInteractive)
             {
-                WindowsServiceConsole.Run(windowsService, args);
+                (new WindowsServiceConsole()).Run(windowsService, true, args);
             }
             else
             {

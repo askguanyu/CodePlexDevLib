@@ -81,7 +81,7 @@ namespace DevLib.ServiceProcess
             this.IsConsoleMode = isConsoleMode;
             this._args = args;
             this._consoleStatus = ServiceControllerStatus.Stopped;
-            this._setupInfo = windowsService.SetupInfo.Clone() as WindowsServiceSetup;
+            this._setupInfo = windowsService.ServiceSetupInfo.Clone() as WindowsServiceSetup;
             this.RunWindowsServiceConsole();
         }
 
@@ -150,8 +150,8 @@ namespace DevLib.ServiceProcess
                     switch (input.ToLowerInvariant())
                     {
                         case "o":
-                            this._setupInfo.ServiceName = this._windowsService.SetupInfo.ServiceName;
-                            this._setupInfo.DisplayName = this._windowsService.SetupInfo.DisplayName;
+                            this._setupInfo.ServiceName = this._windowsService.ServiceSetupInfo.ServiceName;
+                            this._setupInfo.DisplayName = this._windowsService.ServiceSetupInfo.DisplayName;
                             break;
                         case "s":
                             this.Start();
@@ -467,7 +467,7 @@ namespace DevLib.ServiceProcess
         /// </summary>
         private void WriteCommandInfo()
         {
-            this.WriteToConsole(ConsoleColor.White, string.Format("[O]riginal: {0}", this._windowsService.SetupInfo.ServiceName).PadRight(70), true, false);
+            this.WriteToConsole(ConsoleColor.White, string.Format("[O]riginal: {0}", this._windowsService.ServiceSetupInfo.ServiceName).PadRight(70), true, false);
             this.WriteToConsole(ConsoleColor.White, string.Format("[N]ame:     {0}", this._setupInfo.ServiceName).PadRight(70), true, false);
             this.WriteToConsole(ConsoleColor.White, string.Format("Mode:       {0}", this.IsConsoleMode ? "Console" : "Service").PadRight(70), true, false);
             this.WriteToConsole(ConsoleColor.White, string.Format("Status:     {0}", this.IsConsoleMode ? this._consoleStatus : this.ServiceStatus).PadRight(70), true, false);

@@ -13,8 +13,8 @@ namespace DevLib.Samples
     {
         public ServiceProcessTestService()
         {
-            this.WindowsServiceSetupInfo = new WindowsServiceSetup("AAA");
-            base.InstallerSetupInfo = this.WindowsServiceSetupInfo;
+            this.SetupInfo = new WindowsServiceSetup("AAA");
+            base.InstallerSetupInfo = this.SetupInfo;
         }
 
         public void OnStart(string[] args)
@@ -58,7 +58,7 @@ namespace DevLib.Samples
             Console.WriteLine("OnCustomCommand");
         }
 
-        public WindowsServiceSetup WindowsServiceSetupInfo
+        public WindowsServiceSetup SetupInfo
         {
             get;
             set;

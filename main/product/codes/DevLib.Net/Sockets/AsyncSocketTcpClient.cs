@@ -209,6 +209,7 @@ namespace DevLib.Net.Sockets
                     this.CloseReceiveSocketAsyncEventArgs();
 
                     this._clientSocket = new Socket(remoteIPEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    this._clientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                     this._clientSocket.UseOnlyOverlappedIO = true;
 
                     this._connectSocketAsyncEventArgs = new SocketAsyncEventArgs();

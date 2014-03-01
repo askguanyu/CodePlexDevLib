@@ -20,13 +20,13 @@ namespace DevLib.ServiceProcess
         {
             this.WindowsService = windowsService;
 
-            this.AutoLog = this.WindowsService.SetupInfo.AutoLog;
-            this.CanHandlePowerEvent = this.WindowsService.SetupInfo.CanHandlePowerEvent;
-            this.CanHandleSessionChangeEvent = this.WindowsService.SetupInfo.CanHandleSessionChangeEvent;
-            this.CanPauseAndContinue = this.WindowsService.SetupInfo.CanPauseAndContinue;
-            this.CanShutdown = this.WindowsService.SetupInfo.CanShutdown;
-            this.CanStop = this.WindowsService.SetupInfo.CanStop;
-            this.ServiceName = this.WindowsService.SetupInfo.ServiceName;
+            this.AutoLog = this.WindowsService.ServiceSetupInfo.AutoLog;
+            this.CanHandlePowerEvent = this.WindowsService.ServiceSetupInfo.CanHandlePowerEvent;
+            this.CanHandleSessionChangeEvent = this.WindowsService.ServiceSetupInfo.CanHandleSessionChangeEvent;
+            this.CanPauseAndContinue = this.WindowsService.ServiceSetupInfo.CanPauseAndContinue;
+            this.CanShutdown = this.WindowsService.ServiceSetupInfo.CanShutdown;
+            this.CanStop = this.WindowsService.ServiceSetupInfo.CanStop;
+            this.ServiceName = this.WindowsService.ServiceSetupInfo.ServiceName;
         }
 
         /// <summary>

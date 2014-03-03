@@ -52,7 +52,7 @@
     </Compile>
     <Compile Include="DaemonProcessHelper.cs" />
     <Compile Include="DaemonProcessManager.cs" />
-    <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="NativeAPI\NativeMethods.cs" />
     <Compile Include="NativeAPI\NativeMethodsHelper.cs" />
     <Compile Include="NativeAPI\PEB.cs" />

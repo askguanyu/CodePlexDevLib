@@ -41,7 +41,7 @@ namespace DevLib.DaemonProcess
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                     }
                 }
             }

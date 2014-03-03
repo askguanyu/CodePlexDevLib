@@ -47,7 +47,7 @@ namespace DevLib.Configuration
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
         }
 
@@ -175,7 +175,7 @@ namespace DevLib.Configuration
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }
@@ -211,7 +211,7 @@ namespace DevLib.Configuration
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }
@@ -289,7 +289,7 @@ namespace DevLib.Configuration
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         throw;
                     }
@@ -303,7 +303,7 @@ namespace DevLib.Configuration
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         throw;
                     }
@@ -345,7 +345,7 @@ namespace DevLib.Configuration
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         throw;
                     }
@@ -359,7 +359,7 @@ namespace DevLib.Configuration
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         throw;
                     }
@@ -502,7 +502,7 @@ namespace DevLib.Configuration
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
             finally
             {

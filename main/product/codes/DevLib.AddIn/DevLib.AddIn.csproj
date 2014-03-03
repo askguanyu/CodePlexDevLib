@@ -52,7 +52,7 @@
     <Compile Include="AddInConstants.cs" />
     <Compile Include="AddInDomain.cs" />
     <Compile Include="AddInDomainSetup.cs" />
-    <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="AddInPlatformTarget.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

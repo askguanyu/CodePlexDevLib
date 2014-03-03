@@ -111,7 +111,7 @@ namespace DevLib.ServiceProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
         }
 
@@ -221,7 +221,7 @@ namespace DevLib.ServiceProcess
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                         this._consoleStatus = originalConsoleStatus;
                     }
                 }
@@ -268,7 +268,7 @@ namespace DevLib.ServiceProcess
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                         this._consoleStatus = originalConsoleStatus;
                     }
                 }
@@ -315,7 +315,7 @@ namespace DevLib.ServiceProcess
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                         this._consoleStatus = originalConsoleStatus;
                     }
                 }
@@ -362,7 +362,7 @@ namespace DevLib.ServiceProcess
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                         this._consoleStatus = originalConsoleStatus;
                     }
                 }
@@ -410,7 +410,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     this._consoleStatus = originalConsoleStatus;
                 }
 

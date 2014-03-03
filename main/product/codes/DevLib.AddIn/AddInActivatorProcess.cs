@@ -532,7 +532,7 @@ namespace DevLib.AddIn
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
 
             if (this._addInDomainSetup.DeleteOnUnload)
@@ -543,7 +543,7 @@ namespace DevLib.AddIn
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
 
                 try
@@ -552,7 +552,7 @@ namespace DevLib.AddIn
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
 
                 try
@@ -561,7 +561,7 @@ namespace DevLib.AddIn
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
         }

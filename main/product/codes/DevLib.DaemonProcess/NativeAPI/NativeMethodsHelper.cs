@@ -29,7 +29,7 @@ namespace DevLib.DaemonProcess.NativeAPI
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
 
             return result;
@@ -52,7 +52,7 @@ namespace DevLib.DaemonProcess.NativeAPI
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 return outPtr;
             }
@@ -72,7 +72,7 @@ namespace DevLib.DaemonProcess.NativeAPI
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
             finally
             {
@@ -124,7 +124,7 @@ namespace DevLib.DaemonProcess.NativeAPI
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
 
             return result;

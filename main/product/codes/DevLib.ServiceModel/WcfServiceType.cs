@@ -55,7 +55,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
 
@@ -88,7 +88,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
 
@@ -143,14 +143,14 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                         throw;
                     }
                 }
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
 
@@ -187,7 +187,7 @@ namespace DevLib.ServiceModel
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }

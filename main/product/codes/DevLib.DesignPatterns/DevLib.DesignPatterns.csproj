@@ -42,7 +42,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DisposePattern.cs" />
-    <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="IProducerConsumerQueue.cs" />
     <Compile Include="ProducerConsumer.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />

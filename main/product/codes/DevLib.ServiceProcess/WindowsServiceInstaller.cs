@@ -76,7 +76,7 @@ namespace DevLib.ServiceProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
             finally
             {
@@ -105,7 +105,7 @@ namespace DevLib.ServiceProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
             finally
             {
@@ -130,7 +130,7 @@ namespace DevLib.ServiceProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }
@@ -148,7 +148,7 @@ namespace DevLib.ServiceProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
         }
 
@@ -165,7 +165,7 @@ namespace DevLib.ServiceProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }

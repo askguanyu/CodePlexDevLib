@@ -61,7 +61,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     throw;
                 }
             }
@@ -142,7 +142,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     return false;
                 }
@@ -246,7 +246,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
                 finally
                 {
@@ -326,7 +326,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
                 finally
                 {
@@ -427,7 +427,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
 
@@ -489,7 +489,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
 
@@ -509,7 +509,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
         }
@@ -527,7 +527,7 @@ namespace DevLib.IO.Ports
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
         }

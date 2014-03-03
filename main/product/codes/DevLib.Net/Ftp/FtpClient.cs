@@ -133,7 +133,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -157,7 +157,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -202,7 +202,7 @@ namespace DevLib.Net.Ftp
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     if (throwOnError)
                     {
@@ -238,7 +238,7 @@ namespace DevLib.Net.Ftp
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     if (throwOnError)
                     {
@@ -281,7 +281,7 @@ namespace DevLib.Net.Ftp
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     if (throwOnError)
                     {
@@ -303,7 +303,7 @@ namespace DevLib.Net.Ftp
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     if (throwOnError)
                     {
@@ -335,7 +335,7 @@ namespace DevLib.Net.Ftp
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     if (throwOnError)
                     {
@@ -368,7 +368,7 @@ namespace DevLib.Net.Ftp
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     if (throwOnError)
                     {
@@ -401,7 +401,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -449,7 +449,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -495,7 +495,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -573,7 +573,7 @@ namespace DevLib.Net.Ftp
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         if (throwOnError)
                         {
@@ -598,7 +598,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -711,7 +711,7 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
 
                                     if (throwOnError)
                                     {
@@ -733,7 +733,7 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
 
                                     if (throwOnError)
                                     {
@@ -747,7 +747,7 @@ namespace DevLib.Net.Ftp
                     }
                 }
 
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -829,7 +829,7 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
 
                                     if (throwOnError)
                                     {
@@ -843,7 +843,7 @@ namespace DevLib.Net.Ftp
                     }
                 }
 
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -892,7 +892,7 @@ namespace DevLib.Net.Ftp
                     }
                 }
 
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -958,7 +958,7 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
 
                                     if (throwOnError)
                                     {
@@ -980,7 +980,7 @@ namespace DevLib.Net.Ftp
                                 }
                                 catch
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
 
                                     if (throwOnError)
                                     {
@@ -994,7 +994,7 @@ namespace DevLib.Net.Ftp
                     }
                 }
 
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -1026,7 +1026,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -1078,7 +1078,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -1115,7 +1115,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -1142,7 +1142,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -1169,7 +1169,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -1198,7 +1198,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {
@@ -1231,7 +1231,7 @@ namespace DevLib.Net.Ftp
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (throwOnError)
                 {

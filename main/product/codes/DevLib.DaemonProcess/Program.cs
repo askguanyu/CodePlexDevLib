@@ -37,7 +37,7 @@ namespace DevLib.DaemonProcess
 
             if (args == null || args.Length == 0)
             {
-                ExceptionHandler.Log(new ArgumentNullException("args"));
+                InternalLogger.Log(new ArgumentNullException("args"));
 
                 Console.WriteLine(
 @"args[0] = guid                       : daemon process guid
@@ -74,7 +74,7 @@ args[5] = args                       : protected process args");
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     Environment.Exit(-1);
                 }
@@ -82,7 +82,7 @@ args[5] = args                       : protected process args");
 
             if (args.Length < 4)
             {
-                ExceptionHandler.Log(new ArgumentOutOfRangeException("args"));
+                InternalLogger.Log(new ArgumentOutOfRangeException("args"));
 
                 Environment.Exit(-1);
             }
@@ -104,7 +104,7 @@ args[5] = args                       : protected process args");
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
 
             string protectedProcessMode = args[3];
@@ -143,7 +143,7 @@ args[5] = args                       : protected process args");
                             }
                             catch (Exception e)
                             {
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                         }
 
@@ -154,7 +154,7 @@ args[5] = args                       : protected process args");
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         Environment.Exit(-1);
                     }
@@ -167,7 +167,7 @@ args[5] = args                       : protected process args");
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         Environment.Exit(-1);
                     }
@@ -196,7 +196,7 @@ args[5] = args                       : protected process args");
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                     }
 
@@ -220,7 +220,7 @@ args[5] = args                       : protected process args");
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                     }
 
@@ -238,7 +238,7 @@ args[5] = args                       : protected process args");
                             }
                             catch (Exception e)
                             {
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                         }
 
@@ -272,7 +272,7 @@ args[5] = args                       : protected process args");
                             }
                             catch (Exception e)
                             {
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                         }
 
@@ -289,7 +289,7 @@ args[5] = args                       : protected process args");
                             }
                             catch (Exception e)
                             {
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                         }
                     }

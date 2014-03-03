@@ -79,7 +79,7 @@ namespace DevLib.Configuration
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
         }
 
@@ -199,7 +199,7 @@ namespace DevLib.Configuration
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }
@@ -228,7 +228,7 @@ namespace DevLib.Configuration
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }
@@ -286,7 +286,7 @@ namespace DevLib.Configuration
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         throw;
                     }
@@ -330,7 +330,7 @@ namespace DevLib.Configuration
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         throw;
                     }
@@ -375,7 +375,7 @@ namespace DevLib.Configuration
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         return defaultValue;
                     }
@@ -499,7 +499,7 @@ namespace DevLib.Configuration
                                 }
                                 catch (Exception e)
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
                                 }
                                 finally
                                 {
@@ -510,7 +510,7 @@ namespace DevLib.Configuration
                             {
                                 xmlReader.Skip();
 
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                             finally
                             {
@@ -519,7 +519,7 @@ namespace DevLib.Configuration
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                         finally
                         {
@@ -580,7 +580,7 @@ namespace DevLib.Configuration
                                 }
                                 catch (Exception e)
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
                                 }
                                 finally
                                 {
@@ -591,7 +591,7 @@ namespace DevLib.Configuration
                             {
                                 xmlReader.Skip();
 
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                             finally
                             {
@@ -600,7 +600,7 @@ namespace DevLib.Configuration
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                         finally
                         {
@@ -652,7 +652,7 @@ namespace DevLib.Configuration
                             }
                             catch (Exception e)
                             {
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                             finally
                             {
@@ -663,7 +663,7 @@ namespace DevLib.Configuration
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                     }
 
@@ -727,7 +727,7 @@ namespace DevLib.Configuration
                                 }
                                 catch (Exception e)
                                 {
-                                    ExceptionHandler.Log(e);
+                                    InternalLogger.Log(e);
                                 }
                                 finally
                                 {
@@ -738,7 +738,7 @@ namespace DevLib.Configuration
                             {
                                 xmlReader.Skip();
 
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                             finally
                             {
@@ -747,7 +747,7 @@ namespace DevLib.Configuration
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                         finally
                         {
@@ -812,7 +812,7 @@ namespace DevLib.Configuration
                             }
                             catch (Exception e)
                             {
-                                ExceptionHandler.Log(e);
+                                InternalLogger.Log(e);
                             }
                             finally
                             {
@@ -823,7 +823,7 @@ namespace DevLib.Configuration
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                     }
 

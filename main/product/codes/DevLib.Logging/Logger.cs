@@ -153,7 +153,7 @@ namespace DevLib.Logging
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
         }
 
@@ -186,7 +186,7 @@ namespace DevLib.Logging
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                     }
                 }
                 else

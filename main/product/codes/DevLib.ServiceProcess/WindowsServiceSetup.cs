@@ -66,7 +66,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     return Assembly.LoadFrom(AppDomain.CurrentDomain.SetupInformation.ApplicationName);
                 }
             }
@@ -273,7 +273,7 @@ namespace DevLib.ServiceProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
 
             this.StartType = ServiceStartMode.Automatic;

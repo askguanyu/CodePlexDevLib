@@ -155,7 +155,7 @@ namespace DevLib.Net.Sockets
             {
                 Debug.WriteLine(AsyncSocketUdpClientConstants.UdpClientSendException);
 
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
 
             return false;
@@ -196,7 +196,7 @@ namespace DevLib.Net.Sockets
 
                     Debug.WriteLine(AsyncSocketUdpClientConstants.UdpClientStartException);
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -242,7 +242,7 @@ namespace DevLib.Net.Sockets
                 {
                     Debug.WriteLine(AsyncSocketUdpClientConstants.UdpClientStopException);
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -320,7 +320,7 @@ namespace DevLib.Net.Sockets
                         sendSocketAsyncEventArgs = null;
                     }
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -380,7 +380,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
                 finally
                 {
@@ -463,7 +463,7 @@ namespace DevLib.Net.Sockets
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }
@@ -492,7 +492,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
 

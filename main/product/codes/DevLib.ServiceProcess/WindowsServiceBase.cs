@@ -73,7 +73,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     return false;
                 }
                 finally
@@ -124,7 +124,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     return false;
                 }
                 finally
@@ -175,7 +175,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     return false;
                 }
                 finally
@@ -226,7 +226,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     return false;
                 }
                 finally
@@ -269,7 +269,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     return false;
                 }
                 finally
@@ -311,7 +311,7 @@ namespace DevLib.ServiceProcess
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                     return ServiceControllerStatus.Stopped;
                 }
                 finally

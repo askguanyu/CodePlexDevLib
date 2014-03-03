@@ -798,7 +798,7 @@ namespace DevLib.ServiceModel
                 {
                     this.IsOpened = false;
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     throw;
                 }
@@ -834,7 +834,7 @@ namespace DevLib.ServiceModel
                     {
                         serviceHost.Abort();
 
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                     }
 
                     this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
@@ -867,7 +867,7 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                     }
 
                     this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
@@ -912,7 +912,7 @@ namespace DevLib.ServiceModel
                 {
                     this.IsOpened = false;
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     throw;
                 }
@@ -979,7 +979,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     throw;
                 }
@@ -1003,7 +1003,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     throw;
                 }
@@ -1101,7 +1101,7 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
                     }
                 }
             }
@@ -1140,7 +1140,7 @@ namespace DevLib.ServiceModel
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         throw;
                     }
@@ -1257,7 +1257,7 @@ namespace DevLib.ServiceModel
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
         }

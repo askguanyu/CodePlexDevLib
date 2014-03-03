@@ -97,7 +97,7 @@ namespace DevLib.Logging
                     this._fileStream = null;
                 }
 
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }

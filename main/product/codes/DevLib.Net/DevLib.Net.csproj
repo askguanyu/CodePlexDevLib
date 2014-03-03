@@ -54,7 +54,7 @@
     <Compile Include="Sockets\AsyncSocketUdpClientConstants.cs" />
     <Compile Include="Sockets\AsyncSocketUdpServer.cs" />
     <Compile Include="Sockets\AsyncSocketUdpServerConstants.cs" />
-    <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="Ftp\FtpSetup.cs" />
     <Compile Include="Ftp\FtpClient.cs" />
     <Compile Include="Ftp\FtpFileParser.cs" />

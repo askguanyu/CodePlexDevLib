@@ -454,7 +454,7 @@ namespace DevLib.AddIn
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
 

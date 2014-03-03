@@ -47,7 +47,7 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="IWcfClientBase.cs" />
     <Compile Include="IWcfClientTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

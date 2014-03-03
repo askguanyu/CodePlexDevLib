@@ -242,7 +242,7 @@ namespace DevLib.Net.Sockets
                 {
                     Debug.WriteLine(AsyncSocketTcpClientConstants.TcpClientStartException);
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -288,7 +288,7 @@ namespace DevLib.Net.Sockets
                 {
                     Debug.WriteLine(AsyncSocketTcpClientConstants.TcpClientStopException);
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -366,7 +366,7 @@ namespace DevLib.Net.Sockets
                         sendSocketAsyncEventArgs = null;
                     }
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -428,7 +428,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
                 finally
                 {
@@ -513,7 +513,7 @@ namespace DevLib.Net.Sockets
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }
@@ -554,7 +554,7 @@ namespace DevLib.Net.Sockets
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         this.RaiseEvent(
                                         this.ErrorOccurred,
@@ -566,7 +566,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -625,7 +625,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -671,7 +671,7 @@ namespace DevLib.Net.Sockets
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }
@@ -696,7 +696,7 @@ namespace DevLib.Net.Sockets
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }
@@ -740,7 +740,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
             }
 

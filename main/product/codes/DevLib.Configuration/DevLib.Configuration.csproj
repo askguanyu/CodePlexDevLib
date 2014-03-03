@@ -49,7 +49,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="ConfigurationConstants.cs" />
-    <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="ExpandableObjectConverter.cs" />
     <Compile Include="IWinFormConfigEditorPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

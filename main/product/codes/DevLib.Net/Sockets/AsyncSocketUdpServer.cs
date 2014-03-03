@@ -200,7 +200,7 @@ namespace DevLib.Net.Sockets
                 {
                     Debug.WriteLine(AsyncSocketUdpServerConstants.UdpServerStartException);
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -245,7 +245,7 @@ namespace DevLib.Net.Sockets
                 {
                     Debug.WriteLine(AsyncSocketUdpServerConstants.UdpServerStopException);
 
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -317,7 +317,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
                 }
                 finally
                 {
@@ -401,7 +401,7 @@ namespace DevLib.Net.Sockets
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
                 throw;
             }
         }
@@ -429,7 +429,7 @@ namespace DevLib.Net.Sockets
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     this.RaiseEvent(
                                     this.ErrorOccurred,
@@ -450,7 +450,7 @@ namespace DevLib.Net.Sockets
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 this.RaiseEvent(
                                 this.ErrorOccurred,

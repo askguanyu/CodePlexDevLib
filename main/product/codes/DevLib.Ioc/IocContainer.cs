@@ -125,7 +125,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }
@@ -197,7 +197,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }
@@ -264,7 +264,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 throw;
             }
@@ -310,7 +310,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
             finally
             {
@@ -428,7 +428,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 instance = default(T);
 
@@ -485,7 +485,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 return false;
             }
@@ -524,7 +524,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 return false;
             }
@@ -560,7 +560,7 @@ namespace DevLib.Ioc
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
             finally
             {

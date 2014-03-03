@@ -49,13 +49,13 @@ namespace DevLib.DaemonProcess
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     return;
                 }
@@ -163,7 +163,7 @@ namespace DevLib.DaemonProcess
                         }
                         catch (Exception e)
                         {
-                            ExceptionHandler.Log(e);
+                            InternalLogger.Log(e);
 
                             break;
                         }
@@ -185,7 +185,7 @@ namespace DevLib.DaemonProcess
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
             }
         }
 

@@ -118,7 +118,7 @@ namespace DevLib.Timers
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Log(e);
+                    InternalLogger.Log(e);
 
                     if (this._timer != null)
                     {
@@ -163,7 +163,7 @@ namespace DevLib.Timers
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (this._timer != null)
                 {
@@ -211,7 +211,7 @@ namespace DevLib.Timers
             }
             catch (Exception e)
             {
-                ExceptionHandler.Log(e);
+                InternalLogger.Log(e);
 
                 if (this._timer != null)
                 {
@@ -250,7 +250,7 @@ namespace DevLib.Timers
                     }
                     catch (Exception e)
                     {
-                        ExceptionHandler.Log(e);
+                        InternalLogger.Log(e);
 
                         if (this._timer != null)
                         {

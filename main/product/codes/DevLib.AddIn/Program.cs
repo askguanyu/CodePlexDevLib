@@ -128,9 +128,9 @@ namespace DevLib.AddIn
                 {
                     fileStream = File.Open(string.Format("{0}.log", Assembly.GetEntryAssembly().Location), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
 
-                    if (fileStream.Length > 10485760)
+                    if (fileStream.Length > 20971520)
                     {
-                        fileStream.SetLength(10485760);
+                        fileStream.SetLength(20971520);
                     }
 
                     fileStream.Seek(0, SeekOrigin.Begin);

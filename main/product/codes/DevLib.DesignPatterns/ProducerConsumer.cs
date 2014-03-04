@@ -61,7 +61,7 @@ namespace DevLib.DesignPatterns
         private bool _disposed = false;
 
         /// <summary>
-        /// Whether <see cref="Enqueue" /> should add data items when <see cref="IsRunning" /> is false.
+        /// Whether <see cref="Enqueue(object)" /> or <see cref="Enqueue(IEnumerable)" /> should add data items when <see cref="IsRunning" /> is false.
         /// </summary>
         private bool _enqueueWhenStopped = true;
 
@@ -273,7 +273,7 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Stop the consumer thread.
         /// </summary>
-        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue" /> is able to add data items when stopped.</param>
+        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue(object)" /> or <see cref="Enqueue(IEnumerable)" /> is able to add data items when stopped.</param>
         /// <param name="clearQueueOnStop">Whether to call <see cref="Clear" /> when stopped.</param>
         public void Stop(bool enqueueWhenStopped = true, bool clearQueueOnStop = false)
         {
@@ -513,7 +513,7 @@ namespace DevLib.DesignPatterns
         private bool _disposed = false;
 
         /// <summary>
-        /// Whether <see cref="Enqueue" /> should add data items when <see cref="IsRunning" /> is false.
+        /// Whether <see cref="Enqueue(T)" /> or <see cref="Enqueue(IEnumerable{T})" /> should add data items when <see cref="IsRunning" /> is false.
         /// </summary>
         private bool _enqueueWhenStopped = true;
 
@@ -725,7 +725,7 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Stop the consumer thread.
         /// </summary>
-        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue" /> is able to add data items when stopped.</param>
+        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue(T)" /> or <see cref="Enqueue(IEnumerable{T})" /> is able to add data items when stopped.</param>
         /// <param name="clearQueueOnStop">Whether to call <see cref="Clear" /> when stopped.</param>
         public void Stop(bool enqueueWhenStopped = true, bool clearQueueOnStop = false)
         {

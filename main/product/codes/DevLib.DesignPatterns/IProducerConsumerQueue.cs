@@ -29,7 +29,8 @@ namespace DevLib.DesignPatterns
         /// Adds objects to the end of the <see cref="IProducerConsumerQueue" />.
         /// </summary>
         /// <param name="items">The objects to add to the <see cref="IProducerConsumerQueue" />. The value can be null for reference types.</param>
-        void Enqueue(IEnumerable items);
+        /// <returns>Items count.</returns>
+        long Enqueue(IEnumerable items);
 
         /// <summary>
         /// Removes and returns the object at the beginning of the <see cref="IProducerConsumerQueue" />.
@@ -72,7 +73,8 @@ namespace DevLib.DesignPatterns
         /// Adds objects to the end of the <see cref="IProducerConsumerQueue{T}" />.
         /// </summary>
         /// <param name="items">The objects to add to the <see cref="IProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
-        void Enqueue(IEnumerable<T> items);
+        /// <returns>Items count.</returns>
+        long Enqueue(IEnumerable<T> items);
 
         /// <summary>
         /// Removes and returns the object at the beginning of the <see cref="IProducerConsumerQueue{T}" />.

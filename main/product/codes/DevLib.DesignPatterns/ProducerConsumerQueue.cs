@@ -40,12 +40,21 @@ namespace DevLib.DesignPatterns
         /// Adds objects to the end of the <see cref="ProducerConsumerQueue" />.
         /// </summary>
         /// <param name="items">The objects to add to the <see cref="ProducerConsumerQueue" />. The value can be null for reference types.</param>
-        public void Enqueue(IEnumerable items)
+        /// <returns>Items count.</returns>
+        public long Enqueue(IEnumerable items)
         {
-            foreach (var item in items)
+            long result = 0;
+
+            if (items != null)
             {
-                this._queue.Enqueue(item);
+                foreach (var item in items)
+                {
+                    this._queue.Enqueue(item);
+                    result++;
+                }
             }
+
+            return result;
         }
 
         /// <summary>
@@ -127,24 +136,42 @@ namespace DevLib.DesignPatterns
         /// Adds objects to the end of the <see cref="ProducerConsumerQueue{T}" />.
         /// </summary>
         /// <param name="items">The objects to add to the <see cref="ProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
-        public void Enqueue(IEnumerable<T> items)
+        /// <returns>Items count.</returns>
+        public long Enqueue(IEnumerable<T> items)
         {
-            foreach (var item in items)
+            long result = 0;
+
+            if (items != null)
             {
-                this._queue.Enqueue(item);
+                foreach (var item in items)
+                {
+                    this._queue.Enqueue(item);
+                    result++;
+                }
             }
+
+            return result;
         }
 
         /// <summary>
         /// Adds objects to the end of the <see cref="ProducerConsumerQueue{T}" />.
         /// </summary>
         /// <param name="items">The objects to add to the <see cref="ProducerConsumerQueue{T}" />. The value can be null for reference types.</param>
-        public void Enqueue(IEnumerable items)
+        /// <returns>Items count.</returns>
+        public long Enqueue(IEnumerable items)
         {
-            foreach (var item in items)
+            long result = 0;
+
+            if (items != null)
             {
-                this._queue.Enqueue((T)item);
+                foreach (var item in items)
+                {
+                    this._queue.Enqueue((T)item);
+                    result++;
+                }
             }
+
+            return result;
         }
 
         /// <summary>

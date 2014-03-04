@@ -78,13 +78,13 @@ namespace DevLib.DesignPatterns
         /// Removes and returns the object at the beginning of the <see cref="IProducerConsumerQueue{T}" />.
         /// </summary>
         /// <returns>The object that is removed from the beginning of the <see cref="IProducerConsumerQueue{T}" />.</returns>
-        T Dequeue();
+        new T Dequeue();
 
         /// <summary>
         /// Returns the object at the beginning of the <see cref="IProducerConsumerQueue{T}" /> without removing it.
         /// </summary>
         /// <returns>The object at the beginning of the <see cref="IProducerConsumerQueue{T}" />.</returns>
-        T Peek();
+        new T Peek();
 
         /// <summary>
         /// Determines whether an element is in the <see cref="IProducerConsumerQueue{T}" />.

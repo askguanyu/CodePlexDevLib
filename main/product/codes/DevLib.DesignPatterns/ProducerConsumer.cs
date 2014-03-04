@@ -61,6 +61,16 @@ namespace DevLib.DesignPatterns
         private bool _disposed = false;
 
         /// <summary>
+        /// Field _produceAccumulation.
+        /// </summary>
+        private long _produceAccumulation = 0;
+
+        /// <summary>
+        /// Field _consumeAccumulation.
+        /// </summary>
+        private long _consumeAccumulation = 0;
+
+        /// <summary>
         /// Whether <see cref="Enqueue(object)" /> or <see cref="Enqueue(IEnumerable)" /> should add data items when <see cref="IsRunning" /> is false.
         /// </summary>
         private bool _enqueueWhenStopped = true;
@@ -107,6 +117,8 @@ namespace DevLib.DesignPatterns
 
             this._queue = queue;
 
+            Interlocked.Exchange(ref this._produceAccumulation, this._queue.Count());
+
             this._consumerAction = consumerAction;
 
             this._consumerThreads = consumerThreads;
@@ -137,7 +149,7 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
-        /// Gets the number of items contained in the queue.
+        /// Gets the current number of items contained in the queue.
         /// </summary>
         public long QueueCount
         {
@@ -147,6 +159,28 @@ namespace DevLib.DesignPatterns
                 {
                     return this._queue.Count();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the accumulation count of produced items.
+        /// </summary>
+        public long ProduceAccumulation
+        {
+            get
+            {
+                return Interlocked.Read(ref this._produceAccumulation);
+            }
+        }
+
+        /// <summary>
+        /// Gets the accumulation count of consumed items.
+        /// </summary>
+        public long ConsumeAccumulation
+        {
+            get
+            {
+                return Interlocked.Read(ref this._consumeAccumulation);
             }
         }
 
@@ -280,7 +314,7 @@ namespace DevLib.DesignPatterns
                 if (this.IsRunning || this._enqueueWhenStopped)
                 {
                     this._queue.Enqueue(item);
-
+                    Interlocked.Increment(ref this._produceAccumulation);
                     this._queueWaitHandle.Set();
                 }
             }
@@ -298,8 +332,8 @@ namespace DevLib.DesignPatterns
             {
                 if (this.IsRunning || this._enqueueWhenStopped)
                 {
-                    this._queue.Enqueue(items);
-
+                    long count = this._queue.Enqueue(items);
+                    Interlocked.Add(ref this._produceAccumulation, count);
                     this._queueWaitHandle.Set();
                 }
             }
@@ -395,6 +429,7 @@ namespace DevLib.DesignPatterns
                     {
                         try
                         {
+                            Interlocked.Increment(ref this._consumeAccumulation);
                             this._consumerAction(nextItem);
                         }
                         catch (Exception e)
@@ -483,6 +518,16 @@ namespace DevLib.DesignPatterns
         private bool _disposed = false;
 
         /// <summary>
+        /// Field _produceAccumulation.
+        /// </summary>
+        private long _produceAccumulation = 0;
+
+        /// <summary>
+        /// Field _consumeAccumulation.
+        /// </summary>
+        private long _consumeAccumulation = 0;
+
+        /// <summary>
         /// Whether <see cref="Enqueue(T)" /> or <see cref="Enqueue(IEnumerable{T})" /> should add data items when <see cref="IsRunning" /> is false.
         /// </summary>
         private bool _enqueueWhenStopped = true;
@@ -529,6 +574,8 @@ namespace DevLib.DesignPatterns
 
             this._queue = queue;
 
+            Interlocked.Exchange(ref this._produceAccumulation, this._queue.Count());
+
             this._consumerAction = consumerAction;
 
             this._consumerThreads = consumerThreads;
@@ -559,7 +606,7 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
-        /// Gets the number of items contained in the queue.
+        /// Gets the current number of items contained in the queue.
         /// </summary>
         public long QueueCount
         {
@@ -569,6 +616,28 @@ namespace DevLib.DesignPatterns
                 {
                     return this._queue.Count();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the accumulation count of produced items.
+        /// </summary>
+        public long ProduceAccumulation
+        {
+            get
+            {
+                return Interlocked.Read(ref this._produceAccumulation);
+            }
+        }
+
+        /// <summary>
+        /// Gets the accumulation count of consumed items.
+        /// </summary>
+        public long ConsumeAccumulation
+        {
+            get
+            {
+                return Interlocked.Read(ref this._consumeAccumulation);
             }
         }
 
@@ -702,7 +771,7 @@ namespace DevLib.DesignPatterns
                 if (this.IsRunning || this._enqueueWhenStopped)
                 {
                     this._queue.Enqueue(item);
-
+                    Interlocked.Increment(ref this._produceAccumulation);
                     this._queueWaitHandle.Set();
                 }
             }
@@ -720,8 +789,8 @@ namespace DevLib.DesignPatterns
             {
                 if (this.IsRunning || this._enqueueWhenStopped)
                 {
-                    this._queue.Enqueue(items);
-
+                    long count = this._queue.Enqueue(items);
+                    Interlocked.Add(ref this._produceAccumulation, count);
                     this._queueWaitHandle.Set();
                 }
             }
@@ -817,6 +886,7 @@ namespace DevLib.DesignPatterns
                     {
                         try
                         {
+                            Interlocked.Increment(ref this._consumeAccumulation);
                             this._consumerAction(nextItem);
                         }
                         catch (Exception e)

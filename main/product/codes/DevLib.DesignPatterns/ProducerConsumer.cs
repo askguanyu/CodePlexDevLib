@@ -82,38 +82,8 @@ namespace DevLib.DesignPatterns
         /// <param name="consumerThreads">Number of consumer threads.</param>
         /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
         public ProducerConsumer(Action<object> consumerAction, int consumerThreads = 1, bool startImmediately = true)
+            : this(new ProducerConsumerQueue(), consumerAction, consumerThreads, startImmediately)
         {
-            if (consumerAction == null)
-            {
-                throw new ArgumentNullException("consumerAction");
-            }
-
-            if (consumerThreads < 1)
-            {
-                throw new ArgumentOutOfRangeException("consumerThreads", consumerThreads, "Must be greater than 0");
-            }
-
-            this._queue = new ProducerConsumerQueue();
-
-            this._consumerAction = consumerAction;
-
-            this._consumerThreads = consumerThreads;
-
-            this.IsRunning = startImmediately;
-
-            this._consumerThreadList = new List<Thread>(consumerThreads);
-
-            for (int i = 0; i < this._consumerThreads; i++)
-            {
-                Thread consumerThread = new Thread(this.ConsumerThread);
-                consumerThread.IsBackground = true;
-                this._consumerThreadList.Add(consumerThread);
-            }
-
-            foreach (Thread item in this._consumerThreadList)
-            {
-                item.Start();
-            }
         }
 
         /// <summary>
@@ -534,38 +504,8 @@ namespace DevLib.DesignPatterns
         /// <param name="consumerThreads">Number of consumer threads.</param>
         /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
         public ProducerConsumer(Action<T> consumerAction, int consumerThreads = 1, bool startImmediately = true)
+            : this(new ProducerConsumerQueue<T>(), consumerAction, consumerThreads, startImmediately)
         {
-            if (consumerAction == null)
-            {
-                throw new ArgumentNullException("consumerAction");
-            }
-
-            if (consumerThreads < 1)
-            {
-                throw new ArgumentOutOfRangeException("consumerThreads", consumerThreads, "Must be greater than 0");
-            }
-
-            this._queue = new ProducerConsumerQueue<T>();
-
-            this._consumerAction = consumerAction;
-
-            this._consumerThreads = consumerThreads;
-
-            this.IsRunning = startImmediately;
-
-            this._consumerThreadList = new List<Thread>(consumerThreads);
-
-            for (int i = 0; i < this._consumerThreads; i++)
-            {
-                Thread consumerThread = new Thread(this.ConsumerThread);
-                consumerThread.IsBackground = true;
-                this._consumerThreadList.Add(consumerThread);
-            }
-
-            foreach (Thread item in this._consumerThreadList)
-            {
-                item.Start();
-            }
         }
 
         /// <summary>

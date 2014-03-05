@@ -8,6 +8,7 @@ namespace DevLib.DaemonProcess.NativeAPI
     using System;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
+    using System.Security.Permissions;
 
     /// <summary>
     /// Class NativeMethodsHelper.
@@ -19,6 +20,7 @@ namespace DevLib.DaemonProcess.NativeAPI
         /// </summary>
         /// <param name="processId">Process Id.</param>
         /// <returns>Process command line.</returns>
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public static string GetCommandLine(int processId)
         {
             string result = string.Empty;
@@ -40,6 +42,7 @@ namespace DevLib.DaemonProcess.NativeAPI
         /// </summary>
         /// <param name="processId">Process Id.</param>
         /// <returns>PEB Address.</returns>
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         private static IntPtr GetPEBAddress(int processId)
         {
             IntPtr outPtr = IntPtr.Zero;
@@ -103,6 +106,7 @@ namespace DevLib.DaemonProcess.NativeAPI
         /// </summary>
         /// <param name="pebAddress">PEB Address.</param>
         /// <returns>Process command line.</returns>
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         private static string GetCommandLine(IntPtr pebAddress)
         {
             string result = string.Empty;

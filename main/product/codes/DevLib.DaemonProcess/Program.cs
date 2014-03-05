@@ -39,8 +39,8 @@ namespace DevLib.DaemonProcess
             {
                 InternalLogger.Log(new ArgumentNullException("args"));
 
-                Console.WriteLine(
-@"args[0] = guid                       : daemon process guid
+                Console.WriteLine(@"
+args[0] = guid                       : daemon process guid
 args[1] = process id | -stop         : protected process id | stop protecting
 args[2] = delay seconds              : protected process delay start seconds
 args[3] = service | process          : protected process mode

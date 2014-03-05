@@ -8,6 +8,7 @@ namespace DevLib.DaemonProcess
     using System;
     using System.Collections.Generic;
     using System.Management;
+    using System.Security.Permissions;
     using System.Text;
     using DevLib.DaemonProcess.NativeAPI;
 
@@ -21,6 +22,7 @@ namespace DevLib.DaemonProcess
         /// </summary>
         /// <param name="processId">Process id.</param>
         /// <returns>Command line string.</returns>
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public static string GetCommandLineByProcessId(int processId)
         {
             string result = string.Empty;
@@ -220,32 +222,30 @@ namespace DevLib.DaemonProcess
         /// <summary>
         /// Compare if two argument lists are equal or not.
         /// </summary>
-        /// <param name="argsA">The first argument list.</param>
-        /// <param name="argsB">The second argument list.</param>
+        /// <param name="leftArgs">The first argument list.</param>
+        /// <param name="rightArgs">The second argument list.</param>
         /// <param name="comparisonType">One of the enumeration values that specifies the rules to use in the comparison.</param>
         /// <returns>true if two command line arguments are equal;otherwise, false.</returns>
-        public static bool CommandLineArgumentsEquals(IList<string> argsA, IList<string> argsB, StringComparison comparisonType)
+        public static bool CommandLineArgumentsEquals(IList<string> leftArgs, IList<string> rightArgs, StringComparison comparisonType)
         {
-            string.Compare("", "", StringComparison.OrdinalIgnoreCase);
-
-            if (object.ReferenceEquals(argsA, argsB))
+            if (object.ReferenceEquals(leftArgs, rightArgs))
             {
                 return true;
             }
 
-            if (object.ReferenceEquals(argsA, null) || object.ReferenceEquals(argsB, null))
+            if (object.ReferenceEquals(leftArgs, null) || object.ReferenceEquals(rightArgs, null))
             {
                 return false;
             }
 
-            if (argsA.Count != argsB.Count)
+            if (leftArgs.Count != rightArgs.Count)
             {
                 return false;
             }
 
-            for (int i = 0; i < argsA.Count; i++)
+            for (int i = 0; i < leftArgs.Count; i++)
             {
-                if (!argsA[i].Trim('\"').Equals(argsB[i].Trim('\"'), comparisonType))
+                if (!leftArgs[i].Trim('\"').Equals(rightArgs[i].Trim('\"'), comparisonType))
                 {
                     return false;
                 }

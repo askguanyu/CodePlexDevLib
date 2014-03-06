@@ -19,7 +19,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field LogFile.
         /// </summary>
-        private static readonly string LogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log"));
+        private static readonly string LogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".log"));
+
+        /// <summary>
+        /// Field LogFileBackup.
+        /// </summary>
+        private static readonly string LogFileBackup = Path.ChangeExtension(LogFile, ".log.bak");
 
         /// <summary>
         /// Field SyncRoot.
@@ -35,10 +40,24 @@ namespace DevLib.ServiceModel
 #if DEBUG
             if (objs != null)
             {
-                string message = RenderLog(objs);
-                Debug.WriteLine(message);
-                Console.WriteLine(message);
-                AppendToFile(message);
+                lock (SyncRoot)
+                {
+                    if (objs != null)
+                    {
+                        try
+                        {
+                            string message = RenderLog(objs);
+                            Debug.WriteLine(message);
+                            Console.WriteLine(message);
+                            AppendToFile(message);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e.ToString());
+                            Console.WriteLine(e.ToString());
+                        }
+                    }
+                }
             }
 #endif
         }
@@ -137,34 +156,32 @@ namespace DevLib.ServiceModel
         /// <param name="message">Log message to append.</param>
         private static void AppendToFile(string message)
         {
-            lock (SyncRoot)
+            FileStream fileStream = null;
+
+            try
             {
-                FileStream fileStream = null;
+                fileStream = File.Open(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
 
-                try
+                if (fileStream.Length > 10485760)
                 {
-                    fileStream = File.Open(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
-
-                    if (fileStream.Length > 20971520)
-                    {
-                        fileStream.SetLength(20971520);
-                    }
-
-                    fileStream.Seek(0, SeekOrigin.Begin);
-                    byte[] bytes = Encoding.Unicode.GetBytes(message);
-                    fileStream.Write(bytes, 0, bytes.Length);
-                    fileStream.Flush();
+                    File.Copy(LogFile, LogFileBackup, true);
+                    fileStream.SetLength(0);
                 }
-                catch
+
+                fileStream.Seek(0, SeekOrigin.End);
+                byte[] bytes = Encoding.Unicode.GetBytes(message);
+                fileStream.Write(bytes, 0, bytes.Length);
+                fileStream.Flush();
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if (fileStream != null)
                 {
-                }
-                finally
-                {
-                    if (fileStream != null)
-                    {
-                        fileStream.Dispose();
-                        fileStream = null;
-                    }
+                    fileStream.Dispose();
+                    fileStream = null;
                 }
             }
         }

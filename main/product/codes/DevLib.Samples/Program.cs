@@ -71,7 +71,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(i =>
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 CodeTimer.Time(i =>
@@ -586,6 +586,13 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            InternalLogger.Log(1);
+            InternalLogger.Log(2);
+            InternalLogger.Log(3);
+            InternalLogger.Log(4);
+
+            Console.ReadLine();
+
             PrintMethodName("Test CodeSnippets");
             RetryAction.Execute(i =>
             {

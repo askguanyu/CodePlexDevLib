@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.IO
+namespace DevLib.Samples
 {
     using System;
     using System.Diagnostics;

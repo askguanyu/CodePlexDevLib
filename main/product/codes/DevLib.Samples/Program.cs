@@ -71,7 +71,7 @@ namespace DevLib.Samples
 
                 var result = CodeTimer.Time(i =>
                 {
-                    TestCodeSnippets();
+                    //TestCodeSnippets();
                 });
 
                 CodeTimer.Time(i =>
@@ -227,6 +227,22 @@ namespace DevLib.Samples
 
         private static void TestDevLibLogging()
         {
+            Random random = new Random();
+
+            LogManager.Open(@"e:\1\test.log", new LoggerSetup { RollingFileCountLimit = 5, RollingFileSizeMBLimit = 1 });
+            int i = 0;
+            while (true)
+            {
+                i++;
+                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+
+                //Thread.Sleep(random.Next(5, 100));
+            }
+
             //new LogConfig().WriteXml("a.xml",true);
 
             LogManager.OpenConfig("a.xml");
@@ -246,7 +262,7 @@ namespace DevLib.Samples
 
             //LogManager.Open(@"c:\a\b\c\d.log").Log(LogLevel.DBUG, "hello", new Exception());
 
-            Random random = new Random();
+
 
             LogManager.DefaultLoggerSetup.RollingByDate = true;
 

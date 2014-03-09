@@ -49,11 +49,6 @@ namespace DevLib.Logging
         private FileInfo _fileInfo;
 
         /// <summary>
-        /// Field _fileStream.
-        /// </summary>
-        private FileStream _fileStream;
-
-        /// <summary>
         /// Field _loggerSetup.
         /// </summary>
         private LoggerSetup _loggerSetup;
@@ -75,8 +70,6 @@ namespace DevLib.Logging
 
                 this._mutex = this.CreateSharedMutex(this.GetMutexName(this._fileName));
 
-                this._fileStream = this.CreateSharedFileStream(this._fileName);
-
                 this.OpenTime = DateTime.Now;
 
                 this.LastWriteTime = DateTime.MinValue;
@@ -88,13 +81,6 @@ namespace DevLib.Logging
                     this._mutex.Close();
 
                     this._mutex = null;
-                }
-
-                if (this._fileStream != null)
-                {
-                    this._fileStream.Dispose();
-
-                    this._fileStream = null;
                 }
 
                 InternalLogger.Log(e);
@@ -256,13 +242,6 @@ namespace DevLib.Logging
 
                     this._mutex = null;
                 }
-
-                if (this._fileStream != null)
-                {
-                    this._fileStream.Dispose();
-
-                    this._fileStream = null;
-                }
             }
 
             // free native resources
@@ -279,41 +258,55 @@ namespace DevLib.Logging
         /// <param name="bytes">The bytes to write.</param>
         private void InternalWrite(byte[] bytes)
         {
-            if (this._fileStream == null || !this._fileStream.CanWrite)
-            {
-                return;
-            }
+            this.LastWriteTime = DateTime.Now;
 
-            if (this._loggerSetup.RollingByDate)
-            {
-                this._fileInfo.Refresh();
+            FileStream fileStream = null;
 
-                if ((DateTime.Now.Subtract(this._fileInfo.LastWriteTime).Days > 0) || (this._loggerSetup.RollingFileSizeLimit > 0 && this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit))
-                {
-                    this.ProcessRollingByDateFile();
-
-                    this._fileStream.SetLength(0);
-                }
-            }
-            else
+            try
             {
-                if (this._loggerSetup.RollingFileSizeLimit > 0)
+                fileStream = this.CreateSharedFileStream(this._fileName);
+
+                if (this._loggerSetup.RollingByDate)
                 {
                     this._fileInfo.Refresh();
 
-                    if (this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit)
+                    if ((DateTime.Now.Subtract(this._fileInfo.LastWriteTime).Days > 0) || (this._loggerSetup.RollingFileSizeLimit > 0 && this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit))
                     {
-                        this.ProcessRollingFile();
+                        this.ProcessRollingByDateFile();
 
-                        this._fileStream.SetLength(0);
+                        fileStream.SetLength(0);
                     }
                 }
-            }
+                else
+                {
+                    if (this._loggerSetup.RollingFileSizeLimit > 0)
+                    {
+                        this._fileInfo.Refresh();
 
-            this._fileStream.Seek(0, SeekOrigin.End);
-            this._fileStream.Write(bytes, 0, bytes.Length);
-            this._fileStream.Flush();
-            this.LastWriteTime = DateTime.Now;
+                        if (this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit)
+                        {
+                            this.ProcessRollingFile();
+
+                            fileStream.SetLength(0);
+                        }
+                    }
+                }
+
+                fileStream.Seek(0, SeekOrigin.End);
+                fileStream.Write(bytes, 0, bytes.Length);
+                fileStream.Flush();
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if (fileStream != null)
+                {
+                    fileStream.Dispose();
+                    fileStream = null;
+                }
+            }
         }
 
         /// <summary>
@@ -380,15 +373,7 @@ namespace DevLib.Logging
 
                         try
                         {
-                            File.Delete(destFile);
-                        }
-                        catch
-                        {
-                        }
-
-                        try
-                        {
-                            File.Move(sourceFile, destFile);
+                            File.Copy(sourceFile, destFile, true);
                         }
                         catch
                         {
@@ -470,15 +455,7 @@ namespace DevLib.Logging
 
                         try
                         {
-                            File.Delete(destFile);
-                        }
-                        catch
-                        {
-                        }
-
-                        try
-                        {
-                            File.Move(sourceFile, destFile);
+                            File.Copy(sourceFile, destFile, true);
                         }
                         catch
                         {

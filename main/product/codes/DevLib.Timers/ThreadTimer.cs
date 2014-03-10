@@ -329,7 +329,7 @@ namespace DevLib.Timers
 
             if (temp != null)
             {
-                temp(this, null);
+                temp(this, EventArgs.Empty);
             }
         }
 

@@ -680,7 +680,7 @@ namespace DevLib.Net.Sockets
 
             if (temp != null)
             {
-                temp(this, null);
+                temp(this, EventArgs.Empty);
             }
         }
 

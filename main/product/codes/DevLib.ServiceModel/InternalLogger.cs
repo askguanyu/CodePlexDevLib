@@ -164,7 +164,14 @@ namespace DevLib.ServiceModel
 
                 if (fileStream.Length > 10485760)
                 {
-                    File.Copy(LogFile, LogFileBackup, true);
+                    try
+                    {
+                        File.Copy(LogFile, LogFileBackup, true);
+                    }
+                    catch
+                    {
+                    }
+
                     fileStream.SetLength(0);
                 }
 

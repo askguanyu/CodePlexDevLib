@@ -491,11 +491,11 @@ namespace DevLib.ServiceProcess
             this.WriteToConsole(ConsoleColor.Yellow, string.Format("Status:        {0}", this.IsConsoleMode ? this._consoleStatus : this.ServiceStatus).PadRight(70), true, false);
             this.WriteToConsole(ConsoleColor.Yellow, string.Format("Installed:     {0}", WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName)).PadRight(70), true, false);
             this.WriteToConsole(ConsoleColor.Yellow, "Description:".PadRight(70), true, false);
-            this.WriteToConsole(ConsoleColor.Yellow, "  " + this._setupInfo.Description.PadRight(68), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "    " + this._setupInfo.Description.PadRight(66), true, false);
             this.WriteToConsole(ConsoleColor.Yellow, "Assembly:".PadRight(70), true, false);
-            this.WriteToConsole(ConsoleColor.Yellow, "  " + this._setupInfo.ServiceAssembly.FullName.PadRight(68), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "    " + this._setupInfo.ServiceAssembly.FullName.PadRight(66), true, false);
             this.WriteToConsole(ConsoleColor.Yellow, "Assembly File: ".PadRight(70), true, false);
-            this.WriteToConsole(ConsoleColor.Yellow, "  " + this._setupInfo.ServiceAssembly.Location.PadRight(68), true, false);
+            this.WriteToConsole(ConsoleColor.Yellow, "    " + this._setupInfo.ServiceAssembly.Location.PadRight(66), true, false);
         }
 
         /// <summary>

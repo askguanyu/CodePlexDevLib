@@ -472,7 +472,7 @@ namespace DevLib.AddIn
 
             if (temp != null)
             {
-                temp(this, null);
+                temp(this, EventArgs.Empty);
             }
         }
 

@@ -37,14 +37,14 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source EventHandler.</param>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
-        public static void RaiseEvent(this EventHandler source, object sender, EventArgs e)
+        public static void RaiseEvent(this EventHandler source, object sender, EventArgs e = null)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler safeHandler = Interlocked.CompareExchange(ref source, null, null);
 
             if (safeHandler != null)
             {
-                safeHandler(sender, e);
+                safeHandler(sender, e ?? EventArgs.Empty);
             }
         }
     }

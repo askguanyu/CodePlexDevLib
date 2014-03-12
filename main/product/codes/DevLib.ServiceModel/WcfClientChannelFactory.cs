@@ -65,40 +65,32 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Creates a channel that is used to send messages to a service whose endpoint is configured in a specified way.
+        /// Creates a channel of a specified type to a specified endpoint address.
         /// </summary>
-        /// <param name="endpointConfigurationName">The name of the endpoint configuration used for the service.</param>
+        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static TChannel CreateChannel(string endpointConfigurationName, bool fromCaching = true)
+        public static TChannel CreateChannel(string remoteHostAddress, int remotePort, bool fromCaching = true)
         {
-            if (fromCaching)
-            {
-                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.Empty);
+            string remoteAddress = new UriBuilder(Uri.UriSchemeHttp, remoteHostAddress, remotePort, typeof(TChannel).FullName).ToString();
 
-                ChannelFactory<TChannel> result;
+            return CreateChannel(typeof(BasicHttpBinding), remoteAddress, fromCaching);
+        }
 
-                lock (((ICollection)ChannelFactoryDictionary).SyncRoot)
-                {
-                    if (ChannelFactoryDictionary.ContainsKey(key))
-                    {
-                        result = ChannelFactoryDictionary[key];
-                    }
-                    else
-                    {
-                        result = new ChannelFactory<TChannel>(endpointConfigurationName);
+        /// <summary>
+        /// Creates a channel that is used to send messages to a service whose endpoint is configured in a specified way.
+        /// </summary>
+        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        public static TChannel CreateChannel(string remoteIPEndPoint, bool fromCaching = true)
+        {
+            UriBuilder uriBuilder = new UriBuilder(remoteIPEndPoint);
 
-                        ChannelFactoryDictionary.Add(key, result);
-                    }
-                }
+            uriBuilder.Path = typeof(TChannel).FullName;
 
-                return result.CreateChannel();
-            }
-            else
-            {
-                return new ChannelFactory<TChannel>(endpointConfigurationName).CreateChannel();
-            }
+            return CreateChannel(typeof(BasicHttpBinding), uriBuilder.ToString(), fromCaching);
         }
 
         /// <summary>
@@ -125,7 +117,9 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        result = new ChannelFactory<TChannel>(endpointConfigurationName, new EndpointAddress(remoteAddress));
+                        result = string.IsNullOrEmpty(remoteAddress) ?
+                            new ChannelFactory<TChannel>(endpointConfigurationName) :
+                            new ChannelFactory<TChannel>(endpointConfigurationName, new EndpointAddress(remoteAddress));
 
                         ChannelFactoryDictionary.Add(key, result);
                     }
@@ -135,7 +129,9 @@ namespace DevLib.ServiceModel
             }
             else
             {
-                return new ChannelFactory<TChannel>(endpointConfigurationName, new EndpointAddress(remoteAddress)).CreateChannel();
+                return (string.IsNullOrEmpty(remoteAddress) ?
+                    new ChannelFactory<TChannel>(endpointConfigurationName) :
+                    new ChannelFactory<TChannel>(endpointConfigurationName, new EndpointAddress(remoteAddress))).CreateChannel();
             }
         }
 

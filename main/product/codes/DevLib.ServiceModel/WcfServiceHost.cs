@@ -365,7 +365,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, int port)
+        public void Initialize(string assemblyFile, int port = 80)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -615,7 +615,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, int port)
+        public void Initialize(Type serviceType, int port = 80)
         {
             if (serviceType == null)
             {

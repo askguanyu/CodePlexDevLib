@@ -1294,22 +1294,30 @@ namespace DevLib.ServiceModel
                             if (serviceDebugBehavior == null)
                             {
                                 serviceDebugBehavior = new ServiceDebugBehavior();
+                                serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
                                 serviceHost.Description.Behaviors.Add(serviceDebugBehavior);
                             }
-
-                            serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
+                            else
+                            {
+                                serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
+                            }
 
                             ServiceThrottlingBehavior serviceThrottlingBehavior = serviceHost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
 
                             if (serviceThrottlingBehavior == null)
                             {
                                 serviceThrottlingBehavior = new ServiceThrottlingBehavior();
+                                serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
+                                serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
+                                serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
                                 serviceHost.Description.Behaviors.Add(serviceThrottlingBehavior);
                             }
-
-                            serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
-                            serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
-                            serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
+                            else
+                            {
+                                serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
+                                serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
+                                serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
+                            }
 
                             if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
                             {
@@ -1318,10 +1326,13 @@ namespace DevLib.ServiceModel
                                 if (serviceMetadataBehavior == null)
                                 {
                                     serviceMetadataBehavior = new ServiceMetadataBehavior();
+                                    serviceMetadataBehavior.HttpGetEnabled = true;
                                     serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
                                 }
-
-                                serviceMetadataBehavior.HttpGetEnabled = true;
+                                else
+                                {
+                                    serviceMetadataBehavior.HttpGetEnabled = true;
+                                }
                             }
 
                             foreach (var endpoint in serviceHost.Description.Endpoints)
@@ -1335,11 +1346,15 @@ namespace DevLib.ServiceModel
                                     if (serializerBehavior == null)
                                     {
                                         serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+                                        serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                                        serializerBehavior.IgnoreExtensionDataObject = true;
                                         operationDescription.Behaviors.Add(serializerBehavior);
                                     }
-
-                                    serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
-                                    serializerBehavior.IgnoreExtensionDataObject = true;
+                                    else
+                                    {
+                                        serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                                        serializerBehavior.IgnoreExtensionDataObject = true;
+                                    }
                                 }
                             }
 

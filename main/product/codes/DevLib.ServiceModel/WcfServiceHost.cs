@@ -1294,30 +1294,22 @@ namespace DevLib.ServiceModel
                             if (serviceDebugBehavior == null)
                             {
                                 serviceDebugBehavior = new ServiceDebugBehavior();
-                                serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
                                 serviceHost.Description.Behaviors.Add(serviceDebugBehavior);
                             }
-                            else
-                            {
-                                serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
-                            }
+
+                            serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
 
                             ServiceThrottlingBehavior serviceThrottlingBehavior = serviceHost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
 
                             if (serviceThrottlingBehavior == null)
                             {
                                 serviceThrottlingBehavior = new ServiceThrottlingBehavior();
-                                serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
                                 serviceHost.Description.Behaviors.Add(serviceThrottlingBehavior);
                             }
-                            else
-                            {
-                                serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
-                            }
+
+                            serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
+                            serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
+                            serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
 
                             if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
                             {
@@ -1326,7 +1318,6 @@ namespace DevLib.ServiceModel
                                 if (serviceMetadataBehavior == null)
                                 {
                                     serviceMetadataBehavior = new ServiceMetadataBehavior();
-
                                     serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
                                 }
 
@@ -1344,12 +1335,10 @@ namespace DevLib.ServiceModel
                                     if (serializerBehavior == null)
                                     {
                                         serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
-
                                         operationDescription.Behaviors.Add(serializerBehavior);
                                     }
 
                                     serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
-
                                     serializerBehavior.IgnoreExtensionDataObject = true;
                                 }
                             }

@@ -6,619 +6,418 @@
 namespace DevLib.ServiceModel
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.ServiceModel.Description;
 
     /// <summary>
-    /// Provides the implementation used to create client objects that can call services.
+    /// Class WcfClientBase.
     /// </summary>
     /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
-    public static class WcfClientBase<TChannel> where TChannel : class
+    public abstract class WcfClientBase<TChannel> : IWcfClientBase where TChannel : class
     {
         /// <summary>
-        /// Field WcfClientBaseDictionaryKeyStringFormat.
+        /// Field _InstanceType.
         /// </summary>
-        private const string WcfClientBaseDictionaryKeyStringFormat = "[Key1][{0}][Key2][{1}]";
+        private static readonly Type InstanceType = WcfClientType.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
 
         /// <summary>
-        /// Field InstanceDictionary.
+        /// Field _endpointConfigurationName.
         /// </summary>
-        private static readonly Dictionary<string, TChannel> InstanceDictionary = new Dictionary<string, TChannel>();
+        private readonly string _endpointConfigurationName;
 
         /// <summary>
-        /// Field ReusableInstanceDictionary.
+        /// Field _remoteAddress.
         /// </summary>
-        private static readonly Dictionary<string, TChannel> ReusableInstanceDictionary = new Dictionary<string, TChannel>();
+        private readonly EndpointAddress _remoteAddress;
 
         /// <summary>
-        /// Field ReusableFaultUnwrappingInstanceDictionary.
+        /// Field _binding.
         /// </summary>
-        private static readonly Dictionary<string, TChannel> ReusableFaultUnwrappingInstanceDictionary = new Dictionary<string, TChannel>();
+        private readonly Binding _binding;
 
         /// <summary>
-        /// Get Wcf client instance.
+        /// Field _overloadCreateProxyInstance.
         /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetInstance(bool fromCaching = true)
+        private readonly int _overloadCreateProxyInstance;
+
+        /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfClientBase{TChannel}" /> class.
+        /// </summary>
+        protected WcfClientBase()
         {
-            if (fromCaching)
-            {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, string.Empty, string.Empty);
-
-                TChannel result;
-
-                lock (((ICollection)InstanceDictionary).SyncRoot)
-                {
-                    if (InstanceDictionary.ContainsKey(key))
-                    {
-                        result = InstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type);
-
-                        InstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type);
-            }
+            this._overloadCreateProxyInstance = 0;
+            this._endpointConfigurationName = string.Empty;
         }
 
         /// <summary>
-        /// Get Wcf client instance.
+        /// Initializes a new instance of the <see cref="WcfClientBase{TChannel}" /> class.
         /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetInstance(string remoteIPEndPoint, bool fromCaching = true)
+        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
+        protected WcfClientBase(string endpointConfigurationName)
         {
-            UriBuilder uriBuilder = new UriBuilder(remoteIPEndPoint);
-
-            uriBuilder.Path = typeof(TChannel).FullName;
-
-            return GetInstance(typeof(BasicHttpBinding), uriBuilder.ToString(), fromCaching);
+            this._overloadCreateProxyInstance = 1;
+            this._endpointConfigurationName = endpointConfigurationName;
         }
 
         /// <summary>
-        /// Get Wcf client instance.
-        /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
-        {
-            string remoteAddress = new UriBuilder(Uri.UriSchemeHttp, remoteHostAddress, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance(typeof(BasicHttpBinding), remoteAddress, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance.
+        /// Initializes a new instance of the <see cref="WcfClientBase{TChannel}" /> class.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="remoteAddress">The address of the service.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
+        protected WcfClientBase(string endpointConfigurationName, EndpointAddress remoteAddress)
         {
-            if (fromCaching)
-            {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
-
-                TChannel result;
-
-                lock (((ICollection)InstanceDictionary).SyncRoot)
-                {
-                    if (InstanceDictionary.ContainsKey(key))
-                    {
-                        result = InstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                        result = string.IsNullOrEmpty(remoteAddress) ?
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
-
-                        InstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                return string.IsNullOrEmpty(remoteAddress) ?
-                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
-            }
+            this._overloadCreateProxyInstance = 2;
+            this._endpointConfigurationName = endpointConfigurationName;
+            this._remoteAddress = remoteAddress;
         }
 
         /// <summary>
-        /// Get Wcf client instance.
+        /// Initializes a new instance of the <see cref="WcfClientBase{TChannel}" /> class.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteAddress">The address of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetInstance(Binding binding, string remoteAddress, bool fromCaching = true)
+        protected WcfClientBase(Binding binding, EndpointAddress remoteAddress)
         {
-            if (fromCaching)
+            this._overloadCreateProxyInstance = 3;
+            this._endpointConfigurationName = string.Empty;
+            this._binding = binding;
+            this._remoteAddress = remoteAddress;
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="WcfClientBase{TChannel}" /> class.
+        /// </summary>
+        ~WcfClientBase()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Gets the client credentials used to call an operation.
+        /// </summary>
+        public virtual ClientCredentials ClientCredentials
+        {
+            get
             {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
+                return (this.Proxy as ClientBase<TChannel>).ClientCredentials;
+            }
+        }
 
-                TChannel result;
-
-                lock (((ICollection)InstanceDictionary).SyncRoot)
+        /// <summary>
+        /// Gets the current endpoint for the service to which the client connected.
+        /// </summary>
+        public virtual ServiceEndpoint CurrentEndpoint
+        {
+            get
+            {
+                if (this._disposed || this.CachedProxy == null)
                 {
-                    if (InstanceDictionary.ContainsKey(key))
+                    return null;
+                }
+                else
+                {
+                    return (this.CachedProxy as ClientBase<TChannel>).Endpoint;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the target endpoint for the service to which the client can connect.
+        /// </summary>
+        public virtual ServiceEndpoint Endpoint
+        {
+            get
+            {
+                if (this._disposed)
+                {
+                    return null;
+                }
+                else
+                {
+                    return (this.Proxy as ClientBase<TChannel>).Endpoint;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the underlying <see cref="T:System.ServiceModel.IClientChannel" /> implementation.
+        /// </summary>
+        public virtual IClientChannel InnerChannel
+        {
+            get
+            {
+                return (this.Proxy as ClientBase<TChannel>).InnerChannel;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current state of the <see cref="T:System.ServiceModel.ClientBase`1" /> object.
+        /// </summary>
+        public virtual CommunicationState State
+        {
+            get
+            {
+                if (this.CachedProxy != null)
+                {
+                    return (this.CachedProxy as ICommunicationObject).State;
+                }
+                else
+                {
+                    return CommunicationState.Closed;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets user defined tag on the proxy.
+        /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets Proxy caching.
+        /// </summary>
+        protected TChannel CachedProxy
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets client proxy.
+        /// </summary>
+        protected TChannel Proxy
+        {
+            get
+            {
+                this.RefreshCachedProxy();
+                return this.CachedProxy;
+            }
+        }
+
+        /// <summary>
+        /// Gets EndpointConfigurationName.
+        /// </summary>
+        protected string EndpointConfigurationName
+        {
+            get
+            {
+                return this._endpointConfigurationName;
+            }
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="WcfClientBase" /> class.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Causes the <see cref="T:System.ServiceModel.ClientBase`1" /> object to transition immediately from its current state into the closed state.
+        /// </summary>
+        public virtual void Abort()
+        {
+            try
+            {
+                if (this.CachedProxy != null)
+                {
+                    (this.CachedProxy as ICommunicationObject).Abort();
+                }
+            }
+            finally
+            {
+                this.CloseProxy();
+            }
+        }
+
+        /// <summary>
+        /// Causes the <see cref="T:System.ServiceModel.ClientBase`1" /> object to transition from its current state into the closed state.
+        /// </summary>
+        public virtual void Close()
+        {
+            try
+            {
+                if (this.CachedProxy != null)
+                {
+                    (this.CachedProxy as ICommunicationObject).Close();
+                }
+            }
+            finally
+            {
+                this.CloseProxy();
+            }
+        }
+
+        /// <summary>
+        ///  Causes the <see cref="T:System.ServiceModel.ClientBase`1" /> object to transition from the created state into the opened state.
+        /// </summary>
+        public virtual void Open()
+        {
+            try
+            {
+                (this.Proxy as ICommunicationObject).Open();
+            }
+            catch
+            {
+                this.CloseProxy();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Close proxy.
+        /// </summary>
+        protected void CloseProxy()
+        {
+            if (this.CachedProxy != null && this.CachedProxy != default(TChannel))
+            {
+                ICommunicationObject communicationObject = this.CachedProxy as ICommunicationObject;
+
+                if (communicationObject != null)
+                {
+                    try
                     {
-                        result = InstanceDictionary[key];
+                        communicationObject.Close();
                     }
-                    else
+                    catch
                     {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
-
-                        InstanceDictionary.Add(key, result);
+                        communicationObject.Abort();
                     }
                 }
 
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
+                this.CachedProxy = null;
             }
         }
 
         /// <summary>
-        /// Get Wcf client instance.
+        /// Close proxy instance.
         /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
+        /// <param name="value">TChannel instance.</param>
+        protected void CloseProxyInstance(TChannel value)
         {
-            if (fromCaching)
+            if (value != null)
             {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
+                ICommunicationObject communicationObject = this.CachedProxy as ICommunicationObject;
 
-                TChannel result;
-
-                lock (((ICollection)InstanceDictionary).SyncRoot)
+                if (communicationObject != null)
                 {
-                    if (InstanceDictionary.ContainsKey(key))
+                    try
                     {
-                        result = InstanceDictionary[key];
+                        communicationObject.Close();
                     }
-                    else
+                    catch
                     {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
-
-                        InstanceDictionary.Add(key, result);
+                        communicationObject.Abort();
                     }
                 }
 
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+                value = null;
             }
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
+        /// Method RefreshCachedProxy.
         /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableInstance(bool fromCaching = true)
+        protected void RefreshCachedProxy()
         {
-            if (fromCaching)
+            this.CheckDisposed();
+
+            if (this.CachedProxy == null || this.CachedProxy == default(TChannel))
             {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, string.Empty, string.Empty);
-
-                TChannel result;
-
-                lock (((ICollection)ReusableInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type);
-
-                        ReusableInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type);
+                this.CachedProxy = this.CreateProxyInstance();
             }
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
+        /// Method CreateProxyInstance.
         /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableInstance(string remoteIPEndPoint, bool fromCaching = true)
+        /// <returns>Instance of TChannel.</returns>
+        protected virtual TChannel CreateProxyInstance()
         {
-            UriBuilder uriBuilder = new UriBuilder(remoteIPEndPoint);
-
-            uriBuilder.Path = typeof(TChannel).FullName;
-
-            return GetReusableInstance(typeof(BasicHttpBinding), uriBuilder.ToString(), fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
-        /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
-        {
-            string remoteAddress = new UriBuilder(Uri.UriSchemeHttp, remoteHostAddress, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetReusableInstance(typeof(BasicHttpBinding), remoteAddress, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
-        /// </summary>
-        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
-        {
-            if (fromCaching)
+            switch (this._overloadCreateProxyInstance)
             {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
-
-                TChannel result;
-
-                lock (((ICollection)ReusableInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
-
-                        result = string.IsNullOrEmpty(remoteAddress) ?
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
-
-                        ReusableInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
-
-                return string.IsNullOrEmpty(remoteAddress) ?
-                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
+                case 0:
+                    return (TChannel)Activator.CreateInstance(InstanceType);
+                case 1:
+                    return (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName);
+                case 2:
+                    return (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName, this._remoteAddress);
+                case 3:
+                    return (TChannel)Activator.CreateInstance(InstanceType, this._binding, this._remoteAddress);
+                default:
+                    return (TChannel)Activator.CreateInstance(InstanceType);
             }
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
+        /// Method HandleFaultException.
         /// </summary>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableInstance(Binding binding, string remoteAddress, bool fromCaching = true)
+        /// <typeparam name="TDetail">The serializable error detail type.</typeparam>
+        /// <param name="faultException">Instance of FaultException{TDetail}.</param>
+        protected virtual void HandleFaultException<TDetail>(FaultException<TDetail> faultException)
         {
-            if (fromCaching)
+            Exception exception = faultException.Detail as Exception;
+
+            if (exception != null)
             {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
-
-                TChannel result;
-
-                lock (((ICollection)ReusableInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
-
-                        ReusableInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
+                throw exception;
             }
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and will not throw any exception.
+        /// Releases all resources used by the current instance of the <see cref="WcfClientBase" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
         /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        private void Dispose(bool disposing)
         {
-            if (fromCaching)
+            if (this._disposed)
             {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
-
-                TChannel result;
-
-                lock (((ICollection)ReusableInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
-
-                        ReusableInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
+                return;
             }
-            else
+
+            this._disposed = true;
+
+            if (disposing)
             {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientReusableProxyClassBuilder<TChannel>>();
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
 
-                return (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+                this.CloseProxy();
             }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
+        /// Method CheckDisposed.
         /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableFaultUnwrappingInstance(bool fromCaching = true)
+        private void CheckDisposed()
         {
-            if (fromCaching)
+            if (this._disposed)
             {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, string.Empty, string.Empty);
-
-                TChannel result;
-
-                lock (((ICollection)ReusableFaultUnwrappingInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableFaultUnwrappingInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableFaultUnwrappingInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type);
-
-                        ReusableFaultUnwrappingInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type);
-            }
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
-        /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableFaultUnwrappingInstance(string remoteIPEndPoint, bool fromCaching = true)
-        {
-            UriBuilder uriBuilder = new UriBuilder(remoteIPEndPoint);
-
-            uriBuilder.Path = typeof(TChannel).FullName;
-
-            return GetReusableFaultUnwrappingInstance(typeof(BasicHttpBinding), uriBuilder.ToString(), fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
-        /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableFaultUnwrappingInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
-        {
-            string remoteAddress = new UriBuilder(Uri.UriSchemeHttp, remoteHostAddress, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetReusableFaultUnwrappingInstance(typeof(BasicHttpBinding), remoteAddress, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
-        /// </summary>
-        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableFaultUnwrappingInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
-        {
-            if (fromCaching)
-            {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
-
-                TChannel result;
-
-                lock (((ICollection)ReusableFaultUnwrappingInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableFaultUnwrappingInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableFaultUnwrappingInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                        result = string.IsNullOrEmpty(remoteAddress) ?
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
-
-                        ReusableFaultUnwrappingInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                return string.IsNullOrEmpty(remoteAddress) ?
-                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
-            }
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
-        /// </summary>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableFaultUnwrappingInstance(Binding binding, string remoteAddress, bool fromCaching = true)
-        {
-            if (fromCaching)
-            {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
-
-                TChannel result;
-
-                lock (((ICollection)ReusableFaultUnwrappingInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableFaultUnwrappingInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableFaultUnwrappingInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
-
-                        ReusableFaultUnwrappingInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
-            }
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy can be reused if the channel is faulted and unwrap any FaultException and throw the original Exception.
-        /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetReusableFaultUnwrappingInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
-        {
-            if (fromCaching)
-            {
-                string key = string.Format(WcfClientBaseDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
-
-                TChannel result;
-
-                lock (((ICollection)ReusableFaultUnwrappingInstanceDictionary).SyncRoot)
-                {
-                    if (ReusableFaultUnwrappingInstanceDictionary.ContainsKey(key))
-                    {
-                        result = ReusableFaultUnwrappingInstanceDictionary[key];
-                    }
-                    else
-                    {
-                        Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                        result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
-
-                        ReusableFaultUnwrappingInstanceDictionary.Add(key, result);
-                    }
-                }
-
-                return result;
-            }
-            else
-            {
-                Type type = WcfClientProxyTypeBuilder.BuildType<TChannel, WcfClientHandleFaultExceptionProxyClassBuilder<TChannel>>();
-
-                return (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+                throw new ObjectDisposedException("DevLib.ServiceModel.WcfClientBase");
             }
         }
     }

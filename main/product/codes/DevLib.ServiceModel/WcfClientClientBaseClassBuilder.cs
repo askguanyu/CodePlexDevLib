@@ -35,7 +35,6 @@ namespace DevLib.ServiceModel
             ilGenerator.Emit(OpCodes.Ldarg_0);
             MethodInfo channelProperty = GetMethodFromBaseClass("get_Channel");
             ilGenerator.EmitCall(OpCodes.Call, channelProperty, null);
-            ParameterInfo[] parameters = methodInfo.GetParameters();
 
             for (int index = 0; index < parameterTypes.Length; index++)
             {

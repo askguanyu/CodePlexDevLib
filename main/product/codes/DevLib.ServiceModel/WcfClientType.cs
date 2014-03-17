@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfClientProxyTypeBuilder.cs" company="YuGuan Corporation">
+// <copyright file="WcfClientType.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -10,9 +10,9 @@ namespace DevLib.ServiceModel
     using System.Collections.Generic;
 
     /// <summary>
-    /// Class WcfClientProxyTypeBuilder.
+    /// Class WcfClientType.
     /// </summary>
-    internal static class WcfClientProxyTypeBuilder
+    internal static class WcfClientType
     {
         /// <summary>
         /// Field TypeDictionary.

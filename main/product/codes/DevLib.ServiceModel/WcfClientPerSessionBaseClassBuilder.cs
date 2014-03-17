@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfClientHandleFaultExceptionProxyClassBuilder.cs" company="YuGuan Corporation">
+// <copyright file="WcfClientPerSessionBaseClassBuilder.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -11,24 +11,24 @@ namespace DevLib.ServiceModel
     using System.ServiceModel;
 
     /// <summary>
-    /// Class WcfClientHandleFaultExceptionProxyClassBuilder.
+    /// Class WcfClientPerSessionBaseClassBuilder.
     /// </summary>
     /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
-    internal class WcfClientHandleFaultExceptionProxyClassBuilder<TChannel> : WcfClientReusableProxyClassBuilder<TChannel> where TChannel : class
+    internal class WcfClientPerSessionBaseClassBuilder<TChannel> : WcfClientAbstractClassBuilder<TChannel> where TChannel : class
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfClientHandleFaultExceptionProxyClassBuilder{TChannel}" /> class.
+        /// Initializes a new instance of the <see cref="WcfClientPerSessionBaseClassBuilder{TChannel}" /> class.
         /// </summary>
-        public WcfClientHandleFaultExceptionProxyClassBuilder()
-            : base(typeof(WcfClientHandleFaultExceptionProxy<TChannel>))
+        public WcfClientPerSessionBaseClassBuilder()
+            : base(typeof(WcfClientBase<TChannel>))
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfClientHandleFaultExceptionProxyClassBuilder{TChannel}" /> class.
+        /// Initializes a new instance of the <see cref="WcfClientPerSessionBaseClassBuilder{TChannel}" /> class.
         /// </summary>
         /// <param name="baseClassType">Type of Base Class.</param>
-        public WcfClientHandleFaultExceptionProxyClassBuilder(Type baseClassType)
+        public WcfClientPerSessionBaseClassBuilder(Type baseClassType)
             : base(baseClassType)
         {
         }
@@ -48,25 +48,21 @@ namespace DevLib.ServiceModel
                 ilGenerator.DeclareLocal(methodInfo.ReturnType);
             }
 
-            Label tryLabel = ilGenerator.BeginExceptionBlock();
+            ilGenerator.BeginExceptionBlock();
+
+            ilGenerator.Emit(OpCodes.Ldarg_0);
+            ilGenerator.EmitCall(OpCodes.Call, this.GetMethodFromBaseClass("get_Proxy"), null);
+
+            for (int index = 0; index < parameterTypes.Length; index++)
             {
-                ilGenerator.Emit(OpCodes.Ldarg_0);
+                ilGenerator.Emit(OpCodes.Ldarg, ((short)index) + 1);
+            }
 
-                MethodInfo proxyProperty = GetMethodFromBaseClass("get_Proxy");
-                ilGenerator.EmitCall(OpCodes.Call, proxyProperty, null);
-                ParameterInfo[] parameters = methodInfo.GetParameters();
+            ilGenerator.Emit(OpCodes.Callvirt, methodInfo);
 
-                for (int index = 0; index < parameterTypes.Length; index++)
-                {
-                    ilGenerator.Emit(OpCodes.Ldarg, ((short)index) + 1);
-                }
-
-                ilGenerator.Emit(OpCodes.Callvirt, methodInfo);
-
-                if (hasReturn)
-                {
-                    ilGenerator.Emit(OpCodes.Stloc_0);
-                }
+            if (hasReturn)
+            {
+                ilGenerator.Emit(OpCodes.Stloc_0);
             }
 
             object[] objAttributes = methodInfo.GetCustomAttributes(typeof(FaultContractAttribute), true);
@@ -82,20 +78,21 @@ namespace DevLib.ServiceModel
                     ilGenerator.BeginCatchBlock(faultExceptionOfDetail);
                     ilGenerator.Emit(OpCodes.Stloc_S, localVariableIndex);
                     ilGenerator.Emit(OpCodes.Ldarg_0);
-                    MethodInfo closeProxyMethod = GetMethodFromBaseClass(WcfClientConstants.CloseProxyMethodName);
-                    ilGenerator.Emit(OpCodes.Call, closeProxyMethod);
+                    ilGenerator.Emit(OpCodes.Call, this.GetMethodFromBaseClass(WcfClientConstants.CloseProxyMethodName));
                     ilGenerator.Emit(OpCodes.Ldarg_0);
                     ilGenerator.Emit(OpCodes.Ldloc_S, localVariableIndex);
-                    MethodInfo handleExceptionMethod = GetMethodFromBaseClass(WcfClientConstants.HandleFaultExceptionMethodName);
-                    MethodInfo typedHandleExceptionMethod = handleExceptionMethod.MakeGenericMethod(faultAttribute.DetailType);
-                    ilGenerator.Emit(OpCodes.Callvirt, typedHandleExceptionMethod);
-                    ilGenerator.Emit(OpCodes.Rethrow);
+                    ilGenerator.Emit(OpCodes.Callvirt, this.GetMethodFromBaseClass(WcfClientConstants.HandleFaultExceptionMethodName).MakeGenericMethod(faultAttribute.DetailType));
+
+                    this.GenerateRethrow(ilGenerator);
                 }
             }
 
-            this.GenerateStandardBeginCatchBlock(ilGenerator);
+            ilGenerator.BeginCatchBlock(typeof(object));
+            ilGenerator.Emit(OpCodes.Pop);
+            ilGenerator.Emit(OpCodes.Ldarg_0);
+            ilGenerator.Emit(OpCodes.Call, this.GetMethodFromBaseClass(WcfClientConstants.CloseProxyMethodName));
 
-            ilGenerator.Emit(OpCodes.Rethrow);
+            this.GenerateRethrow(ilGenerator);
 
             ilGenerator.EndExceptionBlock();
 
@@ -105,6 +102,15 @@ namespace DevLib.ServiceModel
             }
 
             ilGenerator.Emit(OpCodes.Ret);
+        }
+
+        /// <summary>
+        /// Method GenerateRethrow.
+        /// </summary>
+        /// <param name="ilGenerator">Instance of ILGenerator.</param>
+        protected virtual void GenerateRethrow(ILGenerator ilGenerator)
+        {
+            ilGenerator.Emit(OpCodes.Rethrow);
         }
     }
 }

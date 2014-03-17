@@ -11,13 +11,23 @@ namespace DevLib.ServiceModel
     internal static class WcfClientConstants
     {
         /// <summary>
-        /// Field CloseProxyMethodName.
+        /// Field CreateProxyInstanceMethodName.
         /// </summary>
-        internal const string CloseProxyMethodName = "CloseProxy";
+        public const string CreateProxyInstanceMethodName = "CreateProxyInstance";
 
         /// <summary>
-        /// Field HandleOnFaultExceptionMethodName.
+        /// Field CloseProxyInstanceMethodName.
         /// </summary>
-        internal const string HandleFaultExceptionMethodName = "HandleFaultException";
+        public const string CloseProxyInstanceMethodName = "CloseProxyInstance";
+
+        /// <summary>
+        /// Field CloseProxyMethodName.
+        /// </summary>
+        public const string CloseProxyMethodName = "CloseProxy";
+
+        /// <summary>
+        /// Field HandleFaultExceptionMethodName.
+        /// </summary>
+        public const string HandleFaultExceptionMethodName = "HandleFaultException";
     }
 }

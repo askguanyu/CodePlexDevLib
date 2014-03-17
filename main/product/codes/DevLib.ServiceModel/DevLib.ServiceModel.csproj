@@ -51,16 +51,21 @@
     <Compile Include="IWcfClientBase.cs" />
     <Compile Include="IWcfClientTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WcfClientPerCallBaseClassBuilder.cs" />
     <Compile Include="WcfClientChannelFactory.cs" />
     <Compile Include="WcfClientAbstractClassBuilder.cs" />
-    <Compile Include="WcfClientBase.cs" />
+    <Compile Include="WcfClientPerCallThrowableClassBuilder.cs" />
+    <Compile Include="WcfClientPerCallUnthrowableClassBuilder.cs" />
+    <Compile Include="WcfClientPerSessionThrowableClassBuilder.cs" />
+    <Compile Include="WcfClientPerSessionUnthrowableClassBuilder.cs" />
+    <Compile Include="WcfClientProxy.cs">
+      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="WcfClientClientBaseClassBuilder.cs" />
     <Compile Include="WcfClientConstants.cs" />
-    <Compile Include="WcfClientHandleFaultExceptionProxy.cs" />
-    <Compile Include="WcfClientHandleFaultExceptionProxyClassBuilder.cs" />
-    <Compile Include="WcfClientProxyTypeBuilder.cs" />
-    <Compile Include="WcfClientReusableProxy.cs" />
-    <Compile Include="WcfClientReusableProxyClassBuilder.cs" />
+    <Compile Include="WcfClientType.cs" />
+    <Compile Include="WcfClientBase.cs" />
+    <Compile Include="WcfClientPerSessionBaseClassBuilder.cs" />
     <Compile Include="WcfServiceHost.cs" />
     <Compile Include="WcfServiceHostConstants.cs" />
     <Compile Include="WcfServiceHostInfo.cs" />

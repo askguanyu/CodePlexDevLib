@@ -112,6 +112,15 @@ namespace DevLib.Logging
         }
 
         /// <summary>
+        /// Writes the diagnostic message at INFO level.
+        /// </summary>
+        /// <param name="objs">Diagnostic messages or objects to log.</param>
+        public void Log(params object[] objs)
+        {
+            this.Log(1, LogLevel.INFO, objs);
+        }
+
+        /// <summary>
         /// Writes the diagnostic message at the specified level.
         /// </summary>
         /// <param name="logLevel">Log level.</param>

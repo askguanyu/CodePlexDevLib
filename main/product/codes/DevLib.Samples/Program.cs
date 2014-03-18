@@ -121,7 +121,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    //TestDevLibLogging();
+                    TestDevLibLogging();
                 });
 
                 CodeTimer.Time(delegate
@@ -230,18 +230,18 @@ namespace DevLib.Samples
             Random random = new Random();
 
             LogManager.Open(@"e:\1\test.log", new LoggerSetup { RollingFileCountLimit = 5, RollingFileSizeMBLimit = 1 });
-            int i = 0;
-            while (true)
-            {
-                i++;
-                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
-                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
-                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
-                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
-                LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+            //int i = 0;
+            //while (true)
+            //{
+            //    i++;
+            //    LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+            //    LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+            //    LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+            //    LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
+            //    LogManager.Open(@"e:\1\test.log").Log(LogLevel.DBUG, i, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow, DateTime.Now, DateTime.UtcNow);
 
-                //Thread.Sleep(random.Next(5, 100));
-            }
+            //    //Thread.Sleep(random.Next(5, 100));
+            //}
 
             //new LogConfig().WriteXml("a.xml",true);
 
@@ -249,12 +249,17 @@ namespace DevLib.Samples
 
             var a = LogManager.DefaultLogFile;
 
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Process.GetCurrentProcess().Id);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.INFO, Process.GetCurrentProcess().Id);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.EXCP, Process.GetCurrentProcess().Id);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.WARN, Process.GetCurrentProcess().Id);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.ERRO, Process.GetCurrentProcess().Id);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.FAIL, Process.GetCurrentProcess().Id);
+            for (int i = 0; i < 10; i++)
+            {
+                new Thread(new ThreadStart(() => { LogManager.Open(@"C:\\AAA.log").Log(); })).Start();
+            }
+
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Thread.CurrentThread.ManagedThreadId);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.INFO, Thread.CurrentThread.ManagedThreadId);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.EXCP, Thread.CurrentThread.ManagedThreadId);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.WARN, Thread.CurrentThread.ManagedThreadId);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.ERRO, Thread.CurrentThread.ManagedThreadId);
+            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.FAIL, Thread.CurrentThread.ManagedThreadId);
 
             Console.ReadLine();
 

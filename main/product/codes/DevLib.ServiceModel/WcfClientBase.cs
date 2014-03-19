@@ -6,6 +6,7 @@
 namespace DevLib.ServiceModel
 {
     using System;
+    using System.Net;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
@@ -51,6 +52,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         protected WcfClientBase()
         {
+            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+
             this._overloadCreateProxyInstance = 0;
             this._endpointConfigurationName = string.Empty;
         }
@@ -61,6 +64,8 @@ namespace DevLib.ServiceModel
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         protected WcfClientBase(string endpointConfigurationName)
         {
+            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+
             this._overloadCreateProxyInstance = 1;
             this._endpointConfigurationName = endpointConfigurationName;
         }
@@ -72,6 +77,8 @@ namespace DevLib.ServiceModel
         /// <param name="remoteAddress">The address of the service.</param>
         protected WcfClientBase(string endpointConfigurationName, EndpointAddress remoteAddress)
         {
+            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+
             this._overloadCreateProxyInstance = 2;
             this._endpointConfigurationName = endpointConfigurationName;
             this._remoteAddress = remoteAddress;
@@ -84,6 +91,8 @@ namespace DevLib.ServiceModel
         /// <param name="remoteAddress">The address of the service endpoint.</param>
         protected WcfClientBase(Binding binding, EndpointAddress remoteAddress)
         {
+            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+
             this._overloadCreateProxyInstance = 3;
             this._endpointConfigurationName = string.Empty;
             this._binding = binding;

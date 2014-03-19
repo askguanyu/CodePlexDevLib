@@ -121,7 +121,7 @@ namespace DevLib.Samples
 
                 CodeTimer.Time(delegate
                 {
-                    TestDevLibLogging();
+                    //TestDevLibLogging();
                 });
 
                 CodeTimer.Time(delegate

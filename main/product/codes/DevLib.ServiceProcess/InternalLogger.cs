@@ -10,6 +10,7 @@ namespace DevLib.ServiceProcess
     using System.IO;
     using System.Reflection;
     using System.Text;
+    using System.Threading;
 
     /// <summary>
     /// Internal logger.
@@ -136,6 +137,7 @@ namespace DevLib.ServiceProcess
             result.AppendFormat("[{0}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
             result.AppendFormat(" [{0}]", "INTL");
             result.AppendFormat(" [{0}]", Environment.UserName);
+            result.AppendFormat(" [{0,3}]", Thread.CurrentThread.ManagedThreadId);
 
             if (objs != null && objs.Length > 0)
             {

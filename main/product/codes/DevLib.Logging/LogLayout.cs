@@ -29,7 +29,7 @@ namespace DevLib.Logging
             result.AppendFormat("[{0}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
             result.AppendFormat(" [{0}]", logLevel.ToString());
             result.AppendFormat(" [{0}]", Environment.UserName);
-            result.AppendFormat(" [{0,2}]", Thread.CurrentThread.ManagedThreadId);
+            result.AppendFormat(" [{0,3}]", Thread.CurrentThread.ManagedThreadId);
 
             if (objs != null && objs.Length > 0)
             {

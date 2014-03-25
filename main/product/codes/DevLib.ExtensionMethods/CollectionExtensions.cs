@@ -110,9 +110,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="source">Source IEnumerable.</param>
-        /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
+        /// <param name="matchs">List of the System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
         /// <returns>A list of the zero-based index of the all occurrence of elements that matches the conditions defined by match, if found; otherwise, empty list.</returns>
-        public static List<int> FindAllIndex<T>(this IEnumerable<T> source, Predicate<T> match)
+        public static List<int> FindAllIndex<T>(this IEnumerable<T> source, params Predicate<T>[] matchs)
         {
             List<int> result = new List<int>();
 
@@ -123,9 +123,13 @@ namespace DevLib.ExtensionMethods
 
             for (int i = 0; i < source.Count(); i++)
             {
-                if (match(source.ElementAt(i)))
+                foreach (var match in matchs)
                 {
-                    result.Add(i);
+                    if (match(source.ElementAt(i)))
+                    {
+                        result.Add(i);
+                        continue;
+                    }
                 }
             }
 
@@ -138,13 +142,13 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="source">Source IEnumerable.</param>
-        /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
+        /// <param name="matchs">List of the System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
         /// <returns>A list of IEnumerable{T} that contains the sub collection of source</returns>
-        public static List<IEnumerable<T>> SplitByStartsWith<T>(this IEnumerable<T> source, Predicate<T> match)
+        public static List<IEnumerable<T>> SplitByStartsWith<T>(this IEnumerable<T> source, params Predicate<T>[] matchs)
         {
             List<IEnumerable<T>> result = new List<IEnumerable<T>>();
 
-            List<int> indexes = source.FindAllIndex(match);
+            List<int> indexes = source.FindAllIndex(matchs);
 
             if (indexes.Count < 1)
             {
@@ -178,13 +182,13 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
         /// <param name="source">Source IEnumerable.</param>
-        /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
+        /// <param name="matchs">List of the System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
         /// <returns>A list of IEnumerable{T} that contains the sub collection of source</returns>
-        public static List<IEnumerable<T>> SplitByEndsWith<T>(this IEnumerable<T> source, Predicate<T> match)
+        public static List<IEnumerable<T>> SplitByEndsWith<T>(this IEnumerable<T> source, params Predicate<T>[] matchs)
         {
             List<IEnumerable<T>> result = new List<IEnumerable<T>>();
 
-            List<int> indexes = source.FindAllIndex(match);
+            List<int> indexes = source.FindAllIndex(matchs);
 
             if (indexes.Count < 1)
             {

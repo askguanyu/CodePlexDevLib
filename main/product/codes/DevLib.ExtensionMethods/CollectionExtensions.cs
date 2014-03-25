@@ -121,16 +121,20 @@ namespace DevLib.ExtensionMethods
                 return result;
             }
 
-            for (int i = 0; i < source.Count(); i++)
+            int i = 0;
+
+            foreach (var item in source)
             {
                 foreach (var match in matchs)
                 {
-                    if (match(source.ElementAt(i)))
+                    if (match(item))
                     {
                         result.Add(i);
                         continue;
                     }
                 }
+
+                i++;
             }
 
             return result;

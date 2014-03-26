@@ -52,12 +52,9 @@ namespace DevLib.ExtensionMethods
 
             DateTime result = default(DateTime);
 
-            foreach (var format in formats)
+            if (!DateTime.TryParse(source, out result))
             {
-                if (DateTime.TryParseExact(source, format, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result))
-                {
-                    break;
-                }
+                DateTime.TryParseExact(source, formats, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result);
             }
 
             return result;

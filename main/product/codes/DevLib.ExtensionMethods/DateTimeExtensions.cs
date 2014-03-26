@@ -41,18 +41,25 @@ namespace DevLib.ExtensionMethods
         /// Converts the specified string representation of a date and time to its <see cref="T:System.DateTime" /> equivalent using the specified format and InvariantCulture information. The format of the string representation must match the specified format exactly.
         /// </summary>
         /// <param name="source">Source string.</param>
-        /// <param name="format">The required format of <paramref name="source" />.</param>
-        /// <param name="defaultValue">If convert failed, return default value.</param>
+        /// <param name="formats">A list of possible required format of <paramref name="source" />.</param>
         /// <returns>An object that is equivalent to the date and time contained in <paramref name="source" />, as specified by <paramref name="format" />.</returns>
-        public static DateTime ToDateTime(this string source, string format, DateTime defaultValue = default(DateTime))
+        public static DateTime ToDateTime(this string source, params string[] formats)
         {
             if (source.IsNullOrEmpty())
             {
                 return default(DateTime);
             }
 
-            DateTime result = defaultValue;
-            DateTime.TryParseExact(source, format, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result);
+            DateTime result = default(DateTime);
+
+            foreach (var format in formats)
+            {
+                if (DateTime.TryParseExact(source, format, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result))
+                {
+                    break;
+                }
+            }
+
             return result;
         }
     }

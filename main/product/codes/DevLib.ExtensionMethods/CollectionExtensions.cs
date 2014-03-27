@@ -144,15 +144,15 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source IEnumerable.</param>
         /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
         /// <returns>A list of IEnumerable{T} that contains the sub collection of source</returns>
-        public static List<IEnumerable<T>> SplitByStartsWith<T>(this IEnumerable<T> source, Predicate<T> match)
+        public static List<List<T>> SplitByStartsWith<T>(this IEnumerable<T> source, Predicate<T> match)
         {
-            List<IEnumerable<T>> result = new List<IEnumerable<T>>();
+            List<List<T>> result = new List<List<T>>();
 
             List<int> indexes = source.FindAllIndex(match);
 
             if (indexes.Count < 1)
             {
-                result.Add(source);
+                result.Add(source.ToList());
                 return result;
             }
 
@@ -167,11 +167,11 @@ namespace DevLib.ExtensionMethods
                 }
 
                 takeCount = index - skipCount;
-                result.Add(source.Skip(skipCount).Take(takeCount));
+                result.Add(source.Skip(skipCount).Take(takeCount).ToList());
                 skipCount = index;
             }
 
-            result.Add(source.Skip(skipCount));
+            result.Add(source.Skip(skipCount).ToList());
 
             return result;
         }
@@ -184,15 +184,15 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source IEnumerable.</param>
         /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
         /// <returns>A list of IEnumerable{T} that contains the sub collection of source</returns>
-        public static List<IEnumerable<T>> SplitByEndsWith<T>(this IEnumerable<T> source, Predicate<T> match)
+        public static List<List<T>> SplitByEndsWith<T>(this IEnumerable<T> source, Predicate<T> match)
         {
-            List<IEnumerable<T>> result = new List<IEnumerable<T>>();
+            List<List<T>> result = new List<List<T>>();
 
             List<int> indexes = source.FindAllIndex(match);
 
             if (indexes.Count < 1)
             {
-                result.Add(source);
+                result.Add(source.ToList());
                 return result;
             }
 
@@ -202,13 +202,13 @@ namespace DevLib.ExtensionMethods
             foreach (int index in indexes)
             {
                 takeCount = index + 1 - skipCount;
-                result.Add(source.Skip(skipCount).Take(takeCount));
+                result.Add(source.Skip(skipCount).Take(takeCount).ToList());
                 skipCount = index + 1;
             }
 
             if (skipCount < source.Count())
             {
-                result.Add(source.Skip(skipCount));
+                result.Add(source.Skip(skipCount).ToList());
             }
 
             return result;

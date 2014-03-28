@@ -109,7 +109,7 @@ namespace DevLib.ExtensionMethods
         /// Searches for all elements that matches the conditions defined by the specified predicate, and returns the zero-based index of the all occurrence within the entire System.Collections.Generic.List{T}.
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
-        /// <param name="source">Source IEnumerable.</param>
+        /// <param name="source">Source IEnumerable{T}.</param>
         /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
         /// <returns>A list of the zero-based index of the all occurrence of elements that matches the conditions defined by match, if found; otherwise, empty list.</returns>
         public static List<int> FindAllIndex<T>(this IEnumerable<T> source, Predicate<T> match)
@@ -137,13 +137,43 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Searches for all elements that matches the conditions defined by the specified predicate, and returns the zero-based index of the all occurrence within the entire System.Collections.Generic.List{T}.
+        /// </summary>
+        /// <param name="source">Source IEnumerable.</param>
+        /// <param name="predicate">The delegate that defines the conditions of the element to search for.</param>
+        /// <returns>A list of the zero-based index of the all occurrence of elements that matches the conditions defined by match, if found; otherwise, empty list.</returns>
+        public static List<int> FindAllIndex(this IEnumerable source, Func<object, bool> predicate)
+        {
+            List<int> result = new List<int>();
+
+            if (source == null)
+            {
+                return result;
+            }
+
+            int i = 0;
+
+            foreach (var item in source)
+            {
+                if (predicate(item))
+                {
+                    result.Add(i);
+                }
+
+                i++;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Returns a list of IEnumerable{T} that contains the sub collection of source that are delimited by elements of a specified predicate.
         /// The elements of each sub collection are started with the specified predicate element.
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
-        /// <param name="source">Source IEnumerable.</param>
+        /// <param name="source">Source IEnumerable{T}.</param>
         /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
-        /// <returns>A list of IEnumerable{T} that contains the sub collection of source</returns>
+        /// <returns>A list of IEnumerable{T} that contains the sub collection of source.</returns>
         public static List<List<T>> SplitByStartsWith<T>(this IEnumerable<T> source, Predicate<T> match)
         {
             List<List<T>> result = new List<List<T>>();
@@ -177,13 +207,54 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Returns a list of IEnumerable that contains the sub collection of source that are delimited by elements of a specified predicate.
+        /// The elements of each sub collection are started with the specified predicate element.
+        /// </summary>
+        /// <param name="source">Source IEnumerable.</param>
+        /// <param name="predicate">The delegate that defines the conditions of the element to search for.</param>
+        /// <returns>A list of IEnumerable that contains the sub collection of source.</returns>
+        public static List<List<object>> SplitByStartsWith(this IEnumerable source, Func<object, bool> predicate)
+        {
+            List<List<object>> result = new List<List<object>>();
+
+            List<int> indexes = source.FindAllIndex(predicate);
+
+            var sourceItems = source.Cast<object>();
+
+            if (indexes.Count < 1)
+            {
+                result.Add(sourceItems.ToList());
+                return result;
+            }
+
+            int skipCount = 0;
+            int takeCount = 0;
+
+            foreach (int index in indexes)
+            {
+                if (index == 0)
+                {
+                    continue;
+                }
+
+                takeCount = index - skipCount;
+                result.Add(sourceItems.Skip(skipCount).Take(takeCount).ToList());
+                skipCount = index;
+            }
+
+            result.Add(sourceItems.Skip(skipCount).ToList());
+
+            return result;
+        }
+
+        /// <summary>
         /// Returns a list of IEnumerable{T} that contains the sub collection of source that are delimited by elements of a specified predicate.
         /// The elements of each sub collection are ended with the specified predicate element.
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>
-        /// <param name="source">Source IEnumerable.</param>
+        /// <param name="source">Source IEnumerable{T}.</param>
         /// <param name="match">The System.Predicate{T} delegate that defines the conditions of the element to search for.</param>
-        /// <returns>A list of IEnumerable{T} that contains the sub collection of source</returns>
+        /// <returns>A list of IEnumerable{T} that contains the sub collection of source.</returns>
         public static List<List<T>> SplitByEndsWith<T>(this IEnumerable<T> source, Predicate<T> match)
         {
             List<List<T>> result = new List<List<T>>();
@@ -209,6 +280,45 @@ namespace DevLib.ExtensionMethods
             if (skipCount < source.Count())
             {
                 result.Add(source.Skip(skipCount).ToList());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a list of IEnumerable that contains the sub collection of source that are delimited by elements of a specified predicate.
+        /// The elements of each sub collection are ended with the specified predicate element.
+        /// </summary>
+        /// <param name="source">Source IEnumerable.</param>
+        /// <param name="predicate">The delegate that defines the conditions of the element to search for.</param>
+        /// <returns>A list of IEnumerable that contains the sub collection of source.</returns>
+        public static List<List<object>> SplitByEndsWith(this IEnumerable source, Func<object, bool> predicate)
+        {
+            List<List<object>> result = new List<List<object>>();
+
+            List<int> indexes = source.FindAllIndex(predicate);
+
+            var sourceItems = source.Cast<object>();
+
+            if (indexes.Count < 1)
+            {
+                result.Add(sourceItems.ToList());
+                return result;
+            }
+
+            int skipCount = 0;
+            int takeCount = 0;
+
+            foreach (int index in indexes)
+            {
+                takeCount = index + 1 - skipCount;
+                result.Add(sourceItems.Skip(skipCount).Take(takeCount).ToList());
+                skipCount = index + 1;
+            }
+
+            if (skipCount < sourceItems.Count())
+            {
+                result.Add(sourceItems.Skip(skipCount).ToList());
             }
 
             return result;

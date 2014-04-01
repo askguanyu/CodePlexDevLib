@@ -393,5 +393,21 @@ namespace DevLib.ExtensionMethods
                 p == 0x000A ||
                 p == 0x000D).ToArray());
         }
+
+        /// <summary>
+        /// Retrieves a truncated string from this instance.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="maxLength">Maximum length to truncate.</param>
+        /// <returns>A truncated string.</returns>
+        public static string Truncate(this string source, int maxLength)
+        {
+            if (string.IsNullOrEmpty(source) || source.Length <= maxLength)
+            {
+                return source;
+            }
+
+            return source.Substring(0, maxLength);
+        }
     }
 }

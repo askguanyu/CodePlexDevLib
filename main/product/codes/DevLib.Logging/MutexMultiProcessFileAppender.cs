@@ -135,22 +135,28 @@ namespace DevLib.Logging
 
             try
             {
-                this._mutex.WaitOne();
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                this.InternalWrite(bytes);
-            }
-            catch
-            {
             }
             finally
             {
-                this._mutex.ReleaseMutex();
+                try
+                {
+                    this._mutex.WaitOne();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    this.InternalWrite(bytes);
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    this._mutex.ReleaseMutex();
+                }
             }
         }
 
@@ -173,26 +179,32 @@ namespace DevLib.Logging
                 return;
             }
 
-            byte[] bytes = (encoding ?? Encoding.Unicode).GetBytes(text);
-
             try
-            {
-                this._mutex.WaitOne();
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                this.InternalWrite(bytes);
-            }
-            catch
             {
             }
             finally
             {
-                this._mutex.ReleaseMutex();
+                byte[] bytes = (encoding ?? Encoding.Unicode).GetBytes(text);
+
+                try
+                {
+                    this._mutex.WaitOne();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    this.InternalWrite(bytes);
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    this._mutex.ReleaseMutex();
+                }
             }
         }
 

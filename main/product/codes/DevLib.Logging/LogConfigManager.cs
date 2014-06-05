@@ -77,6 +77,18 @@ namespace DevLib.Logging
 
                     if (logConfigNode == null)
                     {
+                        XmlNode loggerSetupNode = xmlDocument.SelectSingleNode("descendant-or-self::LoggerSetup");
+
+                        if (loggerSetupNode != null)
+                        {
+                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(LoggerSetup));
+
+                            using (StringReader stringReader = new StringReader(loggerSetupNode.OuterXml))
+                            {
+                                result.LoggerSetup = (LoggerSetup)xmlSerializer.Deserialize(stringReader);
+                            }
+                        }
+
                         return result;
                     }
 
@@ -87,13 +99,13 @@ namespace DevLib.Logging
                         result.LogFile = logFileNode.InnerText;
                     }
 
-                    XmlNode loggerSetupNode = logConfigNode.SelectSingleNode("descendant::LoggerSetup");
+                    XmlNode logConfigLoggerSetupNode = logConfigNode.SelectSingleNode("descendant::LoggerSetup");
 
-                    if (loggerSetupNode != null)
+                    if (logConfigLoggerSetupNode != null)
                     {
                         XmlSerializer xmlSerializer = new XmlSerializer(typeof(LoggerSetup));
 
-                        using (StringReader stringReader = new StringReader(loggerSetupNode.OuterXml))
+                        using (StringReader stringReader = new StringReader(logConfigLoggerSetupNode.OuterXml))
                         {
                             result.LoggerSetup = (LoggerSetup)xmlSerializer.Deserialize(stringReader);
                         }

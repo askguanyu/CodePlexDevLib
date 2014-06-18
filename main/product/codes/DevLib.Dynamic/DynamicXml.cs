@@ -158,7 +158,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the current DynamicXml has specified element name; otherwise, false.</returns>
         public bool HasElement(string name)
         {
-            return this._xElement.Element(name) != null;
+            return this._xElement.Element(XName.Get(name, this._xElement.GetDefaultNamespace().NamespaceName)) != null;
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace DevLib.Dynamic
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool RemoveElement(string name)
         {
-            var element = this._xElement.Element(name);
+            var element = this._xElement.Element(XName.Get(name, this._xElement.GetDefaultNamespace().NamespaceName));
 
             if (element != null)
             {
@@ -388,7 +388,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var elements = this._xElement.Elements(binder.Name);
+            var elements = this._xElement.Elements(XName.Get(binder.Name, this._xElement.GetDefaultNamespace().NamespaceName));
 
             if (elements.Count() > 1)
             {
@@ -459,7 +459,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            XElement element = this._xElement.Element(binder.Name);
+            XElement element = this._xElement.Element(XName.Get(binder.Name, this._xElement.GetDefaultNamespace().NamespaceName));
 
             if (element != null)
             {
@@ -708,7 +708,7 @@ namespace DevLib.Dynamic
 
             foreach (var item in properties)
             {
-                var elements = xElement.Elements(item.Name);
+                var elements = xElement.Elements(XName.Get(item.Name, this._xElement.GetDefaultNamespace().NamespaceName));
 
                 if (elements.Count() >= 1)
                 {

@@ -392,7 +392,7 @@ namespace DevLib.Dynamic
 
             if (elements.Count() > 1)
             {
-                result = elements.Select(i => new DynamicXml(i));
+                result = elements.Select(i => new DynamicXml(i)).ToList();
 
                 return true;
             }

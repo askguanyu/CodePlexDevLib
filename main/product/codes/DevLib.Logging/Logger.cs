@@ -13,8 +13,7 @@ namespace DevLib.Logging
     /// <summary>
     /// Class Logger. Provides logging functions.
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Reviewed.")]
-    public sealed class Logger
+    public sealed class Logger : IDisposable
     {
         /// <summary>
         /// Field _logFile.
@@ -52,6 +51,11 @@ namespace DevLib.Logging
         private readonly Thread _consumerThread;
 
         /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Logger" /> class.
         /// </summary>
         /// <param name="logFile">Log file.</param>
@@ -78,8 +82,9 @@ namespace DevLib.Logging
 
                     this._consumerThread.Start();
                 }
-                catch
+                catch (Exception e)
                 {
+                    InternalLogger.Log(e);
                 }
             }
         }
@@ -89,26 +94,24 @@ namespace DevLib.Logging
         /// </summary>
         ~Logger()
         {
-            if (this._queueWaitHandle != null)
-            {
-                this._queueWaitHandle.Close();
-            }
+            this.Dispose(false);
+        }
 
-            if (this._fileAppender != null)
-            {
-                this._fileAppender.Dispose();
-            }
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="Logger" /> class.
+        /// </summary>
+        public void Close()
+        {
+            this.Dispose();
+        }
 
-            if (this._consumerThread != null)
-            {
-                try
-                {
-                    this._consumerThread.Abort();
-                }
-                catch
-                {
-                }
-            }
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="Logger" /> class.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -138,18 +141,18 @@ namespace DevLib.Logging
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public void Log(int skipFrames, LogLevel logLevel, params object[] objs)
         {
-            try
+            if (((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || this._fileAppender != null) && logLevel >= this._loggerSetup.Level)
             {
-                if ((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || this._fileAppender != null)
+                try
                 {
                     string message = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, objs);
 
                     if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                     {
-                        ColoredConsoleAppender.Write(logLevel, message);
+                        this.WriteColoredConsole(logLevel, message);
                     }
 
-                    if (this._fileAppender != null && logLevel >= this._loggerSetup.Level)
+                    if (this._fileAppender != null)
                     {
                         lock (this._queueSyncRoot)
                         {
@@ -159,11 +162,118 @@ namespace DevLib.Logging
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
             }
-            catch (Exception e)
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="Logger" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        private void Dispose(bool disposing)
+        {
+            if (this._disposed)
             {
-                InternalLogger.Log(e);
+                return;
             }
+
+            this._disposed = true;
+
+            if (disposing)
+            {
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+
+                if (this._queueWaitHandle != null)
+                {
+                    this._queueWaitHandle.Close();
+                }
+
+                if (this._fileAppender != null)
+                {
+                    this._fileAppender.Dispose();
+                }
+
+                if (this._consumerThread != null)
+                {
+                    try
+                    {
+                        this._consumerThread.Abort();
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                if (this._queue != null)
+                {
+                    this._queue.Clear();
+                }
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.Logging");
+            }
+        }
+
+        /// <summary>
+        /// Writes the specified string value with foreground color, followed by the current line terminator, to the standard output stream.
+        /// </summary>
+        /// <param name="logLevel">Log level.</param>
+        /// <param name="message">Message to write.</param>
+        private void WriteColoredConsole(LogLevel logLevel, string message)
+        {
+            ConsoleColor originalForeColor = Console.ForegroundColor;
+
+            switch (logLevel)
+            {
+                case LogLevel.DBUG:
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    break;
+                case LogLevel.INFO:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    break;
+                case LogLevel.EXCP:
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    break;
+                case LogLevel.WARN:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case LogLevel.ERRO:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case LogLevel.FAIL:
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    break;
+                default:
+                    break;
+            }
+
+            Console.WriteLine(message);
+
+            Console.ForegroundColor = originalForeColor;
         }
 
         /// <summary>

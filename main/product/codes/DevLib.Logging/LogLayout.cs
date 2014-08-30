@@ -6,6 +6,7 @@
 namespace DevLib.Logging
 {
     using System;
+    using System.Globalization;
     using System.Text;
     using System.Threading;
 
@@ -26,10 +27,10 @@ namespace DevLib.Logging
         {
             StringBuilder result = new StringBuilder();
 
-            result.AppendFormat("[{0}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
-            result.AppendFormat(" [{0}]", logLevel.ToString());
-            result.AppendFormat(" [{0}]", Environment.UserName);
-            result.AppendFormat(" [{0,3}]", Thread.CurrentThread.ManagedThreadId);
+            result.AppendFormat("{0}|", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
+            result.AppendFormat("{0}|", logLevel.ToString());
+            result.AppendFormat("{0}|", Environment.UserName);
+            result.AppendFormat("{0,3}|", Thread.CurrentThread.ManagedThreadId);
 
             if (objs != null && objs.Length > 0)
             {
@@ -49,7 +50,7 @@ namespace DevLib.Logging
                 }
             }
 
-            result.AppendFormat(" [{0}]", InternalLogger.GetStackFrameInfo(skipFrames < 1 ? 2 : skipFrames + 2));
+            result.AppendFormat(" |{0}", InternalLogger.GetStackFrameInfo(skipFrames < 1 ? 2 : skipFrames + 2));
 
             result.Append(Environment.NewLine);
 

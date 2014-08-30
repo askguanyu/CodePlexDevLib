@@ -227,9 +227,22 @@ namespace DevLib.Samples
 
         private static void TestDevLibLogging()
         {
-            Random random = new Random();
+            var logger = LogManager.Open("e:\\1.log");
 
-            LogManager.Open(@"e:\1\test.log", new LoggerSetup { RollingFileCountLimit = 5, RollingFileSizeMBLimit = 1 });
+            CodeTimer.Time(index =>
+            {
+                for (int i = 0; i < 1000; i++)
+                {
+                    logger.Log(i, "The quick brown fox jumps over the lazy dog.");
+                }
+            });
+
+            //Logger logger = LogManager.Open();
+            //logger.Log("This is a log message.");
+
+            //Random random = new Random();
+
+            //LogManager.Open(@"e:\1\test.log", new LoggerSetup { RollingFileCountLimit = 5, RollingFileSizeMBLimit = 1 });
             //int i = 0;
             //while (true)
             //{
@@ -245,23 +258,23 @@ namespace DevLib.Samples
 
             //new LogConfig().WriteXml("a.xml",true);
 
-            LogManager.OpenConfig("a.xml");
+            //LogManager.OpenConfig("a.xml");
 
-            var a = LogManager.DefaultLogFile;
+            //var a = LogManager.DefaultLogFile;
 
-            for (int i = 0; i < 10; i++)
-            {
-                new Thread(new ThreadStart(() => { LogManager.Open(@"C:\\AAA.log").Log(); })).Start();
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    new Thread(new ThreadStart(() => { LogManager.Open(@"C:\\AAA.log").Log(); })).Start();
+            //}
 
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Thread.CurrentThread.ManagedThreadId);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.INFO, Thread.CurrentThread.ManagedThreadId);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.EXCP, Thread.CurrentThread.ManagedThreadId);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.WARN, Thread.CurrentThread.ManagedThreadId);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.ERRO, Thread.CurrentThread.ManagedThreadId);
-            LogManager.Open(@"C:\\AAA.log").Log(LogLevel.FAIL, Thread.CurrentThread.ManagedThreadId);
+            //LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Thread.CurrentThread.ManagedThreadId);
+            //LogManager.Open(@"C:\\AAA.log").Log(LogLevel.INFO, Thread.CurrentThread.ManagedThreadId);
+            //LogManager.Open(@"C:\\AAA.log").Log(LogLevel.EXCP, Thread.CurrentThread.ManagedThreadId);
+            //LogManager.Open(@"C:\\AAA.log").Log(LogLevel.WARN, Thread.CurrentThread.ManagedThreadId);
+            //LogManager.Open(@"C:\\AAA.log").Log(LogLevel.ERRO, Thread.CurrentThread.ManagedThreadId);
+            //LogManager.Open(@"C:\\AAA.log").Log(LogLevel.FAIL, Thread.CurrentThread.ManagedThreadId);
 
-            Console.ReadLine();
+            //Console.ReadLine();
 
             //var a = new Uri(Path.GetFullPath(@"C:\a b\b c\c d e\1 3 4.5")).AbsolutePath;
 
@@ -269,14 +282,14 @@ namespace DevLib.Samples
 
 
 
-            LogManager.DefaultLoggerSetup.RollingByDate = true;
+            //LogManager.DefaultLoggerSetup.RollingByDate = true;
 
-            while (true)
-            {
-                LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Process.GetCurrentProcess().Id);
+            //while (true)
+            //{
+            //    LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, Process.GetCurrentProcess().Id);
 
-                Thread.Sleep(random.Next(5, 100));
-            }
+            //    Thread.Sleep(random.Next(5, 100));
+            //}
 
             //for (int i = 0; i < 100; i++)
             //{

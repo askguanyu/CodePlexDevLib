@@ -7,6 +7,7 @@ namespace DevLib.ServiceProcess
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Reflection;
     using System.Text;
@@ -134,10 +135,10 @@ namespace DevLib.ServiceProcess
         {
             StringBuilder result = new StringBuilder();
 
-            result.AppendFormat("[{0}]", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
-            result.AppendFormat(" [{0}]", "INTL");
-            result.AppendFormat(" [{0}]", Environment.UserName);
-            result.AppendFormat(" [{0,3}]", Thread.CurrentThread.ManagedThreadId);
+            result.AppendFormat("{0}|", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
+            result.AppendFormat("{0}|", "INTL");
+            result.AppendFormat("{0}|", Environment.UserName);
+            result.AppendFormat("{0,3}|", Thread.CurrentThread.ManagedThreadId);
 
             if (objs != null && objs.Length > 0)
             {
@@ -147,7 +148,7 @@ namespace DevLib.ServiceProcess
                 }
             }
 
-            result.AppendFormat(" [{0}]", GetStackFrameInfo(2));
+            result.AppendFormat(" |{0}", GetStackFrameInfo(2));
             result.Append(Environment.NewLine);
             return result.ToString();
         }

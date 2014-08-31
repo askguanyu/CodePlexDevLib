@@ -65,101 +65,101 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            CodeTimer.Time(delegate
+            Benchmark.Run(delegate
             {
                 PrintStartInfo();
 
-                var result = CodeTimer.Time(i =>
+                var result = Benchmark.Run(i =>
                 {
                     //TestCodeSnippets();
                 });
 
-                CodeTimer.Time(i =>
+                Benchmark.Run(i =>
                 {
                     //TestDynamic();
                 });
 
-                CodeTimer.Time(i =>
+                Benchmark.Run(i =>
                 {
                     //TestReflection();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibAddIn();
                 });
 
-                CodeTimer.Time(i =>
+                Benchmark.Run(i =>
                 {
                     //TestCompression();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibDaemonProcess();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibDesignPatterns();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibDiagnostics();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibExtensionMethods();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibIoc();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibLogging();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibNet();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibUtilities();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibServiceModel();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibServiceProcess(args);
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibTerminalServices();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibTimer();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     //TestDevLibConfiguration();
                 });
 
-                CodeTimer.Time(delegate
+                Benchmark.Run(delegate
                 {
                     new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
                 });
@@ -229,7 +229,7 @@ namespace DevLib.Samples
         {
             var logger = LogManager.Open("e:\\1.log");
 
-            CodeTimer.Time(index =>
+            Benchmark.Run(index =>
             {
                 for (int i = 0; i < 1000; i++)
                 {
@@ -660,8 +660,8 @@ namespace DevLib.Samples
 
             var b1 = new Dictionary<int, string>(1000000);
             ReaderWriterLockSlim rwl1 = new ReaderWriterLockSlim();
-            CodeTimer.Initialize();
-            CodeTimer.Time(delegate
+            Benchmark.Initialize();
+            Benchmark.Run(delegate
             {
                 for (int loop = 0; loop < 1000000; loop++)
                 {
@@ -684,7 +684,7 @@ namespace DevLib.Samples
                 }
             }, 2, "ReaderWriterLockSlimDictW");
 
-            CodeTimer.Time(delegate
+            Benchmark.Run(delegate
             {
                 for (int loop = 0; loop < 1000000; loop++)
                 {
@@ -710,8 +710,8 @@ namespace DevLib.Samples
 
             var b = new Dictionary<int, string>(1000000);
             ReaderWriterLock rwl = new ReaderWriterLock();
-            CodeTimer.Initialize();
-            CodeTimer.Time(delegate
+            Benchmark.Initialize();
+            Benchmark.Run(delegate
             {
                 for (int loop = 0; loop < 1000000; loop++)
                 {
@@ -734,7 +734,7 @@ namespace DevLib.Samples
                 }
             }, 2, "ReaderWriterLockDictW");
 
-            CodeTimer.Time(delegate
+            Benchmark.Run(delegate
             {
                 for (int loop = 0; loop < 1000000; loop++)
                 {
@@ -759,8 +759,8 @@ namespace DevLib.Samples
             }, 2, "ReaderWriterLockDictR");
 
             var d = new Dictionary<int, string>(1000000);
-            CodeTimer.Initialize();
-            CodeTimer.Time(delegate
+            Benchmark.Initialize();
+            Benchmark.Run(delegate
             {
                 for (int loop = 0; loop < 1000000; loop++)
                 {
@@ -782,7 +782,7 @@ namespace DevLib.Samples
                 }
             }, 2, "LockDictW");
 
-            CodeTimer.Time(delegate
+            Benchmark.Run(delegate
             {
                 for (int loop = 0; loop < 1000000; loop++)
                 {
@@ -809,8 +809,8 @@ namespace DevLib.Samples
 
 
             var c = new Dictionary<int, string>(1000000);
-            CodeTimer.Initialize();
-            CodeTimer.Time(delegate
+            Benchmark.Initialize();
+            Benchmark.Run(delegate
             {
                 Parallel.For(0, 1000000, (loop) =>
                 {
@@ -819,7 +819,7 @@ namespace DevLib.Samples
                 });
             }, 1, "DictW");
 
-            CodeTimer.Time(delegate
+            Benchmark.Run(delegate
             {
                 for (int loop = 0; loop < 1000000; loop++)
                 {
@@ -840,8 +840,8 @@ namespace DevLib.Samples
             }, 1, "DictR");
 
             var e = new ConcurrentDictionary<int, string>(10000, 1000000);
-            CodeTimer.Initialize();
-            CodeTimer.Time(delegate
+            Benchmark.Initialize();
+            Benchmark.Run(delegate
             {
                 Parallel.For(0, 1000000, (loop) =>
                 {
@@ -850,7 +850,7 @@ namespace DevLib.Samples
                 });
             }, 1, "ConcurrentDictionaryW");
 
-            CodeTimer.Time(delegate
+            Benchmark.Run(delegate
             {
                 Parallel.For(0, 1000000, (loop) =>
                 {
@@ -1013,7 +1013,7 @@ namespace DevLib.Samples
             List<int> list = new List<int>();
             ConcurrentBag<string> safeBag = new ConcurrentBag<string>();
 
-            CodeTimer.Initialize();
+            Benchmark.Initialize();
 
             int times = 1000 * 10;
 
@@ -1021,9 +1021,9 @@ namespace DevLib.Samples
             object[] parameters = new object[] { 1, 2 };
             MethodInfo methodInfo = typeof(TestClass).GetMethod("TestAdd");
 
-            CodeTimer.Time(delegate { }, 1, string.Empty, delegate { });
+            Benchmark.Run(delegate { }, 1, string.Empty, delegate { });
 
-            CodeTimer.Time(delegate { testClass.TestAdd(1, 2); }, times);
+            Benchmark.Run(delegate { testClass.TestAdd(1, 2); }, times);
 
             //methodInfo.Invoke(testClass, parameters).ConsoleOutput();
             //CodeTimer.Time(new Action(() =>

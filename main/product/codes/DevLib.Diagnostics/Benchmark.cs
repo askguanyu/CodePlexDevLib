@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="CodeTimer.cs" company="YuGuan Corporation">
+// <copyright file="Benchmark.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -13,10 +13,10 @@ namespace DevLib.Diagnostics
     using System.Threading;
 
     /// <summary>
-    /// Code snippets performance timer.
+    /// Measure code snippets performance.
     /// </summary>
     [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-    public static class CodeTimer
+    public static class Benchmark
     {
         /// <summary>
         /// Static Field _random.
@@ -24,11 +24,11 @@ namespace DevLib.Diagnostics
         private static Random _random = new Random();
 
         /// <summary>
-        /// Initialize code snippets performance timer.
+        /// Initialize Benchmark.
         /// </summary>
         public static void Initialize()
         {
-            DevLib.Diagnostics.CodeTimer.Time(delegate { }, 1, string.Empty, delegate { });
+            DevLib.Diagnostics.Benchmark.Run(delegate { }, 1, string.Empty, delegate { });
         }
 
         /// <summary>
@@ -42,8 +42,8 @@ namespace DevLib.Diagnostics
         /// <param name="outputAction">The action to handle the performance test result string.
         /// <example>Default: <code>Console.WriteLine</code></example>
         /// </param>
-        /// <returns>CodeTimer result.</returns>
-        public static CodeTimerResult Time(Action<int> action, int iteration = 1, string name = null, Action<string> outputAction = null)
+        /// <returns>Benchmark result.</returns>
+        public static BenchmarkResult Run(Action<int> action, int iteration = 1, string name = null, Action<string> outputAction = null)
         {
             if ((action == null) || (iteration < 1))
             {
@@ -75,7 +75,7 @@ namespace DevLib.Diagnostics
             Console.ForegroundColor = consoleRandomColor;
             Console.BackgroundColor = ConsoleColor.Black;
 
-            string beginTitle = string.Format(@"/--Time Begin-->{0}--\", titleName);
+            string beginTitle = string.Format(@"/--Benchmark Begin-->{0}--\", titleName);
             outputAction(beginTitle);
             Debug.WriteLine(beginTitle);
 
@@ -146,7 +146,7 @@ namespace DevLib.Diagnostics
             Console.ResetColor();
             Console.ForegroundColor = consoleRandomColor;
             Console.BackgroundColor = ConsoleColor.Black;
-            string endTitle = string.Format(@"\--Time End---->{0}--/", titleName);
+            string endTitle = string.Format(@"\--Benchmark End---->{0}--/", titleName);
             outputAction(endTitle);
             Debug.WriteLine(endTitle);
 
@@ -161,7 +161,7 @@ namespace DevLib.Diagnostics
 
             Console.WriteLine();
 
-            CodeTimerResult result = new CodeTimerResult(stopwatch.ElapsedMilliseconds, threadTime / 10000L, cpuCycles, gcCountArray);
+            BenchmarkResult result = new BenchmarkResult(stopwatch.ElapsedMilliseconds, threadTime / 10000L, cpuCycles, gcCountArray);
             return result;
         }
 
@@ -236,23 +236,23 @@ namespace DevLib.Diagnostics
     /// </summary>
     [Serializable]
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
-    public class CodeTimerResult
+    public class BenchmarkResult
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CodeTimerResult" /> class.
+        /// Initializes a new instance of the <see cref="BenchmarkResult" /> class.
         /// </summary>
-        public CodeTimerResult()
+        public BenchmarkResult()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CodeTimerResult" /> class.
+        /// Initializes a new instance of the <see cref="BenchmarkResult" /> class.
         /// </summary>
         /// <param name="stopwatchElapsedMilliseconds">Stopwatch timespan in milliseconds.</param>
         /// <param name="threadTimeElapsedMilliseconds">ThreadTime timespan in milliseconds.</param>
         /// <param name="cpuCycles">CPU cycles.</param>
         /// <param name="gcCountArray">GC Count Array.</param>
-        public CodeTimerResult(long stopwatchElapsedMilliseconds, long threadTimeElapsedMilliseconds, ulong cpuCycles, int[] gcCountArray)
+        public BenchmarkResult(long stopwatchElapsedMilliseconds, long threadTimeElapsedMilliseconds, ulong cpuCycles, int[] gcCountArray)
         {
             this.StopwatchElapsedMilliseconds = stopwatchElapsedMilliseconds;
             this.ThreadTimeElapsedMilliseconds = threadTimeElapsedMilliseconds;

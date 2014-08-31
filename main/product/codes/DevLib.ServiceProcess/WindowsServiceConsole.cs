@@ -514,7 +514,7 @@ namespace DevLib.ServiceProcess
                 if (withTimestamp)
                 {
                     Console.ForegroundColor = foregroundColor;
-                    Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), value));
+                    Console.WriteLine(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture), value));
                 }
                 else
                 {
@@ -527,7 +527,7 @@ namespace DevLib.ServiceProcess
                 if (withTimestamp)
                 {
                     Console.ForegroundColor = foregroundColor;
-                    Console.Write(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"), value));
+                    Console.Write(string.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture), value));
                 }
                 else
                 {

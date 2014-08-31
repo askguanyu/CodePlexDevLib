@@ -161,7 +161,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
+                    //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
                 });
 
                 PrintExitInfo();

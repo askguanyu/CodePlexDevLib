@@ -88,7 +88,6 @@ namespace DevLib.DaemonProcess
             {
                 string daemonProcessFullPath = Assembly.GetExecutingAssembly().Location;
                 string daemonProcessName = Assembly.GetExecutingAssembly().GetName().Name;
-                string daemonProcessFileName = Path.GetFileName(daemonProcessFullPath);
 
                 List<string> daemonProcessArgs = new List<string>();
                 daemonProcessArgs.Add(string.Format("\"{0}\"", daemonProcessGuid.ToString()));
@@ -209,9 +208,7 @@ namespace DevLib.DaemonProcess
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private static void StopProtectHelper(Guid daemonProcessGuid)
         {
-            string daemonProcessFullPath = Assembly.GetExecutingAssembly().Location;
             string daemonProcessName = Assembly.GetExecutingAssembly().GetName().Name;
-            string daemonProcessFileName = Path.GetFileName(daemonProcessFullPath);
 
             Process daemonProcess = null;
 

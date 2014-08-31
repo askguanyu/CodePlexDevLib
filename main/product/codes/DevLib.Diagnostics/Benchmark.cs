@@ -120,10 +120,11 @@ namespace DevLib.Diagnostics
 
             string[] gcTitleArray = new string[gcArrayLength];
             string[] gcResultArray = new string[gcArrayLength];
+
             for (int i = 0; i < gcArrayLength; i++)
             {
-                gcTitleArray[i] = string.Format("G{0}", i);
-                gcResultArray[i] = gcCountArray[i].ToString();
+                gcTitleArray[gcArrayLength - 1 - i] = string.Format("G{0}", i);
+                gcResultArray[gcArrayLength - 1 - i] = gcCountArray[i].ToString();
             }
 
             Console.WriteLine();

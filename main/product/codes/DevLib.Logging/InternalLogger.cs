@@ -159,39 +159,45 @@ namespace DevLib.Logging
         /// <param name="message">Log message to append.</param>
         private static void AppendToFile(string message)
         {
-            FileStream fileStream = null;
-
             try
-            {
-                fileStream = File.Open(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
-
-                if (fileStream.Length > 10485760)
-                {
-                    try
-                    {
-                        File.Copy(LogFile, LogFileBackup, true);
-                    }
-                    catch
-                    {
-                    }
-
-                    fileStream.SetLength(0);
-                }
-
-                fileStream.Seek(0, SeekOrigin.End);
-                byte[] bytes = Encoding.Unicode.GetBytes(message);
-                fileStream.Write(bytes, 0, bytes.Length);
-                fileStream.Flush();
-            }
-            catch
             {
             }
             finally
             {
-                if (fileStream != null)
+                FileStream fileStream = null;
+
+                try
                 {
-                    fileStream.Dispose();
-                    fileStream = null;
+                    fileStream = File.Open(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+                    if (fileStream.Length > 10485760)
+                    {
+                        try
+                        {
+                            File.Copy(LogFile, LogFileBackup, true);
+                        }
+                        catch
+                        {
+                        }
+
+                        fileStream.SetLength(0);
+                    }
+
+                    fileStream.Seek(0, SeekOrigin.End);
+                    byte[] bytes = Encoding.Unicode.GetBytes(message);
+                    fileStream.Write(bytes, 0, bytes.Length);
+                    fileStream.Flush();
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    if (fileStream != null)
+                    {
+                        fileStream.Dispose();
+                        fileStream = null;
+                    }
                 }
             }
         }

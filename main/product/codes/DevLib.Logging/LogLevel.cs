@@ -11,24 +11,24 @@ namespace DevLib.Logging
     public enum LogLevel
     {
         /// <summary>
-        /// Represents debug message level.
+        /// Represents debug message level. Very detailed logs, which may include high-volume information such as protocol payloads. This log level is typically only enabled during development.
         /// </summary>
         DBUG,
 
         /// <summary>
-        /// Represents information message level.
+        /// Represents information message level. Which are normally enabled in production environment.
         /// </summary>
         INFO,
+
+        /// <summary>
+        /// Represents warning message level. Typically for non-critical issues, which can be recovered or which are temporary failures.
+        /// </summary>
+        WARN,
 
         /// <summary>
         /// Represents exception message level.
         /// </summary>
         EXCP,
-
-        /// <summary>
-        /// Represents warning message level.
-        /// </summary>
-        WARN,
 
         /// <summary>
         /// Represents error message level.

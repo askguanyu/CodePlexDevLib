@@ -185,6 +185,11 @@ namespace DevLib.Diagnostics
         /// <returns>Cycle count.</returns>
         private static ulong GetCycleCount()
         {
+            if (Environment.OSVersion.Platform > PlatformID.Win32NT)
+            {
+                return 0;
+            }
+
             ulong cycleCount = 0;
 
             try
@@ -204,6 +209,11 @@ namespace DevLib.Diagnostics
         /// <returns>Thread time.</returns>
         private static long GetCurrentThreadTime()
         {
+            if (Environment.OSVersion.Platform > PlatformID.Win32NT)
+            {
+                return 0;
+            }
+
             long temp = 0;
             long kernelTime = 0;
             long userTimer = 0;

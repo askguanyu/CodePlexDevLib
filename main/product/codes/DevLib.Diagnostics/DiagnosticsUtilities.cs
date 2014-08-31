@@ -7,9 +7,11 @@ namespace DevLib.Diagnostics
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Reflection;
     using System.Text;
+    using System.Threading;
 
     /// <summary>
     /// Diagnostics Utilities.
@@ -25,12 +27,13 @@ namespace DevLib.Diagnostics
             if (exception != null)
             {
                 string message = string.Format(
-                    "[{0}] [{1}] [{2}] [{3}] [{4}]",
-                    DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"),
+                    "{0}|{1}|{2}|{3,3}| [{4}] |{5}",
+                    DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture),
                     "EXCP",
                     Environment.UserName,
-                    GetStackFrameInfo(1),
-                    exception.ToString());
+                    Thread.CurrentThread.ManagedThreadId,
+                    exception.ToString(),
+                    GetStackFrameInfo(1));
 
                 Debug.WriteLine(message);
                 Console.WriteLine(message);

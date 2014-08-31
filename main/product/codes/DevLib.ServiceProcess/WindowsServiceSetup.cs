@@ -6,6 +6,7 @@
 namespace DevLib.ServiceProcess
 {
     using System;
+    using System.Globalization;
     using System.Reflection;
     using System.ServiceProcess;
     using System.Xml.Serialization;
@@ -253,7 +254,7 @@ namespace DevLib.ServiceProcess
             this.ServiceAssemblyPath = string.Empty;
             this.ServiceName = "DefaultServiceName";
             this.DisplayName = this.ServiceName;
-            this.Description = string.Format("Installed on {0}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUTCzzz"));
+            this.Description = string.Format("Installed on {0}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
 
             try
             {

@@ -138,7 +138,7 @@ namespace DevLib.AddIn
             result.AppendFormat("{0}|", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
             result.AppendFormat("{0}|", "INTL");
             result.AppendFormat("{0}|", Environment.UserName);
-            result.AppendFormat("{0,3}|", Thread.CurrentThread.ManagedThreadId);
+            result.AppendFormat("{0:000}|", Thread.CurrentThread.ManagedThreadId);
 
             if (objs != null && objs.Length > 0)
             {

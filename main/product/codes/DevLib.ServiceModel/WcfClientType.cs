@@ -6,8 +6,8 @@
 namespace DevLib.ServiceModel
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
+    using System.Threading;
 
     /// <summary>
     /// Class WcfClientType.
@@ -18,6 +18,11 @@ namespace DevLib.ServiceModel
         /// Field TypeDictionary.
         /// </summary>
         private static readonly Dictionary<string, Type> TypeDictionary = new Dictionary<string, Type>();
+
+        /// <summary>
+        /// Field Lock.
+        /// </summary>
+        private static ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Method BuildType.
@@ -31,7 +36,9 @@ namespace DevLib.ServiceModel
         {
             string typeName = typeof(TChannel).FullName.Replace(".", string.Empty) + typeof(TTypeBuilder).Name;
 
-            lock (((ICollection)TypeDictionary).SyncRoot)
+            Lock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (TypeDictionary.ContainsKey(typeName))
                 {
@@ -39,9 +46,32 @@ namespace DevLib.ServiceModel
                 }
                 else
                 {
-                    TypeDictionary.Add(typeName, new TTypeBuilder().GenerateType(typeName));
-                    return TypeDictionary[typeName];
+                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+
+                    try
+                    {
+                        if (TypeDictionary.ContainsKey(typeName))
+                        {
+                            return TypeDictionary[typeName];
+                        }
+                        else
+                        {
+                            Type result = new TTypeBuilder().GenerateType(typeName);
+
+                            TypeDictionary.Add(typeName, result);
+
+                            return TypeDictionary[typeName];
+                        }
+                    }
+                    finally
+                    {
+                        Lock.DowngradeFromWriterLock(ref lockCookie);
+                    }
                 }
+            }
+            finally
+            {
+                Lock.ReleaseReaderLock();
             }
         }
     }

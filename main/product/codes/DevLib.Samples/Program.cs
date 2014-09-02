@@ -620,6 +620,12 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+
+            Person pa = new Person();
+            pa.DoTryf();
+
+            Console.ReadLine();
+
             SpellingOptions sa = new SpellingOptions();
             SpellingOptions sb = new SpellingOptions();
             SpellingOptions sc = new SpellingOptions();
@@ -1884,6 +1890,26 @@ namespace DevLib.Samples
     [TypeConverterAttribute(typeof(ExpandableObjectConverter))]
     public class Person
     {
+        public string DoTryf()
+        {
+            try
+            {
+                try
+                {
+                    return "done";
+                }
+                finally
+                {
+                    Console.WriteLine("inside finally");
+                }
+            }
+            finally
+            {
+                Console.WriteLine("outside finally");
+            }
+        }
+
+
         [DataMember]
         public SpellingOptions Foo { get; set; }
 

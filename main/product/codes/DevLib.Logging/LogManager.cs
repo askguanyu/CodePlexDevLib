@@ -49,20 +49,27 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(logConfig);
-
                     LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
                     try
                     {
-                        LoggerDictionary.Add(key, result);
+                        if (LoggerDictionary.ContainsKey(key))
+                        {
+                            return LoggerDictionary[key];
+                        }
+                        else
+                        {
+                            Logger result = new Logger(logConfig);
+
+                            LoggerDictionary.Add(key, result);
+
+                            return result;
+                        }
                     }
                     finally
                     {
                         Lock.DowngradeFromWriterLock(ref lockCookie);
                     }
-
-                    return result;
                 }
             }
             finally
@@ -103,20 +110,27 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(logConfig);
-
                     LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
                     try
                     {
-                        LoggerDictionary.Add(key, result);
+                        if (LoggerDictionary.ContainsKey(key))
+                        {
+                            return LoggerDictionary[key];
+                        }
+                        else
+                        {
+                            Logger result = new Logger(logConfig);
+
+                            LoggerDictionary.Add(key, result);
+
+                            return result;
+                        }
                     }
                     finally
                     {
                         Lock.DowngradeFromWriterLock(ref lockCookie);
                     }
-
-                    return result;
                 }
             }
             finally
@@ -154,20 +168,27 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(logConfig);
-
                     LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
                     try
                     {
-                        LoggerDictionary.Add(key, result);
+                        if (LoggerDictionary.ContainsKey(key))
+                        {
+                            return LoggerDictionary[key];
+                        }
+                        else
+                        {
+                            Logger result = new Logger(logConfig);
+
+                            LoggerDictionary.Add(key, result);
+
+                            return result;
+                        }
                     }
                     finally
                     {
                         Lock.DowngradeFromWriterLock(ref lockCookie);
                     }
-
-                    return result;
                 }
             }
             finally
@@ -197,20 +218,27 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(logConfig);
-
                     LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
                     try
                     {
-                        LoggerDictionary.Add(key, result);
+                        if (LoggerDictionary.ContainsKey(key))
+                        {
+                            return LoggerDictionary[key];
+                        }
+                        else
+                        {
+                            Logger result = new Logger(logConfig);
+
+                            LoggerDictionary.Add(key, result);
+
+                            return result;
+                        }
                     }
                     finally
                     {
                         Lock.DowngradeFromWriterLock(ref lockCookie);
                     }
-
-                    return result;
                 }
             }
             finally

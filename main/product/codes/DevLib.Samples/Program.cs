@@ -620,6 +620,28 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            SpellingOptions sa = new SpellingOptions();
+            SpellingOptions sb = new SpellingOptions();
+            SpellingOptions sc = new SpellingOptions();
+
+            sa.SpellCheckCAPS = false;
+            sa.SpellCheckWhileTyping = true;
+            sa.SuggestCorrections = false;
+
+            sb.SpellCheckCAPS = false;
+            sb.SpellCheckWhileTyping = true;
+            sb.SuggestCorrections = false;
+
+            sc.SpellCheckCAPS = false;
+            sc.SpellCheckWhileTyping = false;
+            sc.SuggestCorrections = true;
+
+            sa.GetHashCode().ConsoleOutput();
+            sb.GetHashCode().ConsoleOutput();
+            sc.GetHashCode().ConsoleOutput();
+
+            Console.ReadLine();
+
             InternalLogger.Log(1);
             InternalLogger.Log(2);
             InternalLogger.Log(3);
@@ -1939,6 +1961,11 @@ namespace DevLib.Samples
         [DataMember]
         public bool SuggestCorrections
         { get; set; }
+
+        public override int GetHashCode()
+        {
+            return string.Format("{0}{1}{2}", this.SpellCheckCAPS, this.SpellCheckWhileTyping, this.SuggestCorrections).GetHashCode();
+        }
     }
 
 }

@@ -7,13 +7,12 @@ namespace DevLib.Logging
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     /// <summary>
     /// Class Logger. Provides logging functions.
     /// </summary>
-    public sealed class Logger : IDisposable
+    public sealed class Logger
     {
         /// <summary>
         /// Field _logFile.
@@ -51,11 +50,6 @@ namespace DevLib.Logging
         private readonly Thread _consumerThread;
 
         /// <summary>
-        /// Field _disposed.
-        /// </summary>
-        private bool _disposed = false;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Logger" /> class.
         /// </summary>
         /// <param name="logFile">Log file.</param>
@@ -90,28 +84,12 @@ namespace DevLib.Logging
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="Logger" /> class.
+        /// Initializes a new instance of the <see cref="Logger" /> class.
         /// </summary>
-        ~Logger()
+        /// <param name="logConfig">LogConfig instance.</param>
+        internal Logger(LogConfig logConfig)
+            : this(logConfig.LogFile, logConfig.LoggerSetup)
         {
-            this.Dispose(false);
-        }
-
-        /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="Logger" /> class.
-        /// </summary>
-        public void Close()
-        {
-            this.Dispose();
-        }
-
-        /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="Logger" /> class.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -166,75 +144,6 @@ namespace DevLib.Logging
                 {
                     InternalLogger.Log(e);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="Logger" /> class.
-        /// protected virtual for non-sealed class; private for sealed class.
-        /// </summary>
-        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-        private void Dispose(bool disposing)
-        {
-            if (this._disposed)
-            {
-                return;
-            }
-
-            this._disposed = true;
-
-            if (disposing)
-            {
-                // dispose managed resources
-                ////if (managedResource != null)
-                ////{
-                ////    managedResource.Dispose();
-                ////    managedResource = null;
-                ////}
-
-                if (this._queueWaitHandle != null)
-                {
-                    this._queueWaitHandle.Close();
-                }
-
-                if (this._fileAppender != null)
-                {
-                    this._fileAppender.Dispose();
-                }
-
-                if (this._consumerThread != null)
-                {
-                    try
-                    {
-                        this._consumerThread.Abort();
-                    }
-                    catch
-                    {
-                    }
-                }
-
-                if (this._queue != null)
-                {
-                    this._queue.Clear();
-                }
-            }
-
-            // free native resources
-            ////if (nativeResource != IntPtr.Zero)
-            ////{
-            ////    Marshal.FreeHGlobal(nativeResource);
-            ////    nativeResource = IntPtr.Zero;
-            ////}
-        }
-
-        /// <summary>
-        /// Method CheckDisposed.
-        /// </summary>
-        private void CheckDisposed()
-        {
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException("DevLib.Logging");
             }
         }
 

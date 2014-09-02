@@ -6,6 +6,8 @@
 namespace DevLib.Logging
 {
     using System;
+    using System.Diagnostics;
+    using System.IO;
 
     /// <summary>
     /// Class LogConfig.
@@ -14,12 +16,27 @@ namespace DevLib.Logging
     public class LogConfig
     {
         /// <summary>
+        /// Field DefaultLogFile.
+        /// </summary>
+        public static readonly string DefaultLogFile = Path.GetFullPath(Process.GetCurrentProcess().MainModule.FileName + ".log");
+
+        /// <summary>
+        /// Field DefaultLogConfigFile.
+        /// </summary>
+        public static readonly string DefaultLogConfigFile = Path.GetFullPath(Process.GetCurrentProcess().MainModule.FileName + ".config");
+
+        /// <summary>
+        /// Field DefaultLoggerSetup.
+        /// </summary>
+        public static readonly LoggerSetup DefaultLoggerSetup = new LoggerSetup();
+
+        /// <summary>
         ///  Initializes a new instance of the <see cref="LogConfig" /> class.
         /// </summary>
         public LogConfig()
         {
-            this.LogFile = LogManager.DefaultLogFile;
-            this.LoggerSetup = LogManager.DefaultLoggerSetup;
+            this.LogFile = LogConfig.DefaultLogFile;
+            this.LoggerSetup = LogConfig.DefaultLoggerSetup;
         }
 
         /// <summary>
@@ -38,6 +55,23 @@ namespace DevLib.Logging
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Serves as a hash function for LogConfig instance.
+        /// </summary>
+        /// <returns>A hash code for the current LogConfig.</returns>
+        public override int GetHashCode()
+        {
+            return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+                Path.GetFullPath(this.LogFile),
+                this.LoggerSetup.Level,
+                this.LoggerSetup.RollingByDate,
+                this.LoggerSetup.RollingFileCountLimit,
+                this.LoggerSetup.RollingFileSizeLimit,
+                this.LoggerSetup.UseBracket,
+                this.LoggerSetup.WriteToConsole,
+                this.LoggerSetup.WriteToFile).ToUpperInvariant().GetHashCode();
         }
     }
 }

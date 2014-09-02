@@ -7,11 +7,13 @@ namespace DevLib.Logging
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     /// <summary>
     /// Class Logger. Provides logging functions.
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Reviewed.")]
     public sealed class Logger
     {
         /// <summary>

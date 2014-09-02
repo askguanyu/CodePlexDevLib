@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Logging
 {
-    using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.IO;
+    using System.Threading;
 
     /// <summary>
     /// Provides access to log for applications. This class cannot be inherited.
@@ -19,6 +17,11 @@ namespace DevLib.Logging
         /// Field LoggerDictionary.
         /// </summary>
         private static readonly Dictionary<int, Logger> LoggerDictionary = new Dictionary<int, Logger>();
+
+        /// <summary>
+        /// Field Lock.
+        /// </summary>
+        private static ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Opens the log file for the current application.
@@ -36,7 +39,9 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            lock (((ICollection)LoggerDictionary).SyncRoot)
+            Lock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -45,9 +50,24 @@ namespace DevLib.Logging
                 else
                 {
                     Logger result = new Logger(logConfig);
-                    LoggerDictionary.Add(key, result);
+
+                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+
+                    try
+                    {
+                        LoggerDictionary.Add(key, result);
+                    }
+                    finally
+                    {
+                        Lock.DowngradeFromWriterLock(ref lockCookie);
+                    }
+
                     return result;
                 }
+            }
+            finally
+            {
+                Lock.ReleaseReaderLock();
             }
         }
 
@@ -73,7 +93,9 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            lock (((ICollection)LoggerDictionary).SyncRoot)
+            Lock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -82,9 +104,24 @@ namespace DevLib.Logging
                 else
                 {
                     Logger result = new Logger(logConfig);
-                    LoggerDictionary.Add(key, result);
+
+                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+
+                    try
+                    {
+                        LoggerDictionary.Add(key, result);
+                    }
+                    finally
+                    {
+                        Lock.DowngradeFromWriterLock(ref lockCookie);
+                    }
+
                     return result;
                 }
+            }
+            finally
+            {
+                Lock.ReleaseReaderLock();
             }
         }
 
@@ -107,7 +144,9 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            lock (((ICollection)LoggerDictionary).SyncRoot)
+            Lock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -116,9 +155,24 @@ namespace DevLib.Logging
                 else
                 {
                     Logger result = new Logger(logConfig);
-                    LoggerDictionary.Add(key, result);
+
+                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+
+                    try
+                    {
+                        LoggerDictionary.Add(key, result);
+                    }
+                    finally
+                    {
+                        Lock.DowngradeFromWriterLock(ref lockCookie);
+                    }
+
                     return result;
                 }
+            }
+            finally
+            {
+                Lock.ReleaseReaderLock();
             }
         }
 
@@ -133,7 +187,9 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            lock (((ICollection)LoggerDictionary).SyncRoot)
+            Lock.AcquireReaderLock(Timeout.Infinite);
+
+            try
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -142,9 +198,24 @@ namespace DevLib.Logging
                 else
                 {
                     Logger result = new Logger(logConfig);
-                    LoggerDictionary.Add(key, result);
+
+                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+
+                    try
+                    {
+                        LoggerDictionary.Add(key, result);
+                    }
+                    finally
+                    {
+                        Lock.DowngradeFromWriterLock(ref lockCookie);
+                    }
+
                     return result;
                 }
+            }
+            finally
+            {
+                Lock.ReleaseReaderLock();
             }
         }
     }

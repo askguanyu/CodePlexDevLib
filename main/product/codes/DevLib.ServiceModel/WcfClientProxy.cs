@@ -6,10 +6,10 @@
 namespace DevLib.ServiceModel
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.Threading;
 
     /// <summary>
     /// Provides the implementation used to create client objects that can call services.
@@ -46,6 +46,11 @@ namespace DevLib.ServiceModel
         /// Field PerCallUnthrowableInstanceDictionary.
         /// </summary>
         private static readonly Dictionary<string, TChannel> PerCallUnthrowableInstanceDictionary = new Dictionary<string, TChannel>();
+
+        /// <summary>
+        /// Field Lock.
+        /// </summary>
+        private static ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Get Wcf client instance.
@@ -405,25 +410,45 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, string.Empty, string.Empty);
 
-                TChannel result;
+                Lock.AcquireReaderLock(Timeout.Infinite);
 
-                lock (((ICollection)caching).SyncRoot)
+                try
                 {
                     if (caching.ContainsKey(key))
                     {
-                        result = caching[key];
+                        return caching[key];
                     }
                     else
                     {
-                        Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
-                        result = (TChannel)Activator.CreateInstance(type);
+                        try
+                        {
+                            if (caching.ContainsKey(key))
+                            {
+                                return caching[key];
+                            }
+                            else
+                            {
+                                Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                        caching.Add(key, result);
+                                TChannel result = (TChannel)Activator.CreateInstance(type);
+
+                                caching.Add(key, result);
+
+                                return result;
+                            }
+                        }
+                        finally
+                        {
+                            Lock.DowngradeFromWriterLock(ref lockCookie);
+                        }
                     }
                 }
-
-                return result;
+                finally
+                {
+                    Lock.ReleaseReaderLock();
+                }
             }
             else
             {
@@ -481,27 +506,47 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
 
-                TChannel result;
+                Lock.AcquireReaderLock(Timeout.Infinite);
 
-                lock (((ICollection)caching).SyncRoot)
+                try
                 {
                     if (caching.ContainsKey(key))
                     {
-                        result = caching[key];
+                        return caching[key];
                     }
                     else
                     {
-                        Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
-                        result = string.IsNullOrEmpty(remoteAddress) ?
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                            (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
+                        try
+                        {
+                            if (caching.ContainsKey(key))
+                            {
+                                return caching[key];
+                            }
+                            else
+                            {
+                                Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                        caching.Add(key, result);
+                                TChannel result = string.IsNullOrEmpty(remoteAddress) ?
+                                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
+                                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
+
+                                caching.Add(key, result);
+
+                                return result;
+                            }
+                        }
+                        finally
+                        {
+                            Lock.DowngradeFromWriterLock(ref lockCookie);
+                        }
                     }
                 }
-
-                return result;
+                finally
+                {
+                    Lock.ReleaseReaderLock();
+                }
             }
             else
             {
@@ -528,25 +573,45 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
 
-                TChannel result;
+                Lock.AcquireReaderLock(Timeout.Infinite);
 
-                lock (((ICollection)caching).SyncRoot)
+                try
                 {
                     if (caching.ContainsKey(key))
                     {
-                        result = caching[key];
+                        return caching[key];
                     }
                     else
                     {
-                        Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
-                        result = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
+                        try
+                        {
+                            if (caching.ContainsKey(key))
+                            {
+                                return caching[key];
+                            }
+                            else
+                            {
+                                Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                        caching.Add(key, result);
+                                TChannel result = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
+
+                                caching.Add(key, result);
+
+                                return result;
+                            }
+                        }
+                        finally
+                        {
+                            Lock.DowngradeFromWriterLock(ref lockCookie);
+                        }
                     }
                 }
-
-                return result;
+                finally
+                {
+                    Lock.ReleaseReaderLock();
+                }
             }
             else
             {
@@ -571,25 +636,45 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
 
-                TChannel result;
+                Lock.AcquireReaderLock(Timeout.Infinite);
 
-                lock (((ICollection)caching).SyncRoot)
+                try
                 {
                     if (caching.ContainsKey(key))
                     {
-                        result = caching[key];
+                        return caching[key];
                     }
                     else
                     {
-                        Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
 
-                        result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+                        try
+                        {
+                            if (caching.ContainsKey(key))
+                            {
+                                return caching[key];
+                            }
+                            else
+                            {
+                                Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                        caching.Add(key, result);
+                                TChannel result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+
+                                caching.Add(key, result);
+
+                                return result;
+                            }
+                        }
+                        finally
+                        {
+                            Lock.DowngradeFromWriterLock(ref lockCookie);
+                        }
                     }
                 }
-
-                return result;
+                finally
+                {
+                    Lock.ReleaseReaderLock();
+                }
             }
             else
             {

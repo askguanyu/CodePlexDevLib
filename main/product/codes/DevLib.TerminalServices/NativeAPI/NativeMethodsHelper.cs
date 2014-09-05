@@ -361,13 +361,13 @@ namespace DevLib.TerminalServices.NativeAPI
         }
 
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public static bool CreateProcess(int sessionId, string fileName, string arguments)
+        public static bool CreateProcess(int sessionId, string filename, string arguments)
         {
             IntPtr userTokenHandle = IntPtr.Zero;
 
             try
             {
-                string commandLine = string.Format("{0} {1}", fileName, arguments ?? string.Empty);
+                string commandLine = string.Format("{0} {1}", filename, arguments ?? string.Empty);
 
                 NativeMethods.WTSQueryUserToken(sessionId, ref userTokenHandle);
 
@@ -379,7 +379,7 @@ namespace DevLib.TerminalServices.NativeAPI
 
                 bool result = NativeMethods.CreateProcessAsUser(
                     userTokenHandle,
-                    fileName,
+                    filename,
                     commandLine,
                     IntPtr.Zero,
                     IntPtr.Zero,

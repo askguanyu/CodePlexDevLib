@@ -42,7 +42,7 @@ namespace DevLib.Compression
 
         public long RelativeOffsetOfLocalHeader;
 
-        public byte[] Filename;
+        public byte[] FileName;
 
         public byte[] FileComment;
 
@@ -72,7 +72,7 @@ namespace DevLib.Compression
             header.InternalFileAttributes = reader.ReadUInt16();
             header.ExternalFileAttributes = reader.ReadUInt32();
             uint num4 = reader.ReadUInt32();
-            header.Filename = reader.ReadBytes((int)header.FilenameLength);
+            header.FileName = reader.ReadBytes((int)header.FilenameLength);
             bool readUncompressedSize = (int)num2 == -1;
             bool readCompressedSize = (int)num1 == -1;
             bool readLocalHeaderOffset = (int)num4 == -1;

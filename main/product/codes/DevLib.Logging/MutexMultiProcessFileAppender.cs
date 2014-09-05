@@ -56,13 +56,13 @@ namespace DevLib.Logging
         /// <summary>
         /// Initializes a new instance of the <see cref="MutexMultiProcessFileAppender" /> class.
         /// </summary>
-        /// <param name="fileName">File to write.</param>
+        /// <param name="filename">File to write.</param>
         /// <param name="loggerSetup">Log setup.</param>
-        public MutexMultiProcessFileAppender(string fileName, LoggerSetup loggerSetup)
+        public MutexMultiProcessFileAppender(string filename, LoggerSetup loggerSetup)
         {
             try
             {
-                this._fileName = Path.GetFullPath(fileName);
+                this._fileName = Path.GetFullPath(filename);
 
                 this._fileInfo = new FileInfo(this._fileName);
 
@@ -488,19 +488,19 @@ namespace DevLib.Logging
         /// <summary>
         /// Method CreateSharedFileStream.
         /// </summary>
-        /// <param name="fileName">File to be shared open.</param>
+        /// <param name="filename">File to be shared open.</param>
         /// <returns>Instance of FileStream.</returns>
-        private FileStream CreateSharedFileStream(string fileName)
+        private FileStream CreateSharedFileStream(string filename)
         {
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+                Directory.CreateDirectory(Path.GetDirectoryName(filename));
             }
             catch
             {
             }
 
-            return new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            return new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
         }
 
         /// <summary>
@@ -522,11 +522,11 @@ namespace DevLib.Logging
         /// <summary>
         /// Method GetMutexName.
         /// </summary>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <returns>Mutex name.</returns>
-        private string GetMutexName(string fileName)
+        private string GetMutexName(string filename)
         {
-            string mutexName = new Uri(Path.GetFullPath(fileName)).AbsolutePath.ToLowerInvariant();
+            string mutexName = new Uri(Path.GetFullPath(filename)).AbsolutePath.ToLowerInvariant();
 
             if (MutexNamePrefix.Length + mutexName.Length <= MaxMutexNameLength)
             {

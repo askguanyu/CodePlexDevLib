@@ -39,25 +39,25 @@ namespace DevLib.Serialization
         /// Serializes object to bytes, write to file.
         /// </summary>
         /// <param name="source">Source object.</param>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>File full path.</returns>
-        public static string Write(object source, string fileName, bool overwrite = false)
+        public static string Write(object source, string filename, bool overwrite = false)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(filename);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && File.Exists(fileName))
+            if (!overwrite && File.Exists(filename))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }

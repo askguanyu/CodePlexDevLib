@@ -35,6 +35,7 @@ namespace DevLib.Samples
     using DevLib.AddIn;
     using DevLib.Compression;
     using DevLib.Configuration;
+    using DevLib.Csv;
     using DevLib.DaemonProcess;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
@@ -72,6 +73,11 @@ namespace DevLib.Samples
                 var result = Benchmark.Run(i =>
                 {
                     //TestCodeSnippets();
+                });
+
+                Benchmark.Run(i =>
+                {
+                    //TestCsv();
                 });
 
                 Benchmark.Run(i =>
@@ -166,6 +172,19 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+        }
+
+        private static void TestCsv()
+        {
+            CsvDocument csv = new CsvDocument();
+            csv.Load(@"d:\work\temp\test.csv", false);
+            csv.Table.Columns.RemoveAt(0);
+            csv.Table.Columns.Add("a");
+            csv.Table.Columns.Add("b");
+            csv.Table.Columns.Add("c");
+            csv[0,0] = "hello";
+            string a = csv[0,0];
+            csv.Save(@"d:\work\temp\1.csv", true, true, false, false);
         }
 
         private static void TestDynamic()
@@ -1703,8 +1722,8 @@ namespace DevLib.Samples
             PrintMethodName("Test DevLib.Settings");
 
             var form = new WinFormConfigEditor();
-            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); });
-            form.AddPlugin((fileName) => { return ConfigManager.Open(fileName).GetValue<TestConfig>("keyA"); }, (fileName, obj) => { ConfigManager.Open(fileName).SetValue("keyA", obj); ConfigManager.Open(fileName).Save(); }, "haha");
+            form.AddPlugin((filename) => { return ConfigManager.Open(filename).GetValue<TestConfig>("keyA"); }, (filename, obj) => { ConfigManager.Open(filename).SetValue("keyA", obj); ConfigManager.Open(filename).Save(); });
+            form.AddPlugin((filename) => { return ConfigManager.Open(filename).GetValue<TestConfig>("keyA"); }, (filename, obj) => { ConfigManager.Open(filename).SetValue("keyA", obj); ConfigManager.Open(filename).Save(); }, "haha");
 
             //try
             //{

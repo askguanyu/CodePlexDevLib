@@ -68,29 +68,29 @@ namespace DevLib.Serialization
         /// The object to be serialized should be decorated with the <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
         /// </remarks>
         /// <param name="source">The object to serialize.</param>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
         /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>File full path.</returns>
-        public static string Write(object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
+        public static string Write(object source, string filename, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(filename);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && File.Exists(fileName))
+            if (!overwrite && File.Exists(filename))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }

@@ -27,14 +27,14 @@ namespace DevLib.Samples
             set;
         }
 
-        public object Open(string fileName)
+        public object Open(string filename)
         {
             return new List<TestConfig>();
         }
 
-        public void Save(string fileName, object configObject)
+        public void Save(string filename, object configObject)
         {
-            configObject.WriteXml(fileName, true, true);
+            configObject.WriteXml(filename, true, true);
         }
     }
 }

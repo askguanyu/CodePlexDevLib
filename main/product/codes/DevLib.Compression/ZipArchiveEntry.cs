@@ -85,7 +85,7 @@ namespace DevLib.Compression
             this._currentlyOpenForWrite = false;
             this._everOpenedForWrite = false;
             this._outstandingWriteStream = (Stream)null;
-            this.FullName = this.DecodeEntryName(cd.Filename);
+            this.FullName = this.DecodeEntryName(cd.FileName);
             this._lhUnknownExtraFields = (List<ZipGenericExtraField>)null;
             this._cdUnknownExtraFields = cd.ExtraFields;
             this._fileComment = cd.FileComment;

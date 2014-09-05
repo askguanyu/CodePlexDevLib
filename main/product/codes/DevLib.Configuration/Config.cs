@@ -188,12 +188,12 @@ namespace DevLib.Configuration
         /// <summary>
         /// Writes the configuration to the specified XML configuration file. Keep using current configuration instance.
         /// </summary>
-        /// <param name="fileName">The path and file name to save the configuration file to.</param>
-        public void SaveAs(string fileName)
+        /// <param name="filename">The path and file name to save the configuration file to.</param>
+        public void SaveAs(string filename)
         {
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName", "Didn't specify a configuration file.");
+                throw new ArgumentNullException("filename", "Didn't specify a configuration file.");
             }
 
             this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
@@ -207,7 +207,7 @@ namespace DevLib.Configuration
                     this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
                 }
 
-                this._configuration.SaveAs(fileName, ConfigurationSaveMode.Minimal, false);
+                this._configuration.SaveAs(filename, ConfigurationSaveMode.Minimal, false);
             }
             catch (Exception e)
             {

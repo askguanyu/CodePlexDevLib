@@ -267,7 +267,7 @@ namespace DevLib.Csv
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
         /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Save(Stream outStream, bool hasHeader = true, bool quoteAll = true, char delimiter = ',', char quoteChar = '"')
+        public void Save(Stream outStream, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char quoteChar = '"')
         {
             this.Save(outStream, hasHeader, quoteAll, delimiter, quoteChar, Environment.NewLine);
         }
@@ -315,7 +315,7 @@ namespace DevLib.Csv
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
         /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Save(string filename, bool overwrite = false, bool append = false, bool hasHeader = true, bool quoteAll = true, char delimiter = ',', char quoteChar = '"')
+        public void Save(string filename, bool overwrite = false, bool append = false, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char quoteChar = '"')
         {
             this.Save(filename, overwrite, append, hasHeader, quoteAll, delimiter, quoteChar, Environment.NewLine);
         }
@@ -390,7 +390,7 @@ namespace DevLib.Csv
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
         /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Save(TextWriter writer, bool hasHeader = true, bool quoteAll = true, char delimiter = ',', char quoteChar = '"')
+        public void Save(TextWriter writer, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char quoteChar = '"')
         {
             this.Save(writer, hasHeader, quoteAll, delimiter, quoteChar, Environment.NewLine);
         }

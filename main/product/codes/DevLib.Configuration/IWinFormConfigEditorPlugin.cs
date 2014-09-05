@@ -33,15 +33,15 @@ namespace DevLib.Configuration
         /// <summary>
         /// How to get configuration object from a file.
         /// </summary>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <returns>Configuration object.</returns>
-        object Open(string fileName);
+        object Open(string filename);
 
         /// <summary>
         /// How to save configuration object to a file.
         /// </summary>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="configObject">Configuration object.</param>
-        void Save(string fileName, object configObject);
+        void Save(string filename, object configObject);
     }
 }

@@ -212,19 +212,19 @@ namespace DevLib.Configuration
         /// <summary>
         /// Writes the configuration settings to the specified XML configuration file. Keep using current Settings instance.
         /// </summary>
-        /// <param name="fileName">The path and file name to save the configuration file to.</param>
-        public void SaveAs(string fileName)
+        /// <param name="filename">The path and file name to save the configuration file to.</param>
+        public void SaveAs(string filename)
         {
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName", "Didn't specify a configuration file.");
+                throw new ArgumentNullException("filename", "Didn't specify a configuration file.");
             }
 
             this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
 
             try
             {
-                this.WriteXmlFile(fileName);
+                this.WriteXmlFile(filename);
             }
             catch (Exception e)
             {
@@ -761,12 +761,12 @@ namespace DevLib.Configuration
         /// <summary>
         /// Method WriteXmlFile.
         /// </summary>
-        /// <param name="fileName"> Xml file name.</param>
-        private void WriteXmlFile(string fileName)
+        /// <param name="filename"> Xml file name.</param>
+        private void WriteXmlFile(string filename)
         {
             lock (((ICollection)this._settingsItemDictionary).SyncRoot)
             {
-                string fullPath = Path.GetFullPath(fileName);
+                string fullPath = Path.GetFullPath(filename);
 
                 string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 

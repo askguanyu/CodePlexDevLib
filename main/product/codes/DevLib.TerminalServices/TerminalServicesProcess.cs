@@ -130,12 +130,12 @@ namespace DevLib.TerminalServices
         /// Creates a new process associated with session Id.
         /// </summary>
         /// <param name="sessionId">Terminal session Id.</param>
-        /// <param name="fileName">The name of the module to be executed.</param>
+        /// <param name="filename">The name of the module to be executed.</param>
         /// <param name="arguments">Arguments for the process.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool CreateProcess(int sessionId, string fileName, string arguments = null)
+        public static bool CreateProcess(int sessionId, string filename, string arguments = null)
         {
-            return NativeMethodsHelper.CreateProcess(sessionId, fileName, arguments);
+            return NativeMethodsHelper.CreateProcess(sessionId, filename, arguments);
         }
 
         /// <summary>

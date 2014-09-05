@@ -54,11 +54,11 @@ namespace DevLib.Utilities
         /// <summary>
         /// Get a global shared mutex name according to file name.
         /// </summary>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <returns>Mutex name.</returns>
-        public static string GetSharedFileMutexName(string fileName)
+        public static string GetSharedFileMutexName(string filename)
         {
-            string mutexName = new Uri(Path.GetFullPath(fileName)).AbsolutePath.ToLowerInvariant();
+            string mutexName = new Uri(Path.GetFullPath(filename)).AbsolutePath.ToLowerInvariant();
 
             if (SharedMutexFileNamePrefix.Length + mutexName.Length <= MaxMutexNameLength)
             {

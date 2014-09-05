@@ -234,12 +234,12 @@ namespace DevLib.AddIn
         /// Static Method WriteSetupFile.
         /// </summary>
         /// <param name="addInDomainSetup">Instance of AddInDomainSetup.</param>
-        /// <param name="fileName">Setup file name.</param>
-        internal static void WriteSetupFile(AddInDomainSetup addInDomainSetup, string fileName)
+        /// <param name="filename">Setup file name.</param>
+        internal static void WriteSetupFile(AddInDomainSetup addInDomainSetup, string filename)
         {
             BinaryFormatter formatter = new BinaryFormatter();
 
-            using (FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (FileStream fileStream = new FileStream(filename, FileMode.Create, FileAccess.Write))
             {
                 formatter.Serialize(fileStream, addInDomainSetup);
             }
@@ -248,13 +248,13 @@ namespace DevLib.AddIn
         /// <summary>
         /// Static Method ReadSetupFile.
         /// </summary>
-        /// <param name="fileName">Setup file name.</param>
+        /// <param name="filename">Setup file name.</param>
         /// <returns>Instance of AddInDomainSetup.</returns>
-        internal static AddInDomainSetup ReadSetupFile(string fileName)
+        internal static AddInDomainSetup ReadSetupFile(string filename)
         {
             BinaryFormatter formatter = new BinaryFormatter();
 
-            using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            using (FileStream fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
             {
                 return (AddInDomainSetup)formatter.Deserialize(fileStream);
             }

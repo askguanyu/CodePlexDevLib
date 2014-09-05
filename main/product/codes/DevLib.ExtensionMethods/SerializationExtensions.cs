@@ -48,25 +48,25 @@ namespace DevLib.ExtensionMethods
         /// Serializes object to bytes, write to file.
         /// </summary>
         /// <param name="source">Source object.</param>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>File full path.</returns>
-        public static string WriteBinary(this object source, string fileName, bool overwrite = false)
+        public static string WriteBinary(this object source, string filename, bool overwrite = false)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(filename);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && File.Exists(fileName))
+            if (!overwrite && File.Exists(filename))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -251,29 +251,29 @@ namespace DevLib.ExtensionMethods
         /// The object to be serialized should be decorated with the <see cref="SerializableAttribute"/>, or implement the <see cref="ISerializable"/> interface.
         /// </remarks>
         /// <param name="source">The object to serialize.</param>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
         /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>File full path.</returns>
-        public static string WriteXml(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
+        public static string WriteXml(this object source, string filename, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(filename);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && File.Exists(fileName))
+            if (!overwrite && File.Exists(filename))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -535,20 +535,20 @@ namespace DevLib.ExtensionMethods
         /// Serializes object to Soap string, write to file.
         /// </summary>
         /// <param name="source">The object to serialize.</param>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>File full path.</returns>
-        public static string WriteSoap(this object source, string fileName, bool overwrite = false)
+        public static string WriteSoap(this object source, string filename, bool overwrite = false)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(filename);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && File.Exists(fileName))
+            if (!overwrite && File.Exists(filename))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -705,26 +705,26 @@ namespace DevLib.ExtensionMethods
         /// Serializes object to Json string, write to file.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>File full path.</returns>
-        public static string WriteJson(this object source, string fileName, bool overwrite = false, Type[] knownTypes = null)
+        public static string WriteJson(this object source, string filename, bool overwrite = false, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(filename);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && File.Exists(fileName))
+            if (!overwrite && File.Exists(filename))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }
@@ -1096,28 +1096,28 @@ namespace DevLib.ExtensionMethods
         /// Serializes DataContract object to Xml string, write to file.
         /// </summary>
         /// <param name="source">The DataContract object to serialize.</param>
-        /// <param name="fileName">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="indent">Whether to write individual elements on new lines and indent.</param>
         /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>File full path.</returns>
-        public static string WriteDataContract(this object source, string fileName, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, Type[] knownTypes = null)
+        public static string WriteDataContract(this object source, string filename, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, Type[] knownTypes = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(fileName);
+            string fullPath = Path.GetFullPath(filename);
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            if (!overwrite && File.Exists(fileName))
+            if (!overwrite && File.Exists(filename))
             {
                 throw new ArgumentException("The specified file already exists.", fullPath);
             }

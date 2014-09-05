@@ -333,20 +333,20 @@ namespace DevLib.Configuration
         /// <summary>
         /// Open a file and get configuration object.
         /// </summary>
-        /// <param name="fileName">Configuration file name.</param>
-        private void OpenConfigFile(string fileName)
+        /// <param name="filename">Configuration file name.</param>
+        private void OpenConfigFile(string filename)
         {
             if (this._currentConfigEditorPlugin != null)
             {
                 try
                 {
-                    this.RefreshPropertyGrid(this._currentConfigEditorPlugin.Open(fileName));
-                    this.ConfigFile = fileName;
+                    this.RefreshPropertyGrid(this._currentConfigEditorPlugin.Open(filename));
+                    this.ConfigFile = filename;
                     this.IsChanged = false;
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(string.Format("Could not load configuration from\r\n\"{0}\"\r\n\r\n{1}", fileName, e.ToString()));
+                    MessageBox.Show(string.Format("Could not load configuration from\r\n\"{0}\"\r\n\r\n{1}", filename, e.ToString()));
                 }
             }
         }
@@ -354,22 +354,22 @@ namespace DevLib.Configuration
         /// <summary>
         /// Save configuration object to a file.
         /// </summary>
-        /// <param name="fileName">Configuration file name.</param>
+        /// <param name="filename">Configuration file name.</param>
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        private void SaveConfigFile(string fileName)
+        private void SaveConfigFile(string filename)
         {
             if (this._currentConfigEditorPlugin != null)
             {
                 try
                 {
                     object configObject = this.propertyGridUserControl.ConfigObject;
-                    this._currentConfigEditorPlugin.Save(fileName, configObject);
-                    this.ConfigFile = fileName;
+                    this._currentConfigEditorPlugin.Save(filename, configObject);
+                    this.ConfigFile = filename;
                     this.IsChanged = false;
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(string.Format("Could not save configuration to\r\n\"{0}\"\r\n\r\n{1}", fileName, e.ToString()));
+                    MessageBox.Show(string.Format("Could not save configuration to\r\n\"{0}\"\r\n\r\n{1}", filename, e.ToString()));
                 }
             }
         }
@@ -697,21 +697,21 @@ namespace DevLib.Configuration
             /// <summary>
             /// Method Open.
             /// </summary>
-            /// <param name="fileName">Configuration file.</param>
+            /// <param name="filename">Configuration file.</param>
             /// <returns>Configuration object.</returns>
-            public object Open(string fileName)
+            public object Open(string filename)
             {
-                return this._openDelegate.Invoke(fileName);
+                return this._openDelegate.Invoke(filename);
             }
 
             /// <summary>
             /// Method Save.
             /// </summary>
-            /// <param name="fileName">Configuration file.</param>
+            /// <param name="filename">Configuration file.</param>
             /// <param name="configObject">Configuration object.</param>
-            public void Save(string fileName, object configObject)
+            public void Save(string filename, object configObject)
             {
-                this._saveDelegate.Invoke(fileName, (T)configObject);
+                this._saveDelegate.Invoke(filename, (T)configObject);
             }
         }
     }

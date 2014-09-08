@@ -69,6 +69,7 @@ namespace DevLib.AddIn
             catch (Exception e)
             {
                 InternalLogger.Log(e);
+                throw;
             }
 
             BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();

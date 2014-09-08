@@ -200,7 +200,6 @@ namespace DevLib.Configuration
             catch (Exception e)
             {
                 InternalLogger.Log(e);
-
                 throw;
             }
             finally
@@ -229,7 +228,6 @@ namespace DevLib.Configuration
             catch (Exception e)
             {
                 InternalLogger.Log(e);
-
                 throw;
             }
             finally
@@ -287,7 +285,6 @@ namespace DevLib.Configuration
                     catch (Exception e)
                     {
                         InternalLogger.Log(e);
-
                         throw;
                     }
                 }
@@ -331,7 +328,6 @@ namespace DevLib.Configuration
                     catch (Exception e)
                     {
                         InternalLogger.Log(e);
-
                         throw;
                     }
                 }
@@ -376,7 +372,6 @@ namespace DevLib.Configuration
                     catch (Exception e)
                     {
                         InternalLogger.Log(e);
-
                         return defaultValue;
                     }
                 }

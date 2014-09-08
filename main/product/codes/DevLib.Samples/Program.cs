@@ -11,6 +11,7 @@ namespace DevLib.Samples
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Configuration;
+    using System.Data;
     using System.Diagnostics;
     using System.Drawing.Design;
     using System.Dynamic;
@@ -176,15 +177,27 @@ namespace DevLib.Samples
 
         private static void TestCsv()
         {
-            CsvDocument csv = new CsvDocument();
-            csv.Load(@"d:\work\temp\test.csv", false);
-            csv.Table.Columns.RemoveAt(0);
-            csv.Table.Columns.Add("a");
-            csv.Table.Columns.Add("b");
-            csv.Table.Columns.Add("c");
-            csv[0,0] = "hello";
-            string a = csv[0,0];
-            csv.Save(@"d:\work\temp\1.csv", true, true, false, false);
+            //CsvDocument csv = new CsvDocument();
+            //csv.Load(@"c:\test.csv", true, ';', '~');
+            //DataTable dataTable = csv.Table;
+            //csv.Table.Rows.RemoveAt(1);
+            //csv.Table.Columns.Add("NewColumn");
+            //csv.Table.Columns.Add("b");
+            //csv.Table.Columns.Add("c");
+            //csv[0,0] = "hello";
+            //string a = csv[0,0];
+            //List<string> headers = csv.ColumnNames;
+            //int rowCount = csv.RowCount;
+            //int columnCount = csv.ColumnCount;
+            //csv[0, 0] = "hello";
+            //csv.Save(@"c:\new.csv", true, false, true, false, ',', '"', Environment.NewLine);
+
+            //string cellAtRow0Column1 = csv[0, 1];
+            //string cellAtRow0ColumnNameA = csv[0, "A"];
+            //DataRow row2 = csv[0];
+            //DataColumn columnA = csv["A"];
+
+
         }
 
         private static void TestDynamic()
@@ -677,16 +690,8 @@ namespace DevLib.Samples
             PrintMethodName("Test CodeSnippets");
             RetryAction.Execute(i =>
             {
-                try
-                {
-                    throw new Exception();
-                }
-                catch
-                {
-                    Console.WriteLine(i);
-                    throw;
-                }
-            }, 9, 250);
+                throw new Exception();
+            }, null, 9, 250);
 
             Console.ReadLine();
 

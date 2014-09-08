@@ -38,7 +38,7 @@ namespace DevLib.Diagnostics
         /// <example>E.g. <code>delegate { Console.WriteLine("Hello"); }</code></example>
         /// </param>
         /// <param name="iteration">Repeat times.</param>
-        /// <param name="name">The name of current performance.</param>
+        /// <param name="name">The name of current benchmark.</param>
         /// <param name="outputAction">The action to handle the performance test result string.
         /// <example>Default: <code>Console.WriteLine</code></example>
         /// </param>

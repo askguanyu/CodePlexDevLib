@@ -1082,7 +1082,6 @@ namespace DevLib.ServiceModel
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
-
                     throw;
                 }
 
@@ -1106,7 +1105,6 @@ namespace DevLib.ServiceModel
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
-
                     throw;
                 }
             }
@@ -1243,7 +1241,6 @@ namespace DevLib.ServiceModel
                     catch (Exception e)
                     {
                         InternalLogger.Log(e);
-
                         throw;
                     }
                 }

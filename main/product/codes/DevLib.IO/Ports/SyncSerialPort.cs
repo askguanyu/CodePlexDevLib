@@ -124,8 +124,9 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Opens a new serial port connection.
         /// </summary>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Open()
+        public bool Open(bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -144,6 +145,11 @@ namespace DevLib.IO.Ports
                 {
                     InternalLogger.Log(e);
 
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
                     return false;
                 }
             }
@@ -156,19 +162,34 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Closes the port connection.
         /// </summary>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public bool Close()
+        public bool Close(bool throwOnError = false)
         {
             this.CheckDisposed();
 
             if (this._serialPort != null)
             {
-                if (this._serialPort.IsOpen)
+                try
                 {
-                    this._serialPort.Close();
-                }
+                    if (this._serialPort.IsOpen)
+                    {
+                        this._serialPort.Close();
+                    }
 
-                return true;
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
+                    return false;
+                }
             }
             else
             {
@@ -182,8 +203,9 @@ namespace DevLib.IO.Ports
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
         /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The byte array of received data.</returns>
-        public byte[] SendSync(byte[] sendData, bool waitTimeout = false, int timeout = 1000)
+        public byte[] SendSync(byte[] sendData, bool waitTimeout = false, int timeout = 1000, bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -247,6 +269,11 @@ namespace DevLib.IO.Ports
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
                 }
                 finally
                 {
@@ -263,8 +290,9 @@ namespace DevLib.IO.Ports
         /// <param name="sendData">The byte array that contains the data to write to the port.</param>
         /// <param name="bytesToReceive">The number of bytes to read.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The byte array of received data.</returns>
-        public byte[] SendSync(byte[] sendData, int bytesToReceive, int timeout = 1000)
+        public byte[] SendSync(byte[] sendData, int bytesToReceive, int timeout = 1000, bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -327,6 +355,11 @@ namespace DevLib.IO.Ports
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
                 }
                 finally
                 {
@@ -376,8 +409,9 @@ namespace DevLib.IO.Ports
         /// </summary>
         /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The byte array of received data.</returns>
-        public byte[] ReadSync(bool waitTimeout = false, int timeout = 1000)
+        public byte[] ReadSync(bool waitTimeout = false, int timeout = 1000, bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -428,6 +462,11 @@ namespace DevLib.IO.Ports
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
                 }
             }
 
@@ -439,8 +478,9 @@ namespace DevLib.IO.Ports
         /// </summary>
         /// <param name="bytesToReceive">The number of bytes to read.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The byte array of received data.</returns>
-        public byte[] ReadSync(int bytesToReceive, int timeout = 1000)
+        public byte[] ReadSync(int bytesToReceive, int timeout = 1000, bool throwOnError = false)
         {
             this.CheckDisposed();
 
@@ -490,6 +530,11 @@ namespace DevLib.IO.Ports
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
                 }
             }
 

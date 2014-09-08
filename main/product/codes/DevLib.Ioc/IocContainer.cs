@@ -126,7 +126,6 @@ namespace DevLib.Ioc
             catch (Exception e)
             {
                 InternalLogger.Log(e);
-
                 throw;
             }
             finally
@@ -198,7 +197,6 @@ namespace DevLib.Ioc
             catch (Exception e)
             {
                 InternalLogger.Log(e);
-
                 throw;
             }
             finally
@@ -265,7 +263,6 @@ namespace DevLib.Ioc
             catch (Exception e)
             {
                 InternalLogger.Log(e);
-
                 throw;
             }
             finally

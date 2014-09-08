@@ -137,8 +137,9 @@ namespace DevLib.Net.Sockets
         /// <param name="remoteIP">The IP address of the remote host.</param>
         /// <param name="remotePort">The port number of the remote host.</param>
         /// <param name="buffer">Data to send.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool SendTo(string remoteIP, int remotePort, byte[] buffer)
+        public static bool SendTo(string remoteIP, int remotePort, byte[] buffer, bool throwOnError = false)
         {
             try
             {
@@ -153,9 +154,12 @@ namespace DevLib.Net.Sockets
             }
             catch (Exception e)
             {
-                Debug.WriteLine(AsyncSocketUdpClientConstants.UdpClientSendException);
-
                 InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
             }
 
             return false;

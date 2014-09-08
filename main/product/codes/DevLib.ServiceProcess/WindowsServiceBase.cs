@@ -43,8 +43,9 @@ namespace DevLib.ServiceProcess
         /// </summary>
         /// <param name="serviceName">The service name.</param>
         /// <param name="args">An array of arguments to pass to the service when it starts.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool Start(string serviceName, string[] args = null)
+        public static bool Start(string serviceName, string[] args = null, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(serviceName))
             {
@@ -74,6 +75,12 @@ namespace DevLib.ServiceProcess
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
                     return false;
                 }
                 finally
@@ -95,8 +102,9 @@ namespace DevLib.ServiceProcess
         /// Stops this service and any services that are dependent on this service.
         /// </summary>
         /// <param name="serviceName">The service name.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool Stop(string serviceName)
+        public static bool Stop(string serviceName, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(serviceName))
             {
@@ -125,6 +133,12 @@ namespace DevLib.ServiceProcess
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
                     return false;
                 }
                 finally
@@ -146,8 +160,9 @@ namespace DevLib.ServiceProcess
         /// Suspends a service's operation.
         /// </summary>
         /// <param name="serviceName">The service name.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool Pause(string serviceName)
+        public static bool Pause(string serviceName, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(serviceName))
             {
@@ -176,6 +191,12 @@ namespace DevLib.ServiceProcess
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
                     return false;
                 }
                 finally
@@ -197,8 +218,9 @@ namespace DevLib.ServiceProcess
         /// Continues a service after it has been paused.
         /// </summary>
         /// <param name="serviceName">The service name.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool Continue(string serviceName)
+        public static bool Continue(string serviceName, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(serviceName))
             {
@@ -227,6 +249,12 @@ namespace DevLib.ServiceProcess
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
                     return false;
                 }
                 finally
@@ -249,8 +277,9 @@ namespace DevLib.ServiceProcess
         /// </summary>
         /// <param name="serviceName">The service name.</param>
         /// <param name="command">An application-defined command flag that indicates which custom command to execute.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool ExecuteCommand(string serviceName, int command)
+        public static bool ExecuteCommand(string serviceName, int command, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(serviceName))
             {
@@ -270,6 +299,12 @@ namespace DevLib.ServiceProcess
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
                     return false;
                 }
                 finally
@@ -291,8 +326,9 @@ namespace DevLib.ServiceProcess
         /// Gets the status of the service.
         /// </summary>
         /// <param name="serviceName">The service name.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>One of the <see cref="T:System.ServiceProcess.ServiceControllerStatus" /> values that indicates whether the service is running, stopped, or paused, or whether a start, stop, pause, or continue command is pending.</returns>
-        public static ServiceControllerStatus GetServiceStatus(string serviceName)
+        public static ServiceControllerStatus GetServiceStatus(string serviceName, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(serviceName))
             {
@@ -312,6 +348,12 @@ namespace DevLib.ServiceProcess
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+
                     return ServiceControllerStatus.Stopped;
                 }
                 finally

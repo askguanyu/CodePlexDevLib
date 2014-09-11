@@ -8,6 +8,7 @@ namespace DevLib.Serialization
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Runtime.Serialization;
     using System.Text;
     using System.Xml;
     using System.Xml.Serialization;
@@ -297,7 +298,7 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Xml string to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
@@ -320,7 +321,7 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Xml string to object, read from file.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>

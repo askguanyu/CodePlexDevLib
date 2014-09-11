@@ -139,7 +139,7 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes bytes to object.
         /// </summary>
-        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">The type of returns object.</typeparam>
         /// <param name="source">Byte array.</param>
         /// <returns>Instance of T.</returns>
         public static T Deserialize<T>(byte[] source)
@@ -166,7 +166,7 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes bytes to object, read from file.
         /// </summary>
-        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">The type of returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <returns>Instance of T.</returns>
         public static T Read<T>(string source)

@@ -42,7 +42,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="formats">A list of possible required format of <paramref name="source" />.</param>
-        /// <returns>An object that is equivalent to the date and time contained in <paramref name="source" />, as specified by <paramref name="format" />.</returns>
+        /// <returns>An object that is equivalent to the date and time contained in <paramref name="source" />, as specified by <paramref name="formats" />.</returns>
         public static DateTime ToDateTime(this string source, params string[] formats)
         {
             if (source.IsNullOrEmpty())

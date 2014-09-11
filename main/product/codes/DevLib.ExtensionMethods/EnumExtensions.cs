@@ -17,7 +17,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Convert string to enum.
         /// </summary>
-        /// <typeparam name="TEnum">The type of <paramref name="returns"/> enum.</typeparam>
+        /// <typeparam name="TEnum">The type of returns enum.</typeparam>
         /// <param name="source">Source string.</param>
         /// <param name="defaultValue">Default value of enum.</param>
         /// <param name="ignoreCase">Whether ignore case.</param>

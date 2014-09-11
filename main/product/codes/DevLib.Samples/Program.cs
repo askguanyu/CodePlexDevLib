@@ -43,6 +43,7 @@ namespace DevLib.Samples
     using DevLib.Dynamic;
     using DevLib.Expressions;
     using DevLib.ExtensionMethods;
+    using DevLib.IO.Ports;
     using DevLib.Ioc;
     using DevLib.Logging;
     using DevLib.Main;
@@ -652,7 +653,6 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
-
             Person pa = new Person();
             pa.DoTryf();
 

@@ -137,7 +137,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Converts an object to the specified target type or returns the default value if those two types are not convertible.
         /// </summary>
-        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">The type of returns object.</typeparam>
         /// <param name="source">The value.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
@@ -194,7 +194,7 @@ namespace DevLib.ExtensionMethods
         /// Converts an object to the specified target type or returns null if those two types are not convertible.
         /// </summary>
         /// <param name="source">The value.</param>
-        /// <param name="targetType">The type of <paramref name="returns"/> object.</param>
+        /// <param name="targetType">The type of returns object.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The target type object.</returns>
         public static object ConvertTo(this object source, Type targetType, bool throwOnError = false)

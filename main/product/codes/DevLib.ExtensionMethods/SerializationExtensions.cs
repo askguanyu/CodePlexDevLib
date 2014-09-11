@@ -148,7 +148,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes bytes to object.
         /// </summary>
-        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">The type of returns object.</typeparam>
         /// <param name="source">Byte array.</param>
         /// <returns>Instance of T.</returns>
         public static T DeserializeBinary<T>(this byte[] source)
@@ -175,7 +175,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes bytes to object, read from file.
         /// </summary>
-        /// <typeparam name="T">The type of <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">The type of returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <returns>Instance of T.</returns>
         public static T ReadBinary<T>(this string source)
@@ -458,7 +458,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Xml string to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
@@ -481,7 +481,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Xml string to object, read from file.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
@@ -628,7 +628,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Soap string to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The Soap string to deserialize.</param>
         /// <returns>Instance of T.</returns>
         public static T DeserializeSoap<T>(this string source)
@@ -653,7 +653,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Soap string to object, read from file.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <returns>Instance of T.</returns>
         public static T ReadSoap<T>(this string source)
@@ -900,7 +900,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Json string to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
+        /// <typeparam name="T">Type of the returns objet.</typeparam>
         /// <param name="source">Json string object.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
@@ -923,7 +923,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Json string to object, read from file.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
+        /// <typeparam name="T">Type of the returns objet.</typeparam>
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
@@ -1042,7 +1042,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Json bytes to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> objet.</typeparam>
+        /// <typeparam name="T">Type of the returns objet.</typeparam>
         /// <param name="source">Json string object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
@@ -1293,7 +1293,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes DataContract Xml string to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The DataContract Xml string to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of T.</returns>
@@ -1316,7 +1316,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes DataContract Xml string to object, read from file.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of T.</returns>
@@ -1435,7 +1435,7 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes DataContract bytes to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The bytes to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>

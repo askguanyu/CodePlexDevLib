@@ -5,9 +5,7 @@
 //-----------------------------------------------------------------------
 using System.Reflection;
 
-/// <summary>
-/// This file contains common AssemblyVersion data to be shared across all projects in solution.
-/// </summary>
+// This file contains common AssemblyVersion data to be shared across all projects in solution.
 [assembly: AssemblyDescription("dot Net Development Library")]
 [assembly: AssemblyCompany("YuGuan")]
 [assembly: AssemblyProduct("DevLib")]
@@ -31,5 +29,5 @@ using System.Reflection;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.21.1.*")]
+[assembly: AssemblyVersion("1.21.2.*")]
 ////[assembly: AssemblyFileVersion("1.0.0.0")]

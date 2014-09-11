@@ -310,7 +310,9 @@ namespace DevLib.ExtensionMethods
             using (FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
             {
                 byte[] buffer = new byte[81920];
+
                 int count;
+
                 while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
                 {
                     fileStream.Write(buffer, 0, count);
@@ -630,35 +632,35 @@ namespace DevLib.ExtensionMethods
         /// Execute a command line.
         /// </summary>
         /// <param name="sourceCmd">A command line to execute.</param>
+        /// <param name="runasAdmin">true to run as Administrator; false to run as current user.</param>
         /// <param name="milliseconds">
         /// The amount of time, in milliseconds, to wait for the command to exit.
         /// The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.
         /// Less than or equal to Zero if do not wait for the command to exit.
         /// </param>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public static void ExecuteCmdLine(this string sourceCmd, int milliseconds)
+        public static void ExecuteCmdLine(this string sourceCmd, bool runasAdmin = true, int milliseconds = 0)
         {
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
-                startInfo.Arguments = string.Format(" /c  {0}", sourceCmd);
-                startInfo.CreateNoWindow = true;
-                startInfo.ErrorDialog = false;
-                startInfo.UseShellExecute = true;
-                startInfo.Verb = "runas";
-                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                Process process = Process.Start(startInfo);
+            ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
+            startInfo.Arguments = string.Format(" /c  {0}", sourceCmd);
+            startInfo.CreateNoWindow = true;
+            startInfo.ErrorDialog = false;
+            startInfo.UseShellExecute = true;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                if (milliseconds > 0)
-                {
-                    if (process.WaitForExit(milliseconds))
-                    {
-                        process.Dispose();
-                    }
-                }
-            }
-            catch
+            if (runasAdmin)
             {
+                startInfo.Verb = "runas";
+            }
+
+            Process process = Process.Start(startInfo);
+
+            if (milliseconds > 0)
+            {
+                if (process.WaitForExit(milliseconds))
+                {
+                    process.Dispose();
+                }
             }
         }
 
@@ -683,7 +685,9 @@ namespace DevLib.ExtensionMethods
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
                     byte[] buffer = new byte[81920];
+
                     int count;
+
                     while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
                     {
                         memoryStream.Write(buffer, 0, count);
@@ -728,7 +732,9 @@ namespace DevLib.ExtensionMethods
             }
 
             byte[] buffer = new byte[81920];
+
             int count;
+
             while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
             {
                 destinationStream.Write(buffer, 0, count);

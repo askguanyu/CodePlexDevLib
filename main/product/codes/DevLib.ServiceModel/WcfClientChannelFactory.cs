@@ -37,7 +37,7 @@ namespace DevLib.ServiceModel
         /// Creates a channel of a specified type to a specified endpoint address.
         /// </summary>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static TChannel CreateChannel(bool fromCaching = true)
         {
@@ -95,7 +95,7 @@ namespace DevLib.ServiceModel
         /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
         public static TChannel CreateChannel(string remoteHostAddress, int remotePort, bool fromCaching = true)
         {
             string remoteAddress = new UriBuilder(Uri.UriSchemeHttp, remoteHostAddress, remotePort, typeof(TChannel).FullName).ToString();
@@ -108,7 +108,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
         public static TChannel CreateChannel(string remoteIPEndPoint, bool fromCaching = true)
         {
             UriBuilder uriBuilder = new UriBuilder(remoteIPEndPoint);
@@ -124,7 +124,7 @@ namespace DevLib.ServiceModel
         /// <param name="endpointConfigurationName">The configuration name used for the endpoint.</param>
         /// <param name="remoteAddress">The address that provides the location of the service.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static TChannel CreateChannel(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
         {
@@ -186,7 +186,7 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> used to configure the endpoint.</param>
         /// <param name="remoteAddress">The address that provides the location of the service.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static TChannel CreateChannel(Binding binding, string remoteAddress, bool fromCaching = true)
         {
@@ -244,7 +244,7 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteAddress">The address that provides the location of the service.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static TChannel CreateChannel(Type bindingType, string remoteAddress, bool fromCaching = true)
         {

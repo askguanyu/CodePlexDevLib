@@ -225,7 +225,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WcfClientBase" /> class.
+        /// Releases all resources used by the current instance of the <see cref="WcfClientBase{TChannel}" /> class.
         /// </summary>
         public void Dispose()
         {
@@ -386,7 +386,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WcfClientBase" /> class.
+        /// Releases all resources used by the current instance of the <see cref="WcfClientBase{TChannel}" /> class.
         /// protected virtual for non-sealed class; private for sealed class.
         /// </summary>
         /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>

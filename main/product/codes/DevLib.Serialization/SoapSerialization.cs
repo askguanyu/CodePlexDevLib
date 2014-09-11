@@ -136,7 +136,7 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Soap string to object.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The Soap string to deserialize.</param>
         /// <returns>Instance of T.</returns>
         public static T Deserialize<T>(string source)
@@ -161,7 +161,7 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Soap string to object, read from file.
         /// </summary>
-        /// <typeparam name="T">Type of the <paramref name="returns"/> object.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <returns>Instance of T.</returns>
         public static T Read<T>(string source)

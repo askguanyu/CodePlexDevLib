@@ -276,7 +276,7 @@ namespace DevLib.AddIn
         ///   <paramref name="assemblyName" /> or <paramref name="typeName" /> is null. </exception>
         /// <exception cref="T:System.MissingMethodException">No matching constructor was found. </exception>
         /// <exception cref="T:System.TypeLoadException">
-        ///   <paramref name="typename" /> was not found in <paramref name="assemblyName" />. </exception>
+        ///   <paramref name="typeName" /> was not found in <paramref name="assemblyName" />. </exception>
         /// <exception cref="T:System.IO.FileNotFoundException">
         ///   <paramref name="assemblyName" /> was not found. </exception>
         /// <exception cref="T:System.MethodAccessException">The caller does not have permission to call this constructor. </exception>
@@ -321,7 +321,7 @@ namespace DevLib.AddIn
         /// Creates an object of the specified type.
         /// </summary>
         /// <typeparam name="T">Type of instance.</typeparam>
-        /// <returns>An instance of the object specified by <paramref name="typeName" />.</returns>
+        /// <returns>An instance of the object.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public T CreateInstance<T>()
         {
@@ -333,7 +333,7 @@ namespace DevLib.AddIn
         /// </summary>
         /// <typeparam name="T">Type of instance.</typeparam>
         /// <param name="args">The arguments to pass to the constructor. This array of arguments must match in number, order, and type the parameters of the constructor to invoke. If the default constructor is preferred, <paramref name="args" /> must be an empty array or null. </param>
-        /// <returns>An instance of the object specified by <paramref name="typeName" />.</returns>
+        /// <returns>An instance of the object.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public T CreateInstance<T>(params object[] args)
         {

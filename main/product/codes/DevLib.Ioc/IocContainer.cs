@@ -67,10 +67,10 @@ namespace DevLib.Ioc
         /// Register a type mapping with the container.
         /// </summary>
         /// <typeparam name="T">Type of instance to register.</typeparam>
-        /// <param name="instance">Object to returned.</param>
+        /// <param name="instance">Object to return.</param>
         /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
         /// <returns>The current IocContainer instance.</returns>
-        public IocContainer Register<T>(T instance, string label = "")
+        public IocContainer Register<T>(T instance, string label = null)
         {
             this.CheckDisposed();
 
@@ -79,7 +79,7 @@ namespace DevLib.Ioc
                 throw new ArgumentNullException("instance");
             }
 
-            if (string.IsNullOrEmpty(label))
+            if (label == null)
             {
                 label = DefaultLabel;
             }
@@ -141,7 +141,7 @@ namespace DevLib.Ioc
         /// <param name="creation">Delegate method to create a new instance.</param>
         /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
         /// <returns>The current IocContainer instance.</returns>
-        public IocContainer Register<T>(CreationFunc creation, string label = "")
+        public IocContainer Register<T>(CreationFunc creation, string label = null)
         {
             this.CheckDisposed();
 
@@ -150,7 +150,7 @@ namespace DevLib.Ioc
                 throw new ArgumentNullException("creation");
             }
 
-            if (string.IsNullOrEmpty(label))
+            if (label == null)
             {
                 label = DefaultLabel;
             }
@@ -212,11 +212,11 @@ namespace DevLib.Ioc
         /// <param name="createNew">true to call delegate method to create a new instance; false to return a shared instance.</param>
         /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
         /// <returns>The retrieved object.</returns>
-        public T Resolve<T>(bool createNew = false, string label = "")
+        public T Resolve<T>(bool createNew = false, string label = null)
         {
             this.CheckDisposed();
 
-            if (string.IsNullOrEmpty(label))
+            if (label == null)
             {
                 label = DefaultLabel;
             }
@@ -324,11 +324,11 @@ namespace DevLib.Ioc
         /// <param name="createNew">true to check delegate method exists; false to check a shared instance exists.</param>
         /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
         /// <returns>true if can resolve; otherwise, false.</returns>
-        public bool CanResolve<T>(bool createNew = false, string label = "")
+        public bool CanResolve<T>(bool createNew = false, string label = null)
         {
             this.CheckDisposed();
 
-            if (string.IsNullOrEmpty(label))
+            if (label == null)
             {
                 label = DefaultLabel;
             }
@@ -365,11 +365,11 @@ namespace DevLib.Ioc
         /// <param name="createNew">true to call delegate method to create a new instance; false to return a shared instance.</param>
         /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
         /// <returns>true if resolve successfully; otherwise, false.</returns>
-        public bool TryResolve<T>(out T instance, bool createNew = false, string label = "")
+        public bool TryResolve<T>(out T instance, bool createNew = false, string label = null)
         {
             this.CheckDisposed();
 
-            if (string.IsNullOrEmpty(label))
+            if (label == null)
             {
                 label = DefaultLabel;
             }
@@ -444,11 +444,11 @@ namespace DevLib.Ioc
         /// <param name="instance">true to unregister the shared instance; false to unregister delegate method.</param>
         /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
         /// <returns>true if unregister successfully; otherwise, false.</returns>
-        public bool Unregister<T>(bool instance = true, string label = "")
+        public bool Unregister<T>(bool instance = true, string label = null)
         {
             this.CheckDisposed();
 
-            if (string.IsNullOrEmpty(label))
+            if (label == null)
             {
                 label = DefaultLabel;
             }

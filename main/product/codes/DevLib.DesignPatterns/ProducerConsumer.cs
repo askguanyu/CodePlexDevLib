@@ -73,7 +73,7 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Whether <see cref="Enqueue(object)" /> or <see cref="Enqueue(IEnumerable)" /> should add data items when <see cref="IsRunning" /> is false.
         /// </summary>
-        private bool _enqueueWhenStopped = true;
+        private bool _enableQueueWhenStopped = true;
 
         /// <summary>
         /// Whether to call <see cref="Clear" /> when <see cref="IsRunning" /> is set to false.
@@ -90,9 +90,9 @@ namespace DevLib.DesignPatterns
         /// </summary>
         /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
         /// <param name="consumerThreads">Number of consumer threads.</param>
-        /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
-        public ProducerConsumer(Action<object> consumerAction, int consumerThreads = 1, bool startImmediately = true)
-            : this(new ProducerConsumerQueue(), consumerAction, consumerThreads, startImmediately)
+        /// <param name="startNow">Whether to start the consumer thread immediately.</param>
+        public ProducerConsumer(Action<object> consumerAction, int consumerThreads = 1, bool startNow = true)
+            : this(new ProducerConsumerQueue(), consumerAction, consumerThreads, startNow)
         {
         }
 
@@ -102,8 +102,8 @@ namespace DevLib.DesignPatterns
         /// <param name="queue">An instance of <see cref="IProducerConsumerQueue" />.</param>
         /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
         /// <param name="consumerThreads">Number of consumer threads.</param>
-        /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
-        public ProducerConsumer(IProducerConsumerQueue queue, Action<object> consumerAction, int consumerThreads = 1, bool startImmediately = true)
+        /// <param name="startNow">Whether to start the consumer thread immediately.</param>
+        public ProducerConsumer(IProducerConsumerQueue queue, Action<object> consumerAction, int consumerThreads = 1, bool startNow = true)
         {
             if (consumerAction == null)
             {
@@ -123,7 +123,7 @@ namespace DevLib.DesignPatterns
 
             this._consumerThreads = consumerThreads;
 
-            this.IsRunning = startImmediately;
+            this.IsRunning = startNow;
 
             this._consumerThreadList = new List<Thread>(consumerThreads);
 
@@ -277,15 +277,15 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Stop the consumer thread.
         /// </summary>
-        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue(object)" /> or <see cref="Enqueue(IEnumerable)" /> is able to add data items when stopped.</param>
-        /// <param name="clearQueueOnStop">Whether to call <see cref="Clear" /> when stopped.</param>
-        public void Stop(bool enqueueWhenStopped = true, bool clearQueueOnStop = false)
+        /// <param name="enableQueue">Whether <see cref="Enqueue(object)" /> or <see cref="Enqueue(IEnumerable)" /> is able to add data items when stopped.</param>
+        /// <param name="clearQueue">Whether to call <see cref="Clear" /> when stopped.</param>
+        public void Stop(bool enableQueue = true, bool clearQueue = false)
         {
             this.CheckDisposed();
 
-            this._enqueueWhenStopped = enqueueWhenStopped;
+            this._enableQueueWhenStopped = enableQueue;
 
-            this._clearQueueOnStop = clearQueueOnStop;
+            this._clearQueueOnStop = clearQueue;
 
             this.IsRunning = false;
         }
@@ -311,7 +311,7 @@ namespace DevLib.DesignPatterns
 
             lock (this._queueSyncRoot)
             {
-                if (this.IsRunning || this._enqueueWhenStopped)
+                if (this.IsRunning || this._enableQueueWhenStopped)
                 {
                     this._queue.Enqueue(item);
                     Interlocked.Increment(ref this._produceAccumulation);
@@ -330,7 +330,7 @@ namespace DevLib.DesignPatterns
 
             lock (this._queueSyncRoot)
             {
-                if (this.IsRunning || this._enqueueWhenStopped)
+                if (this.IsRunning || this._enableQueueWhenStopped)
                 {
                     long count = this._queue.Enqueue(items);
                     Interlocked.Add(ref this._produceAccumulation, count);
@@ -530,7 +530,7 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Whether <see cref="Enqueue(T)" /> or <see cref="Enqueue(IEnumerable{T})" /> should add data items when <see cref="IsRunning" /> is false.
         /// </summary>
-        private bool _enqueueWhenStopped = true;
+        private bool _enableQueueWhenStopped = true;
 
         /// <summary>
         /// Whether to call <see cref="Clear" /> when <see cref="IsRunning" /> is set to false.
@@ -547,9 +547,9 @@ namespace DevLib.DesignPatterns
         /// </summary>
         /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
         /// <param name="consumerThreads">Number of consumer threads.</param>
-        /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
-        public ProducerConsumer(Action<T> consumerAction, int consumerThreads = 1, bool startImmediately = true)
-            : this(new ProducerConsumerQueue<T>(), consumerAction, consumerThreads, startImmediately)
+        /// <param name="startNow">Whether to start the consumer thread immediately.</param>
+        public ProducerConsumer(Action<T> consumerAction, int consumerThreads = 1, bool startNow = true)
+            : this(new ProducerConsumerQueue<T>(), consumerAction, consumerThreads, startNow)
         {
         }
 
@@ -559,8 +559,8 @@ namespace DevLib.DesignPatterns
         /// <param name="queue">An instance of <see cref="IProducerConsumerQueue{T}" />.</param>
         /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
         /// <param name="consumerThreads">Number of consumer threads.</param>
-        /// <param name="startImmediately">Whether to start the consumer thread immediately.</param>
-        public ProducerConsumer(IProducerConsumerQueue<T> queue, Action<T> consumerAction, int consumerThreads = 1, bool startImmediately = true)
+        /// <param name="startNow">Whether to start the consumer thread immediately.</param>
+        public ProducerConsumer(IProducerConsumerQueue<T> queue, Action<T> consumerAction, int consumerThreads = 1, bool startNow = true)
         {
             if (consumerAction == null)
             {
@@ -580,7 +580,7 @@ namespace DevLib.DesignPatterns
 
             this._consumerThreads = consumerThreads;
 
-            this.IsRunning = startImmediately;
+            this.IsRunning = startNow;
 
             this._consumerThreadList = new List<Thread>(consumerThreads);
 
@@ -734,15 +734,15 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Stop the consumer thread.
         /// </summary>
-        /// <param name="enqueueWhenStopped">Whether <see cref="Enqueue(T)" /> or <see cref="Enqueue(IEnumerable{T})" /> is able to add data items when stopped.</param>
-        /// <param name="clearQueueOnStop">Whether to call <see cref="Clear" /> when stopped.</param>
-        public void Stop(bool enqueueWhenStopped = true, bool clearQueueOnStop = false)
+        /// <param name="enableQueue">Whether <see cref="Enqueue(T)" /> or <see cref="Enqueue(IEnumerable{T})" /> is able to add data items when stopped.</param>
+        /// <param name="clearQueue">Whether to call <see cref="Clear" /> when stopped.</param>
+        public void Stop(bool enableQueue = true, bool clearQueue = false)
         {
             this.CheckDisposed();
 
-            this._enqueueWhenStopped = enqueueWhenStopped;
+            this._enableQueueWhenStopped = enableQueue;
 
-            this._clearQueueOnStop = clearQueueOnStop;
+            this._clearQueueOnStop = clearQueue;
 
             this.IsRunning = false;
         }
@@ -768,7 +768,7 @@ namespace DevLib.DesignPatterns
 
             lock (this._queueSyncRoot)
             {
-                if (this.IsRunning || this._enqueueWhenStopped)
+                if (this.IsRunning || this._enableQueueWhenStopped)
                 {
                     this._queue.Enqueue(item);
                     Interlocked.Increment(ref this._produceAccumulation);
@@ -787,7 +787,7 @@ namespace DevLib.DesignPatterns
 
             lock (this._queueSyncRoot)
             {
-                if (this.IsRunning || this._enqueueWhenStopped)
+                if (this.IsRunning || this._enableQueueWhenStopped)
                 {
                     long count = this._queue.Enqueue(items);
                     Interlocked.Add(ref this._produceAccumulation, count);

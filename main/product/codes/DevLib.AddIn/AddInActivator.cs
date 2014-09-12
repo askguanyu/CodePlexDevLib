@@ -37,7 +37,7 @@ namespace DevLib.AddIn
         ///   <paramref name="assemblyName" /> or <paramref name="typeName" /> is null. </exception>
         /// <exception cref="T:System.MissingMethodException">No matching public constructor was found. </exception>
         /// <exception cref="T:System.TypeLoadException">
-        ///   <paramref name="typename" /> was not found in <paramref name="assemblyName" />. </exception>
+        ///   <paramref name="typeName" /> was not found in <paramref name="assemblyName" />. </exception>
         /// <exception cref="T:System.IO.FileNotFoundException">
         ///   <paramref name="assemblyName" /> was not found. </exception>
         /// <exception cref="T:System.MethodAccessException">The caller does not have permission to call this constructor. </exception>
@@ -61,7 +61,7 @@ namespace DevLib.AddIn
         ///   <paramref name="assemblyName" /> or <paramref name="typeName" /> is null. </exception>
         /// <exception cref="T:System.MissingMethodException">No matching public constructor was found. </exception>
         /// <exception cref="T:System.TypeLoadException">
-        ///   <paramref name="typename" /> was not found in <paramref name="assemblyName" />. </exception>
+        ///   <paramref name="typeName" /> was not found in <paramref name="assemblyName" />. </exception>
         /// <exception cref="T:System.IO.FileNotFoundException">
         ///   <paramref name="assemblyName" /> was not found. </exception>
         /// <exception cref="T:System.MethodAccessException">The caller does not have permission to call this constructor. </exception>
@@ -90,7 +90,7 @@ namespace DevLib.AddIn
         ///   <paramref name="assemblyName" /> or <paramref name="typeName" /> is null. </exception>
         /// <exception cref="T:System.MissingMethodException">No matching constructor was found. </exception>
         /// <exception cref="T:System.TypeLoadException">
-        ///   <paramref name="typename" /> was not found in <paramref name="assemblyName" />. </exception>
+        ///   <paramref name="typeName" /> was not found in <paramref name="assemblyName" />. </exception>
         /// <exception cref="T:System.IO.FileNotFoundException">
         ///   <paramref name="assemblyName" /> was not found. </exception>
         /// <exception cref="T:System.MethodAccessException">The caller does not have permission to call this constructor. </exception>

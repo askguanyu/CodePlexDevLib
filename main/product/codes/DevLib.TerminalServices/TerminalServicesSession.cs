@@ -216,7 +216,7 @@ namespace DevLib.TerminalServices
         /// Gets the name of the published application that this session is running.
         /// </summary>
         /// <remarks>
-        /// This property may throw an exception for the console session (where <see cref="ClientProtocolType"/> is <see cref="ClientProtocolType.Console" />).
+        /// This property may throw an exception for the console session (where <see cref="ClientProtocolType"/> is ClientProtocolType.Console ).
         /// </remarks>
         public string ApplicationName
         {
@@ -255,7 +255,7 @@ namespace DevLib.TerminalServices
         /// Gets the initial program run when the session started.
         /// </summary>
         /// <remarks>
-        /// This property may throw an exception for the console session (where <see cref="ClientProtocolType"/> is <see cref="ClientProtocolType.Console" />).
+        /// This property may throw an exception for the console session (where <see cref="ClientProtocolType"/> is ClientProtocolType.Console ).
         /// </remarks>
         public string InitialProgram
         {
@@ -269,7 +269,7 @@ namespace DevLib.TerminalServices
         /// Gets the working directory used when launching the initial program.
         /// </summary>
         /// <remarks>
-        /// This property may throw an exception for the console session (where <see cref="ClientProtocolType"/> is <see cref="ClientProtocolType.Console" />).
+        /// This property may throw an exception for the console session (where <see cref="ClientProtocolType"/> is ClientProtocolType.Console ).
         /// </remarks>
         public string WorkingDirectory
         {

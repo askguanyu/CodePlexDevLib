@@ -63,7 +63,8 @@ namespace DevLib.Logging
         /// <returns>A hash code for the current LogConfig.</returns>
         public override int GetHashCode()
         {
-            return string.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+            return string.Format(
+                "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
                 Path.GetFullPath(this.LogFile),
                 this.LoggerSetup.Level,
                 this.LoggerSetup.RollingByDate,

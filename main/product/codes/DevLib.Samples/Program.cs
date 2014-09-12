@@ -347,10 +347,12 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.Ioc");
 
-            IocContainer container = new IocContainer();
-            container.Register<Person>(new Person("a", "b", 1));
+            IocContainer container = new IocContainer(true);
 
+            container.Register<Person>(new Person("a", "b", 1));
             Console.WriteLine(container.Resolve<Person>());
+
+
         }
 
         private static void TestDevLibDaemonProcess()
@@ -474,8 +476,8 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.DesignPatterns");
 
+            TestClass a = Singleton<TestClass>.Instance;
 
-            var a = Singleton<TestClass>.Instance;
             a.Age = 30;
             a.Name = "Same one";
 

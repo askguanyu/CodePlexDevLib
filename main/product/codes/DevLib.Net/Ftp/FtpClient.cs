@@ -1595,7 +1595,7 @@ namespace DevLib.Net.Ftp
         /// </summary>
         /// <param name="sourceRemotePath">The source full path on an FTP server.</param>
         /// <param name="destinationRemotePath">The destination full path on an FTP server.</param>
-        /// <param name="recursive">true to move directories, subdirectories, and files in <paramref name="remotePath" />; otherwise, false.</param>
+        /// <param name="recursive">true to move directories, subdirectories, and files in <paramref name="sourceRemotePath" />; otherwise, false.</param>
         /// <param name="overwrite">true if the destination directory can be overwritten; otherwise, false.</param>
         private void MoveDirectoryHelper(string sourceRemotePath, string destinationRemotePath, bool recursive, bool overwrite)
         {

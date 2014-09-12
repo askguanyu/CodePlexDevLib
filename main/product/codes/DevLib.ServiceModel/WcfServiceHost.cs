@@ -97,12 +97,12 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="port">Wcf service address port.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, int port = 80, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, int port = 80, bool openNow = false)
         {
             this.Initialize(assemblyFile, port);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -114,12 +114,12 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress = null, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress = null, bool openNow = false)
         {
             this.Initialize(assemblyFile, configFile, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -131,12 +131,12 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type bindingType, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Type bindingType, string baseAddress, bool openNow = false)
         {
             this.Initialize(assemblyFile, bindingType, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -149,12 +149,12 @@ namespace DevLib.ServiceModel
         /// <param name="contractType">Wcf contract type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, string baseAddress, bool openNow = false)
         {
             this.Initialize(assemblyFile, contractType, bindingType, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -166,12 +166,12 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool openNow = false)
         {
             this.Initialize(assemblyFile, binding, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -184,12 +184,12 @@ namespace DevLib.ServiceModel
         /// <param name="contractType">Wcf contract type.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, string baseAddress, bool openNow = false)
         {
             this.Initialize(assemblyFile, contractType, binding, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -200,12 +200,12 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="port">Wcf service address port.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, int port = 80, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, int port = 80, bool openNow = false)
         {
             this.Initialize(serviceType, port);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -217,12 +217,12 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, string configFile, string baseAddress = null, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, string configFile, string baseAddress = null, bool openNow = false)
         {
             this.Initialize(serviceType, configFile, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -234,12 +234,12 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type bindingType, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Type bindingType, string baseAddress, bool openNow = false)
         {
             this.Initialize(serviceType, bindingType, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -252,12 +252,12 @@ namespace DevLib.ServiceModel
         /// <param name="contractType">Wcf contract type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, string baseAddress, bool openNow = false)
         {
             this.Initialize(serviceType, contractType, bindingType, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -269,12 +269,12 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool openNow = false)
         {
             this.Initialize(serviceType, binding, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }
@@ -287,12 +287,12 @@ namespace DevLib.ServiceModel
         /// <param name="contractType">Wcf contract type.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        /// <param name="autoOpen">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, string baseAddress, bool autoOpen = false)
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, string baseAddress, bool openNow = false)
         {
             this.Initialize(serviceType, contractType, binding, baseAddress);
 
-            if (autoOpen)
+            if (openNow)
             {
                 this.Open();
             }

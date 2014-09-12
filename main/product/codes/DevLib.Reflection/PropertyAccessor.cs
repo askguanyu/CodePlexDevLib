@@ -79,7 +79,7 @@ namespace DevLib.Reflection
         }
 
         /// <summary>
-        /// Encapsulates a method that has one parameter and returns a value of the type specified by the <paramref name="TResult" /> parameter.
+        /// Encapsulates a method that has one parameter and returns a value of the type specified by the <typeparamref name="TResult" /> parameter.
         /// </summary>
         /// <typeparam name="T">The type of the parameter of the method that this delegate encapsulates.</typeparam>
         /// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>

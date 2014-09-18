@@ -65,60 +65,60 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Get Wcf client instance.
         /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(string remoteIPEndPoint, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, remoteIPEndPoint, fromCaching);
+            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance.
         /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, remoteHostAddress, remotePort, fromCaching);
+            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, remoteHost, remotePort, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, endpointConfigurationName, remoteAddress, fromCaching);
+            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(Binding binding, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, binding, remoteAddress, fromCaching);
+            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, binding, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, bindingType, remoteAddress, fromCaching);
+            return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, bindingType, remoteUri, fromCaching);
         }
 
         /// <summary>
@@ -134,60 +134,60 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string remoteIPEndPoint, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteIPEndPoint, fromCaching);
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteHostAddress, remotePort, fromCaching);
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteHost, remotePort, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, endpointConfigurationName, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, binding, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, binding, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, bindingType, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, bindingType, remoteUri, fromCaching);
         }
 
         /// <summary>
@@ -203,60 +203,60 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string remoteIPEndPoint, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteIPEndPoint, fromCaching);
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteHostAddress, remotePort, fromCaching);
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteHost, remotePort, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, endpointConfigurationName, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, binding, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, binding, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, bindingType, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, bindingType, remoteUri, fromCaching);
         }
 
         /// <summary>
@@ -272,60 +272,60 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(string remoteIPEndPoint, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, remoteIPEndPoint, fromCaching);
+            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, remoteHostAddress, remotePort, fromCaching);
+            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, remoteHost, remotePort, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, endpointConfigurationName, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(Binding binding, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, binding, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, binding, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, bindingType, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, bindingType, remoteUri, fromCaching);
         }
 
         /// <summary>
@@ -341,60 +341,60 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(string remoteIPEndPoint, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, remoteIPEndPoint, fromCaching);
+            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(string remoteHostAddress, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, remoteHostAddress, remotePort, fromCaching);
+            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, remoteHost, remotePort, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(string endpointConfigurationName, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, endpointConfigurationName, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(Binding binding, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, binding, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, binding, remoteUri, fromCaching);
         }
 
         /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(Type bindingType, string remoteAddress, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, bindingType, remoteAddress, fromCaching);
+            return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, bindingType, remoteUri, fromCaching);
         }
 
         /// <summary>
@@ -463,12 +463,12 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <typeparam name="TTypeBuilder">The proxy class builder.</typeparam>
         /// <param name="caching">Caching dictionary to use.</param>
-        /// <param name="remoteIPEndPoint">The IP endpoint of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, string remoteIPEndPoint, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
+        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, string remoteUri, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
         {
-            UriBuilder uriBuilder = new UriBuilder(remoteIPEndPoint);
+            UriBuilder uriBuilder = new UriBuilder(remoteUri);
 
             uriBuilder.Path = typeof(TChannel).FullName;
 
@@ -480,13 +480,13 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <typeparam name="TTypeBuilder">The proxy class builder.</typeparam>
         /// <param name="caching">Caching dictionary to use.</param>
-        /// <param name="remoteHostAddress">The host address of the service endpoint.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, string remoteHostAddress, int remotePort, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
+        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, string remoteHost, int remotePort, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
         {
-            string remoteAddress = new UriBuilder(Uri.UriSchemeHttp, remoteHostAddress, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteAddress = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
             return GetInstance<TTypeBuilder>(caching, typeof(BasicHttpBinding), remoteAddress, fromCaching);
         }
@@ -497,14 +497,14 @@ namespace DevLib.ServiceModel
         /// <typeparam name="TTypeBuilder">The proxy class builder.</typeparam>
         /// <param name="caching">Caching dictionary to use.</param>
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteAddress">The address of the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, string endpointConfigurationName, string remoteAddress, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
+        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, string endpointConfigurationName, string remoteUri, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
         {
             if (fromCaching)
             {
-                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
+                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 Lock.AcquireReaderLock(Timeout.Infinite);
 
@@ -528,9 +528,9 @@ namespace DevLib.ServiceModel
                             {
                                 Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                                TChannel result = string.IsNullOrEmpty(remoteAddress) ?
+                                TChannel result = string.IsNullOrEmpty(remoteUri) ?
                                     (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
+                                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteUri));
 
                                 caching.Add(key, result);
 
@@ -552,9 +552,9 @@ namespace DevLib.ServiceModel
             {
                 Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                return string.IsNullOrEmpty(remoteAddress) ?
+                return string.IsNullOrEmpty(remoteUri) ?
                     (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
-                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteAddress));
+                    (TChannel)Activator.CreateInstance(type, endpointConfigurationName, new EndpointAddress(remoteUri));
             }
         }
 
@@ -564,14 +564,14 @@ namespace DevLib.ServiceModel
         /// <typeparam name="TTypeBuilder">The proxy class builder.</typeparam>
         /// <param name="caching">Caching dictionary to use.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, Binding binding, string remoteAddress, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
+        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, Binding binding, string remoteUri, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
         {
             if (fromCaching)
             {
-                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
+                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 Lock.AcquireReaderLock(Timeout.Infinite);
 
@@ -595,7 +595,7 @@ namespace DevLib.ServiceModel
                             {
                                 Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                                TChannel result = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
+                                TChannel result = (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteUri));
 
                                 caching.Add(key, result);
 
@@ -617,7 +617,7 @@ namespace DevLib.ServiceModel
             {
                 Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteAddress));
+                return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteUri));
             }
         }
 
@@ -627,14 +627,14 @@ namespace DevLib.ServiceModel
         /// <typeparam name="TTypeBuilder">The proxy class builder.</typeparam>
         /// <param name="caching">Caching dictionary to use.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteAddress">The address of the service endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, Type bindingType, string remoteAddress, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
+        private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, Type bindingType, string remoteUri, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
         {
             if (fromCaching)
             {
-                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteAddress) ? string.Empty : remoteAddress.ToLowerInvariant());
+                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 Lock.AcquireReaderLock(Timeout.Infinite);
 
@@ -658,7 +658,7 @@ namespace DevLib.ServiceModel
                             {
                                 Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                                TChannel result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+                                TChannel result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri));
 
                                 caching.Add(key, result);
 
@@ -680,7 +680,7 @@ namespace DevLib.ServiceModel
             {
                 Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
 
-                return (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteAddress));
+                return (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri));
             }
         }
     }

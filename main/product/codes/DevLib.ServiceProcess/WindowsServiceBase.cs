@@ -375,25 +375,40 @@ namespace DevLib.ServiceProcess
         /// Determines whether the specified service exists.
         /// </summary>
         /// <param name="serviceName">The service name.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>true if the specified service exists; otherwise, false.</returns>
-        public static bool ServiceExists(string serviceName)
+        public static bool ServiceExists(string serviceName, bool throwOnError = false)
         {
             if (string.IsNullOrEmpty(serviceName))
             {
                 return false;
             }
 
-            ServiceController[] services = ServiceController.GetServices();
-
-            foreach (ServiceController item in services)
+            try
             {
-                if (serviceName.Equals(item.ServiceName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
+                ServiceController[] services = ServiceController.GetServices();
 
-            return false;
+                foreach (ServiceController item in services)
+                {
+                    if (serviceName.Equals(item.ServiceName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
         }
     }
 }

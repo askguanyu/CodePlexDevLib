@@ -200,18 +200,18 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Sync send a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
-        /// <param name="sendData">The byte array that contains the data to write to the port.</param>
+        /// <param name="buffer">The byte array that contains the data to write to the port.</param>
         /// <param name="waitTimeout">Whether read receive data after wait for timeout to expire or read on data received.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The byte array of received data.</returns>
-        public byte[] SendSync(byte[] sendData, bool waitTimeout = false, int timeout = 1000, bool throwOnError = false)
+        public byte[] SendSync(byte[] buffer, bool waitTimeout = false, int timeout = 1000, bool throwOnError = false)
         {
             this.CheckDisposed();
 
-            if (sendData == null || sendData.Length == 0)
+            if (buffer == null || buffer.Length == 0)
             {
-                throw new ArgumentNullException("sendData");
+                throw new ArgumentNullException("buffer");
             }
 
             if (this._serialPort == null || !this.Open())
@@ -236,7 +236,7 @@ namespace DevLib.IO.Ports
 
                     this._serialPort.DiscardOutBuffer();
 
-                    this._serialPort.Write(sendData, 0, sendData.Length);
+                    this._serialPort.Write(buffer, 0, buffer.Length);
 
                     if (waitTimeout)
                     {
@@ -287,18 +287,18 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Sync send a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
-        /// <param name="sendData">The byte array that contains the data to write to the port.</param>
+        /// <param name="buffer">The byte array that contains the data to write to the port.</param>
         /// <param name="bytesToReceive">The number of bytes to read.</param>
         /// <param name="timeout">The number of milliseconds before a time-out occurs when a read operation does not finish.</param>
         /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>The byte array of received data.</returns>
-        public byte[] SendSync(byte[] sendData, int bytesToReceive, int timeout = 1000, bool throwOnError = false)
+        public byte[] SendSync(byte[] buffer, int bytesToReceive, int timeout = 1000, bool throwOnError = false)
         {
             this.CheckDisposed();
 
-            if (sendData == null || sendData.Length == 0)
+            if (buffer == null || buffer.Length == 0)
             {
-                throw new ArgumentNullException("sendData");
+                throw new ArgumentNullException("buffer");
             }
 
             if (this._serialPort == null || !this.Open())
@@ -323,7 +323,7 @@ namespace DevLib.IO.Ports
 
                     this._serialPort.DiscardOutBuffer();
 
-                    this._serialPort.Write(sendData, 0, sendData.Length);
+                    this._serialPort.Write(buffer, 0, buffer.Length);
 
                     int timeoutCount = 0;
 
@@ -373,8 +373,8 @@ namespace DevLib.IO.Ports
         /// <summary>
         /// Writes a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
-        /// <param name="data">The byte array that contains the data to write to the port.</param>
-        public void Send(byte[] data)
+        /// <param name="buffer">The byte array that contains the data to write to the port.</param>
+        public void Send(byte[] buffer)
         {
             this.CheckDisposed();
 
@@ -383,16 +383,16 @@ namespace DevLib.IO.Ports
                 throw new IOException("The specified port could not be found or opened.");
             }
 
-            this._serialPort.Write(data, 0, data.Length);
+            this._serialPort.Write(buffer, 0, buffer.Length);
         }
 
         /// <summary>
         /// Writes a specified number of bytes to the serial port using data from a buffer.
         /// </summary>
-        /// <param name="data">The byte array that contains the data to write to the port.</param>
+        /// <param name="buffer">The byte array that contains the data to write to the port.</param>
         /// <param name="offset">The zero-based byte offset in the data parameter at which to begin copying bytes to the port.</param>
         /// <param name="count">The number of bytes to write.</param>
-        public void Send(byte[] data, int offset, int count)
+        public void Send(byte[] buffer, int offset, int count)
         {
             this.CheckDisposed();
 
@@ -401,7 +401,7 @@ namespace DevLib.IO.Ports
                 throw new IOException("The specified port could not be found or opened.");
             }
 
-            this._serialPort.Write(data, offset, count);
+            this._serialPort.Write(buffer, offset, count);
         }
 
         /// <summary>

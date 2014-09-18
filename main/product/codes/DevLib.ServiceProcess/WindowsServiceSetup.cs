@@ -265,7 +265,7 @@ namespace DevLib.ServiceProcess
                     this.ServiceAssemblyPath = serviceAssembly.Location;
                     this.ServiceName = serviceAssembly.GetName().Name;
                     this.DisplayName = this.ServiceName;
-                    this.Description = serviceAssembly.FullName;
+                    this.Description = serviceAssembly.FullName + this.Description;
                 }
                 else
                 {

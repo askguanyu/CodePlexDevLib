@@ -22,10 +22,10 @@ namespace DevLib.ServiceModel
     public static class WcfServiceType
     {
         /// <summary>
-        /// Get the type list of hosted services from assembly file.
+        /// Gets the type list of hosted services from assembly file.
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
-        /// <returns>The type list of hosted services.</returns>
+        /// <returns>The list of hosted services type.</returns>
         public static List<Type> LoadFile(string assemblyFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
@@ -63,44 +63,11 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get the ServiceContract list of hosted services from service type.
-        /// </summary>
-        /// <param name="type">Service type.</param>
-        /// <returns>The ServiceContract list of hosted services.</returns>
-        public static List<Type> GetServiceContract(Type type)
-        {
-            List<Type> result = new List<Type>();
-
-            if (type == null)
-            {
-                return result;
-            }
-
-            try
-            {
-                foreach (Type typeInterface in type.GetInterfaces())
-                {
-                    if (HasServiceContractAttribute(typeInterface))
-                    {
-                        result.Add(typeInterface);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Get the type list of hosted services from assembly file.
+        /// Gets the type list of hosted services from assembly file.
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
         /// <param name="configFile">Wcf configuration file.</param>
-        /// <returns>Instance of List{Type}.</returns>
+        /// <returns>The list of hosted services type.</returns>
         public static List<Type> LoadFile(string assemblyFile, string configFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
@@ -193,7 +160,40 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Static Method GetBinding.
+        /// Gets the ServiceContract list of hosted services from service type.
+        /// </summary>
+        /// <param name="type">Service type.</param>
+        /// <returns>The list of hosted services contract.</returns>
+        public static List<Type> GetServiceContract(Type type)
+        {
+            List<Type> result = new List<Type>();
+
+            if (type == null)
+            {
+                return result;
+            }
+
+            try
+            {
+                foreach (Type typeInterface in type.GetInterfaces())
+                {
+                    if (HasServiceContractAttribute(typeInterface))
+                    {
+                        result.Add(typeInterface);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+                throw;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the Binding instance according to a Binding type.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <returns>Instance of Binding.</returns>
@@ -203,7 +203,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Static Method GetBinding.
+        /// Gets the Binding instance according to a Binding type name.
         /// </summary>
         /// <param name="bindingTypeName">The name of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <returns>Instance of Binding.</returns>
@@ -288,9 +288,9 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Static Method IsWcfServiceClass.
+        /// Check whether a Type is a Wcf service.
         /// </summary>
-        /// <param name="type">Source Type.</param>
+        /// <param name="type">Source Type to check.</param>
         /// <returns>true if type is WcfService Class; otherwise, false.</returns>
         public static bool IsWcfServiceClass(Type type)
         {
@@ -303,9 +303,9 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Static Method HasServiceContractAttribute.
+        /// Check whether a Type has ServiceContract Attribute.
         /// </summary>
-        /// <param name="type">Source Type.</param>
+        /// <param name="type">Source Type to check.</param>
         /// <returns>true if has ServiceContractAttribute; otherwise, false.</returns>
         public static bool HasServiceContractAttribute(Type type)
         {

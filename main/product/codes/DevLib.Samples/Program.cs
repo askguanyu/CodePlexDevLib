@@ -2018,6 +2018,87 @@ namespace DevLib.Samples
         {
             return string.Format("{0}{1}{2}", this.SpellCheckCAPS, this.SpellCheckWhileTyping, this.SuggestCorrections).GetHashCode();
         }
+
+
     }
+
+    public class MyDatabaseQueue<T> : IProducerConsumerQueue<T>
+    {
+        public MyDatabaseQueue()
+        {
+            // open connection to database.
+        }
+
+        public void Enqueue(T item)
+        {
+            // insert item to databse.
+        }
+
+        public long Enqueue(IEnumerable<T> items)
+        {
+            // insert items to databse, and return the number of items be inserted.
+            return items.LongCount();
+        }
+
+        public T Dequeue()
+        {
+            // query one item and remove from database.
+            throw new NotImplementedException();
+        }
+
+        public T Peek()
+        {
+            // query one item and keep it from database.
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(T item)
+        {
+            // query item is in database or not.
+            throw new NotImplementedException();
+        }
+
+        public long Count()
+        {
+            // query total rows in database.
+            throw new NotImplementedException();
+        }
+
+        public void Enqueue(object item)
+        {
+            // insert item to databse.
+        }
+
+        public long Enqueue(IEnumerable items)
+        {
+            // insert items to databse, and return the number of items be inserted.
+            throw new NotImplementedException();
+        }
+
+        object IProducerConsumerQueue.Dequeue()
+        {
+            // query one item and remove from database.
+            throw new NotImplementedException();
+        }
+
+        object IProducerConsumerQueue.Peek()
+        {
+            // query one item and keep it from database.
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(object item)
+        {
+            // query item is in database or not.
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            // remove all rows in database.
+            throw new NotImplementedException();
+        }
+    }
+
 
 }

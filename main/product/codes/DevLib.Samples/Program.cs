@@ -1728,6 +1728,22 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.Settings");
 
+
+            IniEntry ini = IniManager.Open();
+
+            ini["section1", "hello"] = 123;
+            ini["section1", "hello1"] = 123;
+            ini["section1", "hello2"] = 123;
+
+            ini["section2", "hello3"] = 123;
+            ini["section2", "hello4"] = 123;
+
+            ini["section3", "hello5"] = 123;
+            ini["section3", "hello6"] = 123;
+            ini.Save();
+
+
+
             var form = new WinFormConfigEditor();
             form.AddPlugin((filename) => { return ConfigManager.Open(filename).GetValue<TestConfig>("keyA"); }, (filename, obj) => { ConfigManager.Open(filename).SetValue("keyA", obj); ConfigManager.Open(filename).Save(); });
             form.AddPlugin((filename) => { return ConfigManager.Open(filename).GetValue<TestConfig>("keyA"); }, (filename, obj) => { ConfigManager.Open(filename).SetValue("keyA", obj); ConfigManager.Open(filename).Save(); }, "haha");

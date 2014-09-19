@@ -40,16 +40,13 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("sourceValue");
             }
 
-            lock (((ICollection)source).SyncRoot)
+            if (source.ContainsKey(sourceKey))
             {
-                if (source.ContainsKey(sourceKey))
-                {
-                    source[sourceKey] = sourceValue;
-                }
-                else
-                {
-                    source.Add(sourceKey, sourceValue);
-                }
+                source[sourceKey] = sourceValue;
+            }
+            else
+            {
+                source.Add(sourceKey, sourceValue);
             }
         }
 

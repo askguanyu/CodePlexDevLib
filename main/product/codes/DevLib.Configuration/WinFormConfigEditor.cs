@@ -292,11 +292,6 @@ namespace DevLib.Configuration
         {
             List<IWinFormConfigEditorPlugin> result = new List<IWinFormConfigEditorPlugin>();
 
-            if (string.IsNullOrEmpty(assemblyFile))
-            {
-                return result;
-            }
-
             if (!File.Exists(assemblyFile))
             {
                 return result;

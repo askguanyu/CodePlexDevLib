@@ -715,7 +715,9 @@ namespace DevLib.Net.Sockets
 
             if (this._sessionDictionary != null)
             {
-                lock (((ICollection)this._sessionDictionary).SyncRoot)
+                this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+                try
                 {
                     foreach (KeyValuePair<int, SocketAsyncEventArgs> item in this._sessionDictionary)
                     {
@@ -726,6 +728,14 @@ namespace DevLib.Net.Sockets
                     }
 
                     this._sessionDictionary.Clear();
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
+                finally
+                {
+                    this._readerWriterLock.ReleaseWriterLock();
                 }
             }
         }

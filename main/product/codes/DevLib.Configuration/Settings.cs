@@ -415,9 +415,19 @@ namespace DevLib.Configuration
         /// </summary>
         public void Clear()
         {
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 this._settingsItemDictionary.Clear();
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -447,12 +457,14 @@ namespace DevLib.Configuration
         /// </summary>
         public void Reload()
         {
-            if (string.IsNullOrEmpty(this.ConfigFile) || !File.Exists(this.ConfigFile))
+            if (!File.Exists(this.ConfigFile))
             {
                 return;
             }
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
                 {
@@ -523,6 +535,14 @@ namespace DevLib.Configuration
                     }
                 }
             }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
         }
 
         /// <summary>
@@ -530,12 +550,14 @@ namespace DevLib.Configuration
         /// </summary>
         public void Refresh()
         {
-            if (string.IsNullOrEmpty(this.ConfigFile) || !File.Exists(this.ConfigFile))
+            if (!File.Exists(this.ConfigFile))
             {
                 return;
             }
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
                 {
@@ -604,6 +626,14 @@ namespace DevLib.Configuration
                     }
                 }
             }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
         }
 
         /// <summary>
@@ -614,7 +644,9 @@ namespace DevLib.Configuration
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 using (XmlWriter writer = XmlWriter.Create(stringBuilder, WriterSettings))
                 {
@@ -665,6 +697,14 @@ namespace DevLib.Configuration
                     writer.WriteEndElement();
                 }
             }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
 
             return stringBuilder.ToString();
         }
@@ -681,7 +721,9 @@ namespace DevLib.Configuration
                 return;
             }
 
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), ReaderSettings))
                 {
@@ -751,6 +793,14 @@ namespace DevLib.Configuration
                     }
                 }
             }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
         }
 
         /// <summary>
@@ -759,7 +809,9 @@ namespace DevLib.Configuration
         /// <param name="filename"> Xml file name.</param>
         private void WriteXmlFile(string filename)
         {
-            lock (((ICollection)this._settingsItemDictionary).SyncRoot)
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
             {
                 string fullPath = Path.GetFullPath(filename);
 
@@ -824,6 +876,14 @@ namespace DevLib.Configuration
 
                     writer.WriteEndElement();
                 }
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 

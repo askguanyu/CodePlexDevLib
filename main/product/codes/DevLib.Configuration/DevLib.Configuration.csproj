@@ -50,6 +50,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="ConfigurationConstants.cs" />
+    <Compile Include="IniEntry.cs" />
+    <Compile Include="IniManager.cs" />
     <Compile Include="InternalLogger.cs" />
     <Compile Include="ExpandableObjectConverter.cs" />
     <Compile Include="IWinFormConfigEditorPlugin.cs" />

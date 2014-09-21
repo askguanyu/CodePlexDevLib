@@ -20,7 +20,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source EventHandler{T}.</param>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
-        public static void RaiseEvent<T>(this EventHandler<T> source, object sender, T e) where T : EventArgs
+        public static void RaiseEvent<T>(this EventHandler<T> source, object sender, T e = null) where T : EventArgs
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<T> safeHandler = Interlocked.CompareExchange(ref source, null, null);
@@ -44,7 +44,7 @@ namespace DevLib.ExtensionMethods
 
             if (safeHandler != null)
             {
-                safeHandler(sender, e ?? EventArgs.Empty);
+                safeHandler(sender, e);
             }
         }
     }

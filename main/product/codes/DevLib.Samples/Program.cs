@@ -656,6 +656,10 @@ namespace DevLib.Samples
         private static void TestCodeSnippets()
         {
             Person pa = new Person();
+            pa.Error += (s, ev) => 
+            {
+                var eee = ev;
+            };
             pa.DoTryf();
 
             Console.ReadLine();
@@ -1932,8 +1936,12 @@ namespace DevLib.Samples
     [TypeConverterAttribute(typeof(ExpandableObjectConverter))]
     public class Person
     {
+        public event EventHandler<ErrorEventArgs> Error;
+
         public string DoTryf()
         {
+            Error.RaiseEvent(this);
+
             try
             {
                 try

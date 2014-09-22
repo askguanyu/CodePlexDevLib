@@ -246,5 +246,55 @@ namespace DevLib.Logging
                 Lock.ReleaseReaderLock();
             }
         }
+
+        /// <summary>
+        /// Opens the log configuration file for the current application.
+        /// </summary>
+        /// <param name="logConfig">LogConfig instance; if null, use the default configuration.</param>
+        /// <returns>Logger instance.</returns>
+        public static Logger OpenConfig(LogConfig logConfig)
+        {
+            LogConfig logConfigInfo = logConfig ?? new LogConfig();
+
+            int key = logConfigInfo.GetHashCode();
+
+            Lock.AcquireReaderLock(Timeout.Infinite);
+
+            try
+            {
+                if (LoggerDictionary.ContainsKey(key))
+                {
+                    return LoggerDictionary[key];
+                }
+                else
+                {
+                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+
+                    try
+                    {
+                        if (LoggerDictionary.ContainsKey(key))
+                        {
+                            return LoggerDictionary[key];
+                        }
+                        else
+                        {
+                            Logger result = new Logger(logConfigInfo);
+
+                            LoggerDictionary.Add(key, result);
+
+                            return result;
+                        }
+                    }
+                    finally
+                    {
+                        Lock.DowngradeFromWriterLock(ref lockCookie);
+                    }
+                }
+            }
+            finally
+            {
+                Lock.ReleaseReaderLock();
+            }
+        }
     }
 }

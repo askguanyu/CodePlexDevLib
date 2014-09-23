@@ -43,6 +43,7 @@ namespace DevLib.Samples
     using DevLib.Dynamic;
     using DevLib.Expressions;
     using DevLib.ExtensionMethods;
+    using DevLib.Input;
     using DevLib.IO.Ports;
     using DevLib.Ioc;
     using DevLib.Logging;
@@ -50,6 +51,7 @@ namespace DevLib.Samples
     using DevLib.Net;
     using DevLib.Net.Ftp;
     using DevLib.Net.Sockets;
+    using DevLib.Options;
     using DevLib.Reflection;
     using DevLib.Serialization;
     using DevLib.ServiceModel;
@@ -71,6 +73,17 @@ namespace DevLib.Samples
             Benchmark.Run(delegate
             {
                 PrintStartInfo();
+
+                //Argument arg = new Argument(args);
+
+                //foreach (var item in arg)
+                //{
+                //    item.Key.ConsoleOutput();
+                //    item.Value.ConsoleOutput();
+                //    Console.WriteLine();
+                //}
+
+                //Console.ReadLine();
 
                 var result = Benchmark.Run(i =>
                 {
@@ -655,8 +668,41 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            //Keyboard.Press(Key.Ctrl);
+            //Keyboard.Press(Key.Alt);
+            //Keyboard.Type(Key.Delete);
+            //Keyboard.Release(Key.Alt);
+            //Keyboard.Release(Key.Ctrl);
+
+            //MemorySnapshot s1 = MemorySnapshot.FromProcess(Process.GetCurrentProcess().Id);
+            //s1.ToFile(@"s1.xml");
+
+            ////Thread.Sleep(3000);
+
+            //MemorySnapshot s2 = MemorySnapshot.FromProcess(Process.GetCurrentProcess().Id);
+            //s1.ToFile(@"s2.xml");
+
+            //s2.CompareTo(s1).ToFile("sDiff.xml");
+
+            //Console.WriteLine("done");
+            //Console.ReadLine();
+
+            Keyboard.Type(Key.LWin);
+            Keyboard.Type("notepad");
+            Keyboard.Type(Key.Enter);
+            Keyboard.Press(Key.LeftShift);
+            Keyboard.Type("h");
+            Keyboard.Release(Key.LeftShift);
+            Keyboard.Type("ello DevLib.Diagnostics.Input");
+            Keyboard.Type(Key.Enter);
+            Keyboard.Type("Hello DevLib.Diagnostics.Input", 10);
+            Keyboard.Type(Key.Enter);
+            Keyboard.Type("Bye bye.");
+
+            Console.ReadLine();
+
             Person pa = new Person();
-            pa.Error += (s, ev) => 
+            pa.Error += (s, ev) =>
             {
                 var eee = ev;
             };

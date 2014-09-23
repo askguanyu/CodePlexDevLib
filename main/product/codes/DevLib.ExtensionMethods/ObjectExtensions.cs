@@ -113,11 +113,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>The copied object.</returns>
         public static T CloneDeep<T>(this T source)
         {
-            if (!typeof(T).IsSerializable)
-            {
-                throw new ArgumentException("The type must be serializable.", "source");
-            }
-
             // Don't serialize a null object, simply return the default for that object
             if (source == null)
             {

@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{254E792E-ECFC-4617-9286-77609816B773}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DevLib.TerminalServices</RootNamespace>
+    <AssemblyName>DevLib.TerminalServices</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\DevLib.TerminalServices.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ClientDisplay.cs" />
+    <Compile Include="ClientProtocolType.cs" />
+    <Compile Include="ConnectState.cs" />
+    <Compile Include="GroupLazyLoadedProperty.cs" />
+    <Compile Include="ITerminalServerHandle.cs" />
+    <Compile Include="LazyLoadedProperty.cs" />
+    <Compile Include="LocalServerHandle.cs" />
+    <Compile Include="NativeAPI\CACHE_STATISTICS.cs" />
+    <Compile Include="NativeAPI\NativeMethods.cs" />
+    <Compile Include="NativeAPI\NativeMethodsHelper.cs" />
+    <Compile Include="NativeAPI\PROCESS_INFORMATION.cs" />
+    <Compile Include="NativeAPI\PROTOCOLCOUNTERS.cs" />
+    <Compile Include="NativeAPI\PROTOCOLSTATUS.cs" />
+    <Compile Include="NativeAPI\STARTUPINFO.cs" />
+    <Compile Include="NativeAPI\SYSTEMTIME.cs" />
+    <Compile Include="NativeAPI\WINSTATIONINFOCLASS.cs" />
+    <Compile Include="NativeAPI\WINSTATIONINFORMATIONW.cs" />
+    <Compile Include="NativeAPI\WINSTATIONREMOTEADDRESS.cs" />
+    <Compile Include="NativeAPI\WTSINFO.cs" />
+    <Compile Include="NativeAPI\WTSINFOEX.cs" />
+    <Compile Include="NativeAPI\WTSINFOEX_LEVEL1.cs" />
+    <Compile Include="NativeAPI\WTS_CLIENT_ADDRESS.cs" />
+    <Compile Include="NativeAPI\WTS_CLIENT_DISPLAY.cs" />
+    <Compile Include="NativeAPI\WTS_INFO_CLASS.cs" />
+    <Compile Include="NativeAPI\WTS_PROCESS_INFO.cs" />
+    <Compile Include="NativeAPI\WTS_SERVER_INFO.cs" />
+    <Compile Include="NativeAPI\WTS_SESSION_INFO.cs" />
+    <Compile Include="ProtocolStatistics.cs" />
+    <Compile Include="RemoteControlHotkeyModifiers.cs" />
+    <Compile Include="RemoteMessageBoxButtons.cs" />
+    <Compile Include="RemoteMessageBoxDefaultButton.cs" />
+    <Compile Include="RemoteMessageBoxIcon.cs" />
+    <Compile Include="RemoteMessageBoxOptions.cs" />
+    <Compile Include="RemoteMessageBoxResult.cs" />
+    <Compile Include="RemoteServerHandle.cs" />
+    <Compile Include="ShutdownType.cs" />
+    <Compile Include="TerminalServer.cs" />
+    <Compile Include="TerminalServicesManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TerminalServicesProcess.cs" />
+    <Compile Include="TerminalServicesSession.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

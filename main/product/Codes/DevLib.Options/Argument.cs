@@ -66,15 +66,15 @@ namespace DevLib.Options
                 return result;
             }
 
-            Regex delimiter = new Regex(@"^-{1,2}|^/|=|:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-            Regex quote = new Regex(@"^['""]?(.*?)['""]?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            Regex delimiterRegex = new Regex(@"^-{1,2}|^/|=|:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            Regex qualifierRegex = new Regex(@"^['""]?(.*?)['""]?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             string parameter = null;
             string[] parts;
 
             foreach (string argument in arguments)
             {
-                parts = delimiter.Split(argument, 3);
+                parts = delimiterRegex.Split(argument, 3);
 
                 switch (parts.Length)
                 {
@@ -84,7 +84,7 @@ namespace DevLib.Options
                         {
                             if (!result.ContainsKey(parameter))
                             {
-                                parts[0] = quote.Replace(parts[0], "$1");
+                                parts[0] = qualifierRegex.Replace(parts[0], "$1");
                                 result.Add(parameter, parts[0]);
                             }
 
@@ -121,7 +121,7 @@ namespace DevLib.Options
 
                         if (!result.ContainsKey(parameter))
                         {
-                            parts[2] = quote.Replace(parts[2], "$1");
+                            parts[2] = qualifierRegex.Replace(parts[2], "$1");
                             result.Add(parameter, parts[2]);
                         }
 

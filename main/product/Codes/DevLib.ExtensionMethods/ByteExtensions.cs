@@ -148,6 +148,7 @@ namespace DevLib.ExtensionMethods
                     {
                         byte[] array = new byte[81920];
                         int count;
+
                         while ((count = zipStream.Read(array, 0, array.Length)) != 0)
                         {
                             outputStream.Write(array, 0, count);

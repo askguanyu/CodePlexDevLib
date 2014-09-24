@@ -113,7 +113,6 @@ namespace DevLib.ExtensionMethods
         /// <returns>The copied object.</returns>
         public static T CloneDeep<T>(this T source)
         {
-            // Don't serialize a null object, simply return the default for that object
             if (source == null)
             {
                 throw new ArgumentNullException("source");
@@ -159,12 +158,14 @@ namespace DevLib.ExtensionMethods
                 }
 
                 var converter = TypeDescriptor.GetConverter(source);
+
                 if (converter != null && converter.CanConvertTo(targetType))
                 {
                     return (T)converter.ConvertTo(source, targetType);
                 }
 
                 converter = TypeDescriptor.GetConverter(targetType);
+
                 if (converter != null && converter.CanConvertFrom(source.GetType()))
                 {
                     return (T)converter.ConvertFrom(source);
@@ -212,12 +213,14 @@ namespace DevLib.ExtensionMethods
                 }
 
                 var converter = TypeDescriptor.GetConverter(source);
+
                 if (converter != null && converter.CanConvertTo(targetType))
                 {
                     return converter.ConvertTo(source, targetType);
                 }
 
                 converter = TypeDescriptor.GetConverter(targetType);
+
                 if (converter != null && converter.CanConvertFrom(source.GetType()))
                 {
                     return converter.ConvertFrom(source);
@@ -269,15 +272,15 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("target");
             }
 
-            // Get and check the object types
             Type type = target.GetType();
+
             if (source.GetType() != type)
             {
                 throw new ArgumentException("The target type must be the same as the source");
             }
 
-            // Build a clean list of property names to ignore
             List<string> ignoreList = new List<string>();
+
             foreach (string item in ignoreProperties)
             {
                 if (!string.IsNullOrEmpty(item) && !ignoreList.Contains(item))
@@ -286,13 +289,12 @@ namespace DevLib.ExtensionMethods
                 }
             }
 
-            // Copy the properties
             foreach (PropertyInfo property in type.GetProperties())
             {
                 if (property.CanWrite && property.CanRead && !ignoreList.Contains(property.Name))
                 {
-                    object val = property.GetValue(target, null);
-                    property.SetValue(source, val, null);
+                    object value = property.GetValue(target, null);
+                    property.SetValue(source, value, null);
                 }
             }
         }

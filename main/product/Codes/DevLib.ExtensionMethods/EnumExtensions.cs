@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
 
@@ -62,6 +63,17 @@ namespace DevLib.ExtensionMethods
         {
             DescriptionAttribute descriptionAttribute = source.GetType().GetField(source.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault() as DescriptionAttribute;
             return (descriptionAttribute != null) ? descriptionAttribute.Description : source.ToString();
+        }
+
+        /// <summary>
+        /// Retrieves a list of the values of the constants in a specified enumeration.
+        /// </summary>
+        /// <typeparam name="TEnum">An enumeration type.</typeparam>
+        /// <param name="source">Source enum.</param>
+        /// <returns>A list of the values of the constants in enumType. The elements of the array are sorted by the binary values of the enumeration constants.</returns>
+        public static List<TEnum> Foo<TEnum>(this TEnum source) where TEnum : struct
+        {
+            return Enum.GetValues(source.GetType()).Cast<TEnum>().ToList();
         }
     }
 }

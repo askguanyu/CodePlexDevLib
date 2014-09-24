@@ -75,6 +75,7 @@ namespace DevLib.ExtensionMethods
             {
                 int suffixArrayLength = suffixArray.Length;
                 sourceArray = new T[suffixArrayLength];
+
                 if (useDeepClone)
                 {
                     for (int i = 0; i < suffixArrayLength; i++)
@@ -138,9 +139,11 @@ namespace DevLib.ExtensionMethods
 
             int j = -1;
             int end = source.Length - pattern.Length;
+
             while (((j = Array.IndexOf(source, pattern[0], j + 1)) <= end) && (j != -1))
             {
                 int i = 1;
+
                 while (source[j + i].Equals(pattern[i]))
                 {
                     if (++i == pattern.Length)

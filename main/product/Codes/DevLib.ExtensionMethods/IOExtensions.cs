@@ -42,33 +42,19 @@ namespace DevLib.ExtensionMethods
 
             if (!Directory.Exists(fullDirectoryPath))
             {
-                try
-                {
-                    Directory.CreateDirectory(fullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
+                Directory.CreateDirectory(fullDirectoryPath);
             }
 
-            try
+            if (encoding == null)
             {
-                if (encoding == null)
-                {
-                    File.WriteAllText(fullPath, contents);
-                }
-                else
-                {
-                    File.WriteAllText(fullPath, contents, encoding);
-                }
+                File.WriteAllText(fullPath, contents);
+            }
+            else
+            {
+                File.WriteAllText(fullPath, contents, encoding);
+            }
 
-                return fullPath;
-            }
-            catch
-            {
-                throw;
-            }
+            return fullPath;
         }
 
         /// <summary>
@@ -91,33 +77,19 @@ namespace DevLib.ExtensionMethods
 
             if (!Directory.Exists(fullDirectoryPath))
             {
-                try
-                {
-                    Directory.CreateDirectory(fullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
+                Directory.CreateDirectory(fullDirectoryPath);
             }
 
-            try
+            if (encoding == null)
             {
-                if (encoding == null)
-                {
-                    File.AppendAllText(fullPath, contents);
-                }
-                else
-                {
-                    File.AppendAllText(fullPath, contents, encoding);
-                }
+                File.AppendAllText(fullPath, contents);
+            }
+            else
+            {
+                File.AppendAllText(fullPath, contents, encoding);
+            }
 
-                return fullPath;
-            }
-            catch
-            {
-                throw;
-            }
+            return fullPath;
         }
 
         /// <summary>
@@ -137,14 +109,7 @@ namespace DevLib.ExtensionMethods
 
             if (File.Exists(fullPath))
             {
-                try
-                {
-                    return encoding == null ? File.ReadAllText(fullPath) : File.ReadAllText(fullPath, encoding);
-                }
-                catch
-                {
-                    throw;
-                }
+                return encoding == null ? File.ReadAllText(fullPath) : File.ReadAllText(fullPath, encoding);
             }
             else
             {
@@ -169,14 +134,7 @@ namespace DevLib.ExtensionMethods
 
             if (File.Exists(fullPath))
             {
-                try
-                {
-                    return encoding == null ? File.ReadAllLines(fullPath) : File.ReadAllLines(fullPath, encoding);
-                }
-                catch
-                {
-                    throw;
-                }
+                return encoding == null ? File.ReadAllLines(fullPath) : File.ReadAllLines(fullPath, encoding);
             }
             else
             {
@@ -214,26 +172,12 @@ namespace DevLib.ExtensionMethods
 
             if (!Directory.Exists(fullDirectoryPath))
             {
-                try
-                {
-                    Directory.CreateDirectory(fullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
+                Directory.CreateDirectory(fullDirectoryPath);
             }
 
-            try
-            {
-                File.WriteAllBytes(fullPath, bytes);
+            File.WriteAllBytes(fullPath, bytes);
 
-                return fullPath;
-            }
-            catch
-            {
-                throw;
-            }
+            return fullPath;
         }
 
         /// <summary>
@@ -252,14 +196,7 @@ namespace DevLib.ExtensionMethods
 
             if (File.Exists(fullPath))
             {
-                try
-                {
-                    return File.ReadAllBytes(fullPath);
-                }
-                catch
-                {
-                    throw;
-                }
+                return File.ReadAllBytes(fullPath);
             }
             else
             {
@@ -297,14 +234,7 @@ namespace DevLib.ExtensionMethods
 
             if (!Directory.Exists(fullDirectoryPath))
             {
-                try
-                {
-                    Directory.CreateDirectory(fullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
+                Directory.CreateDirectory(fullDirectoryPath);
             }
 
             using (FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
@@ -339,16 +269,9 @@ namespace DevLib.ExtensionMethods
 
             string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-            try
-            {
-                Process.Start("explorer.exe", fullDirectoryPath);
+            Process.Start("explorer.exe", fullDirectoryPath);
 
-                return fullPath;
-            }
-            catch
-            {
-                throw;
-            }
+            return fullPath;
         }
 
         /// <summary>
@@ -438,26 +361,12 @@ namespace DevLib.ExtensionMethods
 
             if (!Directory.Exists(destFullDirectoryPath))
             {
-                try
-                {
-                    Directory.CreateDirectory(destFullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
+                Directory.CreateDirectory(destFullDirectoryPath);
             }
 
-            try
-            {
-                File.Move(sourceFullPath, destFullPath);
+            File.Move(sourceFullPath, destFullPath);
 
-                return destFullPath;
-            }
-            catch
-            {
-                throw;
-            }
+            return destFullPath;
         }
 
         /// <summary>
@@ -487,26 +396,12 @@ namespace DevLib.ExtensionMethods
 
             if (!Directory.Exists(destFullDirectoryPath))
             {
-                try
-                {
-                    Directory.CreateDirectory(destFullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
+                Directory.CreateDirectory(destFullDirectoryPath);
             }
 
-            try
-            {
-                File.Copy(sourceFullPath, destFullPath, overwrite);
+            File.Copy(sourceFullPath, destFullPath, overwrite);
 
-                return destFullPath;
-            }
-            catch
-            {
-                throw;
-            }
+            return destFullPath;
         }
 
         /// <summary>
@@ -563,7 +458,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (throwOnError)
                 {
-                    throw new ArgumentException(string.Format("{0} does not exist.", sourceFullPath), "sourceDirectory");
+                    throw new DirectoryNotFoundException(string.Format("{0} does not exist.", sourceFullPath));
                 }
                 else
                 {

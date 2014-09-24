@@ -52,7 +52,7 @@ namespace DevLib.Diagnostics
         {
             if (!File.Exists(filename))
             {
-                throw new FileNotFoundException("MemorySnapshotCollection.FromFile(): the specified file path \"" + filename + "\" does not exist.");
+                throw new FileNotFoundException("MemorySnapshotCollection.FromFile(): The specified file does not exist.", filename);
             }
 
             try

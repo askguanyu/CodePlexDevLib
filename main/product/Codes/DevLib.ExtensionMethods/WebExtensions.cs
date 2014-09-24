@@ -28,10 +28,7 @@ namespace DevLib.ExtensionMethods
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
                     {
-                        // Download in chunks
                         byte[] buffer = new byte[1024];
-
-                        ////int dataLength = (int)webResponse.ContentLength;
 
                         while (true)
                         {
@@ -46,6 +43,8 @@ namespace DevLib.ExtensionMethods
                                 memoryStream.Write(buffer, 0, bytesRead);
                             }
                         }
+
+                        memoryStream.Flush();
 
                         return memoryStream.ToArray();
                     }

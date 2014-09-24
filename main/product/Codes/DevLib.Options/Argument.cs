@@ -8,6 +8,7 @@ namespace DevLib.Options
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Text;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -142,6 +143,16 @@ namespace DevLib.Options
         }
 
         /// <summary>
+        /// Parse argument string to a ignore case dictionary.
+        /// </summary>
+        /// <param name="argument">Argument string to parse.</param>
+        /// <returns>A dictionary represents that is aware of command line input patterns. All lookups for keys ignore case.</returns>
+        public static Dictionary<string, string> Parse(string argument)
+        {
+            return Parse(SplitNest(argument, ' ', '"'));
+        }
+
+        /// <summary>
         /// Gets parameter value.
         /// </summary>
         /// <typeparam name="T">Target type.</typeparam>
@@ -201,6 +212,87 @@ namespace DevLib.Options
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)this._parameters).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Splits string by a specified delimiter and keep nested string with a specified qualifier.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="delimiter">Delimiter character.</param>
+        /// <param name="qualifier">Qualifier character.</param>
+        /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
+        private static List<string> SplitNest(string source, char delimiter, char qualifier)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return null;
+            }
+
+            StringBuilder itemStringBuilder = new StringBuilder();
+            List<string> result = new List<string>();
+            bool inItem = false;
+            bool inQuotes = false;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                char character = source[i];
+
+                if (!inItem)
+                {
+                    if (character.Equals(delimiter))
+                    {
+                        result.Add(string.Empty);
+                        continue;
+                    }
+
+                    if (character.Equals(qualifier))
+                    {
+                        inQuotes = true;
+                    }
+                    else
+                    {
+                        itemStringBuilder.Append(character);
+                    }
+
+                    inItem = true;
+                    continue;
+                }
+
+                if (inQuotes)
+                {
+                    if (character.Equals(qualifier) && ((source.Length > (i + 1) && source[i + 1].Equals(delimiter)) || ((i + 1) == source.Length)))
+                    {
+                        inQuotes = false;
+                        inItem = false;
+                        i++;
+                    }
+                    else if (character.Equals(qualifier) && source.Length > (i + 1) && source[i + 1].Equals(qualifier))
+                    {
+                        i++;
+                    }
+                }
+                else if (character.Equals(delimiter))
+                {
+                    inItem = false;
+                }
+
+                if (!inItem)
+                {
+                    result.Add(itemStringBuilder.ToString());
+                    itemStringBuilder.Remove(0, itemStringBuilder.Length);
+                }
+                else
+                {
+                    itemStringBuilder.Append(character);
+                }
+            }
+
+            if (inItem)
+            {
+                result.Add(itemStringBuilder.ToString());
+            }
+
+            return result;
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ namespace DevLib.Csv
     using System.Data;
     using System.IO;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Represents a CSV document.
@@ -152,15 +153,15 @@ namespace DevLib.Csv
         /// <param name="inStream">The stream containing the csv document to load.</param>
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Load(Stream inStream, bool hasHeader = true, char delimiter = ',', char quoteChar = '"')
+        /// <param name="qualifier">Character to use when quoting.</param>
+        public void Load(Stream inStream, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
             StreamReader streamReader = null;
 
             try
             {
                 streamReader = new StreamReader(inStream);
-                this.InternalLoad(streamReader, hasHeader, delimiter, quoteChar);
+                this.InternalLoad(streamReader, hasHeader, delimiter, qualifier);
             }
             catch (Exception e)
             {
@@ -183,15 +184,15 @@ namespace DevLib.Csv
         /// <param name="filename">The file containing the csv document to load.</param>
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Load(string filename, bool hasHeader = true, char delimiter = ',', char quoteChar = '"')
+        /// <param name="qualifier">Character to use when quoting.</param>
+        public void Load(string filename, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
             StreamReader streamReader = null;
 
             try
             {
                 streamReader = File.OpenText(filename);
-                this.InternalLoad(streamReader, hasHeader, delimiter, quoteChar);
+                this.InternalLoad(streamReader, hasHeader, delimiter, qualifier);
             }
             catch (Exception e)
             {
@@ -214,12 +215,12 @@ namespace DevLib.Csv
         /// <param name="reader">The TextReader used to feed the csv data into the document.</param>
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Load(TextReader reader, bool hasHeader = true, char delimiter = ',', char quoteChar = '"')
+        /// <param name="qualifier">Character to use when quoting.</param>
+        public void Load(TextReader reader, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
             try
             {
-                this.InternalLoad(reader, hasHeader, delimiter, quoteChar);
+                this.InternalLoad(reader, hasHeader, delimiter, qualifier);
             }
             catch (Exception e)
             {
@@ -234,15 +235,15 @@ namespace DevLib.Csv
         /// <param name="csvString">String containing the csv document to load.</param>
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        public void LoadCsv(string csvString, bool hasHeader = true, char delimiter = ',', char quoteChar = '"')
+        /// <param name="qualifier">Character to use when quoting.</param>
+        public void LoadCsv(string csvString, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
             StringReader stringReader = null;
 
             try
             {
                 stringReader = new StringReader(csvString);
-                this.InternalLoad(stringReader, hasHeader, delimiter, quoteChar);
+                this.InternalLoad(stringReader, hasHeader, delimiter, qualifier);
             }
             catch (Exception e)
             {
@@ -266,10 +267,10 @@ namespace DevLib.Csv
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Save(Stream outStream, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char quoteChar = '"')
+        /// <param name="qualifier">Character to use when quoting.</param>
+        public void Save(Stream outStream, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char qualifier = '"')
         {
-            this.Save(outStream, hasHeader, quoteAll, delimiter, quoteChar, Environment.NewLine);
+            this.Save(outStream, hasHeader, quoteAll, delimiter, qualifier, Environment.NewLine);
         }
 
         /// <summary>
@@ -279,16 +280,16 @@ namespace DevLib.Csv
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
+        /// <param name="qualifier">Character to use when quoting.</param>
         /// <param name="newLine">New line characters to use.</param>
-        public void Save(Stream outStream, bool hasHeader, bool quoteAll, char delimiter, char quoteChar, string newLine)
+        public void Save(Stream outStream, bool hasHeader, bool quoteAll, char delimiter, char qualifier, string newLine)
         {
             StreamWriter streamWriter = null;
 
             try
             {
                 streamWriter = new StreamWriter(outStream);
-                this.InternalSave(streamWriter, hasHeader, quoteAll, delimiter.ToString(), quoteChar.ToString(), newLine);
+                this.InternalSave(streamWriter, hasHeader, quoteAll, delimiter.ToString(), qualifier.ToString(), newLine);
             }
             catch (Exception e)
             {
@@ -314,10 +315,10 @@ namespace DevLib.Csv
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Save(string filename, bool overwrite = false, bool append = false, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char quoteChar = '"')
+        /// <param name="qualifier">Character to use when quoting.</param>
+        public void Save(string filename, bool overwrite = false, bool append = false, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char qualifier = '"')
         {
-            this.Save(filename, overwrite, append, hasHeader, quoteAll, delimiter, quoteChar, Environment.NewLine);
+            this.Save(filename, overwrite, append, hasHeader, quoteAll, delimiter, qualifier, Environment.NewLine);
         }
 
         /// <summary>
@@ -329,9 +330,9 @@ namespace DevLib.Csv
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
+        /// <param name="qualifier">Character to use when quoting.</param>
         /// <param name="newLine">New line characters to use.</param>
-        public void Save(string filename, bool overwrite, bool append, bool hasHeader, bool quoteAll, char delimiter, char quoteChar, string newLine)
+        public void Save(string filename, bool overwrite, bool append, bool hasHeader, bool quoteAll, char delimiter, char qualifier, string newLine)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -365,7 +366,7 @@ namespace DevLib.Csv
             try
             {
                 streamWriter = new StreamWriter(fullPath, append);
-                this.InternalSave(streamWriter, hasHeader, quoteAll, delimiter.ToString(), quoteChar.ToString(), newLine);
+                this.InternalSave(streamWriter, hasHeader, quoteAll, delimiter.ToString(), qualifier.ToString(), newLine);
             }
             catch (Exception e)
             {
@@ -389,10 +390,10 @@ namespace DevLib.Csv
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        public void Save(TextWriter writer, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char quoteChar = '"')
+        /// <param name="qualifier">Character to use when quoting.</param>
+        public void Save(TextWriter writer, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char qualifier = '"')
         {
-            this.Save(writer, hasHeader, quoteAll, delimiter, quoteChar, Environment.NewLine);
+            this.Save(writer, hasHeader, quoteAll, delimiter, qualifier, Environment.NewLine);
         }
 
         /// <summary>
@@ -402,13 +403,13 @@ namespace DevLib.Csv
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
+        /// <param name="qualifier">Character to use when quoting.</param>
         /// <param name="newLine">New line characters to use.</param>
-        public void Save(TextWriter writer, bool hasHeader, bool quoteAll, char delimiter, char quoteChar, string newLine)
+        public void Save(TextWriter writer, bool hasHeader, bool quoteAll, char delimiter, char qualifier, string newLine)
         {
             try
             {
-                this.InternalSave(writer, hasHeader, quoteAll, delimiter.ToString(), quoteChar.ToString(), newLine);
+                this.InternalSave(writer, hasHeader, quoteAll, delimiter.ToString(), qualifier.ToString(), newLine);
             }
             catch (Exception e)
             {
@@ -423,16 +424,12 @@ namespace DevLib.Csv
         /// <param name="reader">The TextReader used to feed the csv data into the document.</param>
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
-        private void InternalLoad(TextReader reader, bool hasHeader, char delimiter, char quoteChar)
+        /// <param name="qualifier">Character to use when quoting.</param>
+        private void InternalLoad(TextReader reader, bool hasHeader, char delimiter, char qualifier)
         {
             this.Table.Clear();
             this.HasHeader = hasHeader;
-            StringBuilder cell = new StringBuilder();
-            List<string> row = new List<string>();
             bool addedHeader = false;
-            bool inColumn = false;
-            bool inQuotes = false;
 
             while (reader.Peek() >= 0)
             {
@@ -440,75 +437,11 @@ namespace DevLib.Csv
 
                 if (!string.IsNullOrEmpty(line))
                 {
-                    for (int i = 0; i < line.Length; i++)
-                    {
-                        char character = line[i];
-
-                        if (!inColumn)
-                        {
-                            if (character.Equals(delimiter))
-                            {
-                                row.Add(string.Empty);
-                                continue;
-                            }
-
-                            if (character.Equals(quoteChar))
-                            {
-                                inQuotes = true;
-                            }
-                            else
-                            {
-                                cell.Append(character);
-                            }
-
-                            inColumn = true;
-                            continue;
-                        }
-
-                        if (inQuotes)
-                        {
-                            if (character.Equals(quoteChar) && ((line.Length > (i + 1) && line[i + 1].Equals(delimiter)) || ((i + 1) == line.Length)))
-                            {
-                                inQuotes = false;
-                                inColumn = false;
-                                i++;
-                            }
-                            else if (character.Equals(quoteChar) && line.Length > (i + 1) && line[i + 1].Equals(quoteChar))
-                            {
-                                i++;
-                            }
-                        }
-                        else if (character.Equals(delimiter))
-                        {
-                            inColumn = false;
-                        }
-
-                        if (!inColumn)
-                        {
-                            row.Add(cell.ToString());
-                            cell.Remove(0, cell.Length);
-                        }
-                        else
-                        {
-                            cell.Append(character);
-                        }
-                    }
-
-                    if (inColumn)
-                    {
-                        row.Add(cell.ToString());
-                    }
+                    List<string> row = this.SplitNest(line, delimiter, qualifier);
 
                     if (addedHeader)
                     {
-                        DataRow dataRow = this.Table.NewRow();
-
-                        for (int i = 0; i < row.Count; i++)
-                        {
-                            dataRow[i] = row[i];
-                        }
-
-                        this.Table.Rows.Add(dataRow);
+                        this.Table.Rows.Add(row);
                     }
                     else
                     {
@@ -526,21 +459,11 @@ namespace DevLib.Csv
                                 this.Table.Columns.Add(i.ToString());
                             }
 
-                            DataRow dataRow = this.Table.NewRow();
-
-                            for (int i = 0; i < row.Count; i++)
-                            {
-                                dataRow[i] = row[i];
-                            }
-
-                            this.Table.Rows.Add(dataRow);
+                            this.Table.Rows.Add(row);
                         }
 
                         addedHeader = true;
                     }
-
-                    cell.Remove(0, cell.Length);
-                    row.Clear();
                 }
             }
         }
@@ -552,9 +475,9 @@ namespace DevLib.Csv
         /// <param name="hasHeader">true if the csv has a header row; otherwise false.</param>
         /// <param name="quoteAll">true to quote all cells; otherwise only quote the cell contains delimiter.</param>
         /// <param name="delimiter">Delimiter character to use.</param>
-        /// <param name="quoteChar">Character to use when quoting.</param>
+        /// <param name="qualifier">Character to use when quoting.</param>
         /// <param name="newLine">New line characters to use.</param>
-        private void InternalSave(TextWriter writer, bool hasHeader, bool quoteAll, string delimiter, string quoteChar, string newLine)
+        private void InternalSave(TextWriter writer, bool hasHeader, bool quoteAll, string delimiter, string qualifier, string newLine)
         {
             writer.NewLine = newLine;
 
@@ -566,7 +489,7 @@ namespace DevLib.Csv
 
                 if (firstColumn.Contains(delimiter) || quoteAll)
                 {
-                    firstColumn = quoteChar + firstColumn + quoteChar;
+                    firstColumn = qualifier + firstColumn + qualifier;
                 }
 
                 writer.Write(firstColumn);
@@ -577,7 +500,7 @@ namespace DevLib.Csv
 
                     if (cell.Contains(delimiter) || quoteAll)
                     {
-                        cell = quoteChar + cell + quoteChar;
+                        cell = qualifier + cell + qualifier;
                     }
 
                     writer.Write(delimiter + cell);
@@ -592,7 +515,7 @@ namespace DevLib.Csv
 
                 if (firstColumn.Contains(delimiter) || quoteAll)
                 {
-                    firstColumn = quoteChar + firstColumn + quoteChar;
+                    firstColumn = qualifier + firstColumn + qualifier;
                 }
 
                 writer.Write(firstColumn);
@@ -603,7 +526,7 @@ namespace DevLib.Csv
 
                     if (cell.Contains(delimiter) || quoteAll)
                     {
-                        cell = quoteChar + cell + quoteChar;
+                        cell = qualifier + cell + qualifier;
                     }
 
                     writer.Write(delimiter + cell);
@@ -613,6 +536,82 @@ namespace DevLib.Csv
             }
 
             writer.Flush();
+        }
+
+        /// <summary>
+        /// Splits string by a specified delimiter and keep nested string with a specified qualifier.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="delimiter">Delimiter character.</param>
+        /// <param name="qualifier">Qualifier character.</param>
+        /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
+        private List<string> SplitNest(string source, char delimiter, char qualifier)
+        {
+            StringBuilder itemStringBuilder = new StringBuilder();
+            List<string> result = new List<string>();
+            bool inItem = false;
+            bool inQuotes = false;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                char character = source[i];
+
+                if (!inItem)
+                {
+                    if (character.Equals(delimiter))
+                    {
+                        result.Add(string.Empty);
+                        continue;
+                    }
+
+                    if (character.Equals(qualifier))
+                    {
+                        inQuotes = true;
+                    }
+                    else
+                    {
+                        itemStringBuilder.Append(character);
+                    }
+
+                    inItem = true;
+                    continue;
+                }
+
+                if (inQuotes)
+                {
+                    if (character.Equals(qualifier) && ((source.Length > (i + 1) && source[i + 1].Equals(delimiter)) || ((i + 1) == source.Length)))
+                    {
+                        inQuotes = false;
+                        inItem = false;
+                        i++;
+                    }
+                    else if (character.Equals(qualifier) && source.Length > (i + 1) && source[i + 1].Equals(qualifier))
+                    {
+                        i++;
+                    }
+                }
+                else if (character.Equals(delimiter))
+                {
+                    inItem = false;
+                }
+
+                if (!inItem)
+                {
+                    result.Add(itemStringBuilder.ToString());
+                    itemStringBuilder.Remove(0, itemStringBuilder.Length);
+                }
+                else
+                {
+                    itemStringBuilder.Append(character);
+                }
+            }
+
+            if (inItem)
+            {
+                result.Add(itemStringBuilder.ToString());
+            }
+
+            return result;
         }
     }
 }

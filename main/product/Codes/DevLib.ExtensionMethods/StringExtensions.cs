@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -408,6 +409,168 @@ namespace DevLib.ExtensionMethods
             }
 
             return source.Substring(0, maxLength);
+        }
+
+        /// <summary>
+        /// Splits string by a specified delimiter and keep nested string with a specified qualifier.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="delimiter">Delimiter character.</param>
+        /// <param name="qualifier">Qualifier character.</param>
+        /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
+        public static List<string> SplitNest(this string source, char delimiter = ' ', char qualifier = '"')
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return new List<string>();
+            }
+
+            StringBuilder itemStringBuilder = new StringBuilder();
+            List<string> result = new List<string>();
+            bool inItem = false;
+            bool inQuotes = false;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                char character = source[i];
+
+                if (!inItem)
+                {
+                    if (character.Equals(delimiter))
+                    {
+                        result.Add(string.Empty);
+                        continue;
+                    }
+
+                    if (character.Equals(qualifier))
+                    {
+                        inQuotes = true;
+                    }
+                    else
+                    {
+                        itemStringBuilder.Append(character);
+                    }
+
+                    inItem = true;
+                    continue;
+                }
+
+                if (inQuotes)
+                {
+                    if (character.Equals(qualifier) && ((source.Length > (i + 1) && source[i + 1].Equals(delimiter)) || ((i + 1) == source.Length)))
+                    {
+                        inQuotes = false;
+                        inItem = false;
+                        i++;
+                    }
+                    else if (character.Equals(qualifier) && source.Length > (i + 1) && source[i + 1].Equals(qualifier))
+                    {
+                        i++;
+                    }
+                }
+                else if (character.Equals(delimiter))
+                {
+                    inItem = false;
+                }
+
+                if (!inItem)
+                {
+                    result.Add(itemStringBuilder.ToString());
+                    itemStringBuilder.Remove(0, itemStringBuilder.Length);
+                }
+                else
+                {
+                    itemStringBuilder.Append(character);
+                }
+            }
+
+            if (inItem)
+            {
+                result.Add(itemStringBuilder.ToString());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Splits string by a specified delimiter and keep nested string with a specified qualifier.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="delimiters">Delimiter characters.</param>
+        /// <param name="qualifier">Qualifier character.</param>
+        /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
+        public static List<string> SplitNest(this string source, char[] delimiters, char qualifier = '"')
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return new List<string>();
+            }
+
+            StringBuilder itemStringBuilder = new StringBuilder();
+            List<string> result = new List<string>();
+            bool inItem = false;
+            bool inQuotes = false;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                char character = source[i];
+
+                if (!inItem)
+                {
+                    if (delimiters.Contains(character))
+                    {
+                        result.Add(string.Empty);
+                        continue;
+                    }
+
+                    if (character.Equals(qualifier))
+                    {
+                        inQuotes = true;
+                    }
+                    else
+                    {
+                        itemStringBuilder.Append(character);
+                    }
+
+                    inItem = true;
+                    continue;
+                }
+
+                if (inQuotes)
+                {
+                    if (character.Equals(qualifier) && ((source.Length > (i + 1) && delimiters.Contains(source[i + 1])) || ((i + 1) == source.Length)))
+                    {
+                        inQuotes = false;
+                        inItem = false;
+                        i++;
+                    }
+                    else if (character.Equals(qualifier) && source.Length > (i + 1) && source[i + 1].Equals(qualifier))
+                    {
+                        i++;
+                    }
+                }
+                else if (delimiters.Contains(character))
+                {
+                    inItem = false;
+                }
+
+                if (!inItem)
+                {
+                    result.Add(itemStringBuilder.ToString());
+                    itemStringBuilder.Remove(0, itemStringBuilder.Length);
+                }
+                else
+                {
+                    itemStringBuilder.Append(character);
+                }
+            }
+
+            if (inItem)
+            {
+                result.Add(itemStringBuilder.ToString());
+            }
+
+            return result;
         }
     }
 }

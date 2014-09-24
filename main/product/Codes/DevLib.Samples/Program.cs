@@ -74,17 +74,6 @@ namespace DevLib.Samples
             {
                 PrintStartInfo();
 
-                //Argument arg = new Argument(args);
-
-                //foreach (var item in arg)
-                //{
-                //    item.Key.ConsoleOutput();
-                //    item.Value.ConsoleOutput();
-                //    Console.WriteLine();
-                //}
-
-                //Console.ReadLine();
-
                 var result = Benchmark.Run(i =>
                 {
                     //TestCodeSnippets();
@@ -668,6 +657,24 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            Benchmark.Run(i =>
+            {
+                var csv = new CsvDocument();
+                csv.Load(@"d:\work\temp\2.csv", false);
+            });
+
+            Benchmark.Run(i =>
+            {
+                var csv = new CsvDocument();
+                csv.Load(@"d:\work\temp\2.csv", false);
+            });
+
+            Benchmark.Run(i =>
+            {
+                var csv = new CsvDocument();
+                csv.Load(@"d:\work\temp\2.csv", false);
+            });
+
             //Keyboard.Press(Key.Ctrl);
             //Keyboard.Press(Key.Alt);
             //Keyboard.Type(Key.Delete);
@@ -685,19 +692,19 @@ namespace DevLib.Samples
             //s2.CompareTo(s1).ToFile("sDiff.xml");
 
             //Console.WriteLine("done");
-            //Console.ReadLine();
+            Console.ReadLine();
 
-            Keyboard.Type(Key.LWin);
-            Keyboard.Type("notepad");
-            Keyboard.Type(Key.Enter);
-            Keyboard.Press(Key.LeftShift);
-            Keyboard.Type("h");
-            Keyboard.Release(Key.LeftShift);
-            Keyboard.Type("ello DevLib.Diagnostics.Input");
-            Keyboard.Type(Key.Enter);
-            Keyboard.Type("Hello DevLib.Diagnostics.Input", 10);
-            Keyboard.Type(Key.Enter);
-            Keyboard.Type("Bye bye.");
+            //Keyboard.Type(Key.LWin);
+            //Keyboard.Type("notepad");
+            //Keyboard.Type(Key.Enter);
+            //Keyboard.Press(Key.LeftShift);
+            //Keyboard.Type("h");
+            //Keyboard.Release(Key.LeftShift);
+            //Keyboard.Type("ello DevLib.Diagnostics.Input");
+            //Keyboard.Type(Key.Enter);
+            //Keyboard.Type("Hello DevLib.Diagnostics.Input", 10);
+            //Keyboard.Type(Key.Enter);
+            //Keyboard.Type("Bye bye.");
 
             Console.ReadLine();
 

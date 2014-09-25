@@ -25,7 +25,7 @@ namespace DevLib.ExtensionMethods
         {
             string hexPattern = "^[0-9a-fA-F]+$";
 
-            string temp = source.RemoveAny(' ', '\n', '\r');
+            string temp = source.RemoveAny(false, ' ', '\n', '\r');
 
             if (!Regex.IsMatch(temp, hexPattern))
             {
@@ -60,44 +60,61 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Remove any instance of the given character from the current string.
+        /// Returns a value indicating whether the specified <see cref="T:System.String" /> object occurs within this string.
         /// </summary>
         /// <param name="source">Source string.</param>
-        /// <param name="removeChar">Chars to remove.</param>
-        /// <returns>Result string.</returns>
-        public static string RemoveAny(this string source, params char[] removeChar)
+        /// <param name="value">The string to seek.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
+        /// <returns>true if the <paramref name="value" /> parameter occurs within this string, or if <paramref name="value" /> is the empty string ("") or null; otherwise, false.</returns>
+        public static bool Contains(this string source, string value, bool ignoreCase)
         {
-            var result = source;
-
-            if (!string.IsNullOrEmpty(result) && removeChar != null)
+            if (source == null)
             {
-                Array.ForEach(removeChar, c => result = result.RemoveAny(c.ToString()));
+                return false;
             }
 
-            return result;
+            if (string.IsNullOrEmpty(value))
+            {
+                return true;
+            }
+
+            if (ignoreCase)
+            {
+                return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+            else
+            {
+                return source.Contains(value);
+            }
         }
 
         /// <summary>
-        /// Remove any instance of the given string from the current string.
+        /// Returns a value indicating whether the specified <see cref="T:System.Char" /> object occurs within this string.
         /// </summary>
         /// <param name="source">Source string.</param>
-        /// <param name="removeString">String to remove.</param>
-        /// <returns>Result string.</returns>
-        public static string RemoveAny(this string source, params string[] removeString)
+        /// <param name="value">The char to seek.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the char to seek; otherwise, false.</param>
+        /// <returns>true if the <paramref name="value" /> parameter occurs within this string, or if <paramref name="value" /> is null; otherwise, false.</returns>
+        public static bool Contains(this string source, char value, bool ignoreCase)
         {
-            return removeString.Aggregate(source, (current, c) => current.Replace(c, string.Empty));
-        }
+            if (source == null)
+            {
+                return false;
+            }
 
-        /// <summary>
-        /// Replace any instance of the given string from the current string.
-        /// </summary>
-        /// <param name="source">Source string.</param>
-        /// <param name="newValue">A string to replace all occurrences of oldValue.</param>
-        /// <param name="oldStrings">String to replace.</param>
-        /// <returns>Result string.</returns>
-        public static string ReplaceAny(this string source, string newValue, params string[] oldStrings)
-        {
-            return oldStrings.Aggregate(source, (current, c) => current.Replace(c, newValue));
+            if (ignoreCase)
+            {
+                if (string.IsNullOrEmpty(value.ToString()))
+                {
+                    return true;
+                }
+
+                return source.IndexOf(value.ToString(), StringComparison.OrdinalIgnoreCase) > -1;
+            }
+            else
+            {
+                return source.Contains(value);
+            }
         }
 
         /// <summary>
@@ -105,16 +122,284 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">Source string.</param>
         /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
-        /// <param name="containStrings">Strings to check.</param>
-        /// <returns>true if the <paramref name="containStrings" /> parameter occurs within this string, or if <paramref name="containStrings" /> is the empty string ("") or null; otherwise, false.</returns>
-        public static bool ContainsAny(this string source, bool ignoreCase = true, params string[] containStrings)
+        /// <param name="values">Strings to check.</param>
+        /// <returns>true if the <paramref name="values" /> parameter occurs within this string, or if <paramref name="values" /> is null or empty; otherwise, false.</returns>
+        public static bool ContainsAny(this string source, bool ignoreCase, params string[] values)
         {
-            if (containStrings == null || containStrings.Length < 1)
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (values == null || values.Length < 1)
             {
                 return true;
             }
 
-            return containStrings.Any(p => source.Contains(p, ignoreCase));
+            return values.Any(i => source.Contains(i, ignoreCase));
+        }
+
+        /// <summary>
+        /// Contains any instance of the given string from the current string.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
+        /// <param name="values">Chars to check.</param>
+        /// <returns>true if the <paramref name="values" /> parameter occurs within this string, or if <paramref name="values" /> is null or empty; otherwise, false.</returns>
+        public static bool ContainsAny(this string source, bool ignoreCase, params char[] values)
+        {
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (values == null || values.Length < 1)
+            {
+                return true;
+            }
+
+            return values.Any(i => source.Contains(i, ignoreCase));
+        }
+
+        /// <summary>
+        /// Returns a new string in which all occurrences of a specified string in this instance are replaced with another specified string.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="oldValue">A string to be replaced.</param>
+        /// <param name="newValue">A string to replace all occurrences of oldValue.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <returns>A System.String equivalent to this instance but with all instances of oldValue replaced with newValue.</returns>
+        public static string Replace(this string source, string oldValue, string newValue, bool ignoreCase)
+        {
+            if (source == null || oldValue == null || newValue == null)
+            {
+                return source;
+            }
+
+            if (!ignoreCase)
+            {
+                return source.Replace(oldValue, newValue);
+            }
+            else
+            {
+                string result = source;
+
+                int oldValueLength = oldValue.Length;
+                int newValueLength = newValue.Length;
+                int index = 0;
+
+                while ((index = result.IndexOf(oldValue, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                {
+                    result = result.Remove(index, oldValueLength).Insert(index, newValue);
+                    index += newValueLength;
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Returns a new string in which all occurrences of a specified char in this instance are replaced with another specified char.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="oldValue">A char to be replaced.</param>
+        /// <param name="newValue">A char to replace all occurrences of oldValue.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <returns>A System.String equivalent to this instance but with all instances of oldValue replaced with newValue.</returns>
+        public static string Replace(this string source, char oldValue, char newValue, bool ignoreCase)
+        {
+            if (source == null)
+            {
+                return source;
+            }
+
+            if (!ignoreCase)
+            {
+                return source.Replace(oldValue, newValue);
+            }
+            else
+            {
+                string result = source;
+                string oldString = oldValue.ToString();
+                int oldValueLength = oldString.Length;
+                string newString = newValue.ToString();
+                int newValueLength = newString.Length;
+                int index = 0;
+
+                while ((index = result.IndexOf(oldString, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                {
+                    result = result.Remove(index, oldValueLength).Insert(index, newString);
+                    index += newValueLength;
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Returns a new string in which all occurrences of a specified strings in this instance are replaced with another specified string.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="newValue">A string to replace all occurrences of oldValues.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <param name="oldValues">A list of string to be replaced.</param>
+        /// <returns>A System.String equivalent to this instance but with all instances of oldValues replaced with newValue.</returns>
+        public static string ReplaceAny(this string source, string newValue, bool ignoreCase, params string[] oldValues)
+        {
+            if (source == null || newValue == null || oldValues == null || oldValues.Length < 1)
+            {
+                return source;
+            }
+
+            string result = source;
+
+            foreach (string oldValue in oldValues)
+            {
+                result = result.Replace(oldValue, newValue, ignoreCase);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a new string in which all occurrences of a specified chars in this instance are replaced with another specified char.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="newValue">A char to replace all occurrences of oldValues.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <param name="oldValues">A list of char to be replaced.</param>
+        /// <returns>A System.String equivalent to this instance but with all instances of oldValues replaced with newValue.</returns>
+        public static string ReplaceAny(this string source, char newValue, bool ignoreCase, params char[] oldValues)
+        {
+            if (source == null || oldValues == null || oldValues.Length < 1)
+            {
+                return source;
+            }
+
+            string result = source;
+
+            foreach (char oldValue in oldValues)
+            {
+                result = result.Replace(oldValue, newValue, ignoreCase);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deletes all the string from this string beginning at a specified position and continuing through the last position.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="value">A string to be removed.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <returns>A new System.String object that is equivalent to this string less the removed characters.</returns>
+        public static string Remove(this string source, string value, bool ignoreCase)
+        {
+            if (source == null || value == null)
+            {
+                return source;
+            }
+
+            if (!ignoreCase)
+            {
+                return source.Replace(value, string.Empty);
+            }
+            else
+            {
+                string result = source;
+
+                int valueLength = value.Length;
+                int index = 0;
+
+                while ((index = result.IndexOf(value, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                {
+                    result = result.Remove(index, valueLength);
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Deletes all the character from this string beginning at a specified position and continuing through the last position.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="value">A char to be removed.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <returns>A new System.String object that is equivalent to this string less the removed characters.</returns>
+        public static string Remove(this string source, char value, bool ignoreCase)
+        {
+            if (source == null)
+            {
+                return source;
+            }
+
+            if (!ignoreCase)
+            {
+                return source.Replace(value.ToString(), string.Empty);
+            }
+            else
+            {
+                string result = source;
+                string valueString = value.ToString();
+                int valueLength = valueString.Length;
+                int index = 0;
+
+                while ((index = result.IndexOf(valueString, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                {
+                    result = result.Remove(index, valueLength);
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Deletes all the string from this string beginning at a specified position and continuing through the last position.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <param name="values">A list of string to be removed.</param>
+        /// <returns>A new System.String object that is equivalent to this string less the removed characters.</returns>
+        public static string RemoveAny(this string source, bool ignoreCase, params string[] values)
+        {
+            if (source == null || values == null || values.Length < 1)
+            {
+                return source;
+            }
+
+            string result = source;
+
+            foreach (string value in values)
+            {
+                result = result.Remove(value, ignoreCase);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deletes all the characters from this string beginning at a specified position and continuing through the last position.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
+        /// <param name="values">A list of char to be removed.</param>
+        /// <returns>A new System.String object that is equivalent to this string less the removed characters.</returns>
+        public static string RemoveAny(this string source, bool ignoreCase, params char[] values)
+        {
+            if (source == null || values == null || values.Length < 1)
+            {
+                return source;
+            }
+
+            string result = source;
+
+            foreach (char value in values)
+            {
+                result = result.Remove(value, ignoreCase);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -148,30 +433,6 @@ namespace DevLib.ExtensionMethods
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Returns a value indicating whether the specified <see cref="T:System.String" /> object occurs within this string.
-        /// </summary>
-        /// <param name="source">Source string.</param>
-        /// <param name="value">The string to seek.</param>
-        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
-        /// <returns>true if the <paramref name="value" /> parameter occurs within this string, or if <paramref name="value" /> is the empty string ("") or null; otherwise, false.</returns>
-        public static bool Contains(this string source, string value, bool ignoreCase = false)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                return true;
-            }
-
-            if (ignoreCase)
-            {
-                return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
-            }
-            else
-            {
-                return source.Contains(value);
-            }
         }
 
         /// <summary>

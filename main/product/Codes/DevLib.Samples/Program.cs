@@ -657,6 +657,8 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            var aaa = "abcdeABCDe".ReplaceAny('W',false,'a','E');
+
             Benchmark.Run(i =>
             {
                 var csv = new CsvDocument();
@@ -1195,7 +1197,7 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ExtensionMethods");
 
-            var aa = "abcd".ContainsAny(true);
+            var aa = "abcd".Remove(null, true);
 
             #region SerializationExtensions
 
@@ -1286,7 +1288,7 @@ namespace DevLib.Samples
             #region IO
             var a = "   C:\\asdasd\\ \" \"   ";
             var c = Path.GetInvalidPathChars();
-            string b = a.RemoveAny(c);
+            string b = a.RemoveAny(false,c);
             "hello".WriteTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
 
             //DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();

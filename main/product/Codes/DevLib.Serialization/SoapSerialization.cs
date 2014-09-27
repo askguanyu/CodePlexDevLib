@@ -85,17 +85,17 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Soap string to object.
         /// </summary>
-        /// <param name="source">The Soap string to deserialize.</param>
+        /// <param name="soapString">The Soap string to deserialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object Deserialize(string source)
+        public static object Deserialize(string soapString)
         {
-            if (string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(soapString))
             {
                 throw new ArgumentNullException("source");
             }
 
             XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(source);
+            xmlDocument.LoadXml(soapString);
             SoapFormatter soapFormatter = new SoapFormatter();
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -109,16 +109,16 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Soap string to object, read from file.
         /// </summary>
-        /// <param name="source">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <returns>Instance of object.</returns>
-        public static object Read(string source)
+        public static object Read(string filename)
         {
-            if (string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(filename))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(source);
+            string fullPath = Path.GetFullPath(filename);
 
             if (!File.Exists(fullPath))
             {
@@ -137,17 +137,17 @@ namespace DevLib.Serialization
         /// Deserializes Soap string to object.
         /// </summary>
         /// <typeparam name="T">Type of the returns object.</typeparam>
-        /// <param name="source">The Soap string to deserialize.</param>
+        /// <param name="soapString">The Soap string to deserialize.</param>
         /// <returns>Instance of T.</returns>
-        public static T Deserialize<T>(string source)
+        public static T Deserialize<T>(string soapString)
         {
-            if (string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(soapString))
             {
                 throw new ArgumentNullException("source");
             }
 
             XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(source);
+            xmlDocument.LoadXml(soapString);
             SoapFormatter soapFormatter = new SoapFormatter();
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -162,16 +162,16 @@ namespace DevLib.Serialization
         /// Deserializes Soap string to object, read from file.
         /// </summary>
         /// <typeparam name="T">Type of the returns object.</typeparam>
-        /// <param name="source">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <returns>Instance of T.</returns>
-        public static T Read<T>(string source)
+        public static T Read<T>(string filename)
         {
-            if (string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(filename))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(source);
+            string fullPath = Path.GetFullPath(filename);
 
             if (!File.Exists(fullPath))
             {

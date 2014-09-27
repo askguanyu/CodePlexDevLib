@@ -113,16 +113,16 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes bytes to object, read from file.
         /// </summary>
-        /// <param name="source">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <returns>Instance object.</returns>
-        public static object Read(string source)
+        public static object Read(string filename)
         {
-            if (string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(filename))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(source);
+            string fullPath = Path.GetFullPath(filename);
 
             if (!File.Exists(fullPath))
             {
@@ -168,16 +168,16 @@ namespace DevLib.Serialization
         /// Deserializes bytes to object, read from file.
         /// </summary>
         /// <typeparam name="T">The type of returns object.</typeparam>
-        /// <param name="source">File name.</param>
+        /// <param name="filename">File name.</param>
         /// <returns>Instance of T.</returns>
-        public static T Read<T>(string source)
+        public static T Read<T>(string filename)
         {
-            if (string.IsNullOrEmpty(source))
+            if (string.IsNullOrEmpty(filename))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(source);
+            string fullPath = Path.GetFullPath(filename);
 
             if (!File.Exists(fullPath))
             {

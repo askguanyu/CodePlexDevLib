@@ -833,5 +833,41 @@ namespace DevLib.ExtensionMethods
 
             return result;
         }
+
+        /// <summary>
+        /// Word wrap text for a specified maximum line length.
+        /// </summary>
+        /// <param name="source">Text to word wrap.</param>
+        /// <param name="maxLineLength">Maximum length of a line.</param>
+        /// <returns>A list of lines for the word wrapped text.</returns>
+        public static List<string> WordWrap(this string source, int maxLineLength = 80)
+        {
+            List<string> result = new List<string>();
+
+            string currentLine = string.Empty;
+
+            foreach (string word in source.Split(' '))
+            {
+                if (currentLine.Length + word.Length > maxLineLength)
+                {
+                    result.Add(currentLine);
+                    currentLine = string.Empty;
+                }
+
+                currentLine += word;
+
+                if (currentLine.Length != maxLineLength)
+                {
+                    currentLine += " ";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(currentLine.Trim()))
+            {
+                result.Add(currentLine);
+            }
+
+            return result;
+        }
     }
 }

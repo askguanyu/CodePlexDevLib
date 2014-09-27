@@ -40,6 +40,7 @@ namespace DevLib.ExtensionMethods
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 binaryFormatter.Serialize(memoryStream, source);
+                memoryStream.Position = 0;
                 return memoryStream.ToArray();
             }
         }
@@ -697,6 +698,7 @@ namespace DevLib.ExtensionMethods
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
+                memoryStream.Position = 0;
                 return (encoding ?? Encoding.Default).GetString(memoryStream.ToArray());
             }
         }
@@ -774,6 +776,7 @@ namespace DevLib.ExtensionMethods
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
+                memoryStream.Position = 0;
                 return dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -815,6 +818,7 @@ namespace DevLib.ExtensionMethods
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
+                memoryStream.Position = 0;
                 return dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -916,6 +920,7 @@ namespace DevLib.ExtensionMethods
 
             using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
             {
+                memoryStream.Position = 0;
                 return (T)dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -967,6 +972,7 @@ namespace DevLib.ExtensionMethods
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
+                memoryStream.Position = 0;
                 return memoryStream.ToArray();
             }
         }
@@ -994,6 +1000,7 @@ namespace DevLib.ExtensionMethods
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
+                memoryStream.Position = 0;
                 return dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -1019,23 +1026,25 @@ namespace DevLib.ExtensionMethods
 
             Type sourceType = null;
 
-            using (XmlReader xmlReader = XmlReader.Create(new MemoryStream(source)))
-            {
-                string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
-
-                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
-
-                if (sourceType == null)
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-
-            DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
-
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
-                return dataContractJsonSerializer.ReadObject(memoryStream);
+                memoryStream.Position = 0;
+
+                using (XmlReader xmlReader = XmlReader.Create(memoryStream))
+                {
+                    string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
+
+                    sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                    if (sourceType == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    memoryStream.Position = 0;
+                    DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
+                    return dataContractJsonSerializer.ReadObject(memoryStream);
+                }
             }
         }
 
@@ -1057,6 +1066,7 @@ namespace DevLib.ExtensionMethods
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
+                memoryStream.Position = 0;
                 return (T)dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
@@ -1360,6 +1370,7 @@ namespace DevLib.ExtensionMethods
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 dataContractSerializer.WriteObject(memoryStream, source);
+                memoryStream.Position = 0;
                 return memoryStream.ToArray();
             }
         }
@@ -1387,6 +1398,7 @@ namespace DevLib.ExtensionMethods
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
+                memoryStream.Position = 0;
                 return dataContractSerializer.ReadObject(memoryStream);
             }
         }
@@ -1412,23 +1424,25 @@ namespace DevLib.ExtensionMethods
 
             Type sourceType = null;
 
-            using (XmlReader xmlReader = XmlReader.Create(new MemoryStream(source)))
-            {
-                string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
-
-                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
-
-                if (sourceType == null)
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-
-            DataContractSerializer dataContractSerializer = new DataContractSerializer(sourceType, knownTypes);
-
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
-                return dataContractSerializer.ReadObject(memoryStream);
+                memoryStream.Position = 0;
+
+                using (XmlReader xmlReader = XmlReader.Create(new MemoryStream(source)))
+                {
+                    string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
+
+                    sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                    if (sourceType == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    memoryStream.Position = 0;
+                    DataContractSerializer dataContractSerializer = new DataContractSerializer(sourceType, knownTypes);
+                    return dataContractSerializer.ReadObject(memoryStream);
+                }
             }
         }
 
@@ -1450,6 +1464,7 @@ namespace DevLib.ExtensionMethods
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
+                memoryStream.Position = 0;
                 return (T)dataContractSerializer.ReadObject(memoryStream);
             }
         }

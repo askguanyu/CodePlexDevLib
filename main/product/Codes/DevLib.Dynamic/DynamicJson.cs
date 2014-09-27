@@ -22,7 +22,7 @@ namespace DevLib.Dynamic
     /// <summary>
     /// Provides a class for specifying dynamic Json behavior at run time.
     /// </summary>
-    public class DynamicJson : DynamicObject, IEnumerable<KeyValuePair<string, DynamicJson>>, IEnumerable
+    public class DynamicJson : DynamicObject, IEnumerable<DynamicJson>, IEnumerable<KeyValuePair<string, DynamicJson>>, IEnumerable
     {
         /// <summary>
         /// Field XmlConverters.
@@ -190,18 +190,9 @@ namespace DevLib.Dynamic
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
-
+                memoryStream.Position = 0;
                 return Load(memoryStream, encoding);
             }
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An System.Collections.IEnumerator object that can be used to iterate through the collection.</returns>
-        public IEnumerator<KeyValuePair<string, DynamicJson>> GetEnumerator()
-        {
-            return this._xElement.Elements().ToDictionary(k => k.Name.LocalName, v => CreateDynamicJson(v)).GetEnumerator();
         }
 
         /// <summary>
@@ -298,9 +289,22 @@ namespace DevLib.Dynamic
 
                 return true;
             }
+            else if (binder.ReturnType == this.GetType())
+            {
+                result = this;
+
+                return true;
+            }
             else if (binder.ReturnType == typeof(IEnumerable))
             {
-                result = this._xElement.Elements().Select(i => CreateDynamicJson(i)).ToList();
+                if (this.IsArray)
+                {
+                    result = this._xElement.Elements().Select(i => (dynamic)CreateDynamicJson(i)).ToList();
+                }
+                else
+                {
+                    result = this._xElement.Elements().Select(i => new KeyValuePair<string, dynamic>(i.Name.LocalName, CreateDynamicJson(i))).ToList();
+                }
 
                 return true;
             }
@@ -491,9 +495,34 @@ namespace DevLib.Dynamic
         /// Returns an enumerator that iterates through a collection.
         /// </summary>
         /// <returns>An System.Collections.IEnumerator object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator()
+        public IEnumerator GetEnumerator()
         {
-            return this._xElement.Elements().ToDictionary(k => k.Name.LocalName, v => CreateDynamicJson(v)).GetEnumerator();
+            if (this.IsArray)
+            {
+                return this._xElement.Elements().Select(i => (dynamic)CreateDynamicJson(i)).GetEnumerator();
+            }
+            else
+            {
+                return this._xElement.Elements().Select(i => new KeyValuePair<string, dynamic>(i.Name.LocalName, CreateDynamicJson(i))).GetEnumerator();
+            }
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An System.Collections.IEnumerator{DynamicJson} object that can be used to iterate through the collection.</returns>
+        IEnumerator<DynamicJson> IEnumerable<DynamicJson>.GetEnumerator()
+        {
+            return this._xElement.Elements().Select(i => CreateDynamicJson(i)).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An System.Collections.IEnumerator{KeyValuePair{string, DynamicJson}} object that can be used to iterate through the collection.</returns>
+        IEnumerator<KeyValuePair<string, DynamicJson>> IEnumerable<KeyValuePair<string, DynamicJson>>.GetEnumerator()
+        {
+            return this._xElement.Elements().Select(i => new KeyValuePair<string, DynamicJson>(i.Name.LocalName, CreateDynamicJson(i))).GetEnumerator();
         }
 
         /// <summary>
@@ -642,6 +671,12 @@ namespace DevLib.Dynamic
 
                 return true;
             }
+            else if (returnType.Equals(this.GetType()))
+            {
+                result = CreateDynamicJson(xElement);
+
+                return true;
+            }
             else
             {
                 var converter = default(Func<string, object>);
@@ -662,6 +697,63 @@ namespace DevLib.Dynamic
         }
 
         /// <summary>
+        /// Method TryXmlConvert.
+        /// </summary>
+        /// <param name="value">Source value.</param>
+        /// <param name="returnType">Target type.</param>
+        /// <param name="result">Result object.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private bool TryXmlConvert(string value, Type returnType, out object result)
+        {
+            if (returnType == typeof(string))
+            {
+                result = value;
+
+                return true;
+            }
+            else if (returnType.IsEnum)
+            {
+                if (Enum.IsDefined(returnType, value))
+                {
+                    result = Enum.Parse(returnType, value);
+
+                    return true;
+                }
+
+                var enumType = Enum.GetUnderlyingType(returnType);
+
+                var rawValue = XmlConverters[enumType].Invoke(value);
+
+                result = Enum.ToObject(returnType, rawValue);
+
+                return true;
+            }
+            else if (returnType.Equals(this.GetType()))
+            {
+                result = new DynamicJson(new XElement(value, this.CreateTypeAttribute(JsonType.@string), this.CreateXContent(value)), JsonType.@string);
+
+                return true;
+            }
+            else
+            {
+                var converter = default(Func<string, object>);
+
+                if (XmlConverters.TryGetValue(returnType, out converter))
+                {
+                    result = converter(value);
+
+                    return true;
+                }
+                else
+                {
+                    result = null;
+
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Method Deserialize.
         /// </summary>
         /// <param name="xElement">Source element.</param>
@@ -669,35 +761,93 @@ namespace DevLib.Dynamic
         /// <returns>Instance of object.</returns>
         private object Deserialize(XElement xElement, Type targetType)
         {
-            return this.IsArray ? this.DeserializeArray(xElement, targetType) : this.DeserializeObject(xElement, targetType);
+            return this.IsEnumerable(targetType) ? this.DeserializeEnumerable(xElement, targetType) : this.DeserializeObject(xElement, targetType);
         }
 
         /// <summary>
-        /// Method DeserializeArray.
+        /// Method DeserializeEnumerable.
         /// </summary>
         /// <param name="xElement">Source element.</param>
         /// <param name="targetType">Target Type.</param>
         /// <returns>Instance of object.</returns>
-        private object DeserializeArray(XElement xElement, Type targetType)
+        private object DeserializeEnumerable(XElement xElement, Type targetType)
         {
-            Type elementType = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
-
-            IList list = (IList)Activator.CreateInstance(targetType);
-
-            foreach (var item in xElement.Elements())
+            if (this.IsDictionary(targetType))
             {
-                object result = null;
+                IDictionary result = (IDictionary)Activator.CreateInstance(targetType, true);
 
-                if (this.TryXmlConvert(item, elementType, out result))
+                Type keyType = targetType.GetGenericArguments()[0];
+                Type valueType = targetType.GetGenericArguments()[1];
+
+                foreach (var item in xElement.Elements())
                 {
-                    if (result != null)
+                    dynamic key = null;
+
+                    if (this.TryXmlConvert(item.Name.LocalName, keyType, out key))
                     {
-                        list.Add(result);
+                        if (key != null)
+                        {
+                            dynamic value = null;
+
+                            if (this.TryXmlConvert(item, valueType, out value))
+                            {
+                                if (value != null)
+                                {
+                                    result[key] = value;
+                                }
+                            }
+                        }
                     }
                 }
-            }
 
-            return list;
+                return result;
+            }
+            else
+            {
+                Type elementType = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
+
+                if (targetType.IsArray)
+                {
+                    IList list = new List<dynamic>();
+
+                    foreach (var item in xElement.Elements())
+                    {
+                        dynamic element = null;
+
+                        if (this.TryXmlConvert(item, elementType, out element))
+                        {
+                            if (element != null)
+                            {
+                                list.Add(element);
+                            }
+                        }
+                    }
+
+                    Array result = Array.CreateInstance(elementType, list.Count);
+                    list.CopyTo(result, 0);
+
+                    return result;
+                }
+                else
+                {
+                    IList result = (IList)Activator.CreateInstance(targetType);
+
+                    foreach (var item in xElement.Elements())
+                    {
+                        dynamic element = null;
+
+                        if (this.TryXmlConvert(item, elementType, out element))
+                        {
+                            if (element != null)
+                            {
+                                result.Add(element);
+                            }
+                        }
+                    }
+
+                    return result;
+                }
+            }
         }
 
         /// <summary>
@@ -734,13 +884,13 @@ namespace DevLib.Dynamic
 
             foreach (var item in properties)
             {
-                var elements = xElement.Elements(item.Name);
+                var elements = xElement.Elements(item.Name).ToArray();
 
-                if (elements.Count() >= 1)
+                if (elements.Length >= 1)
                 {
                     object itemValue = null;
 
-                    if (this.TryXmlConvert(elements.First(), item.PropertyType, out itemValue))
+                    if (this.TryXmlConvert(elements[0], item.PropertyType, out itemValue))
                     {
                         item.SetValue(result, itemValue, null);
 
@@ -766,8 +916,29 @@ namespace DevLib.Dynamic
             {
                 element.WriteTo(writer);
                 writer.Flush();
+                memoryStream.Position = 0;
                 return Encoding.Unicode.GetString(memoryStream.ToArray());
             }
+        }
+
+        /// <summary>
+        /// Method IsEnumerable.
+        /// </summary>
+        /// <param name="source">Source Type.</param>
+        /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
+        private bool IsEnumerable(Type source)
+        {
+            return !source.Equals(this.GetType()) && !source.Equals(typeof(string)) && source.GetInterface("IEnumerable") != null;
+        }
+
+        /// <summary>
+        /// Method IsDictionary.
+        /// </summary>
+        /// <param name="source">Source Type.</param>
+        /// <returns>true if the source Type inherit IDictionary interface; otherwise, false.</returns>
+        private bool IsDictionary(Type source)
+        {
+            return source.GetInterface("IDictionary") != null;
         }
     }
 }

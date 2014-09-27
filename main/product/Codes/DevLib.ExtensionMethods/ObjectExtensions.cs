@@ -123,7 +123,7 @@ namespace DevLib.ExtensionMethods
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 binaryFormatter.Serialize(memoryStream, source);
-                memoryStream.Seek(0, SeekOrigin.Begin);
+                memoryStream.Position = 0;
                 return (T)binaryFormatter.Deserialize(memoryStream);
             }
         }

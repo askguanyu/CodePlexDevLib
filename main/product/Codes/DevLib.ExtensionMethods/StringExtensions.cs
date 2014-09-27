@@ -679,7 +679,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="delimiter">Delimiter character.</param>
         /// <param name="qualifier">Qualifier character.</param>
         /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
-        public static List<string> SplitNest(this string source, char delimiter = ' ', char qualifier = '"')
+        public static List<string> SplitNested(this string source, char delimiter = ' ', char qualifier = '"')
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -697,13 +697,13 @@ namespace DevLib.ExtensionMethods
 
                 if (!inItem)
                 {
-                    if (character.Equals(delimiter))
+                    if (character == delimiter)
                     {
                         result.Add(string.Empty);
                         continue;
                     }
 
-                    if (character.Equals(qualifier))
+                    if (character == qualifier)
                     {
                         inQuotes = true;
                     }
@@ -718,18 +718,18 @@ namespace DevLib.ExtensionMethods
 
                 if (inQuotes)
                 {
-                    if (character.Equals(qualifier) && ((source.Length > (i + 1) && source[i + 1].Equals(delimiter)) || ((i + 1) == source.Length)))
+                    if (character == qualifier && ((source.Length > (i + 1) && source[i + 1] == delimiter) || ((i + 1) == source.Length)))
                     {
                         inQuotes = false;
                         inItem = false;
                         i++;
                     }
-                    else if (character.Equals(qualifier) && source.Length > (i + 1) && source[i + 1].Equals(qualifier))
+                    else if (character == qualifier && source.Length > (i + 1) && source[i + 1] == qualifier)
                     {
                         i++;
                     }
                 }
-                else if (character.Equals(delimiter))
+                else if (character == delimiter)
                 {
                     inItem = false;
                 }
@@ -760,7 +760,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="delimiters">Delimiter characters.</param>
         /// <param name="qualifier">Qualifier character.</param>
         /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
-        public static List<string> SplitNest(this string source, char[] delimiters, char qualifier = '"')
+        public static List<string> SplitNested(this string source, char[] delimiters, char qualifier = '"')
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -784,7 +784,7 @@ namespace DevLib.ExtensionMethods
                         continue;
                     }
 
-                    if (character.Equals(qualifier))
+                    if (character == qualifier)
                     {
                         inQuotes = true;
                     }
@@ -799,13 +799,13 @@ namespace DevLib.ExtensionMethods
 
                 if (inQuotes)
                 {
-                    if (character.Equals(qualifier) && ((source.Length > (i + 1) && delimiters.Contains(source[i + 1])) || ((i + 1) == source.Length)))
+                    if (character == qualifier && ((source.Length > (i + 1) && delimiters.Contains(source[i + 1])) || ((i + 1) == source.Length)))
                     {
                         inQuotes = false;
                         inItem = false;
                         i++;
                     }
-                    else if (character.Equals(qualifier) && source.Length > (i + 1) && source[i + 1].Equals(qualifier))
+                    else if (character == qualifier && source.Length > (i + 1) && source[i + 1] == qualifier)
                     {
                         i++;
                     }

@@ -250,7 +250,7 @@ namespace DevLib.AddIn
 
             foreach (KeyValuePair<AssemblyName, string> item in subDict)
             {
-                if (assemblyName.Version != null && assemblyName.Version != item.Key.Version)
+                if (assemblyName.Version != null && !assemblyName.Version.Equals(item.Key.Version))
                 {
                     continue;
                 }

@@ -558,13 +558,13 @@ namespace DevLib.Csv
 
                 if (!inItem)
                 {
-                    if (character.Equals(delimiter))
+                    if (character == delimiter)
                     {
                         result.Add(string.Empty);
                         continue;
                     }
 
-                    if (character.Equals(qualifier))
+                    if (character == qualifier)
                     {
                         inQuotes = true;
                     }
@@ -579,18 +579,18 @@ namespace DevLib.Csv
 
                 if (inQuotes)
                 {
-                    if (character.Equals(qualifier) && ((source.Length > (i + 1) && source[i + 1].Equals(delimiter)) || ((i + 1) == source.Length)))
+                    if (character == qualifier && ((source.Length > (i + 1) && source[i + 1] == delimiter) || ((i + 1) == source.Length)))
                     {
                         inQuotes = false;
                         inItem = false;
                         i++;
                     }
-                    else if (character.Equals(qualifier) && source.Length > (i + 1) && source[i + 1].Equals(qualifier))
+                    else if (character == qualifier && source.Length > (i + 1) && source[i + 1] == qualifier)
                     {
                         i++;
                     }
                 }
-                else if (character.Equals(delimiter))
+                else if (character == delimiter)
                 {
                     inItem = false;
                 }

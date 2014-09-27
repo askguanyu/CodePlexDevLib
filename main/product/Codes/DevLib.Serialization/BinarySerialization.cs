@@ -31,6 +31,7 @@ namespace DevLib.Serialization
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 binaryFormatter.Serialize(memoryStream, source);
+                memoryStream.Position = 0;
                 return memoryStream.ToArray();
             }
         }

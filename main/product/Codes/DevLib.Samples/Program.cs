@@ -86,7 +86,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(i =>
                 {
-                    //TestDynamic();
+                    TestDynamic();
                 });
 
                 Benchmark.Run(i =>
@@ -205,9 +205,78 @@ namespace DevLib.Samples
 
         private static void TestDynamic()
         {
+            var json = DynamicJson.Parse(@"{""name"":""json"", ""age"":23, ""nest"":{ ""foobar"":true } }");
+
+            string p1 = json.name; // "json" - dynamic(string)
+            int p2 = json.age; // 23 - dynamic(double)
+            bool p3 = json.nest.foobar; // true - dynamic(bool)
+            bool p4 = json["nest"]["foobar"]; // can access string indexer
+            bool p5 = json[2][0]; // can access int indexer
+
+            var p6 = json.Has("name");// true
+            var p7 = json.Has("address"); // false
+            var p8 = (Dictionary<DynamicJson, DynamicJson>)json;
+            json.Arr = new string[] { "ABC", "DEF" }; // Add Array
+            json.Obj1 = new { }; // Add Object
+            json.address = new { postcode = "abc120", street = "def" }; // Add and Init
+
+            json.Remove("age");
+            json.Arr.Remove(0);
+
+            json.Obj1 = 5000; // use 5000 to replace new { }
+
+            string jsonString = json.ToString();
+
+
+            // DynamicJson - (IsArray)
+            var arrayJson = DynamicJson.Parse(@"[1,10,200,300]");
+            arrayJson[9] = 600;
+            foreach (int item in arrayJson)
+            {
+                Console.WriteLine(item); // 1, 10, 200, 300, 600
+            }
+
+            // DynamicJson - (IsObject)
+            var objectJson = DynamicJson.Parse(@"{""foo"":""json"",""bar"":100}");
+            foreach (KeyValuePair<string, dynamic> item in objectJson)
+            {
+                Console.WriteLine(item.Key + ":" + (string)item.Value); // foo:json, bar:100
+            }
+
+
+
+
+            var arrayJson2 = DynamicJson.Parse(@"[1,10,200,300]");
+
+            var array1 = (string[])json; // string[] {"1", "10", "200", "300"}
+            var list2 = (List<int>)arrayJson2; // List<int> {1, 10, 200, 300}
+
+            var objectJson2 = DynamicJson.Parse(@"{""foo"":""json"",""bar"":100}");
+            // mapping by public property name
+            var foobar1 = (FooBar)objectJson2;
+
+            // with linq
+            var objectJsonList = DynamicJson.Parse(@"[{""bar"":50},{""bar"":100}]");
+            var barSum = ((FooBar[])objectJsonList).Select(fb => fb.bar).Sum(); // 150
+            var dynamicWithLinq = ((IEnumerable<dynamic>)objectJsonList).Select(d => (int)d.bar).ToList();
+
+
+
+
             Person aPerson = new Person { FirstName = "A", LastName = "B", Foo = new SpellingOptions(), ID = 2 };
             dynamic jsonObj = DynamicJson.Parse(aPerson.SerializeJsonString());
-            dynamic xmlObj = DynamicXml.Parse(aPerson.SerializeXml(true));
+            string xmlstring = aPerson.SerializeXml(true);
+
+            var x3 = xmlstring.DeserializeXml(new [] { typeof(FooBar), typeof(Person) });
+
+            dynamic xmlObj = DynamicXml.LoadFrom(aPerson);
+
+            foreach (DynamicXml item in xmlObj)
+            {
+                var x2 = item;
+            }
+
+            var xa = (Dictionary<string, DynamicXml>)xmlObj;
 
             xmlObj.C = DateTime.Now;
 
@@ -220,28 +289,24 @@ namespace DevLib.Samples
             xmlObj.Foo["att"] = DateTime.Now;
             //jsonObj[9] = new SpellingOptions();
 
-            //var foo = jsonObj[2];
-
             //jsonObj.Remove1(0);
-            //xmlObj.ID = 3;
-            //int xa = xmlObj.ID;
+            xmlObj.ID = 3;
+            int x1 = xmlObj.ID;
 
-            //jsonObj.A = new List<object>();
+            jsonObj.A = new List<object>();
 
-            //jsonObj.A[0] = 1;
-            //jsonObj.A[1] = "a";
-            //jsonObj.A[2] = true;
+            jsonObj.A[0] = 1;
+            jsonObj.A[1] = "a";
+            jsonObj.A[2] = true;
 
             //var a = jsonObj.A.B;
 
-            //foreach (var item in jsonObj)
-            //{
+            foreach (var item in xmlObj)
+            {
+                string a = item["att"];
+            }
 
-            //    var aa=item.Key;
-            //    var b = item.ToString();
-            //}
-
-            //jsonObj["ID"] = 1;
+            jsonObj["ID"] = 1;
 
 
 
@@ -2067,6 +2132,12 @@ namespace DevLib.Samples
             return string.Format("FirstName= {0} LastName= {1} Id= {2}", this.FirstName, this.LastName, this.ID);
         }
 
+    }
+
+    public class FooBar
+    {
+        public string foo { get; set; }
+        public int bar { get; set; }
     }
 
     [TypeConverterAttribute(typeof(ExpandableObjectConverter<SpellingOptions>))]

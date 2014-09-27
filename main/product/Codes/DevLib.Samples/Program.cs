@@ -86,7 +86,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(i =>
                 {
-                    TestDynamic();
+                    //TestDynamic();
                 });
 
                 Benchmark.Run(i =>

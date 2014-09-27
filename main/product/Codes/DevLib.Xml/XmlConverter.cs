@@ -46,9 +46,9 @@ namespace DevLib.Xml
 
                     if (sourceType.IsEnum ||
                         IsNullableType(sourceType) ||
-                        sourceType.Equals(typeof(Guid)) ||
-                        sourceType.Equals(typeof(TimeSpan)) ||
-                        sourceType.Equals(typeof(DateTimeOffset)))
+                        sourceType == typeof(Guid) ||
+                        sourceType == typeof(TimeSpan) ||
+                        sourceType == typeof(DateTimeOffset))
                     {
                         return true;
                     }
@@ -122,17 +122,17 @@ namespace DevLib.Xml
                         return ToString(Convert.ChangeType(value, Nullable.GetUnderlyingType(sourceType)));
                     }
 
-                    if (sourceType.Equals(typeof(Guid)))
+                    if (sourceType == typeof(Guid))
                     {
                         return XmlConvert.ToString((Guid)value);
                     }
 
-                    if (sourceType.Equals(typeof(TimeSpan)))
+                    if (sourceType == typeof(TimeSpan))
                     {
                         return XmlConvert.ToString((TimeSpan)value);
                     }
 
-                    if (sourceType.Equals(typeof(DateTimeOffset)))
+                    if (sourceType == typeof(DateTimeOffset))
                     {
                         return XmlConvert.ToString((DateTimeOffset)value);
                     }
@@ -214,17 +214,17 @@ namespace DevLib.Xml
                         return ToObject(value, Nullable.GetUnderlyingType(targetType));
                     }
 
-                    if (targetType.Equals(typeof(Guid)))
+                    if (targetType == typeof(Guid))
                     {
                         return XmlConvert.ToGuid(value);
                     }
 
-                    if (targetType.Equals(typeof(TimeSpan)))
+                    if (targetType == typeof(TimeSpan))
                     {
                         return XmlConvert.ToTimeSpan(value);
                     }
 
-                    if (targetType.Equals(typeof(DateTimeOffset)))
+                    if (targetType == typeof(DateTimeOffset))
                     {
                         return XmlConvert.ToDateTimeOffset(value);
                     }

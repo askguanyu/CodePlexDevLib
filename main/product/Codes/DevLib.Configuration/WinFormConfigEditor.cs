@@ -247,7 +247,7 @@ namespace DevLib.Configuration
 
             foreach (IWinFormConfigEditorPlugin item in this._configEditorPluginList)
             {
-                if (sourceType.Equals(item.GetType()))
+                if (sourceType == item.GetType())
                 {
                     return true;
                 }

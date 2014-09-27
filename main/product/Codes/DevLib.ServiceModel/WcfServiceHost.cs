@@ -1316,7 +1316,7 @@ namespace DevLib.ServiceModel
                                 serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
                             }
 
-                            if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp))
+                            if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
                             {
                                 ServiceMetadataBehavior serviceMetadataBehavior = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
 

@@ -1026,25 +1026,23 @@ namespace DevLib.ExtensionMethods
 
             Type sourceType = null;
 
-            using (MemoryStream memoryStream = new MemoryStream(source))
+            MemoryStream memoryStream = new MemoryStream(source);
+            memoryStream.Position = 0;
+
+            using (XmlReader xmlReader = XmlReader.Create(memoryStream))
             {
-                memoryStream.Position = 0;
+                string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
 
-                using (XmlReader xmlReader = XmlReader.Create(memoryStream))
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                if (sourceType == null)
                 {
-                    string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
-
-                    sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
-
-                    if (sourceType == null)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    memoryStream.Position = 0;
-                    DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
-                    return dataContractJsonSerializer.ReadObject(memoryStream);
+                    throw new InvalidOperationException();
                 }
+
+                memoryStream.Position = 0;
+                DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
+                return dataContractJsonSerializer.ReadObject(memoryStream);
             }
         }
 
@@ -1424,25 +1422,23 @@ namespace DevLib.ExtensionMethods
 
             Type sourceType = null;
 
-            using (MemoryStream memoryStream = new MemoryStream(source))
+            MemoryStream memoryStream = new MemoryStream(source);
+            memoryStream.Position = 0;
+
+            using (XmlReader xmlReader = XmlReader.Create(memoryStream))
             {
-                memoryStream.Position = 0;
+                string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
 
-                using (XmlReader xmlReader = XmlReader.Create(new MemoryStream(source)))
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
+
+                if (sourceType == null)
                 {
-                    string rootNodeName = XElement.Load(xmlReader).Name.LocalName;
-
-                    sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
-
-                    if (sourceType == null)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    memoryStream.Position = 0;
-                    DataContractSerializer dataContractSerializer = new DataContractSerializer(sourceType, knownTypes);
-                    return dataContractSerializer.ReadObject(memoryStream);
+                    throw new InvalidOperationException();
                 }
+
+                memoryStream.Position = 0;
+                DataContractSerializer dataContractSerializer = new DataContractSerializer(sourceType, knownTypes);
+                return dataContractSerializer.ReadObject(memoryStream);
             }
         }
 

@@ -39,7 +39,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if 1; otherwise, false.</returns>
         public static bool ToBool(this int source)
         {
-            return source.Equals(1);
+            return source == 1;
         }
 
         /// <summary>

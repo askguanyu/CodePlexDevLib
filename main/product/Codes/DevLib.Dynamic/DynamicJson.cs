@@ -671,7 +671,7 @@ namespace DevLib.Dynamic
 
                 return true;
             }
-            else if (returnType.Equals(this.GetType()))
+            else if (returnType == this.GetType())
             {
                 result = CreateDynamicJson(xElement);
 
@@ -728,7 +728,7 @@ namespace DevLib.Dynamic
 
                 return true;
             }
-            else if (returnType.Equals(this.GetType()))
+            else if (returnType == this.GetType())
             {
                 result = new DynamicJson(new XElement(value, this.CreateTypeAttribute(JsonType.@string), this.CreateXContent(value)), JsonType.@string);
 
@@ -928,7 +928,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
         private bool IsEnumerable(Type source)
         {
-            return !source.Equals(this.GetType()) && !source.Equals(typeof(string)) && source.GetInterface("IEnumerable") != null;
+            return source != this.GetType() && source != typeof(string) && source.GetInterface("IEnumerable") != null;
         }
 
         /// <summary>

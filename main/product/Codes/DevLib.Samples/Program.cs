@@ -244,16 +244,16 @@ namespace DevLib.Samples
             }
 
 
-
-
             var arrayJson2 = DynamicJson.Parse(@"[1,10,200,300]");
 
             var array1 = (string[])json; // string[] {"1", "10", "200", "300"}
-            var list2 = (List<int>)arrayJson2; // List<int> {1, 10, 200, 300}
+            var list1 = (List<int>)arrayJson2; // List<int> {1, 10, 200, 300}
 
             var objectJson2 = DynamicJson.Parse(@"{""foo"":""json"",""bar"":100}");
-            // mapping by public property name
-            var foobar1 = (FooBar)objectJson2;
+            var foobar1 = (FooBar)objectJson2; // Deserialize to FooBar
+
+            var objectJson3 = DynamicJson.LoadFrom(new FooBar { foo = "你好", bar = 10 });
+            string jsonString1 = objectJson3.ToString(); // Serialize to json string
 
             // with linq
             var objectJsonList = DynamicJson.Parse(@"[{""bar"":50},{""bar"":100}]");
@@ -261,53 +261,44 @@ namespace DevLib.Samples
             var dynamicWithLinq = ((IEnumerable<dynamic>)objectJsonList).Select(d => (int)d.bar).ToList();
 
 
+            var dynamicXml = DynamicXml.Parse("<FooBar name=\"foobar1\" ><foo>xml</foo><bar size=\"456\">123</bar></FooBar>");
 
+            string x1 = dynamicXml.foo; // element "xml" - dynamic(string)
+            int x2 = dynamicXml.bar; // element 123 - dynamic(int)
+            string x4 = dynamicXml["name"]; // attribute "foobar1"
+            string x5 = dynamicXml[0]; // first element "xml"
+            int x6 = dynamicXml[1]["size"]; // second element's attribute 456
 
-            Person aPerson = new Person { FirstName = "A", LastName = "B", Foo = new SpellingOptions(), ID = 2 };
-            dynamic jsonObj = DynamicJson.Parse(aPerson.SerializeJsonString());
-            string xmlstring = aPerson.SerializeXml(true);
+            var x7 = dynamicXml.HasElement("foo");// element true
+            var x8 = dynamicXml.HasElement("foooo"); // element false
+            var x9 = dynamicXml.HasAttribute("name");// attribute true
+            var x10 = dynamicXml.HasAttribute("size"); // attribute false
+            var x11 = dynamicXml.bar.HasAttribute("size"); // attribute true
 
-            var x3 = xmlstring.DeserializeXml(new [] { typeof(FooBar), typeof(Person) });
+            dynamicXml.Date = DateTime.Now; // add new element
+            dynamicXml["age"] = 10; // add new attribute
+            dynamicXml[9] = "hello"; // add new element, element name is value's Type
+            var atts = dynamicXml.Attributes(); // get all attributes
+            var elms = dynamicXml.Elements(); // get all elements
+            //dynamicXml.RemoveElement("bar"); //remove element
+            //dynamicXml.RemoveElement(0); //remove first element
+            //dynamicXml.RemoveAttribute("name"); //remove attribute
+            //dynamicXml.RemoveAttribute(0); //remove first attribute
 
-            dynamic xmlObj = DynamicXml.LoadFrom(aPerson);
+            dynamicXml.Date = 2001; // update element with another type
 
-            foreach (DynamicXml item in xmlObj)
+            var dynamicXml1 = DynamicXml.Parse("<FooBar name=\"foobar1\" ><foo>xml</foo><bar size=\"456\">123</bar></FooBar>");
+            foreach (KeyValuePair<string, dynamic> item in dynamicXml1)
             {
-                var x2 = item;
+                Console.WriteLine(item.Key + ":" + (string)item.Value); //name:foobar1, foo:xml, bar:123
             }
 
-            var xa = (Dictionary<string, DynamicXml>)xmlObj;
+            var dynamicXml2 = DynamicXml.Parse("<FooBar><foo>xml</foo><bar>123</bar></FooBar>");
+            var foobar2 = (FooBar)dynamicXml2;
 
-            xmlObj.C = DateTime.Now;
-
-            SpellingOptions foo = xmlObj.Foo;
-
-            int id = xmlObj.ID;
-
-            xmlObj.ID = 4;
-
-            xmlObj.Foo["att"] = DateTime.Now;
-            //jsonObj[9] = new SpellingOptions();
-
-            //jsonObj.Remove1(0);
-            xmlObj.ID = 3;
-            int x1 = xmlObj.ID;
-
-            jsonObj.A = new List<object>();
-
-            jsonObj.A[0] = 1;
-            jsonObj.A[1] = "a";
-            jsonObj.A[2] = true;
-
-            //var a = jsonObj.A.B;
-
-            foreach (var item in xmlObj)
-            {
-                string a = item["att"];
-            }
-
-            jsonObj["ID"] = 1;
-
+            var dynamicXml4 = DynamicXml.LoadFrom(new List<FooBar> { new FooBar { foo = "foo1", bar = 10 }, new FooBar { foo = "foo2", bar = 20 } });
+            var barSum1 = ((FooBar[])dynamicXml4).Select(fb => fb.bar).Sum(); //30
+            var fooList = ((IEnumerable<dynamic>)dynamicXml4).Select(p => (string)p.foo).ToList();
 
 
             Console.WriteLine("done");

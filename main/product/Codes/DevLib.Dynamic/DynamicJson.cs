@@ -151,11 +151,10 @@ namespace DevLib.Dynamic
         /// Parse Json string stream to DynamicJson.
         /// </summary>
         /// <param name="stream">Source Json string stream.</param>
-        /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>DynamicJson object.</returns>
-        public static dynamic Load(Stream stream, Encoding encoding = null)
+        public static dynamic Load(Stream stream)
         {
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader(stream, encoding ?? Encoding.Unicode, XmlDictionaryReaderQuotas.Max, _ => { }))
+            using (var reader = JsonReaderWriterFactory.CreateJsonReader(stream, XmlDictionaryReaderQuotas.Max))
             {
                 return CreateDynamicJson(XElement.Load(reader));
             }
@@ -165,12 +164,11 @@ namespace DevLib.Dynamic
         /// Load Json file to DynamicJson.
         /// </summary>
         /// <param name="jsonFile">Source Json file.</param>
-        /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>DynamicJson object.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static dynamic Load(string jsonFile, Encoding encoding = null)
+        public static dynamic Load(string jsonFile)
         {
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader(File.OpenRead(jsonFile), encoding ?? Encoding.Unicode, XmlDictionaryReaderQuotas.Max, _ => { }))
+            using (var reader = JsonReaderWriterFactory.CreateJsonReader(File.OpenRead(jsonFile), XmlDictionaryReaderQuotas.Max))
             {
                 return CreateDynamicJson(XElement.Load(reader));
             }
@@ -180,10 +178,9 @@ namespace DevLib.Dynamic
         /// Load Json from an object to DynamicJson.
         /// </summary>
         /// <param name="source">Source object.</param>
-        /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>DynamicJson object.</returns>
-        public static dynamic LoadFrom(object source, Encoding encoding = null, Type[] knownTypes = null)
+        public static dynamic LoadFrom(object source, Type[] knownTypes = null)
         {
             DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(source.GetType()) : new DataContractJsonSerializer(source.GetType(), knownTypes);
 
@@ -191,7 +188,7 @@ namespace DevLib.Dynamic
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 memoryStream.Position = 0;
-                return Load(memoryStream, encoding);
+                return Load(memoryStream);
             }
         }
 
@@ -503,7 +500,7 @@ namespace DevLib.Dynamic
             }
             else
             {
-                return this._xElement.Elements().Select(i => new KeyValuePair<string, dynamic>(i.Name.LocalName, CreateDynamicJson(i))).GetEnumerator();
+                return this._xElement.Elements().Select(i => new KeyValuePair<string, dynamic>(i.Name.LocalName, (dynamic)CreateDynamicJson(i))).GetEnumerator();
             }
         }
 
@@ -912,7 +909,7 @@ namespace DevLib.Dynamic
         {
             MemoryStream memoryStream = new MemoryStream();
 
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(memoryStream, Encoding.Unicode))
+            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(memoryStream, Encoding.Unicode, true))
             {
                 element.WriteTo(writer);
                 writer.Flush();

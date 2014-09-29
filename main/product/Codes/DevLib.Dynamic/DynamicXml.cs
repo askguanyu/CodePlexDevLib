@@ -127,10 +127,9 @@ namespace DevLib.Dynamic
         /// Load Xml from an object to DynamicXml.
         /// </summary>
         /// <param name="source">Source object.</param>
-        /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>DynamicXml object.</returns>
-        public static dynamic LoadFrom(object source, Encoding encoding = null, Type[] extraTypes = null)
+        public static dynamic LoadFrom(object source, Type[] extraTypes = null)
         {
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
@@ -149,7 +148,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the current DynamicXml has specified element name; otherwise, false.</returns>
         public bool HasElement(string name)
         {
-            return this._xElement.Element(XName.Get(name, this._xElement.GetDefaultNamespace().NamespaceName)) != null;
+            return this._xElement != null && this._xElement.Element(XName.Get(name, this._xElement.GetDefaultNamespace().NamespaceName)) != null;
         }
 
         /// <summary>
@@ -159,7 +158,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the current DynamicXml has specified element index; otherwise, false.</returns>
         public bool HasElement(int index)
         {
-            return this._xElement.Elements().ElementAtOrDefault(index) != null;
+            return this._xElement != null && this._xElement.Elements().ElementAtOrDefault(index) != null;
         }
 
         /// <summary>
@@ -169,7 +168,8 @@ namespace DevLib.Dynamic
         /// <returns>true if the current DynamicXml has specified attribute name; otherwise, false.</returns>
         public bool HasAttribute(string name)
         {
-            return this._xElement.Attribute(name) != null;
+            return (this._xAttribute != null && this._xAttribute.Name.LocalName.Equals(name, StringComparison.Ordinal)) ||
+                (this._xElement != null && this._xElement.Attribute(name) != null);
         }
 
         /// <summary>
@@ -179,7 +179,8 @@ namespace DevLib.Dynamic
         /// <returns>true if the current DynamicXml has specified attribute index; otherwise, false.</returns>
         public bool HasAttribute(int index)
         {
-            return this._xElement.Attributes().ElementAtOrDefault(index) != null;
+            return (this._xAttribute != null && index == 0) ||
+                (this._xElement != null && this._xElement.Attributes().ElementAtOrDefault(index) != null);
         }
 
         /// <summary>
@@ -189,6 +190,11 @@ namespace DevLib.Dynamic
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool RemoveElement(string name)
         {
+            if (this._xElement == null)
+            {
+                return false;
+            }
+
             var element = this._xElement.Element(XName.Get(name, this._xElement.GetDefaultNamespace().NamespaceName));
 
             if (element != null)
@@ -210,6 +216,11 @@ namespace DevLib.Dynamic
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool RemoveElement(int index)
         {
+            if (this._xElement == null)
+            {
+                return false;
+            }
+
             var element = this._xElement.Elements().ElementAtOrDefault(index);
 
             if (element != null)
@@ -231,17 +242,33 @@ namespace DevLib.Dynamic
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool RemoveAttribute(string name)
         {
-            var attribute = this._xElement.Attribute(name);
-
-            if (attribute != null)
+            if (this._xElement != null)
             {
-                attribute.Remove();
+                var attribute = this._xElement.Attribute(name);
 
-                return true;
+                if (attribute != null)
+                {
+                    attribute.Remove();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
-                return false;
+                if (this._xAttribute.Name.LocalName.Equals(name, StringComparison.Ordinal))
+                {
+                    this._xAttribute.Remove();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -252,17 +279,65 @@ namespace DevLib.Dynamic
         /// <returns>true if succeeded; otherwise, false.</returns>
         public bool RemoveAttribute(int index)
         {
-            var attribute = this._xElement.Attributes().ElementAtOrDefault(index);
-
-            if (attribute != null)
+            if (this._xElement != null)
             {
-                attribute.Remove();
+                var attribute = this._xElement.Attributes().ElementAtOrDefault(index);
 
-                return true;
+                if (attribute != null)
+                {
+                    attribute.Remove();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
-                return false;
+                if (index == 0)
+                {
+                    this._xAttribute.Remove();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of the child elements of this element or document, in document order.
+        /// </summary>
+        /// <returns>A list of the child elements of this instance.</returns>
+        public List<dynamic> Elements()
+        {
+            if (this._xElement != null)
+            {
+                return this._xElement.Elements().Select(i => (dynamic)new DynamicXml(i)).ToList();
+            }
+            else
+            {
+                return new List<dynamic>();
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of attributes of this element.
+        /// </summary>
+        /// <returns>A list of attributes of this instance.</returns>
+        public List<dynamic> Attributes()
+        {
+            if (this._xElement != null)
+            {
+                return this._xElement.Attributes().Select(i => (dynamic)new DynamicXml(i)).ToList();
+            }
+            else
+            {
+                return new List<dynamic> { (dynamic)new DynamicXml(this._xAttribute) };
             }
         }
 
@@ -272,7 +347,7 @@ namespace DevLib.Dynamic
         /// <returns>A Xml string that represents the current object.</returns>
         public override string ToString()
         {
-            return this._xElement.ToString();
+            return this._xElement != null ? this._xElement.ToString() : this._xAttribute.ToString();
         }
 
         /// <summary>
@@ -281,7 +356,7 @@ namespace DevLib.Dynamic
         /// <returns>A sequence that contains dynamic member names.</returns>
         public override IEnumerable<string> GetDynamicMemberNames()
         {
-            return this._xElement.Elements().Select(i => i.Name.LocalName);
+            return this._xElement != null ? this._xElement.Elements().Select(i => i.Name.LocalName) : new List<string> { this._xAttribute.Name.LocalName };
         }
 
         /// <summary>
@@ -328,7 +403,7 @@ namespace DevLib.Dynamic
                 }
                 else if (binder.ReturnType == typeof(IEnumerable))
                 {
-                    result = this._xElement.Attributes().Select(i => (dynamic)new DynamicXml(i)).ToList();
+                    result = new List<dynamic> { (dynamic)new DynamicXml(this._xAttribute) };
 
                     return true;
                 }
@@ -352,24 +427,48 @@ namespace DevLib.Dynamic
         {
             if (indexes[0] is string)
             {
-                XAttribute attribute = this._xElement.Attribute((string)indexes[0]);
-
-                if (attribute != null)
+                if (this._xElement != null)
                 {
-                    result = new DynamicXml(attribute);
+                    XAttribute attribute = this._xElement.Attribute((string)indexes[0]);
 
-                    return true;
+                    if (attribute != null)
+                    {
+                        result = new DynamicXml(attribute);
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (this._xAttribute.Name.LocalName.Equals((string)indexes[0], StringComparison.Ordinal))
+                    {
+                        result = new DynamicXml(this._xAttribute);
+
+                        return true;
+                    }
                 }
             }
             else if (indexes[0] is int)
             {
-                XElement element = this._xElement.Elements().ElementAtOrDefault((int)indexes[0]);
-
-                if (element != null)
+                if (this._xElement != null)
                 {
-                    result = new DynamicXml(element);
+                    XElement element = this._xElement.Elements().ElementAtOrDefault((int)indexes[0]);
 
-                    return true;
+                    if (element != null)
+                    {
+                        result = new DynamicXml(element);
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    if ((int)indexes[0] == 0)
+                    {
+                        result = new DynamicXml(this._xAttribute);
+
+                        return true;
+                    }
                 }
             }
 
@@ -386,19 +485,22 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var elements = this._xElement.Elements(XName.Get(binder.Name, this._xElement.GetDefaultNamespace().NamespaceName));
-
-            if (elements.Count() > 1)
+            if (this._xElement != null)
             {
-                result = elements.Select(i => new DynamicXml(i)).ToList();
+                var elements = this._xElement.Elements(XName.Get(binder.Name, this._xElement.GetDefaultNamespace().NamespaceName));
 
-                return true;
-            }
-            else if (elements.Count() == 1)
-            {
-                result = new DynamicXml(elements.FirstOrDefault());
+                if (elements.Count() > 1)
+                {
+                    result = elements.Select(i => new DynamicXml(i)).ToList();
 
-                return true;
+                    return true;
+                }
+                else if (elements.Count() == 1)
+                {
+                    result = new DynamicXml(elements.FirstOrDefault());
+
+                    return true;
+                }
             }
 
             result = null;
@@ -417,33 +519,57 @@ namespace DevLib.Dynamic
         {
             if (indexes[0] is string)
             {
-                XAttribute attribute = this._xElement.Attribute((string)indexes[0]);
-
-                if (attribute != null)
+                if (this._xElement != null)
                 {
-                    attribute.Value = XmlConvert.ToString((dynamic)value);
+                    XAttribute attribute = this._xElement.Attribute((string)indexes[0]);
+
+                    if (attribute != null)
+                    {
+                        attribute.Value = XmlConvert.ToString((dynamic)value);
+                    }
+                    else
+                    {
+                        this._xElement.Add(new XAttribute((string)indexes[0], XmlConvert.ToString((dynamic)value)));
+                    }
+
+                    return true;
                 }
                 else
                 {
-                    this._xElement.Add(new XAttribute((string)indexes[0], XmlConvert.ToString((dynamic)value)));
-                }
+                    if (this._xAttribute.Name.LocalName.Equals((string)indexes[0], StringComparison.Ordinal))
+                    {
+                        this._xAttribute.Value = XmlConvert.ToString((dynamic)value);
 
-                return true;
+                        return true;
+                    }
+                }
             }
             else if (indexes[0] is int)
             {
-                XElement element = this._xElement.Elements().ElementAtOrDefault((int)indexes[0]);
-
-                if (element != null)
+                if (this._xElement != null)
                 {
-                    element.ReplaceNodes(this.CreateXContent(value));
+                    XElement element = this._xElement.Elements().ElementAtOrDefault((int)indexes[0]);
+
+                    if (element != null)
+                    {
+                        element.ReplaceNodes(this.CreateXContent(value));
+                    }
+                    else
+                    {
+                        this._xElement.Add(new XElement(value.GetType().Name, this.CreateXContent(value)));
+                    }
+
+                    return true;
                 }
                 else
                 {
-                    this._xElement.Add(new XElement(value.GetType().Name, this.CreateXContent(value)));
-                }
+                    if ((int)indexes[0] == 0)
+                    {
+                        this._xAttribute.Value = XmlConvert.ToString((dynamic)value);
 
-                return true;
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -457,18 +583,23 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            XElement element = this._xElement.Element(XName.Get(binder.Name, this._xElement.GetDefaultNamespace().NamespaceName));
-
-            if (element != null)
+            if (this._xElement != null)
             {
-                element.ReplaceNodes(this.CreateXContent(value));
-            }
-            else
-            {
-                this._xElement.Add(new XElement(binder.Name, this.CreateXContent(value)));
+                XElement element = this._xElement.Element(XName.Get(binder.Name, this._xElement.GetDefaultNamespace().NamespaceName));
+
+                if (element != null)
+                {
+                    element.ReplaceNodes(this.CreateXContent(value));
+                }
+                else
+                {
+                    this._xElement.Add(new XElement(binder.Name, this.CreateXContent(value)));
+                }
+
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -477,9 +608,14 @@ namespace DevLib.Dynamic
         /// <returns>An System.Collections.IEnumerator object that can be used to iterate through the collection.</returns>
         public IEnumerator GetEnumerator()
         {
-            return this._xElement.Attributes().Select(i => (dynamic)new DynamicXml(i))
-                .Concat(this._xElement.Elements().Select(i => (dynamic)new DynamicXml(i)))
-                .GetEnumerator();
+            if (this._xElement != null)
+            {
+                return this._xElement.Elements().Select(i => new KeyValuePair<string, dynamic>(i.Name.LocalName, (dynamic)new DynamicXml(i))).GetEnumerator();
+            }
+            else
+            {
+                return new List<KeyValuePair<string, dynamic>> { new KeyValuePair<string, dynamic>(this._xAttribute.Name.LocalName, (dynamic)new DynamicXml(this._xAttribute)) }.GetEnumerator();
+            }
         }
 
         /// <summary>
@@ -488,9 +624,14 @@ namespace DevLib.Dynamic
         /// <returns>An System.Collections.IEnumerator{DynamicXml} object that can be used to iterate through the collection.</returns>
         IEnumerator<DynamicXml> IEnumerable<DynamicXml>.GetEnumerator()
         {
-            return this._xElement.Attributes().Select(i => new DynamicXml(i))
-                .Concat(this._xElement.Elements().Select(i => new DynamicXml(i)))
-                .GetEnumerator();
+            if (this._xElement != null)
+            {
+                return this._xElement.Elements().Select(i => new DynamicXml(i)).GetEnumerator();
+            }
+            else
+            {
+                return new List<DynamicXml> { new DynamicXml(this._xAttribute) }.GetEnumerator();
+            }
         }
 
         /// <summary>
@@ -499,9 +640,14 @@ namespace DevLib.Dynamic
         /// <returns>An System.Collections.IEnumerator{KeyValuePair{string, DynamicXml}} object that can be used to iterate through the collection.</returns>
         IEnumerator<KeyValuePair<string, DynamicXml>> IEnumerable<KeyValuePair<string, DynamicXml>>.GetEnumerator()
         {
-            return this._xElement.Attributes().Select(i => new KeyValuePair<string, DynamicXml>(i.Name.LocalName, new DynamicXml(i)))
-                .Concat(this._xElement.Elements().Select(i => new KeyValuePair<string, DynamicXml>(i.Name.LocalName, new DynamicXml(i))))
-                .GetEnumerator();
+            if (this._xElement != null)
+            {
+                return this._xElement.Elements().Select(i => new KeyValuePair<string, DynamicXml>(i.Name.LocalName, new DynamicXml(i))).GetEnumerator();
+            }
+            else
+            {
+                return new List<KeyValuePair<string, DynamicXml>> { new KeyValuePair<string, DynamicXml>(this._xAttribute.Name.LocalName, new DynamicXml(this._xAttribute)) }.GetEnumerator();
+            }
         }
 
         /// <summary>

@@ -699,7 +699,7 @@ namespace DevLib.ExtensionMethods
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 memoryStream.Position = 0;
-                return (encoding ?? Encoding.Default).GetString(memoryStream.ToArray());
+                return (encoding ?? Encoding.Unicode).GetString(memoryStream.ToArray());
             }
         }
 
@@ -774,7 +774,7 @@ namespace DevLib.ExtensionMethods
 
             DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(type) : new DataContractJsonSerializer(type, knownTypes);
 
-            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
+            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Unicode).GetBytes(source)))
             {
                 memoryStream.Position = 0;
                 return dataContractJsonSerializer.ReadObject(memoryStream);
@@ -816,7 +816,7 @@ namespace DevLib.ExtensionMethods
 
             DataContractJsonSerializer dataContractJsonSerializer = new DataContractJsonSerializer(sourceType, knownTypes);
 
-            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
+            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Unicode).GetBytes(source)))
             {
                 memoryStream.Position = 0;
                 return dataContractJsonSerializer.ReadObject(memoryStream);
@@ -918,7 +918,7 @@ namespace DevLib.ExtensionMethods
 
             DataContractJsonSerializer dataContractJsonSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractJsonSerializer(typeof(T)) : new DataContractJsonSerializer(typeof(T), knownTypes);
 
-            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Default).GetBytes(source)))
+            using (MemoryStream memoryStream = new MemoryStream((encoding ?? Encoding.Unicode).GetBytes(source)))
             {
                 memoryStream.Position = 0;
                 return (T)dataContractJsonSerializer.ReadObject(memoryStream);

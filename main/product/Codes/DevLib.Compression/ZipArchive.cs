@@ -191,15 +191,15 @@ namespace DevLib.Compression
         /// Creates an empty entry that has the specified path and entry name in the zip archive.
         /// </summary>
         /// <param name="entryName">A path, relative to the root of the archive, that specifies the name of the entry to be created.</param>
-        /// <param name="isIsDirectory">true to include this entry is a directory; false to include this entry is a file.</param>
+        /// <param name="isDirectory">true to include this entry is a directory; false to include this entry is a file.</param>
         /// <returns>An empty entry in the zip archive.</returns>
         /// <exception cref="T:System.ArgumentException"><paramref name="entryName"/> is <see cref="F:System.String.Empty"/>.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="entryName"/> is null.</exception>
         /// <exception cref="T:System.NotSupportedException">The zip archive does not support writing.</exception>
         /// <exception cref="T:System.ObjectDisposedException">The zip archive has been disposed.</exception>
-        public ZipArchiveEntry CreateEntry(string entryName, bool isIsDirectory)
+        public ZipArchiveEntry CreateEntry(string entryName, bool isDirectory)
         {
-            return this.CreateEntry(entryName, isIsDirectory ? FileAttributes.Directory : FileAttributes.Normal);
+            return this.CreateEntry(entryName, isDirectory ? FileAttributes.Directory : FileAttributes.Normal);
         }
 
         /// <summary>

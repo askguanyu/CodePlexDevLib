@@ -8,6 +8,7 @@ namespace DevLib.Configuration
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Text;
     using System.Threading;
 
     /// <summary>
@@ -16,9 +17,19 @@ namespace DevLib.Configuration
     public sealed class IniEntry
     {
         /// <summary>
+        /// Field CommentKeyStringFormat.
+        /// </summary>
+        private const string CommentKeyStringFormat = "[Key1][{0}][Key2][{1}]";
+
+        /// <summary>
         /// Field _readerWriterLock.
         /// </summary>
         private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
+
+        /// <summary>
+        /// Field _comments.
+        /// </summary>
+        private Dictionary<string, string> _comments = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IniEntry" /> class.
@@ -28,7 +39,7 @@ namespace DevLib.Configuration
         {
             this.IniFile = iniFile;
 
-            this.Sections = new Dictionary<string, Dictionary<string, string>>();
+            this.Sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
             try
             {
@@ -103,38 +114,6 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
-        /// Sets value for specified section.
-        /// </summary>
-        /// <param name="section">A string specifying the section.</param>
-        /// <param name="properties">The value to set.</param>
-        public void SetSection(string section, IDictionary<string, string> properties = null)
-        {
-            this.CheckNullValue(section);
-
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
-            {
-                if (!this.Sections.ContainsKey(section))
-                {
-                    this.Sections[section] = new Dictionary<string, string>();
-                }
-
-                if (properties != null && properties.Count > 0)
-                {
-                    foreach (var item in properties)
-                    {
-                        this.Sections[section][item.Key] = item.Value;
-                    }
-                }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
-        }
-
-        /// <summary>
         /// Gets value of specified section.
         /// </summary>
         /// <param name="section">A string specifying the section.</param>
@@ -153,7 +132,39 @@ namespace DevLib.Configuration
                 }
                 else
                 {
-                    return new Dictionary<string, string>(this.Sections[section]);
+                    return new Dictionary<string, string>(this.Sections[section], StringComparer.OrdinalIgnoreCase);
+                }
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
+        }
+
+        /// <summary>
+        /// Sets value for specified section.
+        /// </summary>
+        /// <param name="section">A string specifying the section.</param>
+        /// <param name="properties">The value to set.</param>
+        public void SetSection(string section, IDictionary<string, string> properties = null)
+        {
+            this.CheckNullValue(section);
+
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
+            {
+                if (!this.Sections.ContainsKey(section))
+                {
+                    this.Sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                if (properties != null && properties.Count > 0)
+                {
+                    foreach (var item in properties)
+                    {
+                        this.Sections[section][item.Key] = item.Value;
+                    }
                 }
             }
             finally
@@ -175,35 +186,7 @@ namespace DevLib.Configuration
             try
             {
                 this.Sections.Remove(section);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
-        }
-
-        /// <summary>
-        /// Sets value for specified key.
-        /// </summary>
-        /// <param name="section">A string specifying the section.</param>
-        /// <param name="key">A string specifying the key.</param>
-        /// <param name="value">An object specifying the value.</param>
-        public void SetValue(string section, string key, object value)
-        {
-            this.CheckNullValue(section);
-
-            this.CheckNullValue(key);
-
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
-            {
-                if (!this.Sections.ContainsKey(section))
-                {
-                    this.Sections[section] = new Dictionary<string, string>();
-                }
-
-                this.Sections[section][key] = XmlConverter.ToString(value);
+                this._comments.Remove(string.Format(CommentKeyStringFormat, section, string.Empty));
             }
             finally
             {
@@ -355,6 +338,35 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
+        /// Sets value for specified key.
+        /// </summary>
+        /// <param name="section">A string specifying the section.</param>
+        /// <param name="key">A string specifying the key.</param>
+        /// <param name="value">An object specifying the value.</param>
+        public void SetValue(string section, string key, object value)
+        {
+            this.CheckNullValue(section);
+
+            this.CheckNullValue(key);
+
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
+            {
+                if (!this.Sections.ContainsKey(section))
+                {
+                    this.Sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                this.Sections[section][key] = XmlConverter.ToString(value);
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
+        }
+
+        /// <summary>
         /// Removes a property by key.
         /// </summary>
         /// <param name="section">A string specifying the section.</param>
@@ -372,7 +384,92 @@ namespace DevLib.Configuration
                 if (this.Sections.ContainsKey(section))
                 {
                     this.Sections[section].Remove(key);
+                    this._comments.Remove(string.Format(CommentKeyStringFormat, section, key));
                 }
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
+        }
+
+        /// <summary>
+        /// Gets comment for specified section and key.
+        /// </summary>
+        /// <param name="section">A string specifying the section.</param>
+        /// <param name="key">A string specifying the key. If null or string.Empty, only get comment for the section.</param>
+        /// <param name="refresh">Whether refresh ini before gets comment.</param>
+        /// <returns>The comment string. string.Empty will return if no comments.</returns>
+        public string GetComment(string section, string key = null, bool refresh = false)
+        {
+            this.CheckNullValue(section);
+
+            if (refresh)
+            {
+                this.Refresh();
+            }
+
+            string commentKey = string.Format(CommentKeyStringFormat, section, key ?? string.Empty);
+
+            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
+
+            try
+            {
+                if (this._comments.ContainsKey(commentKey))
+                {
+                    return this._comments[commentKey];
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseReaderLock();
+            }
+        }
+
+        /// <summary>
+        /// Sets comment for specified section and key.
+        /// </summary>
+        /// <param name="section">A string specifying the section.</param>
+        /// <param name="key">A string specifying the key. If null or string.Empty, only set comment for the section.</param>
+        /// <param name="value">The comment string.</param>
+        public void SetComment(string section, string key, string value)
+        {
+            this.CheckNullValue(section);
+
+            string commentKey = string.Format(CommentKeyStringFormat, section, key ?? string.Empty);
+
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
+            {
+                this._comments[commentKey] = value ?? string.Empty;
+            }
+            finally
+            {
+                this._readerWriterLock.ReleaseWriterLock();
+            }
+        }
+
+        /// <summary>
+        /// Removes a comment by key.
+        /// </summary>
+        /// <param name="section">A string specifying the section.</param>
+        /// <param name="key">A string specifying the key. If null or string.Empty, only remove comment for the section.</param>
+        public void RemoveComment(string section, string key = null)
+        {
+            this.CheckNullValue(section);
+
+            string commentKey = string.Format(CommentKeyStringFormat, section, key ?? string.Empty);
+
+            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
+
+            try
+            {
+                this._comments.Remove(commentKey);
             }
             finally
             {
@@ -390,6 +487,7 @@ namespace DevLib.Configuration
             try
             {
                 this.Sections.Clear();
+                this._comments.Clear();
             }
             catch (Exception e)
             {
@@ -492,6 +590,7 @@ namespace DevLib.Configuration
             try
             {
                 this.Sections.Clear();
+                this._comments.Clear();
 
                 this.InternalLoad();
             }
@@ -519,6 +618,8 @@ namespace DevLib.Configuration
 
             try
             {
+                this._comments.Clear();
+
                 this.InternalLoad();
             }
             catch (Exception e)
@@ -599,29 +700,46 @@ namespace DevLib.Configuration
 
                 string section = null;
 
+                StringBuilder comments = new StringBuilder();
+
                 while (streamReader.Peek() >= 0)
                 {
                     string line = streamReader.ReadLine().Trim();
 
-                    if (!string.IsNullOrEmpty(line) && !line.StartsWith(";", StringComparison.OrdinalIgnoreCase) && !line.StartsWith("#", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(line))
                     {
-                        if (line.StartsWith("[", StringComparison.OrdinalIgnoreCase) && line.EndsWith("]", StringComparison.OrdinalIgnoreCase))
+                        if (line.StartsWith(";", StringComparison.OrdinalIgnoreCase) || line.StartsWith("#", StringComparison.OrdinalIgnoreCase))
                         {
-                            section = line.TrimStart('[').TrimEnd(']');
-
-                            if (!this.Sections.ContainsKey(section))
-                            {
-                                this.Sections[section] = new Dictionary<string, string>();
-                            }
+                            comments.AppendLine(line);
                         }
-                        else if (!string.IsNullOrEmpty(section) && !line.StartsWith("=", StringComparison.OrdinalIgnoreCase) && line.Contains("="))
+                        else
                         {
-                            int index = line.IndexOf("=", StringComparison.OrdinalIgnoreCase);
+                            if (line.StartsWith("[", StringComparison.OrdinalIgnoreCase) && line.EndsWith("]", StringComparison.OrdinalIgnoreCase))
+                            {
+                                section = line.TrimStart('[').TrimEnd(']');
 
-                            string key = line.Substring(0, index).Trim();
-                            string value = line.Substring(index + 1).Trim();
+                                if (!this.Sections.ContainsKey(section))
+                                {
+                                    this.Sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                                }
 
-                            this.Sections[section][key] = value;
+                                this._comments[string.Format(CommentKeyStringFormat, section, string.Empty)] = comments.ToString();
+
+                                comments.Remove(0, comments.Length);
+                            }
+                            else if (!string.IsNullOrEmpty(section) && !line.StartsWith("=", StringComparison.OrdinalIgnoreCase) && line.Contains("="))
+                            {
+                                int index = line.IndexOf("=", StringComparison.OrdinalIgnoreCase);
+
+                                string key = line.Substring(0, index).Trim();
+                                string value = line.Substring(index + 1).Trim();
+
+                                this.Sections[section][key] = value;
+
+                                this._comments[string.Format(CommentKeyStringFormat, section, key)] = comments.ToString();
+
+                                comments.Remove(0, comments.Length);
+                            }
                         }
                     }
                 }
@@ -672,11 +790,47 @@ namespace DevLib.Configuration
 
                 foreach (var section in this.Sections)
                 {
+                    string sectionCommentKey = string.Format(CommentKeyStringFormat, section, string.Empty);
+                    string sectionComment;
+
+                    if (this._comments.TryGetValue(sectionCommentKey, out sectionComment))
+                    {
+                        if (!string.IsNullOrEmpty(sectionComment))
+                        {
+                            sectionComment = sectionComment.Trim();
+
+                            if (!sectionComment.StartsWith(";", StringComparison.OrdinalIgnoreCase) || !sectionComment.StartsWith("#", StringComparison.OrdinalIgnoreCase))
+                            {
+                                sectionComment = ";" + sectionComment;
+                            }
+
+                            streamWriter.WriteLine(sectionComment);
+                        }
+                    }
+
                     streamWriter.WriteLine("[{0}]", section.Key);
 
-                    foreach (var item in section.Value)
+                    foreach (var key in section.Value)
                     {
-                        streamWriter.WriteLine("{0} = {1}", item.Key, item.Value);
+                        string valueCommentKey = string.Format(CommentKeyStringFormat, section, key);
+                        string valueComment;
+
+                        if (this._comments.TryGetValue(valueCommentKey, out valueComment))
+                        {
+                            if (!string.IsNullOrEmpty(valueComment))
+                            {
+                                valueComment = valueComment.Trim();
+
+                                if (!valueComment.StartsWith(";", StringComparison.OrdinalIgnoreCase) || !valueComment.StartsWith("#", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    valueComment = ";" + valueComment;
+                                }
+
+                                streamWriter.WriteLine(valueComment);
+                            }
+                        }
+
+                        streamWriter.WriteLine("{0} = {1}", key.Key, key.Value);
                     }
 
                     streamWriter.WriteLine();

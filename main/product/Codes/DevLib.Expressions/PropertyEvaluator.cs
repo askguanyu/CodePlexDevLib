@@ -9,7 +9,7 @@ namespace DevLib.Expressions
     using System.Linq.Expressions;
 
     /// <summary>
-    /// Class ExpressionEvaluator to perform extracts the property name from a property expression.
+    /// Class PropertyEvaluator to perform extracts the property name from a property expression.
     /// </summary>
     public static class PropertyEvaluator
     {

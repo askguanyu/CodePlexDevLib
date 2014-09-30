@@ -61,6 +61,7 @@ namespace DevLib.Samples
     using DevLib.Utilities;
     using DevLib.WinForms;
     using DevLib.Xml;
+    using System.Linq.Expressions;
 
     public class Program
     {
@@ -76,7 +77,7 @@ namespace DevLib.Samples
 
                 var result = Benchmark.Run(i =>
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 Benchmark.Run(i =>
@@ -713,6 +714,10 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            string expression1 = PropertyEvaluator.ExtractPropertyName<Company>(p => p.Bosses[3].Home.Street); // will return Bosses[3].Home.Street
+
+            string expression2 = PropertyEvaluator.ExtractPropertyName<Company, int>(p => p.Bosses[3].Home.PostCode); //will return Bosses[3].Home.PostCode
+
             var aaa = "abcdeABCDe".ReplaceAny('W',false,'a','E');
 
             Benchmark.Run(i =>
@@ -2129,6 +2134,23 @@ namespace DevLib.Samples
     {
         public string foo { get; set; }
         public int bar { get; set; }
+    }
+
+    public class Company
+    {
+        public Boss[] Bosses { get; set; }
+    }
+
+    public class Boss
+    {
+        public string Name { get; set; }
+        public Address Home { get; set; }
+    }
+
+    public class Address
+    {
+        public int PostCode { get; set; }
+        public string Street { get; set; }
     }
 
     [TypeConverterAttribute(typeof(ExpandableObjectConverter<SpellingOptions>))]

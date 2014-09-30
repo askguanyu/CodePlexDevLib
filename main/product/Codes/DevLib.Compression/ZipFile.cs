@@ -35,7 +35,7 @@ namespace DevLib.Compression
         }
 
         /// <summary>
-        ///  Opens a zip archive at the specified path and in the specified mode.
+        /// Opens a zip archive at the specified path and in the specified mode.
         /// </summary>
         /// <param name="archiveFileName">The path to the archive to open, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="mode">One of the enumeration values that specifies the actions which are allowed on the entries in the opened archive.</param>
@@ -77,6 +77,7 @@ namespace DevLib.Compression
             FileMode mode2;
             FileAccess access;
             FileShare share;
+
             switch (mode)
             {
                 case ZipArchiveMode.Read:
@@ -100,6 +101,7 @@ namespace DevLib.Compression
 
             FileStream fileStream = null;
             ZipArchive result;
+
             try
             {
                 fileStream = File.Open(archiveFileName, mode2, access, share);
@@ -225,6 +227,14 @@ namespace DevLib.Compression
             }
         }
 
+        /// <summary>
+        /// Creates a zip archive that contains the files and directories from the specified directory, uses the specified compression level and character encoding for entry names, and optionally includes the base directory.
+        /// </summary>
+        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="destinationArchiveFileName">The path of the archive to be created, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="includeBaseDirectory">true to include the directory name from <paramref name="sourceDirectoryName"/> at the root of the archive; false to include only the contents of the directory.</param>
+        /// <param name="includeSubDirectories">true to include all subdirectories from <paramref name="sourceDirectoryName"/>; false to include only the contents of the top directory.</param>
+        /// <param name="entryNameEncoding">The encoding to use when reading or writing entry names in this archive. Specify a value for this parameter only when required for interoperability with ZIP archive tools and libraries that do not support UTF-8 encoding for entry names.</param>
         private static void DoCreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, bool includeBaseDirectory, bool includeSubDirectories, Encoding entryNameEncoding)
         {
             if (sourceDirectoryName == null)
@@ -264,7 +274,6 @@ namespace DevLib.Compression
                 if (includeSubDirectories)
                 {
                     list.AddRange(directoryInfo.GetDirectories("*", SearchOption.AllDirectories));
-
                     list.AddRange(directoryInfo.GetFiles("*", SearchOption.AllDirectories));
                 }
                 else

@@ -18,6 +18,7 @@ namespace DevLib.Samples
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Management;
     using System.Net;
     using System.Net.NetworkInformation;
@@ -61,7 +62,6 @@ namespace DevLib.Samples
     using DevLib.Utilities;
     using DevLib.WinForms;
     using DevLib.Xml;
-    using System.Linq.Expressions;
 
     public class Program
     {

@@ -212,7 +212,7 @@ namespace DevLib.ServiceProcess
                 if (this._consoleStatus == ServiceControllerStatus.Stopped)
                 {
                     this._consoleStatus = ServiceControllerStatus.StartPending;
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
 
                     try
                     {
@@ -226,7 +226,7 @@ namespace DevLib.ServiceProcess
                     }
                 }
 
-                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
             }
             else
             {
@@ -234,11 +234,11 @@ namespace DevLib.ServiceProcess
                 {
                     if (this.ServiceStatus == ServiceControllerStatus.Stopped)
                     {
-                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                         WindowsServiceBase.Start(this._setupInfo.ServiceName, this._args);
                     }
 
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                 }
                 else
                 {
@@ -259,7 +259,7 @@ namespace DevLib.ServiceProcess
                 if (this._consoleStatus == ServiceControllerStatus.Running || this._consoleStatus == ServiceControllerStatus.Paused)
                 {
                     this._consoleStatus = ServiceControllerStatus.StopPending;
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
 
                     try
                     {
@@ -273,7 +273,7 @@ namespace DevLib.ServiceProcess
                     }
                 }
 
-                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
             }
             else
             {
@@ -281,11 +281,11 @@ namespace DevLib.ServiceProcess
                 {
                     if (this.ServiceStatus == ServiceControllerStatus.Running || this.ServiceStatus == ServiceControllerStatus.Paused)
                     {
-                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                         WindowsServiceBase.Stop(this._setupInfo.ServiceName);
                     }
 
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                 }
                 else
                 {
@@ -306,7 +306,7 @@ namespace DevLib.ServiceProcess
                 if (this._consoleStatus == ServiceControllerStatus.Running)
                 {
                     this._consoleStatus = ServiceControllerStatus.PausePending;
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
 
                     try
                     {
@@ -320,7 +320,7 @@ namespace DevLib.ServiceProcess
                     }
                 }
 
-                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
             }
             else
             {
@@ -328,11 +328,11 @@ namespace DevLib.ServiceProcess
                 {
                     if (this.ServiceStatus == ServiceControllerStatus.Running)
                     {
-                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                         WindowsServiceBase.Pause(this._setupInfo.ServiceName);
                     }
 
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                 }
                 else
                 {
@@ -353,7 +353,7 @@ namespace DevLib.ServiceProcess
                 if (this._consoleStatus == ServiceControllerStatus.Paused)
                 {
                     this._consoleStatus = ServiceControllerStatus.ContinuePending;
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
 
                     try
                     {
@@ -367,7 +367,7 @@ namespace DevLib.ServiceProcess
                     }
                 }
 
-                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
             }
             else
             {
@@ -375,11 +375,11 @@ namespace DevLib.ServiceProcess
                 {
                     if (this.ServiceStatus == ServiceControllerStatus.Paused)
                     {
-                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                        this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                         WindowsServiceBase.Continue(this._setupInfo.ServiceName);
                     }
 
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                 }
                 else
                 {
@@ -398,7 +398,7 @@ namespace DevLib.ServiceProcess
             if (this.IsConsoleMode)
             {
                 this._consoleStatus = ServiceControllerStatus.StartPending;
-                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
 
                 try
                 {
@@ -414,16 +414,16 @@ namespace DevLib.ServiceProcess
                     this._consoleStatus = originalConsoleStatus;
                 }
 
-                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus));
+                this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this._consoleStatus.ToString()));
             }
             else
             {
                 if (WindowsServiceBase.ServiceExists(this._setupInfo.ServiceName))
                 {
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                     WindowsServiceBase.Stop(this._setupInfo.ServiceName);
                     WindowsServiceBase.Start(this._setupInfo.ServiceName, this._args);
-                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus));
+                    this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                 }
                 else
                 {

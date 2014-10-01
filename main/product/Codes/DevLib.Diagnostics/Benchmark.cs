@@ -123,7 +123,7 @@ namespace DevLib.Diagnostics
 
             for (int i = 0; i < gcArrayLength; i++)
             {
-                gcTitleArray[gcArrayLength - 1 - i] = string.Format("G{0}", i);
+                gcTitleArray[gcArrayLength - 1 - i] = string.Format("G{0}", i.ToString());
                 gcResultArray[gcArrayLength - 1 - i] = gcCountArray[i].ToString();
             }
 
@@ -140,7 +140,7 @@ namespace DevLib.Diagnostics
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.BackgroundColor = ConsoleColor.Black;
-            string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", stopwatch.ElapsedMilliseconds, threadTime / 10000L, cpuCycles, string.Join("/", gcResultArray));
+            string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", stopwatch.ElapsedMilliseconds.ToString(), (threadTime / 10000L).ToString(), cpuCycles.ToString(), string.Join("/", gcResultArray));
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 

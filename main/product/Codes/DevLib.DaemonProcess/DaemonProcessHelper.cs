@@ -31,7 +31,7 @@ namespace DevLib.DaemonProcess
 
             try
             {
-                managementObjectSearcher = new ManagementObjectSearcher(string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", processId));
+                managementObjectSearcher = new ManagementObjectSearcher(string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", processId.ToString()));
 
                 foreach (ManagementObject managementObject in managementObjectSearcher.Get())
                 {

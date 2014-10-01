@@ -71,6 +71,8 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
+            InternalLogger.Log("Begin");
+
             Benchmark.Run(delegate
             {
                 PrintStartInfo();
@@ -177,6 +179,8 @@ namespace DevLib.Samples
 
                 PrintExitInfo();
             }, 1, "DevLib.Samples");
+
+            InternalLogger.Log("End");
         }
 
         private static void TestCsv()

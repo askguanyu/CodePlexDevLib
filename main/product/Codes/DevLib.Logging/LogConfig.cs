@@ -66,13 +66,13 @@ namespace DevLib.Logging
             return string.Format(
                 "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
                 Path.GetFullPath(this.LogFile),
-                this.LoggerSetup.Level,
-                this.LoggerSetup.RollingByDate,
-                this.LoggerSetup.RollingFileCountLimit,
-                this.LoggerSetup.RollingFileSizeLimit,
-                this.LoggerSetup.UseBracket,
-                this.LoggerSetup.WriteToConsole,
-                this.LoggerSetup.WriteToFile).ToUpperInvariant().GetHashCode();
+                this.LoggerSetup.Level.ToString(),
+                this.LoggerSetup.RollingByDate.ToString(),
+                this.LoggerSetup.RollingFileCountLimit.ToString(),
+                this.LoggerSetup.RollingFileSizeLimit.ToString(),
+                this.LoggerSetup.UseBracket.ToString(),
+                this.LoggerSetup.WriteToConsole.ToString(),
+                this.LoggerSetup.WriteToFile.ToString()).ToUpperInvariant().GetHashCode();
         }
     }
 }

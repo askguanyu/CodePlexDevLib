@@ -27,11 +27,11 @@ namespace DevLib.Diagnostics
             if (exception != null)
             {
                 string message = string.Format(
-                    "{0}|{1}|{2}|{3,3}| [{4}] |{5}",
+                    "{0}|{1}|{2}|{3}| [{4}] |{5}",
                     DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture),
                     "EXCP",
                     Environment.UserName,
-                    Thread.CurrentThread.ManagedThreadId,
+                    Thread.CurrentThread.ManagedThreadId.ToString("000"),
                     exception.ToString(),
                     GetStackFrameInfo(1));
 

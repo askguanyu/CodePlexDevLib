@@ -652,23 +652,23 @@ namespace DevLib.ExtensionMethods
 
             if (fileSize >= 1099511627776D)
             {
-                return string.Format("{0:########0.00} TB", fileSize / 1099511627776D);
+                return (fileSize / 1099511627776D).ToString("########0.00") + " TB";
             }
             else if (fileSize >= 1073741824D)
             {
-                return string.Format("{0:########0.00} GB", fileSize / 1073741824D);
+                return (fileSize / 1073741824D).ToString("########0.00") + " GB";
             }
             else if (fileSize >= 1048576D)
             {
-                return string.Format("{0:####0.00} MB", fileSize / 1048576D);
+                return (fileSize / 1048576D).ToString("####0.00") + " MB";
             }
             else if (fileSize >= 1024D)
             {
-                return string.Format("{0:####0.00} KB", fileSize / 1024D);
+                return (fileSize / 1024D).ToString("####0.00") + " KB";
             }
             else
             {
-                return string.Format("{0:####0.00} bytes", fileSize);
+                return fileSize.ToString("####0.00") + " bytes";
             }
         }
 

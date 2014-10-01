@@ -571,7 +571,7 @@ namespace DevLib.ServiceModel
         {
             if (fromCaching)
             {
-                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
+                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, binding.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 Lock.AcquireReaderLock(Timeout.Infinite);
 
@@ -634,7 +634,7 @@ namespace DevLib.ServiceModel
         {
             if (fromCaching)
             {
-                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
+                string key = string.Format(WcfClientProxyDictionaryKeyStringFormat, bindingType.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 Lock.AcquireReaderLock(Timeout.Infinite);
 

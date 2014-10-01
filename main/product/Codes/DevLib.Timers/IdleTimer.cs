@@ -45,10 +45,10 @@ namespace DevLib.Timers
         /// <summary>
         /// Initializes a new instance of the <see cref="IdleTimer" /> class.
         /// </summary>
-        /// <param name="idleTimeout">The timeout in milliseconds when user is idle state. IdleTimer is disabled if timeout is zero.</param>
+        /// <param name="idleTimeout">The timeout in milliseconds when user is idle state. IdleTimer is disabled if timeout is less than or equal to zero (0).</param>
         /// <param name="startNow">true if immediately start IdleTimer; otherwise, false.</param>
         /// <param name="autoStop">Whether stop current IdleTimer when IdleOccurred event raised.</param>
-        public IdleTimer(uint idleTimeout, bool startNow = false, bool autoStop = true)
+        public IdleTimer(long idleTimeout, bool startNow = false, bool autoStop = true)
         {
             this.IdleTimeout = idleTimeout;
 
@@ -78,7 +78,7 @@ namespace DevLib.Timers
         /// <summary>
         /// Gets or sets user idle state timeout in milliseconds.
         /// </summary>
-        public uint IdleTimeout
+        public long IdleTimeout
         {
             get;
             set;

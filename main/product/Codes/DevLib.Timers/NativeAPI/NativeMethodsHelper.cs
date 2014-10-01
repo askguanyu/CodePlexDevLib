@@ -17,9 +17,9 @@ namespace DevLib.Timers.NativeAPI
         /// Method GetLastInputTime.
         /// </summary>
         /// <returns>The time in milliseconds since last user input.</returns>
-        public static uint GetLastInputTime()
+        public static long GetLastInputTime()
         {
-            uint idleTime = 0;
+            long idleTime = 0;
 
             LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
             lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);

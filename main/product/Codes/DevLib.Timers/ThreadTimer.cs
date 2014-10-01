@@ -19,6 +19,11 @@ namespace DevLib.Timers
         private bool _disposed = false;
 
         /// <summary>
+        /// Field _interval.
+        /// </summary>
+        private long _interval = 0;
+
+        /// <summary>
         /// Field _timer.
         /// </summary>
         private System.Threading.Timer _timer;
@@ -34,9 +39,9 @@ namespace DevLib.Timers
         /// <summary>
         /// Initializes a new instance of the <see cref="ThreadTimer" /> class.
         /// </summary>
-        /// <param name="interval">The time, in milliseconds, between events. If interval is zero (0), the event is raised once.</param>
+        /// <param name="interval">The time, in milliseconds, between events. If interval is less than or equal to zero (0), the event is raised once.</param>
         /// <param name="firstStartTime">The time to delay before event is raised. If less than or equal to DateTime.Now, the timer will start immediately.</param>
-        public ThreadTimer(uint interval, DateTime firstStartTime = default(DateTime))
+        public ThreadTimer(long interval, DateTime firstStartTime = default(DateTime))
         {
             this.Interval = interval;
             this.FirstStartTime = firstStartTime;
@@ -57,12 +62,19 @@ namespace DevLib.Timers
         public event EventHandler Elapsed;
 
         /// <summary>
-        /// Gets or sets the interval in milliseconds at which to raise the <see cref="E:Elapsed" /> event. If interval is zero (0), the event is raised once.
+        /// Gets or sets the interval in milliseconds at which to raise the <see cref="E:Elapsed" /> event. If interval is less than or equal to zero (0), the event is raised once.
         /// </summary>
-        public uint Interval
+        public long Interval
         {
-            get;
-            set;
+            get
+            {
+                return this._interval;
+            }
+
+            set
+            {
+                this._interval = value < 0 ? Timeout.Infinite : value;
+            }
         }
 
         /// <summary>
@@ -96,7 +108,7 @@ namespace DevLib.Timers
                 {
                     double totalMilliseconds = (this.FirstStartTime - DateTime.Now).TotalMilliseconds;
 
-                    uint dueTime = totalMilliseconds > 0 ? (uint)totalMilliseconds : 0;
+                    long dueTime = totalMilliseconds > 0 ? (long)totalMilliseconds : 0;
 
                     if (this._timer == null)
                     {
@@ -189,7 +201,7 @@ namespace DevLib.Timers
             {
                 double totalMilliseconds = (this.FirstStartTime - DateTime.Now).TotalMilliseconds;
 
-                uint dueTime = totalMilliseconds > 0 ? (uint)totalMilliseconds : 0;
+                long dueTime = totalMilliseconds > 0 ? (long)totalMilliseconds : 0;
 
                 if (this._timer == null)
                 {

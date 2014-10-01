@@ -79,7 +79,7 @@ namespace DevLib.DaemonProcess
 
             StringBuilder stringBuilder = new StringBuilder();
 
-            uint splitSwitch = 0;
+            int splitSwitch = 0;
 
             foreach (char item in args.Trim())
             {
@@ -167,7 +167,7 @@ namespace DevLib.DaemonProcess
 
             StringBuilder stringBuilder = new StringBuilder();
 
-            uint splitSwitch = 0;
+            int splitSwitch = 0;
 
             foreach (char item in args.Trim())
             {

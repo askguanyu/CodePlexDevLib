@@ -431,7 +431,7 @@ namespace DevLib.AddIn
                 //// args[3] = AddInDomainSetup file
                 //// args[4] = Redirect output or not
 
-                this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\" {4}", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id, this._addInDomainSetupFile, this._redirectOutput);
+                this._process.StartInfo.Arguments = string.Format("\"{0}\" {1} {2} \"{3}\" {4}", addInDomainAssemblyPath, guid, Process.GetCurrentProcess().Id.ToString(), this._addInDomainSetupFile, this._redirectOutput.ToString());
                 this.IsRunning = this._process.Start();
 
                 if (!this.IsRunning)

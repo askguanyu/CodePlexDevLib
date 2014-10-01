@@ -30,7 +30,7 @@ namespace DevLib.Logging
             result.AppendFormat("{0}|", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
             result.AppendFormat("{0}|", logLevel.ToString());
             result.AppendFormat("{0}|", Environment.UserName);
-            result.AppendFormat("{0:000}|", Thread.CurrentThread.ManagedThreadId);
+            result.AppendFormat("{0}|", Thread.CurrentThread.ManagedThreadId.ToString("000"));
 
             if (objs != null && objs.Length > 0)
             {

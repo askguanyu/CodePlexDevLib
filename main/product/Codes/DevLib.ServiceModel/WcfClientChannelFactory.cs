@@ -192,7 +192,7 @@ namespace DevLib.ServiceModel
         {
             if (fromCaching)
             {
-                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, binding.GetHashCode(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
+                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, binding.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 Lock.AcquireReaderLock(Timeout.Infinite);
 
@@ -250,7 +250,7 @@ namespace DevLib.ServiceModel
         {
             if (fromCaching)
             {
-                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, bindingType.GetHashCode(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
+                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, bindingType.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 Lock.AcquireReaderLock(Timeout.Infinite);
 

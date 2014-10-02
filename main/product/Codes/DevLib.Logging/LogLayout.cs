@@ -27,10 +27,12 @@ namespace DevLib.Logging
         {
             StringBuilder result = new StringBuilder();
 
-            result.AppendFormat("{0}|", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
-            result.AppendFormat("{0}|", logLevel.ToString());
-            result.AppendFormat("{0}|", Environment.UserName);
-            result.AppendFormat("{0}|", Thread.CurrentThread.ManagedThreadId.ToString("000"));
+            result.AppendFormat(
+                "{0}|{1}|{2}|{3}|",
+                DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture),
+                logLevel.ToString(),
+                Environment.UserName,
+                Thread.CurrentThread.ManagedThreadId.ToString("000"));
 
             if (objs != null && objs.Length > 0)
             {
@@ -50,9 +52,7 @@ namespace DevLib.Logging
                 }
             }
 
-            result.AppendFormat(" |{0}", InternalLogger.GetStackFrameInfo(skipFrames < 1 ? 2 : skipFrames + 2));
-
-            result.Append(Environment.NewLine);
+            result.AppendFormat(" |{0}{1}", InternalLogger.GetStackFrameInfo(skipFrames < 1 ? 2 : skipFrames + 2), Environment.NewLine);
 
             return result.ToString();
         }

@@ -399,10 +399,12 @@ namespace DevLib.AddIn
         {
             StringBuilder result = new StringBuilder();
 
-            result.AppendFormat("{0}|", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
-            result.AppendFormat("{0}|", "INTL");
-            result.AppendFormat("{0}|", Environment.UserName);
-            result.AppendFormat("{0}|", Thread.CurrentThread.ManagedThreadId.ToString("000"));
+            result.AppendFormat(
+                "{0}|{1}|{2}|{3}|",
+                DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture),
+                "INTL",
+                Environment.UserName,
+                Thread.CurrentThread.ManagedThreadId.ToString("000"));
 
             if (objs != null && objs.Length > 0)
             {
@@ -412,8 +414,8 @@ namespace DevLib.AddIn
                 }
             }
 
-            result.AppendFormat(" |{0}", GetStackFrameInfo(2));
-            result.Append(Environment.NewLine);
+            result.AppendFormat(" |{0}{1}", GetStackFrameInfo(2), Environment.NewLine);
+
             return result.ToString();
         }
 

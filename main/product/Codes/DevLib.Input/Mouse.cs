@@ -27,7 +27,7 @@ namespace DevLib.Input
         /// <summary>
         /// Clicks a mouse button.
         /// </summary>
-        /// <param name="mouseButton">The mouse button to click.</param>
+        /// <param name="mouseButton">The mouse button to use.</param>
         public static void Click(MouseButton mouseButton)
         {
             Down(mouseButton);
@@ -37,7 +37,7 @@ namespace DevLib.Input
         /// <summary>
         /// Double-clicks a mouse button.
         /// </summary>
-        /// <param name="mouseButton">The mouse button to click.</param>
+        /// <param name="mouseButton">The mouse button to use.</param>
         public static void DoubleClick(MouseButton mouseButton)
         {
             Click(mouseButton);
@@ -77,6 +77,15 @@ namespace DevLib.Input
         }
 
         /// <summary>
+        /// Moves the mouse pointer to the specified screen coordinates.
+        /// </summary>
+        /// <param name="point">The screen coordinates to move to.</param>
+        public static void MoveTo(Point point)
+        {
+            SendMouseInput(point.X, point.Y, 0, SendMouseInputFlags.Move | SendMouseInputFlags.Absolute);
+        }
+
+        /// <summary>
         /// Drags the mouse pointer to the specified screen coordinates, using the specified mouse button.
         /// Dragging involves pressing and holding the mouse button, moving to the specified location, and releasing the mouse button.
         /// </summary>
@@ -87,15 +96,6 @@ namespace DevLib.Input
             Down(mouseButton);
             MoveTo(point);
             Up(mouseButton);
-        }
-
-        /// <summary>
-        /// Moves the mouse pointer to the specified screen coordinates.
-        /// </summary>
-        /// <param name="point">The screen coordinates to move to.</param>
-        public static void MoveTo(Point point)
-        {
-            SendMouseInput(point.X, point.Y, 0, SendMouseInputFlags.Move | SendMouseInputFlags.Absolute);
         }
 
         /// <summary>

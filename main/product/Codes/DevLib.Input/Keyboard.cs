@@ -264,12 +264,33 @@ namespace DevLib.Input
         /// <summary>
         /// Performs a press-and-release operation for the specified key, which is effectively equivalent to typing.
         /// </summary>
-        /// <param name="key">The key to press.</param>
+        /// <param name="key">The key to type.</param>
         /// <param name="interval">The interval time, in milliseconds, between two keys.</param>
         public static void Type(Key key, int interval = 100)
         {
             Press(key, interval);
             Release(key, interval);
+        }
+
+        /// <summary>
+        /// Types the specified key with modifier keys.
+        /// </summary>
+        /// <param name="key">The key to type.</param>
+        /// <param name="modifierKeys">Modifier keys.</param>
+        /// <param name="interval">The interval time, in milliseconds, between two keys.</param>
+        public static void Type(Key key, Key[] modifierKeys, int interval = 100)
+        {
+            for (int i = 0; i < modifierKeys.Length; i++)
+            {
+                Press(modifierKeys[i], interval);
+            }
+
+            Type(key, interval);
+
+            for (int i = modifierKeys.Length - 1; i >= 0; i--)
+            {
+                Release(modifierKeys[i], interval);
+            }
         }
 
         /// <summary>
@@ -305,27 +326,6 @@ namespace DevLib.Input
                         Type(key, interval);
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Types the specified key.
-        /// </summary>
-        /// <param name="key">The key to type.</param>
-        /// <param name="modifierKeys">Modifier keys.</param>
-        /// <param name="interval">The interval time, in milliseconds, between two keys.</param>
-        public static void Type(Key key, Key[] modifierKeys, int interval = 100)
-        {
-            for (int i = 0; i < modifierKeys.Length; i++)
-            {
-                Press(modifierKeys[i], interval);
-            }
-
-            Type(key, interval);
-
-            for (int i = modifierKeys.Length - 1; i >= 0; i--)
-            {
-                Release(modifierKeys[i], interval);
             }
         }
 

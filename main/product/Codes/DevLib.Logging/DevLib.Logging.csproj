@@ -48,7 +48,6 @@
     <Compile Include="LogConfigManager.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LoggerSetup.cs" />
-    <Compile Include="LoggingConstants.cs" />
     <Compile Include="LogLayout.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogManager.cs" />

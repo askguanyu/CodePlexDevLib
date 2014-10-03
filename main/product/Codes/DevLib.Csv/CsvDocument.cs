@@ -437,7 +437,7 @@ namespace DevLib.Csv
 
                 if (!string.IsNullOrEmpty(line))
                 {
-                    List<string> row = this.SplitNest(line, delimiter, qualifier);
+                    List<string> row = this.SplitNested(line, delimiter, qualifier);
 
                     if (addedHeader)
                     {
@@ -545,7 +545,7 @@ namespace DevLib.Csv
         /// <param name="delimiter">Delimiter character.</param>
         /// <param name="qualifier">Qualifier character.</param>
         /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
-        private List<string> SplitNest(string source, char delimiter, char qualifier)
+        private List<string> SplitNested(string source, char delimiter, char qualifier)
         {
             StringBuilder itemStringBuilder = new StringBuilder();
             List<string> result = new List<string>();

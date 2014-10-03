@@ -718,6 +718,9 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            FooBar fb = ArgumentParser.ParseTo<FooBar>(" /bar:123 --ok -foo=aaa");
+
+
             string expression1 = PropertyEvaluator.ExtractPropertyName<Company>(p => p.Bosses[3].Home.Street); // will return Bosses[3].Home.Street
 
             string expression2 = PropertyEvaluator.ExtractPropertyName<Company, int>(p => p.Bosses[3].Home.PostCode); //will return Bosses[3].Home.PostCode
@@ -2136,8 +2139,14 @@ namespace DevLib.Samples
 
     public class FooBar
     {
+        [Option(Required = true)]
         public string foo { get; set; }
+
+        [Option("b", "bar", "barr", Required = false, DefaultValue = 123)]
         public int bar { get; set; }
+
+        [Option("o", "ok", "okk", DefaultValue = true, Required = true)]
+        public bool IsOk { get; set; }
     }
 
     public class Company

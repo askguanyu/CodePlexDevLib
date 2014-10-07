@@ -181,6 +181,10 @@
       <Project>{80EDAB7E-57DA-4995-A42C-74D09BDEF78F}</Project>
       <Name>DevLib.Reflection</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Remoting\DevLib.Remoting.csproj">
+      <Project>{BD70852E-8B00-452B-A871-174DEE86E056}</Project>
+      <Name>DevLib.Remoting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Serialization\DevLib.Serialization.csproj">
       <Project>{E263E10B-9DF6-44F8-9E58-34338316F08E}</Project>
       <Name>DevLib.Serialization</Name>

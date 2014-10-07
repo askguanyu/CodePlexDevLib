@@ -730,20 +730,18 @@ namespace DevLib.Samples
             fb2.foo = "fb2";
             fb2.bar = 222;
 
-
             FooBar fb3 = RemotingObject<FooBar>.GetObject();
-            string foo3 = fb3.foo;
-            int bar3 = fb3.bar;
-
+            string foo3 = fb3.foo; // fb1
+            int bar3 = fb3.bar; // 111
 
             FooBar fb4 = RemotingObject<FooBar>.GetObject("fb2");
-            string foo4 = fb4.foo;
-            int bar4 = fb4.bar;
+            string foo4 = fb4.foo; //fb2
+            int bar4 = fb4.bar; // 222
 
             RemotingObject<FooBar>.Register();
             FooBar fb5 = RemotingObject<FooBar>.GetObject();
-            string foo5 = fb5.foo;
-            int bar5 = fb5.bar;
+            string foo5 = fb5.foo; // fb1
+            int bar5 = fb5.bar; //111
 
             FooBar fb = ArgumentParser.ParseTo<FooBar>(" /bar:123 --ok -foo=aaa");
 

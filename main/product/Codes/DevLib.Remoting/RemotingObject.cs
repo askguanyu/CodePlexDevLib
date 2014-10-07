@@ -16,6 +16,10 @@ namespace DevLib.Remoting
     /// Provides a mechanism for communicating that allows objects to interact with each other across application domains or processes.
     /// </summary>
     /// <typeparam name="T">Type of the remoting object.</typeparam>
+    /// <remarks>
+    /// To use an object as a remoting object, {T} must be deriving from MarshalByRefObject,
+    /// or making it serializable either by adding the [Serializable] tag or by implementing the ISerializable interface.
+    /// </remarks>
     public static class RemotingObject<T>
     {
         /// <summary>
@@ -27,7 +31,7 @@ namespace DevLib.Remoting
         /// Registers an object on the service end as a well-known type for remoting communication.
         /// </summary>
         /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
-        /// <param name="ignoreCase">true to ignore case when host object by label; otherwise, false.</param>
+        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
         public static void Register(string label = null, bool ignoreCase = false)
         {
             Type objectType = typeof(T);

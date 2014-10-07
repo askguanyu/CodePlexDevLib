@@ -54,6 +54,7 @@ namespace DevLib.Samples
     using DevLib.Net.Sockets;
     using DevLib.Options;
     using DevLib.Reflection;
+    using DevLib.Remoting;
     using DevLib.Serialization;
     using DevLib.ServiceModel;
     using DevLib.ServiceProcess;
@@ -718,6 +719,32 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+
+            RemotingObject<FooBar>.Register();
+            FooBar fb1 = RemotingObject<FooBar>.GetObject();
+            fb1.foo = "fb1";
+            fb1.bar = 111;
+
+            RemotingObject<FooBar>.Register("fb2");
+            FooBar fb2 = RemotingObject<FooBar>.GetObject("fb2");
+            fb2.foo = "fb2";
+            fb2.bar = 222;
+
+
+            FooBar fb3 = RemotingObject<FooBar>.GetObject();
+            string foo3 = fb3.foo;
+            int bar3 = fb3.bar;
+
+
+            FooBar fb4 = RemotingObject<FooBar>.GetObject("fb2");
+            string foo4 = fb4.foo;
+            int bar4 = fb4.bar;
+
+            RemotingObject<FooBar>.Register();
+            FooBar fb5 = RemotingObject<FooBar>.GetObject();
+            string foo5 = fb5.foo;
+            int bar5 = fb5.bar;
+
             FooBar fb = ArgumentParser.ParseTo<FooBar>(" /bar:123 --ok -foo=aaa");
 
 
@@ -2137,7 +2164,7 @@ namespace DevLib.Samples
 
     }
 
-    public class FooBar
+    public class FooBar : MarshalByRefObject
     {
         [Option(Required = true)]
         public string foo { get; set; }

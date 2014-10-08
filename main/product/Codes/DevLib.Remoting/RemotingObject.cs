@@ -94,7 +94,7 @@ namespace DevLib.Remoting
         /// <param name="objectType">Type of the object.</param>
         /// <param name="label">A unique label.</param>
         /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
-        /// <returns>An uri string.</returns>
+        /// <returns>Object uri string.</returns>
         private static string GetObjectUri(Type objectType, string label, bool ignoreCase)
         {
             return string.IsNullOrEmpty(label) ? GetHashString(objectType.AssemblyQualifiedName, ignoreCase) : GetHashString(label, ignoreCase);
@@ -194,7 +194,7 @@ namespace DevLib.Remoting
         /// </summary>
         /// <param name="label">A unique label.</param>
         /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
-        /// <returns>An uri string.</returns>
+        /// <returns>Object uri string.</returns>
         private static string GetObjectUri(string label, bool ignoreCase)
         {
             return string.IsNullOrEmpty(label) ? (ignoreCase ? ObjectTypeHashIgnoreCase : ObjectTypeHash) : GetHashString(label, ignoreCase);

@@ -21,12 +21,7 @@ namespace DevLib.Utilities
         /// <summary>
         /// Field SharedMutexFileNamePrefix.
         /// </summary>
-        private const string SharedMutexFileNamePrefix = @"Global\DevLib.Utilities.MutexUtilities/";
-
-        /// <summary>
-        /// Field MaxMutexNameLength.
-        /// </summary>
-        private const int MaxMutexNameLength = 260;
+        private const string SharedMutexFileNamePrefix = @"Global\DevLibUtilitiesMutexUtilities_";
 
         /// <summary>
         /// Create a global shared mutex.
@@ -58,27 +53,14 @@ namespace DevLib.Utilities
         /// <returns>Mutex name.</returns>
         public static string GetSharedFileMutexName(string filename)
         {
-            string mutexName = new Uri(Path.GetFullPath(filename)).AbsolutePath.ToLowerInvariant();
+            byte[] hash;
 
-            if (SharedMutexFileNamePrefix.Length + mutexName.Length <= MaxMutexNameLength)
+            using (MD5 hasher = MD5.Create())
             {
-                return SharedMutexFileNamePrefix + mutexName;
+                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(Path.GetFullPath(filename).ToLowerInvariant()));
             }
-            else
-            {
-                string hash;
 
-                using (MD5 md5 = MD5.Create())
-                {
-                    byte[] bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(mutexName));
-
-                    hash = Convert.ToBase64String(bytes);
-                }
-
-                int index = mutexName.Length - (MaxMutexNameLength - SharedMutexFileNamePrefix.Length - hash.Length);
-
-                return SharedMutexFileNamePrefix + hash + mutexName.Substring(index);
-            }
+            return SharedMutexFileNamePrefix + BitConverter.ToString(hash).Replace("-", string.Empty);
         }
     }
 }

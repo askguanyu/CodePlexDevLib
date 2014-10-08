@@ -37,25 +37,45 @@ namespace DevLib.ExtensionMethods
         /// Convert bytes to Hex string.
         /// </summary>
         /// <param name="source">Byte array.</param>
-        /// <param name="addSpace">Whether add space between Hex.</param>
+        /// <param name="delimiter">Delimiter character.</param>
         /// <returns>Hex string.</returns>
-        public static string ToHexString(this IEnumerable<byte> source, bool addSpace = true)
+        public static string ToHexString(this IList<byte> source, char? delimiter = null)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            IEnumerator<byte> enumerator = source.GetEnumerator();
+            char[] result = new char[source.Count * 2];
 
-            List<string> result = new List<string>();
+            byte tempByte;
 
-            while (enumerator.MoveNext())
+            for (int bx = 0, cx = 0; bx < source.Count; ++bx, ++cx)
             {
-                result.Add(string.Format("{0:X2}", enumerator.Current));
+                tempByte = (byte)(source[bx] >> 4);
+                result[cx] = (char)(tempByte > 9 ? tempByte + 0x37 + 0x20 : tempByte + 0x30);
+
+                tempByte = (byte)(source[bx] & 0x0F);
+                result[++cx] = (char)(tempByte > 9 ? tempByte + 0x37 + 0x20 : tempByte + 0x30);
             }
 
-            return string.Join(addSpace ? " " : string.Empty, result.ToArray());
+            if (delimiter != null)
+            {
+                char[] resultWithDelimiter = new char[(source.Count * 3)];
+
+                for (int i = 0; i < source.Count; i++)
+                {
+                    resultWithDelimiter[i * 3] = result[i * 2];
+                    resultWithDelimiter[(i * 3) + 1] = result[(i * 2) + 1];
+                    resultWithDelimiter[(i * 3) + 2] = delimiter.Value;
+                }
+
+                return new string(resultWithDelimiter).TrimEnd(delimiter.Value).ToUpperInvariant();
+            }
+            else
+            {
+                return new string(result).ToUpperInvariant();
+            }
         }
 
         /// <summary>

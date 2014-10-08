@@ -9,7 +9,6 @@ namespace DevLib.ExtensionMethods
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
 
     /// <summary>
     /// String Extensions.
@@ -21,28 +20,28 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">Hex string.</param>
         /// <returns>Byte array.</returns>
-        public static byte[] ToHexByteArray(this string source)
+        public static byte[] HexToBytes(this string source)
         {
-            string hexPattern = "^[0-9a-fA-F]+$";
-
             string temp = source.RemoveAny(false, ' ', '\n', '\r');
-
-            if (!Regex.IsMatch(temp, hexPattern))
-            {
-                throw new ArgumentException(string.Format("\"{0}\" is not a Hex String.", source));
-            }
 
             if (source.Length % 2 == 1)
             {
                 temp = "0" + temp;
             }
 
-            int resultLength = temp.Length / 2;
-            byte[] result = new byte[resultLength];
+            byte[] result = new byte[temp.Length / 2];
 
-            for (int i = 0; i < resultLength; i++)
+            char tempChar;
+
+            for (int bx = 0, sx = 0; bx < result.Length; ++bx, ++sx)
             {
-                result[i] = Convert.ToByte(temp.Substring(i * 2, 2), 16);
+                // Convert first half of byte
+                tempChar = temp[sx];
+                result[bx] = (byte)((tempChar > '9' ? (tempChar > 'Z' ? (tempChar - 'a' + 10) : (tempChar - 'A' + 10)) : (tempChar - '0')) << 4);
+
+                // Convert second half of byte
+                tempChar = temp[++sx];
+                result[bx] |= (byte)(tempChar > '9' ? (tempChar > 'Z' ? (tempChar - 'a' + 10) : (tempChar - 'A' + 10)) : (tempChar - '0'));
             }
 
             return result;
@@ -521,7 +520,7 @@ namespace DevLib.ExtensionMethods
         {
             byte[] buffer = Convert.FromBase64String(source);
 
-            return System.Text.Encoding.UTF8.GetString(buffer);
+            return Encoding.Unicode.GetString(buffer);
         }
 
         /// <summary>
@@ -531,7 +530,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>A base64 encoded string.</returns>
         public static string Base64Encode(this string source)
         {
-            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(source);
+            byte[] buffer = Encoding.Unicode.GetBytes(source);
 
             return Convert.ToBase64String(buffer);
         }

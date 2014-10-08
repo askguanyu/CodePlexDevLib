@@ -72,8 +72,8 @@ namespace DevLib.Samples
         [STAThread]
         public static void Main(string[] args)
         {
-            InternalLogger.Log("Begin");
-            LogManager.Open().Log("Begin");
+            InternalLogger.Log("Begin InternalLogger");
+            LogManager.Open().Log("Begin LogManager");
 
             Benchmark.Run(delegate
             {

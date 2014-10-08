@@ -173,9 +173,9 @@
       <Project>{CF145C2E-642F-4EFA-A03D-96B5082E6650}</Project>
       <Name>DevLib.Net</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DevLib.Options\DevLib.Options.csproj">
-      <Project>{9945CE70-DEA8-4CE0-BB81-4B8D96EB4BAA}</Project>
-      <Name>DevLib.Options</Name>
+    <ProjectReference Include="..\DevLib.Parameters\DevLib.Parameters.csproj">
+      <Project>{2EDCA3CE-68F5-4B8D-B145-A7747C185E0F}</Project>
+      <Name>DevLib.Parameters</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.Reflection\DevLib.Reflection.csproj">
       <Project>{80EDAB7E-57DA-4995-A42C-74D09BDEF78F}</Project>

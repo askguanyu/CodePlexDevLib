@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="OptionAttribute.cs" company="YuGuan Corporation">
+// <copyright file="ParameterAttribute.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Options
+namespace DevLib.Parameters
 {
     using System;
 
@@ -11,21 +11,21 @@ namespace DevLib.Options
     /// Attribute for argument properties.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public sealed class OptionAttribute : Attribute
+    public sealed class ParameterAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="OptionAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ParameterAttribute" /> class.
         /// </summary>
-        public OptionAttribute()
+        public ParameterAttribute()
             : this(null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OptionAttribute" /> class.
+        /// Initializes a new instance of the <see cref="ParameterAttribute" /> class.
         /// </summary>
         /// <param name="alias">Argument alias.</param>
-        public OptionAttribute(params string[] alias)
+        public ParameterAttribute(params string[] alias)
         {
             this.Alias = alias;
             this.Required = false;

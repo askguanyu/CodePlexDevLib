@@ -6,6 +6,7 @@
 namespace DevLib.Remoting
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Channels;
     using System.Runtime.Remoting.Channels.Ipc;
@@ -20,6 +21,7 @@ namespace DevLib.Remoting
     /// To use an object as a remoting object, object type must be deriving from MarshalByRefObject,
     /// or making it serializable either by adding the [Serializable] tag or by implementing the ISerializable interface.
     /// </remarks>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public static class RemotingObject
     {
         /// <summary>
@@ -107,6 +109,7 @@ namespace DevLib.Remoting
     /// To use an object as a remoting object, object type must be deriving from MarshalByRefObject,
     /// or making it serializable either by adding the [Serializable] tag or by implementing the ISerializable interface.
     /// </remarks>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public static class RemotingObject<T>
     {
         /// <summary>

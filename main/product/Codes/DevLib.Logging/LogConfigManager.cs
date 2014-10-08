@@ -61,7 +61,7 @@ namespace DevLib.Logging
         /// <param name="configFile">Configuration file which contains LogConfig info.</param>
         /// <returns>Instance of LogConfig.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        internal static LogConfig GetLogConfig(string configFile)
+        public static LogConfig GetLogConfig(string configFile)
         {
             LogConfig result = new LogConfig();
 

@@ -21,12 +21,7 @@ namespace DevLib.Logging
         /// <summary>
         /// Field MutexNamePrefix.
         /// </summary>
-        private const string MutexNamePrefix = @"Global\DevLib.Logging/";
-
-        /// <summary>
-        /// Field MaxMutexNameLength.
-        /// </summary>
-        private const int MaxMutexNameLength = 260;
+        private const string MutexNamePrefix = @"Global\DevLibLogging_";
 
         /// <summary>
         /// Field _disposed.
@@ -526,27 +521,14 @@ namespace DevLib.Logging
         /// <returns>Mutex name.</returns>
         private string GetMutexName(string filename)
         {
-            string mutexName = new Uri(Path.GetFullPath(filename)).AbsolutePath.ToLowerInvariant();
+            byte[] hash;
 
-            if (MutexNamePrefix.Length + mutexName.Length <= MaxMutexNameLength)
+            using (MD5 hasher = MD5.Create())
             {
-                return MutexNamePrefix + mutexName;
+                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(Path.GetFullPath(filename).ToLowerInvariant()));
             }
-            else
-            {
-                string hash;
 
-                using (MD5 md5 = MD5.Create())
-                {
-                    byte[] bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(mutexName));
-
-                    hash = Convert.ToBase64String(bytes);
-                }
-
-                int index = mutexName.Length - (MaxMutexNameLength - MutexNamePrefix.Length - hash.Length);
-
-                return MutexNamePrefix + hash + mutexName.Substring(index);
-            }
+            return MutexNamePrefix + BitConverter.ToString(hash).Replace("-", string.Empty);
         }
 
         /// <summary>

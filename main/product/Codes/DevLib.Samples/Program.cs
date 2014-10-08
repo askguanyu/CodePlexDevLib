@@ -73,6 +73,7 @@ namespace DevLib.Samples
         public static void Main(string[] args)
         {
             InternalLogger.Log("Begin");
+            LogManager.Open().Log("Begin");
 
             Benchmark.Run(delegate
             {
@@ -719,7 +720,6 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
-
             RemotingObject<FooBar>.Register();
             FooBar fb1 = RemotingObject<FooBar>.GetObject();
             fb1.foo = "fb1";
@@ -1400,7 +1400,7 @@ namespace DevLib.Samples
             #region Security
             string inputString = "Hello I am secret.".ConsoleOutput();
             inputString.RSAEncrypt("key").ConsoleOutput().RSADecrypt("key").ConsoleOutput();
-            inputString.ToMD5().ConsoleOutput().MD5VerifyToOriginal(inputString).ConsoleOutput();
+            inputString.ToMD5String().ConsoleOutput().MD5VerifyToOriginal(inputString).ConsoleOutput();
 
             #endregion
 
@@ -2172,6 +2172,8 @@ namespace DevLib.Samples
 
         [Option("o", "ok", "okk", DefaultValue = true, Required = true)]
         public bool IsOk { get; set; }
+
+        public bool IsOk2 { get; set; }
     }
 
     public class Company

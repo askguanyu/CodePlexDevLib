@@ -6,21 +6,21 @@
 namespace DevLib.Remoting
 {
     using System;
-    using System.Globalization;
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Channels;
     using System.Runtime.Remoting.Channels.Ipc;
+    using System.Security.Cryptography;
     using System.Security.Permissions;
+    using System.Text;
 
     /// <summary>
     /// Provides a mechanism for communicating that allows objects to interact with each other across application domains or processes.
     /// </summary>
-    /// <typeparam name="T">Type of the remoting object.</typeparam>
     /// <remarks>
-    /// To use an object as a remoting object, {T} must be deriving from MarshalByRefObject,
+    /// To use an object as a remoting object, object type must be deriving from MarshalByRefObject,
     /// or making it serializable either by adding the [Serializable] tag or by implementing the ISerializable interface.
     /// </remarks>
-    public static class RemotingObject<T>
+    public static class RemotingObject
     {
         /// <summary>
         /// Field IpcUrlStringFormat.
@@ -30,24 +30,12 @@ namespace DevLib.Remoting
         /// <summary>
         /// Registers an object on the service end as a well-known type for remoting communication.
         /// </summary>
+        /// <param name="objectType">Type of the object.</param>
         /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
         /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
-        public static void Register(string label = null, bool ignoreCase = false)
+        public static void Register(Type objectType, string label = null, bool ignoreCase = false)
         {
-            Type objectType = typeof(T);
-
-            int objectUriHashCode;
-
-            if (ignoreCase)
-            {
-                objectUriHashCode = string.IsNullOrEmpty(label) ? objectType.AssemblyQualifiedName.ToLowerInvariant().GetHashCode() : label.ToLowerInvariant().GetHashCode();
-            }
-            else
-            {
-                objectUriHashCode = string.IsNullOrEmpty(label) ? objectType.AssemblyQualifiedName.GetHashCode() : label.GetHashCode();
-            }
-
-            string objectUri = objectUriHashCode.ToString(CultureInfo.InvariantCulture);
+            string objectUri = GetObjectUri(objectType, label, ignoreCase);
 
             try
             {
@@ -68,28 +56,145 @@ namespace DevLib.Remoting
         /// <summary>
         /// Creates a proxy for the well-known object indicated by the specified type from remoting service.
         /// </summary>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="label">A unique label that gets the specific instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when get object by label; otherwise, false.</param>
+        /// <returns>The remoting object instance.</returns>
+        [SecurityPermission(SecurityAction.Demand)]
+        public static object GetObject(Type objectType, string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(objectType, label, ignoreCase);
+
+            return Activator.GetObject(objectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
+        }
+
+        /// <summary>
+        /// Gets hash string.
+        /// </summary>
+        /// <param name="value">String to calculate.</param>
+        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
+        /// <returns>A hash string.</returns>
+        private static string GetHashString(string value, bool ignoreCase)
+        {
+            byte[] hash;
+
+            using (MD5 hasher = MD5.Create())
+            {
+                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(ignoreCase ? value.ToLowerInvariant() : value));
+            }
+
+            return BitConverter.ToString(hash).Replace("-", string.Empty);
+        }
+
+        /// <summary>
+        /// Gets object uri.
+        /// </summary>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="label">A unique label.</param>
+        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
+        /// <returns>An uri string.</returns>
+        private static string GetObjectUri(Type objectType, string label, bool ignoreCase)
+        {
+            return string.IsNullOrEmpty(label) ? GetHashString(objectType.AssemblyQualifiedName, ignoreCase) : GetHashString(label, ignoreCase);
+        }
+    }
+
+    /// <summary>
+    /// Provides a mechanism for communicating that allows objects to interact with each other across application domains or processes.
+    /// </summary>
+    /// <typeparam name="T">Type of the remoting object.</typeparam>
+    /// <remarks>
+    /// To use an object as a remoting object, object type must be deriving from MarshalByRefObject,
+    /// or making it serializable either by adding the [Serializable] tag or by implementing the ISerializable interface.
+    /// </remarks>
+    public static class RemotingObject<T>
+    {
+        /// <summary>
+        /// Field IpcUrlStringFormat.
+        /// </summary>
+        private const string IpcUrlStringFormat = "ipc://{0}/{0}";
+
+        /// <summary>
+        /// Field ObjectType.
+        /// </summary>
+        private static Type ObjectType = typeof(T);
+
+        /// <summary>
+        /// Field ObjectTypeHash.
+        /// </summary>
+        private static string ObjectTypeHash = GetHashString(ObjectType.AssemblyQualifiedName, false);
+
+        /// <summary>
+        /// Field ObjectTypeHashIgnoreCase.
+        /// </summary>
+        private static string ObjectTypeHashIgnoreCase = GetHashString(ObjectType.AssemblyQualifiedName, true);
+
+        /// <summary>
+        /// Registers an object on the service end as a well-known type for remoting communication.
+        /// </summary>
+        /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
+        public static void Register(string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(label, ignoreCase);
+
+            try
+            {
+                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri);
+                ChannelServices.RegisterChannel(ipcChannel, false);
+                RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
+            }
+            catch (RemotingException)
+            {
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Creates a proxy for the well-known object indicated by the specified type from remoting service.
+        /// </summary>
         /// <param name="label">A unique label that gets the specific instance of the same type.</param>
         /// <param name="ignoreCase">true to ignore case when get object by label; otherwise, false.</param>
         /// <returns>The remoting object instance.</returns>
         [SecurityPermission(SecurityAction.Demand)]
         public static T GetObject(string label = null, bool ignoreCase = false)
         {
-            Type objectType = typeof(T);
+            string objectUri = GetObjectUri(label, ignoreCase);
 
-            int objectUriHashCode;
+            return (T)Activator.GetObject(ObjectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
+        }
 
-            if (ignoreCase)
+        /// <summary>
+        /// Gets hash string.
+        /// </summary>
+        /// <param name="value">String to calculate.</param>
+        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
+        /// <returns>A hash string.</returns>
+        private static string GetHashString(string value, bool ignoreCase)
+        {
+            byte[] hash;
+
+            using (MD5 hasher = MD5.Create())
             {
-                objectUriHashCode = string.IsNullOrEmpty(label) ? objectType.AssemblyQualifiedName.ToLowerInvariant().GetHashCode() : label.ToLowerInvariant().GetHashCode();
-            }
-            else
-            {
-                objectUriHashCode = string.IsNullOrEmpty(label) ? objectType.AssemblyQualifiedName.GetHashCode() : label.GetHashCode();
+                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(ignoreCase ? value.ToLowerInvariant() : value));
             }
 
-            string objectUri = objectUriHashCode.ToString(CultureInfo.InvariantCulture);
+            return BitConverter.ToString(hash).Replace("-", string.Empty);
+        }
 
-            return (T)Activator.GetObject(objectType, string.Format(IpcUrlStringFormat, objectUriHashCode), objectUriHashCode);
+        /// <summary>
+        /// Gets object uri.
+        /// </summary>
+        /// <param name="label">A unique label.</param>
+        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
+        /// <returns>An uri string.</returns>
+        private static string GetObjectUri(string label, bool ignoreCase)
+        {
+            return string.IsNullOrEmpty(label) ? (ignoreCase ? ObjectTypeHashIgnoreCase : ObjectTypeHash) : GetHashString(label, ignoreCase);
         }
     }
 }

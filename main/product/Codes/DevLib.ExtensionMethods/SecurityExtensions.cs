@@ -23,7 +23,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if the input and the hash are the same; otherwise, false.</returns>
         public static bool MD5VerifyToHash(this string source, string hash)
         {
-            string sourceHash = source.ToMD5();
+            string sourceHash = source.ToMD5String();
 
             return sourceHash.Equals(hash, StringComparison.OrdinalIgnoreCase);
         }
@@ -36,7 +36,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if the input and the hash are the same; otherwise, false.</returns>
         public static bool MD5VerifyToOriginal(this string source, string original)
         {
-            string originalHash = original.ToMD5();
+            string originalHash = original.ToMD5String();
 
             return source.Equals(originalHash, StringComparison.OrdinalIgnoreCase);
         }
@@ -45,23 +45,29 @@ namespace DevLib.ExtensionMethods
         /// MD5 encodes the passed <see cref="string">string</see>.
         /// </summary>
         /// <param name="source">The <see cref="string">string</see> to encode.</param>
-        /// <returns>An encoded <see cref="string">string</see>; string.Empty if hash failed.</returns>
-        public static string ToMD5(this string source)
+        /// <returns>An encoded <see cref="string">string</see>.</returns>
+        public static string ToMD5String(this string source)
         {
-            byte[] data;
+            byte[] result;
 
             using (MD5 hasher = MD5.Create())
             {
-                data = hasher.ComputeHash(Encoding.Unicode.GetBytes(source));
+                result = hasher.ComputeHash(Encoding.Unicode.GetBytes(source));
             }
 
-            if (data != null)
+            return result.ToHexString();
+        }
+
+        /// <summary>
+        /// MD5 encodes the passed <see cref="string">string</see>.
+        /// </summary>
+        /// <param name="source">The <see cref="string">string</see> to encode.</param>
+        /// <returns>An encoded byte array.</returns>
+        public static byte[] ToMD5Bytes(this string source)
+        {
+            using (MD5 hasher = MD5.Create())
             {
-                return data.ToHexString(false);
-            }
-            else
-            {
-                return string.Empty;
+                return hasher.ComputeHash(Encoding.Unicode.GetBytes(source));
             }
         }
 
@@ -90,7 +96,7 @@ namespace DevLib.ExtensionMethods
             {
                 rsa.PersistKeyInCsp = true;
                 byte[] bytes = rsa.Decrypt(decryptByteArray, true);
-                return Encoding.UTF8.GetString(bytes);
+                return Encoding.Unicode.GetString(bytes);
             }
         }
 
@@ -115,7 +121,7 @@ namespace DevLib.ExtensionMethods
             using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
                 rsa.PersistKeyInCsp = true;
-                byte[] bytes = rsa.Encrypt(Encoding.UTF8.GetBytes(source), true);
+                byte[] bytes = rsa.Encrypt(Encoding.Unicode.GetBytes(source), true);
                 return BitConverter.ToString(bytes);
             }
         }

@@ -52,7 +52,7 @@ namespace DevLib.Samples
     using DevLib.Net;
     using DevLib.Net.Ftp;
     using DevLib.Net.Sockets;
-    using DevLib.Options;
+    using DevLib.Parameters;
     using DevLib.Reflection;
     using DevLib.Remoting;
     using DevLib.Serialization;
@@ -2164,13 +2164,13 @@ namespace DevLib.Samples
 
     public class FooBar : MarshalByRefObject
     {
-        [Option(Required = true)]
+        [Parameter(Required = true)]
         public string foo { get; set; }
 
-        [Option("b", "bar", "barr", Required = false, DefaultValue = 123)]
+        [Parameter("b", "bar", "barr", Required = false, DefaultValue = 123)]
         public int bar { get; set; }
 
-        [Option("o", "ok", "okk", DefaultValue = true, Required = true)]
+        [Parameter("o", "ok", "okk", DefaultValue = true, Required = true)]
         public bool IsOk { get; set; }
 
         public bool IsOk2 { get; set; }

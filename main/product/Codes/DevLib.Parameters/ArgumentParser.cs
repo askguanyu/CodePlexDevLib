@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Options
+namespace DevLib.Parameters
 {
     using System;
     using System.Collections.Generic;
@@ -133,13 +133,13 @@ namespace DevLib.Options
             {
                 if (property.CanWrite && property.CanRead)
                 {
-                    OptionAttribute optionAttribute = null;
+                    ParameterAttribute optionAttribute = null;
 
                     foreach (Attribute attribute in property.GetCustomAttributes(true))
                     {
-                        if (attribute.GetType() == typeof(OptionAttribute))
+                        if (attribute.GetType() == typeof(ParameterAttribute))
                         {
-                            optionAttribute = attribute as OptionAttribute;
+                            optionAttribute = attribute as ParameterAttribute;
                             break;
                         }
                     }

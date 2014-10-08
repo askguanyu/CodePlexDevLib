@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Options
+namespace DevLib.Parameters
 {
     using System;
     using System.Collections;
@@ -35,6 +35,17 @@ namespace DevLib.Options
         public Argument(string argument)
         {
             this._parameters = ArgumentParser.Parse(argument);
+        }
+
+        /// <summary>
+        /// Gets the number of parameters contained in the Argument.
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                return this._parameters.Count;
+            }
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DevLib.Options")]
+[assembly: AssemblyTitle("DevLib.Parameters")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -17,4 +17,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("758a2d4d-7e50-466f-9b82-e091f7a49ffd")]
+[assembly: Guid("7bd8a5a3-49e8-4638-955c-3cf7471ab5e2")]

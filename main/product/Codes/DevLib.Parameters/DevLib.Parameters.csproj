@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9945CE70-DEA8-4CE0-BB81-4B8D96EB4BAA}</ProjectGuid>
+    <ProjectGuid>{2EDCA3CE-68F5-4B8D-B145-A7747C185E0F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DevLib.Options</RootNamespace>
-    <AssemblyName>DevLib.Options</AssemblyName>
+    <RootNamespace>DevLib.Parameters</RootNamespace>
+    <AssemblyName>DevLib.Parameters</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -25,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\DevLib.Options.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\DevLib.Parameters.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +37,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
@@ -44,7 +46,7 @@
     </Compile>
     <Compile Include="Argument.cs" />
     <Compile Include="ArgumentParser.cs" />
-    <Compile Include="OptionAttribute.cs" />
+    <Compile Include="ParameterAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -21,9 +21,9 @@ namespace DevLib.Web.Services
     public class WebServiceClientProxy
     {
         /// <summary>
-        /// Field _client.
+        /// Field _clientAssembly.
         /// </summary>
-        private readonly object _client;
+        private readonly Assembly _clientAssembly;
 
         /// <summary>
         /// Field _clientType.
@@ -31,56 +31,42 @@ namespace DevLib.Web.Services
         private readonly Type _clientType;
 
         /// <summary>
+        /// Field _client.
+        /// </summary>
+        private readonly object _client;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WebServiceClientProxy" /> class.
         /// </summary>
-        /// <param name="url">Web service url.</param>
+        /// <param name="url">The URL for the Web service WSDL address or the file containing the WSDL data.</param>
         [PermissionSetAttribute(SecurityAction.LinkDemand, Name = "FullTrust")]
         public WebServiceClientProxy(string url)
         {
-            XmlTextReader xmlTextReader = null;
-            ServiceDescriptionImporter serviceDescriptionImporter = null;
-
-            CodeNamespace codeNamespace = new CodeNamespace();
-            CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
-            codeCompileUnit.Namespaces.Add(codeNamespace);
-
             try
             {
-                try
+                using (XmlReader xmlReader = XmlReader.Create(url))
                 {
-                    xmlTextReader = new XmlTextReader(url.EndsWith("wsdl", StringComparison.OrdinalIgnoreCase) ? url : url.TrimEnd(' ', '\\', '/', '?') + "?wsdl");
-                    ServiceDescription serviceDescription = ServiceDescription.Read(xmlTextReader);
-                    serviceDescriptionImporter = new ServiceDescriptionImporter();
-                    serviceDescriptionImporter.CodeGenerationOptions = CodeGenerationOptions.None | CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOldAsync | CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.EnableDataBinding;
+                    ServiceDescription serviceDescription = ServiceDescription.Read(xmlReader);
+
+                    CodeNamespace codeNamespace = new CodeNamespace();
+                    CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+                    codeCompileUnit.Namespaces.Add(codeNamespace);
+
+                    ServiceDescriptionImporter serviceDescriptionImporter = new ServiceDescriptionImporter();
+                    serviceDescriptionImporter.CodeGenerationOptions = CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOldAsync | CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.EnableDataBinding;
                     serviceDescriptionImporter.AddServiceDescription(serviceDescription, null, null);
                     serviceDescriptionImporter.Import(codeNamespace, codeCompileUnit);
-                }
-                catch (InvalidOperationException)
-                {
-                    if (xmlTextReader != null)
+
+                    CompilerParameters compilerParameters = new CompilerParameters();
+                    compilerParameters.GenerateInMemory = true;
+
+                    using (CSharpCodeProvider provider = new CSharpCodeProvider())
                     {
-                        xmlTextReader.Close();
-                        xmlTextReader = null;
+                        CompilerResults compilerResults = provider.CompileAssemblyFromDom(compilerParameters, codeCompileUnit);
+                        this._clientAssembly = compilerResults.CompiledAssembly;
+                        this._clientType = this._clientAssembly.GetTypes()[0];
+                        this._client = Activator.CreateInstance(this._clientType);
                     }
-
-                    serviceDescriptionImporter = null;
-
-                    xmlTextReader = new XmlTextReader(url.EndsWith("wsdl", StringComparison.OrdinalIgnoreCase) ? url : url.TrimEnd(' ', '\\', '/', '?') + "?singleWsdl");
-                    ServiceDescription serviceDescription = ServiceDescription.Read(xmlTextReader);
-                    serviceDescriptionImporter = new ServiceDescriptionImporter();
-                    serviceDescriptionImporter.CodeGenerationOptions = CodeGenerationOptions.None | CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOldAsync | CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.EnableDataBinding;
-                    serviceDescriptionImporter.AddServiceDescription(serviceDescription, null, null);
-                    serviceDescriptionImporter.Import(codeNamespace, codeCompileUnit);
-                }
-
-                CompilerParameters compilerParameters = new CompilerParameters();
-                compilerParameters.GenerateInMemory = true;
-
-                using (CSharpCodeProvider provider = new CSharpCodeProvider())
-                {
-                    CompilerResults compilerResults = provider.CompileAssemblyFromDom(compilerParameters, codeCompileUnit);
-                    this._clientType = compilerResults.CompiledAssembly.GetTypes()[0];
-                    this._client = Activator.CreateInstance(this._clientType);
                 }
             }
             catch (Exception e)
@@ -88,13 +74,16 @@ namespace DevLib.Web.Services
                 InternalLogger.Log(e);
                 throw;
             }
-            finally
+        }
+
+        /// <summary>
+        /// Gets all the types defined in the current client proxy assembly.
+        /// </summary>
+        public Type[] Types
+        {
+            get
             {
-                if (xmlTextReader != null)
-                {
-                    xmlTextReader.Close();
-                    xmlTextReader = null;
-                }
+                return this._clientAssembly.GetTypes();
             }
         }
 
@@ -112,69 +101,40 @@ namespace DevLib.Web.Services
         /// <summary>
         /// Compiles a client proxy assembly based on Web services url.
         /// </summary>
-        /// <param name="url">Web service url.</param>
+        /// <param name="url">The URL for the Web service WSDL address or the file containing the WSDL data.</param>
         /// <param name="outputAssembly">The name of the output assembly.</param>
         [PermissionSetAttribute(SecurityAction.LinkDemand, Name = "FullTrust")]
         public static void CompileAssembly(string url, string outputAssembly)
         {
-            XmlTextReader xmlTextReader = null;
-            ServiceDescriptionImporter serviceDescriptionImporter = null;
-
-            CodeNamespace codeNamespace = new CodeNamespace();
-            CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
-            codeCompileUnit.Namespaces.Add(codeNamespace);
-
             try
             {
-                try
+                using (XmlReader xmlReader = XmlReader.Create(url))
                 {
-                    xmlTextReader = new XmlTextReader(url.EndsWith("wsdl", StringComparison.OrdinalIgnoreCase) ? url : url.TrimEnd(' ', '\\', '/', '?') + "?wsdl");
-                    ServiceDescription serviceDescription = ServiceDescription.Read(xmlTextReader);
-                    serviceDescriptionImporter = new ServiceDescriptionImporter();
-                    serviceDescriptionImporter.CodeGenerationOptions = CodeGenerationOptions.None | CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOldAsync | CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.EnableDataBinding;
+                    ServiceDescription serviceDescription = ServiceDescription.Read(xmlReader);
+
+                    CodeNamespace codeNamespace = new CodeNamespace();
+                    CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
+                    codeCompileUnit.Namespaces.Add(codeNamespace);
+
+                    ServiceDescriptionImporter serviceDescriptionImporter = new ServiceDescriptionImporter();
+                    serviceDescriptionImporter.CodeGenerationOptions = CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOldAsync | CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.EnableDataBinding;
                     serviceDescriptionImporter.AddServiceDescription(serviceDescription, null, null);
                     serviceDescriptionImporter.Import(codeNamespace, codeCompileUnit);
-                }
-                catch (InvalidOperationException)
-                {
-                    if (xmlTextReader != null)
+
+                    CompilerParameters compilerParameters = new CompilerParameters();
+                    compilerParameters.GenerateInMemory = false;
+                    compilerParameters.OutputAssembly = outputAssembly;
+
+                    using (CSharpCodeProvider provider = new CSharpCodeProvider())
                     {
-                        xmlTextReader.Close();
-                        xmlTextReader = null;
+                        CompilerResults compilerResults = provider.CompileAssemblyFromDom(compilerParameters, codeCompileUnit);
                     }
-
-                    serviceDescriptionImporter = null;
-
-                    xmlTextReader = new XmlTextReader(url.EndsWith("wsdl", StringComparison.OrdinalIgnoreCase) ? url : url.TrimEnd(' ', '\\', '/', '?') + "?singleWsdl");
-                    ServiceDescription serviceDescription = ServiceDescription.Read(xmlTextReader);
-                    serviceDescriptionImporter = new ServiceDescriptionImporter();
-                    serviceDescriptionImporter.CodeGenerationOptions = CodeGenerationOptions.None | CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOldAsync | CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.EnableDataBinding;
-                    serviceDescriptionImporter.AddServiceDescription(serviceDescription, null, null);
-                    serviceDescriptionImporter.Import(codeNamespace, codeCompileUnit);
-                }
-
-                CompilerParameters compilerParameters = new CompilerParameters();
-                compilerParameters.GenerateInMemory = false;
-                compilerParameters.GenerateExecutable = false;
-                compilerParameters.OutputAssembly = outputAssembly;
-
-                using (CSharpCodeProvider provider = new CSharpCodeProvider())
-                {
-                    CompilerResults compilerResults = provider.CompileAssemblyFromDom(compilerParameters, codeCompileUnit);
                 }
             }
             catch (Exception e)
             {
                 InternalLogger.Log(e);
                 throw;
-            }
-            finally
-            {
-                if (xmlTextReader != null)
-                {
-                    xmlTextReader.Close();
-                    xmlTextReader = null;
-                }
             }
         }
 

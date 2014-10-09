@@ -721,10 +721,10 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
-            //WebServiceClientProxy proxy = new WebServiceClientProxy("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
+            //WebServiceClientProxy proxy = new WebServiceClientProxy("http://wsf.cdyne.com/WeatherWS/Weather.asmx?wsdl");
 
 
-            //WebServiceClientProxy.CompileAssembly("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "d:\\ws.dll");
+            //WebServiceClientProxy.CompileAssembly("d:\\ws.xml", "d:\\ws1.dll");
 
             RemotingObject<FooBar>.Register();
             FooBar fb1 = RemotingObject<FooBar>.GetObject();

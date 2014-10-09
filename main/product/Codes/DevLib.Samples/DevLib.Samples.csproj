@@ -209,6 +209,10 @@
       <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>
       <Name>DevLib.Utilities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Web\DevLib.Web.csproj">
+      <Project>{9656A664-9CF7-4834-AB8A-49D25DE2BF29}</Project>
+      <Name>DevLib.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.WinForms\DevLib.WinForms.csproj">
       <Project>{73AF4976-0D28-4EB8-852E-2B375B6EBC33}</Project>
       <Name>DevLib.WinForms</Name>

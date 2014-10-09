@@ -61,6 +61,7 @@ namespace DevLib.Samples
     using DevLib.TerminalServices;
     using DevLib.Timers;
     using DevLib.Utilities;
+    using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
 
@@ -720,6 +721,11 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            //WebServiceClientProxy proxy = new WebServiceClientProxy("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
+
+
+            //WebServiceClientProxy.CompileAssembly("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "d:\\ws.dll");
+
             RemotingObject<FooBar>.Register();
             FooBar fb1 = RemotingObject<FooBar>.GetObject();
             fb1.foo = "fb1";
@@ -750,7 +756,7 @@ namespace DevLib.Samples
 
             string expression2 = PropertyEvaluator.ExtractPropertyName<Company, int>(p => p.Bosses[3].Home.PostCode); //will return Bosses[3].Home.PostCode
 
-            var aaa = "abcdeABCDe".ReplaceAny('W',false,'a','E');
+            var aaa = "abcdeABCDe".ReplaceAny('W', false, 'a', 'E');
 
             Benchmark.Run(i =>
             {
@@ -1381,7 +1387,7 @@ namespace DevLib.Samples
             #region IO
             var a = "   C:\\asdasd\\ \" \"   ";
             var c = Path.GetInvalidPathChars();
-            string b = a.RemoveAny(false,c);
+            string b = a.RemoveAny(false, c);
             "hello".WriteTextFile(@".\out\hello.txt").GetFullPath().OpenContainingFolder();
 
             //DateTime.Now.CreateBinaryFile(@".\out\list.bin").ConsoleWriteLine().ReadTextFile().ConsoleWriteLine();

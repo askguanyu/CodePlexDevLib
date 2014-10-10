@@ -97,11 +97,7 @@ namespace DevLib.ServiceModel
         /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
         public static TChannel CreateChannel(string remoteUri, bool fromCaching = true)
         {
-            UriBuilder uriBuilder = new UriBuilder(remoteUri);
-
-            uriBuilder.Path = typeof(TChannel).FullName;
-
-            return CreateChannel(typeof(BasicHttpBinding), uriBuilder.ToString(), fromCaching);
+            return CreateChannel(typeof(BasicHttpBinding), remoteUri, fromCaching);
         }
 
         /// <summary>

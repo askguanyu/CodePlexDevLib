@@ -468,11 +468,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         private static TChannel GetInstance<TTypeBuilder>(Dictionary<string, TChannel> caching, string remoteUri, bool fromCaching = true) where TTypeBuilder : IWcfClientTypeBuilder, new()
         {
-            UriBuilder uriBuilder = new UriBuilder(remoteUri);
-
-            uriBuilder.Path = typeof(TChannel).FullName;
-
-            return GetInstance<TTypeBuilder>(caching, typeof(BasicHttpBinding), uriBuilder.ToString(), fromCaching);
+            return GetInstance<TTypeBuilder>(caching, typeof(BasicHttpBinding), remoteUri, fromCaching);
         }
 
         /// <summary>

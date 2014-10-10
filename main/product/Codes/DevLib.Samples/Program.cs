@@ -64,6 +64,7 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
+    using System.Web;
 
     public class Program
     {
@@ -721,6 +722,14 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            Uri baseAddressUri = new Uri("http://localhost:123/abc");
+
+            string rp = Path.Combine(baseAddressUri.AbsolutePath, "def").Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            var path = new Uri(baseAddressUri, rp);
+
+            //Uri serviceContractUri = new Uri(path);
+
             //WebServiceClientProxy proxy = new WebServiceClientProxy("http://wsf.cdyne.com/WeatherWS/Weather.asmx?wsdl");
 
 

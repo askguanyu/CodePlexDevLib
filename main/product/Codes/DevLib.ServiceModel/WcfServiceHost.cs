@@ -1271,20 +1271,23 @@ namespace DevLib.ServiceModel
                 {
                     WcfServiceHostProxy.SetConfigFile(null);
 
-                    foreach (var serviceType in serviceTypeList)
+                    try
                     {
-                        if (this._contractType == null)
+                        foreach (var serviceType in serviceTypeList)
                         {
-                            contractList = WcfServiceType.GetServiceContract(serviceType);
-                        }
+                            if (this._contractType == null)
+                            {
+                                contractList = WcfServiceType.GetServiceContract(serviceType);
+                            }
 
-                        foreach (Type serviceContract in contractList)
-                        {
                             WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType, baseAddressUri);
 
                             serviceHost.Description.Endpoints.Clear();
 
-                            serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+                            foreach (Type serviceContract in contractList)
+                            {
+                                serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+                            }
 
                             ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
 
@@ -1361,6 +1364,11 @@ namespace DevLib.ServiceModel
 
                             InternalLogger.Log(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        InternalLogger.Log(e);
+                        throw;
                     }
                 }
             }

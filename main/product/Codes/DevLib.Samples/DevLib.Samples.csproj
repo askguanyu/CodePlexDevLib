@@ -76,6 +76,7 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Routing" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

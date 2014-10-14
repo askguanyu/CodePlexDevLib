@@ -12,7 +12,7 @@ namespace DevLib.ServiceModel
     /// Class WcfClientPerCallUnthrowableClassBuilder.
     /// </summary>
     /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
-    internal class WcfClientPerCallUnthrowableClassBuilder<TChannel> : WcfClientPerSessionBaseClassBuilder<TChannel> where TChannel : class
+    internal class WcfClientPerCallUnthrowableClassBuilder<TChannel> : WcfClientPerCallBaseClassBuilder<TChannel> where TChannel : class
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfClientPerCallUnthrowableClassBuilder{TChannel}" /> class.

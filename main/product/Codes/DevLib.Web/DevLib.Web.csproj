@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
@@ -47,7 +48,12 @@
     </Compile>
     <Compile Include="InternalLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\WebServiceClientObject.cs" />
     <Compile Include="Services\WebServiceClientProxy.cs" />
+    <Compile Include="Services\WebServiceClientProxyConstants.cs" />
+    <Compile Include="Services\WebServiceClientProxyException.cs" />
+    <Compile Include="Services\WebServiceClientProxyFactory.cs" />
+    <Compile Include="Services\WebServiceClientProxyFactoryOptions.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

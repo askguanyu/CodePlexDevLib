@@ -10,6 +10,7 @@ namespace DevLib.ServiceModel
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Net;
     using System.Security.Permissions;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
@@ -96,9 +97,25 @@ namespace DevLib.ServiceModel
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, string baseAddress, bool openNow = false)
+        {
+            this.Initialize(assemblyFile, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, int port = 80, bool openNow = false)
+        public WcfServiceHost(string assemblyFile, int port, bool openNow = false)
         {
             this.Initialize(assemblyFile, port);
 
@@ -115,9 +132,26 @@ namespace DevLib.ServiceModel
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress = null, bool openNow = false)
+        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress, bool openNow = false)
         {
             this.Initialize(assemblyFile, configFile, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, int port, bool openNow = false)
+        {
+            this.Initialize(assemblyFile, configFile, port);
 
             if (openNow)
             {
@@ -135,6 +169,57 @@ namespace DevLib.ServiceModel
         public WcfServiceHost(string assemblyFile, Type bindingType, string baseAddress, bool openNow = false)
         {
             this.Initialize(assemblyFile, bindingType, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Type bindingType, int port, bool openNow = false)
+        {
+            this.Initialize(assemblyFile, bindingType, port);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool openNow = false)
+        {
+            this.Initialize(assemblyFile, binding, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Binding binding, int port, bool openNow = false)
+        {
+            this.Initialize(assemblyFile, binding, port);
 
             if (openNow)
             {
@@ -164,12 +249,13 @@ namespace DevLib.ServiceModel
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
-        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool openNow = false)
+        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, int port, bool openNow = false)
         {
-            this.Initialize(assemblyFile, binding, baseAddress);
+            this.Initialize(assemblyFile, contractType, bindingType, port);
 
             if (openNow)
             {
@@ -198,10 +284,44 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
         /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, int port, bool openNow = false)
+        {
+            this.Initialize(assemblyFile, contractType, binding, port);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, string baseAddress, bool openNow = false)
+        {
+            this.Initialize(serviceType, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, int port = 80, bool openNow = false)
+        public WcfServiceHost(Type serviceType, int port, bool openNow = false)
         {
             this.Initialize(serviceType, port);
 
@@ -218,9 +338,26 @@ namespace DevLib.ServiceModel
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, string configFile, string baseAddress = null, bool openNow = false)
+        public WcfServiceHost(Type serviceType, string configFile, string baseAddress, bool openNow = false)
         {
             this.Initialize(serviceType, configFile, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, string configFile, int port, bool openNow = false)
+        {
+            this.Initialize(serviceType, configFile, port);
 
             if (openNow)
             {
@@ -238,6 +375,57 @@ namespace DevLib.ServiceModel
         public WcfServiceHost(Type serviceType, Type bindingType, string baseAddress, bool openNow = false)
         {
             this.Initialize(serviceType, bindingType, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Type bindingType, int port, bool openNow = false)
+        {
+            this.Initialize(serviceType, bindingType, port);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool openNow = false)
+        {
+            this.Initialize(serviceType, binding, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, int port, bool openNow = false)
+        {
+            this.Initialize(serviceType, binding, port);
 
             if (openNow)
             {
@@ -267,12 +455,13 @@ namespace DevLib.ServiceModel
         /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
         /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
-        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool openNow = false)
+        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, int port, bool openNow = false)
         {
-            this.Initialize(serviceType, binding, baseAddress);
+            this.Initialize(serviceType, contractType, bindingType, port);
 
             if (openNow)
             {
@@ -291,6 +480,24 @@ namespace DevLib.ServiceModel
         public WcfServiceHost(Type serviceType, Type contractType, Binding binding, string baseAddress, bool openNow = false)
         {
             this.Initialize(serviceType, contractType, binding, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, int port, bool openNow = false)
+        {
+            this.Initialize(serviceType, contractType, binding, port);
 
             if (openNow)
             {
@@ -364,8 +571,8 @@ namespace DevLib.ServiceModel
         /// Create an isolated AppDomain to host Wcf service.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, int port = 80)
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(string assemblyFile, string baseAddress)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -375,6 +582,40 @@ namespace DevLib.ServiceModel
             if (!File.Exists(assemblyFile))
             {
                 throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (string.IsNullOrEmpty(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            {
+                throw new UriFormatException(baseAddress ?? string.Empty);
+            }
+
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
+            this._bindingType = typeof(BasicHttpBinding);
+            this._baseAddress = baseAddress;
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(string assemblyFile, int port)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
             }
 
             string contractName = string.Empty;
@@ -401,7 +642,7 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        public void Initialize(string assemblyFile, string configFile, string baseAddress = null)
+        public void Initialize(string assemblyFile, string configFile, string baseAddress)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -431,6 +672,58 @@ namespace DevLib.ServiceModel
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._configFile = Path.GetFullPath(configFile);
             this._baseAddress = baseAddress;
+            this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(string assemblyFile, string configFile, int port)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (string.IsNullOrEmpty(configFile))
+            {
+                throw new ArgumentNullException("configFile");
+            }
+
+            if (!File.Exists(configFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", configFile);
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string contractName = string.Empty;
+
+            try
+            {
+                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadFile(assemblyFile)[0])[0].FullName;
+            }
+            catch
+            {
+                throw new ArgumentException("Cannot get contract type full name from the specified file.", "assemblyFile");
+            }
+
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
+            this._configFile = Path.GetFullPath(configFile);
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
             this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
 
             this._isInitialized = true;
@@ -472,6 +765,138 @@ namespace DevLib.ServiceModel
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._bindingType = bindingType;
             this._baseAddress = baseAddress;
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(string assemblyFile, Type bindingType, int port)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (bindingType == null)
+            {
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException("The parameter bindingType is not a System.ServiceModel.Channels.Binding type.", "bindingType");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string contractName = string.Empty;
+
+            try
+            {
+                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadFile(assemblyFile)[0])[0].FullName;
+            }
+            catch
+            {
+                throw new ArgumentException("Cannot get contract type full name from the specified file.", "assemblyFile");
+            }
+
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
+            this._bindingType = bindingType;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(string assemblyFile, Binding binding, string baseAddress)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (string.IsNullOrEmpty(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            {
+                throw new UriFormatException(baseAddress ?? string.Empty);
+            }
+
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
+            this._binding = binding;
+            this._baseAddress = baseAddress;
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(string assemblyFile, Binding binding, int port)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string contractName = string.Empty;
+
+            try
+            {
+                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadFile(assemblyFile)[0])[0].FullName;
+            }
+            catch
+            {
+                throw new ArgumentException("Cannot get contract type full name from the specified file.", "assemblyFile");
+            }
+
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
+            this._binding = binding;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
 
             this._isInitialized = true;
         }
@@ -532,9 +957,10 @@ namespace DevLib.ServiceModel
         /// Use current AppDomain to host Wcf service.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
-        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
-        /// <param name="baseAddress">Wcf service base address.</param>
-        public void Initialize(string assemblyFile, Binding binding, string baseAddress)
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(string assemblyFile, Type contractType, Type bindingType, int port)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -546,19 +972,35 @@ namespace DevLib.ServiceModel
                 throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
             }
 
-            if (binding == null)
+            if (contractType == null)
             {
-                throw new ArgumentNullException("binding");
+                throw new ArgumentNullException("contractType");
             }
 
-            if (string.IsNullOrEmpty(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            if (bindingType == null)
             {
-                throw new UriFormatException(baseAddress ?? string.Empty);
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            {
+                throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException("The parameter bindingType is not a System.ServiceModel.Channels.Binding type.", "bindingType");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
             }
 
             this._assemblyFile = Path.GetFullPath(assemblyFile);
-            this._binding = binding;
-            this._baseAddress = baseAddress;
+            this._contractType = contractType;
+            this._bindingType = bindingType;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractType.FullName).ToString();
 
             this._isInitialized = true;
         }
@@ -611,11 +1053,58 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="assemblyFile">Wcf service assembly file.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(string assemblyFile, Type contractType, Binding binding, int port)
+        {
+            if (string.IsNullOrEmpty(assemblyFile))
+            {
+                throw new ArgumentNullException("assemblyFile");
+            }
+
+            if (!File.Exists(assemblyFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", assemblyFile);
+            }
+
+            if (contractType == null)
+            {
+                throw new ArgumentNullException("contractType");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            {
+                throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            this._assemblyFile = Path.GetFullPath(assemblyFile);
+            this._contractType = contractType;
+            this._binding = binding;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractType.FullName).ToString();
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
         /// Create an isolated AppDomain to host Wcf service.
         /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, int port = 80)
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(Type serviceType, string baseAddress)
         {
             if (serviceType == null)
             {
@@ -625,6 +1114,40 @@ namespace DevLib.ServiceModel
             if (!WcfServiceType.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (string.IsNullOrEmpty(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            {
+                throw new UriFormatException(baseAddress ?? string.Empty);
+            }
+
+            this._serviceType = serviceType;
+            this._bindingType = typeof(BasicHttpBinding);
+            this._baseAddress = baseAddress;
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(Type serviceType, int port)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
             }
 
             string contractName = string.Empty;
@@ -651,7 +1174,7 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
-        public void Initialize(Type serviceType, string configFile, string baseAddress = null)
+        public void Initialize(Type serviceType, string configFile, string baseAddress)
         {
             if (serviceType == null)
             {
@@ -681,6 +1204,58 @@ namespace DevLib.ServiceModel
             this._serviceType = serviceType;
             this._configFile = Path.GetFullPath(configFile);
             this._baseAddress = baseAddress;
+            this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(Type serviceType, string configFile, int port)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (string.IsNullOrEmpty(configFile))
+            {
+                throw new ArgumentNullException("configFile");
+            }
+
+            if (!File.Exists(configFile))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", configFile);
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string contractName = string.Empty;
+
+            try
+            {
+                contractName = WcfServiceType.GetServiceContract(serviceType)[0].FullName;
+            }
+            catch
+            {
+                throw new ArgumentException("Cannot get contract type full name from the specified service type.", "serviceType");
+            }
+
+            this._serviceType = serviceType;
+            this._configFile = Path.GetFullPath(configFile);
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
             this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
 
             this._isInitialized = true;
@@ -722,6 +1297,138 @@ namespace DevLib.ServiceModel
             this._serviceType = serviceType;
             this._bindingType = bindingType;
             this._baseAddress = baseAddress;
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(Type serviceType, Type bindingType, int port)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (bindingType == null)
+            {
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException("The parameter bindingType is not a System.ServiceModel.Channels.Binding type.", "bindingType");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string contractName = string.Empty;
+
+            try
+            {
+                contractName = WcfServiceType.GetServiceContract(serviceType)[0].FullName;
+            }
+            catch
+            {
+                throw new ArgumentException("Cannot get contract type full name from the specified service type.", "serviceType");
+            }
+
+            this._serviceType = serviceType;
+            this._bindingType = bindingType;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(Type serviceType, Binding binding, string baseAddress)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (string.IsNullOrEmpty(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            {
+                throw new UriFormatException(baseAddress ?? string.Empty);
+            }
+
+            this._serviceType = serviceType;
+            this._binding = binding;
+            this._baseAddress = baseAddress;
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(Type serviceType, Binding binding, int port)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string contractName = string.Empty;
+
+            try
+            {
+                contractName = WcfServiceType.GetServiceContract(serviceType)[0].FullName;
+            }
+            catch
+            {
+                throw new ArgumentException("Cannot get contract type full name from the specified service type.", "serviceType");
+            }
+
+            this._serviceType = serviceType;
+            this._binding = binding;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
 
             this._isInitialized = true;
         }
@@ -782,13 +1489,19 @@ namespace DevLib.ServiceModel
         /// Use current AppDomain to host Wcf service.
         /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
-        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
-        /// <param name="baseAddress">Wcf service base address.</param>
-        public void Initialize(Type serviceType, Binding binding, string baseAddress)
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(Type serviceType, Type contractType, Type bindingType, int port)
         {
             if (serviceType == null)
             {
                 throw new ArgumentNullException("serviceType");
+            }
+
+            if (contractType == null)
+            {
+                throw new ArgumentNullException("contractType");
             }
 
             if (!WcfServiceType.IsWcfServiceClass(serviceType))
@@ -796,19 +1509,30 @@ namespace DevLib.ServiceModel
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
 
-            if (binding == null)
+            if (!WcfServiceType.HasServiceContractAttribute(contractType))
             {
-                throw new ArgumentNullException("binding");
+                throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
 
-            if (string.IsNullOrEmpty(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            if (bindingType == null)
             {
-                throw new UriFormatException(baseAddress ?? string.Empty);
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException("The parameter bindingType is not a System.ServiceModel.Channels.Binding type.", "bindingType");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
             }
 
             this._serviceType = serviceType;
-            this._binding = binding;
-            this._baseAddress = baseAddress;
+            this._contractType = contractType;
+            this._bindingType = bindingType;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractType.FullName).ToString();
 
             this._isInitialized = true;
         }
@@ -856,6 +1580,53 @@ namespace DevLib.ServiceModel
             this._contractType = contractType;
             this._binding = binding;
             this._baseAddress = baseAddress;
+
+            this._isInitialized = true;
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="serviceType">Wcf service type.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(Type serviceType, Type contractType, Binding binding, int port)
+        {
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            if (contractType == null)
+            {
+                throw new ArgumentNullException("contractType");
+            }
+
+            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            {
+                throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
+            }
+
+            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            {
+                throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
+            }
+
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+
+            if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("port", port, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            this._serviceType = serviceType;
+            this._contractType = contractType;
+            this._binding = binding;
+            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractType.FullName).ToString();
 
             this._isInitialized = true;
         }
@@ -1048,7 +1819,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <exception cref="T:System.AppDomainUnloadedException">The operation is attempted on an unloaded application domain.</exception>
         /// <returns>Always null.</returns>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.Infrastructure)]
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.AllFlags)]
         public override object InitializeLifetimeService()
         {
             return null;

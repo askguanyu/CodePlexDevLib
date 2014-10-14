@@ -193,6 +193,48 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Check whether a Type is a Wcf service.
+        /// </summary>
+        /// <param name="type">Source Type to check.</param>
+        /// <returns>true if type is WcfService Class; otherwise, false.</returns>
+        public static bool IsWcfServiceClass(Type type)
+        {
+            if (type == null)
+            {
+                return false;
+            }
+
+            return type.IsClass && HasServiceContractAttribute(type) && !IsDerivedFrom(type, typeof(ClientBase<>));
+        }
+
+        /// <summary>
+        /// Check whether a Type has ServiceContract Attribute.
+        /// </summary>
+        /// <param name="type">Source Type to check.</param>
+        /// <returns>true if has ServiceContractAttribute; otherwise, false.</returns>
+        public static bool HasServiceContractAttribute(Type type)
+        {
+            if (type.IsDefined(typeof(ServiceContractAttribute), false))
+            {
+                return true;
+            }
+
+            Type[] interfaces = type.GetInterfaces();
+
+            for (int i = 0; i < interfaces.Length; i++)
+            {
+                Type interfaceType = interfaces[i];
+
+                if (interfaceType.IsDefined(typeof(ServiceContractAttribute), false))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets the Binding instance according to a Binding type.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
@@ -285,46 +327,6 @@ namespace DevLib.ServiceModel
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Check whether a Type is a Wcf service.
-        /// </summary>
-        /// <param name="type">Source Type to check.</param>
-        /// <returns>true if type is WcfService Class; otherwise, false.</returns>
-        public static bool IsWcfServiceClass(Type type)
-        {
-            if (type == null)
-            {
-                return false;
-            }
-
-            return type.IsClass && HasServiceContractAttribute(type) && !IsDerivedFrom(type, typeof(ClientBase<>));
-        }
-
-        /// <summary>
-        /// Check whether a Type has ServiceContract Attribute.
-        /// </summary>
-        /// <param name="type">Source Type to check.</param>
-        /// <returns>true if has ServiceContractAttribute; otherwise, false.</returns>
-        public static bool HasServiceContractAttribute(Type type)
-        {
-            if (type.IsDefined(typeof(ServiceContractAttribute), false))
-            {
-                return true;
-            }
-
-            Type[] interfaces = type.GetInterfaces();
-            for (int i = 0; i < interfaces.Length; i++)
-            {
-                Type type2 = interfaces[i];
-                if (type2.IsDefined(typeof(ServiceContractAttribute), false))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         /// <summary>

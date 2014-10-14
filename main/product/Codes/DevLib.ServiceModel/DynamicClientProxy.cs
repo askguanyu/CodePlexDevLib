@@ -1,74 +1,82 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WebServiceClientProxy.cs" company="YuGuan Corporation">
+// <copyright file="DynamicClientProxy.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Web.Services
+namespace DevLib.ServiceModel
 {
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+    using System.ServiceModel;
+    using System.ServiceModel.Channels;
 
     /// <summary>
     /// Represents service client proxy object.
     /// </summary>
     [Serializable]
-    public class WebServiceClientProxy : WebServiceClientObject, IDisposable
+    public class DynamicClientProxy : DynamicClientObject, IDisposable
     {
-        /// <summary>
-        /// Field UrlPropertyName.
-        /// </summary>
-        private const string UrlPropertyName = "Url";
-
         /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServiceClientProxy" /> class.
+        /// Initializes a new instance of the <see cref="DynamicClientProxy" /> class.
         /// </summary>
         /// <param name="proxyType">Service client type.</param>
-        public WebServiceClientProxy(Type proxyType)
+        /// <param name="binding">Service client binding.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        public DynamicClientProxy(Type proxyType, Binding binding, string remoteUri)
             : base(proxyType)
         {
-            this.CallConstructor();
+            Type[] paramTypes = new Type[2];
+            paramTypes[0] = typeof(Binding);
+            paramTypes[1] = typeof(EndpointAddress);
+
+            object[] paramValues = new object[2];
+            paramValues[0] = binding;
+            paramValues[1] = new EndpointAddress(remoteUri);
+
+            this.CallConstructor(paramTypes, paramValues);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServiceClientProxy" /> class.
+        /// Initializes a new instance of the <see cref="DynamicClientProxy" /> class.
         /// </summary>
         /// <param name="proxyType">Service client type.</param>
-        /// <param name="url">The base URL of the Web service the client is requesting.</param>
-        public WebServiceClientProxy(Type proxyType, string url)
+        /// <param name="bindingType">Service client binding type.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        public DynamicClientProxy(Type proxyType, Type bindingType, string remoteUri)
             : base(proxyType)
         {
-            this.CallConstructor();
-            this.Url = url;
+            Type[] paramTypes = new Type[2];
+            paramTypes[0] = typeof(Binding);
+            paramTypes[1] = typeof(EndpointAddress);
+
+            object[] paramValues = new object[2];
+            paramValues[0] = WcfServiceType.GetBinding(bindingType);
+            paramValues[1] = new EndpointAddress(remoteUri);
+
+            this.CallConstructor(paramTypes, paramValues);
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="WebServiceClientProxy" /> class.
+        /// Initializes a new instance of the <see cref="DynamicClientProxy" /> class.
         /// </summary>
-        ~WebServiceClientProxy()
+        /// <param name="obj">Service client proxy object.</param>
+        internal DynamicClientProxy(object obj)
+            : base(obj)
+        {
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="DynamicClientProxy" /> class.
+        /// </summary>
+        ~DynamicClientProxy()
         {
             this.Dispose(false);
-        }
-
-        /// <summary>
-        /// Gets or sets the base URL of the Web service the client is requesting.
-        /// </summary>
-        public string Url
-        {
-            get
-            {
-                return (string)this.GetProperty(UrlPropertyName);
-            }
-
-            set
-            {
-                this.SetProperty(UrlPropertyName, value);
-            }
         }
 
         /// <summary>
@@ -115,7 +123,7 @@ namespace DevLib.Web.Services
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WebServiceClientProxy" /> class.
+        /// Releases all resources used by the current instance of the <see cref="DynamicClientProxy" /> class.
         /// </summary>
         public void Close()
         {
@@ -123,7 +131,7 @@ namespace DevLib.Web.Services
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WebServiceClientProxy" /> class.
+        /// Releases all resources used by the current instance of the <see cref="DynamicClientProxy" /> class.
         /// </summary>
         public void Dispose()
         {
@@ -132,7 +140,7 @@ namespace DevLib.Web.Services
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WebServiceClientProxy" /> class.
+        /// Releases all resources used by the current instance of the <see cref="DynamicClientProxy" /> class.
         /// protected virtual for non-sealed class; private for sealed class.
         /// </summary>
         /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
@@ -154,7 +162,13 @@ namespace DevLib.Web.Services
                 ////    managedResource = null;
                 ////}
 
-                this.CallMethod("Dispose");
+                try
+                {
+                    this.CallMethod("Abort");
+                }
+                catch
+                {
+                }
             }
 
             // free native resources
@@ -172,7 +186,7 @@ namespace DevLib.Web.Services
         {
             if (this._disposed)
             {
-                throw new ObjectDisposedException("DevLib.Web.Services.WebServiceClientProxy");
+                throw new ObjectDisposedException("DevLib.ServiceModel.DynamicClientProxy");
             }
         }
     }

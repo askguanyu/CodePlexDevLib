@@ -10,8 +10,6 @@ namespace DevLib.Samples
     public interface IWcfTest
     {
         [OperationContract]
-        [FaultContract(typeof(InvalidOperationException))]
-        [FaultContract(typeof(Exception))]
         string MyOperation1(string arg1, int arg2);
 
         [OperationContract]

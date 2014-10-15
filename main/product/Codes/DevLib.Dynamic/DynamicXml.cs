@@ -39,6 +39,11 @@ namespace DevLib.Dynamic
         private readonly XAttribute _xAttribute;
 
         /// <summary>
+        /// Field _xElementList.
+        /// </summary>
+        private readonly IList<XElement> _xElementList;
+
+        /// <summary>
         /// Initializes static members of the <see cref="DynamicXml" /> class.
         /// </summary>
         static DynamicXml()
@@ -81,6 +86,7 @@ namespace DevLib.Dynamic
         {
             this._xElement = xElement;
             this._xAttribute = null;
+            this._xElementList = null;
         }
 
         /// <summary>
@@ -89,8 +95,21 @@ namespace DevLib.Dynamic
         /// <param name="xAttribute">XAttribute instance.</param>
         public DynamicXml(XAttribute xAttribute)
         {
-            this._xElement = null;
             this._xAttribute = xAttribute;
+            this._xElement = null;
+            this._xElementList = null;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicXml" /> class.
+        /// </summary>
+        /// <param name="xElement">XElement instance.</param>
+        /// <param name="xElementList">A list of XElement.</param>
+        private DynamicXml(XElement xElement, IList<XElement> xElementList)
+        {
+            this._xElement = xElement;
+            this._xElementList = xElementList;
+            this._xAttribute = null;
         }
 
         /// <summary>
@@ -425,7 +444,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
-            result = this.GetIndexInternal(this, indexes);
+            result = (dynamic)this.GetIndexInternal(this, false, indexes);
 
             return result != null;
         }
@@ -438,7 +457,9 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            return this.GetMemberInternal(this, binder.Name, out result);
+            result = (dynamic)this.GetMemberInternal(this, binder.Name);
+
+            return result != null;
         }
 
         /// <summary>
@@ -450,7 +471,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
         {
-            return this.SetIndexInternal(this._xElement != null ? (XObject)this._xElement : (XObject)this._xAttribute, value, indexes);
+            return this.SetIndexInternal(this, value, indexes);
         }
 
         /// <summary>
@@ -496,14 +517,7 @@ namespace DevLib.Dynamic
             }
             else if (args.Length == 1)
             {
-                object innerObject = null;
-
-                if (!this.GetMemberInternal(this, binder.Name, out innerObject))
-                {
-                    result = false;
-                }
-
-                DynamicXml innerDynamicXml = innerObject as DynamicXml;
+                DynamicXml innerDynamicXml = this.GetMemberInternal(this, binder.Name);
 
                 if (innerDynamicXml == null)
                 {
@@ -651,42 +665,34 @@ namespace DevLib.Dynamic
         /// </summary>
         /// <param name="source">Source object.</param>
         /// <param name="name">Name of member to get.</param>
-        /// <param name="result">The result of the get operation.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        private bool GetMemberInternal(DynamicXml source, string name, out object result)
+        /// <returns>The result of the get operation.</returns>
+        private DynamicXml GetMemberInternal(DynamicXml source, string name)
         {
             if (source._xElement != null)
             {
-                XElement xElement = new XElement(source._xElement);
+                var elements = source._xElement.Elements(XName.Get(name, source._xElement.GetDefaultNamespace().NamespaceName));
 
-                xElement.Elements().Except(xElement.Elements(XName.Get(name, xElement.GetDefaultNamespace().NamespaceName))).Remove();
-
-                if (xElement.Elements().Count() > 1)
+                if (elements.Count() > 1)
                 {
-                    result = new DynamicXml(xElement);
-
-                    return true;
+                    return new DynamicXml(source._xElement, elements.ToList());
                 }
-                else if (xElement.Elements().Count() == 1)
+                else if (elements.Count() == 1)
                 {
-                    result = new DynamicXml(xElement.Elements().FirstOrDefault());
-
-                    return true;
+                    return new DynamicXml(elements.FirstOrDefault());
                 }
             }
 
-            result = null;
-
-            return false;
+            return null;
         }
 
         /// <summary>
         /// Provides the implementation for operations that get a value by index.
         /// </summary>
         /// <param name="source">Source object.</param>
+        /// <param name="getInner">true to get inner level elements; false to get current level elements.</param>
         /// <param name="indexes">The indexes that are used in the operation.</param>
         /// <returns>The result of the index operation.</returns>
-        private DynamicXml GetIndexInternal(DynamicXml source, params object[] indexes)
+        private DynamicXml GetIndexInternal(DynamicXml source, bool getInner, params object[] indexes)
         {
             if (source == null)
             {
@@ -731,15 +737,26 @@ namespace DevLib.Dynamic
 
                 XElement element = null;
 
-                if (source._xElement.Elements().Count() > 0)
+                if (source._xElementList != null)
                 {
-                    element = source._xElement.Elements().ElementAtOrDefault(firstIndex);
+                    element = source._xElementList.ElementAtOrDefault(firstIndex);
                 }
-                else if (firstIndex == 0)
+                else if (source._xElement != null)
                 {
-                    element = source._xElement;
+                    if (getInner)
+                    {
+                        element = source._xElement.Elements().ElementAtOrDefault(firstIndex);
+                    }
+                    else
+                    {
+                        if (firstIndex == 0)
+                        {
+                            element = source._xElement;
+                        }
+                    }
                 }
-                else
+
+                if (element == null)
                 {
                     return null;
                 }
@@ -750,7 +767,7 @@ namespace DevLib.Dynamic
                 }
                 else if (indexes.Length == 2)
                 {
-                    return this.GetIndexInternal(new DynamicXml(element), indexes[1]);
+                    return this.GetIndexInternal(new DynamicXml(element), true, indexes[1]);
                 }
             }
 
@@ -764,7 +781,7 @@ namespace DevLib.Dynamic
         /// <param name="value">The value to set to the object that has the specified index.</param>
         /// <param name="indexes">The indexes that are used in the operation.</param>
         /// <returns>true if the operation is successful; otherwise, false.</returns>
-        private bool SetIndexInternal(XObject source, object value, params object[] indexes)
+        private bool SetIndexInternal(DynamicXml source, object value, params object[] indexes)
         {
             if (source == null)
             {
@@ -777,19 +794,17 @@ namespace DevLib.Dynamic
                 int attrIndex = 0;
                 bool isNumber = int.TryParse(attrName, NumberStyles.Number, CultureInfo.InvariantCulture, out attrIndex);
 
-                if (source is XElement)
+                if (source._xElement != null)
                 {
-                    XElement xElement = (XElement)source;
-
                     XAttribute attribute = null;
 
                     if (isNumber)
                     {
-                        attribute = xElement.Attributes().ElementAtOrDefault(attrIndex);
+                        attribute = source._xElement.Attributes().ElementAtOrDefault(attrIndex);
                     }
                     else
                     {
-                        attribute = xElement.Attribute(attrName);
+                        attribute = source._xElement.Attribute(attrName);
                     }
 
                     if (attribute != null)
@@ -798,18 +813,16 @@ namespace DevLib.Dynamic
                     }
                     else
                     {
-                        xElement.Add(new XAttribute(isNumber ? "attribute" + attrName : attrName, XmlConvert.ToString((dynamic)value)));
+                        source._xElement.Add(new XAttribute(isNumber ? "attribute" + attrName : attrName, XmlConvert.ToString((dynamic)value)));
                     }
 
                     return true;
                 }
                 else
                 {
-                    XAttribute xAttribute = (XAttribute)source;
-
-                    if ((isNumber && attrIndex == 0) || (!isNumber && xAttribute.Name.LocalName.Equals(attrName, StringComparison.Ordinal)))
+                    if ((isNumber && attrIndex == 0) || (!isNumber && source._xAttribute.Name.LocalName.Equals(attrName, StringComparison.Ordinal)))
                     {
-                        xAttribute.Value = XmlConvert.ToString((dynamic)value);
+                        source._xAttribute.Value = XmlConvert.ToString((dynamic)value);
 
                         return true;
                     }
@@ -819,11 +832,9 @@ namespace DevLib.Dynamic
             {
                 int firstIndex = (int)indexes[0];
 
-                if (source is XElement)
+                if (source._xElementList != null)
                 {
-                    XElement xElement = (XElement)source;
-
-                    XElement element = xElement.Elements().ElementAtOrDefault(firstIndex);
+                    XElement element = source._xElementList.ElementAtOrDefault(firstIndex);
 
                     if (indexes.Length == 1)
                     {
@@ -833,7 +844,9 @@ namespace DevLib.Dynamic
                         }
                         else
                         {
-                            xElement.Add(new XElement(value.GetType().Name, this.CreateXContent(value)));
+                            element = new XElement(value.GetType().Name, this.CreateXContent(value));
+                            source._xElement.Add(element);
+                            source._xElementList.Add(element);
                         }
 
                         return true;
@@ -843,19 +856,46 @@ namespace DevLib.Dynamic
                         if (element == null)
                         {
                             element = new XElement("ArrayOf" + value.GetType().Name);
-                            xElement.Add(element);
+                            source._xElement.Add(element);
+                            source._xElementList.Add(element);
                         }
 
-                        return this.SetIndexInternal(element, value, indexes[1]);
+                        return this.SetIndexInternal(new DynamicXml(element), value, indexes[1]);
                     }
                 }
-                else
+                else if (source._xElement != null)
+                {
+                    XElement element = source._xElement.Elements().ElementAtOrDefault(firstIndex);
+
+                    if (indexes.Length == 1)
+                    {
+                        if (element != null)
+                        {
+                            element.ReplaceNodes(this.CreateXContent(value));
+                        }
+                        else
+                        {
+                            source._xElement.Add(new XElement(value.GetType().Name, this.CreateXContent(value)));
+                        }
+
+                        return true;
+                    }
+                    else if (indexes.Length == 2)
+                    {
+                        if (element == null)
+                        {
+                            element = new XElement("ArrayOf" + value.GetType().Name);
+                            source._xElement.Add(element);
+                        }
+
+                        return this.SetIndexInternal(new DynamicXml(element), value, indexes[1]);
+                    }
+                }
+                else if (source._xAttribute != null)
                 {
                     if (firstIndex == 0)
                     {
-                        XAttribute xAttribute = (XAttribute)source;
-
-                        xAttribute.Value = XmlConvert.ToString((dynamic)value);
+                        source._xAttribute.Value = XmlConvert.ToString((dynamic)value);
 
                         return true;
                     }

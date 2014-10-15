@@ -347,7 +347,7 @@ namespace DevLib.Dynamic
 
             if (element != null)
             {
-                result = CreateDynamicJson(element);
+                result = (dynamic)CreateDynamicJson(element);
 
                 return true;
             }
@@ -367,7 +367,9 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            return this.GetMemberInternal(this, binder.Name, out result);
+            result = (dynamic)this.GetMemberInternal(this, binder.Name);
+
+            return result != null;
         }
 
         /// <summary>
@@ -489,14 +491,7 @@ namespace DevLib.Dynamic
             }
             else if (args.Length == 1)
             {
-                object innerObject = null;
-
-                if (!this.GetMemberInternal(this, binder.Name, out innerObject))
-                {
-                    result = false;
-                }
-
-                DynamicJson innerDynamicJson = innerObject as DynamicJson;
+                DynamicJson innerDynamicJson = this.GetMemberInternal(this, binder.Name);
 
                 if (innerDynamicJson == null)
                 {
@@ -634,29 +629,22 @@ namespace DevLib.Dynamic
         /// </summary>
         /// <param name="source">Source object.</param>
         /// <param name="name">Name of member to get.</param>
-        /// <param name="result">The result of the get operation.</param>
-        /// <returns>true if the operation is successful; otherwise, false.</returns>
-        private bool GetMemberInternal(DynamicJson source, string name, out object result)
+        /// <returns>The result of the get operation..</returns>
+        private DynamicJson GetMemberInternal(DynamicJson source, string name)
         {
             if (source.IsArray)
             {
-                result = null;
-
-                return false;
+                return null;
             }
 
             var element = source._xElement.Element(name);
 
             if (element != null)
             {
-                result = CreateDynamicJson(element);
-
-                return true;
+                return CreateDynamicJson(element);
             }
 
-            result = null;
-
-            return false;
+            return null;
         }
 
         /// <summary>

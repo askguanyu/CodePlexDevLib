@@ -10,6 +10,7 @@ namespace DevLib.Dynamic
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Dynamic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -260,6 +261,8 @@ namespace DevLib.Dynamic
         /// <returns>A Json string that represents the current object.</returns>
         public override string ToString()
         {
+            this._xElement.Descendants().Where(x => x.Attribute("type").Value == "null").Remove();
+
             return this.CreateJsonString(new XStreamingElement("root", this.CreateTypeAttribute(this._jsonType), this._xElement.Elements()));
         }
 
@@ -364,25 +367,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            if (this.IsArray)
-            {
-                result = null;
-
-                return false;
-            }
-
-            var element = this._xElement.Element(binder.Name);
-
-            if (element != null)
-            {
-                result = CreateDynamicJson(element);
-
-                return true;
-            }
-
-            result = null;
-
-            return false;
+            return this.GetMemberInternal(this, binder.Name, out result);
         }
 
         /// <summary>
@@ -489,6 +474,116 @@ namespace DevLib.Dynamic
         }
 
         /// <summary>
+        /// Provides the implementation for operations that invoke a member.
+        /// </summary>
+        /// <param name="binder">Provides information about the dynamic operation.</param>
+        /// <param name="args">The arguments that are passed to the object member during the invoke operation.</param>
+        /// <param name="result">The result of the member invocation.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+        {
+            if (args.Length == 0)
+            {
+                result = this.Has(binder.Name);
+                return true;
+            }
+            else if (args.Length == 1)
+            {
+                object innerObject = null;
+
+                if (!this.GetMemberInternal(this, binder.Name, out innerObject))
+                {
+                    result = false;
+                }
+
+                DynamicJson innerDynamicJson = innerObject as DynamicJson;
+
+                if (innerDynamicJson == null)
+                {
+                    result = false;
+                }
+
+                dynamic memberIndex;
+
+                if (args[0] is int)
+                {
+                    memberIndex = (int)args[0];
+                }
+                else if (args[0] is string)
+                {
+                    memberIndex = (string)args[0];
+
+                    int index;
+                    bool isNumber = int.TryParse((string)memberIndex, NumberStyles.Number, CultureInfo.InvariantCulture, out index);
+
+                    if (isNumber)
+                    {
+                        memberIndex = index;
+                    }
+                }
+                else
+                {
+                    result = false;
+                    return false;
+                }
+
+                result = innerDynamicJson.Has(memberIndex);
+                return true;
+            }
+
+            result = false;
+            return false;
+        }
+
+        /// <summary>
+        /// Provides the implementation for operations that invoke an object.
+        /// </summary>
+        /// <param name="binder">Provides information about the invoke operation.</param>
+        /// <param name="args">The arguments that are passed to the object during the invoke operation.</param>
+        /// <param name="result">The result of the object invocation.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        public override bool TryInvoke(InvokeBinder binder, object[] args, out object result)
+        {
+            if (args.Length == 0)
+            {
+                result = this._xElement.Name.LocalName;
+                return true;
+            }
+            else if (args.Length == 1)
+            {
+                dynamic memberIndex;
+
+                if (args[0] is int)
+                {
+                    memberIndex = (int)args[0];
+                }
+                else if (args[0] is string)
+                {
+                    memberIndex = (string)args[0];
+
+                    int index;
+                    bool isNumber = int.TryParse((string)memberIndex, NumberStyles.Number, CultureInfo.InvariantCulture, out index);
+
+                    if (isNumber)
+                    {
+                        memberIndex = index;
+                    }
+                }
+                else
+                {
+                    result = false;
+                    return false;
+                }
+
+                result = this.Has(memberIndex);
+                return true;
+            }
+
+            result = false;
+            return false;
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through a collection.
         /// </summary>
         /// <returns>An System.Collections.IEnumerator object that can be used to iterate through the collection.</returns>
@@ -532,6 +627,36 @@ namespace DevLib.Dynamic
             JsonType type = (JsonType)Enum.Parse(typeof(JsonType), xElement.Attribute("type").Value);
 
             return new DynamicJson(xElement, type);
+        }
+
+        /// <summary>
+        /// Provides the implementation for operations that get member values.
+        /// </summary>
+        /// <param name="source">Source object.</param>
+        /// <param name="name">Name of member to get.</param>
+        /// <param name="result">The result of the get operation.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        private bool GetMemberInternal(DynamicJson source, string name, out object result)
+        {
+            if (source.IsArray)
+            {
+                result = null;
+
+                return false;
+            }
+
+            var element = source._xElement.Element(name);
+
+            if (element != null)
+            {
+                result = CreateDynamicJson(element);
+
+                return true;
+            }
+
+            result = null;
+
+            return false;
         }
 
         /// <summary>

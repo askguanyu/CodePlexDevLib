@@ -2302,9 +2302,11 @@ namespace DevLib.ServiceModel
         private void AddDocumentToResult(object document, IList<MetadataSection> result)
         {
             WebService.ServiceDescription wsdl = document as WebService.ServiceDescription;
-            XmlSchema xmlSchema = document as XmlSchema;
-            XmlElement xmlElement = document as XmlElement;
 
+            XmlSchema xmlSchema = document as XmlSchema;
+#if !__MonoCS__
+            XmlElement xmlElement = document as XmlElement;
+#endif
             if (wsdl != null)
             {
                 result.Add(MetadataSection.CreateFromServiceDescription(wsdl));
@@ -2313,10 +2315,12 @@ namespace DevLib.ServiceModel
             {
                 result.Add(MetadataSection.CreateFromSchema(xmlSchema));
             }
+#if !__MonoCS__
             else if (xmlElement != null && xmlElement.LocalName == "Policy")
             {
                 result.Add(MetadataSection.CreateFromPolicy(xmlElement, null));
             }
+#endif
             else
             {
                 MetadataSection metadataSection = new MetadataSection();
@@ -2351,6 +2355,7 @@ namespace DevLib.ServiceModel
         /// <param name="importer">Importer instance.</param>
         private void AddStateForXmlSerializerImport(WsdlImporter importer)
         {
+#if !__MonoCS__
             XmlSerializerImportOptions importOptions = new XmlSerializerImportOptions(this._codeCompileUnit);
 
             importOptions.CodeProvider = this._codeDomProvider;
@@ -2366,6 +2371,7 @@ namespace DevLib.ServiceModel
             importOptions.WebReferenceOptions.SchemaImporterExtensions.Add(typeof(DataSetSchemaImporterExtension).AssemblyQualifiedName);
 
             importer.State.Add(typeof(XmlSerializerImportOptions), importOptions);
+#endif
         }
 
         /// <summary>

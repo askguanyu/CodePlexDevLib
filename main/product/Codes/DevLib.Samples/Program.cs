@@ -270,13 +270,15 @@ namespace DevLib.Samples
             var dynamicWithLinq = ((IEnumerable<dynamic>)objectJsonList).Select(d => (int)d.bar).ToList();
 
 
-            var dynamicXml = DynamicXml.Parse("<FooBar name=\"foobar1\" ><foo>xml</foo><bar size=\"456\">123</bar></FooBar>");
+            var dynamicXml = DynamicXml.Parse("<FooBar name=\"foobar1\" ><foo>xml</foo><bar size=\"456\">123<aaa>xml2</aaa></bar></FooBar>");
+            dynamicXml.foo[0] = 1;
+            var b1 = dynamicXml.bar[0].aaa;
 
             string x1 = dynamicXml.foo; // element "xml" - dynamic(string)
-            int x2 = dynamicXml.bar; // element 123 - dynamic(int)
+            var x2 = dynamicXml.bar; // element 123 - dynamic(int)
             string x4 = dynamicXml["name"]; // attribute "foobar1"
-            string x5 = dynamicXml[0]; // first element "xml"
-            int x6 = dynamicXml[1]["size"]; // second element's attribute 456
+            string x5 = dynamicXml[0, 0]; // first element "xml"
+            int x6 = dynamicXml[0, 1]["size"]; // second element's attribute 456
 
             var x7 = dynamicXml.HasElement("foo");// element true
             var x8 = dynamicXml.HasElement("foooo"); // element false
@@ -286,7 +288,7 @@ namespace DevLib.Samples
 
             dynamicXml.Date = DateTime.Now; // add new element
             dynamicXml["age"] = 10; // add new attribute
-            dynamicXml[9] = "hello"; // add new element, element name is value's Type
+            dynamicXml[9,2] = "hello"; // add new element, element name is value's Type
             var atts = dynamicXml.Attributes(); // get all attributes
             var elms = dynamicXml.Elements(); // get all elements
             //dynamicXml.RemoveElement("bar"); //remove element

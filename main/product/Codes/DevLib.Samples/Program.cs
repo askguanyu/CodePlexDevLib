@@ -24,6 +24,7 @@ namespace DevLib.Samples
     using System.Net.NetworkInformation;
     using System.Net.Sockets;
     using System.Reflection;
+    using System.Reflection.Emit;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters;
     using System.ServiceModel;
@@ -732,8 +733,8 @@ namespace DevLib.Samples
 
             //Uri serviceContractUri = new Uri(path);
 
-            WebServiceClientProxyFactory wsf = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
-            var wsc = wsf.GetProxy();
+            //WebServiceClientProxyFactory wsf = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
+            //var wsc = wsf.GetProxy();
             //var mds = wsc.Methods;
             //var rv = wsc.CallMethod("GetCityForecastByZIP", "33133");
 
@@ -746,12 +747,16 @@ namespace DevLib.Samples
 
 
 
-            DynamicClientProxyFactory cf = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
+            DynamicClientProxyFactory cf = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "d:\\1\\1.dll");
+
+            var cf1 = DynamicClientProxyFactory.Load("d:\\1\\1.dll");
+
+
             var epr = cf.Endpoints;
 
             //var dp = cf.Foo();
 
-            using (var dp = cf.GetClientBaseProxy())
+            using (var dp = cf1.GetClientBaseProxy("http://wsf.cdyne.com/WeatherWS/Weather.asmx"))
             {
                 //DynamicClientObject obj = new DynamicClientObject(cf.Types.First(i => i.Name == "AgentInfoDTO"));
                 //obj.CallConstructor();

@@ -46,6 +46,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field _codeCompileUnit.
         /// </summary>
+        [NonSerialized]
         private CodeCompileUnit _codeCompileUnit;
 
         /// <summary>
@@ -61,11 +62,66 @@ namespace DevLib.ServiceModel
         private ServiceContractGenerator _contractGenerator;
 
         /// <summary>
+        /// Field _endpoints.
+        /// </summary>
+        [NonSerialized]
+        private IList<ServiceEndpoint> _endpoints;
+
+        /// <summary>
+        /// Field _metadata.
+        /// </summary>
+        [NonSerialized]
+        private IList<MetadataSection> _metadata;
+
+        /// <summary>
+        /// Field _bindings.
+        /// </summary>
+        [NonSerialized]
+        private IList<Binding> _bindings;
+
+        /// <summary>
+        /// Field _contracts.
+        /// </summary>
+        [NonSerialized]
+        private IList<ContractDescription> _contracts;
+
+        /// <summary>
+        /// Field _metadataImportWarnings.
+        /// </summary>
+        [NonSerialized]
+        private IList<MetadataConversionError> _metadataImportWarnings;
+
+        /// <summary>
+        /// Field _codeGenerationWarnings.
+        /// </summary>
+        [NonSerialized]
+        private IList<MetadataConversionError> _codeGenerationWarnings;
+
+        /// <summary>
+        /// Field _compilerWarnings.
+        /// </summary>
+        [NonSerialized]
+        private IList<CompilerError> _compilerWarnings;
+
+        /// <summary>
+        /// Field _proxyAssembly.
+        /// </summary>
+        [NonSerialized]
+        private Assembly _proxyAssembly;
+
+        /// <summary>
+        /// Field _isLoadFile.
+        /// </summary>
+        private bool _isLoadFile;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="options">The DynamicClientProxyFactoryOptions to use.</param>
-        public DynamicClientProxyFactory(string url, DynamicClientProxyFactoryOptions options)
+        public DynamicClientProxyFactory(string url, string outputAssembly, bool overwrite, DynamicClientProxyFactoryOptions options)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -79,13 +135,15 @@ namespace DevLib.ServiceModel
 
             this.Url = url;
             this._options = options;
+            this._isLoadFile = false;
 
             this.DownloadMetadata();
             this.ImportMetadata();
             this.GenerateServiceContract();
             this.WriteCode();
-            this.CompileProxy();
+            this.CompileProxy(outputAssembly, overwrite);
             this.DisposeCodeDomProvider();
+            this.ImportTypes();
         }
 
         /// <summary>
@@ -93,8 +151,57 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         public DynamicClientProxyFactory(string url)
-            : this(url, new DynamicClientProxyFactoryOptions())
+            : this(url, null, true, new DynamicClientProxyFactoryOptions())
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="options">The DynamicClientProxyFactoryOptions to use.</param>
+        public DynamicClientProxyFactory(string url, DynamicClientProxyFactoryOptions options)
+            : this(url, null, true, options)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
+        public DynamicClientProxyFactory(string url, string outputAssembly)
+            : this(url, outputAssembly, true, new DynamicClientProxyFactoryOptions())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        public DynamicClientProxyFactory(string url, string outputAssembly, bool overwrite)
+            : this(url, outputAssembly, overwrite, new DynamicClientProxyFactoryOptions())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Client proxy assembly file.</param>
+        /// <param name="isLoadFile">true to indicate DynamicClientProxyFactory is loaded from assembly file.</param>
+        private DynamicClientProxyFactory(string assemblyFile, bool isLoadFile)
+        {
+            if (!File.Exists(assemblyFile))
+            {
+                throw new ArgumentException("The specified assembly file does not exist.", "assemblyFile");
+            }
+
+            this._isLoadFile = isLoadFile;
+
+            this.ProxyAssembly = Assembly.LoadFrom(assemblyFile);
+            this.ImportTypes();
         }
 
         /// <summary>
@@ -111,8 +218,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Assembly ProxyAssembly
         {
-            get;
-            private set;
+            get
+            {
+                return this._proxyAssembly;
+            }
+
+            private set
+            {
+                this._proxyAssembly = value;
+            }
         }
 
         /// <summary>
@@ -129,10 +243,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Type[] Types
         {
-            get
-            {
-                return this.ProxyAssembly.GetTypes();
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -140,8 +252,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         public IList<MetadataSection> Metadata
         {
-            get;
-            private set;
+            get
+            {
+                return this._metadata;
+            }
+
+            private set
+            {
+                this._metadata = value;
+            }
         }
 
         /// <summary>
@@ -149,14 +268,37 @@ namespace DevLib.ServiceModel
         /// </summary>
         public IList<Binding> Bindings
         {
-            get;
-            private set;
+            get
+            {
+                return this._bindings;
+            }
+
+            private set
+            {
+                this._bindings = value;
+            }
         }
 
         /// <summary>
         /// Gets all the Contracts.
         /// </summary>
         public IList<ContractDescription> Contracts
+        {
+            get
+            {
+                return this._contracts;
+            }
+
+            private set
+            {
+                this._contracts = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets all the Contract types.
+        /// </summary>
+        public IList<Type> ContractTypes
         {
             get;
             private set;
@@ -167,8 +309,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         public IList<ServiceEndpoint> Endpoints
         {
-            get;
-            private set;
+            get
+            {
+                return this._endpoints;
+            }
+
+            private set
+            {
+                this._endpoints = value;
+            }
         }
 
         /// <summary>
@@ -176,8 +325,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         public IList<MetadataConversionError> MetadataImportWarnings
         {
-            get;
-            private set;
+            get
+            {
+                return this._metadataImportWarnings;
+            }
+
+            private set
+            {
+                this._metadataImportWarnings = value;
+            }
         }
 
         /// <summary>
@@ -185,8 +341,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         public IList<MetadataConversionError> CodeGenerationWarnings
         {
-            get;
-            private set;
+            get
+            {
+                return this._codeGenerationWarnings;
+            }
+
+            private set
+            {
+                this._codeGenerationWarnings = value;
+            }
         }
 
         /// <summary>
@@ -194,8 +357,25 @@ namespace DevLib.ServiceModel
         /// </summary>
         public IList<CompilerError> CompilerWarnings
         {
-            get;
-            private set;
+            get
+            {
+                return this._compilerWarnings;
+            }
+
+            private set
+            {
+                this._compilerWarnings = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets DynamicClientProxyFactory from client proxy assembly file.
+        /// </summary>
+        /// <param name="assemblyFile">Client proxy assembly file.</param>
+        /// <returns>DynamicClientProxyFactory instance.</returns>
+        public static DynamicClientProxyFactory Load(string assemblyFile)
+        {
+            return new DynamicClientProxyFactory(assemblyFile, true);
         }
 
         /// <summary>
@@ -305,7 +485,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(string remoteUri)
         {
-            return this.GetClientBaseProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteUri);
+            if (this._isLoadFile)
+            {
+                return this.GetClientBaseProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri);
+            }
+            else
+            {
+                return this.GetClientBaseProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteUri);
+            }
         }
 
         /// <summary>
@@ -316,7 +503,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(string remoteHost, int remotePort)
         {
-            return this.GetClientBaseProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
+            if (this._isLoadFile)
+            {
+                return this.GetClientBaseProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
+            }
+            else
+            {
+                return this.GetClientBaseProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
+            }
         }
 
         /// <summary>
@@ -327,7 +521,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Binding binding, string remoteUri)
         {
-            return this.GetClientBaseProxy(this.Endpoints[0], binding, remoteUri);
+            if (this._isLoadFile)
+            {
+                return this.GetClientBaseProxy(this.ContractTypes[0], binding, remoteUri);
+            }
+            else
+            {
+                return this.GetClientBaseProxy(this.Endpoints[0], binding, remoteUri);
+            }
         }
 
         /// <summary>
@@ -339,7 +540,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Binding binding, string remoteHost, int remotePort)
         {
-            return this.GetClientBaseProxy(this.Endpoints[0], binding, remoteHost, remotePort);
+            if (this._isLoadFile)
+            {
+                return this.GetClientBaseProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
+            }
+            else
+            {
+                return this.GetClientBaseProxy(this.Endpoints[0], binding, remoteHost, remotePort);
+            }
         }
 
         /// <summary>
@@ -350,7 +558,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Type bindingType, string remoteUri)
         {
-            return this.GetClientBaseProxy(this.Endpoints[0], bindingType, remoteUri);
+            if (this._isLoadFile)
+            {
+                return this.GetClientBaseProxy(this.ContractTypes[0], bindingType, remoteUri);
+            }
+            else
+            {
+                return this.GetClientBaseProxy(this.Endpoints[0], bindingType, remoteUri);
+            }
         }
 
         /// <summary>
@@ -362,7 +577,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Type bindingType, string remoteHost, int remotePort)
         {
-            return this.GetClientBaseProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
+            if (this._isLoadFile)
+            {
+                return this.GetClientBaseProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
+            }
+            else
+            {
+                return this.GetClientBaseProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
+            }
         }
 
         /// <summary>
@@ -642,9 +864,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerSessionThrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerSessionThrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -656,9 +885,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerSessionThrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionThrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -670,7 +906,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -683,7 +926,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -695,7 +945,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -708,7 +965,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1039,9 +1303,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1053,9 +1324,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1067,7 +1345,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1080,7 +1365,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1092,7 +1384,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1105,7 +1404,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1436,9 +1742,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerCallThrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerCallThrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1450,9 +1763,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerCallThrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallThrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1464,7 +1784,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1477,7 +1804,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1489,7 +1823,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1502,7 +1843,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1833,9 +2181,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerCallUnthrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerCallUnthrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1847,9 +2202,16 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            ServiceEndpoint endpoint = this.Endpoints[0];
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerCallUnthrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallUnthrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1861,7 +2223,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1874,7 +2243,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1886,7 +2262,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+            }
         }
 
         /// <summary>
@@ -1899,7 +2282,14 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            if (this._isLoadFile)
+            {
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
+            else
+            {
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+            }
         }
 
         /// <summary>
@@ -2259,6 +2649,45 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Import Contract types.
+        /// </summary>
+        private void ImportTypes()
+        {
+            this.Types = this.ProxyAssembly.GetTypes();
+
+            this.ContractTypes = new List<Type>();
+
+            if (this.Endpoints != null)
+            {
+                foreach (var endpoint in this.Endpoints)
+                {
+                    try
+                    {
+                        Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+                        if (!this.ContractTypes.Contains(contractType))
+                        {
+                            this.ContractTypes.Add(contractType);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in this.Types)
+                {
+                    if (item.IsInterface && item.IsPublic)
+                    {
+                        this.ContractTypes.Add(item);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Dispose CodeDomProvider.
         /// </summary>
         private void DisposeCodeDomProvider()
@@ -2444,11 +2873,30 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Compile Proxy.
         /// </summary>
+        /// <param name="outputAssembly">The name of the output assembly.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        private void CompileProxy()
+        private void CompileProxy(string outputAssembly = null, bool overwrite = false)
         {
             CompilerParameters compilerParams = new CompilerParameters();
             compilerParams.GenerateInMemory = true;
+
+            if (!string.IsNullOrEmpty(outputAssembly))
+            {
+                string fullPath = Path.GetFullPath(outputAssembly);
+
+                string fullDirectoryPath = Path.GetDirectoryName(Path.GetFullPath(outputAssembly));
+
+                if (overwrite || !File.Exists(fullPath))
+                {
+                    if (!Directory.Exists(fullDirectoryPath))
+                    {
+                        Directory.CreateDirectory(fullDirectoryPath);
+                    }
+
+                    compilerParams.OutputAssembly = fullPath;
+                }
+            }
 
             this.AddAssemblyReference(typeof(System.ServiceModel.ServiceContractAttribute).Assembly, compilerParams.ReferencedAssemblies);
             this.AddAssemblyReference(typeof(System.Web.Services.Description.ServiceDescription).Assembly, compilerParams.ReferencedAssemblies);
@@ -2593,11 +3041,9 @@ namespace DevLib.ServiceModel
         {
             Type clientBaseType = typeof(ClientBase<>).MakeGenericType(contractType);
 
-            Type[] types = this.ProxyAssembly.GetTypes();
-
             Type result = null;
 
-            foreach (Type type in types)
+            foreach (Type type in this.Types)
             {
                 if (type.IsClass && contractType.IsAssignableFrom(type) && type.IsSubclassOf(clientBaseType))
                 {

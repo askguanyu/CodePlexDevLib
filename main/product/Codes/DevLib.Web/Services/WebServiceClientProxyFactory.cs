@@ -32,6 +32,7 @@ namespace DevLib.Web.Services
         /// <summary>
         /// Field _codeCompileUnit.
         /// </summary>
+        [NonSerialized]
         private CodeCompileUnit _codeCompileUnit;
 
         /// <summary>
@@ -41,11 +42,31 @@ namespace DevLib.Web.Services
         private CodeDomProvider _codeDomProvider;
 
         /// <summary>
+        /// Field _metadata.
+        /// </summary>
+        [NonSerialized]
+        private IList<ServiceDescription> _metadata;
+
+        /// <summary>
+        /// Field _compilerWarnings.
+        /// </summary>
+        [NonSerialized]
+        private IList<CompilerError> _compilerWarnings;
+
+        /// <summary>
+        /// Field _proxyAssembly.
+        /// </summary>
+        [NonSerialized]
+        private Assembly _proxyAssembly;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="options">The WebServiceClientProxyFactoryOptions to use.</param>
-        public WebServiceClientProxyFactory(string url, WebServiceClientProxyFactoryOptions options)
+        public WebServiceClientProxyFactory(string url, string outputAssembly, bool overwrite, WebServiceClientProxyFactoryOptions options)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -63,17 +84,65 @@ namespace DevLib.Web.Services
             this.DownloadMetadata();
             this.ImportMetadata();
             this.WriteCode();
-            this.CompileProxy();
+            this.CompileProxy(outputAssembly, overwrite);
             this.DisposeCodeDomProvider();
+            this.Types = this.ProxyAssembly.GetTypes();
         }
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
+        /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         public WebServiceClientProxyFactory(string url)
-            : this(url, new WebServiceClientProxyFactoryOptions())
+            : this(url, null, true, new WebServiceClientProxyFactoryOptions())
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="options">The WebServiceClientProxyFactoryOptions to use.</param>
+        public WebServiceClientProxyFactory(string url, WebServiceClientProxyFactoryOptions options)
+            : this(url, null, true, options)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
+        public WebServiceClientProxyFactory(string url, string outputAssembly)
+            : this(url, outputAssembly, true, new WebServiceClientProxyFactoryOptions())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
+        /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        public WebServiceClientProxyFactory(string url, string outputAssembly, bool overwrite)
+            : this(url, outputAssembly, overwrite, new WebServiceClientProxyFactoryOptions())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
+        /// </summary>
+        /// <param name="assemblyFile">Client proxy assembly file.</param>
+        /// <param name="isLoadFile">true to indicate WebServiceClientProxyFactory is loaded from assembly file.</param>
+        private WebServiceClientProxyFactory(string assemblyFile, bool isLoadFile)
+        {
+            if (!File.Exists(assemblyFile))
+            {
+                throw new ArgumentException("The specified assembly file does not exist.", "assemblyFile");
+            }
+
+            this.ProxyAssembly = Assembly.LoadFrom(assemblyFile);
+            this.Types = this.ProxyAssembly.GetTypes();
         }
 
         /// <summary>
@@ -90,8 +159,15 @@ namespace DevLib.Web.Services
         /// </summary>
         public Assembly ProxyAssembly
         {
-            get;
-            private set;
+            get
+            {
+                return this._proxyAssembly;
+            }
+
+            private set
+            {
+                this._proxyAssembly = value;
+            }
         }
 
         /// <summary>
@@ -108,10 +184,8 @@ namespace DevLib.Web.Services
         /// </summary>
         public Type[] Types
         {
-            get
-            {
-                return this.ProxyAssembly.GetTypes();
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -119,8 +193,15 @@ namespace DevLib.Web.Services
         /// </summary>
         public IList<ServiceDescription> Metadata
         {
-            get;
-            private set;
+            get
+            {
+                return this._metadata;
+            }
+
+            private set
+            {
+                this._metadata = value;
+            }
         }
 
         /// <summary>
@@ -128,8 +209,15 @@ namespace DevLib.Web.Services
         /// </summary>
         public IList<CompilerError> CompilerWarnings
         {
-            get;
-            private set;
+            get
+            {
+                return this._compilerWarnings;
+            }
+
+            private set
+            {
+                this._compilerWarnings = value;
+            }
         }
 
         /// <summary>
@@ -139,6 +227,16 @@ namespace DevLib.Web.Services
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets WebServiceClientProxyFactory from client proxy assembly file.
+        /// </summary>
+        /// <param name="assemblyFile">Client proxy assembly file.</param>
+        /// <returns>WebServiceClientProxyFactory instance.</returns>
+        public static WebServiceClientProxyFactory Load(string assemblyFile)
+        {
+            return new WebServiceClientProxyFactory(assemblyFile, true);
         }
 
         /// <summary>
@@ -309,11 +407,30 @@ namespace DevLib.Web.Services
         /// <summary>
         /// Compile Proxy.
         /// </summary>
+        /// <param name="outputAssembly">The name of the output assembly.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        private void CompileProxy()
+        private void CompileProxy(string outputAssembly = null, bool overwrite = false)
         {
             CompilerParameters compilerParams = new CompilerParameters();
             compilerParams.GenerateInMemory = true;
+
+            if (!string.IsNullOrEmpty(outputAssembly))
+            {
+                string fullPath = Path.GetFullPath(outputAssembly);
+
+                string fullDirectoryPath = Path.GetDirectoryName(Path.GetFullPath(outputAssembly));
+
+                if (overwrite || !File.Exists(fullPath))
+                {
+                    if (!Directory.Exists(fullDirectoryPath))
+                    {
+                        Directory.CreateDirectory(fullDirectoryPath);
+                    }
+
+                    compilerParams.OutputAssembly = fullPath;
+                }
+            }
 
             this.AddAssemblyReference(typeof(System.Web.Services.Description.ServiceDescription).Assembly, compilerParams.ReferencedAssemblies);
             this.AddAssemblyReference(typeof(System.Xml.XmlElement).Assembly, compilerParams.ReferencedAssemblies);

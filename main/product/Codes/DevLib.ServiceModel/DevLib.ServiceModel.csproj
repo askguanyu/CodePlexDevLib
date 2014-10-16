@@ -56,7 +56,7 @@
     <Compile Include="DynamicClientProxyConstants.cs" />
     <Compile Include="DynamicClientProxyException.cs" />
     <Compile Include="DynamicClientProxyFactory.cs" />
-    <Compile Include="DynamicClientProxyFactoryOptions.cs" />
+    <Compile Include="DynamicClientProxyFactorySetup.cs" />
     <Compile Include="InternalLogger.cs" />
     <Compile Include="IWcfClientBase.cs" />
     <Compile Include="IWcfClientTypeBuilder.cs" />

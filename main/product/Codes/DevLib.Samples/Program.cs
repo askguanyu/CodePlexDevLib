@@ -733,7 +733,7 @@ namespace DevLib.Samples
 
             //Uri serviceContractUri = new Uri(path);
 
-            //WebServiceClientProxyFactory wsf = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
+            WebServiceClientProxyFactory wsf = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
             //var wsc = wsf.GetProxy();
             //var mds = wsc.Methods;
             //var rv = wsc.CallMethod("GetCityForecastByZIP", "33133");

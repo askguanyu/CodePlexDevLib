@@ -39,9 +39,9 @@ namespace DevLib.ServiceModel
         internal const string DefaultNamespace = "http://tempuri.org/";
 
         /// <summary>
-        /// Field _options.
+        /// Field _setupInfo.
         /// </summary>
-        private DynamicClientProxyFactoryOptions _options;
+        private DynamicClientProxyFactorySetup _setupInfo;
 
         /// <summary>
         /// Field _codeCompileUnit.
@@ -120,21 +120,21 @@ namespace DevLib.ServiceModel
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
-        /// <param name="options">The DynamicClientProxyFactoryOptions to use.</param>
-        public DynamicClientProxyFactory(string url, string outputAssembly, bool overwrite, DynamicClientProxyFactoryOptions options)
+        /// <param name="setupInfo">The DynamicClientProxyFactorySetup to use.</param>
+        public DynamicClientProxyFactory(string url, string outputAssembly, bool overwrite, DynamicClientProxyFactorySetup setupInfo)
         {
             if (string.IsNullOrEmpty(url))
             {
                 throw new ArgumentNullException("url");
             }
 
-            if (options == null)
+            if (setupInfo == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException("setupInfo");
             }
 
             this.Url = url;
-            this._options = options;
+            this._setupInfo = setupInfo;
             this._isLoadFile = false;
 
             this.DownloadMetadata();
@@ -151,7 +151,7 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         public DynamicClientProxyFactory(string url)
-            : this(url, null, true, new DynamicClientProxyFactoryOptions())
+            : this(url, null, true, new DynamicClientProxyFactorySetup())
         {
         }
 
@@ -159,9 +159,9 @@ namespace DevLib.ServiceModel
         /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
-        /// <param name="options">The DynamicClientProxyFactoryOptions to use.</param>
-        public DynamicClientProxyFactory(string url, DynamicClientProxyFactoryOptions options)
-            : this(url, null, true, options)
+        /// <param name="setupInfo">The DynamicClientProxyFactorySetup to use.</param>
+        public DynamicClientProxyFactory(string url, DynamicClientProxyFactorySetup setupInfo)
+            : this(url, null, true, setupInfo)
         {
         }
 
@@ -171,7 +171,7 @@ namespace DevLib.ServiceModel
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
         public DynamicClientProxyFactory(string url, string outputAssembly)
-            : this(url, outputAssembly, true, new DynamicClientProxyFactoryOptions())
+            : this(url, outputAssembly, true, new DynamicClientProxyFactorySetup())
         {
         }
 
@@ -182,7 +182,7 @@ namespace DevLib.ServiceModel
         /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         public DynamicClientProxyFactory(string url, string outputAssembly, bool overwrite)
-            : this(url, outputAssembly, overwrite, new DynamicClientProxyFactoryOptions())
+            : this(url, outputAssembly, overwrite, new DynamicClientProxyFactorySetup())
         {
         }
 
@@ -2765,7 +2765,7 @@ namespace DevLib.ServiceModel
         private void ImportMetadata()
         {
             this._codeCompileUnit = new CodeCompileUnit();
-            this._codeDomProvider = CodeDomProvider.CreateProvider(this._options.Language.ToString());
+            this._codeDomProvider = CodeDomProvider.CreateProvider(this._setupInfo.Language.ToString());
 
             WsdlImporter importer = new WsdlImporter(new MetadataSet(this.Metadata));
 
@@ -2791,7 +2791,7 @@ namespace DevLib.ServiceModel
             importOptions.WebReferenceOptions = new WebService.WebReferenceOptions();
             importOptions.WebReferenceOptions.CodeGenerationOptions = CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOrder | CodeGenerationOptions.EnableDataBinding;
 
-            if (this._options.GenerateAsync)
+            if (this._setupInfo.GenerateAsync)
             {
                 importOptions.WebReferenceOptions.CodeGenerationOptions |= CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.GenerateOldAsync;
             }
@@ -2812,7 +2812,7 @@ namespace DevLib.ServiceModel
             XsdDataContractImporter xsdDataContractImporter = new XsdDataContractImporter(this._codeCompileUnit);
 
             xsdDataContractImporter.Options = new ImportOptions();
-            xsdDataContractImporter.Options.ImportXmlType = this._options.FormatMode == DynamicClientProxyFactoryOptions.FormatModeOptions.DataContractSerializer;
+            xsdDataContractImporter.Options.ImportXmlType = this._setupInfo.FormatMode == DynamicClientProxyFactorySetup.FormatModeOptions.DataContractSerializer;
             xsdDataContractImporter.Options.CodeProvider = this._codeDomProvider;
 
             importer.State.Add(typeof(XsdDataContractImporter), xsdDataContractImporter);
@@ -2823,7 +2823,7 @@ namespace DevLib.ServiceModel
 
                 if (dataContractMessageImporter != null)
                 {
-                    dataContractMessageImporter.Enabled = this._options.FormatMode != DynamicClientProxyFactoryOptions.FormatModeOptions.XmlSerializer;
+                    dataContractMessageImporter.Enabled = this._setupInfo.FormatMode != DynamicClientProxyFactorySetup.FormatModeOptions.XmlSerializer;
                 }
             }
         }
@@ -2836,7 +2836,7 @@ namespace DevLib.ServiceModel
             this._contractGenerator = new ServiceContractGenerator(this._codeCompileUnit);
             this._contractGenerator.Options = ServiceContractGenerationOptions.ChannelInterface | ServiceContractGenerationOptions.ClientClass;
 
-            if (this._options.GenerateAsync)
+            if (this._setupInfo.GenerateAsync)
             {
                 this._contractGenerator.Options |= ServiceContractGenerationOptions.AsynchronousMethods | ServiceContractGenerationOptions.EventBasedAsynchronousMethods;
             }
@@ -2934,9 +2934,9 @@ namespace DevLib.ServiceModel
                 this.ProxyCode = writer.ToString();
             }
 
-            if (this._options.CodeModifier != null)
+            if (this._setupInfo.CodeModifier != null)
             {
-                this.ProxyCode = this._options.CodeModifier(this.ProxyCode);
+                this.ProxyCode = this._setupInfo.CodeModifier(this.ProxyCode);
             }
         }
 

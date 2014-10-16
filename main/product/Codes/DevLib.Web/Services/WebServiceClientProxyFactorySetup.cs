@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WebServiceClientProxyFactoryOptions.cs" company="YuGuan Corporation">
+// <copyright file="WebServiceClientProxyFactorySetup.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -15,15 +15,15 @@ namespace DevLib.Web.Services
     public delegate string ProxyCodeModifier(string proxyCode);
 
     /// <summary>
-    /// Represents options for WebServiceClientProxyFactory.
+    /// Represents setup information for WebServiceClientProxyFactory.
     /// </summary>
     [Serializable]
-    public class WebServiceClientProxyFactoryOptions : MarshalByRefObject
+    public class WebServiceClientProxyFactorySetup : MarshalByRefObject
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServiceClientProxyFactoryOptions" /> class.
+        /// Initializes a new instance of the <see cref="WebServiceClientProxyFactorySetup" /> class.
         /// </summary>
-        public WebServiceClientProxyFactoryOptions()
+        public WebServiceClientProxyFactorySetup()
         {
             this.Language = LanguageOptions.CS;
             this.GenerateAsync = false;
@@ -74,12 +74,12 @@ namespace DevLib.Web.Services
         }
 
         /// <summary>
-        /// Creates and returns a string representation of the current options.
+        /// Creates and returns a string representation of the current setup.
         /// </summary>
-        /// <returns>A string representation of the current options.</returns>
+        /// <returns>A string representation of the current setup.</returns>
         public override string ToString()
         {
-            string result = string.Format("WebServiceClientProxyFactoryOptions[Language={0},CodeModifier={1}]", this.Language.ToString(), this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
+            string result = string.Format("WebServiceClientProxyFactorySetup[Language={0},CodeModifier={1}]", this.Language.ToString(), this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
 
             return result;
         }

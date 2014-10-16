@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="DynamicClientProxyFactoryOptions.cs" company="YuGuan Corporation">
+// <copyright file="DynamicClientProxyFactorySetup.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -15,15 +15,15 @@ namespace DevLib.ServiceModel
     public delegate string ProxyCodeModifier(string proxyCode);
 
     /// <summary>
-    /// Represents options for DynamicClientProxyFactory.
+    /// Represents setup information for DynamicClientProxyFactory.
     /// </summary>
     [Serializable]
-    public class DynamicClientProxyFactoryOptions : MarshalByRefObject
+    public class DynamicClientProxyFactorySetup : MarshalByRefObject
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DynamicClientProxyFactoryOptions" /> class.
+        /// Initializes a new instance of the <see cref="DynamicClientProxyFactorySetup" /> class.
         /// </summary>
-        public DynamicClientProxyFactoryOptions()
+        public DynamicClientProxyFactorySetup()
         {
             this.Language = LanguageOptions.CS;
             this.GenerateAsync = false;
@@ -105,12 +105,12 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Creates and returns a string representation of the current options.
+        /// Creates and returns a string representation of the current setup.
         /// </summary>
-        /// <returns>A string representation of the current options.</returns>
+        /// <returns>A string representation of the current setup.</returns>
         public override string ToString()
         {
-            string result = string.Format("DynamicClientProxyFactoryOptions[Language={0},FormatMode={1},CodeModifier={2}]", this.Language.ToString(), this.FormatMode.ToString(), this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
+            string result = string.Format("DynamicClientProxyFactorySetup[Language={0},FormatMode={1},CodeModifier={2}]", this.Language.ToString(), this.FormatMode.ToString(), this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
 
             return result;
         }

@@ -25,9 +25,9 @@ namespace DevLib.Web.Services
     public class WebServiceClientProxyFactory : MarshalByRefObject
     {
         /// <summary>
-        /// Field _options.
+        /// Field _setupInfo.
         /// </summary>
-        private WebServiceClientProxyFactoryOptions _options;
+        private WebServiceClientProxyFactorySetup _setupInfo;
 
         /// <summary>
         /// Field _codeCompileUnit.
@@ -65,21 +65,21 @@ namespace DevLib.Web.Services
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
-        /// <param name="options">The WebServiceClientProxyFactoryOptions to use.</param>
-        public WebServiceClientProxyFactory(string url, string outputAssembly, bool overwrite, WebServiceClientProxyFactoryOptions options)
+        /// <param name="setupInfo">The WebServiceClientProxyFactorySetup to use.</param>
+        public WebServiceClientProxyFactory(string url, string outputAssembly, bool overwrite, WebServiceClientProxyFactorySetup setupInfo)
         {
             if (string.IsNullOrEmpty(url))
             {
                 throw new ArgumentNullException("url");
             }
 
-            if (options == null)
+            if (setupInfo == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException("setupInfo");
             }
 
             this.Url = url;
-            this._options = options;
+            this._setupInfo = setupInfo;
 
             this.DownloadMetadata();
             this.ImportMetadata();
@@ -94,7 +94,7 @@ namespace DevLib.Web.Services
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         public WebServiceClientProxyFactory(string url)
-            : this(url, null, true, new WebServiceClientProxyFactoryOptions())
+            : this(url, null, true, new WebServiceClientProxyFactorySetup())
         {
         }
 
@@ -102,9 +102,9 @@ namespace DevLib.Web.Services
         /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
         /// </summary>
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
-        /// <param name="options">The WebServiceClientProxyFactoryOptions to use.</param>
-        public WebServiceClientProxyFactory(string url, WebServiceClientProxyFactoryOptions options)
-            : this(url, null, true, options)
+        /// <param name="setupInfo">The WebServiceClientProxyFactorySetup to use.</param>
+        public WebServiceClientProxyFactory(string url, WebServiceClientProxyFactorySetup setupInfo)
+            : this(url, null, true, setupInfo)
         {
         }
 
@@ -114,7 +114,7 @@ namespace DevLib.Web.Services
         /// <param name="url">The URL for the service address or the file containing the WSDL data.</param>
         /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
         public WebServiceClientProxyFactory(string url, string outputAssembly)
-            : this(url, outputAssembly, true, new WebServiceClientProxyFactoryOptions())
+            : this(url, outputAssembly, true, new WebServiceClientProxyFactorySetup())
         {
         }
 
@@ -125,7 +125,7 @@ namespace DevLib.Web.Services
         /// <param name="outputAssembly">The name of the output assembly of client proxy.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         public WebServiceClientProxyFactory(string url, string outputAssembly, bool overwrite)
-            : this(url, outputAssembly, overwrite, new WebServiceClientProxyFactoryOptions())
+            : this(url, outputAssembly, overwrite, new WebServiceClientProxyFactorySetup())
         {
         }
 
@@ -383,7 +383,7 @@ namespace DevLib.Web.Services
         private void ImportMetadata()
         {
             this._codeCompileUnit = new CodeCompileUnit();
-            this._codeDomProvider = CodeDomProvider.CreateProvider(this._options.Language.ToString());
+            this._codeDomProvider = CodeDomProvider.CreateProvider(this._setupInfo.Language.ToString());
 
             CodeNamespace codeNamespace = new CodeNamespace();
             this._codeCompileUnit.Namespaces.Add(codeNamespace);
@@ -391,7 +391,7 @@ namespace DevLib.Web.Services
             ServiceDescriptionImporter serviceDescriptionImporter = new ServiceDescriptionImporter();
             serviceDescriptionImporter.CodeGenerationOptions = CodeGenerationOptions.GenerateProperties | CodeGenerationOptions.GenerateOrder | CodeGenerationOptions.EnableDataBinding;
 
-            if (this._options.GenerateAsync)
+            if (this._setupInfo.GenerateAsync)
             {
                 serviceDescriptionImporter.CodeGenerationOptions |= CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.GenerateOldAsync;
             }
@@ -466,9 +466,9 @@ namespace DevLib.Web.Services
                 this.ProxyCode = writer.ToString();
             }
 
-            if (this._options.CodeModifier != null)
+            if (this._setupInfo.CodeModifier != null)
             {
-                this.ProxyCode = this._options.CodeModifier(this.ProxyCode);
+                this.ProxyCode = this._setupInfo.CodeModifier(this.ProxyCode);
             }
         }
 

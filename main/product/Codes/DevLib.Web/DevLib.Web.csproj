@@ -53,7 +53,7 @@
     <Compile Include="Services\WebServiceClientProxyConstants.cs" />
     <Compile Include="Services\WebServiceClientProxyException.cs" />
     <Compile Include="Services\WebServiceClientProxyFactory.cs" />
-    <Compile Include="Services\WebServiceClientProxyFactoryOptions.cs" />
+    <Compile Include="Services\WebServiceClientProxyFactorySetup.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -72,11 +72,12 @@ namespace DevLib.AddIn
                 throw;
             }
 
+            this._process = Process.GetProcessById(processId);
+
             BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
             serverProvider.TypeFilterLevel = addInDomainSetup.TypeFilterLevel;
 
             BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
-            this._process = Process.GetProcessById(processId);
 
             Hashtable properties = new Hashtable();
             properties[AddInConstants.KeyIpcPortName] = string.Format(AddInServerChannelNameStringFormat, guid);
@@ -84,6 +85,7 @@ namespace DevLib.AddIn
 
             this._ipcChannel = new IpcChannel(properties, clientProvider, serverProvider);
             ChannelServices.RegisterChannel(this._ipcChannel, false);
+
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(AddInActivator), AddInActivatorName, WellKnownObjectMode.Singleton);
 
             bool isCreated;

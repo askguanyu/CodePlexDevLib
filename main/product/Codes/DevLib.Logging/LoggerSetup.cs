@@ -6,11 +6,13 @@
 namespace DevLib.Logging
 {
     using System;
+    using System.ComponentModel;
 
     /// <summary>
     /// Class LoggerSetup.
     /// </summary>
     [Serializable]
+    [TypeConverter(typeof(ExpandableObjectConverter<LoggerSetup>))]
     public class LoggerSetup
     {
         /// <summary>

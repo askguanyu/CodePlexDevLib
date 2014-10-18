@@ -79,7 +79,7 @@ namespace DevLib.Web.Services
         /// <returns>A string representation of the current setup.</returns>
         public override string ToString()
         {
-            string result = string.Format("WebServiceClientProxyFactorySetup[Language={0},CodeModifier={1}]", this.Language.ToString(), this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
+            string result = string.Format("WebServiceClientProxyFactorySetup [Language={0}, CodeModifier={1}]", this.Language.ToString(), this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
 
             return result;
         }

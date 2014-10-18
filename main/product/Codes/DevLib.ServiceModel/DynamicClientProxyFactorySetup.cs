@@ -110,7 +110,12 @@ namespace DevLib.ServiceModel
         /// <returns>A string representation of the current setup.</returns>
         public override string ToString()
         {
-            string result = string.Format("DynamicClientProxyFactorySetup [Language={0}, FormatMode={1}, CodeModifier={2}]", this.Language.ToString(), this.FormatMode.ToString(), this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
+            string result = string.Format(
+                "DynamicClientProxyFactorySetup [Language={0}, GenerateAsync={1}, FormatMode={2}, CodeModifier={3}]",
+                this.Language.ToString(),
+                this.GenerateAsync.ToString(),
+                this.FormatMode.ToString(),
+                this.CodeModifier == null ? string.Empty : this.CodeModifier.ToString());
 
             return result;
         }

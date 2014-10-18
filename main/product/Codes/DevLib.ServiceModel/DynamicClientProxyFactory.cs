@@ -144,6 +144,7 @@ namespace DevLib.ServiceModel
             this.CompileProxy(outputAssembly, overwrite);
             this.DisposeCodeDomProvider();
             this.ImportTypes();
+            this.ImportNamespaces();
         }
 
         /// <summary>
@@ -202,6 +203,7 @@ namespace DevLib.ServiceModel
 
             this.ProxyAssembly = Assembly.LoadFrom(assemblyFile);
             this.ImportTypes();
+            this.ImportNamespaces();
         }
 
         /// <summary>
@@ -299,6 +301,15 @@ namespace DevLib.ServiceModel
         /// Gets all the Contract types.
         /// </summary>
         public IList<Type> ContractTypes
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets all the namespaces.
+        /// </summary>
+        public IList<string> Namespaces
         {
             get;
             private set;
@@ -2646,6 +2657,35 @@ namespace DevLib.ServiceModel
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Import Namespaces.
+        /// </summary>
+        private void ImportNamespaces()
+        {
+            this.Namespaces = new List<string>();
+
+            if (this._codeCompileUnit != null)
+            {
+                foreach (CodeNamespace item in this._codeCompileUnit.Namespaces)
+                {
+                    if (!string.IsNullOrEmpty(item.Name) && !this.Namespaces.Contains(item.Name))
+                    {
+                        this.Namespaces.Add(item.Name);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in this.Types)
+                {
+                    if (!string.IsNullOrEmpty(item.Namespace) && !this.Namespaces.Contains(item.Namespace))
+                    {
+                        this.Namespaces.Add(item.Namespace);
+                    }
+                }
+            }
         }
 
         /// <summary>

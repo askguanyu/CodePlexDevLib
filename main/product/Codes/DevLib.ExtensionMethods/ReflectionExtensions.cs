@@ -6,8 +6,12 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.Serialization;
+    using System.Security.Permissions;
 
     /// <summary>
     /// Reflection Extensions.
@@ -15,14 +19,121 @@ namespace DevLib.ExtensionMethods
     public static class ReflectionExtensions
     {
         /// <summary>
+        /// Check whether the Type is nullable type.
+        /// </summary>
+        /// <param name="source">The type to check.</param>
+        /// <returns>true if the type is Nullable{} type; otherwise, false.</returns>
+        public static bool IsNullableType(this Type source)
+        {
+            return source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        /// <summary>
+        /// Returns whether can convert the object to a <see cref="T:System.String" /> and vice versa.
+        /// </summary>
+        /// <param name="source">A <see cref="T:System.Type" /> that represents the type you want to convert.</param>
+        /// <returns>true if can perform the conversion; otherwise, false.</returns>
+        public static bool CanConvert(this Type source)
+        {
+            switch (Type.GetTypeCode(source))
+            {
+                case TypeCode.Boolean:
+                case TypeCode.Byte:
+                case TypeCode.Char:
+                case TypeCode.DBNull:
+                case TypeCode.DateTime:
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Empty:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.SByte:
+                case TypeCode.Single:
+                case TypeCode.String:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                    return true;
+                case TypeCode.Object:
+                default:
+
+                    if (source.IsEnum ||
+                        source.IsNullableType() ||
+                        source == typeof(Guid) ||
+                        source == typeof(TimeSpan) ||
+                        source == typeof(DateTimeOffset))
+                    {
+                        return true;
+                    }
+
+                    break;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Creates an instance of IList by the specified type which inherit IEnumerable interface.
+        /// </summary>
+        /// <param name="source">Source Type which inherit IEnumerable interface.</param>
+        /// <param name="lengths">An array of 32-bit integers that represent the size of each dimension of the list to create.</param>
+        /// <returns>A reference to the newly created IList object.</returns>
+        public static IList CreateIList(this Type source, params int[] lengths)
+        {
+            if (source != typeof(string) && source.GetInterface("IEnumerable") != null && source.GetInterface("IDictionary") == null)
+            {
+                if (source.IsArray)
+                {
+                    return Array.CreateInstance(source.GetElementType(), lengths);
+                }
+                else
+                {
+                    if (lengths == null || lengths.Length == 0)
+                    {
+                        return (IList)Activator.CreateInstance(source);
+                    }
+                    else
+                    {
+                        return (IList)Activator.CreateInstance(source, lengths[0]);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates an instance of List{} by the specified element type.
+        /// </summary>
+        /// <param name="source">Element Type of the list.</param>
+        /// <returns>A reference to the newly created List object.</returns>
+        public static IList CreateListByElementType(this Type source)
+        {
+            return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(source));
+        }
+
+        /// <summary>
         /// Creates an instance of the specified type using the constructor that best matches the specified parameters.
         /// </summary>
         /// <param name="source">The type of object to create.</param>
         /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
         /// <returns>A reference to the newly created object.</returns>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         public static object CreateInstance(this Type source, params object[] args)
         {
-            return Activator.CreateInstance(source, args);
+            object result = null;
+
+            try
+            {
+                result = Activator.CreateInstance(source, args);
+            }
+            catch
+            {
+                result = FormatterServices.GetUninitializedObject(source);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -32,9 +143,23 @@ namespace DevLib.ExtensionMethods
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
         /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
         /// <returns>A reference to the newly created object.</returns>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         public static object CreateInstanceGeneric(this Type source, Type[] typeArguments, params object[] args)
         {
-            return Activator.CreateInstance(source.MakeGenericType(typeArguments), args);
+            object result = null;
+
+            Type genericType = source.MakeGenericType(typeArguments);
+
+            try
+            {
+                result = Activator.CreateInstance(genericType, args);
+            }
+            catch
+            {
+                result = FormatterServices.GetUninitializedObject(genericType);
+            }
+
+            return result;
         }
 
         /// <summary>

@@ -6,6 +6,7 @@
 namespace DevLib.Logging
 {
     using System;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
 
@@ -13,6 +14,7 @@ namespace DevLib.Logging
     /// Class LogConfig.
     /// </summary>
     [Serializable]
+    [TypeConverter(typeof(ExpandableObjectConverter<LogConfig>))]
     public class LogConfig
     {
         /// <summary>

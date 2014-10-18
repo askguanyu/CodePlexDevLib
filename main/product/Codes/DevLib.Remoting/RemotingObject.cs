@@ -10,6 +10,7 @@ namespace DevLib.Remoting
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Channels;
     using System.Runtime.Remoting.Channels.Ipc;
+    using System.Runtime.Serialization.Formatters;
     using System.Security.Cryptography;
     using System.Security.Permissions;
     using System.Text;
@@ -41,8 +42,15 @@ namespace DevLib.Remoting
 
             try
             {
-                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri);
+                RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+                RemotingConfiguration.CustomErrorsEnabled(false);
+
+                BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+                serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
+
+                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
                 ChannelServices.RegisterChannel(ipcChannel, false);
+
                 RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
             }
             catch (RemotingException)
@@ -143,8 +151,15 @@ namespace DevLib.Remoting
 
             try
             {
-                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri);
+                RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+                RemotingConfiguration.CustomErrorsEnabled(false);
+
+                BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+                serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
+
+                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
                 ChannelServices.RegisterChannel(ipcChannel, false);
+
                 RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
             }
             catch (RemotingException)

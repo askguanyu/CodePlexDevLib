@@ -16,6 +16,41 @@ namespace DevLib.ExtensionMethods
     public static class CollectionExtensions
     {
         /// <summary>
+        /// Check Type inherit IEnumerable interface or not.
+        /// </summary>
+        /// <param name="source">Source Type.</param>
+        /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
+        public static bool IsEnumerable(this Type source)
+        {
+            return source != typeof(string) && source.GetInterface("IEnumerable") != null;
+        }
+
+        /// <summary>
+        /// Check Type inherit IDictionary interface or not.
+        /// </summary>
+        /// <param name="source">Source Type.</param>
+        /// <returns>true if the source Type inherit IDictionary interface; otherwise, false.</returns>
+        public static bool IsDictionary(this Type source)
+        {
+            return source.GetInterface("IDictionary") != null;
+        }
+
+        /// <summary>
+        /// Gets the element Type of the specified type which inherit IEnumerable interface.
+        /// </summary>
+        /// <param name="source">Source Type which inherit IEnumerable interface.</param>
+        /// <returns>The System.Type of the element in the source list.</returns>
+        public static Type GetEnumerableElementType(this Type source)
+        {
+            if (source.GetInterface("IEnumerable") != null)
+            {
+                return source.IsArray ? source.GetElementType() : source.GetGenericArguments()[0];
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Update value, if not contain key then add value.
         /// </summary>
         /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>

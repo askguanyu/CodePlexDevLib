@@ -196,7 +196,7 @@ namespace DevLib.ServiceModel
         {
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The specified assembly file does not exist.", "assemblyFile");
+                throw new FileNotFoundException("The specified assembly file does not exist.", assemblyFile);
             }
 
             this._isLoadFile = isLoadFile;

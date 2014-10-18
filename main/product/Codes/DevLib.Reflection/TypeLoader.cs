@@ -28,7 +28,7 @@ namespace DevLib.Reflection
 
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The specified assembly file does not exist.", assemblyFile);
+                throw new FileNotFoundException("The specified assembly file does not exist.", assemblyFile);
             }
 
             try
@@ -64,7 +64,7 @@ namespace DevLib.Reflection
 
             if (!File.Exists(assemblyFile))
             {
-                throw new ArgumentException("The specified assembly file does not exist.", "assemblyFile");
+                throw new FileNotFoundException("The specified assembly file does not exist.", assemblyFile);
             }
 
             try

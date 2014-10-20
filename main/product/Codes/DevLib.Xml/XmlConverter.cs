@@ -144,6 +144,24 @@ namespace DevLib.Xml
         }
 
         /// <summary>
+        /// Converts object to a <see cref="T:System.String" />.
+        /// </summary>
+        /// <param name="value">The value to convert.</param>
+        /// <param name="defaultValue">The default value if failed.</param>
+        /// <returns>A string representation of the object.</returns>
+        public static string ToString(object value, string defaultValue)
+        {
+            try
+            {
+                return ToString(value);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
         /// Converts the <see cref="T:System.String" /> to a object equivalent.
         /// </summary>
         /// <param name="value">The string to convert.</param>
@@ -238,12 +256,50 @@ namespace DevLib.Xml
         /// <summary>
         /// Converts the <see cref="T:System.String" /> to a object equivalent.
         /// </summary>
+        /// <param name="value">The string to convert.</param>
+        /// <param name="targetType">Target type to convert.</param>
+        /// <param name="defaultValue">The default value if failed.</param>
+        /// <returns>An object equivalent of the string.</returns>
+        public static object ToObject(string value, Type targetType, object defaultValue)
+        {
+            try
+            {
+                return ToObject(value, targetType);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Converts the <see cref="T:System.String" /> to a object equivalent.
+        /// </summary>
         /// <typeparam name="T">Target type to convert.</typeparam>
         /// <param name="value">The string to convert.</param>
         /// <returns>An object equivalent of the string.</returns>
         public static T ToObject<T>(string value)
         {
             return (T)ToObject(value, typeof(T));
+        }
+
+        /// <summary>
+        /// Converts the <see cref="T:System.String" /> to a object equivalent.
+        /// </summary>
+        /// <typeparam name="T">Target type to convert.</typeparam>
+        /// <param name="value">The string to convert.</param>
+        /// <param name="defaultValue">The default value if failed.</param>
+        /// <returns>An object equivalent of the string.</returns>
+        public static T ToObject<T>(string value, T defaultValue)
+        {
+            try
+            {
+                return ToObject<T>(value);
+            }
+            catch
+            {
+                return defaultValue;
+            }
         }
 
         /// <summary>

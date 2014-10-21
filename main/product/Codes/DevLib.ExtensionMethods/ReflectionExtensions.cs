@@ -114,6 +114,17 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Creates an instance of List{} by the specified element type.
+        /// </summary>
+        /// <param name="source">Element Type of the list.</param>
+        /// <param name="collection">The collection whose elements are copied to the new list.</param>
+        /// <returns>A reference to the newly created List object.</returns>
+        public static IList CreateListByElementType(this Type source, object collection)
+        {
+            return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(source), collection);
+        }
+
+        /// <summary>
         /// Creates an instance of the specified type using the constructor that best matches the specified parameters.
         /// </summary>
         /// <param name="source">The type of object to create.</param>

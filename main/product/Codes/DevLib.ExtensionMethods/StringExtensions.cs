@@ -59,6 +59,89 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Reports the indexes of all occurrence of the specified string in the current <see cref="T:System.String" /> object.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="value">The string to seek.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
+        /// <returns>The list of index positions of the value parameter if that string is found, or empty list if it is not. If value is System.String.Empty or null, the return value is empty list.</returns>
+        public static List<int> AllIndexOf(this string source, string value, bool ignoreCase)
+        {
+            List<int> result = new List<int>();
+
+            if (source == null || string.IsNullOrEmpty(value))
+            {
+                return result;
+            }
+
+            int valueLength = value.Length;
+            int index = 0;
+
+            if (ignoreCase)
+            {
+                while ((index = source.IndexOf(value, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                {
+                    result.Add(index);
+                    index += valueLength;
+                }
+
+                return result;
+            }
+            else
+            {
+                while ((index = source.IndexOf(value, index)) > -1)
+                {
+                    result.Add(index);
+                    index += valueLength;
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Reports the indexes of all occurrence of the specified string in the current <see cref="T:System.String" /> object.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="value">A Unicode character to seek.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
+        /// <returns>The list of index positions of the value parameter if that string is found, or empty list if it is not. If value is System.String.Empty or null, the return value is empty list.</returns>
+        public static List<int> AllIndexOf(this string source, char value, bool ignoreCase)
+        {
+            List<int> result = new List<int>();
+
+            if (source == null)
+            {
+                return result;
+            }
+
+            int index = 0;
+
+            if (ignoreCase)
+            {
+                string stringValue = value.ToString();
+
+                while ((index = source.IndexOf(stringValue, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                {
+                    result.Add(index);
+                    index += 1;
+                }
+
+                return result;
+            }
+            else
+            {
+                while ((index = source.IndexOf(value, index)) > -1)
+                {
+                    result.Add(index);
+                    index += 1;
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
         /// Returns a value indicating whether the specified <see cref="T:System.String" /> object occurs within this string.
         /// </summary>
         /// <param name="source">Source string.</param>
@@ -91,7 +174,7 @@ namespace DevLib.ExtensionMethods
         /// Returns a value indicating whether the specified <see cref="T:System.Char" /> object occurs within this string.
         /// </summary>
         /// <param name="source">Source string.</param>
-        /// <param name="value">The char to seek.</param>
+        /// <param name="value">A Unicode character to seek.</param>
         /// <param name="ignoreCase">true to ignore case when comparing the char to seek; otherwise, false.</param>
         /// <returns>true if the <paramref name="value" /> parameter occurs within this string, or if <paramref name="value" /> is null; otherwise, false.</returns>
         public static bool Contains(this string source, char value, bool ignoreCase)
@@ -201,8 +284,8 @@ namespace DevLib.ExtensionMethods
         /// Returns a new string in which all occurrences of a specified char in this instance are replaced with another specified char.
         /// </summary>
         /// <param name="source">Source string.</param>
-        /// <param name="oldValue">A char to be replaced.</param>
-        /// <param name="newValue">A char to replace all occurrences of oldValue.</param>
+        /// <param name="oldValue">A Unicode character to be replaced.</param>
+        /// <param name="newValue">A Unicode character to replace all occurrences of oldChar.</param>
         /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
         /// <returns>A System.String equivalent to this instance but with all instances of oldValue replaced with newValue.</returns>
         public static string Replace(this string source, char oldValue, char newValue, bool ignoreCase)
@@ -323,7 +406,7 @@ namespace DevLib.ExtensionMethods
         /// Deletes all the character from this string beginning at a specified position and continuing through the last position.
         /// </summary>
         /// <param name="source">Source string.</param>
-        /// <param name="value">A char to be removed.</param>
+        /// <param name="value">A Unicode character to be removed.</param>
         /// <param name="ignoreCase">A System.Boolean indicating a case-sensitive or insensitive comparison. (true indicates a case-insensitive comparison.)</param>
         /// <returns>A new System.String object that is equivalent to this string less the removed characters.</returns>
         public static string Remove(this string source, char value, bool ignoreCase)

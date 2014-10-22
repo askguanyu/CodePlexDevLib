@@ -135,22 +135,26 @@ namespace DevLib.IO
         {
             StringBuilder result = new StringBuilder();
 
-            result.AppendFormat(
-                "{0}|{1}|{2}|{3}|",
-                DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture),
-                "INTL",
-                Environment.UserName,
-                Thread.CurrentThread.ManagedThreadId.ToString("000"));
+            result.Append(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
+            result.Append("|INTL|");
+            result.Append(Environment.UserName);
+            result.Append("|");
+            result.Append(Thread.CurrentThread.ManagedThreadId.ToString("000"));
+            result.Append("|");
 
             if (objs != null && objs.Length > 0)
             {
                 foreach (var item in objs)
                 {
-                    result.AppendFormat(" [{0}]", item == null ? string.Empty : item.ToString());
+                    result.Append(" [");
+                    result.Append(item == null ? string.Empty : item.ToString());
+                    result.Append("]");
                 }
             }
 
-            result.AppendFormat(" |{0}{1}", GetStackFrameInfo(2), Environment.NewLine);
+            result.Append(" |");
+            result.Append(GetStackFrameInfo(2));
+            result.Append(Environment.NewLine);
 
             return result.ToString();
         }

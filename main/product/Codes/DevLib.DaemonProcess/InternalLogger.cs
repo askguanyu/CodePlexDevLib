@@ -77,15 +77,15 @@ namespace DevLib.DaemonProcess
 
             if (method != null)
             {
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder result = new StringBuilder();
 
-                stringBuilder.Append(method.Name);
+                result.Append(method.Name);
 
                 if (method is MethodInfo && ((MethodInfo)method).IsGenericMethod)
                 {
                     Type[] genericArguments = ((MethodInfo)method).GetGenericArguments();
 
-                    stringBuilder.Append("<");
+                    result.Append("<");
 
                     int i = 0;
 
@@ -95,30 +95,27 @@ namespace DevLib.DaemonProcess
                     {
                         if (!flag)
                         {
-                            stringBuilder.Append(",");
+                            result.Append(",");
                         }
                         else
                         {
                             flag = false;
                         }
 
-                        stringBuilder.Append(genericArguments[i].Name);
+                        result.Append(genericArguments[i].Name);
 
                         i++;
                     }
 
-                    stringBuilder.Append(">");
+                    result.Append(">");
                 }
 
-                stringBuilder.Append(" in ");
+                result.Append(" in ");
+                result.Append(Path.GetFileName(stackFrame.GetFileName()) ?? "<unknown>");
+                result.Append(":");
+                result.Append(stackFrame.GetFileLineNumber());
 
-                stringBuilder.Append(Path.GetFileName(stackFrame.GetFileName()) ?? "<unknown>");
-
-                stringBuilder.Append(":");
-
-                stringBuilder.Append(stackFrame.GetFileLineNumber());
-
-                return stringBuilder.ToString();
+                return result.ToString();
             }
             else
             {

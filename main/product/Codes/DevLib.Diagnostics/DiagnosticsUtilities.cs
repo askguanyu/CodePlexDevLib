@@ -56,23 +56,23 @@ namespace DevLib.Diagnostics
 
             if (methodBase != null)
             {
-                StringBuilder stringBuilder = new StringBuilder(255);
+                StringBuilder result = new StringBuilder(255);
 
                 Type declaringType = methodBase.DeclaringType;
 
                 if (declaringType != null)
                 {
-                    stringBuilder.Append(declaringType.FullName.Replace('+', '.'));
-                    stringBuilder.Append(".");
+                    result.Append(declaringType.FullName.Replace('+', '.'));
+                    result.Append(".");
                 }
 
-                stringBuilder.Append(methodBase.Name);
+                result.Append(methodBase.Name);
 
                 if (methodBase is MethodInfo && ((MethodInfo)methodBase).IsGenericMethod)
                 {
                     Type[] genericArguments = ((MethodInfo)methodBase).GetGenericArguments();
 
-                    stringBuilder.Append("[");
+                    result.Append("[");
 
                     int i = 0;
 
@@ -82,22 +82,22 @@ namespace DevLib.Diagnostics
                     {
                         if (!flag)
                         {
-                            stringBuilder.Append(",");
+                            result.Append(",");
                         }
                         else
                         {
                             flag = false;
                         }
 
-                        stringBuilder.Append(genericArguments[i].Name);
+                        result.Append(genericArguments[i].Name);
 
                         i++;
                     }
 
-                    stringBuilder.Append("]");
+                    result.Append("]");
                 }
 
-                stringBuilder.Append("(");
+                result.Append("(");
 
                 ParameterInfo[] parameters = methodBase.GetParameters();
 
@@ -107,7 +107,7 @@ namespace DevLib.Diagnostics
                 {
                     if (!flag2)
                     {
-                        stringBuilder.Append(", ");
+                        result.Append(", ");
                     }
                     else
                     {
@@ -121,12 +121,12 @@ namespace DevLib.Diagnostics
                         parameterTypeName = parameters[j].ParameterType.Name;
                     }
 
-                    stringBuilder.Append(parameterTypeName + " " + parameters[j].Name);
+                    result.Append(parameterTypeName + " " + parameters[j].Name);
                 }
 
-                stringBuilder.Append(")");
+                result.Append(")");
 
-                return stringBuilder.ToString();
+                return result.ToString();
             }
             else
             {
@@ -147,15 +147,15 @@ namespace DevLib.Diagnostics
 
             if (method != null)
             {
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder result = new StringBuilder();
 
-                stringBuilder.Append(method.Name);
+                result.Append(method.Name);
 
                 if (method is MethodInfo && ((MethodInfo)method).IsGenericMethod)
                 {
                     Type[] genericArguments = ((MethodInfo)method).GetGenericArguments();
 
-                    stringBuilder.Append("<");
+                    result.Append("<");
 
                     int i = 0;
 
@@ -165,30 +165,27 @@ namespace DevLib.Diagnostics
                     {
                         if (!flag)
                         {
-                            stringBuilder.Append(",");
+                            result.Append(",");
                         }
                         else
                         {
                             flag = false;
                         }
 
-                        stringBuilder.Append(genericArguments[i].Name);
+                        result.Append(genericArguments[i].Name);
 
                         i++;
                     }
 
-                    stringBuilder.Append(">");
+                    result.Append(">");
                 }
 
-                stringBuilder.Append(" in ");
+                result.Append(" in ");
+                result.Append(Path.GetFileName(stackFrame.GetFileName()) ?? "<unknown>");
+                result.Append(":");
+                result.Append(stackFrame.GetFileLineNumber());
 
-                stringBuilder.Append(Path.GetFileName(stackFrame.GetFileName()) ?? "<unknown>");
-
-                stringBuilder.Append(":");
-
-                stringBuilder.Append(stackFrame.GetFileLineNumber());
-
-                return stringBuilder.ToString();
+                return result.ToString();
             }
             else
             {

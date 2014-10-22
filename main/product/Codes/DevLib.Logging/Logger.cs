@@ -100,7 +100,17 @@ namespace DevLib.Logging
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public void Log(params object[] objs)
         {
-            this.Log(1, LogLevel.INFO, objs);
+            this.Log(1, LogLevel.INFO, null, objs);
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at INFO level.
+        /// </summary>
+        /// <param name="message">Diagnostic message to log.</param>
+        /// <param name="objs">Diagnostic messages or objects to log.</param>
+        public void Log(string message, params object[] objs)
+        {
+            this.Log(1, LogLevel.INFO, message, objs);
         }
 
         /// <summary>
@@ -116,6 +126,17 @@ namespace DevLib.Logging
         /// <summary>
         /// Writes the diagnostic message at the specified level.
         /// </summary>
+        /// <param name="logLevel">Log level.</param>
+        /// <param name="message">Diagnostic message to log.</param>
+        /// <param name="objs">Diagnostic messages or objects to log.</param>
+        public void Log(LogLevel logLevel, string message, params object[] objs)
+        {
+            this.Log(1, logLevel, message, objs);
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at the specified level.
+        /// </summary>
         /// <param name="skipFrames">The number of frames up the stack to skip.</param>
         /// <param name="logLevel">Log level.</param>
         /// <param name="objs">Diagnostic messages or objects to log.</param>
@@ -125,18 +146,55 @@ namespace DevLib.Logging
             {
                 try
                 {
-                    string message = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, objs);
+                    string logMessage = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, null, objs);
 
                     if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                     {
-                        this.WriteColoredConsole(logLevel, message);
+                        this.WriteColoredConsole(logLevel, logMessage);
                     }
 
                     if (this._fileAppender != null)
                     {
                         lock (this._queueSyncRoot)
                         {
-                            this._queue.Enqueue(message);
+                            this._queue.Enqueue(logMessage);
+
+                            this._queueWaitHandle.Set();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Writes the diagnostic message at the specified level.
+        /// </summary>
+        /// <param name="skipFrames">The number of frames up the stack to skip.</param>
+        /// <param name="logLevel">Log level.</param>
+        /// <param name="message">Diagnostic message to log.</param>
+        /// <param name="objs">Diagnostic messages or objects to log.</param>
+        public void Log(int skipFrames, LogLevel logLevel, string message, params object[] objs)
+        {
+            if (((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || this._fileAppender != null) && logLevel >= this._loggerSetup.Level)
+            {
+                try
+                {
+                    string logMessage = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, message, objs);
+
+                    if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                    {
+                        this.WriteColoredConsole(logLevel, logMessage);
+                    }
+
+                    if (this._fileAppender != null)
+                    {
+                        lock (this._queueSyncRoot)
+                        {
+                            this._queue.Enqueue(logMessage);
 
                             this._queueWaitHandle.Set();
                         }

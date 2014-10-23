@@ -44,6 +44,8 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DbHelper.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="SqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

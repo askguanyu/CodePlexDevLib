@@ -263,6 +263,7 @@ namespace DevLib.Data
                 this.OpenConnection();
                 DbCommand dbCommand = this.CreateCommand(commandType, commandText, commandParameters);
                 DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter();
+                dbDataAdapter.SelectCommand = dbCommand;
                 DataSet dataSet = new DataSet();
                 dbDataAdapter.Fill(dataSet);
                 return dataSet;

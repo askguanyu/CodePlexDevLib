@@ -9,6 +9,7 @@ namespace DevLib.Configuration
     using System.ComponentModel;
     using System.ComponentModel.Design;
     using System.Drawing;
+    using System.Runtime.Serialization;
     using System.Security.Permissions;
     using System.Windows.Forms;
 
@@ -80,6 +81,40 @@ namespace DevLib.Configuration
             result.StartPosition = FormStartPosition.CenterParent;
 
             return result;
+        }
+
+        /// <summary>
+        /// Creates a new instance of the specified collection item type.
+        /// </summary>
+        /// <param name="itemType">The type of item to create.</param>
+        /// <returns>A new instance of the specified object.</returns>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+        protected override object CreateInstance(Type itemType)
+        {
+            if (itemType == typeof(string))
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                return base.CreateInstance(itemType);
+            }
+            catch
+            {
+                object result = null;
+
+                try
+                {
+                    result = Activator.CreateInstance(itemType);
+                }
+                catch
+                {
+                    result = FormatterServices.GetUninitializedObject(itemType);
+                }
+
+                return result;
+            }
         }
     }
 }

@@ -164,6 +164,15 @@ namespace DevLib.Data
         }
 
         /// <summary>
+        /// Returns a new instance of the provider's class that implements the System.Data.Common.DbParameter class.
+        /// </summary>
+        /// <returns>A new instance of System.Data.Common.DbParameter.</returns>
+        public DbParameter CreateParameter()
+        {
+            return this.ProviderFactory.CreateParameter();
+        }
+
+        /// <summary>
         /// Open database connection.
         /// </summary>
         public void OpenConnection()

@@ -32,62 +32,9 @@ namespace DevLib.Remoting
         private const string IpcUrlStringFormat = "ipc://{0}/{0}";
 
         /// <summary>
-        /// Registers an object on the service end as a well-known type for remoting communication.
+        /// Initializes static members of the <see cref="RemotingObject" /> class.
         /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
-        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
-        public static void Register(Type objectType, string label = null, bool ignoreCase = false)
-        {
-            string objectUri = GetObjectUri(objectType, label, ignoreCase);
-
-            try
-            {
-                ConfigureLifetimeServices();
-
-                RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
-                RemotingConfiguration.CustomErrorsEnabled(false);
-
-                BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
-                serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
-
-                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
-                ChannelServices.RegisterChannel(ipcChannel, false);
-
-                RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
-            }
-            catch (RemotingException)
-            {
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Creates a proxy for the well-known object indicated by the specified type from remoting service.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="label">A unique label that gets the specific instance of the same type.</param>
-        /// <param name="ignoreCase">true to ignore case when get object by label; otherwise, false.</param>
-        /// <returns>The remoting object instance.</returns>
-        [SecurityPermission(SecurityAction.Demand)]
-        public static object GetObject(Type objectType, string label = null, bool ignoreCase = false)
-        {
-            ConfigureLifetimeServices();
-
-            string objectUri = GetObjectUri(objectType, label, ignoreCase);
-
-            return Activator.GetObject(objectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
-        }
-
-        /// <summary>
-        /// Configure remoting lifetime services.
-        /// </summary>
-        [SecurityPermission(SecurityAction.Demand)]
-        private static void ConfigureLifetimeServices()
+        static RemotingObject()
         {
             try
             {
@@ -120,6 +67,54 @@ namespace DevLib.Remoting
             catch
             {
             }
+        }
+
+        /// <summary>
+        /// Registers an object on the service end as a well-known type for remoting communication.
+        /// </summary>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
+        public static void Register(Type objectType, string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(objectType, label, ignoreCase);
+
+            try
+            {
+                RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+                RemotingConfiguration.CustomErrorsEnabled(false);
+
+                BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+                serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
+
+                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
+                ChannelServices.RegisterChannel(ipcChannel, false);
+
+                RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
+            }
+            catch (RemotingException)
+            {
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Creates a proxy for the well-known object indicated by the specified type from remoting service.
+        /// </summary>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="label">A unique label that gets the specific instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when get object by label; otherwise, false.</param>
+        /// <returns>The remoting object instance.</returns>
+        [SecurityPermission(SecurityAction.Demand)]
+        public static object GetObject(Type objectType, string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(objectType, label, ignoreCase);
+
+            return Activator.GetObject(objectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
         }
 
         /// <summary>
@@ -185,60 +180,9 @@ namespace DevLib.Remoting
         private static string ObjectTypeHashIgnoreCase = GetHashString(ObjectType.AssemblyQualifiedName, true);
 
         /// <summary>
-        /// Registers an object on the service end as a well-known type for remoting communication.
+        /// Initializes static members of the <see cref="RemotingObject{T}" /> class.
         /// </summary>
-        /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
-        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
-        public static void Register(string label = null, bool ignoreCase = false)
-        {
-            string objectUri = GetObjectUri(label, ignoreCase);
-
-            try
-            {
-                ConfigureLifetimeServices();
-
-                RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
-                RemotingConfiguration.CustomErrorsEnabled(false);
-
-                BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
-                serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
-
-                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
-                ChannelServices.RegisterChannel(ipcChannel, false);
-
-                RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
-            }
-            catch (RemotingException)
-            {
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Creates a proxy for the well-known object indicated by the specified type from remoting service.
-        /// </summary>
-        /// <param name="label">A unique label that gets the specific instance of the same type.</param>
-        /// <param name="ignoreCase">true to ignore case when get object by label; otherwise, false.</param>
-        /// <returns>The remoting object instance.</returns>
-        [SecurityPermission(SecurityAction.Demand)]
-        public static T GetObject(string label = null, bool ignoreCase = false)
-        {
-            ConfigureLifetimeServices();
-
-            string objectUri = GetObjectUri(label, ignoreCase);
-
-            return (T)Activator.GetObject(ObjectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
-        }
-
-        /// <summary>
-        /// Configure remoting lifetime services.
-        /// </summary>
-        [SecurityPermission(SecurityAction.Demand)]
-        private static void ConfigureLifetimeServices()
+        static RemotingObject()
         {
             try
             {
@@ -271,6 +215,52 @@ namespace DevLib.Remoting
             catch
             {
             }
+        }
+
+        /// <summary>
+        /// Registers an object on the service end as a well-known type for remoting communication.
+        /// </summary>
+        /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
+        public static void Register(string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(label, ignoreCase);
+
+            try
+            {
+                RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+                RemotingConfiguration.CustomErrorsEnabled(false);
+
+                BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+                serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
+
+                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
+                ChannelServices.RegisterChannel(ipcChannel, false);
+
+                RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
+            }
+            catch (RemotingException)
+            {
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Creates a proxy for the well-known object indicated by the specified type from remoting service.
+        /// </summary>
+        /// <param name="label">A unique label that gets the specific instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when get object by label; otherwise, false.</param>
+        /// <returns>The remoting object instance.</returns>
+        [SecurityPermission(SecurityAction.Demand)]
+        public static T GetObject(string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(label, ignoreCase);
+
+            return (T)Activator.GetObject(ObjectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
         }
 
         /// <summary>

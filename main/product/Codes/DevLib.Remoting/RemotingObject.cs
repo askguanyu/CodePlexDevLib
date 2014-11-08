@@ -10,6 +10,7 @@ namespace DevLib.Remoting
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Channels;
     using System.Runtime.Remoting.Channels.Ipc;
+    using System.Runtime.Remoting.Lifetime;
     using System.Runtime.Serialization.Formatters;
     using System.Security.Cryptography;
     using System.Security.Permissions;
@@ -42,6 +43,8 @@ namespace DevLib.Remoting
 
             try
             {
+                ConfigureLifetimeServices();
+
                 RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
                 RemotingConfiguration.CustomErrorsEnabled(false);
 
@@ -73,9 +76,50 @@ namespace DevLib.Remoting
         [SecurityPermission(SecurityAction.Demand)]
         public static object GetObject(Type objectType, string label = null, bool ignoreCase = false)
         {
+            ConfigureLifetimeServices();
+
             string objectUri = GetObjectUri(objectType, label, ignoreCase);
 
             return Activator.GetObject(objectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
+        }
+
+        /// <summary>
+        /// Configure the.NET remoting lifetime services.
+        /// </summary>
+        [SecurityPermission(SecurityAction.Demand)]
+        private static void ConfigureLifetimeServices()
+        {
+            try
+            {
+                LifetimeServices.LeaseManagerPollTime = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                LifetimeServices.LeaseTime = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                LifetimeServices.RenewOnCallTime = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                LifetimeServices.SponsorshipTimeout = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>
@@ -151,6 +195,8 @@ namespace DevLib.Remoting
 
             try
             {
+                ConfigureLifetimeServices();
+
                 RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
                 RemotingConfiguration.CustomErrorsEnabled(false);
 
@@ -181,9 +227,50 @@ namespace DevLib.Remoting
         [SecurityPermission(SecurityAction.Demand)]
         public static T GetObject(string label = null, bool ignoreCase = false)
         {
+            ConfigureLifetimeServices();
+
             string objectUri = GetObjectUri(label, ignoreCase);
 
             return (T)Activator.GetObject(ObjectType, string.Format(IpcUrlStringFormat, objectUri), objectUri);
+        }
+
+        /// <summary>
+        /// Configure the.NET remoting lifetime services.
+        /// </summary>
+        [SecurityPermission(SecurityAction.Demand)]
+        private static void ConfigureLifetimeServices()
+        {
+            try
+            {
+                LifetimeServices.LeaseManagerPollTime = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                LifetimeServices.LeaseTime = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                LifetimeServices.RenewOnCallTime = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                LifetimeServices.SponsorshipTimeout = TimeSpan.Zero;
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>

@@ -84,7 +84,7 @@ namespace DevLib.Remoting
         }
 
         /// <summary>
-        /// Configure the.NET remoting lifetime services.
+        /// Configure remoting lifetime services.
         /// </summary>
         [SecurityPermission(SecurityAction.Demand)]
         private static void ConfigureLifetimeServices()
@@ -235,7 +235,7 @@ namespace DevLib.Remoting
         }
 
         /// <summary>
-        /// Configure the.NET remoting lifetime services.
+        /// Configure remoting lifetime services.
         /// </summary>
         [SecurityPermission(SecurityAction.Demand)]
         private static void ConfigureLifetimeServices()

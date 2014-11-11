@@ -109,7 +109,6 @@ namespace DevLib.Remoting
                     }
                     catch (RemotingException)
                     {
-                        RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
                     }
                     catch
                     {
@@ -336,7 +335,6 @@ namespace DevLib.Remoting
                     }
                     catch (RemotingException)
                     {
-                        RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
                     }
                     catch
                     {

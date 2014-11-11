@@ -6,6 +6,7 @@
 namespace DevLib.Remoting
 {
     using System;
+    using System.Collections;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Channels;
@@ -84,10 +85,15 @@ namespace DevLib.Remoting
                 RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
                 RemotingConfiguration.CustomErrorsEnabled(false);
 
+                IDictionary properties = new Hashtable();
+                properties["portName"] = objectUri;
+                properties["name"] = objectUri;
+                properties["authorizedGroup"] = "Everyone";
+
                 BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
                 serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
-                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
+                IpcServerChannel ipcChannel = new IpcServerChannel(properties, serverProvider);
                 ChannelServices.RegisterChannel(ipcChannel, false);
 
                 RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
@@ -231,10 +237,15 @@ namespace DevLib.Remoting
                 RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
                 RemotingConfiguration.CustomErrorsEnabled(false);
 
+                IDictionary properties = new Hashtable();
+                properties["portName"] = objectUri;
+                properties["name"] = objectUri;
+                properties["authorizedGroup"] = "Everyone";
+
                 BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
                 serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
-                IpcServerChannel ipcChannel = new IpcServerChannel(objectUri, objectUri, serverProvider);
+                IpcServerChannel ipcChannel = new IpcServerChannel(properties, serverProvider);
                 ChannelServices.RegisterChannel(ipcChannel, false);
 
                 RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);

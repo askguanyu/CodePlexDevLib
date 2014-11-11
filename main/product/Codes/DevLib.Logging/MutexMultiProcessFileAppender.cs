@@ -179,7 +179,7 @@ namespace DevLib.Logging
             }
             finally
             {
-                byte[] bytes = (encoding ?? Encoding.Unicode).GetBytes(text);
+                byte[] bytes = (encoding ?? Encoding.UTF8).GetBytes(text);
 
                 try
                 {
@@ -525,7 +525,7 @@ namespace DevLib.Logging
 
             using (MD5 hasher = MD5.Create())
             {
-                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(Path.GetFullPath(filename).ToLowerInvariant()));
+                hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(Path.GetFullPath(filename).ToLowerInvariant()));
             }
 
             return MutexNamePrefix + BitConverter.ToString(hash).Replace("-", string.Empty);

@@ -591,7 +591,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>Byte array.</returns>
         public static byte[] ToByteArray(this string source, Encoding encoding = null)
         {
-            return (encoding ?? Encoding.Unicode).GetBytes(source);
+            return (encoding ?? Encoding.UTF8).GetBytes(source);
         }
 
         /// <summary>
@@ -603,7 +603,7 @@ namespace DevLib.ExtensionMethods
         {
             byte[] buffer = Convert.FromBase64String(source);
 
-            return Encoding.Unicode.GetString(buffer);
+            return Encoding.UTF8.GetString(buffer);
         }
 
         /// <summary>
@@ -613,7 +613,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>A base64 encoded string.</returns>
         public static string Base64Encode(this string source)
         {
-            byte[] buffer = Encoding.Unicode.GetBytes(source);
+            byte[] buffer = Encoding.UTF8.GetBytes(source);
 
             return Convert.ToBase64String(buffer);
         }

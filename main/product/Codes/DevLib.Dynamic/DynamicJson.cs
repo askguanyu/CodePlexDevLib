@@ -142,7 +142,7 @@ namespace DevLib.Dynamic
         /// <returns>DynamicJson object.</returns>
         public static dynamic Parse(string jsonString, Encoding encoding = null)
         {
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader((encoding ?? Encoding.Unicode).GetBytes(jsonString), XmlDictionaryReaderQuotas.Max))
+            using (var reader = JsonReaderWriterFactory.CreateJsonReader((encoding ?? Encoding.UTF8).GetBytes(jsonString), XmlDictionaryReaderQuotas.Max))
             {
                 return CreateDynamicJson(XElement.Load(reader));
             }
@@ -1022,12 +1022,12 @@ namespace DevLib.Dynamic
         {
             MemoryStream memoryStream = new MemoryStream();
 
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(memoryStream, Encoding.Unicode, true))
+            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(memoryStream, Encoding.UTF8, true))
             {
                 element.WriteTo(writer);
                 writer.Flush();
                 memoryStream.Position = 0;
-                return Encoding.Unicode.GetString(memoryStream.ToArray());
+                return Encoding.UTF8.GetString(memoryStream.ToArray());
             }
         }
 

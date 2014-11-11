@@ -178,7 +178,7 @@ namespace DevLib.Compression
 
             private set
             {
-                if (value != null && (value.Equals((object)Encoding.BigEndianUnicode) || value.Equals((object)Encoding.Unicode) || (value.Equals((object)Encoding.UTF32) || value.Equals((object)Encoding.UTF7))))
+                if (value != null && (value.Equals((object)Encoding.BigEndianUnicode) || value.Equals((object)Encoding.UTF8) || (value.Equals((object)Encoding.UTF32) || value.Equals((object)Encoding.UTF7))))
                 {
                     throw new ArgumentException(CompressionConstants.EntryNameEncodingNotSupported, "entryNameEncoding");
                 }

@@ -57,7 +57,7 @@ namespace DevLib.Utilities
 
             using (MD5 hasher = MD5.Create())
             {
-                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(Path.GetFullPath(filename).ToLowerInvariant()));
+                hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(Path.GetFullPath(filename).ToLowerInvariant()));
             }
 
             return SharedMutexFileNamePrefix + BitConverter.ToString(hash).Replace("-", string.Empty);

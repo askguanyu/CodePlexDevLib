@@ -1194,7 +1194,7 @@ namespace DevLib.Samples
 
             //TestClass aclass = new TestClass() { MyName = "aaa" };
             //aclass.ToByteArray().Compress().WriteBinaryFile("test.bin").ReadBinaryFile().Decompress().ToObject<TestEventClass>().MyName.ConsoleOutput();
-            //aclass.ToXml().ToByteArray(Encoding.Unicode).Compress().Decompress().ToEncodingString(Encoding.Unicode).FromXml<TestEventClass>().MyName.ConsoleOutput();
+            //aclass.ToXml().ToByteArray(Encoding.UTF8).Compress().Decompress().ToEncodingString(Encoding.UTF8).FromXml<TestEventClass>().MyName.ConsoleOutput();
 
             //Environment.GetLogicalDrives().ForEach(p => p.ConsoleOutput());
             //Environment.MachineName.ConsoleOutput();
@@ -1748,7 +1748,7 @@ namespace DevLib.Samples
             //client.Send("hello2  你好 end", Encoding.UTF32);
             //client.Send("hello3  你好 end", Encoding.BigEndianUnicode);
             //client.Send("hello4  你好 end", Encoding.ASCII);
-            //client.Send("hello5  你好 end", Encoding.Unicode);
+            //client.Send("hello5  你好 end", Encoding.UTF8);
 
             //Console.ReadKey();
 

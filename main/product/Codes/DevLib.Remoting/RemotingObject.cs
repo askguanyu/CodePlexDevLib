@@ -210,7 +210,7 @@ namespace DevLib.Remoting
 
             using (MD5 hasher = MD5.Create())
             {
-                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(ignoreCase ? value.ToLowerInvariant() : value));
+                hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(ignoreCase ? value.ToLowerInvariant() : value));
             }
 
             return BitConverter.ToString(hash).Replace("-", string.Empty);
@@ -434,7 +434,7 @@ namespace DevLib.Remoting
 
             using (MD5 hasher = MD5.Create())
             {
-                hash = hasher.ComputeHash(Encoding.Unicode.GetBytes(ignoreCase ? value.ToLowerInvariant() : value));
+                hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(ignoreCase ? value.ToLowerInvariant() : value));
             }
 
             return BitConverter.ToString(hash).Replace("-", string.Empty);

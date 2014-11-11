@@ -182,7 +182,7 @@ namespace DevLib.Samples
                 }
 
                 fileStream.Seek(0, SeekOrigin.End);
-                byte[] bytes = Encoding.Unicode.GetBytes(message);
+                byte[] bytes = Encoding.UTF8.GetBytes(message);
                 fileStream.Write(bytes, 0, bytes.Length);
                 fileStream.Flush();
             }

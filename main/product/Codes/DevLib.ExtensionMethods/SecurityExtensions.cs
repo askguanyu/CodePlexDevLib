@@ -52,7 +52,7 @@ namespace DevLib.ExtensionMethods
 
             using (MD5 hasher = MD5.Create())
             {
-                result = hasher.ComputeHash(Encoding.Unicode.GetBytes(source));
+                result = hasher.ComputeHash(Encoding.UTF8.GetBytes(source));
             }
 
             return result.ToHexString();
@@ -67,7 +67,7 @@ namespace DevLib.ExtensionMethods
         {
             using (MD5 hasher = MD5.Create())
             {
-                return hasher.ComputeHash(Encoding.Unicode.GetBytes(source));
+                return hasher.ComputeHash(Encoding.UTF8.GetBytes(source));
             }
         }
 
@@ -96,7 +96,7 @@ namespace DevLib.ExtensionMethods
             {
                 rsa.PersistKeyInCsp = true;
                 byte[] bytes = rsa.Decrypt(decryptByteArray, true);
-                return Encoding.Unicode.GetString(bytes);
+                return Encoding.UTF8.GetString(bytes);
             }
         }
 
@@ -121,7 +121,7 @@ namespace DevLib.ExtensionMethods
             using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
                 rsa.PersistKeyInCsp = true;
-                byte[] bytes = rsa.Encrypt(Encoding.Unicode.GetBytes(source), true);
+                byte[] bytes = rsa.Encrypt(Encoding.UTF8.GetBytes(source), true);
                 return BitConverter.ToString(bytes);
             }
         }

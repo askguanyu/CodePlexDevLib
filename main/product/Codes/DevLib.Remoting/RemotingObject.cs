@@ -8,6 +8,7 @@ namespace DevLib.Remoting
     using System;
     using System.Collections;
     using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Channels;
     using System.Runtime.Remoting.Channels.Ipc;
@@ -31,6 +32,11 @@ namespace DevLib.Remoting
         /// Field IpcUrlStringFormat.
         /// </summary>
         private const string IpcUrlStringFormat = "ipc://{0}/{0}";
+
+        /// <summary>
+        /// Field SyncRoot.
+        /// </summary>
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Initializes static members of the <see cref="RemotingObject" /> class.
@@ -94,9 +100,79 @@ namespace DevLib.Remoting
                 serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
                 IpcServerChannel ipcChannel = new IpcServerChannel(properties, serverProvider);
-                ChannelServices.RegisterChannel(ipcChannel, false);
 
-                RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
+                lock (SyncRoot)
+                {
+                    try
+                    {
+                        ChannelServices.RegisterChannel(ipcChannel, false);
+                    }
+                    catch (RemotingException)
+                    {
+                        RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+
+                    RemotingConfiguration.RegisterWellKnownServiceType(objectType, objectUri, WellKnownObjectMode.Singleton);
+                }
+            }
+            catch (RemotingException)
+            {
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Unregisters an object on the service end as a well-known type for remoting communication.
+        /// </summary>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
+        [SecurityPermission(SecurityAction.Demand)]
+        public static void Unregister(Type objectType, string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(objectType, label, ignoreCase);
+
+            try
+            {
+                IChannel channel = ChannelServices.GetChannel(objectUri);
+                IpcServerChannel ipcChannel = channel as IpcServerChannel;
+
+                if (ipcChannel != null)
+                {
+                    Type remotingConfigHandlerType = Type.GetType("System.Runtime.Remoting.RemotingConfigHandler, mscorlib");
+                    FieldInfo remotingConfigHandlerFieldInfoInfo = remotingConfigHandlerType.GetField("Info", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+                    Type identityHolderType = Type.GetType("System.Runtime.Remoting.IdentityHolder, mscorlib");
+                    MethodInfo identityHolderMethodInfoRemoveIdentity = identityHolderType.GetMethod("RemoveIdentity", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+
+                    object obj = remotingConfigHandlerFieldInfoInfo.GetValue(null);
+                    FieldInfo fieldInfo = obj.GetType().GetField("_wellKnownExportInfo", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    obj = fieldInfo.GetValue(obj);
+                    Hashtable registeredTypes = (Hashtable)obj;
+
+                    lock (SyncRoot)
+                    {
+                        try
+                        {
+                            identityHolderMethodInfoRemoveIdentity.Invoke(null, new object[] { objectUri });
+                            registeredTypes.Remove(objectUri.ToLowerInvariant());
+                        }
+                        catch
+                        {
+                        }
+
+                        ipcChannel.StopListening(null);
+                        ChannelServices.UnregisterChannel(ipcChannel);
+                    }
+                }
             }
             catch (RemotingException)
             {
@@ -169,6 +245,11 @@ namespace DevLib.Remoting
         /// Field IpcUrlStringFormat.
         /// </summary>
         private const string IpcUrlStringFormat = "ipc://{0}/{0}";
+
+        /// <summary>
+        /// Field SyncRoot.
+        /// </summary>
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Field ObjectType.
@@ -246,9 +327,78 @@ namespace DevLib.Remoting
                 serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
 
                 IpcServerChannel ipcChannel = new IpcServerChannel(properties, serverProvider);
-                ChannelServices.RegisterChannel(ipcChannel, false);
 
-                RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
+                lock (SyncRoot)
+                {
+                    try
+                    {
+                        ChannelServices.RegisterChannel(ipcChannel, false);
+                    }
+                    catch (RemotingException)
+                    {
+                        RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+
+                    RemotingConfiguration.RegisterWellKnownServiceType(ObjectType, objectUri, WellKnownObjectMode.Singleton);
+                }
+            }
+            catch (RemotingException)
+            {
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Unregisters an object on the service end as a well-known type for remoting communication.
+        /// </summary>
+        /// <param name="label">A unique label that allows to register multiple instance of the same type.</param>
+        /// <param name="ignoreCase">true to ignore case when register object by label; otherwise, false.</param>
+        [SecurityPermission(SecurityAction.Demand)]
+        public static void Unregister(string label = null, bool ignoreCase = false)
+        {
+            string objectUri = GetObjectUri(label, ignoreCase);
+
+            try
+            {
+                IChannel channel = ChannelServices.GetChannel(objectUri);
+                IpcServerChannel ipcChannel = channel as IpcServerChannel;
+
+                if (ipcChannel != null)
+                {
+                    Type remotingConfigHandlerType = Type.GetType("System.Runtime.Remoting.RemotingConfigHandler, mscorlib");
+                    FieldInfo remotingConfigHandlerFieldInfoInfo = remotingConfigHandlerType.GetField("Info", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+                    Type identityHolderType = Type.GetType("System.Runtime.Remoting.IdentityHolder, mscorlib");
+                    MethodInfo identityHolderMethodInfoRemoveIdentity = identityHolderType.GetMethod("RemoveIdentity", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+
+                    object obj = remotingConfigHandlerFieldInfoInfo.GetValue(null);
+                    FieldInfo fieldInfo = obj.GetType().GetField("_wellKnownExportInfo", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    obj = fieldInfo.GetValue(obj);
+                    Hashtable registeredTypes = (Hashtable)obj;
+
+                    lock (SyncRoot)
+                    {
+                        try
+                        {
+                            identityHolderMethodInfoRemoveIdentity.Invoke(null, new object[] { objectUri });
+                            registeredTypes.Remove(objectUri.ToLowerInvariant());
+                        }
+                        catch
+                        {
+                        }
+
+                        ipcChannel.StopListening(null);
+                        ChannelServices.UnregisterChannel(ipcChannel);
+                    }
+                }
             }
             catch (RemotingException)
             {

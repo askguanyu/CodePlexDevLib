@@ -634,12 +634,12 @@ namespace DevLib.Compression
 
         private string DecodeEntryName(byte[] entryNameBytes)
         {
-            return ((this._generalPurposeBitFlag & ZipArchiveEntry.BitFlagValues.UnicodeFileName) != (ZipArchiveEntry.BitFlagValues)0 ? Encoding.UTF8 : (this._archive == null ? Encoding.UTF8 : this._archive.EntryNameEncoding ?? Encoding.UTF8)).GetString(entryNameBytes);
+            return ((this._generalPurposeBitFlag & ZipArchiveEntry.BitFlagValues.UnicodeFileName) != (ZipArchiveEntry.BitFlagValues)0 ? Encoding.UTF8 : (this._archive == null ? Encoding.Unicode : this._archive.EntryNameEncoding ?? Encoding.Unicode)).GetString(entryNameBytes);
         }
 
         private byte[] EncodeEntryName(string entryName, out bool isUTF8)
         {
-            Encoding encoding = this._archive == null || this._archive.EntryNameEncoding == null ? (ZipHelper.RequiresUnicode(entryName) ? Encoding.UTF8 : Encoding.UTF8) : this._archive.EntryNameEncoding;
+            Encoding encoding = this._archive == null || this._archive.EntryNameEncoding == null ? (ZipHelper.RequiresUnicode(entryName) ? Encoding.UTF8 : Encoding.Unicode) : this._archive.EntryNameEncoding;
             isUTF8 = encoding is UTF8Encoding && encoding.Equals((object)Encoding.UTF8);
             return encoding.GetBytes(entryName);
         }

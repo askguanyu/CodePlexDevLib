@@ -1851,6 +1851,16 @@ namespace DevLib.Samples
 
             var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
 
+            WcfClientType.SaveGeneratedAssemblyFile = true;
+
+            var client1 = WcfClientProxy<IWcfTest>.GetClientBaseInstance(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest");
+
+            var client2 = client1 as WcfClientBase<IWcfTest>;
+
+            client2.SetClientCredentialsAction = (c) => { c.UserName.UserName = "a"; c.UserName.Password = "b"; };
+            client1.Foo("");
+            
+            //clinet2.ClientCredentials
             string a = string.Empty;
             object b = new object();
 

@@ -108,6 +108,15 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Gets or sets a delegate to configure ClientCredentials.
+        /// </summary>
+        public Action<ClientCredentials> SetClientCredentialsAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the client credentials used to call an operation.
         /// </summary>
         public virtual ClientCredentials ClientCredentials
@@ -209,6 +218,7 @@ namespace DevLib.ServiceModel
             get
             {
                 this.RefreshCachedProxy();
+                this.SetClientCredentials(this.CachedProxy);
                 return this.CachedProxy;
             }
         }
@@ -346,6 +356,18 @@ namespace DevLib.ServiceModel
             if (this.CachedProxy == null || this.CachedProxy == default(TChannel))
             {
                 this.CachedProxy = this.CreateProxyInstance();
+            }
+        }
+
+        /// <summary>
+        /// Method SetClientCredentials.
+        /// </summary>
+        /// <param name="value">TChannel instance.</param>
+        protected void SetClientCredentials(TChannel value)
+        {
+            if (value != null && value != default(TChannel) && this.SetClientCredentialsAction != null)
+            {
+                this.SetClientCredentialsAction((value as ClientBase<TChannel>).ClientCredentials);
             }
         }
 

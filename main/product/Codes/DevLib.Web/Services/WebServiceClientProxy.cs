@@ -7,6 +7,7 @@ namespace DevLib.Web.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Reflection;
 
     /// <summary>
@@ -19,6 +20,11 @@ namespace DevLib.Web.Services
         /// Field UrlPropertyName.
         /// </summary>
         private const string UrlPropertyName = "Url";
+
+        /// <summary>
+        /// Field CredentialsPropertyName.
+        /// </summary>
+        private const string CredentialsPropertyName = "Credentials";
 
         /// <summary>
         /// Field _disposed.
@@ -68,6 +74,22 @@ namespace DevLib.Web.Services
             set
             {
                 this.SetProperty(UrlPropertyName, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets security credentials for XML Web service client authentication.
+        /// </summary>
+        public ICredentials Credentials
+        {
+            get
+            {
+                return (ICredentials)this.GetProperty(CredentialsPropertyName);
+            }
+
+            set
+            {
+                this.SetProperty(CredentialsPropertyName, value);
             }
         }
 

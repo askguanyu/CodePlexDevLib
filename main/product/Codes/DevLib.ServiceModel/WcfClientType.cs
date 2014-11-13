@@ -12,7 +12,7 @@ namespace DevLib.ServiceModel
     /// <summary>
     /// Class WcfClientType.
     /// </summary>
-    internal static class WcfClientType
+    public static class WcfClientType
     {
         /// <summary>
         /// Field TypeDictionary.
@@ -25,12 +25,21 @@ namespace DevLib.ServiceModel
         private static ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
+        /// Gets or sets a value indicating whether save generated assembly file or not.
+        /// </summary>
+        public static bool SaveGeneratedAssemblyFile
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Method BuildType.
         /// </summary>
         /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
         /// <typeparam name="TTypeBuilder">The proxy class builder.</typeparam>
         /// <returns>Type object.</returns>
-        public static Type BuildType<TChannel, TTypeBuilder>()
+        internal static Type BuildType<TChannel, TTypeBuilder>()
             where TChannel : class
             where TTypeBuilder : IWcfClientTypeBuilder, new()
         {

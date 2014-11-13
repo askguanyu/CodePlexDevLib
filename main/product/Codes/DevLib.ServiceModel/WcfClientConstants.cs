@@ -16,6 +16,11 @@ namespace DevLib.ServiceModel
         public const string CreateProxyInstanceMethodName = "CreateProxyInstance";
 
         /// <summary>
+        /// Field SetClientCredentialsMethodName.
+        /// </summary>
+        public const string SetClientCredentialsMethodName = "SetClientCredentials";
+
+        /// <summary>
         /// Field CloseProxyInstanceMethodName.
         /// </summary>
         public const string CloseProxyInstanceMethodName = "CloseProxyInstance";

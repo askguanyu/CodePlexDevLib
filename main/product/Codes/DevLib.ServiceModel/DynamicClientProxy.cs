@@ -10,6 +10,7 @@ namespace DevLib.ServiceModel
     using System.Reflection;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.ServiceModel.Description;
 
     /// <summary>
     /// Represents service client proxy object.
@@ -17,6 +18,16 @@ namespace DevLib.ServiceModel
     [Serializable]
     public class DynamicClientProxy : DynamicClientObject, IDisposable
     {
+        /// <summary>
+        /// Field SetClientCredentialsActionPropertyName.
+        /// </summary>
+        private const string SetClientCredentialsActionPropertyName = "SetClientCredentialsAction";
+
+        /// <summary>
+        /// Field ClientCredentialsPropertyName.
+        /// </summary>
+        private const string ClientCredentialsPropertyName = "ClientCredentials";
+
         /// <summary>
         /// Field _disposed.
         /// </summary>
@@ -40,6 +51,8 @@ namespace DevLib.ServiceModel
             paramValues[1] = new EndpointAddress(remoteUri);
 
             this.CallConstructor(paramTypes, paramValues);
+
+            this.IsClientBase = true;
         }
 
         /// <summary>
@@ -60,6 +73,8 @@ namespace DevLib.ServiceModel
             paramValues[1] = new EndpointAddress(remoteUri);
 
             this.CallConstructor(paramTypes, paramValues);
+
+            this.IsClientBase = true;
         }
 
         /// <summary>
@@ -69,6 +84,7 @@ namespace DevLib.ServiceModel
         internal DynamicClientProxy(object obj)
             : base(obj)
         {
+            this.IsClientBase = false;
         }
 
         /// <summary>
@@ -77,6 +93,15 @@ namespace DevLib.ServiceModel
         ~DynamicClientProxy()
         {
             this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether current proxy is created by GetClientBaseProxy or not.
+        /// </summary>
+        public bool IsClientBase
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -119,6 +144,43 @@ namespace DevLib.ServiceModel
                 }
 
                 return result;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a delegate to configure ClientCredentials.
+        /// </summary>
+        public Action<ClientCredentials> SetClientCredentialsAction
+        {
+            get
+            {
+                if (this.IsClientBase)
+                {
+                    return null;
+                }
+                else
+                {
+                    return (Action<ClientCredentials>)this.GetProperty(SetClientCredentialsActionPropertyName);
+                }
+            }
+
+            set
+            {
+                if (!this.IsClientBase)
+                {
+                    this.SetProperty(SetClientCredentialsActionPropertyName, value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the client credentials used to call an operation.
+        /// </summary>
+        public ClientCredentials ClientCredentials
+        {
+            get
+            {
+                return (ClientCredentials)this.GetProperty(ClientCredentialsPropertyName);
             }
         }
 

@@ -37,7 +37,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field _saveGeneratedAssembly.
         /// </summary>
-        private static bool _saveGeneratedAssembly = false;
+        private readonly bool _saveGeneratedAssembly;
 
         /// <summary>
         /// Field _baseClassType.
@@ -71,6 +71,7 @@ namespace DevLib.ServiceModel
         protected WcfClientAbstractClassBuilder(Type baseClassType)
         {
             this._baseClassType = baseClassType;
+            this._saveGeneratedAssembly = WcfClientType.SaveGeneratedAssemblyFile;
         }
 
         /// <summary>
@@ -83,11 +84,11 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method SaveGeneratedAssembly.
+        /// Method SaveAssemblyFile.
         /// </summary>
-        public void SaveGeneratedAssembly()
+        public void SaveAssemblyFile()
         {
-            if (_saveGeneratedAssembly)
+            if (this._saveGeneratedAssembly)
             {
                 this._assemblyBuilder.Save(string.Format(AssemblyFileStringFormat, this._generatedAssemblyName));
                 this._assemblyBuilder = null;
@@ -115,7 +116,7 @@ namespace DevLib.ServiceModel
 
             type = this.GenerateTypeImplementation();
 
-            this.SaveGeneratedAssembly();
+            this.SaveAssemblyFile();
 
             return type;
         }
@@ -215,9 +216,9 @@ namespace DevLib.ServiceModel
                 {
                     this._assemblyName = new AssemblyName();
                     this._assemblyName.Name = this._generatedAssemblyName;
-                    this._assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(this._assemblyName, _saveGeneratedAssembly ? AssemblyBuilderAccess.RunAndSave : AssemblyBuilderAccess.Run);
+                    this._assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(this._assemblyName, this._saveGeneratedAssembly ? AssemblyBuilderAccess.RunAndSave : AssemblyBuilderAccess.Run);
 
-                    if (_saveGeneratedAssembly)
+                    if (this._saveGeneratedAssembly)
                     {
                         this._moduleBuilder = this._assemblyBuilder.DefineDynamicModule(this._generatedAssemblyName, string.Format(AssemblyFileStringFormat, this._generatedAssemblyName));
                     }

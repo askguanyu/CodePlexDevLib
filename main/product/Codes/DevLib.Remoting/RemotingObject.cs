@@ -45,31 +45,7 @@ namespace DevLib.Remoting
         {
             try
             {
-                LifetimeServices.LeaseManagerPollTime = TimeSpan.Zero;
-            }
-            catch
-            {
-            }
-
-            try
-            {
                 LifetimeServices.LeaseTime = TimeSpan.Zero;
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                LifetimeServices.RenewOnCallTime = TimeSpan.Zero;
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                LifetimeServices.SponsorshipTimeout = TimeSpan.Zero;
             }
             catch
             {
@@ -272,31 +248,7 @@ namespace DevLib.Remoting
         {
             try
             {
-                LifetimeServices.LeaseManagerPollTime = TimeSpan.Zero;
-            }
-            catch
-            {
-            }
-
-            try
-            {
                 LifetimeServices.LeaseTime = TimeSpan.Zero;
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                LifetimeServices.RenewOnCallTime = TimeSpan.Zero;
-            }
-            catch
-            {
-            }
-
-            try
-            {
-                LifetimeServices.SponsorshipTimeout = TimeSpan.Zero;
             }
             catch
             {

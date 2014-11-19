@@ -21,7 +21,7 @@ namespace DevLib.Logging
         /// <summary>
         /// Field Lock.
         /// </summary>
-        private static ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Opens the log file for the current application.

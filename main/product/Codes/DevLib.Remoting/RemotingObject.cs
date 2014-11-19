@@ -16,6 +16,7 @@ namespace DevLib.Remoting
     using System.Runtime.Serialization.Formatters;
     using System.Security.Cryptography;
     using System.Security.Permissions;
+    using System.Security.Principal;
     using System.Text;
 
     /// <summary>
@@ -34,6 +35,11 @@ namespace DevLib.Remoting
         private const string IpcUrlStringFormat = "ipc://{0}/{0}";
 
         /// <summary>
+        /// Field WorldSidSecurityIdentifier.
+        /// </summary>
+        private static readonly SecurityIdentifier WorldSidSecurityIdentifier = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+
+        /// <summary>
         /// Field SyncRoot.
         /// </summary>
         private static readonly object SyncRoot = new object();
@@ -41,7 +47,7 @@ namespace DevLib.Remoting
         /// <summary>
         /// Field KeyStringFormat.
         /// </summary>
-        private static string KeyStringFormat = "[Key1][{0}][Key2][{1}]";
+        private static readonly string KeyStringFormat = "[Key1][{0}][Key2][{1}]";
 
         /// <summary>
         /// Initializes static members of the <see cref="RemotingObject" /> class.
@@ -90,7 +96,7 @@ namespace DevLib.Remoting
                         IDictionary properties = new Hashtable();
                         properties["portName"] = objectUri;
                         properties["name"] = objectUri;
-                        properties["authorizedGroup"] = "Everyone";
+                        properties["authorizedGroup"] = WorldSidSecurityIdentifier.Translate(typeof(NTAccount)).Value;
 
                         BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
                         serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -206,7 +212,7 @@ namespace DevLib.Remoting
                         IDictionary properties = new Hashtable();
                         properties["portName"] = Guid.NewGuid().ToString();
                         properties["name"] = objectUri;
-                        properties["authorizedGroup"] = "Everyone";
+                        properties["authorizedGroup"] = WorldSidSecurityIdentifier.Translate(typeof(NTAccount)).Value;
 
                         BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
                         serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -228,6 +234,18 @@ namespace DevLib.Remoting
         }
 
         /// <summary>
+        /// Gets object uri.
+        /// </summary>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="label">A unique label.</param>
+        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
+        /// <returns>Object uri string.</returns>
+        private static string GetObjectUri(Type objectType, string label, bool ignoreCase)
+        {
+            return GetHashString(string.Format(KeyStringFormat, objectType.FullName, string.IsNullOrEmpty(label) ? string.Empty : label), ignoreCase);
+        }
+
+        /// <summary>
         /// Gets hash string.
         /// </summary>
         /// <param name="value">String to calculate.</param>
@@ -243,18 +261,6 @@ namespace DevLib.Remoting
             }
 
             return BitConverter.ToString(hash).Replace("-", string.Empty);
-        }
-
-        /// <summary>
-        /// Gets object uri.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="label">A unique label.</param>
-        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
-        /// <returns>Object uri string.</returns>
-        private static string GetObjectUri(Type objectType, string label, bool ignoreCase)
-        {
-            return GetHashString(string.Format(KeyStringFormat, objectType.FullName, string.IsNullOrEmpty(label) ? string.Empty : label), ignoreCase);
         }
     }
 
@@ -275,6 +281,11 @@ namespace DevLib.Remoting
         private const string IpcUrlStringFormat = "ipc://{0}/{0}";
 
         /// <summary>
+        /// Field WorldSidSecurityIdentifier.
+        /// </summary>
+        private static readonly SecurityIdentifier WorldSidSecurityIdentifier = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+
+        /// <summary>
         /// Field SyncRoot.
         /// </summary>
         private static readonly object SyncRoot = new object();
@@ -282,27 +293,27 @@ namespace DevLib.Remoting
         /// <summary>
         /// Field ObjectType.
         /// </summary>
-        private static Type ObjectType = typeof(T);
+        private static readonly Type ObjectType = typeof(T);
 
         /// <summary>
         /// Field KeyStringFormat.
         /// </summary>
-        private static string KeyStringFormat = "[Key1][" + ObjectType.FullName + "][Key2][{0}]";
+        private static readonly string KeyStringFormat = "[Key1][" + ObjectType.FullName + "][Key2][{0}]";
 
         /// <summary>
         /// Field DefaultKey.
         /// </summary>
-        private static string DefaultKey = "[Key1][" + ObjectType.FullName + "][Key2][]";
+        private static readonly string DefaultKey = "[Key1][" + ObjectType.FullName + "][Key2][]";
 
         /// <summary>
         /// Field ObjectTypeHash.
         /// </summary>
-        private static string ObjectTypeHash = GetHashString(DefaultKey, false);
+        private static readonly string ObjectTypeHash = GetHashString(DefaultKey, false);
 
         /// <summary>
         /// Field ObjectTypeHashIgnoreCase.
         /// </summary>
-        private static string ObjectTypeHashIgnoreCase = GetHashString(DefaultKey, true);
+        private static readonly string ObjectTypeHashIgnoreCase = GetHashString(DefaultKey, true);
 
         /// <summary>
         /// Initializes static members of the <see cref="RemotingObject{T}" /> class.
@@ -350,7 +361,7 @@ namespace DevLib.Remoting
                         IDictionary properties = new Hashtable();
                         properties["portName"] = objectUri;
                         properties["name"] = objectUri;
-                        properties["authorizedGroup"] = "Everyone";
+                        properties["authorizedGroup"] = WorldSidSecurityIdentifier.Translate(typeof(NTAccount)).Value;
 
                         BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
                         serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -464,7 +475,7 @@ namespace DevLib.Remoting
                         IDictionary properties = new Hashtable();
                         properties["portName"] = Guid.NewGuid().ToString();
                         properties["name"] = objectUri;
-                        properties["authorizedGroup"] = "Everyone";
+                        properties["authorizedGroup"] = WorldSidSecurityIdentifier.Translate(typeof(NTAccount)).Value;
 
                         BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
                         serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
@@ -485,6 +496,17 @@ namespace DevLib.Remoting
         }
 
         /// <summary>
+        /// Gets object uri.
+        /// </summary>
+        /// <param name="label">A unique label.</param>
+        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
+        /// <returns>Object uri string.</returns>
+        private static string GetObjectUri(string label, bool ignoreCase)
+        {
+            return string.IsNullOrEmpty(label) ? (ignoreCase ? ObjectTypeHashIgnoreCase : ObjectTypeHash) : GetHashString(string.Format(KeyStringFormat, label), ignoreCase);
+        }
+
+        /// <summary>
         /// Gets hash string.
         /// </summary>
         /// <param name="value">String to calculate.</param>
@@ -500,17 +522,6 @@ namespace DevLib.Remoting
             }
 
             return BitConverter.ToString(hash).Replace("-", string.Empty);
-        }
-
-        /// <summary>
-        /// Gets object uri.
-        /// </summary>
-        /// <param name="label">A unique label.</param>
-        /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
-        /// <returns>Object uri string.</returns>
-        private static string GetObjectUri(string label, bool ignoreCase)
-        {
-            return string.IsNullOrEmpty(label) ? (ignoreCase ? ObjectTypeHashIgnoreCase : ObjectTypeHash) : GetHashString(string.Format(KeyStringFormat, label), ignoreCase);
         }
     }
 }

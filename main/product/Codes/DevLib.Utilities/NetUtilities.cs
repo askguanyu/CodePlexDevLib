@@ -14,9 +14,9 @@ namespace DevLib.Utilities
     public static class NetUtilities
     {
         /// <summary>
-        /// Static Field _random.
+        /// Field PortRandom.
         /// </summary>
-        private static Random _random = new Random();
+        private static readonly Random PortRandom = new Random();
 
         /// <summary>
         /// Get Local IP Array.
@@ -42,7 +42,7 @@ namespace DevLib.Utilities
         /// <returns>Random port number.</returns>
         public static int GetRandomPortNumber()
         {
-            return _random.Next(IPEndPoint.MinPort, IPEndPoint.MaxPort);
+            return PortRandom.Next(IPEndPoint.MinPort, IPEndPoint.MaxPort);
         }
     }
 }

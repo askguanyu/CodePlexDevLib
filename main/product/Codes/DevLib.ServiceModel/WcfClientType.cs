@@ -22,7 +22,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field Lock.
         /// </summary>
-        private static ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Gets or sets a value indicating whether save generated assembly file or not.

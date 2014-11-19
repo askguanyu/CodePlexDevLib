@@ -51,7 +51,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field Lock.
         /// </summary>
-        private static ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Get Wcf client instance.

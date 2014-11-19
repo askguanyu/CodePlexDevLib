@@ -173,14 +173,11 @@ namespace DevLib.Net.Ftp
         /// <returns>A hash code for the current <see cref="FtpSetup" />.</returns>
         public override int GetHashCode()
         {
-            if (object.ReferenceEquals(this, null))
-            {
-                return 0;
-            }
-
-            return this.UseAnonymous ?
-                (this.HostName ?? string.Empty).ToLowerInvariant().GetHashCode() :
-                (this.HostName ?? string.Empty).ToLowerInvariant().GetHashCode() ^ (this.UserName ?? string.Empty).GetHashCode() ^ (this.Password ?? string.Empty).GetHashCode();
+            return string.Format(
+                "{0}|{1}|{2}",
+                (this.HostName ?? string.Empty).ToLowerInvariant(),
+                this.UserName ?? string.Empty,
+                this.Password ?? string.Empty).GetHashCode();
         }
     }
 }

@@ -19,9 +19,9 @@ namespace DevLib.Remoting
     public class RemotingObjectEventProxy : MarshalByRefObject
     {
         /// <summary>
-        /// Represents the method that will handle an event that raises in transparent proxy of RemotingObject.
+        /// Represents the event that will raises in transparent proxy of RemotingObject.
         /// </summary>
-        public event EventHandler OnRemotingObjectEvent;
+        public event EventHandler RemotingObjectEventOccurred;
 
         /// <summary>
         /// Thread safety raise event in the real RemotingObject type.
@@ -62,9 +62,9 @@ namespace DevLib.Remoting
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
         [OneWay]
-        public void RaiseRemotingObjectEvent(object sender, EventArgs e)
+        public void OnRemotingObjectEvent(object sender, EventArgs e)
         {
-            EventHandler safeHandler = Interlocked.CompareExchange(ref this.OnRemotingObjectEvent, null, null);
+            EventHandler safeHandler = Interlocked.CompareExchange(ref this.RemotingObjectEventOccurred, null, null);
 
             if (safeHandler != null)
             {
@@ -92,9 +92,9 @@ namespace DevLib.Remoting
     public class RemotingObjectEventProxy<T> : MarshalByRefObject where T : EventArgs
     {
         /// <summary>
-        /// Represents the method that will handle an event that raises in transparent proxy of RemotingObject.
+        /// Represents the event that will raises in transparent proxy of RemotingObject.
         /// </summary>
-        public event EventHandler<T> OnRemotingObjectEvent;
+        public event EventHandler<T> RemotingObjectEventOccurred;
 
         /// <summary>
         /// Thread safety raise event in the real RemotingObject type.
@@ -135,9 +135,9 @@ namespace DevLib.Remoting
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
         [OneWay]
-        public void RaiseRemotingObjectEvent(object sender, T e)
+        public void OnRemotingObjectEvent(object sender, T e)
         {
-            EventHandler<T> safeHandler = Interlocked.CompareExchange(ref this.OnRemotingObjectEvent, null, null);
+            EventHandler<T> safeHandler = Interlocked.CompareExchange(ref this.RemotingObjectEventOccurred, null, null);
 
             if (safeHandler != null)
             {

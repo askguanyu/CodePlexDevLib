@@ -31,7 +31,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field Lock.
         /// </summary>
-        private static ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Creates a channel of a specified type to a specified endpoint address.

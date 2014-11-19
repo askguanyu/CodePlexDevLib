@@ -19,9 +19,9 @@ namespace DevLib.Diagnostics
     public static class Benchmark
     {
         /// <summary>
-        /// Static Field _random.
+        /// Field ColorRandom.
         /// </summary>
-        private static Random _random = new Random();
+        private static readonly Random ColorRandom = new Random();
 
         /// <summary>
         /// Initialize Benchmark.
@@ -70,7 +70,7 @@ namespace DevLib.Diagnostics
             ConsoleColor originalForegroundColor = Console.ForegroundColor;
             ConsoleColor originalBackgroundColor = Console.BackgroundColor;
 
-            ConsoleColor consoleRandomColor = (ConsoleColor)_random.Next(9, 15);
+            ConsoleColor consoleRandomColor = (ConsoleColor)ColorRandom.Next(9, 15);
             Console.ResetColor();
             Console.ForegroundColor = consoleRandomColor;
             Console.BackgroundColor = ConsoleColor.Black;

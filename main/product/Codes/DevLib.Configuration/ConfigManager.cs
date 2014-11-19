@@ -23,7 +23,7 @@ namespace DevLib.Configuration
         /// <summary>
         /// Field Lock.
         /// </summary>
-        private static ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
 
         /// <summary>
         /// Opens the configuration file for the current application.

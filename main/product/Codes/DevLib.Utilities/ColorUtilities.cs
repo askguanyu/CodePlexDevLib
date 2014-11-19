@@ -14,9 +14,9 @@ namespace DevLib.Utilities
     public static class ColorUtilities
     {
         /// <summary>
-        /// Static Field _random.
+        /// Field ColorRandom.
         /// </summary>
-        private static Random _random = new Random();
+        private static readonly Random ColorRandom = new Random();
 
         /// <summary>
         /// Returns a random color.
@@ -24,7 +24,7 @@ namespace DevLib.Utilities
         /// <returns>The result color.</returns>
         public static Color GetRandomColor()
         {
-            return Color.FromKnownColor((KnownColor)_random.Next(1, 174));
+            return Color.FromKnownColor((KnownColor)ColorRandom.Next(1, 174));
         }
     }
 }

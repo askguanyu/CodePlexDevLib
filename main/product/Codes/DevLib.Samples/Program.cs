@@ -289,7 +289,7 @@ namespace DevLib.Samples
 
             dynamicXml.Date = DateTime.Now; // add new element
             dynamicXml["age"] = 10; // add new attribute
-            dynamicXml[9,2] = "hello"; // add new element, element name is value's Type
+            dynamicXml[9, 2] = "hello"; // add new element, element name is value's Type
             var atts = dynamicXml.Attributes(); // get all attributes
             var elms = dynamicXml.Elements(); // get all elements
             //dynamicXml.RemoveElement("bar"); //remove element
@@ -1863,7 +1863,7 @@ namespace DevLib.Samples
 
             client2.SetClientCredentialsAction = (c) => { c.UserName.UserName = "a"; c.UserName.Password = "b"; };
             client1.Foo("");
-            
+
             //clinet2.ClientCredentials
             string a = string.Empty;
             object b = new object();

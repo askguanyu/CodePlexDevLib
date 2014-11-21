@@ -99,10 +99,13 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -115,10 +118,13 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -132,10 +138,13 @@ namespace DevLib.ServiceModel
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, configFile, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -149,10 +158,13 @@ namespace DevLib.ServiceModel
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, configFile, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -166,10 +178,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type bindingType, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, bindingType, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -183,10 +198,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type bindingType, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, bindingType, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -200,10 +218,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, binding, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -217,10 +238,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Binding binding, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, binding, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -235,10 +259,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, contractType, bindingType, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -253,10 +280,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, contractType, bindingType, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -271,10 +301,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, contractType, binding, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -289,10 +322,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(assemblyFile, contractType, binding, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -305,10 +341,13 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -321,10 +360,13 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -338,10 +380,13 @@ namespace DevLib.ServiceModel
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, string configFile, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, string configFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, configFile, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -355,10 +400,13 @@ namespace DevLib.ServiceModel
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, string configFile, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, string configFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, configFile, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -372,10 +420,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type bindingType, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, bindingType, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -389,10 +440,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type bindingType, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, bindingType, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -406,10 +460,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, binding, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -423,10 +480,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Binding binding, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, binding, port);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -441,10 +501,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, contractType, bindingType, baseAddress);
 
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
             if (openNow)
             {
                 this.Open();
@@ -459,9 +522,12 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, contractType, bindingType, port);
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
             if (openNow)
             {
@@ -477,9 +543,12 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, string baseAddress, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, contractType, binding, baseAddress);
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
             if (openNow)
             {
@@ -495,9 +564,12 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, int port, bool openNow = false)
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
         {
             this.Initialize(serviceType, contractType, binding, port);
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
             if (openNow)
             {
@@ -565,6 +637,15 @@ namespace DevLib.ServiceModel
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets or sets a delegate to configure ServiceCredentials.
+        /// </summary>
+        public Action<ServiceCredentials> SetServiceCredentialsAction
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -1657,6 +1738,11 @@ namespace DevLib.ServiceModel
                         {
                             this.RaiseEvent(this.Opening, serviceHost.Description.Name, WcfServiceHostStateEnum.Opening);
 
+                            if (this.SetServiceCredentialsAction != null)
+                            {
+                                this.SetServiceCredentialsAction(serviceHost.Credentials);
+                            }
+
                             serviceHost.Open();
 
                             this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostStateEnum.Opened);
@@ -1808,7 +1894,7 @@ namespace DevLib.ServiceModel
 
             foreach (var item in this._serviceHostList)
             {
-                result.Add(new WcfServiceHostInfo() { ServiceType = item.Description.ServiceType.FullName, BaseAddress = item.BaseAddresses[0].AbsoluteUri, State = item.State });
+                result.Add(new WcfServiceHostInfo() { ServiceType = item.Description.ServiceType.FullName, BaseAddress = item.BaseAddresses[0].AbsoluteUri, State = item.State, Credentials = item.Credentials });
             }
 
             return result;

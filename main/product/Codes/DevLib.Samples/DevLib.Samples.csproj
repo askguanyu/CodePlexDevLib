@@ -139,6 +139,10 @@
       <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
       <Name>DevLib.Diagnostics</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.DirectoryServices\DevLib.DirectoryServices.csproj">
+      <Project>{4A3025ED-0AF6-46E6-927F-128DF086CFCC}</Project>
+      <Name>DevLib.DirectoryServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Dynamic\DevLib.Dynamic.csproj">
       <Project>{7AC78159-7869-4615-B918-DC5E410FBB44}</Project>
       <Name>DevLib.Dynamic</Name>

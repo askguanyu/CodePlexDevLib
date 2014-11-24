@@ -269,7 +269,7 @@ namespace DevLib.DirectoryServices
         /// <param name="filter">The search filter string.</param>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsers(string filter = "")
+        public List<LdapUserObject> GetUsers(string filter = null)
         {
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {

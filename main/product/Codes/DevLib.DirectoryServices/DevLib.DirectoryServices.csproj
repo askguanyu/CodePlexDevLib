@@ -46,7 +46,7 @@
     <Compile Include="InternalLogger.cs" />
     <Compile Include="LdapEntry.cs" />
     <Compile Include="LdapResult.cs" />
-    <Compile Include="LdapUserObject.cs" />
+    <Compile Include="LdapUser.cs" />
     <Compile Include="MailingAddress.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -118,27 +118,27 @@ namespace DevLib.DirectoryServices
                 }
                 else
                 {
-                    result.UserObject = new LdapUserObject();
-                    result.UserObject.DisplayName = searchResult.Properties["cn"][0].ToString();
+                    result.User = new LdapUser();
+                    result.User.DisplayName = searchResult.Properties["cn"][0].ToString();
 
                     if (getAdditionalInfo)
                     {
                         if (searchResult.Properties["mail"].Count > 0)
                         {
-                            result.UserObject.EmailAddress = searchResult.Properties["mail"][0].ToString();
+                            result.User.EmailAddress = searchResult.Properties["mail"][0].ToString();
                         }
 
                         if (searchResult.Properties["department"].Count > 0)
                         {
-                            result.UserObject.Department = searchResult.Properties["department"][0].ToString();
+                            result.User.Department = searchResult.Properties["department"][0].ToString();
                         }
 
                         if (searchResult.Properties["telephoneNumber"].Count > 0)
                         {
-                            result.UserObject.PhoneNumber = searchResult.Properties["telephoneNumber"][0].ToString();
+                            result.User.PhoneNumber = searchResult.Properties["telephoneNumber"][0].ToString();
                         }
 
-                        result.UserObject.MailingAddress = this.GetUserAddress(userName);
+                        result.User.MailingAddress = this.GetUserAddress(userName);
 
                         List<string> groups = new List<string>();
 
@@ -150,7 +150,7 @@ namespace DevLib.DirectoryServices
                             }
                         }
 
-                        result.UserObject.Groups = groups;
+                        result.User.Groups = groups;
                     }
                 }
 
@@ -269,7 +269,7 @@ namespace DevLib.DirectoryServices
         /// <param name="filter">The search filter string.</param>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsers(string filter = null)
+        public List<LdapUser> GetUsers(string filter = null)
         {
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
@@ -289,11 +289,11 @@ namespace DevLib.DirectoryServices
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
-                        List<LdapUserObject> result = new List<LdapUserObject>();
+                        List<LdapUser> result = new List<LdapUser>();
 
                         foreach (SearchResult searchResult in searchResultCollection)
                         {
-                            LdapUserObject ldapUserObject = new LdapUserObject();
+                            LdapUser ldapUserObject = new LdapUser();
 
                             ldapUserObject.UserName = searchResult.Properties["samAccountName"][0].ToString();
 
@@ -488,7 +488,7 @@ namespace DevLib.DirectoryServices
         /// </summary>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsersWithMissingOffice()
+        public List<LdapUser> GetUsersWithMissingOffice()
         {
             return this.GetUsersWithMissingProperty("(&(objectCategory=person)(!physicalDeliveryOfficeName=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))");
         }
@@ -498,7 +498,7 @@ namespace DevLib.DirectoryServices
         /// </summary>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsersWithMissingPhoneNumber()
+        public List<LdapUser> GetUsersWithMissingPhoneNumber()
         {
             return this.GetUsersWithMissingProperty("(&(objectCategory=person)(!telephoneNumber=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))");
         }
@@ -508,7 +508,7 @@ namespace DevLib.DirectoryServices
         /// </summary>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsersWithMissingEmailAddress()
+        public List<LdapUser> GetUsersWithMissingEmailAddress()
         {
             return this.GetUsersWithMissingProperty("(&(objectCategory=person)(!mail=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))");
         }
@@ -518,7 +518,7 @@ namespace DevLib.DirectoryServices
         /// </summary>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsersWithMissingAddress()
+        public List<LdapUser> GetUsersWithMissingAddress()
         {
             return this.GetUsersWithMissingProperty("(&(objectCategory=person)(!streetAddress=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))");
         }
@@ -528,7 +528,7 @@ namespace DevLib.DirectoryServices
         /// </summary>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsersWithMissingDepartment()
+        public List<LdapUser> GetUsersWithMissingDepartment()
         {
             return this.GetUsersWithMissingProperty("(&(objectCategory=person)(!department=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))");
         }
@@ -539,7 +539,7 @@ namespace DevLib.DirectoryServices
         /// <param name="filter">The search filter string.</param>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUserObject> GetUsersPasswordExpiration(string filter = null)
+        public List<LdapUser> GetUsersPasswordExpiration(string filter = null)
         {
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
@@ -560,11 +560,11 @@ namespace DevLib.DirectoryServices
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
-                        List<LdapUserObject> result = new List<LdapUserObject>();
+                        List<LdapUser> result = new List<LdapUser>();
 
                         foreach (SearchResult searchResult in searchResultCollection)
                         {
-                            LdapUserObject ldapUserObject = new LdapUserObject();
+                            LdapUser ldapUserObject = new LdapUser();
                             ldapUserObject.UserName = searchResult.Properties["samAccountName"][0].ToString();
                             ldapUserObject.DisplayName = searchResult.Properties["displayName"][0].ToString();
                             ldapUserObject.PasswordLastSetTime = DateTime.FromFileTime((long)searchResult.Properties["pwdLastSet"][0]);
@@ -588,7 +588,7 @@ namespace DevLib.DirectoryServices
         /// Zero x.DisplayName equals y.DisplayName.
         /// Greater than zero x.DisplayName is greater than y.DisplayName.
         /// </returns>
-        public int CompareLdapUsers(LdapUserObject x, LdapUserObject y)
+        public int CompareLdapUsers(LdapUser x, LdapUser y)
         {
             if (x == null)
             {
@@ -713,7 +713,7 @@ namespace DevLib.DirectoryServices
         /// <param name="filter">The search filter string.</param>
         /// <returns>LdapUserObject list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        private List<LdapUserObject> GetUsersWithMissingProperty(string filter)
+        private List<LdapUser> GetUsersWithMissingProperty(string filter)
         {
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
@@ -725,13 +725,13 @@ namespace DevLib.DirectoryServices
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
-                        List<LdapUserObject> result = new List<LdapUserObject>();
+                        List<LdapUser> result = new List<LdapUser>();
 
                         if (searchResultCollection != null)
                         {
                             foreach (SearchResult searchResult in searchResultCollection)
                             {
-                                LdapUserObject ldapUserObject = new LdapUserObject();
+                                LdapUser ldapUserObject = new LdapUser();
                                 ldapUserObject.UserName = searchResult.Properties["samAccountName"][0].ToString();
                                 ldapUserObject.DisplayName = searchResult.Properties["cn"][0].ToString();
 

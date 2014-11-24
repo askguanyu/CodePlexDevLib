@@ -146,7 +146,7 @@ namespace DevLib.DirectoryServices
                         {
                             foreach (object obj in searchResult.Properties["MemberOf"])
                             {
-                                groups.Add(this.TrimToName((string)obj));
+                                groups.Add(this.GetCommonName((string)obj));
                             }
                         }
 
@@ -267,7 +267,7 @@ namespace DevLib.DirectoryServices
         /// Gets Users.
         /// </summary>
         /// <param name="filter">The search filter string.</param>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUser> GetUsers(string filter = null)
         {
@@ -293,16 +293,16 @@ namespace DevLib.DirectoryServices
 
                         foreach (SearchResult searchResult in searchResultCollection)
                         {
-                            LdapUser ldapUserObject = new LdapUser();
+                            LdapUser ldapUser = new LdapUser();
 
-                            ldapUserObject.UserName = searchResult.Properties["samAccountName"][0].ToString();
+                            ldapUser.UserName = searchResult.Properties["samAccountName"][0].ToString();
 
                             if (searchResult.Properties["displayName"].Count > 0)
                             {
-                                ldapUserObject.DisplayName = searchResult.Properties["displayName"][0].ToString();
+                                ldapUser.DisplayName = searchResult.Properties["displayName"][0].ToString();
                             }
 
-                            result.Add(ldapUserObject);
+                            result.Add(ldapUser);
                         }
 
                         return result;
@@ -486,7 +486,7 @@ namespace DevLib.DirectoryServices
         /// <summary>
         /// Finds all active user accounts whose 'physicalDeliveryOfficeName' property is blank.
         /// </summary>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUser> GetUsersWithMissingOffice()
         {
@@ -496,7 +496,7 @@ namespace DevLib.DirectoryServices
         /// <summary>
         /// Finds all active user accounts whose 'telephoneNumber' property is blank.
         /// </summary>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUser> GetUsersWithMissingPhoneNumber()
         {
@@ -506,7 +506,7 @@ namespace DevLib.DirectoryServices
         /// <summary>
         /// Finds all active user accounts whose 'mail' property is blank.
         /// </summary>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUser> GetUsersWithMissingEmailAddress()
         {
@@ -516,7 +516,7 @@ namespace DevLib.DirectoryServices
         /// <summary>
         /// Finds all active user accounts whose 'streetAddress' property is blank.
         /// </summary>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUser> GetUsersWithMissingAddress()
         {
@@ -526,7 +526,7 @@ namespace DevLib.DirectoryServices
         /// <summary>
         /// Finds all active user accounts whose 'department' property is blank.
         /// </summary>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUser> GetUsersWithMissingDepartment()
         {
@@ -537,7 +537,7 @@ namespace DevLib.DirectoryServices
         /// Returns a list of users and their password expiration date.
         /// </summary>
         /// <param name="filter">The search filter string.</param>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUser> GetUsersPasswordExpiration(string filter = null)
         {
@@ -564,11 +564,11 @@ namespace DevLib.DirectoryServices
 
                         foreach (SearchResult searchResult in searchResultCollection)
                         {
-                            LdapUser ldapUserObject = new LdapUser();
-                            ldapUserObject.UserName = searchResult.Properties["samAccountName"][0].ToString();
-                            ldapUserObject.DisplayName = searchResult.Properties["displayName"][0].ToString();
-                            ldapUserObject.PasswordLastSetTime = DateTime.FromFileTime((long)searchResult.Properties["pwdLastSet"][0]);
-                            result.Add(ldapUserObject);
+                            LdapUser ldapUser = new LdapUser();
+                            ldapUser.UserName = searchResult.Properties["samAccountName"][0].ToString();
+                            ldapUser.DisplayName = searchResult.Properties["displayName"][0].ToString();
+                            ldapUser.PasswordLastSetTime = DateTime.FromFileTime((long)searchResult.Properties["pwdLastSet"][0]);
+                            result.Add(ldapUser);
                         }
 
                         return result;
@@ -578,10 +578,10 @@ namespace DevLib.DirectoryServices
         }
 
         /// <summary>
-        /// Compares two specified LdapUserObject objects and returns an integer that indicates their relationship to one another in the sort order.
+        /// Compares two specified LdapUser objects and returns an integer that indicates their relationship to one another in the sort order.
         /// </summary>
-        /// <param name="x">The first LdapUserObject.</param>
-        /// <param name="y">The second LdapUserObject.</param>
+        /// <param name="x">The first LdapUser instance.</param>
+        /// <param name="y">The second LdapUser instance.</param>
         /// <returns>
         /// A 32-bit signed integer indicating the lexical relationship between the two comparands.
         /// Value Condition Less than zero x.DisplayName is less than y.DisplayName.
@@ -711,7 +711,7 @@ namespace DevLib.DirectoryServices
         /// Gets Users with missing property.
         /// </summary>
         /// <param name="filter">The search filter string.</param>
-        /// <returns>LdapUserObject list.</returns>
+        /// <returns>LdapUser list.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         private List<LdapUser> GetUsersWithMissingProperty(string filter)
         {
@@ -731,11 +731,11 @@ namespace DevLib.DirectoryServices
                         {
                             foreach (SearchResult searchResult in searchResultCollection)
                             {
-                                LdapUser ldapUserObject = new LdapUser();
-                                ldapUserObject.UserName = searchResult.Properties["samAccountName"][0].ToString();
-                                ldapUserObject.DisplayName = searchResult.Properties["cn"][0].ToString();
+                                LdapUser ldapUser = new LdapUser();
+                                ldapUser.UserName = searchResult.Properties["samAccountName"][0].ToString();
+                                ldapUser.DisplayName = searchResult.Properties["cn"][0].ToString();
 
-                                result.Add(ldapUserObject);
+                                result.Add(ldapUser);
                             }
                         }
 
@@ -768,13 +768,13 @@ namespace DevLib.DirectoryServices
                         {
                             if (string.IsNullOrEmpty(propertyName))
                             {
-                                result.Add(this.TrimToName(searchResult.GetDirectoryEntry().Name));
+                                result.Add(this.GetCommonName(searchResult.GetDirectoryEntry().Name));
                             }
                             else
                             {
                                 foreach (object resultProperty in searchResult.Properties[propertyName])
                                 {
-                                    result.Add(this.TrimToName((string)resultProperty));
+                                    result.Add(this.GetCommonName((string)resultProperty));
                                 }
                             }
                         }
@@ -803,17 +803,17 @@ namespace DevLib.DirectoryServices
 
                     SearchResult searchResult = directorySearcher.FindOne();
 
-                    return this.TrimToName(searchResult.Properties[propertyName][0].ToString());
+                    return this.GetCommonName(searchResult.Properties[propertyName][0].ToString());
                 }
             }
         }
 
         /// <summary>
-        /// Trim To Name.
+        /// Gets Common Name (CN=).
         /// </summary>
-        /// <param name="path">Path to trim.</param>
-        /// <returns>Name string.</returns>
-        private string TrimToName(string path)
+        /// <param name="path">Path to get.</param>
+        /// <returns>CN value.</returns>
+        private string GetCommonName(string path)
         {
             string[] parts = path.Split(',');
 

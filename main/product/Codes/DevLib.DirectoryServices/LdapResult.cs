@@ -42,9 +42,9 @@ namespace DevLib.DirectoryServices
         }
 
         /// <summary>
-        /// Gets or sets LdapUserObject instance.
+        /// Gets or sets LdapUser instance.
         /// </summary>
-        public LdapUserObject UserObject
+        public LdapUser User
         {
             get;
             set;

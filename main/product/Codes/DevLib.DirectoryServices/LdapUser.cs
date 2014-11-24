@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="LdapUserObject.cs" company="YuGuan Corporation">
+// <copyright file="LdapUser.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -10,10 +10,10 @@ namespace DevLib.DirectoryServices
     using System.Security.Permissions;
 
     /// <summary>
-    /// Ldap user object.
+    /// Ldap user.
     /// </summary>
     [Serializable]
-    public class LdapUserObject : MarshalByRefObject
+    public class LdapUser : MarshalByRefObject
     {
         /// <summary>
         /// Gets or sets user account name.

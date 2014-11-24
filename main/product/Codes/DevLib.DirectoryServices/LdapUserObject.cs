@@ -93,7 +93,10 @@ namespace DevLib.DirectoryServices
         /// <returns>A string representation of the current instance DisplayName.</returns>
         public override string ToString()
         {
-            return this.DisplayName;
+            return string.Format(
+                "User account: {0} | Display name: {1}",
+                this.UserName ?? string.Empty,
+                this.DisplayName ?? string.Empty);
         }
 
         /// <summary>

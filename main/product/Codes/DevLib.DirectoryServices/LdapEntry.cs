@@ -114,7 +114,7 @@ namespace DevLib.DirectoryServices
                 {
                     result.Succeeded = false;
                     result.Message = "Authentication failed.";
-                    result.Process = "Authenticate";
+                    result.Source = "DevLib.DirectoryServices.LdapEntry.Authenticate";
                 }
                 else
                 {
@@ -165,7 +165,6 @@ namespace DevLib.DirectoryServices
                 result.Succeeded = false;
                 result.Message = e.ToString().Trim();
                 result.Source = e.Source.Trim();
-                result.Process = "Authenticate";
 
                 return result;
             }
@@ -229,15 +228,13 @@ namespace DevLib.DirectoryServices
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<string> GetLocalGroupMembership(string userName)
         {
-            List<string> result = null;
-
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
                 using (DirectoryEntry directoryEntryChildren = directoryEntry.Children.Find(userName))
                 {
                     object groupsObject = directoryEntryChildren.Invoke("Groups");
 
-                    result = new List<string>();
+                    List<string> result = new List<string>();
 
                     foreach (object adsObject in (IEnumerable)groupsObject)
                     {
@@ -274,8 +271,6 @@ namespace DevLib.DirectoryServices
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUserObject> GetUsers(string filter = "")
         {
-            List<LdapUserObject> result = null;
-
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
@@ -294,7 +289,7 @@ namespace DevLib.DirectoryServices
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
-                        result = new List<LdapUserObject>();
+                        List<LdapUserObject> result = new List<LdapUserObject>();
 
                         foreach (SearchResult searchResult in searchResultCollection)
                         {
@@ -450,23 +445,23 @@ namespace DevLib.DirectoryServices
 
             string filter = null;
             string emailUserName = null;
-            List<string> results = null;
+            List<string> searchResults = null;
 
             filter = "(&(objectCategory=person)(mail=" + emailAddress + "))";
-            results = this.Search(filter);
+            searchResults = this.Search(filter);
 
-            if (results.Count > 0)
+            if (searchResults.Count > 0)
             {
-                result = results[0];
+                result = searchResults[0];
             }
 
             emailUserName = emailAddress.Substring(0, emailAddress.IndexOf("@"));
             filter = "(&(objectCategory=person)(samAccountName=" + emailUserName + "))";
-            results = this.Search(filter);
+            searchResults = this.Search(filter);
 
-            if (results.Count > 0)
+            if (searchResults.Count > 0)
             {
-                result = results[0];
+                result = searchResults[0];
             }
 
             return result;
@@ -546,8 +541,6 @@ namespace DevLib.DirectoryServices
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public List<LdapUserObject> GetUsersPasswordExpiration(string filter = null)
         {
-            List<LdapUserObject> result = null;
-
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
@@ -567,7 +560,7 @@ namespace DevLib.DirectoryServices
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
-                        result = new List<LdapUserObject>();
+                        List<LdapUserObject> result = new List<LdapUserObject>();
 
                         foreach (SearchResult searchResult in searchResultCollection)
                         {
@@ -639,12 +632,10 @@ namespace DevLib.DirectoryServices
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         private List<string> GetGroupMembershipByGroup(string groupName)
         {
-            List<string> result = null;
-
             string filter = "(&(objectCategory=group)(cn=" + groupName + "))";
             List<string> searchResults = this.Search(filter, "MemberOf");
 
-            result = new List<string>();
+            List<string> result = new List<string>();
 
             if (searchResults != null)
             {
@@ -724,8 +715,6 @@ namespace DevLib.DirectoryServices
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         private List<LdapUserObject> GetUsersWithMissingProperty(string filter)
         {
-            List<LdapUserObject> result = null;
-
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
@@ -736,14 +725,10 @@ namespace DevLib.DirectoryServices
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
-                        if (searchResultCollection == null)
-                        {
-                            return null;
-                        }
-                        else
-                        {
-                            result = new List<LdapUserObject>();
+                        List<LdapUserObject> result = new List<LdapUserObject>();
 
+                        if (searchResultCollection != null)
+                        {
                             foreach (SearchResult searchResult in searchResultCollection)
                             {
                                 LdapUserObject ldapUserObject = new LdapUserObject();
@@ -752,9 +737,9 @@ namespace DevLib.DirectoryServices
 
                                 result.Add(ldapUserObject);
                             }
-
-                            return result;
                         }
+
+                        return result;
                     }
                 }
             }
@@ -771,14 +756,14 @@ namespace DevLib.DirectoryServices
         {
             using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
-                List<string> result = new List<string>();
-
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
                 {
                     directorySearcher.Filter = filter;
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
+                        List<string> result = new List<string>();
+
                         foreach (SearchResult searchResult in searchResultCollection)
                         {
                             if (string.IsNullOrEmpty(propertyName))
@@ -793,10 +778,10 @@ namespace DevLib.DirectoryServices
                                 }
                             }
                         }
+
+                        return result;
                     }
                 }
-
-                return result;
             }
         }
 
@@ -830,7 +815,7 @@ namespace DevLib.DirectoryServices
         /// <returns>Name string.</returns>
         private string TrimToName(string path)
         {
-            string[] parts = path.Split(new char[] { ',' });
+            string[] parts = path.Split(',');
 
             return parts[0].Replace("CN=", string.Empty);
         }

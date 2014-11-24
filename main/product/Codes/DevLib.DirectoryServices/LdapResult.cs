@@ -24,7 +24,7 @@ namespace DevLib.DirectoryServices
         }
 
         /// <summary>
-        /// Gets or sets message.
+        /// Gets or sets the message.
         /// </summary>
         public string Message
         {
@@ -36,24 +36,6 @@ namespace DevLib.DirectoryServices
         /// Gets or sets the name of the application or the object that causes the result.
         /// </summary>
         public string Source
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the name of the processing.
-        /// </summary>
-        public string Process
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets a tag.
-        /// </summary>
-        public object Tag
         {
             get;
             set;

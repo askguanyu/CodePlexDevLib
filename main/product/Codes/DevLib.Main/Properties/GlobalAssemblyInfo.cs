@@ -9,7 +9,7 @@ using System.Reflection;
 [assembly: AssemblyDescription("dot Net Development Library")]
 [assembly: AssemblyCompany("YuGuan")]
 [assembly: AssemblyProduct("DevLib")]
-[assembly: AssemblyCopyright("YuGuan Copyright © 2007")]
+[assembly: AssemblyCopyright("YuGuan Copyright © 2007-2015")]
 [assembly: AssemblyTrademark("DevLib")]
 [assembly: AssemblyCulture("")]
 

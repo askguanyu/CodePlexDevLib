@@ -66,6 +66,7 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
+    using DevLib.DirectoryServices;
 
     public class Program
     {
@@ -725,6 +726,17 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            string path = "LDAP://contoso.local";
+
+            LdapEntry ldapEntry = new LdapEntry(path,"aaa","bbb!");
+
+            //var ldapuser = ldapEntry.Authenticate("aaa","ccc");
+
+            var ldapusers = ldapEntry.GetUser("aaa");
+
+
+            var result = ldapEntry.Authenticate("ccc", "ddd");
+
             ////Uri baseAddressUri = new Uri("http://localhost:888/opc");
 
             ////string rp = Path.Combine(baseAddressUri.AbsolutePath, "def").Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);

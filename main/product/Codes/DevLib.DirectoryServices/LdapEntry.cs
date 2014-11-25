@@ -81,10 +81,9 @@ namespace DevLib.DirectoryServices
         /// </summary>
         /// <param name="userName">User account to authenticate.</param>
         /// <param name="password">User password.</param>
-        /// <param name="getAdditionalInfo">Indicates additional account information should be retrieved upon a successful authentication.</param>
         /// <returns>LdapResult instance.</returns>
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public LdapResult Authenticate(string userName, string password, bool getAdditionalInfo = false)
+        public LdapResult Authenticate(string userName, string password)
         {
             LdapResult result = new LdapResult();
 
@@ -98,15 +97,7 @@ namespace DevLib.DirectoryServices
 
                 directorySearcher = new DirectorySearcher(directoryEntry);
                 directorySearcher.Filter = "(SAMAccountName=" + userName + ")";
-                directorySearcher.PropertiesToLoad.Add("cn");
-
-                if (getAdditionalInfo)
-                {
-                    directorySearcher.PropertiesToLoad.Add("MemberOf");
-                    directorySearcher.PropertiesToLoad.Add("mail");
-                    directorySearcher.PropertiesToLoad.Add("department");
-                    directorySearcher.PropertiesToLoad.Add("telephoneNumber");
-                }
+                directorySearcher.SearchScope = SearchScope.Subtree;
 
                 SearchResult searchResult = directorySearcher.FindOne();
 
@@ -114,47 +105,13 @@ namespace DevLib.DirectoryServices
                 {
                     result.Succeeded = false;
                     result.Message = "Authentication failed.";
-                    result.Source = "DevLib.DirectoryServices.LdapEntry.Authenticate";
+                    result.Source = InternalLogger.GetStackFrameInfo(0);
                 }
                 else
                 {
-                    result.User = new LdapUser();
-                    result.User.DisplayName = searchResult.Properties["cn"][0].ToString();
-
-                    if (getAdditionalInfo)
-                    {
-                        if (searchResult.Properties["mail"].Count > 0)
-                        {
-                            result.User.EmailAddress = searchResult.Properties["mail"][0].ToString();
-                        }
-
-                        if (searchResult.Properties["department"].Count > 0)
-                        {
-                            result.User.Department = searchResult.Properties["department"][0].ToString();
-                        }
-
-                        if (searchResult.Properties["telephoneNumber"].Count > 0)
-                        {
-                            result.User.PhoneNumber = searchResult.Properties["telephoneNumber"][0].ToString();
-                        }
-
-                        result.User.MailingAddress = this.GetUserAddress(userName);
-
-                        List<string> groups = new List<string>();
-
-                        if (searchResult.Properties["MemberOf"] != null)
-                        {
-                            foreach (object obj in searchResult.Properties["MemberOf"])
-                            {
-                                groups.Add(this.GetCommonName((string)obj));
-                            }
-                        }
-
-                        result.User.Groups = groups;
-                    }
+                    result.Succeeded = true;
+                    result.User = this.InternalGetUser(searchResult);
                 }
-
-                result.Succeeded = true;
 
                 return result;
             }
@@ -164,7 +121,7 @@ namespace DevLib.DirectoryServices
 
                 result.Succeeded = false;
                 result.Message = e.ToString().Trim();
-                result.Source = e.Source.Trim();
+                result.Source = InternalLogger.GetStackFrameInfo(0);
 
                 return result;
             }
@@ -185,6 +142,91 @@ namespace DevLib.DirectoryServices
         }
 
         /// <summary>
+        /// Gets a Ldap user by account name.
+        /// </summary>
+        /// <param name="userName">User account name to get.</param>
+        /// <returns>LdapUser instance.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public LdapUser GetUser(string userName)
+        {
+            using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
+            {
+                using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
+                {
+                    directorySearcher.Filter = "(SAMAccountName=" + userName + ")";
+                    directorySearcher.SearchScope = SearchScope.Subtree;
+
+                    SearchResult searchResult = directorySearcher.FindOne();
+
+                    return this.InternalGetUser(searchResult);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets Ldap users.
+        /// </summary>
+        /// <param name="filter">The search filter string.</param>
+        /// <returns>LdapUser list.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public List<LdapUser> GetUsers(string filter = null)
+        {
+            using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
+            {
+                using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
+                {
+                    if (string.IsNullOrEmpty(filter))
+                    {
+                        directorySearcher.Filter = "(&(objectCategory=person))";
+                    }
+                    else
+                    {
+                        directorySearcher.Filter = filter;
+                    }
+
+                    directorySearcher.SearchScope = SearchScope.Subtree;
+
+                    using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
+                    {
+                        List<LdapUser> result = new List<LdapUser>();
+
+                        if (searchResultCollection != null)
+                        {
+                            foreach (SearchResult searchResult in searchResultCollection)
+                            {
+                                result.Add(this.InternalGetUser(searchResult));
+                            }
+                        }
+
+                        return result;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the specified user account exists.
+        /// </summary>
+        /// <param name="userName">User account to check.</param>
+        /// <returns>true if the user account exists; otherwise, false.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
+        public bool ExistsUser(string userName)
+        {
+            string filter = "(&(objectCategory=person)(samAccountName=" + userName + "))";
+
+            List<string> searchResult = this.Search(filter);
+
+            if (searchResult.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets UserGroup Membership.
         /// </summary>
         /// <param name="userName">User account to get.</param>
@@ -195,6 +237,7 @@ namespace DevLib.DirectoryServices
             List<string> result = null;
 
             string filter = "(&(objectCategory=person)(samAccountName=" + userName + "))";
+
             List<string> searchResults = this.Search(filter, "MemberOf");
 
             result = new List<string>();
@@ -264,54 +307,6 @@ namespace DevLib.DirectoryServices
         }
 
         /// <summary>
-        /// Gets Users.
-        /// </summary>
-        /// <param name="filter">The search filter string.</param>
-        /// <returns>LdapUser list.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUser> GetUsers(string filter = null)
-        {
-            using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
-            {
-                using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
-                {
-                    if (string.IsNullOrEmpty(filter))
-                    {
-                        directorySearcher.Filter = "(&(objectCategory=person))";
-                    }
-                    else
-                    {
-                        directorySearcher.Filter = filter;
-                    }
-
-                    directorySearcher.PropertiesToLoad.Add("samAccountName");
-                    directorySearcher.PropertiesToLoad.Add("displayName");
-
-                    using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
-                    {
-                        List<LdapUser> result = new List<LdapUser>();
-
-                        foreach (SearchResult searchResult in searchResultCollection)
-                        {
-                            LdapUser ldapUser = new LdapUser();
-
-                            ldapUser.UserName = searchResult.Properties["samAccountName"][0].ToString();
-
-                            if (searchResult.Properties["displayName"].Count > 0)
-                            {
-                                ldapUser.DisplayName = searchResult.Properties["displayName"][0].ToString();
-                            }
-
-                            result.Add(ldapUser);
-                        }
-
-                        return result;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets UserAddress.
         /// </summary>
         /// <param name="userName">User account to get.</param>
@@ -319,28 +314,67 @@ namespace DevLib.DirectoryServices
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
         public MailingAddress GetUserAddress(string userName)
         {
-            MailingAddress result = new MailingAddress();
-
-            string streetAddress = this.GetUserProperty(userName, "streetAddress");
-            int newLineIndex = streetAddress.IndexOf(Environment.NewLine);
-
-            if (newLineIndex == -1)
+            using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
             {
-                result.StreetLine1 = streetAddress;
-            }
-            else
-            {
-                result.StreetLine1 = streetAddress.Substring(0, newLineIndex);
-                result.StreetLine2 = streetAddress.Substring(newLineIndex + 2, streetAddress.Length - newLineIndex - 2);
-            }
+                using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
+                {
+                    directorySearcher.Filter = "(SAMAccountName=" + userName + ")";
+                    directorySearcher.SearchScope = SearchScope.Subtree;
 
-            result.POBox = this.GetUserProperty(userName, "postOfficeBox");
-            result.City = this.GetUserProperty(userName, "l");
-            result.State = this.GetUserProperty(userName, "st");
-            result.PostalCode = this.GetUserProperty(userName, "postalCode");
-            result.Country = this.GetUserProperty(userName, "c");
+                    SearchResult searchResult = directorySearcher.FindOne();
 
-            return result;
+                    MailingAddress result = new MailingAddress();
+
+                    string streetAddress = null;
+
+                    if (searchResult.Properties["streetAddress"].Count > 0)
+                    {
+                        streetAddress = searchResult.Properties["streetAddress"][0].ToString();
+                    }
+
+                    if (!string.IsNullOrEmpty(streetAddress))
+                    {
+                        int newLineIndex = streetAddress.IndexOf(Environment.NewLine);
+
+                        if (newLineIndex == -1)
+                        {
+                            result.StreetLine1 = streetAddress;
+                        }
+                        else
+                        {
+                            result.StreetLine1 = streetAddress.Substring(0, newLineIndex);
+                            result.StreetLine2 = streetAddress.Substring(newLineIndex + 2, streetAddress.Length - newLineIndex - 2);
+                        }
+                    }
+
+                    if (searchResult.Properties["postOfficeBox"].Count > 0)
+                    {
+                        result.POBox = searchResult.Properties["postOfficeBox"][0].ToString();
+                    }
+
+                    if (searchResult.Properties["l"].Count > 0)
+                    {
+                        result.City = searchResult.Properties["l"][0].ToString();
+                    }
+
+                    if (searchResult.Properties["st"].Count > 0)
+                    {
+                        result.State = searchResult.Properties["st"][0].ToString();
+                    }
+
+                    if (searchResult.Properties["postalCode"].Count > 0)
+                    {
+                        result.PostalCode = searchResult.Properties["postalCode"][0].ToString();
+                    }
+
+                    if (searchResult.Properties["c"].Count > 0)
+                    {
+                        result.Country = searchResult.Properties["c"][0].ToString();
+                    }
+
+                    return result;
+                }
+            }
         }
 
         /// <summary>
@@ -409,28 +443,6 @@ namespace DevLib.DirectoryServices
             long fileTime = Convert.ToInt64(this.GetUserProperty(userName, "pwdLastSet"));
 
             return DateTime.FromFileTime(fileTime);
-        }
-
-        /// <summary>
-        /// Determines whether the specified user account exists.
-        /// </summary>
-        /// <param name="userName">User account to check.</param>
-        /// <returns>true if the user account exists; otherwise, false.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public bool ExistsUser(string userName)
-        {
-            string filter = "(&(objectCategory=person)(samAccountName=" + userName + "))";
-
-            List<string> searchResult = this.Search(filter);
-
-            if (searchResult.Count > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         /// <summary>
@@ -534,59 +546,15 @@ namespace DevLib.DirectoryServices
         }
 
         /// <summary>
-        /// Returns a list of users and their password expiration date.
-        /// </summary>
-        /// <param name="filter">The search filter string.</param>
-        /// <returns>LdapUser list.</returns>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
-        public List<LdapUser> GetUsersPasswordExpiration(string filter = null)
-        {
-            using (DirectoryEntry directoryEntry = this.GetDirectoryEntry())
-            {
-                using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
-                {
-                    if (string.IsNullOrEmpty(filter))
-                    {
-                        directorySearcher.Filter = "(&(objectCategory=person))";
-                    }
-                    else
-                    {
-                        directorySearcher.Filter = filter;
-                    }
-
-                    directorySearcher.PropertiesToLoad.Add("samAccountName");
-                    directorySearcher.PropertiesToLoad.Add("displayName");
-                    directorySearcher.PropertiesToLoad.Add("pwdLastSet");
-
-                    using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
-                    {
-                        List<LdapUser> result = new List<LdapUser>();
-
-                        foreach (SearchResult searchResult in searchResultCollection)
-                        {
-                            LdapUser ldapUser = new LdapUser();
-                            ldapUser.UserName = searchResult.Properties["samAccountName"][0].ToString();
-                            ldapUser.DisplayName = searchResult.Properties["displayName"][0].ToString();
-                            ldapUser.PasswordLastSetTime = DateTime.FromFileTime((long)searchResult.Properties["pwdLastSet"][0]);
-                            result.Add(ldapUser);
-                        }
-
-                        return result;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Compares two specified LdapUser objects and returns an integer that indicates their relationship to one another in the sort order.
         /// </summary>
         /// <param name="x">The first LdapUser instance.</param>
         /// <param name="y">The second LdapUser instance.</param>
         /// <returns>
         /// A 32-bit signed integer indicating the lexical relationship between the two comparands.
-        /// Value Condition Less than zero x.DisplayName is less than y.DisplayName.
-        /// Zero x.DisplayName equals y.DisplayName.
-        /// Greater than zero x.DisplayName is greater than y.DisplayName.
+        /// Value Condition Less than zero x.UserName is less than y.UserName.
+        /// Zero x.UserName equals y.UserName.
+        /// Greater than zero x.UserName is greater than y.UserName.
         /// </returns>
         public int CompareLdapUsers(LdapUser x, LdapUser y)
         {
@@ -609,7 +577,7 @@ namespace DevLib.DirectoryServices
                 }
                 else
                 {
-                    return string.Compare(x.DisplayName, y.DisplayName);
+                    return string.Compare(x.UserName, y.UserName);
                 }
             }
         }
@@ -622,6 +590,113 @@ namespace DevLib.DirectoryServices
         public override object InitializeLifetimeService()
         {
             return null;
+        }
+
+        /// <summary>
+        /// Gets Ldap user.
+        /// </summary>
+        /// <param name="searchResult">SearchResult instance.</param>
+        /// <returns>LdapUser instance.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.Infrastructure)]
+        private LdapUser InternalGetUser(SearchResult searchResult)
+        {
+            if (searchResult == null)
+            {
+                return null;
+            }
+
+            LdapUser result = new LdapUser();
+
+            if (searchResult.Properties["samAccountName"].Count > 0)
+            {
+                result.UserName = searchResult.Properties["samAccountName"][0].ToString();
+            }
+
+            if (searchResult.Properties["displayName"].Count > 0)
+            {
+                result.DisplayName = searchResult.Properties["displayName"][0].ToString();
+            }
+
+            if (searchResult.Properties["mail"].Count > 0)
+            {
+                result.EmailAddress = searchResult.Properties["mail"][0].ToString();
+            }
+
+            if (searchResult.Properties["department"].Count > 0)
+            {
+                result.Department = searchResult.Properties["department"][0].ToString();
+            }
+
+            if (searchResult.Properties["telephoneNumber"].Count > 0)
+            {
+                result.PhoneNumber = searchResult.Properties["telephoneNumber"][0].ToString();
+            }
+
+            if (searchResult.Properties["pwdLastSet"].Count > 0)
+            {
+                result.PasswordLastSetTime = DateTime.FromFileTime(Convert.ToInt64(searchResult.Properties["pwdLastSet"][0]));
+            }
+
+            result.Groups = new List<string>();
+
+            if (searchResult.Properties["MemberOf"] != null)
+            {
+                foreach (object obj in searchResult.Properties["MemberOf"])
+                {
+                    result.Groups.Add(this.GetCommonName((string)obj));
+                }
+            }
+
+            result.MailingAddress = new MailingAddress();
+
+            string streetAddress = null;
+
+            if (searchResult.Properties["streetAddress"].Count > 0)
+            {
+                streetAddress = searchResult.Properties["streetAddress"][0].ToString();
+            }
+
+            if (!string.IsNullOrEmpty(streetAddress))
+            {
+                int newLineIndex = streetAddress.IndexOf(Environment.NewLine);
+
+                if (newLineIndex == -1)
+                {
+                    result.MailingAddress.StreetLine1 = streetAddress;
+                }
+                else
+                {
+                    result.MailingAddress.StreetLine1 = streetAddress.Substring(0, newLineIndex);
+                    result.MailingAddress.StreetLine2 = streetAddress.Substring(newLineIndex + 2, streetAddress.Length - newLineIndex - 2);
+                }
+            }
+
+            if (searchResult.Properties["postOfficeBox"].Count > 0)
+            {
+                result.MailingAddress.POBox = searchResult.Properties["postOfficeBox"][0].ToString();
+            }
+
+            if (searchResult.Properties["l"].Count > 0)
+            {
+                result.MailingAddress.City = searchResult.Properties["l"][0].ToString();
+            }
+
+            if (searchResult.Properties["st"].Count > 0)
+            {
+                result.MailingAddress.State = searchResult.Properties["st"][0].ToString();
+            }
+
+            if (searchResult.Properties["postalCode"].Count > 0)
+            {
+                result.MailingAddress.PostalCode = searchResult.Properties["postalCode"][0].ToString();
+            }
+
+            if (searchResult.Properties["c"].Count > 0)
+            {
+                result.MailingAddress.Country = searchResult.Properties["c"][0].ToString();
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -720,8 +795,7 @@ namespace DevLib.DirectoryServices
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
                 {
                     directorySearcher.Filter = filter;
-                    directorySearcher.PropertiesToLoad.Add("samAccountName");
-                    directorySearcher.PropertiesToLoad.Add("cn");
+                    directorySearcher.SearchScope = SearchScope.Subtree;
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
@@ -731,11 +805,7 @@ namespace DevLib.DirectoryServices
                         {
                             foreach (SearchResult searchResult in searchResultCollection)
                             {
-                                LdapUser ldapUser = new LdapUser();
-                                ldapUser.UserName = searchResult.Properties["samAccountName"][0].ToString();
-                                ldapUser.DisplayName = searchResult.Properties["cn"][0].ToString();
-
-                                result.Add(ldapUser);
+                                result.Add(this.InternalGetUser(searchResult));
                             }
                         }
 
@@ -759,6 +829,7 @@ namespace DevLib.DirectoryServices
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
                 {
                     directorySearcher.Filter = filter;
+                    directorySearcher.SearchScope = SearchScope.Subtree;
 
                     using (SearchResultCollection searchResultCollection = directorySearcher.FindAll())
                     {
@@ -803,7 +874,14 @@ namespace DevLib.DirectoryServices
 
                     SearchResult searchResult = directorySearcher.FindOne();
 
-                    return this.GetCommonName(searchResult.Properties[propertyName][0].ToString());
+                    if (searchResult.Properties[propertyName].Count > 0)
+                    {
+                        return this.GetCommonName(searchResult.Properties[propertyName][0].ToString());
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
                 }
             }
         }
@@ -815,9 +893,16 @@ namespace DevLib.DirectoryServices
         /// <returns>CN value.</returns>
         private string GetCommonName(string path)
         {
-            string[] parts = path.Split(',');
+            try
+            {
+                string[] parts = path.Split(',');
 
-            return parts[0].Replace("CN=", string.Empty);
+                return parts[0].Replace("CN=", string.Empty);
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }

@@ -835,17 +835,20 @@ namespace DevLib.DirectoryServices
                     {
                         List<string> result = new List<string>();
 
-                        foreach (SearchResult searchResult in searchResultCollection)
+                        if (searchResultCollection != null)
                         {
-                            if (string.IsNullOrEmpty(propertyName))
+                            foreach (SearchResult searchResult in searchResultCollection)
                             {
-                                result.Add(this.GetCommonName(searchResult.GetDirectoryEntry().Name));
-                            }
-                            else
-                            {
-                                foreach (object resultProperty in searchResult.Properties[propertyName])
+                                if (string.IsNullOrEmpty(propertyName))
                                 {
-                                    result.Add(this.GetCommonName((string)resultProperty));
+                                    result.Add(this.GetCommonName(searchResult.GetDirectoryEntry().Name));
+                                }
+                                else
+                                {
+                                    foreach (object resultProperty in searchResult.Properties[propertyName])
+                                    {
+                                        result.Add(this.GetCommonName((string)resultProperty));
+                                    }
                                 }
                             }
                         }

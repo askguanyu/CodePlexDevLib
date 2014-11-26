@@ -7,7 +7,6 @@ namespace DevLib.Remoting
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.Remoting.Messaging;
     using System.Security.Permissions;
     using System.Threading;
 
@@ -61,7 +60,6 @@ namespace DevLib.Remoting
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
-        [OneWay]
         public void OnRemotingObjectEvent(object sender, EventArgs e)
         {
             EventHandler safeHandler = Interlocked.CompareExchange(ref this.RemotingObjectEventOccurred, null, null);
@@ -134,7 +132,6 @@ namespace DevLib.Remoting
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
-        [OneWay]
         public void OnRemotingObjectEvent(object sender, T e)
         {
             EventHandler<T> safeHandler = Interlocked.CompareExchange(ref this.RemotingObjectEventOccurred, null, null);

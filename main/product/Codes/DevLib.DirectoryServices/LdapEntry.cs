@@ -96,7 +96,7 @@ namespace DevLib.DirectoryServices
                 object directoryObject = directoryEntry.NativeObject;
 
                 directorySearcher = new DirectorySearcher(directoryEntry);
-                directorySearcher.Filter = "(SAMAccountName=" + userName + ")";
+                directorySearcher.Filter = "(samAccountName=" + userName + ")";
                 directorySearcher.SearchScope = SearchScope.Subtree;
 
                 SearchResult searchResult = directorySearcher.FindOne();
@@ -153,7 +153,7 @@ namespace DevLib.DirectoryServices
             {
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
                 {
-                    directorySearcher.Filter = "(SAMAccountName=" + userName + ")";
+                    directorySearcher.Filter = "(samAccountName=" + userName + ")";
                     directorySearcher.SearchScope = SearchScope.Subtree;
 
                     SearchResult searchResult = directorySearcher.FindOne();
@@ -318,7 +318,7 @@ namespace DevLib.DirectoryServices
             {
                 using (DirectorySearcher directorySearcher = new DirectorySearcher(directoryEntry))
                 {
-                    directorySearcher.Filter = "(SAMAccountName=" + userName + ")";
+                    directorySearcher.Filter = "(samAccountName=" + userName + ")";
                     directorySearcher.SearchScope = SearchScope.Subtree;
 
                     SearchResult searchResult = directorySearcher.FindOne();

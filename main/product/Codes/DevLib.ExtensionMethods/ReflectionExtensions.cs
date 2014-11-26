@@ -133,6 +133,11 @@ namespace DevLib.ExtensionMethods
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         public static object CreateInstance(this Type source, params object[] args)
         {
+            if (source == typeof(string))
+            {
+                return string.Empty;
+            }
+
             object result = null;
 
             try
@@ -320,6 +325,7 @@ namespace DevLib.ExtensionMethods
         public static object SetPropertyValue(this object source, string propertyName, object value, params object[] index)
         {
             source.GetType().GetProperty(propertyName).SetValue(source, value, index);
+
             return source;
         }
 
@@ -335,6 +341,7 @@ namespace DevLib.ExtensionMethods
         public static object SetPropertyValueGeneric(this object source, string propertyName, object value, Type[] typeArguments, params object[] index)
         {
             source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName).SetValue(source, value, index);
+
             return source;
         }
     }

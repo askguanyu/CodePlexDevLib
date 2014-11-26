@@ -6,6 +6,8 @@
 namespace DevLib.Xml
 {
     using System;
+    using System.Runtime.Serialization;
+    using System.Security.Permissions;
     using System.Xml;
 
     /// <summary>
@@ -169,11 +171,6 @@ namespace DevLib.Xml
         /// <returns>An object equivalent of the string.</returns>
         public static object ToObject(string value, Type targetType)
         {
-            if (value == null)
-            {
-                return null;
-            }
-
             switch (Type.GetTypeCode(targetType))
             {
                 case TypeCode.Boolean:
@@ -259,8 +256,9 @@ namespace DevLib.Xml
         /// <param name="value">The string to convert.</param>
         /// <param name="targetType">Target type to convert.</param>
         /// <param name="defaultValue">The default value if failed.</param>
+        /// <param name="defaultOnError">When convert failed, true to return a default value of targetType; false to return defaultValue.</param>
         /// <returns>An object equivalent of the string.</returns>
-        public static object ToObject(string value, Type targetType, object defaultValue)
+        public static object ToObject(string value, Type targetType, object defaultValue, bool defaultOnError = false)
         {
             try
             {
@@ -268,7 +266,21 @@ namespace DevLib.Xml
             }
             catch
             {
-                return defaultValue;
+                if (defaultOnError)
+                {
+                    try
+                    {
+                        return CreateInstance(targetType);
+                    }
+                    catch
+                    {
+                        return defaultValue;
+                    }
+                }
+                else
+                {
+                    return defaultValue;
+                }
             }
         }
 
@@ -289,17 +301,39 @@ namespace DevLib.Xml
         /// <typeparam name="T">Target type to convert.</typeparam>
         /// <param name="value">The string to convert.</param>
         /// <param name="defaultValue">The default value if failed.</param>
+        /// <param name="defaultOnError">When convert failed, true to return a default value of targetType; false to return defaultValue.</param>
         /// <returns>An object equivalent of the string.</returns>
-        public static T ToObject<T>(string value, T defaultValue)
+        public static T ToObject<T>(string value, T defaultValue, bool defaultOnError = false)
         {
+            return (T)ToObject(value, typeof(T), defaultValue, defaultOnError);
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified type using the constructor that best matches the specified parameters.
+        /// </summary>
+        /// <param name="type">The type of object to create.</param>
+        /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
+        /// <returns>A reference to the newly created object.</returns>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+        private static object CreateInstance(Type type, params object[] args)
+        {
+            if (type == typeof(string))
+            {
+                return string.Empty;
+            }
+
+            object result = null;
+
             try
             {
-                return ToObject<T>(value);
+                result = Activator.CreateInstance(type, args);
             }
             catch
             {
-                return defaultValue;
+                result = FormatterServices.GetUninitializedObject(type);
             }
+
+            return result;
         }
 
         /// <summary>

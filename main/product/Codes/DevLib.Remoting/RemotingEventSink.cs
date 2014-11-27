@@ -27,7 +27,7 @@ namespace DevLib.Remoting
         /// </summary>
         /// <param name="source">Source EventHandler.</param>
         /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">An System.EventArgs that contains the event data.</param>
+        /// <param name="e">A System.EventArgs that contains the event data.</param>
         public static void RaiseEvent(EventHandler source, object sender, EventArgs e = null)
         {
             EventHandler safeSourceHandler = Interlocked.CompareExchange(ref source, null, null);
@@ -61,7 +61,7 @@ namespace DevLib.Remoting
         /// Raise event method for transparent proxy of remoting object.
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">An System.EventArgs that contains the event data.</param>
+        /// <param name="e">A System.EventArgs that contains the event data.</param>
         public void OnRemotingEvent(object sender, EventArgs e)
         {
             EventHandler safeHandler = Interlocked.CompareExchange(ref this.RemotingEventOccurred, null, null);
@@ -101,7 +101,7 @@ namespace DevLib.Remoting
         /// </summary>
         /// <param name="source">Source EventHandler{T}.</param>
         /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">An System.EventArgs that contains the event data.</param>
+        /// <param name="e">A System.EventArgs that contains the event data.</param>
         public static void RaiseEvent(EventHandler<T> source, object sender, T e)
         {
             EventHandler<T> safeSourceHandler = Interlocked.CompareExchange(ref source, null, null);
@@ -135,7 +135,7 @@ namespace DevLib.Remoting
         /// Raise event method for transparent proxy of remoting object.
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">An System.EventArgs that contains the event data.</param>
+        /// <param name="e">A System.EventArgs that contains the event data.</param>
         public void OnRemotingEvent(object sender, T e)
         {
             EventHandler<T> safeHandler = Interlocked.CompareExchange(ref this.RemotingEventOccurred, null, null);

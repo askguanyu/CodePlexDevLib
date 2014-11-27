@@ -43,6 +43,7 @@ namespace DevLib.Samples
     using DevLib.DaemonProcess;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
+    using DevLib.DirectoryServices;
     using DevLib.Dynamic;
     using DevLib.Expressions;
     using DevLib.ExtensionMethods;
@@ -66,7 +67,6 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
-    using DevLib.DirectoryServices;
 
     public class Program
     {

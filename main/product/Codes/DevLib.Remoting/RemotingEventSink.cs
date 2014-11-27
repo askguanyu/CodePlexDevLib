@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="RemotingObjectEventProxy.cs" company="YuGuan Corporation">
+// <copyright file="RemotingEventSink.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -15,40 +15,42 @@ namespace DevLib.Remoting
     /// </summary>
     [Serializable]
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
-    public class RemotingObjectEventProxy : MarshalByRefObject
+    public class RemotingEventSink : MarshalByRefObject
     {
         /// <summary>
-        /// Represents the event that will raises in transparent proxy of RemotingObject.
+        /// Represents the event that will raises in transparent proxy of remoting object.
         /// </summary>
-        public event EventHandler RemotingObjectEventOccurred;
+        public event EventHandler RemotingEventOccurred;
 
         /// <summary>
-        /// Thread safety raise event in the real RemotingObject type.
+        /// Thread safety raise event in the real remoting object type.
         /// </summary>
         /// <param name="source">Source EventHandler.</param>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
         public static void RaiseEvent(EventHandler source, object sender, EventArgs e = null)
         {
-            EventHandler safeHandler = Interlocked.CompareExchange(ref source, null, null);
+            EventHandler safeSourceHandler = Interlocked.CompareExchange(ref source, null, null);
 
-            if (safeHandler != null)
+            if (safeSourceHandler != null)
             {
                 EventHandler tempHandler = null;
 
-                foreach (Delegate invocation in source.GetInvocationList())
+                foreach (Delegate invocation in safeSourceHandler.GetInvocationList())
                 {
                     tempHandler = invocation as EventHandler;
 
-                    if (tempHandler != null)
+                    EventHandler safeTempHandler = Interlocked.CompareExchange(ref tempHandler, null, null);
+
+                    if (safeTempHandler != null)
                     {
                         try
                         {
-                            tempHandler(sender, e);
+                            safeTempHandler(sender, e);
                         }
                         catch
                         {
-                            source -= tempHandler;
+                            safeSourceHandler -= safeTempHandler;
                         }
                     }
                 }
@@ -56,13 +58,13 @@ namespace DevLib.Remoting
         }
 
         /// <summary>
-        /// Raise event method for transparent proxy of RemotingObject.
+        /// Raise event method for transparent proxy of remoting object.
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
-        public void OnRemotingObjectEvent(object sender, EventArgs e)
+        public void OnRemotingEvent(object sender, EventArgs e)
         {
-            EventHandler safeHandler = Interlocked.CompareExchange(ref this.RemotingObjectEventOccurred, null, null);
+            EventHandler safeHandler = Interlocked.CompareExchange(ref this.RemotingEventOccurred, null, null);
 
             if (safeHandler != null)
             {
@@ -87,40 +89,42 @@ namespace DevLib.Remoting
     /// <typeparam name="T">The type of the event.</typeparam>
     [Serializable]
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
-    public class RemotingObjectEventProxy<T> : MarshalByRefObject where T : EventArgs
+    public class RemotingEventSink<T> : MarshalByRefObject where T : EventArgs
     {
         /// <summary>
-        /// Represents the event that will raises in transparent proxy of RemotingObject.
+        /// Represents the event that will raises in transparent proxy of remoting object.
         /// </summary>
-        public event EventHandler<T> RemotingObjectEventOccurred;
+        public event EventHandler<T> RemotingEventOccurred;
 
         /// <summary>
-        /// Thread safety raise event in the real RemotingObject type.
+        /// Thread safety raise event in the real remoting object type.
         /// </summary>
         /// <param name="source">Source EventHandler{T}.</param>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
         public static void RaiseEvent(EventHandler<T> source, object sender, T e)
         {
-            EventHandler<T> safeHandler = Interlocked.CompareExchange(ref source, null, null);
+            EventHandler<T> safeSourceHandler = Interlocked.CompareExchange(ref source, null, null);
 
-            if (safeHandler != null)
+            if (safeSourceHandler != null)
             {
                 EventHandler<T> tempHandler = null;
 
-                foreach (Delegate invocation in source.GetInvocationList())
+                foreach (Delegate invocation in safeSourceHandler.GetInvocationList())
                 {
                     tempHandler = invocation as EventHandler<T>;
 
-                    if (tempHandler != null)
+                    EventHandler<T> safeTempHandler = Interlocked.CompareExchange(ref tempHandler, null, null);
+
+                    if (safeTempHandler != null)
                     {
                         try
                         {
-                            tempHandler(sender, e);
+                            safeTempHandler(sender, e);
                         }
                         catch
                         {
-                            source -= tempHandler;
+                            safeSourceHandler -= safeTempHandler;
                         }
                     }
                 }
@@ -128,13 +132,13 @@ namespace DevLib.Remoting
         }
 
         /// <summary>
-        /// Raise event method for transparent proxy of RemotingObject.
+        /// Raise event method for transparent proxy of remoting object.
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">An System.EventArgs that contains the event data.</param>
-        public void OnRemotingObjectEvent(object sender, T e)
+        public void OnRemotingEvent(object sender, T e)
         {
-            EventHandler<T> safeHandler = Interlocked.CompareExchange(ref this.RemotingObjectEventOccurred, null, null);
+            EventHandler<T> safeHandler = Interlocked.CompareExchange(ref this.RemotingEventOccurred, null, null);
 
             if (safeHandler != null)
             {

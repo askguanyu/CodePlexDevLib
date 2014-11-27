@@ -62,7 +62,7 @@ namespace DevLib.Remoting
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">A System.EventArgs that contains the event data.</param>
-        public void OnRemotingEvent(object sender, EventArgs e)
+        public void RaiseRemotingEvent(object sender, EventArgs e)
         {
             EventHandler safeHandler = Interlocked.CompareExchange(ref this.RemotingEventOccurred, null, null);
 
@@ -136,7 +136,7 @@ namespace DevLib.Remoting
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">A System.EventArgs that contains the event data.</param>
-        public void OnRemotingEvent(object sender, T e)
+        public void RaiseRemotingEvent(object sender, T e)
         {
             EventHandler<T> safeHandler = Interlocked.CompareExchange(ref this.RemotingEventOccurred, null, null);
 

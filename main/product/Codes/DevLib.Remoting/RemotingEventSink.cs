@@ -25,12 +25,12 @@ namespace DevLib.Remoting
         /// <summary>
         /// Thread safety raise event in the real remoting object type.
         /// </summary>
-        /// <param name="source">Source EventHandler.</param>
+        /// <param name="eventHandler">Source EventHandler.</param>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">A System.EventArgs that contains the event data.</param>
-        public static void RaiseEvent(EventHandler source, object sender, EventArgs e = null)
+        public static void RaiseEvent(EventHandler eventHandler, object sender, EventArgs e = null)
         {
-            EventHandler safeSourceHandler = Interlocked.CompareExchange(ref source, null, null);
+            EventHandler safeSourceHandler = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (safeSourceHandler != null)
             {
@@ -99,12 +99,12 @@ namespace DevLib.Remoting
         /// <summary>
         /// Thread safety raise event in the real remoting object type.
         /// </summary>
-        /// <param name="source">Source EventHandler{T}.</param>
+        /// <param name="eventHandler">Source EventHandler{T}.</param>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">A System.EventArgs that contains the event data.</param>
-        public static void RaiseEvent(EventHandler<T> source, object sender, T e)
+        public static void RaiseEvent(EventHandler<T> eventHandler, object sender, T e)
         {
-            EventHandler<T> safeSourceHandler = Interlocked.CompareExchange(ref source, null, null);
+            EventHandler<T> safeSourceHandler = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (safeSourceHandler != null)
             {

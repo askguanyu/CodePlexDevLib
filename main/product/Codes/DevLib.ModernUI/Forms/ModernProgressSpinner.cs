@@ -62,7 +62,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Field _speed.
         /// </summary>
-        private float _speed;
+        private float _speed = 1;
 
         /// <summary>
         /// Field _backwards.

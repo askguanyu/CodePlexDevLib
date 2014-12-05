@@ -66,6 +66,9 @@ namespace DevLib.ModernUI.Forms
 
             this.TextAlign = ContentAlignment.BottomLeft;
             this.TileImageAlign = ContentAlignment.TopLeft;
+            this.ShowTileCount = true;
+            this.FontSize = ModernFontSize.Medium;
+            this.FontWeight = ModernFontWeight.Light;
         }
 
         /// <summary>
@@ -226,11 +229,11 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether paint tile count.
+        /// Gets or sets a value indicating whether show tile count.
         /// </summary>
         [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryAppearance)]
-        public bool PaintTileCount
+        public bool ShowTileCount
         {
             get;
             set;
@@ -526,7 +529,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.TileCount > 0 && this.PaintTileCount)
+            if (this.TileCount > 0 && this.ShowTileCount)
             {
                 Size countSize = TextRenderer.MeasureText(this.TileCount.ToString(), ModernFonts.TileCount);
 

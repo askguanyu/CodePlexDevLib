@@ -75,7 +75,9 @@ namespace DevLib.ModernUI.Forms
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
 
             this.Padding = new Point(6, 8);
-            this.TextAlign = ContentAlignment.MiddleCenter;
+            this.TextAlign = ContentAlignment.MiddleLeft;
+            this.FontSize = ModernFontSize.Medium;
+            this.FontWeight = ModernFontWeight.Light;
         }
 
         /// <summary>

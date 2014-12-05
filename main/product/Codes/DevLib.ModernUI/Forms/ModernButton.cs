@@ -61,7 +61,8 @@ namespace DevLib.ModernUI.Forms
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
-            this.TextAlign = ContentAlignment.MiddleCenter;
+            this.FontSize = ModernFontSize.Small;
+            this.FontWeight = ModernFontWeight.Bold;
         }
 
         /// <summary>

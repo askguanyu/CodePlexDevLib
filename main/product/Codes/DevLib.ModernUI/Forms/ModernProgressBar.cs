@@ -47,6 +47,9 @@ namespace DevLib.ModernUI.Forms
 
             this.TextAlign = ContentAlignment.MiddleRight;
             this.ProgressBarStyle = ProgressBarStyle.Continuous;
+            this.FontSize = ModernFontSize.Medium;
+            this.FontWeight = ModernFontWeight.Regular;
+            this.HideProgressText = true;
         }
 
         /// <summary>

@@ -62,11 +62,12 @@ namespace DevLib.ModernUI.Forms
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
-            this.TextAlign = ContentAlignment.MiddleLeft;
             this._baseTextBox = new DoubleBufferedTextBox();
-            this._baseTextBox.TextAlign = HorizontalAlignment.Left;
             this._baseTextBox.Visible = false;
             this.Controls.Add(this._baseTextBox);
+
+            this.FontSize = ModernFontSize.Medium;
+            this.FontWeight = ModernFontWeight.Light;
         }
 
         /// <summary>

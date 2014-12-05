@@ -49,6 +49,9 @@ namespace DevLib.ModernUI.Forms
         public ModernDateTimePicker()
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
+
+            this.FontSize = ModernFontSize.Medium;
+            this.FontWeight = ModernFontWeight.Regular;
         }
 
         /// <summary>

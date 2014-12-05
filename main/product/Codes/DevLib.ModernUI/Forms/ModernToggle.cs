@@ -55,6 +55,8 @@ namespace DevLib.ModernUI.Forms
             this.TextStatusOn = "On";
             this.TextStatusOff = "Off";
             this.DisplayStatus = true;
+            this.FontSize = ModernFontSize.Small;
+            this.FontWeight = ModernFontWeight.Regular;
         }
 
         /// <summary>

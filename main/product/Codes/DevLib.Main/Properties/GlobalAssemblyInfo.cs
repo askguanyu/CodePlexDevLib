@@ -12,7 +12,6 @@ using System.Reflection;
 [assembly: AssemblyCopyright("YuGuan Copyright © 2007-2015")]
 [assembly: AssemblyTrademark("DevLib")]
 [assembly: AssemblyCulture("")]
-
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 #else
@@ -29,5 +28,5 @@ using System.Reflection;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.25.6.*")]
+[assembly: AssemblyVersion("1.26.0.*")]
 ////[assembly: AssemblyFileVersion("1.0.0.0")]

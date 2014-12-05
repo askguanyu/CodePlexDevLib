@@ -187,7 +187,7 @@ namespace DevLib.Samples
             this.modernTile1.ActiveControl = null;
             this.modernTile1.Location = new System.Drawing.Point(459, 249);
             this.modernTile1.Name = "modernTile1";
-            this.modernTile1.PaintTileCount = false;
+            this.modernTile1.ShowTileCount = false;
             this.modernTile1.Size = new System.Drawing.Size(144, 117);
             this.modernTile1.TabIndex = 8;
             this.modernTile1.Text = "modernTile1";

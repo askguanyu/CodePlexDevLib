@@ -48,6 +48,16 @@ namespace DevLib.ModernUI.Forms
         private ModernThemeStyle _modernThemeStyle = ModernThemeStyle.Light;
 
         /// <summary>
+        /// Field _modernFontSize.
+        /// </summary>
+        private ModernFontSize _modernFontSize = ModernFontSize.Medium;
+
+        /// <summary>
+        /// Field _modernFontWeight.
+        /// </summary>
+        private ModernFontWeight _modernFontWeight = ModernFontWeight.Light;
+
+        /// <summary>
         /// Field _displayHeader.
         /// </summary>
         private bool _displayHeader = true;
@@ -169,6 +179,50 @@ namespace DevLib.ModernUI.Forms
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Gets or sets the size of the font.
+        /// </summary>
+        /// <value>
+        /// The size of the font.
+        /// </value>
+        [DefaultValue(ModernFontSize.Medium)]
+        [Category(ModernConstants.PropertyCategoryAppearance)]
+        public ModernFontSize FontSize
+        {
+            get
+            {
+                return this._modernFontSize;
+            }
+
+            set
+            {
+                this._modernFontSize = value;
+                this.Refresh();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the font weight.
+        /// </summary>
+        /// <value>
+        /// The font weight.
+        /// </value>
+        [DefaultValue(ModernFontWeight.Light)]
+        [Category(ModernConstants.PropertyCategoryAppearance)]
+        public ModernFontWeight FontWeight
+        {
+            get
+            {
+                return this._modernFontWeight;
+            }
+
+            set
+            {
+                this._modernFontWeight = value;
+                this.Refresh();
+            }
         }
 
         /// <summary>
@@ -659,7 +713,7 @@ namespace DevLib.ModernUI.Forms
             {
                 Rectangle bounds = new Rectangle(20, 20, this.ClientRectangle.Width - (2 * 20), 40);
                 TextFormatFlags flags = TextFormatFlags.EndEllipsis | this.GetTextFormatFlags();
-                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Title, bounds, foreColor, flags);
+                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.GetDefaultFont(this.FontSize, this.FontWeight), bounds, foreColor, flags);
             }
 
             if (this.Resizable && (this.SizeGripStyle == SizeGripStyle.Auto || this.SizeGripStyle == SizeGripStyle.Show))

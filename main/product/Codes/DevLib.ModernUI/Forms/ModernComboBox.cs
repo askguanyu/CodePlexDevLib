@@ -85,6 +85,9 @@ namespace DevLib.ModernUI.Forms
             base.DropDownStyle = ComboBoxStyle.DropDownList;
 
             this._drawPrompt = this.SelectedIndex == -1;
+
+            this.FontSize = ModernFontSize.Medium;
+            this.FontWeight = ModernFontWeight.Regular;
         }
 
         /// <summary>

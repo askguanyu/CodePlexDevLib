@@ -72,6 +72,44 @@ namespace DevLib.ModernUI.Drawing
         }
 
         /// <summary>
+        /// Gets Default Font.
+        /// </summary>
+        /// <param name="size">Modern Font size.</param>
+        /// <param name="weight">Modern Font weight.</param>
+        /// <returns>Font instance.</returns>
+        public static Font GetDefaultFont(ModernFontSize size, ModernFontWeight weight)
+        {
+            float fontSize = 14f;
+
+            switch (size)
+            {
+                case ModernFontSize.Small:
+                    fontSize = 12f;
+                    break;
+                case ModernFontSize.Medium:
+                    fontSize = 14f;
+                    break;
+                case ModernFontSize.Large:
+                    fontSize = 18f;
+                    break;
+                default:
+                    break;
+            }
+
+            switch (weight)
+            {
+                case ModernFontWeight.Light:
+                    return FontResolver.ResolveFont("Segoe UI Light", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+                case ModernFontWeight.Regular:
+                    return FontResolver.ResolveFont("Segoe UI", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+                case ModernFontWeight.Bold:
+                    return FontResolver.ResolveFont("Segoe UI", fontSize, FontStyle.Bold, GraphicsUnit.Pixel);
+                default:
+                    return FontResolver.ResolveFont("Segoe UI", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+            }
+        }
+
+        /// <summary>
         /// Gets Font of Tile.
         /// </summary>
         /// <param name="size">Modern Font size.</param>
@@ -190,44 +228,6 @@ namespace DevLib.ModernUI.Drawing
                     break;
                 case ModernFontSize.Large:
                     fontSize = 16f;
-                    break;
-                default:
-                    break;
-            }
-
-            switch (weight)
-            {
-                case ModernFontWeight.Light:
-                    return FontResolver.ResolveFont("Segoe UI Light", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-                case ModernFontWeight.Regular:
-                    return FontResolver.ResolveFont("Segoe UI", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-                case ModernFontWeight.Bold:
-                    return FontResolver.ResolveFont("Segoe UI", fontSize, FontStyle.Bold, GraphicsUnit.Pixel);
-                default:
-                    return FontResolver.ResolveFont("Segoe UI", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-            }
-        }
-
-        /// <summary>
-        /// Gets Default Font.
-        /// </summary>
-        /// <param name="size">Modern Font size.</param>
-        /// <param name="weight">Modern Font weight.</param>
-        /// <returns>Font instance.</returns>
-        private static Font GetDefaultFont(ModernFontSize size, ModernFontWeight weight)
-        {
-            float fontSize = 14f;
-
-            switch (size)
-            {
-                case ModernFontSize.Small:
-                    fontSize = 12f;
-                    break;
-                case ModernFontSize.Medium:
-                    fontSize = 14f;
-                    break;
-                case ModernFontSize.Large:
-                    fontSize = 18f;
                     break;
                 default:
                     break;

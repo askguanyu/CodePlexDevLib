@@ -71,7 +71,9 @@ namespace DevLib.ModernUI.Forms
             this.UpdateBaseTextBox();
             this.AddEventHandler();
 
-            this.TextAlign = HorizontalAlignment.Left;
+            this.FontSize = ModernFontSize.Small;
+            this.FontWeight = ModernFontWeight.Regular;
+            this.DisplayIcon = true;
         }
 
         /// <summary>

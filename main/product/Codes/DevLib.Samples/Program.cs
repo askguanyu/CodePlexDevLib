@@ -180,6 +180,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
+                    //TestDevLibWinForms();
                     //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
                 });
 
@@ -1841,7 +1842,7 @@ namespace DevLib.Samples
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new WinFormRibbon());
+            Application.Run(new DemoForm());
         }
 
         private static void TestDevLibUtilities()

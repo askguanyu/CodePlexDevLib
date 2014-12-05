@@ -48,11 +48,6 @@ namespace DevLib.ModernUI.Forms
         private ModernThemeStyle _modernThemeStyle = ModernThemeStyle.Light;
 
         /// <summary>
-        /// Field _modernFontSize.
-        /// </summary>
-        private ModernFontSize _modernFontSize = ModernFontSize.Medium;
-
-        /// <summary>
         /// Field _modernFontWeight.
         /// </summary>
         private ModernFontWeight _modernFontWeight = ModernFontWeight.Light;
@@ -125,6 +120,7 @@ namespace DevLib.ModernUI.Forms
             this.UseMinimizeBox = true;
             this.UseMaximizeBox = true;
             this.UseCloseBox = true;
+            this.FontSize = 24f;
         }
 
         /// <summary>
@@ -187,20 +183,12 @@ namespace DevLib.ModernUI.Forms
         /// <value>
         /// The size of the font.
         /// </value>
-        [DefaultValue(ModernFontSize.Medium)]
+        [DefaultValue(24f)]
         [Category(ModernConstants.PropertyCategoryAppearance)]
-        public ModernFontSize FontSize
+        public float FontSize
         {
-            get
-            {
-                return this._modernFontSize;
-            }
-
-            set
-            {
-                this._modernFontSize = value;
-                this.Refresh();
-            }
+            get;
+            set;
         }
 
         /// <summary>

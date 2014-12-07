@@ -22,7 +22,7 @@ namespace DevLib.ServiceProcess
         /// </summary>
         public WindowsServiceSetup()
         {
-            this.InitSetupInfo();
+            this.InitializeSetupInfo();
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace DevLib.ServiceProcess
         /// <param name="serviceName">The service name.</param>
         public WindowsServiceSetup(string serviceName)
         {
-            this.InitSetupInfo();
+            this.InitializeSetupInfo();
 
             this.ServiceName = serviceName;
             this.DisplayName = this.ServiceName;
@@ -247,9 +247,9 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
-        /// Method InitSetupInfo.
+        /// Initializes the setup information.
         /// </summary>
-        private void InitSetupInfo()
+        private void InitializeSetupInfo()
         {
             this.ServiceAssemblyPath = string.Empty;
             this.ServiceName = "DefaultServiceName";

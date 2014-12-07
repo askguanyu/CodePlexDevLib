@@ -17,8 +17,19 @@ namespace DevLib.ServiceProcess
         /// </summary>
         /// <param name="windowsService">Instance of IWindowsService.</param>
         public WindowsServiceConcrete(IWindowsService windowsService)
+            : this(windowsService, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WindowsServiceConcrete"/> class.
+        /// </summary>
+        /// <param name="windowsService">Instance of IWindowsService.</param>
+        /// <param name="args">The arguments passed by the start command.</param>
+        public WindowsServiceConcrete(IWindowsService windowsService, string[] args)
         {
             this.WindowsService = windowsService;
+            this.Arguments = args;
 
             this.AutoLog = this.WindowsService.ServiceSetupInfo.AutoLog;
             this.CanHandlePowerEvent = this.WindowsService.ServiceSetupInfo.CanHandlePowerEvent;
@@ -39,12 +50,26 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
+        /// Gets the arguments passed by the start command.
+        /// </summary>
+        public string[] Arguments
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
         /// </summary>
         /// <param name="args">Data passed by the start command.</param>
         protected override void OnStart(string[] args)
         {
-            this.WindowsService.OnStart(args);
+            if (args != null)
+            {
+                this.Arguments = args;
+            }
+
+            this.WindowsService.OnStart(this.Arguments);
         }
 
         /// <summary>

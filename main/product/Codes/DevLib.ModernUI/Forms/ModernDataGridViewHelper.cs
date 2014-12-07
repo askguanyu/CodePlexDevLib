@@ -33,9 +33,9 @@ namespace DevLib.ModernUI.Forms
         private int _ignoreScrollBarChange = 0;
 
         /// <summary>
-        /// Field _isHorizontal.
+        /// Field _isVertical.
         /// </summary>
-        private bool _isHorizontal = false;
+        private bool _isVertical = true;
 
         /// <summary>
         /// Field _hScrollBar.
@@ -52,13 +52,13 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         /// <param name="scrollBar">The ModernScrollBar.</param>
         /// <param name="dataGridView">The DataGridView.</param>
-        /// <param name="vertical">Whether use vertical.</param>
-        public ModernDataGridViewHelper(ModernScrollBar scrollBar, DataGridView dataGridView, bool vertical = true)
+        /// <param name="isVertical">Whether use vertical.</param>
+        public ModernDataGridViewHelper(ModernScrollBar scrollBar, DataGridView dataGridView, bool isVertical = true)
         {
             this._scrollBar = scrollBar;
             this._scrollBar.UseBarColor = true;
             this._dataGridView = dataGridView;
-            this._isHorizontal = !vertical;
+            this._isVertical = isVertical;
 
             foreach (var item in this._dataGridView.Controls)
             {
@@ -92,21 +92,7 @@ namespace DevLib.ModernUI.Forms
             {
                 this.BeginIgnoreScrollbarChangeEvents();
 
-                if (this._isHorizontal)
-                {
-                    int visibleCols = this.GetVisibleColumns();
-
-                    this._scrollBar.Maximum = this._hScrollBar.Maximum;
-                    this._scrollBar.Minimum = this._hScrollBar.Minimum;
-                    this._scrollBar.SmallChange = this._hScrollBar.SmallChange;
-                    this._scrollBar.LargeChange = this._hScrollBar.LargeChange;
-                    this._scrollBar.Location = new Point(0, this._dataGridView.Height - this._scrollBar.ScrollbarSize);
-                    this._scrollBar.Width = this._dataGridView.Width - (this._vScrollBar.Visible ? this._scrollBar.ScrollbarSize : 0);
-                    this._scrollBar.BringToFront();
-                    this._scrollBar.Visible = this._hScrollBar.Visible;
-                    this._scrollBar.Value = this._hScrollBar.Value == 0 ? 1 : this._hScrollBar.Value;
-                }
-                else
+                if (this._isVertical)
                 {
                     int visibleRows = this.GetVisibleRows();
 
@@ -117,8 +103,22 @@ namespace DevLib.ModernUI.Forms
                     this._scrollBar.Value = this._dataGridView.FirstDisplayedScrollingRowIndex;
                     this._scrollBar.Location = new Point(this._dataGridView.Width - this._scrollBar.ScrollbarSize, 0);
                     this._scrollBar.Height = this._dataGridView.Height - (this._hScrollBar.Visible ? this._scrollBar.ScrollbarSize : 0);
-                    this._scrollBar.BringToFront();
                     this._scrollBar.Visible = this._vScrollBar.Visible;
+                    this._scrollBar.BringToFront();
+                }
+                else
+                {
+                    int visibleCols = this.GetVisibleColumns();
+
+                    this._scrollBar.Maximum = this._hScrollBar.Maximum;
+                    this._scrollBar.Minimum = this._hScrollBar.Minimum;
+                    this._scrollBar.SmallChange = this._hScrollBar.SmallChange;
+                    this._scrollBar.LargeChange = this._hScrollBar.LargeChange;
+                    this._scrollBar.Value = this._hScrollBar.Value == 0 ? 1 : this._hScrollBar.Value;
+                    this._scrollBar.Location = new Point(0, this._dataGridView.Height - this._scrollBar.ScrollbarSize);
+                    this._scrollBar.Width = this._dataGridView.Width - (this._vScrollBar.Visible ? this._scrollBar.ScrollbarSize : 0);
+                    this._scrollBar.Visible = this._hScrollBar.Visible;
+                    this._scrollBar.BringToFront();
                 }
             }
             finally
@@ -201,9 +201,22 @@ namespace DevLib.ModernUI.Forms
                 return;
             }
 
-            if (this._isHorizontal)
+            if (this._isVertical)
             {
-                this._hScrollBar.Value = this._scrollBar.Value;
+                if (this._scrollBar.Value >= 0 && this._scrollBar.Value < this._dataGridView.Rows.Count)
+                {
+                    this._dataGridView.FirstDisplayedScrollingRowIndex = this._scrollBar.Value + (this._scrollBar.Value == 1 ? -1 : 1);
+                }
+            }
+            else
+            {
+                try
+                {
+                    this._hScrollBar.Value = this._scrollBar.Value;
+                }
+                catch
+                {
+                }
 
                 try
                 {
@@ -211,13 +224,6 @@ namespace DevLib.ModernUI.Forms
                 }
                 catch
                 {
-                }
-            }
-            else
-            {
-                if (this._scrollBar.Value >= 0 && this._scrollBar.Value < this._dataGridView.Rows.Count)
-                {
-                    this._dataGridView.FirstDisplayedScrollingRowIndex = this._scrollBar.Value + (this._scrollBar.Value == 1 ? -1 : 1);
                 }
             }
 

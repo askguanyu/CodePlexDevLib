@@ -16,9 +16,14 @@ namespace DevLib.ServiceProcess
     internal class WindowsServiceConsole
     {
         /// <summary>
-        /// Field _args.
+        /// Field _serviceArgs.
         /// </summary>
-        private string[] _args;
+        private string[] _serviceArgs;
+
+        /// <summary>
+        /// Field _consoleArgs.
+        /// </summary>
+        private string[] _consoleArgs;
 
         /// <summary>
         /// Field _isConsoleMode.
@@ -73,13 +78,15 @@ namespace DevLib.ServiceProcess
         /// Method Run.
         /// </summary>
         /// <param name="windowsService">IWindowsService instance.</param>
+        /// <param name="serviceArgs">The arguments passed by the service start command.</param>
         /// <param name="isConsoleMode">true to start in console mode; otherwise, start in windows service mode.</param>
-        /// <param name="args">Command line arguments.</param>
-        public void Run(IWindowsService windowsService, bool isConsoleMode, string[] args)
+        /// <param name="consoleArgs">The arguments for console mode.</param>
+        public void Run(IWindowsService windowsService, string[] serviceArgs, bool isConsoleMode = true, string[] consoleArgs = null)
         {
             this._windowsService = windowsService;
             this.IsConsoleMode = isConsoleMode;
-            this._args = args;
+            this._serviceArgs = serviceArgs;
+            this._consoleArgs = consoleArgs;
             this._consoleStatus = ServiceControllerStatus.Stopped;
             this._setupInfo = windowsService.ServiceSetupInfo.Clone() as WindowsServiceSetup;
             this.RunWindowsServiceConsole();
@@ -94,6 +101,11 @@ namespace DevLib.ServiceProcess
             this.WriteServiceInfo();
 
             bool canContinue = true;
+
+            if (this._consoleArgs != null)
+            {
+                canContinue = this.HandleConsoleInput(string.Join(" ", this._consoleArgs));
+            }
 
             while (canContinue)
             {
@@ -216,7 +228,7 @@ namespace DevLib.ServiceProcess
 
                     try
                     {
-                        this._windowsService.OnStart(this._args);
+                        this._windowsService.OnStart(this._serviceArgs);
                         this._consoleStatus = ServiceControllerStatus.Running;
                     }
                     catch (Exception e)
@@ -235,7 +247,7 @@ namespace DevLib.ServiceProcess
                     if (this.ServiceStatus == ServiceControllerStatus.Stopped)
                     {
                         this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
-                        WindowsServiceBase.Start(this._setupInfo.ServiceName, this._args);
+                        WindowsServiceBase.Start(this._setupInfo.ServiceName, this._serviceArgs);
                     }
 
                     this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
@@ -405,7 +417,7 @@ namespace DevLib.ServiceProcess
                     this._windowsService.OnStop();
                     originalConsoleStatus = ServiceControllerStatus.Stopped;
 
-                    this._windowsService.OnStart(this._args);
+                    this._windowsService.OnStart(this._serviceArgs);
                     this._consoleStatus = ServiceControllerStatus.Running;
                 }
                 catch (Exception e)
@@ -422,7 +434,7 @@ namespace DevLib.ServiceProcess
                 {
                     this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                     WindowsServiceBase.Stop(this._setupInfo.ServiceName);
-                    WindowsServiceBase.Start(this._setupInfo.ServiceName, this._args);
+                    WindowsServiceBase.Start(this._setupInfo.ServiceName, this._serviceArgs);
                     this.WriteToConsole(ConsoleColor.Yellow, string.Format("[Status:] {0}", this.ServiceStatus.ToString()));
                 }
                 else

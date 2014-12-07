@@ -107,6 +107,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
             switch (m.Msg)
             {
                 case (int)WinApi.Messages.WM_NCHITTEST:
+
                     if (m.Result.ToInt32() == (int)WinApi.HitTest.HTTRANSPARENT)
                     {
                         m.Result = (IntPtr)WinApi.HitTest.HTCLIENT;

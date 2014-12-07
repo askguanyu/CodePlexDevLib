@@ -54,7 +54,7 @@ namespace DevLib.ModernUI.Forms
             this.Name = "ModernToggle";
             this.TextStatusOn = "On";
             this.TextStatusOff = "Off";
-            this.DisplayStatus = true;
+            this.ShowStatusText = true;
             this.FontSize = ModernFontSize.Small;
             this.FontWeight = ModernFontWeight.Regular;
         }
@@ -62,25 +62,25 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CustomPaintBackground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintBackground;
 
         /// <summary>
         /// Event CustomPaint.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaint;
 
         /// <summary>
         /// Event CustomPaintForeground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernColorStyle.Default)]
         public ModernColorStyle ColorStyle
         {
@@ -113,7 +113,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernThemeStyle.Default)]
         public ModernThemeStyle ThemeStyle
         {
@@ -158,7 +158,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
         {
             get;
@@ -169,7 +169,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
         {
             get;
@@ -180,7 +180,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
             get;
@@ -191,7 +191,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
         public bool UseSelectable
         {
@@ -210,7 +210,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether display focus rectangle.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool DisplayFocus
         {
             get;
@@ -221,7 +221,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets text font size.
         /// </summary>
         [DefaultValue(ModernFontSize.Small)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
         {
             get;
@@ -232,7 +232,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets text font weight.
         /// </summary>
         [DefaultValue(ModernFontWeight.Regular)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
         {
             get;
@@ -243,8 +243,19 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether display status.
         /// </summary>
         [DefaultValue(true)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
-        public bool DisplayStatus
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool ShowStatusText
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether show status text on the right side.
+        /// </summary>
+        [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool StatusTextOnRight
         {
             get;
             set;
@@ -306,7 +317,7 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         [Browsable(true)]
         [DefaultValue("On")]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public string TextStatusOn
         {
             get;
@@ -318,7 +329,7 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         [Browsable(true)]
         [DefaultValue("Off")]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public string TextStatusOff
         {
             get;
@@ -333,7 +344,7 @@ namespace DevLib.ModernUI.Forms
         public override Size GetPreferredSize(Size proposedSize)
         {
             Size preferredSize = base.GetPreferredSize(proposedSize);
-            preferredSize.Width = this.DisplayStatus ? 80 : 50;
+            preferredSize.Width = this.ShowStatusText ? 80 : 50;
             return preferredSize;
         }
 
@@ -458,7 +469,7 @@ namespace DevLib.ModernUI.Forms
 
             using (Pen pen = new Pen(borderColor))
             {
-                Rectangle boxRectangle = new Rectangle(this.DisplayStatus ? 30 : 0, 0, this.ClientRectangle.Width - (this.DisplayStatus ? 31 : 1), this.ClientRectangle.Height - 1);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? 0 : (this.ShowStatusText ? 30 : 0), 0, this.ClientRectangle.Width - (this.ShowStatusText ? 31 : 1), this.ClientRectangle.Height - 1);
                 e.Graphics.DrawRectangle(pen, boxRectangle);
             }
 
@@ -466,7 +477,7 @@ namespace DevLib.ModernUI.Forms
 
             using (SolidBrush brush = new SolidBrush(fillColor))
             {
-                Rectangle boxRectangle = new Rectangle(this.DisplayStatus ? 32 : 2, 2, this.ClientRectangle.Width - (this.DisplayStatus ? 34 : 4), this.ClientRectangle.Height - 4);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? 0 : (this.ShowStatusText ? 32 : 2), 2, this.ClientRectangle.Width - (this.ShowStatusText ? 34 : 4), this.ClientRectangle.Height - 4);
                 e.Graphics.FillRectangle(brush, boxRectangle);
             }
 
@@ -479,23 +490,23 @@ namespace DevLib.ModernUI.Forms
 
             using (SolidBrush brush = new SolidBrush(backColor))
             {
-                int left = this.Checked ? this.Width - 11 : (this.DisplayStatus ? 30 : 0);
+                int left = this.Checked ? this.Width - 11 : (this.ShowStatusText ? 30 : 0);
 
-                Rectangle boxRectangle = new Rectangle(left, 0, 11, this.ClientRectangle.Height);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? left - 30 : left, 0, 11, this.ClientRectangle.Height);
                 e.Graphics.FillRectangle(brush, boxRectangle);
             }
 
             using (SolidBrush brush = new SolidBrush(ModernPaint.BorderColor.CheckBox.Hover(this.ThemeStyle)))
             {
-                int left = this.Checked ? this.Width - 10 : (this.DisplayStatus ? 30 : 0);
+                int left = this.Checked ? this.Width - 10 : (this.ShowStatusText ? 30 : 0);
 
-                Rectangle boxRectangle = new Rectangle(left, 0, 10, this.ClientRectangle.Height);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? left - 30 : left, 0, 10, this.ClientRectangle.Height);
                 e.Graphics.FillRectangle(brush, boxRectangle);
             }
 
-            if (this.DisplayStatus)
+            if (this.ShowStatusText)
             {
-                Rectangle textRectangle = new Rectangle(0, 0, 30, this.ClientRectangle.Height);
+                Rectangle textRectangle = new Rectangle(this.StatusTextOnRight ? this.ClientRectangle.Width - (this.ShowStatusText ? 31 : 1) : 0, 0, 30, this.ClientRectangle.Height);
                 TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Link(this.FontSize, this.FontWeight), textRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
             }
 

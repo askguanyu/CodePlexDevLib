@@ -189,6 +189,8 @@ namespace DevLib.ModernUI.Forms
             modernMessageBoxControl.ArrangeAppearance();
             int overlaySizes = Convert.ToInt32(Math.Floor(modernMessageBoxControl.Size.Height * 0.28));
 
+            modernMessageBoxControl.TopLevel = true;
+            modernMessageBoxControl.TopMost = true;
             modernMessageBoxControl.ShowDialog();
             modernMessageBoxControl.BringToFront();
             modernMessageBoxControl.SetDefaultButton();

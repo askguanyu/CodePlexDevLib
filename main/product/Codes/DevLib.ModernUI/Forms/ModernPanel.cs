@@ -66,25 +66,25 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CustomPaintBackground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintBackground;
 
         /// <summary>
         /// Event CustomPaint.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaint;
 
         /// <summary>
         /// Event CustomPaintForeground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernColorStyle.Default)]
         public ModernColorStyle ColorStyle
         {
@@ -117,7 +117,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernThemeStyle.Default)]
         public ModernThemeStyle ThemeStyle
         {
@@ -162,7 +162,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
         {
             get;
@@ -173,7 +173,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
         {
             get;
@@ -184,7 +184,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
             get;
@@ -195,7 +195,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
         public bool UseSelectable
         {
@@ -214,7 +214,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether show horizontal scrollbar.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowHorizontalScrollBar
         {
             get;
@@ -224,7 +224,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the size of the horizontal scrollbar.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int HorizontalScrollBarSize
         {
             get
@@ -241,7 +241,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use horizontal scrollbar bar color.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseHorizontalBarColor
         {
             get
@@ -258,7 +258,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether highlight horizontal scrollbar on wheel.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool HighlightHorizontalScrollBarOnWheel
         {
             get
@@ -276,7 +276,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether show vertical scrollbar.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowVerticalScrollBar
         {
             get;
@@ -286,7 +286,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the size of the vertical scrollbar.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int VerticalScrollBarSize
         {
             get
@@ -303,7 +303,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use vertical scrollbar bar color.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseVerticalBarColor
         {
             get
@@ -320,7 +320,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether highlight vertical scrollbar highlight on wheel.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool HighlightVerticalScrollBarOnWheel
         {
             get
@@ -337,7 +337,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the container enables the user to scroll to any controls placed outside of its visible boundaries.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public new bool AutoScroll
         {
             get
@@ -513,6 +513,8 @@ namespace DevLib.ModernUI.Forms
             {
                 WinApi.ShowScrollBar(this.Handle, (int)WinApi.ScrollBar.SB_BOTH, 0);
             }
+
+            this.UpdateScrollBarPositions();
         }
 
         /// <summary>
@@ -542,11 +544,6 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         private void UpdateScrollBarPositions()
         {
-            if (this.DesignMode)
-            {
-                return;
-            }
-
             if (!this.AutoScroll)
             {
                 this._verticalScrollbar.Visible = false;

@@ -46,9 +46,9 @@ namespace DevLib.ModernUI.Forms
         private DoubleBufferedTextBox _baseTextBox;
 
         /// <summary>
-        /// Field _wrap.
+        /// Field _wordWrap.
         /// </summary>
-        private bool _wrap;
+        private bool _wordWrap;
 
         /// <summary>
         /// Field _firstInitialization.
@@ -73,25 +73,25 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CustomPaintBackground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintBackground;
 
         /// <summary>
         /// Event CustomPaint.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaint;
 
         /// <summary>
         /// Event CustomPaintForeground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernColorStyle.Default)]
         public ModernColorStyle ColorStyle
         {
@@ -124,7 +124,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernThemeStyle.Default)]
         public ModernThemeStyle ThemeStyle
         {
@@ -169,7 +169,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
         {
             get;
@@ -180,7 +180,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
         {
             get;
@@ -191,7 +191,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
             get;
@@ -202,7 +202,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
         public bool UseSelectable
         {
@@ -224,7 +224,7 @@ namespace DevLib.ModernUI.Forms
         /// The size of the font.
         /// </value>
         [DefaultValue(ModernFontSize.Medium)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
         {
             get
@@ -246,7 +246,7 @@ namespace DevLib.ModernUI.Forms
         /// The font weight.
         /// </value>
         [DefaultValue(ModernFontWeight.Light)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
         {
             get
@@ -265,19 +265,30 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether wrap to line.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
-        public bool Wrap
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool WordWrap
         {
             get
             {
-                return this._wrap;
+                return this._wordWrap;
             }
 
             set
             {
-                this._wrap = value;
+                this._wordWrap = value;
                 this.Refresh();
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether user can select label text.
+        /// </summary>
+        [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool CanSelectText
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -285,7 +296,7 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         public override void Refresh()
         {
-            if (this.CanSelect)
+            if (this.CanSelectText)
             {
                 this.UpdateBaseTextBox();
             }
@@ -472,7 +483,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.CanSelect)
+            if (this.CanSelectText)
             {
                 this.CreateBaseTextBox();
                 this.UpdateBaseTextBox();
@@ -485,7 +496,7 @@ namespace DevLib.ModernUI.Forms
             else
             {
                 this.DestroyBaseTextbox();
-                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Label(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign, this.Wrap));
+                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Label(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign, this.WordWrap));
                 this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
             }
         }
@@ -506,7 +517,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
         protected override void OnResize(EventArgs e)
         {
-            if (this.CanSelect)
+            if (this.CanSelectText)
             {
                 this.HideBaseTextBox();
             }
@@ -522,7 +533,7 @@ namespace DevLib.ModernUI.Forms
         {
             base.OnSizeChanged(e);
 
-            if (this.CanSelect)
+            if (this.CanSelectText)
             {
                 this.ShowBaseTextBox();
             }
@@ -580,7 +591,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void OnParentFormResizeEnd(object sender, EventArgs e)
         {
-            if (this.CanSelect)
+            if (this.CanSelectText)
             {
                 this.ShowBaseTextBox();
             }
@@ -593,7 +604,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void OnParentFormResizeBegin(object sender, EventArgs e)
         {
-            if (this.CanSelect)
+            if (this.CanSelectText)
             {
                 this.HideBaseTextBox();
             }

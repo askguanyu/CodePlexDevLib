@@ -19,8 +19,9 @@ namespace DevLib.ServiceProcess
         /// Registers the executable for a service with the Service Control Manager (SCM).
         /// </summary>
         /// <param name="windowsService">A <see cref="IWindowsService" /> which indicates a service to start.</param>
-        /// <param name="args">Command line arguments.</param>
-        public static void Run(IWindowsService windowsService, string[] args = null)
+        /// <param name="serviceArgs">The arguments passed by the service start command.</param>
+        /// <param name="consoleArgs">The arguments for console mode.</param>
+        public static void Run(IWindowsService windowsService, string[] serviceArgs = null, string[] consoleArgs = null)
         {
             if (windowsService == null)
             {
@@ -29,12 +30,12 @@ namespace DevLib.ServiceProcess
 
             if (Environment.UserInteractive)
             {
-                (new WindowsServiceConsole()).Run(windowsService, true, args);
+                (new WindowsServiceConsole()).Run(windowsService, serviceArgs, true, consoleArgs);
             }
             else
             {
                 Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-                ServiceBase.Run(new WindowsServiceConcrete(windowsService));
+                ServiceBase.Run(new WindowsServiceConcrete(windowsService, serviceArgs));
             }
         }
 

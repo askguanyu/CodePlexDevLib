@@ -66,7 +66,7 @@ namespace DevLib.ModernUI.ComponentModel
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernThemeStyle.Default)]
         public ModernThemeStyle ThemeStyle
         {
@@ -122,7 +122,7 @@ namespace DevLib.ModernUI.ComponentModel
         /// <param name="control">Control to apply.</param>
         /// <returns>true if apply succeeded; otherwise, false.</returns>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [Description("Apply Modern Theme BackColor and ForeColor.")]
         public bool ApplyModernStyle(Control control)
         {

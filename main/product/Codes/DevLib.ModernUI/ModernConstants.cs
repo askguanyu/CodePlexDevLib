@@ -23,13 +23,8 @@ namespace DevLib.ModernUI
         public const ModernThemeStyle DefaultThemeStyle = ModernThemeStyle.Light;
 
         /// <summary>
-        /// Field PropertyCategoryAppearance.
+        /// Field PropertyCategoryName.
         /// </summary>
-        public const string PropertyCategoryAppearance = "Modern Appearance";
-
-        /// <summary>
-        /// Field PropertyCategoryBehavior.
-        /// </summary>
-        public const string PropertyCategoryBehavior = "Modern Behavior";
+        public const string PropertyCategoryName = "Modern UI";
     }
 }

@@ -23,6 +23,7 @@ namespace DevLib.Samples
         private void modernToggle1_CheckedChanged(object sender, EventArgs e)
         {
            this.StyleManager.ThemeStyle = modernToggle1.Checked ? ModernThemeStyle.Dark : ModernThemeStyle.Light;
+           this.modernProgressSpinner1.Spinning = modernToggle1.Checked;
         }
 
         private void modernTabPage1_Click(object sender, EventArgs e)

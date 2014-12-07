@@ -66,8 +66,6 @@ namespace DevLib.ModernUI.Forms
 
             this.HighlightPercentage = 0.2f;
 
-            this.ApplyModernStyle();
-
             this.Controls.Add(this._verticalScrollBar);
             this.Controls.Add(this._horizontalScrollBar);
 
@@ -77,8 +75,10 @@ namespace DevLib.ModernUI.Forms
             this._verticalScrollBar.Visible = false;
             this._horizontalScrollBar.Visible = false;
 
-            this._verticalScrollBarHelper = new ModernDataGridViewHelper(this._verticalScrollBar, this);
+            this._verticalScrollBarHelper = new ModernDataGridViewHelper(this._verticalScrollBar, this, true);
             this._horizontalScrollBarHelper = new ModernDataGridViewHelper(this._horizontalScrollBar, this, false);
+
+            this.ApplyModernStyle();
         }
 
         /// <summary>
@@ -130,6 +130,7 @@ namespace DevLib.ModernUI.Forms
             {
                 this._modernColorStyle = value;
                 this.ApplyModernStyle();
+                this.RefreshScrollBarHelper();
             }
         }
 
@@ -164,6 +165,7 @@ namespace DevLib.ModernUI.Forms
             {
                 this._modernThemeStyle = value;
                 this.ApplyModernStyle();
+                this.RefreshScrollBarHelper();
             }
         }
 
@@ -183,6 +185,7 @@ namespace DevLib.ModernUI.Forms
             {
                 this._styleManager = value;
                 this.ApplyModernStyle();
+                this.RefreshScrollBarHelper();
             }
         }
 
@@ -249,6 +252,16 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Forces the control to invalidate its client area and immediately redraw itself and any child controls.
+        /// </summary>
+        public override void Refresh()
+        {
+            base.Refresh();
+
+            this.RefreshScrollBarHelper();
+        }
+
+        /// <summary>
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -299,6 +312,17 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Raises the VisibleChanged event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            this.RefreshScrollBarHelper();
+
+            base.OnVisibleChanged(e);
+        }
+
+        /// <summary>
         /// OnMouseWheel method.
         /// </summary>
         /// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
@@ -308,11 +332,23 @@ namespace DevLib.ModernUI.Forms
 
             if (e.Delta > 0 && this.FirstDisplayedScrollingRowIndex > 0)
             {
-                this.FirstDisplayedScrollingRowIndex--;
+                try
+                {
+                    this.FirstDisplayedScrollingRowIndex--;
+                }
+                catch
+                {
+                }
             }
             else if (e.Delta < 0)
             {
-                this.FirstDisplayedScrollingRowIndex++;
+                try
+                {
+                    this.FirstDisplayedScrollingRowIndex++;
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -328,26 +364,26 @@ namespace DevLib.ModernUI.Forms
             this.SuspendLayout();
 
             this._horizontalScrollBar.LargeChange = 10;
-            this._horizontalScrollBar.Location = new System.Drawing.Point(0, 0);
+            this._horizontalScrollBar.Location = new Point(0, 0);
             this._horizontalScrollBar.Maximum = 100;
             this._horizontalScrollBar.Minimum = 0;
             this._horizontalScrollBar.MouseWheelBarPartitions = 10;
             this._horizontalScrollBar.Name = "_horizontalScrollBar";
             this._horizontalScrollBar.Orientation = ModernScrollBarOrientation.Horizontal;
             this._horizontalScrollBar.ScrollbarSize = 50;
-            this._horizontalScrollBar.Size = new System.Drawing.Size(200, 50);
+            this._horizontalScrollBar.Size = new Size(200, 50);
             this._horizontalScrollBar.TabIndex = 0;
             this._horizontalScrollBar.UseSelectable = true;
 
             this._verticalScrollBar.LargeChange = 10;
-            this._verticalScrollBar.Location = new System.Drawing.Point(0, 0);
+            this._verticalScrollBar.Location = new Point(0, 0);
             this._verticalScrollBar.Maximum = 100;
             this._verticalScrollBar.Minimum = 0;
             this._verticalScrollBar.MouseWheelBarPartitions = 10;
             this._verticalScrollBar.Name = "_verticalScrollBar";
             this._verticalScrollBar.Orientation = ModernScrollBarOrientation.Vertical;
             this._verticalScrollBar.ScrollbarSize = 50;
-            this._verticalScrollBar.Size = new System.Drawing.Size(50, 200);
+            this._verticalScrollBar.Size = new Size(50, 200);
             this._verticalScrollBar.TabIndex = 0;
             this._verticalScrollBar.UseSelectable = true;
 
@@ -372,6 +408,7 @@ namespace DevLib.ModernUI.Forms
 
             this.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.AllowUserToResizeRows = false;
+            this.AllowUserToResizeColumns = true;
 
             this.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             this.ColumnHeadersDefaultCellStyle.BackColor = ModernPaint.GetStyleColor(this.ColorStyle);
@@ -394,6 +431,15 @@ namespace DevLib.ModernUI.Forms
 
             this.ColumnHeadersDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
             this.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+        }
+
+        /// <summary>
+        /// Refreshes the scroll bar helper.
+        /// </summary>
+        private void RefreshScrollBarHelper()
+        {
+            this._verticalScrollBarHelper.UpdateScrollBar();
+            this._horizontalScrollBarHelper.UpdateScrollBar();
         }
     }
 }

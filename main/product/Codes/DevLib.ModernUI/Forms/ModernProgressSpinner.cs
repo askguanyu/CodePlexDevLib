@@ -88,25 +88,25 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CustomPaintBackground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintBackground;
 
         /// <summary>
         /// Event CustomPaint.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaint;
 
         /// <summary>
         /// Event CustomPaintForeground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernColorStyle.Default)]
         public ModernColorStyle ColorStyle
         {
@@ -139,7 +139,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernThemeStyle.Default)]
         public ModernThemeStyle ThemeStyle
         {
@@ -184,7 +184,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
         {
             get;
@@ -195,7 +195,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
         {
             get;
@@ -206,7 +206,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
             get;
@@ -217,7 +217,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
         public bool UseSelectable
         {
@@ -236,7 +236,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether this <see cref="ModernProgressSpinner"/> is spinning.
         /// </summary>
         [DefaultValue(true)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool Spinning
         {
             get
@@ -254,7 +254,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the value of progress.
         /// </summary>
         [DefaultValue(0)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int Value
         {
             get
@@ -278,7 +278,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the minimum value of progress.
         /// </summary>
         [DefaultValue(0)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int Minimum
         {
             get
@@ -290,12 +290,12 @@ namespace DevLib.ModernUI.Forms
             {
                 if (value < 0)
                 {
-                    throw new ArgumentOutOfRangeException("Minimum value must be >= 0.", (Exception)null);
+                    throw new ArgumentOutOfRangeException("Minimum value must bigger than or equal to 0.", (Exception)null);
                 }
 
                 if (value >= this._maximum)
                 {
-                    throw new ArgumentOutOfRangeException("Minimum value must be < Maximum.", (Exception)null);
+                    throw new ArgumentOutOfRangeException("Minimum value must be less than Maximum.", (Exception)null);
                 }
 
                 this._minimum = value;
@@ -313,7 +313,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the maximum value of progress.
         /// </summary>
         [DefaultValue(0)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int Maximum
         {
             get
@@ -343,7 +343,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether ensure visible.
         /// </summary>
         [DefaultValue(true)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool EnsureVisible
         {
             get
@@ -362,7 +362,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the speed.
         /// </summary>
         [DefaultValue(1f)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        [Description("Speed value must be bigger than 0 and less than or equal to 10.")]
         public float Speed
         {
             get
@@ -372,9 +373,14 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                if (value <= 0 || value > 10)
+                if (value <= 0)
                 {
-                    throw new ArgumentOutOfRangeException("Speed value must be bigger than 0 and less than or equal to 10.", (Exception)null);
+                    this._speed = 1;
+                }
+
+                if (value > 10)
+                {
+                    this._speed = 10;
                 }
 
                 this._speed = value;
@@ -385,7 +391,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether this <see cref="ModernProgressSpinner"/> is backwards.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool Backwards
         {
             get
@@ -404,7 +410,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom background.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackground
         {
             get;
@@ -608,11 +614,8 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void TimerTick(object sender, EventArgs e)
         {
-            if (!this.DesignMode)
-            {
-                this._angle += 6f * this._speed * (this._backwards ? -1 : 1);
-                this.Refresh();
-            }
+            this._angle += 6f * this._speed * (this._backwards ? -1 : 1);
+            this.Refresh();
         }
     }
 }

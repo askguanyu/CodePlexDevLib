@@ -74,25 +74,25 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CustomPaintBackground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintBackground;
 
         /// <summary>
         /// Event CustomPaint.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaint;
 
         /// <summary>
         /// Event CustomPaintForeground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernColorStyle.Default)]
         public ModernColorStyle ColorStyle
         {
@@ -125,7 +125,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernThemeStyle.Default)]
         public ModernThemeStyle ThemeStyle
         {
@@ -170,7 +170,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
         {
             get;
@@ -181,7 +181,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
         {
             get;
@@ -192,7 +192,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
             get;
@@ -203,7 +203,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
         public bool UseSelectable
         {
@@ -222,6 +222,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets active control.
         /// </summary>
         [Browsable(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public Control ActiveControl
         {
             get;
@@ -232,7 +233,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether show tile count.
         /// </summary>
         [DefaultValue(true)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowTileCount
         {
             get;
@@ -243,6 +244,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets tile count.
         /// </summary>
         [DefaultValue(0)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int TileCount
         {
             get;
@@ -270,7 +272,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets tile image.
         /// </summary>
         [DefaultValue(null)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public Image TileImage
         {
             get;
@@ -281,7 +283,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use tile image.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseTileImage
         {
             get;
@@ -292,7 +294,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the alignment of the image on the control.
         /// </summary>
         [DefaultValue(ContentAlignment.TopLeft)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ContentAlignment TileImageAlign
         {
             get;
@@ -303,7 +305,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets tile text font size.
         /// </summary>
         [DefaultValue(ModernFontSize.Medium)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
         {
             get
@@ -322,7 +324,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets tile text font weight.
         /// </summary>
         [DefaultValue(ModernFontWeight.Light)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
         {
             get

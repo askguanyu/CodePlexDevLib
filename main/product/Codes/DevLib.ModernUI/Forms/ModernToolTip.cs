@@ -42,7 +42,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -64,7 +64,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get

@@ -6,6 +6,7 @@
 namespace DevLib.ModernUI.Forms
 {
     using System;
+    using System.ComponentModel;
     using DevLib.ModernUI.ComponentModel;
     using DevLib.ModernUI.Drawing;
 
@@ -17,21 +18,29 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CustomPaintBackground.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         event EventHandler<ModernPaintEventArgs> CustomPaintBackground;
 
         /// <summary>
         /// Event CustomPaint.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         event EventHandler<ModernPaintEventArgs> CustomPaint;
 
         /// <summary>
         /// Event CustomPaintForeground.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         ModernColorStyle ColorStyle
         {
             get;
@@ -41,6 +50,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         ModernThemeStyle ThemeStyle
         {
             get;
@@ -50,6 +61,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern style manager.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         ModernStyleManager StyleManager
         {
             get;
@@ -59,6 +72,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         bool UseCustomBackColor
         {
             get;
@@ -68,6 +83,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         bool UseCustomForeColor
         {
             get;
@@ -77,6 +94,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         bool UseStyleColors
         {
             get;
@@ -86,6 +105,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         bool UseSelectable
         {
             get;

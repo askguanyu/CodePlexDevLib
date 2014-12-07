@@ -88,9 +88,9 @@ namespace DevLib.ModernUI.Forms
         private ModernFormBackImageAlign _backImageAlign;
 
         /// <summary>
-        /// Field _invertImage.
+        /// Field _backImageInvert.
         /// </summary>
-        private bool _invertImage;
+        private bool _backImageInvert;
 
         /// <summary>
         /// Field _buttonDictionary.
@@ -126,7 +126,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -148,7 +148,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get
@@ -171,6 +171,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets modern style manager.
         /// </summary>
         [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernStyleManager StyleManager
         {
             get;
@@ -184,7 +185,7 @@ namespace DevLib.ModernUI.Forms
         /// The size of the font.
         /// </value>
         [DefaultValue(24f)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public float FontSize
         {
             get;
@@ -198,7 +199,7 @@ namespace DevLib.ModernUI.Forms
         /// The font weight.
         /// </value>
         [DefaultValue(ModernFontWeight.Light)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
         {
             get
@@ -217,7 +218,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the text align.
         /// </summary>
         [Browsable(true)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFormTextAlign TextAlign
         {
             get;
@@ -225,23 +226,11 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets the back color.
-        /// </summary>
-        [Browsable(false)]
-        public override Color BackColor
-        {
-            get
-            {
-                return ModernPaint.BackColor.Form(this.ThemeStyle);
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the border style.
         /// </summary>
         [DefaultValue(ModernFormBorderStyle.None)]
         [Browsable(true)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFormBorderStyle BorderStyle
         {
             get;
@@ -251,7 +240,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is movable.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool Movable
         {
             get;
@@ -261,7 +250,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether a modern control box is displayed in the caption bar of the form.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseControlBox
         {
             get;
@@ -271,7 +260,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the modern Minimize button is displayed in the caption bar of the form.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseMinimizeBox
         {
             get;
@@ -281,7 +270,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the modern Maximize button is displayed in the caption bar of the form.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseMaximizeBox
         {
             get;
@@ -291,7 +280,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the modern Close button is displayed in the caption bar of the form.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCloseBox
         {
             get;
@@ -310,17 +299,17 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                value.Top = Math.Max(value.Top, this.DisplayHeader ? 60 : 30);
+                value.Top = Math.Max(value.Top, this.ShowHeader ? 60 : 30);
                 base.Padding = value;
             }
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether display header.
+        /// Gets or sets a value indicating whether show header.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(true)]
-        public bool DisplayHeader
+        public bool ShowHeader
         {
             get
             {
@@ -343,7 +332,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is resizable.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool Resizable
         {
             get;
@@ -353,7 +342,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the type of the shadow.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernFormShadowType.AeroShadow)]
         public ModernFormShadowType ShadowType
         {
@@ -410,7 +399,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the back image.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(null)]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public Image BackImage
@@ -436,7 +425,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the back image padding.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public Padding BackImagePadding
         {
             get
@@ -454,7 +443,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the maximum size of the back image.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int BackImageMaxSize
         {
             get
@@ -472,7 +461,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the back image align.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernFormBackImageAlign.TopLeft)]
         public ModernFormBackImageAlign BackImageAlign
         {
@@ -489,22 +478,44 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether invert image.
+        /// Gets or sets a value indicating whether invert back image.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(true)]
-        public bool InvertImage
+        public bool BackImageInvert
         {
             get
             {
-                return this._invertImage;
+                return this._backImageInvert;
             }
 
             set
             {
-                this._invertImage = value;
+                this._backImageInvert = value;
                 this.Refresh();
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether use custom BackColor.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool UseCustomBackColor
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether use custom ForeColor.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool UseCustomForeColor
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -514,7 +525,7 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return new Padding(20, this.DisplayHeader ? 60 : 20, 20, 20);
+                return new Padding(20, this.ShowHeader ? 60 : 20, 20, 20);
             }
         }
 
@@ -639,8 +650,8 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.</param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            Color backColor = ModernPaint.BackColor.Form(this.ThemeStyle);
-            Color foreColor = ModernPaint.ForeColor.Title(this.ThemeStyle);
+            Color backColor = this.UseCustomBackColor ? this.BackColor : ModernPaint.BackColor.Form(this.ThemeStyle);
+            Color foreColor = this.UseCustomForeColor ? this.ForeColor : ModernPaint.ForeColor.Title(this.ThemeStyle);
 
             e.Graphics.Clear(backColor);
 
@@ -672,7 +683,7 @@ namespace DevLib.ModernUI.Forms
             {
                 Image image = ModernImage.ResizeImage(this.BackImage, new Rectangle(0, 0, this.BackImageMaxSize, this.BackImageMaxSize));
 
-                if (this.InvertImage)
+                if (this.BackImageInvert)
                 {
                     image = ModernImage.ResizeImage(this.ThemeStyle == ModernThemeStyle.Dark ? this._image : this.BackImage, new Rectangle(0, 0, this.BackImageMaxSize, this.BackImageMaxSize));
                 }
@@ -697,7 +708,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.DisplayHeader)
+            if (this.ShowHeader)
             {
                 Rectangle bounds = new Rectangle(20, 20, this.ClientRectangle.Width - (2 * 20), 40);
                 TextFormatFlags flags = TextFormatFlags.EndEllipsis | this.GetTextFormatFlags();
@@ -1092,6 +1103,7 @@ namespace DevLib.ModernUI.Forms
 
                 if (controlBoxFlag == FormControlBox.Close)
                 {
+                    this.DialogResult = DialogResult.Abort;
                     this.Close();
                 }
                 else if (controlBoxFlag == FormControlBox.Minimize)

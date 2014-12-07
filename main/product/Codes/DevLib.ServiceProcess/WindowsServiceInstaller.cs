@@ -36,7 +36,7 @@ namespace DevLib.ServiceProcess
         public WindowsServiceInstaller()
         {
             this.InstallerSetupInfo = new WindowsServiceSetup();
-            this.InitInstaller();
+            this.InitializeInstaller();
             this.Committed += this.OnWindowsServiceInstallerCommitted;
         }
 
@@ -47,7 +47,7 @@ namespace DevLib.ServiceProcess
         public WindowsServiceInstaller(WindowsServiceSetup windowsServiceSetup)
         {
             this.InstallerSetupInfo = windowsServiceSetup;
-            this.InitInstaller();
+            this.InitializeInstaller();
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace DevLib.ServiceProcess
         {
             try
             {
-                this.InitInstaller();
+                this.InitializeInstaller();
                 base.Install(stateSaver);
             }
             catch (Exception e)
@@ -143,7 +143,7 @@ namespace DevLib.ServiceProcess
         {
             try
             {
-                this.InitInstaller();
+                this.InitializeInstaller();
                 base.Uninstall(savedState);
             }
             catch (Exception e)
@@ -160,7 +160,7 @@ namespace DevLib.ServiceProcess
         {
             try
             {
-                this.InitInstaller();
+                this.InitializeInstaller();
                 base.Rollback(savedState);
             }
             catch (Exception e)
@@ -171,9 +171,9 @@ namespace DevLib.ServiceProcess
         }
 
         /// <summary>
-        /// Method InitInstaller.
+        /// Initializes the installer.
         /// </summary>
-        private void InitInstaller()
+        private void InitializeInstaller()
         {
             this.Installers.Clear();
 

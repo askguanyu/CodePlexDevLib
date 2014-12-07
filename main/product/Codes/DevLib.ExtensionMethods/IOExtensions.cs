@@ -528,20 +528,21 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="sourceCmd">A command line to execute.</param>
         /// <param name="runasAdmin">true to run as Administrator; false to run as current user.</param>
+        /// <param name="hidden">true if want to hide window; otherwise, false.</param>
         /// <param name="milliseconds">
         /// The amount of time, in milliseconds, to wait for the command to exit.
         /// The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.
         /// Less than or equal to Zero if do not wait for the command to exit.
         /// </param>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public static void ExecuteCmdLine(this string sourceCmd, bool runasAdmin = true, int milliseconds = 0)
+        public static void ExecuteCmdLine(this string sourceCmd, bool runasAdmin = true, bool hidden = true, int milliseconds = 0)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
             startInfo.Arguments = string.Format(" /c  {0}", sourceCmd);
-            startInfo.CreateNoWindow = true;
-            startInfo.ErrorDialog = false;
+            startInfo.CreateNoWindow = hidden;
+            startInfo.ErrorDialog = true;
             startInfo.UseShellExecute = true;
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.WindowStyle = hidden ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal;
 
             if (runasAdmin)
             {

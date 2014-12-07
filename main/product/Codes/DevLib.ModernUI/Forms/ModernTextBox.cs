@@ -79,19 +79,19 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CustomPaintBackground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintBackground;
 
         /// <summary>
         /// Event CustomPaint.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaint;
 
         /// <summary>
         /// Event CustomPaintForeground.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernColorStyle.Default)]
         public ModernColorStyle ColorStyle
         {
@@ -135,7 +135,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(ModernThemeStyle.Default)]
         public ModernThemeStyle ThemeStyle
         {
@@ -180,7 +180,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
         {
             get;
@@ -191,7 +191,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
         {
             get;
@@ -202,7 +202,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
             get;
@@ -213,7 +213,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryBehavior)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
         public bool UseSelectable
         {
@@ -232,7 +232,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets modern font size.
         /// </summary>
         [DefaultValue(ModernFontSize.Small)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
         {
             get
@@ -251,7 +251,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets modern font weight.
         /// </summary>
         [DefaultValue(ModernFontWeight.Regular)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
         {
             get
@@ -272,7 +272,7 @@ namespace DevLib.ModernUI.Forms
         [Browsable(true)]
         [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue("")]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public string PromptText
         {
             get
@@ -292,7 +292,7 @@ namespace DevLib.ModernUI.Forms
         [Browsable(true)]
         [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue(null)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public Image Icon
         {
             get
@@ -313,7 +313,7 @@ namespace DevLib.ModernUI.Forms
         [Browsable(true)]
         [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool IconRight
         {
             get
@@ -334,7 +334,7 @@ namespace DevLib.ModernUI.Forms
         [Browsable(true)]
         [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue(true)]
-        [Category(ModernConstants.PropertyCategoryAppearance)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool DisplayIcon
         {
             get

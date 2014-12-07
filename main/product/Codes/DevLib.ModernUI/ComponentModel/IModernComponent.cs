@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ModernUI.ComponentModel
 {
+    using System.ComponentModel;
     using DevLib.ModernUI.Forms;
 
     /// <summary>
@@ -15,6 +16,8 @@ namespace DevLib.ModernUI.ComponentModel
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         ModernColorStyle ColorStyle
         {
             get;
@@ -24,6 +27,8 @@ namespace DevLib.ModernUI.ComponentModel
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         ModernThemeStyle ThemeStyle
         {
             get;
@@ -33,6 +38,8 @@ namespace DevLib.ModernUI.ComponentModel
         /// <summary>
         /// Gets or sets modern style manager.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         ModernStyleManager StyleManager
         {
             get;

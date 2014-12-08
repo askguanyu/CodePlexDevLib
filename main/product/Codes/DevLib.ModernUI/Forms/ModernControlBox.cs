@@ -355,9 +355,39 @@ namespace DevLib.ModernUI.Forms
         protected override void OnMouseLeave(EventArgs e)
         {
             this._isHovered = false;
+            this._isPressed = false;
             this.Invalidate();
 
             base.OnMouseLeave(e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="M:System.Windows.Forms.ButtonBase.OnLostFocus(System.EventArgs)" /> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnLostFocus(EventArgs e)
+        {
+            this._isHovered = false;
+            this._isPressed = false;
+            this.Invalidate();
+
+            base.OnLostFocus(e);
+        }
+
+        /// <summary>
+        /// Raises the VisibleChanged event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            if (!this.Visible)
+            {
+                this._isHovered = false;
+                this._isPressed = false;
+                this.Invalidate();
+            }
+
+            base.OnVisibleChanged(e);
         }
     }
 }

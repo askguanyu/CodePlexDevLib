@@ -75,7 +75,7 @@ namespace DevLib.Samples
             this.modernToggle1.Location = new System.Drawing.Point(247, 125);
             this.modernToggle1.Name = "modernToggle1";
             this.modernToggle1.Size = new System.Drawing.Size(80, 17);
-            this.modernToggle1.StatusTextOnRight = true;
+            this.modernToggle1.StatusTextRightToLeft = true;
             this.modernToggle1.TabIndex = 4;
             this.modernToggle1.Text = "Off";
             this.modernToggle1.UseSelectable = true;

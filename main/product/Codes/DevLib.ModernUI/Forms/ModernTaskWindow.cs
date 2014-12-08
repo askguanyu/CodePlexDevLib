@@ -72,6 +72,7 @@ namespace DevLib.ModernUI.Forms
             this.Controls.Add(this.ControlContainer);
             this.Size = new Size(400, 200);
             this.TopBarHeight = 2;
+            this.ShowStatusStrip = false;
         }
 
         /// <summary>

@@ -93,9 +93,9 @@ namespace DevLib.ModernUI.Forms
         private bool _backImageInvert;
 
         /// <summary>
-        /// Field _buttonDictionary.
+        /// Field _controlBoxDictionary.
         /// </summary>
-        private Dictionary<FormControlBox, ModernControlBox> _buttonDictionary;
+        private Dictionary<FormControlBox, ModernControlBox> _controlBoxDictionary;
 
         /// <summary>
         /// Field _shadowForm.
@@ -533,6 +533,50 @@ namespace DevLib.ModernUI.Forms
         [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether control box use custom BackColor.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool ControlBoxUseCustomBackColor
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether control box use custom ForeColor.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool ControlBoxUseCustomForeColor
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the custom back color of the control box.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public Color ControlBoxCustomBackColor
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the custom fore color of the control box.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public Color ControlBoxCustomForeColor
         {
             get;
             set;
@@ -1064,48 +1108,61 @@ namespace DevLib.ModernUI.Forms
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         private void AddControlBox(FormControlBox controlBox)
         {
-            if (this._buttonDictionary == null)
+            if (this._controlBoxDictionary == null)
             {
-                this._buttonDictionary = new Dictionary<FormControlBox, ModernControlBox>();
+                this._controlBoxDictionary = new Dictionary<FormControlBox, ModernControlBox>();
             }
 
-            if (this._buttonDictionary.ContainsKey(controlBox))
+            if (this._controlBoxDictionary.ContainsKey(controlBox))
             {
                 return;
             }
 
-            ModernControlBox newButton = new ModernControlBox();
+            ModernControlBox modernControlBox = new ModernControlBox();
 
             if (controlBox == FormControlBox.Close)
             {
-                newButton.Text = "r";
+                modernControlBox.Text = "r";
             }
             else if (controlBox == FormControlBox.Minimize)
             {
-                newButton.Text = "0";
+                modernControlBox.Text = "0";
             }
             else if (controlBox == FormControlBox.Maximize)
             {
                 if (this.WindowState == FormWindowState.Normal)
                 {
-                    newButton.Text = "1";
+                    modernControlBox.Text = "1";
                 }
                 else
                 {
-                    newButton.Text = "2";
+                    modernControlBox.Text = "2";
                 }
             }
 
-            newButton.ColorStyle = this.ColorStyle;
-            newButton.ThemeStyle = this.ThemeStyle;
-            newButton.Tag = controlBox;
-            newButton.Size = new Size(25, 20);
-            newButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            newButton.TabStop = false;
-            newButton.Click += this.OnControlBoxClick;
-            this.Controls.Add(newButton);
+            modernControlBox.ColorStyle = this.ColorStyle;
+            modernControlBox.ThemeStyle = this.ThemeStyle;
+            modernControlBox.Tag = controlBox;
+            modernControlBox.Size = new Size(25, 20);
+            modernControlBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            modernControlBox.TabStop = false;
+            modernControlBox.Click += this.OnControlBoxClick;
+            modernControlBox.UseCustomBackColor = this.ControlBoxUseCustomBackColor;
+            modernControlBox.UseCustomForeColor = this.ControlBoxUseCustomForeColor;
 
-            this._buttonDictionary.Add(controlBox, newButton);
+            if (this.ControlBoxUseCustomBackColor)
+            {
+                modernControlBox.BackColor = this.ControlBoxCustomBackColor;
+            }
+
+            if (this.ControlBoxUseCustomForeColor)
+            {
+                modernControlBox.ForeColor = this.ControlBoxCustomForeColor;
+            }
+
+            this.Controls.Add(modernControlBox);
+
+            this._controlBoxDictionary.Add(controlBox, modernControlBox);
         }
 
         /// <summary>
@@ -1115,11 +1172,11 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void OnControlBoxClick(object sender, EventArgs e)
         {
-            var modernFormButton = sender as ModernControlBox;
+            var modernControlBox = sender as ModernControlBox;
 
-            if (modernFormButton != null)
+            if (modernControlBox != null)
             {
-                var controlBoxFlag = (FormControlBox)modernFormButton.Tag;
+                var controlBoxFlag = (FormControlBox)modernControlBox.Tag;
 
                 if (controlBoxFlag == FormControlBox.Close)
                 {
@@ -1146,7 +1203,7 @@ namespace DevLib.ModernUI.Forms
                     if (this.WindowState == FormWindowState.Normal)
                     {
                         this.WindowState = FormWindowState.Maximized;
-                        modernFormButton.Text = "2";
+                        modernControlBox.Text = "2";
 
                         if (this.NormalBoxClick != null)
                         {
@@ -1156,7 +1213,7 @@ namespace DevLib.ModernUI.Forms
                     else
                     {
                         this.WindowState = FormWindowState.Normal;
-                        modernFormButton.Text = "1";
+                        modernControlBox.Text = "1";
 
                         if (this.MaximizeBoxClick != null)
                         {
@@ -1197,34 +1254,34 @@ namespace DevLib.ModernUI.Forms
             Point firstControlBoxLocation = new Point(this.ClientRectangle.Width - BorderWidth - 25, BorderWidth);
             int lastDrawedControlBoxPosition = firstControlBoxLocation.X - 25;
 
-            ModernControlBox firstButton = null;
+            ModernControlBox firstControlBox = null;
 
-            if (this._buttonDictionary.Count == 1)
+            if (this._controlBoxDictionary.Count == 1)
             {
-                foreach (KeyValuePair<FormControlBox, ModernControlBox> button in this._buttonDictionary)
+                foreach (KeyValuePair<FormControlBox, ModernControlBox> item in this._controlBoxDictionary)
                 {
-                    button.Value.Location = firstControlBoxLocation;
+                    item.Value.Location = firstControlBoxLocation;
                 }
             }
             else
             {
-                foreach (KeyValuePair<int, FormControlBox> button in priorityOrder)
+                foreach (KeyValuePair<int, FormControlBox> item in priorityOrder)
                 {
-                    bool buttonExists = this._buttonDictionary.ContainsKey(button.Value);
+                    bool exists = this._controlBoxDictionary.ContainsKey(item.Value);
 
-                    if (firstButton == null && buttonExists)
+                    if (firstControlBox == null && exists)
                     {
-                        firstButton = this._buttonDictionary[button.Value];
-                        firstButton.Location = firstControlBoxLocation;
+                        firstControlBox = this._controlBoxDictionary[item.Value];
+                        firstControlBox.Location = firstControlBoxLocation;
                         continue;
                     }
 
-                    if (firstButton == null || !buttonExists)
+                    if (firstControlBox == null || !exists)
                     {
                         continue;
                     }
 
-                    this._buttonDictionary[button.Value].Location = new Point(lastDrawedControlBoxPosition, BorderWidth);
+                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, BorderWidth);
                     lastDrawedControlBoxPosition = lastDrawedControlBoxPosition - 25;
                 }
             }

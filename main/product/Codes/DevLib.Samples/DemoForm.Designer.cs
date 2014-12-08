@@ -53,8 +53,8 @@ namespace DevLib.Samples
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.modernProgressSpinner1 = new DevLib.ModernUI.Forms.ModernProgressSpinner();
             this.modernTabPage2 = new DevLib.ModernUI.Forms.ModernTabPage();
+            this.modernProgressSpinner1 = new DevLib.ModernUI.Forms.ModernProgressSpinner();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).BeginInit();
             this.modernPanel1.SuspendLayout();
             this.modernTabControl2.SuspendLayout();
@@ -310,18 +310,6 @@ namespace DevLib.Samples
             this.Column6.HeaderText = "Column6";
             this.Column6.Name = "Column6";
             // 
-            // modernProgressSpinner1
-            // 
-            this.modernProgressSpinner1.Location = new System.Drawing.Point(621, 125);
-            this.modernProgressSpinner1.Maximum = 100;
-            this.modernProgressSpinner1.Name = "modernProgressSpinner1";
-            this.modernProgressSpinner1.Size = new System.Drawing.Size(65, 63);
-            this.modernProgressSpinner1.Spinning = false;
-            this.modernProgressSpinner1.TabIndex = 12;
-            this.modernProgressSpinner1.Text = "modernProgressSpinner1";
-            this.modernProgressSpinner1.UseSelectable = true;
-            this.modernProgressSpinner1.Value = 25;
-            // 
             // modernTabPage2
             // 
             this.modernTabPage2.HighlightHorizontalScrollBarOnWheel = false;
@@ -336,6 +324,18 @@ namespace DevLib.Samples
             this.modernTabPage2.UseVerticalBarColor = true;
             this.modernTabPage2.VerticalScrollBarSize = 10;
             // 
+            // modernProgressSpinner1
+            // 
+            this.modernProgressSpinner1.Location = new System.Drawing.Point(621, 125);
+            this.modernProgressSpinner1.Maximum = 100;
+            this.modernProgressSpinner1.Name = "modernProgressSpinner1";
+            this.modernProgressSpinner1.Size = new System.Drawing.Size(65, 63);
+            this.modernProgressSpinner1.Spinning = false;
+            this.modernProgressSpinner1.TabIndex = 12;
+            this.modernProgressSpinner1.Text = "modernProgressSpinner1";
+            this.modernProgressSpinner1.UseSelectable = true;
+            this.modernProgressSpinner1.Value = 25;
+            // 
             // DemoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -346,6 +346,8 @@ namespace DevLib.Samples
             this.ClientSize = new System.Drawing.Size(752, 629);
             this.ColorStyle = DevLib.ModernUI.Forms.ModernColorStyle.Pink;
             this.ControlBox = false;
+            this.ControlBoxUseCustomBackColor = true;
+            this.ControlBoxUseCustomForeColor = true;
             this.Controls.Add(this.modernProgressSpinner1);
             this.Controls.Add(this.modernTabControl1);
             this.Controls.Add(this.modernTabControl2);

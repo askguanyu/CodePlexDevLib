@@ -19,6 +19,11 @@ namespace DevLib.ModernUI.Forms
     public class ModernTaskWindow : ModernForm
     {
         /// <summary>
+        /// Field _controlContainer.
+        /// </summary>
+        protected readonly ModernPanel ControlContainer;
+
+        /// <summary>
         /// Field _singletonWindow.
         /// </summary>
         private static ModernTaskWindow _singletonWindow;
@@ -27,11 +32,6 @@ namespace DevLib.ModernUI.Forms
         /// Field _closeTime.
         /// </summary>
         private readonly double _closeTime;
-
-        /// <summary>
-        /// Field _controlContainer.
-        /// </summary>
-        private readonly ModernPanel _controlContainer;
 
         /// <summary>
         /// Field _elapsedTime.
@@ -68,8 +68,8 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         public ModernTaskWindow()
         {
-            this._controlContainer = new ModernPanel();
-            this.Controls.Add(this._controlContainer);
+            this.ControlContainer = new ModernPanel();
+            this.Controls.Add(this.ControlContainer);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace DevLib.ModernUI.Forms
         {
             if (userControl != null)
             {
-                this._controlContainer.Controls.Add(userControl);
+                this.ControlContainer.Controls.Add(userControl);
                 userControl.Dock = DockStyle.Fill;
             }
         }
@@ -105,7 +105,7 @@ namespace DevLib.ModernUI.Forms
         {
             if (userControl != null)
             {
-                this._controlContainer.Controls.Add(userControl);
+                this.ControlContainer.Controls.Add(userControl);
                 userControl.Dock = DockStyle.Fill;
             }
 
@@ -287,9 +287,9 @@ namespace DevLib.ModernUI.Forms
         {
             if (!this._isInitialized)
             {
-                this._controlContainer.ThemeStyle = this.ThemeStyle;
-                this._controlContainer.ColorStyle = this.ColorStyle;
-                this._controlContainer.StyleManager = this.StyleManager;
+                this.ControlContainer.ThemeStyle = this.ThemeStyle;
+                this.ControlContainer.ColorStyle = this.ColorStyle;
+                this.ControlContainer.StyleManager = this.StyleManager;
 
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
@@ -323,13 +323,13 @@ namespace DevLib.ModernUI.Forms
                         break;
                 }
 
-                this._controlContainer.Location = new Point(0, 60);
-                this._controlContainer.Size = new Size(this.Width - 40, this.Height - 80);
-                this._controlContainer.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom | AnchorStyles.Left;
-                this._controlContainer.AutoScroll = false;
-                this._controlContainer.ShowHorizontalScrollBar = false;
-                this._controlContainer.ShowVerticalScrollBar = false;
-                this._controlContainer.Refresh();
+                this.ControlContainer.Location = new Point(0, 60);
+                this.ControlContainer.Size = new Size(this.Width - 40, this.Height - 80);
+                this.ControlContainer.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom | AnchorStyles.Left;
+                this.ControlContainer.AutoScroll = false;
+                this.ControlContainer.ShowHorizontalScrollBar = false;
+                this.ControlContainer.ShowVerticalScrollBar = false;
+                this.ControlContainer.Refresh();
 
                 if (this.StyleManager != null)
                 {
@@ -339,7 +339,7 @@ namespace DevLib.ModernUI.Forms
                 this._isInitialized = true;
 
                 MoveAnimation moveAnimation = new MoveAnimation();
-                moveAnimation.Start(this._controlContainer, new Point(20, 60), TransitionType.EaseInOutCubic, 4);
+                moveAnimation.Start(this.ControlContainer, new Point(20, 60), TransitionType.EaseInOutCubic, 4);
             }
 
             base.OnActivated(e);

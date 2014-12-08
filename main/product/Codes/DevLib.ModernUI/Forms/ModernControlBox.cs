@@ -260,45 +260,52 @@ namespace DevLib.ModernUI.Forms
 
             ModernThemeStyle modernThemeStyle = this.ThemeStyle;
 
-            if (this.Parent != null)
+            if (this.UseCustomBackColor)
             {
-                if (this.Parent is IModernForm)
-                {
-                    modernThemeStyle = ((IModernForm)Parent).ThemeStyle;
-                    backColor = ModernPaint.BackColor.Form(modernThemeStyle);
-                }
-                else if (this.Parent is IModernControl)
-                {
-                    backColor = ModernPaint.GetStyleColor(this.ColorStyle);
-                }
-                else
-                {
-                    backColor = this.Parent.BackColor;
-                }
+                backColor = this.BackColor;
             }
             else
             {
-                backColor = ModernPaint.BackColor.Form(modernThemeStyle);
+                if (this.Parent != null)
+                {
+                    if (this.Parent is IModernForm)
+                    {
+                        modernThemeStyle = ((IModernForm)Parent).ThemeStyle;
+                        backColor = ModernPaint.BackColor.Form(modernThemeStyle);
+                    }
+                    else if (this.Parent is IModernControl)
+                    {
+                        backColor = ModernPaint.GetStyleColor(this.ColorStyle);
+                    }
+                    else
+                    {
+                        backColor = this.Parent.BackColor;
+                    }
+                }
+                else
+                {
+                    backColor = ModernPaint.BackColor.Form(modernThemeStyle);
+                }
             }
 
             if (this._isHovered && !this._isPressed && this.Enabled)
             {
-                foreColor = ModernPaint.ForeColor.Button.Normal(modernThemeStyle);
-                backColor = ModernPaint.BackColor.Button.Normal(modernThemeStyle);
+                foreColor = this.UseCustomForeColor ? this.ForeColor : ModernPaint.ForeColor.Button.Normal(modernThemeStyle);
+                backColor = this.UseCustomBackColor ? this.BackColor : ModernPaint.BackColor.Button.Normal(modernThemeStyle);
             }
             else if (this._isHovered && this._isPressed && this.Enabled)
             {
-                foreColor = ModernPaint.ForeColor.Button.Press(modernThemeStyle);
-                backColor = ModernPaint.GetStyleColor(this.ColorStyle);
+                foreColor = this.UseCustomForeColor ? this.ForeColor : ModernPaint.ForeColor.Button.Press(modernThemeStyle);
+                backColor = this.UseCustomBackColor ? this.BackColor : ModernPaint.GetStyleColor(this.ColorStyle);
             }
             else if (!this.Enabled)
             {
-                foreColor = ModernPaint.ForeColor.Button.Disabled(modernThemeStyle);
-                backColor = ModernPaint.BackColor.Button.Disabled(modernThemeStyle);
+                foreColor = this.UseCustomForeColor ? this.ForeColor : ModernPaint.ForeColor.Button.Disabled(modernThemeStyle);
+                backColor = this.UseCustomBackColor ? this.BackColor : ModernPaint.BackColor.Button.Disabled(modernThemeStyle);
             }
             else
             {
-                foreColor = ModernPaint.ForeColor.Button.Normal(modernThemeStyle);
+                foreColor = this.UseCustomForeColor ? this.ForeColor : ModernPaint.ForeColor.Button.Normal(modernThemeStyle);
             }
 
             e.Graphics.Clear(backColor);

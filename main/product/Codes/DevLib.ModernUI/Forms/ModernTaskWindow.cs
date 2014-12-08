@@ -387,16 +387,9 @@ namespace DevLib.ModernUI.Forms
             this._progressWidth = (int)((double)this.Width * percent);
             this.Invalidate(new Rectangle(0, 0, this.Width, this.TopBarHeight));
 
-            if (this._elapsedTime >= this._thresholdTime && this.Opacity > 0.1d)
+            if (this._elapsedTime >= this._thresholdTime)
             {
-                double opacity = ((1d - percent) * 3d) + 0.01;
-
-                if (opacity <= 0.1d)
-                {
-                    opacity = 0.1d;
-                }
-
-                this.Opacity = opacity;
+                this.Opacity = ((1d - percent) * 3d) + 0.01;
             }
 
             if (!this.CancelTimer)

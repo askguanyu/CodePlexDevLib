@@ -7,6 +7,7 @@ namespace DevLib.ModernUI.Forms
 {
     using System;
     using System.Drawing;
+    using System.Drawing.Drawing2D;
     using System.Windows.Forms;
     using DevLib.ModernUI.Animation;
     using DevLib.ModernUI.ComponentModel;
@@ -71,9 +72,9 @@ namespace DevLib.ModernUI.Forms
             this.ControlContainer = new ModernPanel();
             this.Controls.Add(this.ControlContainer);
             this.Size = new Size(400, 200);
-            this.TopBarHeight = 2;
             this.ShowStatusStrip = false;
             this.ShowBorder = false;
+            this.TopBarHeight = 2;
         }
 
         /// <summary>
@@ -294,10 +295,6 @@ namespace DevLib.ModernUI.Forms
                 this.ControlContainer.ColorStyle = this.ColorStyle;
                 this.ControlContainer.StyleManager = this.StyleManager;
 
-                this.MaximizeBox = false;
-                this.MinimizeBox = false;
-                this.Movable = true;
-
                 Taskbar taskbar = new Taskbar();
 
                 switch (taskbar.Position)
@@ -356,9 +353,10 @@ namespace DevLib.ModernUI.Forms
         {
             base.OnPaint(e);
 
-            using (SolidBrush brush = new SolidBrush(ModernPaint.BackColor.Form(this.ThemeStyle)))
+            using (SolidBrush brush = new SolidBrush(ModernPaint.GetStyleColor(this.ColorStyle)))
             {
-                e.Graphics.FillRectangle(brush, new Rectangle(this.Width - this._progressWidth, 0, this._progressWidth, this.TopBarHeight));
+                e.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
+                e.Graphics.FillRectangle(brush, new Rectangle(0, 0, this._progressWidth, this.TopBarHeight));
             }
         }
 
@@ -388,7 +386,7 @@ namespace DevLib.ModernUI.Forms
             this._progressWidth = (int)((double)this.Width * percent);
             this.Invalidate(new Rectangle(0, 0, this.Width, this.TopBarHeight));
 
-            if (this._elapsedTime >= this._thresholdTime && this.Opacity > 0.1d)
+            if (this._elapsedTime >= this._thresholdTime && this.Opacity > 0.05d)
             {
                 double opacity = ((1d - percent) * 3d) + 0.01;
 

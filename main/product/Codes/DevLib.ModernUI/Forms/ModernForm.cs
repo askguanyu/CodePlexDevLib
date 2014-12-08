@@ -123,7 +123,6 @@ namespace DevLib.ModernUI.Forms
             this.UseMaximizeBox = true;
             this.UseCloseBox = true;
             this.FontSize = 24f;
-            this.TopBarHeight = 0;
             this.Controls.Add(this.StatusStrip);
         }
 
@@ -344,17 +343,6 @@ namespace DevLib.ModernUI.Forms
 
                 this._showHeader = value;
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the height of the top bar.
-        /// </summary>
-        [DefaultValue(0)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public int TopBarHeight
-        {
-            get;
-            set;
         }
 
         /// <summary>
@@ -604,6 +592,15 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets or sets the height of the top bar.
+        /// </summary>
+        protected int TopBarHeight
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the internal spacing, in pixels, of the contents of a control.
         /// </summary>
         protected override Padding DefaultPadding
@@ -746,21 +743,6 @@ namespace DevLib.ModernUI.Forms
 
             e.Graphics.Clear(backColor);
 
-            using (SolidBrush brush = ModernPaint.GetStyleBrush(this.ColorStyle))
-            {
-                Rectangle topRectangle = new Rectangle(0, 0, this.Width, this.TopBarHeight);
-                e.Graphics.FillRectangle(brush, topRectangle);
-
-                if (this.ShowStatusStrip)
-                {
-                    this.StatusStrip.Width = this.Width - 20;
-                    this.StatusStrip.Location = new Point(0, this.Height - 20);
-
-                    Rectangle bottomRectangle = new Rectangle(0, this.Height - 20, this.Width, 20);
-                    e.Graphics.FillRectangle(brush, bottomRectangle);
-                }
-            }
-
             if (this.ShowHeader)
             {
                 Rectangle bounds = new Rectangle(20, 20, this.ClientRectangle.Width - (2 * 20), 40);
@@ -797,6 +779,19 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
+            if (this.ShowStatusStrip)
+            {
+                using (SolidBrush brush = ModernPaint.GetStyleBrush(this.ColorStyle))
+                {
+                    this.StatusStrip.Height = 20;
+                    this.StatusStrip.Width = this.Width - 20;
+                    this.StatusStrip.Location = new Point(0, this.Height - 20);
+
+                    Rectangle bottomRectangle = new Rectangle(0, this.Height - 20, this.Width, 20);
+                    e.Graphics.FillRectangle(brush, bottomRectangle);
+                }
+            }
+
             if (this.Resizable && (this.SizeGripStyle == SizeGripStyle.Auto || this.SizeGripStyle == SizeGripStyle.Show))
             {
                 using (SolidBrush brush = new SolidBrush(ModernPaint.ForeColor.Button.Disabled(this.ThemeStyle)))
@@ -817,7 +812,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.ShowBorder)
+            if (this.ShowBorder && this.WindowState != FormWindowState.Maximized)
             {
                 Color borderColor = ModernPaint.GetStyleColor(this.ColorStyle);
 
@@ -1053,14 +1048,14 @@ namespace DevLib.ModernUI.Forms
 
                 if (this.ShowBorder)
                 {
-                    if (this.Width - 1 > e.Location.X && e.Location.X > 1 && e.Location.Y > this.TopBarHeight + 1)
+                    if (this.Width - 1 > e.Location.X && e.Location.X > 1 && e.Location.Y > 1 + this.TopBarHeight)
                     {
                         this.MoveControl();
                     }
                 }
                 else
                 {
-                    if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > this.TopBarHeight)
+                    if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > 0 + this.TopBarHeight)
                     {
                         this.MoveControl();
                     }
@@ -1134,7 +1129,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.RectangleToScreen(new Rectangle(0, this.TopBarHeight, this.ClientRectangle.Width, 50)).Contains(vPoint))
+            if (this.RectangleToScreen(new Rectangle(0, 0, this.ClientRectangle.Width, 50)).Contains(vPoint))
             {
                 return WinApi.HitTest.HTCAPTION;
             }
@@ -1306,11 +1301,11 @@ namespace DevLib.ModernUI.Forms
 
             if (this.ShowBorder)
             {
-                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25 - 1, this.TopBarHeight + 1);
+                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25 - 1, 1 + this.TopBarHeight);
             }
             else
             {
-                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25, this.TopBarHeight);
+                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25, 0 + this.TopBarHeight);
             }
 
             int lastDrawedControlBoxPosition = firstControlBoxLocation.X - 25;
@@ -1342,7 +1337,7 @@ namespace DevLib.ModernUI.Forms
                         continue;
                     }
 
-                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, this.ShowBorder ? this.TopBarHeight + 1 : this.TopBarHeight);
+                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, this.TopBarHeight + (this.ShowBorder ? 1 : 0));
                     lastDrawedControlBoxPosition = lastDrawedControlBoxPosition - 25;
                 }
             }

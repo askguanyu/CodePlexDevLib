@@ -115,6 +115,7 @@ namespace DevLib.ModernUI.Forms
             this.TransparencyKey = Color.Lavender;
             this.Movable = true;
             this.Resizable = true;
+            this.ShowBorder = true;
             this.TextAlign = ModernFormTextAlign.Left;
             this.BackImageAlign = ModernFormBackImageAlign.TopLeft;
             this.UseControlBox = true;
@@ -251,6 +252,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is movable.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool Movable
         {
@@ -261,6 +263,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether a modern control box is displayed in the caption bar of the form.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseControlBox
         {
@@ -271,6 +274,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the modern Minimize button is displayed in the caption bar of the form.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseMinimizeBox
         {
@@ -281,6 +285,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the modern Maximize button is displayed in the caption bar of the form.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseMaximizeBox
         {
@@ -291,6 +296,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the modern Close button is displayed in the caption bar of the form.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCloseBox
         {
@@ -318,8 +324,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether show header.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowHeader
         {
             get
@@ -354,6 +360,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is resizable.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool Resizable
         {
@@ -376,23 +383,6 @@ namespace DevLib.ModernUI.Forms
             set
             {
                 this._shadowType = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the border style of the form.
-        /// </summary>
-        [Browsable(false)]
-        public new FormBorderStyle FormBorderStyle
-        {
-            get
-            {
-                return base.FormBorderStyle;
-            }
-
-            set
-            {
-                base.FormBorderStyle = value;
             }
         }
 
@@ -603,6 +593,17 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether show border.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool ShowBorder
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the internal spacing, in pixels, of the contents of a control.
         /// </summary>
         protected override Padding DefaultPadding
@@ -752,13 +753,20 @@ namespace DevLib.ModernUI.Forms
 
                 if (this.ShowStatusStrip)
                 {
+                    this.StatusStrip.Width = this.Width - 20;
+                    this.StatusStrip.Location = new Point(0, this.Height - 20);
+
                     Rectangle bottomRectangle = new Rectangle(0, this.Height - 20, this.Width, 20);
                     e.Graphics.FillRectangle(brush, bottomRectangle);
                 }
             }
 
-            this.StatusStrip.Location = new Point(0, this.Height - 20);
-            this.StatusStrip.Width = this.Width - 20;
+            if (this.ShowHeader)
+            {
+                Rectangle bounds = new Rectangle(20, 20, this.ClientRectangle.Width - (2 * 20), 40);
+                TextFormatFlags flags = TextFormatFlags.EndEllipsis | this.GetTextFormatFlags();
+                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.GetDefaultFont(this.FontSize, this.FontWeight), bounds, foreColor, flags);
+            }
 
             if (this.BackImage != null && this.BackImageMaxSize != 0)
             {
@@ -789,13 +797,6 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.ShowHeader)
-            {
-                Rectangle bounds = new Rectangle(20, 20, this.ClientRectangle.Width - (2 * 20), 40);
-                TextFormatFlags flags = TextFormatFlags.EndEllipsis | this.GetTextFormatFlags();
-                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.GetDefaultFont(this.FontSize, this.FontWeight), bounds, foreColor, flags);
-            }
-
             if (this.Resizable && (this.SizeGripStyle == SizeGripStyle.Auto || this.SizeGripStyle == SizeGripStyle.Show))
             {
                 using (SolidBrush brush = new SolidBrush(ModernPaint.ForeColor.Button.Disabled(this.ThemeStyle)))
@@ -812,6 +813,25 @@ namespace DevLib.ModernUI.Forms
                             new Rectangle(new Point(this.ClientRectangle.Width - 6, this.ClientRectangle.Height - 10), resizeHandleSize),
                             new Rectangle(new Point(this.ClientRectangle.Width - 14, this.ClientRectangle.Height - 6), resizeHandleSize),
                             new Rectangle(new Point(this.ClientRectangle.Width - 6, this.ClientRectangle.Height - 14), resizeHandleSize)
+                        });
+                }
+            }
+
+            if (this.ShowBorder)
+            {
+                Color borderColor = ModernPaint.GetStyleColor(this.ColorStyle);
+
+                using (Pen pen = new Pen(borderColor))
+                {
+                    e.Graphics.DrawLines(
+                        pen,
+                        new[]
+                        {
+                            new Point(0, 0),
+                            new Point(0, this.Height),
+                            new Point(this.Width - 1, this.Height),
+                            new Point(this.Width - 1, 0),
+                            new Point(0, 0)
                         });
                 }
             }
@@ -1031,9 +1051,19 @@ namespace DevLib.ModernUI.Forms
                     return;
                 }
 
-                if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > this.TopBarHeight)
+                if (this.ShowBorder)
                 {
-                    this.MoveControl();
+                    if (this.Width - 1 > e.Location.X && e.Location.X > 1 && e.Location.Y > this.TopBarHeight + 1)
+                    {
+                        this.MoveControl();
+                    }
+                }
+                else
+                {
+                    if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > this.TopBarHeight)
+                    {
+                        this.MoveControl();
+                    }
                 }
             }
         }
@@ -1272,7 +1302,17 @@ namespace DevLib.ModernUI.Forms
                 priorityOrder.Add(2, FormControlBox.Minimize);
             }
 
-            Point firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25, this.TopBarHeight);
+            Point firstControlBoxLocation;
+
+            if (this.ShowBorder)
+            {
+                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25 - 1, this.TopBarHeight + 1);
+            }
+            else
+            {
+                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25, this.TopBarHeight);
+            }
+
             int lastDrawedControlBoxPosition = firstControlBoxLocation.X - 25;
 
             ModernControlBox firstControlBox = null;
@@ -1302,7 +1342,7 @@ namespace DevLib.ModernUI.Forms
                         continue;
                     }
 
-                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, this.TopBarHeight);
+                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, this.ShowBorder ? this.TopBarHeight + 1 : this.TopBarHeight);
                     lastDrawedControlBoxPosition = lastDrawedControlBoxPosition - 25;
                 }
             }

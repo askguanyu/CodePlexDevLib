@@ -1205,9 +1205,9 @@ namespace DevLib.ModernUI.Forms
                         this.WindowState = FormWindowState.Maximized;
                         modernControlBox.Text = "2";
 
-                        if (this.NormalBoxClick != null)
+                        if (this.MaximizeBoxClick != null)
                         {
-                            this.NormalBoxClick(this, EventArgs.Empty);
+                            this.MaximizeBoxClick(this, EventArgs.Empty);
                         }
                     }
                     else
@@ -1215,9 +1215,9 @@ namespace DevLib.ModernUI.Forms
                         this.WindowState = FormWindowState.Normal;
                         modernControlBox.Text = "1";
 
-                        if (this.MaximizeBoxClick != null)
+                        if (this.NormalBoxClick != null)
                         {
-                            this.MaximizeBoxClick(this, EventArgs.Empty);
+                            this.NormalBoxClick(this, EventArgs.Empty);
                         }
                     }
                 }

@@ -34,6 +34,7 @@ namespace DevLib.Logging
             this.WriteToConsole = true;
             this.WriteToFile = true;
             this.UseBracket = true;
+            this.EnableStackInfo = true;
             this.RollingFileSizeMBLimit = 10;
             this.RollingFileCountLimit = 10;
             this.RollingByDate = false;
@@ -70,6 +71,15 @@ namespace DevLib.Logging
         /// Gets or sets a value indicating whether use square brackets ([ ]) around log message.
         /// </summary>
         public bool UseBracket
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether enable stack frame information.
+        /// </summary>
+        public bool EnableStackInfo
         {
             get;
             set;

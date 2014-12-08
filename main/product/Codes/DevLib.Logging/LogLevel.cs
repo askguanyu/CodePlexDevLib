@@ -6,7 +6,7 @@
 namespace DevLib.Logging
 {
     /// <summary>
-    /// Enum LogLevel.
+    /// Log message level.
     /// </summary>
     public enum LogLevel
     {

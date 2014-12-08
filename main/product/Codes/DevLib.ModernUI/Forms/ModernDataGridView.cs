@@ -312,6 +312,28 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Control.HandleCreated" /> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            this.RefreshScrollBarHelper();
+
+            base.OnHandleCreated(e);
+        }
+
+        /// <summary>
+        /// Raises the GotFocus event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnGotFocus(EventArgs e)
+        {
+            this.RefreshScrollBarHelper();
+
+            base.OnGotFocus(e);
+        }
+
+        /// <summary>
         /// Raises the VisibleChanged event.
         /// </summary>
         /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>

@@ -23,6 +23,31 @@ namespace DevLib.ModernUI.Drawing
         /// <summary>
         /// Represents Large size.
         /// </summary>
-        Large
+        Large,
+
+        /// <summary>
+        /// Represents 24pt size.
+        /// </summary>
+        XL,
+
+        /// <summary>
+        /// Represents 30pt size.
+        /// </summary>
+        XXL,
+
+        /// <summary>
+        /// Represents 36f size.
+        /// </summary>
+        XXXL,
+
+        /// <summary>
+        /// Represents 48f size.
+        /// </summary>
+        XXXXL,
+
+        /// <summary>
+        /// Represents 72f size.
+        /// </summary>
+        XXXXXL,
     }
 }

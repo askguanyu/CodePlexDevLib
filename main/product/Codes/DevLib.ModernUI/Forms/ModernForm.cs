@@ -23,9 +23,9 @@ namespace DevLib.ModernUI.Forms
     public class ModernForm : Form, IModernForm, IDisposable
     {
         /// <summary>
-        /// Field BorderWidth.
+        /// Field StatusStrip.
         /// </summary>
-        private const int BorderWidth = 5;
+        protected readonly Panel StatusStrip = new Panel() { Height = 20, BackColor = Color.Transparent, ForeColor = Color.WhiteSmoke, Visible = true };
 
         /// <summary>
         /// Field CS_DROPSHADOW.
@@ -53,9 +53,9 @@ namespace DevLib.ModernUI.Forms
         private ModernFontWeight _modernFontWeight = ModernFontWeight.Light;
 
         /// <summary>
-        /// Field _displayHeader.
+        /// Field _showHeader.
         /// </summary>
-        private bool _displayHeader = true;
+        private bool _showHeader = true;
 
         /// <summary>
         /// Field _shadowType.
@@ -63,9 +63,9 @@ namespace DevLib.ModernUI.Forms
         private ModernFormShadowType _shadowType = ModernFormShadowType.AeroShadow;
 
         /// <summary>
-        /// Field _image.
+        /// Field _invertBackImage.
         /// </summary>
-        private Bitmap _image = null;
+        private Image _invertBackImage = null;
 
         /// <summary>
         /// Field _backImage.
@@ -105,6 +105,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernForm"/> class.
         /// </summary>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public ModernForm()
         {
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
@@ -121,6 +122,8 @@ namespace DevLib.ModernUI.Forms
             this.UseMaximizeBox = true;
             this.UseCloseBox = true;
             this.FontSize = 24f;
+            this.TopBarHeight = 0;
+            this.Controls.Add(this.StatusStrip);
         }
 
         /// <summary>
@@ -246,18 +249,6 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets the border style.
-        /// </summary>
-        [DefaultValue(ModernFormBorderStyle.None)]
-        [Browsable(true)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public ModernFormBorderStyle BorderStyle
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is movable.
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
@@ -333,20 +324,31 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._displayHeader;
+                return this._showHeader;
             }
 
             set
             {
-                if (value != this._displayHeader)
+                if (value != this._showHeader)
                 {
                     Padding padding = base.Padding;
                     padding.Top += value ? 30 : -30;
                     base.Padding = padding;
                 }
 
-                this._displayHeader = value;
+                this._showHeader = value;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the height of the top bar.
+        /// </summary>
+        [DefaultValue(0)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public int TopBarHeight
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -435,7 +437,7 @@ namespace DevLib.ModernUI.Forms
 
                 if (value != null)
                 {
-                    this._image = this.ApplyInvertImage(new Bitmap(value));
+                    this._invertBackImage = this.GetInvertImage(value);
                 }
 
                 this.Refresh();
@@ -583,6 +585,24 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether show status strip.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool ShowStatusStrip
+        {
+            get
+            {
+                return this.StatusStrip.Visible;
+            }
+
+            set
+            {
+                this.StatusStrip.Visible = value;
+            }
+        }
+
+        /// <summary>
         /// Gets the internal spacing, in pixels, of the contents of a control.
         /// </summary>
         protected override Padding DefaultPadding
@@ -614,12 +634,15 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Applies the invert image.
+        /// Gets the invert image.
         /// </summary>
         /// <param name="sourceImage">The source bitmap image.</param>
         /// <returns>The inverted image.</returns>
-        public Bitmap ApplyInvertImage(Bitmap sourceImage)
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public virtual Image GetInvertImage(Image sourceImage)
         {
+            Bitmap result = new Bitmap(sourceImage);
+
             byte a;
             byte r;
             byte g;
@@ -627,11 +650,12 @@ namespace DevLib.ModernUI.Forms
 
             Color pixelColor;
 
-            for (int y = 0; y < sourceImage.Height; y++)
+            for (int y = 0; y < result.Height; y++)
             {
-                for (int x = 0; x < sourceImage.Width; x++)
+                for (int x = 0; x < result.Width; x++)
                 {
-                    pixelColor = sourceImage.GetPixel(x, y);
+                    pixelColor = result.GetPixel(x, y);
+
                     a = pixelColor.A;
                     r = (byte)(255 - pixelColor.R);
                     g = (byte)(255 - pixelColor.G);
@@ -652,11 +676,11 @@ namespace DevLib.ModernUI.Forms
                         b = 17;
                     }
 
-                    sourceImage.SetPixel(x, y, Color.FromArgb((int)r, (int)g, (int)b));
+                    result.SetPixel(x, y, Color.FromArgb((int)r, (int)g, (int)b));
                 }
             }
 
-            return sourceImage;
+            return result;
         }
 
         /// <summary>
@@ -703,6 +727,8 @@ namespace DevLib.ModernUI.Forms
             if (disposing)
             {
                 this.RemoveShadow();
+
+                this.StatusStrip.Dispose();
             }
 
             base.Dispose(disposing);
@@ -721,27 +747,18 @@ namespace DevLib.ModernUI.Forms
 
             using (SolidBrush brush = ModernPaint.GetStyleBrush(this.ColorStyle))
             {
-                Rectangle topRectangle = new Rectangle(0, 0, this.Width, BorderWidth);
+                Rectangle topRectangle = new Rectangle(0, 0, this.Width, this.TopBarHeight);
                 e.Graphics.FillRectangle(brush, topRectangle);
-            }
 
-            if (this.BorderStyle != ModernFormBorderStyle.None)
-            {
-                Color borderColor = ModernPaint.BorderColor.Form(this.ThemeStyle);
-
-                using (Pen pen = new Pen(borderColor))
+                if (this.ShowStatusStrip)
                 {
-                    e.Graphics.DrawLines(
-                        pen,
-                        new[]
-                        {
-                            new Point(0, BorderWidth),
-                            new Point(0, this.Height - 1),
-                            new Point(this.Width - 1, this.Height - 1),
-                            new Point(this.Width - 1, BorderWidth)
-                        });
+                    Rectangle bottomRectangle = new Rectangle(0, this.Height - 20, this.Width, 20);
+                    e.Graphics.FillRectangle(brush, bottomRectangle);
                 }
             }
+
+            this.StatusStrip.Location = new Point(0, this.Height - 20);
+            this.StatusStrip.Width = this.Width - 20;
 
             if (this.BackImage != null && this.BackImageMaxSize != 0)
             {
@@ -749,7 +766,7 @@ namespace DevLib.ModernUI.Forms
 
                 if (this.BackImageInvert)
                 {
-                    image = ModernImage.ResizeImage(this.ThemeStyle == ModernThemeStyle.Dark ? this._image : this.BackImage, new Rectangle(0, 0, this.BackImageMaxSize, this.BackImageMaxSize));
+                    image = ModernImage.ResizeImage(this.ThemeStyle == ModernThemeStyle.Dark ? this._invertBackImage : this.BackImage, new Rectangle(0, 0, this.BackImageMaxSize, this.BackImageMaxSize));
                 }
 
                 switch (this.BackImageAlign)
@@ -784,6 +801,7 @@ namespace DevLib.ModernUI.Forms
                 using (SolidBrush brush = new SolidBrush(ModernPaint.ForeColor.Button.Disabled(this.ThemeStyle)))
                 {
                     Size resizeHandleSize = new Size(2, 2);
+
                     e.Graphics.FillRectangles(
                         brush,
                         new Rectangle[]
@@ -820,6 +838,8 @@ namespace DevLib.ModernUI.Forms
         protected override void OnClosed(EventArgs e)
         {
             this.RemoveShadow();
+
+            this.StatusStrip.Dispose();
 
             base.OnClosed(e);
         }
@@ -888,6 +908,7 @@ namespace DevLib.ModernUI.Forms
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
+
             if (this.ShadowType == ModernFormShadowType.AeroShadow && IsAeroThemeEnabled() && IsDropShadowSupported())
             {
                 int val = 2;
@@ -1010,7 +1031,7 @@ namespace DevLib.ModernUI.Forms
                     return;
                 }
 
-                if (this.Width - BorderWidth > e.Location.X && e.Location.X > BorderWidth && e.Location.Y > BorderWidth)
+                if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > this.TopBarHeight)
                 {
                     this.MoveControl();
                 }
@@ -1083,7 +1104,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.RectangleToScreen(new Rectangle(BorderWidth, BorderWidth, this.ClientRectangle.Width - (2 * BorderWidth), 50)).Contains(vPoint))
+            if (this.RectangleToScreen(new Rectangle(0, this.TopBarHeight, this.ClientRectangle.Width, 50)).Contains(vPoint))
             {
                 return WinApi.HitTest.HTCAPTION;
             }
@@ -1251,7 +1272,7 @@ namespace DevLib.ModernUI.Forms
                 priorityOrder.Add(2, FormControlBox.Minimize);
             }
 
-            Point firstControlBoxLocation = new Point(this.ClientRectangle.Width - BorderWidth - 25, BorderWidth);
+            Point firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25, this.TopBarHeight);
             int lastDrawedControlBoxPosition = firstControlBoxLocation.X - 25;
 
             ModernControlBox firstControlBox = null;
@@ -1281,7 +1302,7 @@ namespace DevLib.ModernUI.Forms
                         continue;
                     }
 
-                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, BorderWidth);
+                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, this.TopBarHeight);
                     lastDrawedControlBoxPosition = lastDrawedControlBoxPosition - 25;
                 }
             }
@@ -1321,23 +1342,6 @@ namespace DevLib.ModernUI.Forms
             this._shadowForm.Owner = null;
             this._shadowForm.Dispose();
             this._shadowForm = null;
-        }
-
-        /// <summary>
-        /// Measures the text.
-        /// </summary>
-        /// <param name="g">Graphics instance.</param>
-        /// <param name="clientRectangle">The client rectangle.</param>
-        /// <param name="font">The font.</param>
-        /// <param name="text">The text.</param>
-        /// <param name="flags">The flags.</param>
-        /// <returns>Rectangle instance.</returns>
-        private Rectangle MeasureText(Graphics g, Rectangle clientRectangle, Font font, string text, TextFormatFlags flags)
-        {
-            var proposedSize = new Size(int.MaxValue, int.MinValue);
-            var actualSize = TextRenderer.MeasureText(g, text, font, proposedSize, flags);
-
-            return new Rectangle(clientRectangle.X, clientRectangle.Y, actualSize.Width, actualSize.Height);
         }
     }
 }

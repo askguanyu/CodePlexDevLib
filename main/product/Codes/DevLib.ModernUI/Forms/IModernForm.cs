@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ModernUI.Forms
 {
+    using System;
     using System.ComponentModel;
     using DevLib.ModernUI.ComponentModel;
 
@@ -13,6 +14,34 @@ namespace DevLib.ModernUI.Forms
     /// </summary>
     public interface IModernForm
     {
+        /// <summary>
+        /// Event CloseBoxClick.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        event EventHandler CloseBoxClick;
+
+        /// <summary>
+        /// Event MinimizeBoxClick.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        event EventHandler MinimizeBoxClick;
+
+        /// <summary>
+        /// Event MaximizeBoxClick.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        event EventHandler MaximizeBoxClick;
+
+        /// <summary>
+        /// Event MaximizeBoxClick.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        event EventHandler NormalBoxClick;
+
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>

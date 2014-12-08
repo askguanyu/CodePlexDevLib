@@ -124,6 +124,26 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Event CloseBoxClick.
+        /// </summary>
+        public event EventHandler CloseBoxClick;
+
+        /// <summary>
+        /// Event MinimizeBoxClick.
+        /// </summary>
+        public event EventHandler MinimizeBoxClick;
+
+        /// <summary>
+        /// Event MaximizeBoxClick.
+        /// </summary>
+        public event EventHandler MaximizeBoxClick;
+
+        /// <summary>
+        /// Event MaximizeBoxClick.
+        /// </summary>
+        public event EventHandler NormalBoxClick;
+
+        /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
@@ -1104,11 +1124,22 @@ namespace DevLib.ModernUI.Forms
                 if (controlBoxFlag == FormControlBox.Close)
                 {
                     this.DialogResult = DialogResult.Abort;
+
+                    if (this.CloseBoxClick != null)
+                    {
+                        this.CloseBoxClick(this, EventArgs.Empty);
+                    }
+
                     this.Close();
                 }
                 else if (controlBoxFlag == FormControlBox.Minimize)
                 {
                     this.WindowState = FormWindowState.Minimized;
+
+                    if (this.MinimizeBoxClick != null)
+                    {
+                        this.MinimizeBoxClick(this, EventArgs.Empty);
+                    }
                 }
                 else if (controlBoxFlag == FormControlBox.Maximize)
                 {
@@ -1116,11 +1147,21 @@ namespace DevLib.ModernUI.Forms
                     {
                         this.WindowState = FormWindowState.Maximized;
                         modernFormButton.Text = "2";
+
+                        if (this.NormalBoxClick != null)
+                        {
+                            this.NormalBoxClick(this, EventArgs.Empty);
+                        }
                     }
                     else
                     {
                         this.WindowState = FormWindowState.Normal;
                         modernFormButton.Text = "1";
+
+                        if (this.MaximizeBoxClick != null)
+                        {
+                            this.MaximizeBoxClick(this, EventArgs.Empty);
+                        }
                     }
                 }
             }

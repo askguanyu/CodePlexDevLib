@@ -255,7 +255,7 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
-        public bool StatusTextOnRight
+        public bool StatusTextRightToLeft
         {
             get;
             set;
@@ -469,7 +469,7 @@ namespace DevLib.ModernUI.Forms
 
             using (Pen pen = new Pen(borderColor))
             {
-                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? 0 : (this.ShowStatusText ? 30 : 0), 0, this.ClientRectangle.Width - (this.ShowStatusText ? 31 : 1), this.ClientRectangle.Height - 1);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextRightToLeft ? 0 : (this.ShowStatusText ? 30 : 0), 0, this.ClientRectangle.Width - (this.ShowStatusText ? 31 : 1), this.ClientRectangle.Height - 1);
                 e.Graphics.DrawRectangle(pen, boxRectangle);
             }
 
@@ -477,7 +477,7 @@ namespace DevLib.ModernUI.Forms
 
             using (SolidBrush brush = new SolidBrush(fillColor))
             {
-                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? 0 : (this.ShowStatusText ? 32 : 2), 2, this.ClientRectangle.Width - (this.ShowStatusText ? 34 : 4), this.ClientRectangle.Height - 4);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextRightToLeft ? 0 : (this.ShowStatusText ? 32 : 2), 2, this.ClientRectangle.Width - (this.ShowStatusText ? 34 : 4), this.ClientRectangle.Height - 4);
                 e.Graphics.FillRectangle(brush, boxRectangle);
             }
 
@@ -492,7 +492,7 @@ namespace DevLib.ModernUI.Forms
             {
                 int left = this.Checked ? this.Width - 11 : (this.ShowStatusText ? 30 : 0);
 
-                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? left - 30 : left, 0, 11, this.ClientRectangle.Height);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextRightToLeft ? left - 30 : left, 0, 11, this.ClientRectangle.Height);
                 e.Graphics.FillRectangle(brush, boxRectangle);
             }
 
@@ -500,13 +500,13 @@ namespace DevLib.ModernUI.Forms
             {
                 int left = this.Checked ? this.Width - 10 : (this.ShowStatusText ? 30 : 0);
 
-                Rectangle boxRectangle = new Rectangle(this.StatusTextOnRight ? left - 30 : left, 0, 10, this.ClientRectangle.Height);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextRightToLeft ? left - 30 : left, 0, 10, this.ClientRectangle.Height);
                 e.Graphics.FillRectangle(brush, boxRectangle);
             }
 
             if (this.ShowStatusText)
             {
-                Rectangle textRectangle = new Rectangle(this.StatusTextOnRight ? this.ClientRectangle.Width - (this.ShowStatusText ? 31 : 1) : 0, 0, 30, this.ClientRectangle.Height);
+                Rectangle textRectangle = new Rectangle(this.StatusTextRightToLeft ? this.ClientRectangle.Width - (this.ShowStatusText ? 31 : 1) : 0, 0, 30, this.ClientRectangle.Height);
                 TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Link(this.FontSize, this.FontWeight), textRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
             }
 

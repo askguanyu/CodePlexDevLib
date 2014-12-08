@@ -21,10 +21,11 @@ namespace DevLib.Logging
         /// <param name="skipFrames">The number of frames up the stack to skip.</param>
         /// <param name="logLevel">Log level.</param>
         /// <param name="useBracket">true to use square brackets ([ ]) around log message; otherwise, false.</param>
+        /// <param name="enableStackInfo">true to enable stack information; otherwise, false.</param>
         /// <param name="message">Diagnostic message to log.</param>
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         /// <returns>The rendered layout string.</returns>
-        public static string Render(int skipFrames, LogLevel logLevel, bool useBracket, string message, object[] objs)
+        public static string Render(int skipFrames, LogLevel logLevel, bool useBracket, bool enableStackInfo, string message, object[] objs)
         {
             StringBuilder result = new StringBuilder();
 
@@ -73,8 +74,12 @@ namespace DevLib.Logging
                 }
             }
 
-            result.Append(" |");
-            result.Append(InternalLogger.GetStackFrameInfo(skipFrames < 1 ? 2 : skipFrames + 2));
+            if (enableStackInfo)
+            {
+                result.Append(" |");
+                result.Append(InternalLogger.GetStackFrameInfo(skipFrames < 1 ? 2 : skipFrames + 2));
+            }
+
             result.Append(Environment.NewLine);
 
             return result.ToString();

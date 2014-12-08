@@ -70,6 +70,8 @@ namespace DevLib.ModernUI.Forms
         {
             this.ControlContainer = new ModernPanel();
             this.Controls.Add(this.ControlContainer);
+            this.Size = new Size(400, 200);
+            this.TopBarHeight = 2;
         }
 
         /// <summary>
@@ -241,7 +243,6 @@ namespace DevLib.ModernUI.Forms
                 _singletonWindow.StyleManager = ownerForm.StyleManager.Clone(_singletonWindow) as ModernStyleManager;
             }
 
-            _singletonWindow.Opacity = 0;
             _singletonWindow.Show();
         }
 
@@ -295,8 +296,6 @@ namespace DevLib.ModernUI.Forms
                 this.MinimizeBox = false;
                 this.Movable = true;
 
-                this.Size = new Size(400, 200);
-
                 Taskbar taskbar = new Taskbar();
 
                 switch (taskbar.Position)
@@ -344,7 +343,6 @@ namespace DevLib.ModernUI.Forms
 
             base.OnActivated(e);
 
-            this.Opacity = 1;
             this.TopMost = true;
         }
 
@@ -358,7 +356,7 @@ namespace DevLib.ModernUI.Forms
 
             using (SolidBrush brush = new SolidBrush(ModernPaint.BackColor.Form(this.ThemeStyle)))
             {
-                e.Graphics.FillRectangle(brush, new Rectangle(this.Width - this._progressWidth, 0, this._progressWidth, 5));
+                e.Graphics.FillRectangle(brush, new Rectangle(this.Width - this._progressWidth, 0, this._progressWidth, this.TopBarHeight));
             }
         }
 
@@ -386,7 +384,7 @@ namespace DevLib.ModernUI.Forms
 
             double percent = this._elapsedTime / this._closeTime;
             this._progressWidth = (int)((double)this.Width * percent);
-            this.Invalidate(new Rectangle(0, 0, this.Width, 5));
+            this.Invalidate(new Rectangle(0, 0, this.Width, this.TopBarHeight));
 
             if (this._elapsedTime >= this._thresholdTime && this.Opacity > 0.1d)
             {

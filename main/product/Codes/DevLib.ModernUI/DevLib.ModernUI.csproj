@@ -75,7 +75,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ModernFormBackImageAlign.cs" />
-    <Compile Include="Forms\ModernFormBorderStyle.cs" />
     <Compile Include="Forms\ModernFormShadowType.cs" />
     <Compile Include="Forms\ModernFormTextAlign.cs" />
     <Compile Include="Forms\ModernRealisticDropShadow.cs">

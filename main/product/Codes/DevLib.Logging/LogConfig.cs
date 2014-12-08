@@ -66,15 +66,16 @@ namespace DevLib.Logging
         public override int GetHashCode()
         {
             return string.Format(
-                "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}",
+                "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
                 Path.GetFullPath(this.LogFile),
                 this.LoggerSetup.Level.ToString(),
-                this.LoggerSetup.RollingByDate.ToString(),
-                this.LoggerSetup.RollingFileCountLimit.ToString(),
-                this.LoggerSetup.RollingFileSizeLimit.ToString(),
-                this.LoggerSetup.UseBracket.ToString(),
                 this.LoggerSetup.WriteToConsole.ToString(),
-                this.LoggerSetup.WriteToFile.ToString()).ToUpperInvariant().GetHashCode();
+                this.LoggerSetup.WriteToFile.ToString(),
+                this.LoggerSetup.UseBracket.ToString(),
+                this.LoggerSetup.EnableStackInfo.ToString(),
+                this.LoggerSetup.RollingFileSizeLimit.ToString(),
+                this.LoggerSetup.RollingFileCountLimit.ToString(),
+                this.LoggerSetup.RollingByDate.ToString()).ToUpperInvariant().GetHashCode();
         }
     }
 }

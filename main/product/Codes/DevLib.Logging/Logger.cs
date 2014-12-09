@@ -146,7 +146,7 @@ namespace DevLib.Logging
             {
                 try
                 {
-                    string logMessage = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, null, objs);
+                    string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
 
                     if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                     {
@@ -183,7 +183,7 @@ namespace DevLib.Logging
             {
                 try
                 {
-                    string logMessage = LogLayout.Render(skipFrames, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
+                    string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
 
                     if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                     {

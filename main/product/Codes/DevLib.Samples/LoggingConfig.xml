@@ -1,6 +1,7 @@
 ﻿<LogConfig>
     <LogFile>C:\test.log</LogFile>
     <LoggerSetup>
+        <DateTimeFormat>yyyy-MM-ddTHH:mm:ss.fffffffUzzz</DateTimeFormat>
         <Level>DBUG</Level>
         <WriteToConsole>true</WriteToConsole>
         <WriteToFile>true</WriteToFile>

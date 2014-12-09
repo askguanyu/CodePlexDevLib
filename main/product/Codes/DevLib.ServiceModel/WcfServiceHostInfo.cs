@@ -10,10 +10,20 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Description;
 
     /// <summary>
-    /// Defines the WcfServiceHost state Enum.
+    /// Defines the WcfServiceHost state.
     /// </summary>
-    public enum WcfServiceHostStateEnum
+    public enum WcfServiceHostState
     {
+        /// <summary>
+        /// Represents receiving request.
+        /// </summary>
+        Receiving,
+
+        /// <summary>
+        /// Represents sending reply.
+        /// </summary>
+        Replying,
+
         /// <summary>
         /// Represents Created.
         /// </summary>

@@ -727,6 +727,8 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            string dts = DateTime.Now.ToString((string)null);
+
             string path = "LDAP://contoso.local";
 
             LdapEntry ldapEntry = new LdapEntry(path,"aaa","bbb!");
@@ -1862,7 +1864,11 @@ namespace DevLib.Samples
 
             //new WcfServiceHost(typeof(WcfTest), "DevLib.Samples.exe.config", "http://127.0.0.1:6000/WcfTest", true);
 
-            new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", true);
+            var calcsvr = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", true);
+            calcsvr.Receiving += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Receiving);
+            calcsvr.Replying += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Replying);
+
+            Console.ReadLine();
 
             //new WcfServiceHost(typeof(WcfTest), typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
 
@@ -1951,6 +1957,16 @@ namespace DevLib.Samples
 
             //Console.ReadKey();
             //host.Dispose();
+        }
+
+        static void calcsvr_Replying(object sender, WcfServiceHostEventArgs e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        static void calcsvr_Receiving(object sender, WcfServiceHostEventArgs e)
+        {
+            Console.WriteLine(e.Message);
         }
 
         private static void TestDevLibConfiguration()

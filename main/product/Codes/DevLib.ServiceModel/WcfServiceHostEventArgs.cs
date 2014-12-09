@@ -18,25 +18,36 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="wcfServiceName">String of Wcf Service Name.</param>
         /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
-        public WcfServiceHostEventArgs(string wcfServiceName, WcfServiceHostStateEnum state)
+        /// <param name="message">The Wcf service message.</param>
+        public WcfServiceHostEventArgs(string wcfServiceName, WcfServiceHostState state, string message = "")
         {
             this.WcfServiceName = wcfServiceName;
             this.State = state;
-        }
-
-        /// <summary>
-        /// Gets Wcf service state.
-        /// </summary>
-        public WcfServiceHostStateEnum State
-        {
-            get;
-            private set;
+            this.Message = message;
         }
 
         /// <summary>
         /// Gets Wcf service name.
         /// </summary>
         public string WcfServiceName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets Wcf service state.
+        /// </summary>
+        public WcfServiceHostState State
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets Wcf service message.
+        /// </summary>
+        public string Message
         {
             get;
             private set;

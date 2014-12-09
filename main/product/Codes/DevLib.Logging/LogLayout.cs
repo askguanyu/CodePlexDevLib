@@ -19,17 +19,20 @@ namespace DevLib.Logging
         /// Render parameters into a string.
         /// </summary>
         /// <param name="skipFrames">The number of frames up the stack to skip.</param>
+        /// <param name="format">A standard or custom date and time format string.</param>
         /// <param name="logLevel">Log level.</param>
         /// <param name="useBracket">true to use square brackets ([ ]) around log message; otherwise, false.</param>
         /// <param name="enableStackInfo">true to enable stack information; otherwise, false.</param>
         /// <param name="message">Diagnostic message to log.</param>
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         /// <returns>The rendered layout string.</returns>
-        public static string Render(int skipFrames, LogLevel logLevel, bool useBracket, bool enableStackInfo, string message, object[] objs)
+        public static string Render(int skipFrames, string format, LogLevel logLevel, bool useBracket, bool enableStackInfo, string message, object[] objs)
         {
+            DateTime timestamp = DateTime.Now;
+
             StringBuilder result = new StringBuilder();
 
-            result.Append(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
+            result.Append(string.IsNullOrEmpty(format) ? timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture) : timestamp.ToString(format));
             result.Append("|");
             result.Append(logLevel.ToString());
             result.Append("|");

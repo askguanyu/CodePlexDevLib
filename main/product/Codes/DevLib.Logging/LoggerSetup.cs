@@ -30,6 +30,7 @@ namespace DevLib.Logging
         /// </summary>
         public LoggerSetup()
         {
+            this.DateTimeFormat = string.Empty;
             this.Level = LogLevel.DBUG;
             this.WriteToConsole = true;
             this.WriteToFile = true;
@@ -38,6 +39,15 @@ namespace DevLib.Logging
             this.RollingFileSizeMBLimit = 10;
             this.RollingFileCountLimit = 10;
             this.RollingByDate = false;
+        }
+
+        /// <summary>
+        /// Gets or sets the standard or custom date and time format string.
+        /// </summary>
+        public string DateTimeFormat
+        {
+            get;
+            set;
         }
 
         /// <summary>

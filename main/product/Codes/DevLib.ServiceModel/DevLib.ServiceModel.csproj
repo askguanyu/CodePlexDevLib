@@ -78,9 +78,11 @@
     <Compile Include="WcfClientPerSessionBaseClassBuilder.cs" />
     <Compile Include="WcfServiceHost.cs" />
     <Compile Include="WcfServiceHostConstants.cs" />
+    <Compile Include="WcfServiceHostDispatchMessageInspector.cs" />
     <Compile Include="WcfServiceHostInfo.cs" />
     <Compile Include="WcfServiceHostEventArgs.cs" />
     <Compile Include="WcfServiceHostProxy.cs" />
+    <Compile Include="WcfServiceHostServiceBehavior.cs" />
     <Compile Include="WcfServiceType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

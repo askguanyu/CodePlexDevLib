@@ -22,7 +22,7 @@ namespace DevLib.ServiceModel
     /// Class WcfServiceHost.
     /// </summary>
     [Serializable]
-    public sealed class WcfServiceHost : MarshalByRefObject, IDisposable
+    public class WcfServiceHost : MarshalByRefObject, IDisposable
     {
         /// <summary>
         /// Field ServiceHostSyncRoot.
@@ -629,6 +629,16 @@ namespace DevLib.ServiceModel
         /// Event Restarted.
         /// </summary>
         public event EventHandler<WcfServiceHostEventArgs> Restarted;
+
+        /// <summary>
+        /// Occurs after receive request.
+        /// </summary>
+        public event EventHandler<WcfServiceHostEventArgs> Receiving;
+
+        /// <summary>
+        /// Occurs before send reply.
+        /// </summary>
+        public event EventHandler<WcfServiceHostEventArgs> Replying;
 
         /// <summary>
         /// Gets a value indicating whether service host is opened or not.
@@ -1736,7 +1746,7 @@ namespace DevLib.ServiceModel
                     {
                         if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
                         {
-                            this.RaiseEvent(this.Opening, serviceHost.Description.Name, WcfServiceHostStateEnum.Opening);
+                            this.RaiseEvent(this.Opening, serviceHost.Description.Name, WcfServiceHostState.Opening);
 
                             if (this.SetServiceCredentialsAction != null)
                             {
@@ -1745,7 +1755,7 @@ namespace DevLib.ServiceModel
 
                             serviceHost.Open();
 
-                            this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostStateEnum.Opened);
+                            this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostState.Opened);
 
                             InternalLogger.Log(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
@@ -1781,7 +1791,7 @@ namespace DevLib.ServiceModel
             {
                 foreach (var serviceHost in this._serviceHostList)
                 {
-                    this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostStateEnum.Closing);
+                    this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostState.Closing);
 
                     try
                     {
@@ -1796,7 +1806,7 @@ namespace DevLib.ServiceModel
                         InternalLogger.Log(e);
                     }
 
-                    this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostStateEnum.Closed);
+                    this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostState.Closed);
                 }
             }
 
@@ -1816,7 +1826,7 @@ namespace DevLib.ServiceModel
             {
                 foreach (var serviceHost in this._serviceHostList)
                 {
-                    this.RaiseEvent(this.Aborting, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborting);
+                    this.RaiseEvent(this.Aborting, serviceHost.Description.Name, WcfServiceHostState.Aborting);
 
                     try
                     {
@@ -1829,7 +1839,7 @@ namespace DevLib.ServiceModel
                         InternalLogger.Log(e);
                     }
 
-                    this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostStateEnum.Aborted);
+                    this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostState.Aborted);
                 }
             }
 
@@ -1855,11 +1865,11 @@ namespace DevLib.ServiceModel
                     {
                         if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
                         {
-                            this.RaiseEvent(this.Restarting, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarting);
+                            this.RaiseEvent(this.Restarting, serviceHost.Description.Name, WcfServiceHostState.Restarting);
 
                             serviceHost.Open();
 
-                            this.RaiseEvent(this.Restarted, serviceHost.Description.Name, WcfServiceHostStateEnum.Restarted);
+                            this.RaiseEvent(this.Restarted, serviceHost.Description.Name, WcfServiceHostState.Restarted);
 
                             InternalLogger.Log(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
@@ -2030,15 +2040,35 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
         /// <param name="wcfServiceName">String of Wcf Service Name.</param>
-        /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostStateEnum state)
+        /// <param name="state">Instance of WcfServiceHostState.</param>
+        /// <param name="message">The message.</param>
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string wcfServiceName, WcfServiceHostState state, string message = "")
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostEventArgs(wcfServiceName, state));
+                temp(this, new WcfServiceHostEventArgs(wcfServiceName, state, message));
+            }
+        }
+
+        /// <summary>
+        /// Method RaiseEvent.
+        /// </summary>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        /// <param name="sender">The sender.</param>
+        /// <param name="wcfServiceName">String of Wcf Service Name.</param>
+        /// <param name="state">Instance of WcfServiceHostState.</param>
+        /// <param name="message">The message.</param>
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, object sender, string wcfServiceName, WcfServiceHostState state, string message = "")
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(sender, new WcfServiceHostEventArgs(wcfServiceName, state, message));
             }
         }
 
@@ -2088,9 +2118,28 @@ namespace DevLib.ServiceModel
 
                             WcfServiceHostProxy serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new WcfServiceHostProxy(serviceType) : new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
 
+                            WcfServiceHostServiceBehavior wcfServiceHostServiceBehavior = serviceHost.Description.Behaviors.Find<WcfServiceHostServiceBehavior>();
+
+                            if (wcfServiceHostServiceBehavior == null)
+                            {
+                                wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
+                                wcfServiceHostServiceBehavior.Receiving += (s, e) => this.RaiseEvent(this.Receiving, s, serviceHost.Description.Name, e.State, e.Message);
+                                wcfServiceHostServiceBehavior.Replying += (s, e) => this.RaiseEvent(this.Replying, s, serviceHost.Description.Name, e.State, e.Message);
+
+                                serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
+                            }
+                            else
+                            {
+                                wcfServiceHostServiceBehavior.Receiving -= (s, e) => this.RaiseEvent(this.Receiving, s, serviceHost.Description.Name, e.State, e.Message);
+                                wcfServiceHostServiceBehavior.Replying -= (s, e) => this.RaiseEvent(this.Replying, s, serviceHost.Description.Name, e.State, e.Message);
+
+                                wcfServiceHostServiceBehavior.Receiving += (s, e) => this.RaiseEvent(this.Receiving, s, serviceHost.Description.Name, e.State, e.Message);
+                                wcfServiceHostServiceBehavior.Replying += (s, e) => this.RaiseEvent(this.Replying, s, serviceHost.Description.Name, e.State, e.Message);
+                            }
+
                             this._serviceHostList.Add(serviceHost);
 
-                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
+                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostState.Created);
 
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
@@ -2144,6 +2193,25 @@ namespace DevLib.ServiceModel
                             foreach (Type serviceContract in contractList)
                             {
                                 serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+                            }
+
+                            WcfServiceHostServiceBehavior wcfServiceHostServiceBehavior = serviceHost.Description.Behaviors.Find<WcfServiceHostServiceBehavior>();
+
+                            if (wcfServiceHostServiceBehavior == null)
+                            {
+                                wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
+                                wcfServiceHostServiceBehavior.Receiving += (s, e) => this.RaiseEvent(this.Receiving, s, serviceHost.Description.Name, e.State, e.Message);
+                                wcfServiceHostServiceBehavior.Replying += (s, e) => this.RaiseEvent(this.Replying, s, serviceHost.Description.Name, e.State, e.Message);
+
+                                serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
+                            }
+                            else
+                            {
+                                wcfServiceHostServiceBehavior.Receiving -= (s, e) => this.RaiseEvent(this.Receiving, s, serviceHost.Description.Name, e.State, e.Message);
+                                wcfServiceHostServiceBehavior.Replying -= (s, e) => this.RaiseEvent(this.Replying, s, serviceHost.Description.Name, e.State, e.Message);
+
+                                wcfServiceHostServiceBehavior.Receiving += (s, e) => this.RaiseEvent(this.Receiving, s, serviceHost.Description.Name, e.State, e.Message);
+                                wcfServiceHostServiceBehavior.Replying += (s, e) => this.RaiseEvent(this.Replying, s, serviceHost.Description.Name, e.State, e.Message);
                             }
 
                             ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
@@ -2217,7 +2285,7 @@ namespace DevLib.ServiceModel
 
                             this._serviceHostList.Add(serviceHost);
 
-                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostStateEnum.Created);
+                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostState.Created);
 
                             InternalLogger.Log(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }

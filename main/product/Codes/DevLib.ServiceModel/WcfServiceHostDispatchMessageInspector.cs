@@ -37,7 +37,16 @@ namespace DevLib.ServiceModel
         /// <returns>The object used to correlate state.</returns>
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            string message = request.ToString();
+            string message = null;
+
+            if (request != null)
+            {
+                message = request.ToString();
+            }
+            else
+            {
+                message = string.Empty;
+            }
 
             Debug.WriteLine(message);
 
@@ -53,7 +62,16 @@ namespace DevLib.ServiceModel
         /// <param name="correlationState">State of the correlation.</param>
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            string message = reply.ToString();
+            string message = null;
+
+            if (reply != null)
+            {
+                message = reply.ToString();
+            }
+            else
+            {
+                message = string.Empty;
+            }
 
             Debug.WriteLine(message);
 

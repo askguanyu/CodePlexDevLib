@@ -58,10 +58,6 @@ namespace DevLib.ServiceModel
             ilGenerator.EmitCall(OpCodes.Call, this.GetMethodFromBaseClass(WcfClientConstants.CreateProxyInstanceMethodName), null);
             ilGenerator.Emit(OpCodes.Stloc_0);
 
-            ilGenerator.Emit(OpCodes.Ldarg_0);
-            ilGenerator.Emit(OpCodes.Ldloc_0);
-            ilGenerator.Emit(OpCodes.Call, this.GetMethodFromBaseClass(WcfClientConstants.SetClientCredentialsMethodName));
-
             ilGenerator.Emit(OpCodes.Ldloc_0);
 
             for (int index = 0; index < parameterTypes.Length; index++)

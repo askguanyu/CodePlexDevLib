@@ -67,7 +67,7 @@ namespace DevLib.Logging
         {
             return string.Format(
                 "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
-                Path.GetFullPath(this.LogFile),
+                Path.GetFullPath(this.LogFile).ToUpperInvariant(),
                 this.LoggerSetup.DateTimeFormat ?? string.Empty,
                 this.LoggerSetup.Level.ToString(),
                 this.LoggerSetup.WriteToConsole.ToString(),
@@ -76,7 +76,7 @@ namespace DevLib.Logging
                 this.LoggerSetup.EnableStackInfo.ToString(),
                 this.LoggerSetup.RollingFileSizeLimit.ToString(),
                 this.LoggerSetup.RollingFileCountLimit.ToString(),
-                this.LoggerSetup.RollingByDate.ToString()).ToUpperInvariant().GetHashCode();
+                this.LoggerSetup.RollingByDate.ToString()).GetHashCode();
         }
     }
 }

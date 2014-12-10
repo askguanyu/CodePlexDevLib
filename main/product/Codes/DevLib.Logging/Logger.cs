@@ -39,7 +39,7 @@ namespace DevLib.Logging
         /// <summary>
         /// The <see cref="Queue{T}" /> that contains the data items.
         /// </summary>
-        private readonly Queue<string> _queue;
+        private readonly Queue<LogMessage> _queue;
 
         /// <summary>
         /// Allows the consumer thread to block when no items are available in the <see cref="_queue" />.
@@ -52,6 +52,16 @@ namespace DevLib.Logging
         private readonly Thread _consumerThread;
 
         /// <summary>
+        /// Field _consumerThread.
+        /// </summary>
+        private readonly Thread _fileAppenderThread;
+
+        /// <summary>
+        /// Field _consumerThread.
+        /// </summary>
+        private readonly Thread _consoleAppenderThread;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Logger" /> class.
         /// </summary>
         /// <param name="logFile">Log file.</param>
@@ -62,26 +72,36 @@ namespace DevLib.Logging
 
             this._loggerSetup = loggerSetup;
 
+            if (this._loggerSetup.WriteToConsole && this._loggerSetup.WriteToFile)
+            {
+                this._queueWaitHandle = new AutoResetEvent(false);
+
+                this._queue = new Queue<LogMessage>();
+
+                this._consumerThread = new Thread(this.ConsumerThread);
+                this._consumerThread.IsBackground = true;
+                this._consumerThread.Start();
+            }
+
             if (this._loggerSetup.WriteToFile)
             {
                 try
                 {
                     this._fileAppender = new MutexMultiProcessFileAppender(this._logFile, this._loggerSetup);
 
-                    this._queueWaitHandle = new AutoResetEvent(false);
-
-                    this._queue = new Queue<string>();
-
-                    this._consumerThread = new Thread(this.ConsumerThread);
-
-                    this._consumerThread.IsBackground = true;
-
-                    this._consumerThread.Start();
+                    this._fileAppenderThread = new Thread(this.FileAppenderThread);
+                    this._fileAppenderThread.IsBackground = true;
                 }
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
                 }
+            }
+
+            if (this._loggerSetup.WriteToConsole)
+            {
+                this._consoleAppenderThread = new Thread(this.ConsoleAppenderThread);
+                this._consoleAppenderThread.IsBackground = true;
             }
         }
 
@@ -148,19 +168,11 @@ namespace DevLib.Logging
                 {
                     string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
 
-                    if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                    lock (this._queueSyncRoot)
                     {
-                        this.WriteColoredConsole(logLevel, logMessage);
-                    }
+                        this._queue.Enqueue(new LogMessage(logLevel, logMessage));
 
-                    if (this._fileAppender != null)
-                    {
-                        lock (this._queueSyncRoot)
-                        {
-                            this._queue.Enqueue(logMessage);
-
-                            this._queueWaitHandle.Set();
-                        }
+                        this._queueWaitHandle.Set();
                     }
                 }
                 catch (Exception e)
@@ -185,19 +197,11 @@ namespace DevLib.Logging
                 {
                     string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
 
-                    if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                    lock (this._queueSyncRoot)
                     {
-                        this.WriteColoredConsole(logLevel, logMessage);
-                    }
+                        this._queue.Enqueue(new LogMessage(logLevel, logMessage));
 
-                    if (this._fileAppender != null)
-                    {
-                        lock (this._queueSyncRoot)
-                        {
-                            this._queue.Enqueue(logMessage);
-
-                            this._queueWaitHandle.Set();
-                        }
+                        this._queueWaitHandle.Set();
                     }
                 }
                 catch (Exception e)
@@ -208,51 +212,13 @@ namespace DevLib.Logging
         }
 
         /// <summary>
-        /// Writes the specified string value with foreground color, followed by the current line terminator, to the standard output stream.
-        /// </summary>
-        /// <param name="logLevel">Log level.</param>
-        /// <param name="message">Message to write.</param>
-        private void WriteColoredConsole(LogLevel logLevel, string message)
-        {
-            ConsoleColor originalForeColor = Console.ForegroundColor;
-
-            switch (logLevel)
-            {
-                case LogLevel.DBUG:
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    break;
-                case LogLevel.INFO:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    break;
-                case LogLevel.EXCP:
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
-                case LogLevel.WARN:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case LogLevel.ERRO:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case LogLevel.FAIL:
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    break;
-                default:
-                    break;
-            }
-
-            Console.WriteLine(message);
-
-            Console.ForegroundColor = originalForeColor;
-        }
-
-        /// <summary>
         /// The consumer thread.
         /// </summary>
         private void ConsumerThread()
         {
             while (true)
             {
-                string nextItem = null;
+                LogMessage nextItem = null;
 
                 bool itemExists;
 
@@ -268,19 +234,45 @@ namespace DevLib.Logging
 
                 if (itemExists)
                 {
-                    try
+                    if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                     {
-                        this._fileAppender.Write(nextItem);
+                        this._consoleAppenderThread.Start(nextItem);
                     }
-                    catch (Exception e)
+
+                    if (this._fileAppender != null)
                     {
-                        InternalLogger.Log(e);
+                        this._fileAppenderThread.Start(nextItem.Message);
                     }
                 }
                 else
                 {
                     this._queueWaitHandle.WaitOne();
                 }
+            }
+        }
+
+        /// <summary>
+        /// ConsoleAppender thread.
+        /// </summary>
+        /// <param name="logMessage">The LogMessage instance.</param>
+        private void ConsoleAppenderThread(object logMessage)
+        {
+            ColoredConsoleAppender.Write((LogMessage)logMessage);
+        }
+
+        /// <summary>
+        /// FileAppender thread.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private void FileAppenderThread(object message)
+        {
+            try
+            {
+                this._fileAppender.Write((string)message);
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
             }
         }
     }

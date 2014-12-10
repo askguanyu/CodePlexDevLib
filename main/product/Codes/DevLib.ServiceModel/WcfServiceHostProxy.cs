@@ -7,6 +7,7 @@ namespace DevLib.ServiceModel
 {
     using System;
     using System.Configuration;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
     using System.ServiceModel;
@@ -27,6 +28,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field ConfigFile.
         /// </summary>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1306:FieldNamesMustBeginWithLowerCaseLetter", Justification = "Reviewed.")]
         private static string ConfigFile;
 
         /// <summary>

@@ -144,8 +144,9 @@ namespace DevLib.Logging
         /// </summary>
         /// <param name="logFile">Log file for the current application; if null or string.Empty use the default log file.</param>
         /// <param name="configFile">Configuration file which contains LoggerSetup info; if null or string.Empty use the default configuration file.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>Logger instance.</returns>
-        public static Logger Open(string logFile, string configFile)
+        public static Logger Open(string logFile, string configFile, bool throwOnError = false)
         {
             LogConfig logConfig = new LogConfig();
 
@@ -154,7 +155,7 @@ namespace DevLib.Logging
                 logConfig.LogFile = logFile;
             }
 
-            logConfig.LoggerSetup = LogConfigManager.GetLoggerSetup(configFile);
+            logConfig.LoggerSetup = LogConfigManager.GetLoggerSetup(configFile, throwOnError);
 
             int key = logConfig.GetHashCode();
 
@@ -201,10 +202,11 @@ namespace DevLib.Logging
         /// Opens the log configuration file for the current application.
         /// </summary>
         /// <param name="configFile">Configuration file which contains LogConfig info; if null or string.Empty use the default configuration file.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>Logger instance.</returns>
-        public static Logger OpenConfig(string configFile = null)
+        public static Logger OpenConfig(string configFile = null, bool throwOnError = false)
         {
-            LogConfig logConfig = LogConfigManager.GetLogConfig(configFile);
+            LogConfig logConfig = LogConfigManager.GetLogConfig(configFile, throwOnError);
 
             int key = logConfig.GetHashCode();
 

@@ -20,10 +20,16 @@ namespace DevLib.Logging
         /// Get logger setup from configuration file.
         /// </summary>
         /// <param name="configFile">Configuration file which contains LoggerSetup info.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>Instance of LoggerSetup.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static LoggerSetup GetLoggerSetup(string configFile)
+        public static LoggerSetup GetLoggerSetup(string configFile, bool throwOnError = false)
         {
+            if (string.IsNullOrEmpty(configFile) && throwOnError)
+            {
+                throw new ArgumentNullException("configFile", "The specified file name is null or empty.");
+            }
+
             LoggerSetup result = new LoggerSetup();
 
             if (File.Exists(configFile))
@@ -49,6 +55,18 @@ namespace DevLib.Logging
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+                }
+            }
+            else
+            {
+                if (throwOnError)
+                {
+                    throw new FileNotFoundException("The specified file does not exist.", configFile);
                 }
             }
 
@@ -59,10 +77,16 @@ namespace DevLib.Logging
         /// Get log config from configuration file.
         /// </summary>
         /// <param name="configFile">Configuration file which contains LogConfig info.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>Instance of LogConfig.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static LogConfig GetLogConfig(string configFile)
+        public static LogConfig GetLogConfig(string configFile, bool throwOnError = false)
         {
+            if (string.IsNullOrEmpty(configFile) && throwOnError)
+            {
+                throw new ArgumentNullException("configFile", "The specified file name is null or empty.");
+            }
+
             LogConfig result = new LogConfig();
 
             if (File.Exists(configFile))
@@ -114,6 +138,18 @@ namespace DevLib.Logging
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+                }
+            }
+            else
+            {
+                if (throwOnError)
+                {
+                    throw new FileNotFoundException("The specified file does not exist.", configFile);
                 }
             }
 

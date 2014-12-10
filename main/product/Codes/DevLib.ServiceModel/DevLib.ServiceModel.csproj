@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DevLib.ServiceModel</RootNamespace>
     <AssemblyName>DevLib.ServiceModel</AssemblyName>
-    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -61,6 +61,7 @@
     <Compile Include="IWcfClientBase.cs" />
     <Compile Include="IWcfClientTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WcfClientProxyExtensions.cs" />
     <Compile Include="WcfClientPerCallBaseClassBuilder.cs" />
     <Compile Include="WcfClientChannelFactory.cs" />
     <Compile Include="WcfClientAbstractClassBuilder.cs" />

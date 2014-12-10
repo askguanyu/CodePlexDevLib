@@ -60,6 +60,7 @@ namespace DevLib.Samples
     using DevLib.Remoting;
     using DevLib.Serialization;
     using DevLib.ServiceModel;
+    using DevLib.ServiceModel.Extensions;
     using DevLib.ServiceProcess;
     using DevLib.TerminalServices;
     using DevLib.Timers;
@@ -731,7 +732,7 @@ namespace DevLib.Samples
 
             string path = "LDAP://contoso.local";
 
-            LdapEntry ldapEntry = new LdapEntry(path,"aaa","bbb!");
+            LdapEntry ldapEntry = new LdapEntry(path, "aaa", "bbb!");
 
             //var ldapuser = ldapEntry.Authenticate("aaa","ccc");
 
@@ -1864,23 +1865,26 @@ namespace DevLib.Samples
 
             //new WcfServiceHost(typeof(WcfTest), "DevLib.Samples.exe.config", "http://127.0.0.1:6000/WcfTest", true);
 
-            var calcsvr = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", true);
-            calcsvr.Receiving += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Receiving);
-            calcsvr.Replying += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Replying);
-
-            Console.ReadLine();
-
+            var testsrv = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
+            //testsrv.Receiving += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Receiving);
+            //testsrv.Replying += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Replying);
+            testsrv.SetDataContractResolverAction = i => i.AddGenericDataContractResolver();
+            //Console.ReadLine();
+            testsrv.Open();
             //new WcfServiceHost(typeof(WcfTest), typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
 
             var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
 
             WcfClientType.SaveGeneratedAssemblyFile = true;
 
-            var client1 = WcfClientProxy<IWcfTest>.GetClientBaseInstance(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest");
+            var client1 = WcfClientProxy<IWcfTest>.GetPerCallUnthrowableInstance(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest");
 
-            var client2 = client1 as WcfClientBase<IWcfTest>;
+            client1.SetDataContractResolver(i => i.AddGenericDataContractResolver());
 
-            client2.SetClientCredentialsAction = (c) => { c.UserName.UserName = "a"; c.UserName.Password = "b"; };
+            //client2.SetClientCredentialsAction = (c) => { c.UserName.UserName = "a"; c.UserName.Password = "b"; };
+
+            client1.AddAnimal(new Dog());
+
             client1.Foo("");
 
             //clinet2.ClientCredentials

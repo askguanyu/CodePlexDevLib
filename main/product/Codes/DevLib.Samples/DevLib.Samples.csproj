@@ -210,6 +210,10 @@
       <Project>{E263E10B-9DF6-44F8-9E58-34338316F08E}</Project>
       <Name>DevLib.Serialization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceModel.Extensions\DevLib.ServiceModel.Extensions.csproj">
+      <Project>{78F68CF9-8C7A-4E4A-8ACF-897AF942CD3B}</Project>
+      <Name>DevLib.ServiceModel.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ServiceModel\DevLib.ServiceModel.csproj">
       <Project>{61266225-A0B6-4792-A8C2-2B99DD02927A}</Project>
       <Name>DevLib.ServiceModel</Name>

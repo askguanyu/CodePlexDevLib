@@ -117,6 +117,15 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Gets or sets a delegate to configure DataContractSerializerOperationBehavior.
+        /// </summary>
+        public Action<DataContractSerializerOperationBehavior> SetDataContractResolverAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the client credentials used to call an operation.
         /// </summary>
         public virtual ClientCredentials ClientCredentials
@@ -218,7 +227,6 @@ namespace DevLib.ServiceModel
             get
             {
                 this.RefreshCachedProxy();
-                this.SetClientCredentials(this.CachedProxy);
                 return this.CachedProxy;
             }
         }
@@ -360,36 +368,64 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method SetClientCredentials.
-        /// </summary>
-        /// <param name="value">TChannel instance.</param>
-        protected void SetClientCredentials(TChannel value)
-        {
-            if (value != null && value != default(TChannel) && this.SetClientCredentialsAction != null)
-            {
-                this.SetClientCredentialsAction((value as ClientBase<TChannel>).ClientCredentials);
-            }
-        }
-
-        /// <summary>
         /// Method CreateProxyInstance.
         /// </summary>
         /// <returns>Instance of TChannel.</returns>
         protected virtual TChannel CreateProxyInstance()
         {
+            TChannel result = null;
+
             switch (this._overloadCreateProxyInstance)
             {
                 case 0:
-                    return (TChannel)Activator.CreateInstance(InstanceType);
+                    result = (TChannel)Activator.CreateInstance(InstanceType);
+                    break;
                 case 1:
-                    return (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName);
+                    result = (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName);
+                    break;
                 case 2:
-                    return (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName, this._remoteAddress);
+                    result = (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName, this._remoteAddress);
+                    break;
                 case 3:
-                    return (TChannel)Activator.CreateInstance(InstanceType, this._binding, this._remoteAddress);
+                    result = (TChannel)Activator.CreateInstance(InstanceType, this._binding, this._remoteAddress);
+                    break;
                 default:
-                    return (TChannel)Activator.CreateInstance(InstanceType);
+                    result = (TChannel)Activator.CreateInstance(InstanceType);
+                    break;
             }
+
+            if (this.SetClientCredentialsAction != null)
+            {
+                this.SetClientCredentialsAction((result as ClientBase<TChannel>).ClientCredentials);
+            }
+
+            ServiceEndpoint endpoint = (result as ClientBase<TChannel>).Endpoint;
+
+            foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
+            {
+                DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                if (serializerBehavior == null)
+                {
+                    serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+                    serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                    serializerBehavior.IgnoreExtensionDataObject = true;
+
+                    operationDescription.Behaviors.Add(serializerBehavior);
+                }
+                else
+                {
+                    serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                    serializerBehavior.IgnoreExtensionDataObject = true;
+                }
+
+                if (this.SetDataContractResolverAction != null)
+                {
+                    this.SetDataContractResolverAction(serializerBehavior);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

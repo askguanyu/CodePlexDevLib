@@ -100,12 +100,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -119,12 +122,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -139,12 +145,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, configFile, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -159,12 +168,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, string configFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, configFile, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -179,12 +191,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, bindingType, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -199,12 +214,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, bindingType, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -219,12 +237,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, binding, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -239,12 +260,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, binding, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -260,12 +284,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, contractType, bindingType, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -281,12 +308,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, contractType, bindingType, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -302,12 +332,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, contractType, binding, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -323,12 +356,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(string assemblyFile, Type contractType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(assemblyFile, contractType, binding, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -342,12 +378,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -361,12 +400,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -381,12 +423,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, string configFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, string configFile, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, configFile, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -401,12 +446,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, string configFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, string configFile, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, configFile, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -421,12 +469,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, bindingType, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -441,12 +492,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, bindingType, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -461,12 +515,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, binding, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -481,12 +538,15 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, binding, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -502,12 +562,15 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, contractType, bindingType, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
 
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
             if (openNow)
             {
                 this.Open();
@@ -523,11 +586,14 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Type bindingType, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, contractType, bindingType, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
 
             if (openNow)
             {
@@ -544,11 +610,14 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">Wcf service base address.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, string baseAddress, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, contractType, binding, baseAddress);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
 
             if (openNow)
             {
@@ -565,11 +634,14 @@ namespace DevLib.ServiceModel
         /// <param name="port">Wcf service address port.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
-        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null)
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(Type serviceType, Type contractType, Binding binding, int port, bool openNow = false, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, contractType, binding, port);
 
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
 
             if (openNow)
             {
@@ -653,6 +725,15 @@ namespace DevLib.ServiceModel
         /// Gets or sets a delegate to configure ServiceCredentials.
         /// </summary>
         public Action<ServiceCredentials> SetServiceCredentialsAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a delegate to configure DataContractSerializerOperationBehavior.
+        /// </summary>
+        public Action<DataContractSerializerOperationBehavior> SetDataContractResolverAction
         {
             get;
             set;
@@ -1753,6 +1834,26 @@ namespace DevLib.ServiceModel
                                 this.SetServiceCredentialsAction(serviceHost.Credentials);
                             }
 
+                            if (this.SetDataContractResolverAction != null)
+                            {
+                                foreach (var endpoint in serviceHost.Description.Endpoints)
+                                {
+                                    foreach (var operationDescription in endpoint.Contract.Operations)
+                                    {
+                                        DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                                        if (serializerBehavior == null)
+                                        {
+                                            serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+
+                                            operationDescription.Behaviors.Add(serializerBehavior);
+                                        }
+
+                                        this.SetDataContractResolverAction(serializerBehavior);
+                                    }
+                                }
+                            }
+
                             serviceHost.Open();
 
                             this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostState.Opened);
@@ -2220,6 +2321,7 @@ namespace DevLib.ServiceModel
                             {
                                 serviceDebugBehavior = new ServiceDebugBehavior();
                                 serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
+
                                 serviceHost.Description.Behaviors.Add(serviceDebugBehavior);
                             }
                             else
@@ -2235,6 +2337,7 @@ namespace DevLib.ServiceModel
                                 serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
                                 serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
                                 serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
+
                                 serviceHost.Description.Behaviors.Add(serviceThrottlingBehavior);
                             }
                             else
@@ -2252,6 +2355,7 @@ namespace DevLib.ServiceModel
                                 {
                                     serviceMetadataBehavior = new ServiceMetadataBehavior();
                                     serviceMetadataBehavior.HttpGetEnabled = true;
+
                                     serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
                                 }
                                 else
@@ -2262,9 +2366,7 @@ namespace DevLib.ServiceModel
 
                             foreach (var endpoint in serviceHost.Description.Endpoints)
                             {
-                                ContractDescription contractDescription = endpoint.Contract;
-
-                                foreach (var operationDescription in contractDescription.Operations)
+                                foreach (var operationDescription in endpoint.Contract.Operations)
                                 {
                                     DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
 
@@ -2273,6 +2375,7 @@ namespace DevLib.ServiceModel
                                         serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
                                         serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
                                         serializerBehavior.IgnoreExtensionDataObject = true;
+
                                         operationDescription.Behaviors.Add(serializerBehavior);
                                     }
                                     else

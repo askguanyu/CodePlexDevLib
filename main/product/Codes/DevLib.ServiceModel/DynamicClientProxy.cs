@@ -24,9 +24,19 @@ namespace DevLib.ServiceModel
         private const string SetClientCredentialsActionPropertyName = "SetClientCredentialsAction";
 
         /// <summary>
+        /// Field SetDataContractResolverActionPropertyName.
+        /// </summary>
+        private const string SetDataContractResolverActionPropertyName = "SetDataContractResolverAction";
+
+        /// <summary>
         /// Field ClientCredentialsPropertyName.
         /// </summary>
         private const string ClientCredentialsPropertyName = "ClientCredentials";
+
+        /// <summary>
+        /// Field EndpointPropertyName.
+        /// </summary>
+        private const string EndpointPropertyName = "Endpoint";
 
         /// <summary>
         /// Field _disposed.
@@ -174,6 +184,32 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Gets or sets a delegate to configure ClientCredentials.
+        /// </summary>
+        public Action<DataContractSerializerOperationBehavior> SetDataContractResolverAction
+        {
+            get
+            {
+                if (this.IsClientBase)
+                {
+                    return null;
+                }
+                else
+                {
+                    return (Action<DataContractSerializerOperationBehavior>)this.GetProperty(SetDataContractResolverActionPropertyName);
+                }
+            }
+
+            set
+            {
+                if (!this.IsClientBase)
+                {
+                    this.SetProperty(SetDataContractResolverActionPropertyName, value);
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets the client credentials used to call an operation.
         /// </summary>
         public ClientCredentials ClientCredentials
@@ -181,6 +217,17 @@ namespace DevLib.ServiceModel
             get
             {
                 return (ClientCredentials)this.GetProperty(ClientCredentialsPropertyName);
+            }
+        }
+
+        /// <summary>
+        /// Gets the endpoint for the client.
+        /// </summary>
+        public ServiceEndpoint Endpoint
+        {
+            get
+            {
+                return (ServiceEndpoint)this.GetProperty(EndpointPropertyName);
             }
         }
 

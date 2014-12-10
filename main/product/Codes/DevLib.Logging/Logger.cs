@@ -52,16 +52,6 @@ namespace DevLib.Logging
         private readonly Thread _consumerThread;
 
         /// <summary>
-        /// Field _consumerThread.
-        /// </summary>
-        private readonly Thread _fileAppenderThread;
-
-        /// <summary>
-        /// Field _consumerThread.
-        /// </summary>
-        private readonly Thread _consoleAppenderThread;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Logger" /> class.
         /// </summary>
         /// <param name="logFile">Log file.</param>
@@ -88,20 +78,11 @@ namespace DevLib.Logging
                 try
                 {
                     this._fileAppender = new MutexMultiProcessFileAppender(this._logFile, this._loggerSetup);
-
-                    this._fileAppenderThread = new Thread(this.FileAppenderThread);
-                    this._fileAppenderThread.IsBackground = true;
                 }
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
                 }
-            }
-
-            if (this._loggerSetup.WriteToConsole)
-            {
-                this._consoleAppenderThread = new Thread(this.ConsoleAppenderThread);
-                this._consoleAppenderThread.IsBackground = true;
             }
         }
 
@@ -236,43 +217,25 @@ namespace DevLib.Logging
                 {
                     if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                     {
-                        this._consoleAppenderThread.Start(nextItem);
+                        ColoredConsoleAppender.Write(nextItem);
                     }
 
                     if (this._fileAppender != null)
                     {
-                        this._fileAppenderThread.Start(nextItem.Message);
+                        try
+                        {
+                            this._fileAppender.Write(nextItem.Message);
+                        }
+                        catch (Exception e)
+                        {
+                            InternalLogger.Log(e);
+                        }
                     }
                 }
                 else
                 {
                     this._queueWaitHandle.WaitOne();
                 }
-            }
-        }
-
-        /// <summary>
-        /// ConsoleAppender thread.
-        /// </summary>
-        /// <param name="logMessage">The LogMessage instance.</param>
-        private void ConsoleAppenderThread(object logMessage)
-        {
-            ColoredConsoleAppender.Write((LogMessage)logMessage);
-        }
-
-        /// <summary>
-        /// FileAppender thread.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        private void FileAppenderThread(object message)
-        {
-            try
-            {
-                this._fileAppender.Write((string)message);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
             }
         }
     }

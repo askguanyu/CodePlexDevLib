@@ -141,7 +141,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibLogging();
+                    TestDevLibLogging();
                 });
 
                 Benchmark.Run(delegate
@@ -333,7 +333,7 @@ namespace DevLib.Samples
 
         private static void TestDevLibLogging()
         {
-            var logger = LogManager.Open("e:\\1.log");
+            var logger = LogManager.Open("d:\\Work\\temp\\1.log");
 
             Benchmark.Run(index =>
             {

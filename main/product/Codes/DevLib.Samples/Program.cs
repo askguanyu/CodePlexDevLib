@@ -141,7 +141,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    TestDevLibLogging();
+                    //TestDevLibLogging();
                 });
 
                 Benchmark.Run(delegate
@@ -728,6 +728,25 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            var tempp = LogConfigManager.GetFileFullPath(@"$TMP\a\Logs\b.log");
+            var tempp1 = LogConfigManager.GetFileFullPath(@"$TMP$\a\Logs\b.log");
+            var tempp2 = LogConfigManager.GetFileFullPath(@"%TMP\a\Logs\b.log");
+            var tempp3 = LogConfigManager.GetFileFullPath(@"%TMP%\a\Logs\b.log");
+
+            string evnv = Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.Process);
+            string evnv1 = Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.User);
+            string evnv2 = Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.Machine);
+
+            var en = @"%tmp%\a\b\c".Split(Path.DirectorySeparatorChar);
+
+            for (int i = 0; i < en.Length; i++)
+            {
+                if (en[i].StartsWith("%"))
+                {
+                    en[i] = Environment.GetEnvironmentVariable(en[i].Trim('%'));
+                }
+            }
+
             string dts = DateTime.Now.ToString((string)null);
 
             string path = "LDAP://contoso.local";

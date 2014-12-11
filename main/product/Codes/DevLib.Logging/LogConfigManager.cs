@@ -155,5 +155,35 @@ namespace DevLib.Logging
 
             return result;
         }
+
+        /// <summary>
+        /// Gets the file full path.
+        /// </summary>
+        /// <param name="filename">The filename.</param>
+        /// <returns>A string containing the fully qualified location of path.</returns>
+        public static string GetFileFullPath(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+            {
+                return filename;
+            }
+
+            if (!filename.Contains("%") && !filename.Contains("$"))
+            {
+                return Path.GetFullPath(filename);
+            }
+
+            var parts = filename.Split(Path.DirectorySeparatorChar);
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (parts[i].StartsWith("%") || parts[i].StartsWith("$"))
+                {
+                    parts[i] = Environment.GetEnvironmentVariable(parts[i].Trim('%', '$')) ?? string.Empty;
+                }
+            }
+
+            return Path.GetFullPath(string.Join(Path.DirectorySeparatorChar.ToString(), parts));
+        }
     }
 }

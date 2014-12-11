@@ -67,7 +67,7 @@ namespace DevLib.Logging
         {
             return string.Format(
                 "{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
-                Path.GetFullPath(this.LogFile).ToUpperInvariant(),
+                LogConfigManager.GetFileFullPath(this.LogFile).ToLowerInvariant(),
                 this.LoggerSetup.DateTimeFormat ?? string.Empty,
                 this.LoggerSetup.Level.ToString(),
                 this.LoggerSetup.WriteToConsole.ToString(),

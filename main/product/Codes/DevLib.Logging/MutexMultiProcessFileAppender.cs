@@ -57,7 +57,7 @@ namespace DevLib.Logging
         {
             try
             {
-                this._fileName = Path.GetFullPath(filename);
+                this._fileName = LogConfigManager.GetFileFullPath(filename);
 
                 this._fileInfo = new FileInfo(this._fileName);
 

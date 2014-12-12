@@ -97,13 +97,15 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event AcceptsTabChanged.
         /// </summary>
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler AcceptsTabChanged;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernColorStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -135,8 +137,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernThemeStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get
@@ -179,6 +182,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
@@ -190,6 +194,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
@@ -201,7 +206,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
-        [DefaultValue(false)]
+        [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
@@ -213,8 +219,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseSelectable
         {
             get
@@ -231,6 +237,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern font size.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ModernFontSize.Small)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
@@ -250,6 +257,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern font weight.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ModernFontWeight.Regular)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
@@ -270,8 +278,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets prompt text.
         /// </summary>
         [Browsable(true)]
-        [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue("")]
+        [EditorBrowsable(EditorBrowsableState.Always)]
         [Category(ModernConstants.PropertyCategoryName)]
         public string PromptText
         {
@@ -290,8 +298,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets icon.
         /// </summary>
         [Browsable(true)]
-        [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue(null)]
+        [EditorBrowsable(EditorBrowsableState.Always)]
         [Category(ModernConstants.PropertyCategoryName)]
         public Image Icon
         {
@@ -311,8 +319,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether icon is on the right side or not.
         /// </summary>
         [Browsable(true)]
-        [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue(false)]
+        [EditorBrowsable(EditorBrowsableState.Always)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool IconRight
         {
@@ -332,8 +340,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether display icon.
         /// </summary>
         [Browsable(true)]
-        [EditorBrowsable(EditorBrowsableState.Always)]
         [DefaultValue(true)]
+        [EditorBrowsable(EditorBrowsableState.Always)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool DisplayIcon
         {
@@ -386,6 +394,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether this is a multiline control.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         public bool Multiline
         {
@@ -403,7 +412,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether a multiline text box control automatically wraps words to the beginning of the next line when necessary.
         /// </summary>
-        [DefaultValue(true)]
+        [Browsable(true)]
+        [DefaultValue(false)]
         public bool WordWrap
         {
             get
@@ -469,6 +479,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether text in the text box is read-only.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         public bool ReadOnly
         {
@@ -502,7 +513,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the text in the control should appear as the default password character.
         /// </summary>
-        [DefaultValue(false)]
+        [Browsable(true)]
+        [DefaultValue(true)]
         public bool UseSystemPasswordChar
         {
             get
@@ -519,7 +531,6 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets how text is aligned in the control.
         /// </summary>
-        [DefaultValue(HorizontalAlignment.Left)]
         public HorizontalAlignment TextAlign
         {
             get
@@ -536,6 +547,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the user can give the focus to this control using the TAB key.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(true)]
         public new bool TabStop
         {

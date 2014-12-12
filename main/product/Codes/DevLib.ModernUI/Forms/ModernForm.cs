@@ -129,26 +129,32 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Event CloseBoxClick.
         /// </summary>
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler CloseBoxClick;
 
         /// <summary>
         /// Event MinimizeBoxClick.
         /// </summary>
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler MinimizeBoxClick;
 
         /// <summary>
         /// Event MaximizeBoxClick.
         /// </summary>
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler MaximizeBoxClick;
 
         /// <summary>
         /// Event MaximizeBoxClick.
         /// </summary>
+        [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler NormalBoxClick;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ModernColorStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
@@ -171,6 +177,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ModernThemeStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
@@ -207,6 +215,7 @@ namespace DevLib.ModernUI.Forms
         /// <value>
         /// The size of the font.
         /// </value>
+        [Browsable(true)]
         [DefaultValue(24f)]
         [Category(ModernConstants.PropertyCategoryName)]
         public float FontSize
@@ -221,6 +230,7 @@ namespace DevLib.ModernUI.Forms
         /// <value>
         /// The font weight.
         /// </value>
+        [Browsable(true)]
         [DefaultValue(ModernFontWeight.Light)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
@@ -241,6 +251,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the text align.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(ModernFormTextAlign.Left)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFormTextAlign TextAlign
         {
@@ -252,6 +263,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is movable.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool Movable
         {
@@ -263,6 +275,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether a modern control box is displayed in the caption bar of the form.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseControlBox
         {
@@ -274,6 +287,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the modern Minimize button is displayed in the caption bar of the form.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseMinimizeBox
         {
@@ -285,6 +299,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the modern Maximize button is displayed in the caption bar of the form.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseMaximizeBox
         {
@@ -296,6 +311,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the modern Close button is displayed in the caption bar of the form.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCloseBox
         {
@@ -323,6 +339,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether show header.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowHeader
@@ -349,6 +366,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is resizable.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool Resizable
         {
@@ -359,8 +377,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the type of the shadow.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernFormShadowType.AeroShadow)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernFormShadowType ShadowType
         {
             get
@@ -399,8 +418,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the back image.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(null)]
+        [Category(ModernConstants.PropertyCategoryName)]
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public Image BackImage
         {
@@ -425,6 +445,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the back image padding.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public Padding BackImagePadding
         {
@@ -443,6 +464,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the maximum size of the back image.
         /// </summary>
+        [Browsable(true)]
+        [DefaultValue(0)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int BackImageMaxSize
         {
@@ -461,8 +484,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the back image align.
         /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ModernFormBackImageAlign.TopRight)]
         [Category(ModernConstants.PropertyCategoryName)]
-        [DefaultValue(ModernFormBackImageAlign.TopLeft)]
         public ModernFormBackImageAlign BackImageAlign
         {
             get
@@ -480,8 +504,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether invert back image.
         /// </summary>
+        [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
-        [DefaultValue(true)]
         public bool BackImageInvert
         {
             get
@@ -500,6 +525,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
         {
@@ -511,6 +537,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
         {
@@ -522,6 +549,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether control box use custom BackColor.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool ControlBoxUseCustomBackColor
         {
@@ -533,6 +561,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether control box use custom ForeColor.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool ControlBoxUseCustomForeColor
         {
@@ -566,6 +595,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether show status strip.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowStatusStrip
         {
@@ -584,6 +614,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether show border.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowBorder
         {

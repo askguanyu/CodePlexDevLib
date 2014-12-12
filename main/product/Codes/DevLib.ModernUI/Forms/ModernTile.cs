@@ -92,8 +92,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernColorStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -125,8 +126,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernThemeStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get
@@ -169,6 +171,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
@@ -180,6 +183,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
@@ -191,7 +195,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
-        [DefaultValue(false)]
+        [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
@@ -203,8 +208,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseSelectable
         {
             get
@@ -232,7 +237,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether show tile count.
         /// </summary>
-        [DefaultValue(true)]
+        [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowTileCount
         {
@@ -243,6 +249,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets tile count.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(0)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int TileCount
@@ -271,6 +278,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets tile image.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(null)]
         [Category(ModernConstants.PropertyCategoryName)]
         public Image TileImage
@@ -282,6 +290,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use tile image.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseTileImage
@@ -293,6 +302,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the alignment of the image on the control.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ContentAlignment.TopLeft)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ContentAlignment TileImageAlign
@@ -304,6 +314,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets tile text font size.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ModernFontSize.Medium)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
@@ -323,6 +334,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets tile text font weight.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ModernFontWeight.Light)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight

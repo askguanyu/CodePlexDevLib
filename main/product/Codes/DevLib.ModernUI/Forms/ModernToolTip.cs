@@ -42,6 +42,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ModernColorStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
@@ -64,6 +66,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ModernThemeStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {

@@ -73,8 +73,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernColorStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -106,8 +107,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernThemeStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get
@@ -150,6 +152,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
@@ -188,8 +191,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseSelectable
         {
             get
@@ -206,6 +209,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets text font size.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ModernFontSize.Medium)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
@@ -217,7 +221,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets text font weight.
         /// </summary>
-        [DefaultValue(ModernFontWeight.Light)]
+        [Browsable(true)]
+        [DefaultValue(ModernFontWeight.Regular)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
         {
@@ -228,6 +233,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the alignment of the text on the control.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ContentAlignment.MiddleRight)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ContentAlignment TextAlign
@@ -239,6 +245,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether hide progress text.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool HideProgressText
@@ -250,6 +257,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets ProgressBar style.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(ProgressBarStyle.Continuous)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ProgressBarStyle ProgressBarStyle

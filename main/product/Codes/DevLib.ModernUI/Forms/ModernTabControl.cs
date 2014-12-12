@@ -101,8 +101,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernColorStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -134,8 +135,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernThemeStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get
@@ -178,6 +180,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
@@ -189,6 +192,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
@@ -200,7 +204,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
-        [DefaultValue(false)]
+        [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
@@ -212,8 +217,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseSelectable
         {
             get
@@ -230,9 +235,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the size of the font.
         /// </summary>
-        /// <value>
-        /// The size of the font.
-        /// </value>
+        [Browsable(true)]
         [DefaultValue(ModernFontSize.Medium)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontSize FontSize
@@ -244,9 +247,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the font weight.
         /// </summary>
-        /// <value>
-        /// The font weight.
-        /// </value>
+        [Browsable(true)]
         [DefaultValue(ModernFontWeight.Light)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernFontWeight FontWeight
@@ -258,9 +259,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the text align.
         /// </summary>
-        /// <value>
-        /// The text align.
-        /// </value>
+        [Browsable(true)]
         [DefaultValue(ContentAlignment.MiddleLeft)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ContentAlignment TextAlign
@@ -283,6 +282,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether the control is mirrored.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public new bool IsMirrored

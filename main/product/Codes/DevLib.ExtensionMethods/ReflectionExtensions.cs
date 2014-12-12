@@ -35,42 +35,17 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if can perform the conversion; otherwise, false.</returns>
         public static bool CanConvert(this Type source)
         {
-            switch (Type.GetTypeCode(source))
+            if (Type.GetTypeCode(source) == TypeCode.Object &&
+                !source.IsEnum &&
+                !IsNullableType(source) &&
+                source != typeof(Guid) &&
+                source != typeof(TimeSpan) &&
+                source != typeof(DateTimeOffset))
             {
-                case TypeCode.Boolean:
-                case TypeCode.Byte:
-                case TypeCode.Char:
-                case TypeCode.DBNull:
-                case TypeCode.DateTime:
-                case TypeCode.Decimal:
-                case TypeCode.Double:
-                case TypeCode.Empty:
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                case TypeCode.SByte:
-                case TypeCode.Single:
-                case TypeCode.String:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    return true;
-                case TypeCode.Object:
-                default:
-
-                    if (source.IsEnum ||
-                        source.IsNullableType() ||
-                        source == typeof(Guid) ||
-                        source == typeof(TimeSpan) ||
-                        source == typeof(DateTimeOffset))
-                    {
-                        return true;
-                    }
-
-                    break;
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>

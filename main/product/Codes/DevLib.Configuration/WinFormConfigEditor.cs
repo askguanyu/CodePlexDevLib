@@ -299,7 +299,7 @@ namespace DevLib.Configuration
 
             try
             {
-                Assembly assembly = Assembly.LoadFrom(assemblyFile);
+                Assembly assembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
                 Type[] assemblyTypeList = assembly.GetTypes();
 
                 foreach (Type type in assemblyTypeList)

@@ -728,10 +728,11 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
-            var tempp = LogConfigManager.GetFileFullPath(@"$TMP\a\Logs\b.log");
-            var tempp1 = LogConfigManager.GetFileFullPath(@"$TMP$\a\Logs\b.log");
-            var tempp2 = LogConfigManager.GetFileFullPath(@"%TMP\a\Logs\b.log");
-            var tempp3 = LogConfigManager.GetFileFullPath(@"%TMP%\a\Logs\b.log");
+            var tempp0 = @"\\gytp\d$\Download";
+            var tempp = LogConfigManager.GetFileFullPath(@"\\gytp\d$\Download");
+            var tempp1 = LogConfigManager.GetFileFullPath(@"$TMp$\a\Logs\b.log");
+            var tempp2 = LogConfigManager.GetFileFullPath(@"%TmP\a\Logs\b.log");
+            var tempp3 = LogConfigManager.GetFileFullPath(@"%tMP%\a\Logs\b.log");
 
             string evnv = Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.Process);
             string evnv1 = Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.User);
@@ -1885,11 +1886,12 @@ namespace DevLib.Samples
             //new WcfServiceHost(typeof(WcfTest), "DevLib.Samples.exe.config", "http://127.0.0.1:6000/WcfTest", true);
 
             var testsrv = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
-            //testsrv.Receiving += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Receiving);
-            //testsrv.Replying += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Replying);
-            testsrv.SetDataContractResolverAction = i => i.AddGenericDataContractResolver();
-            //Console.ReadLine();
+            testsrv.Receiving += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Receiving);
+            testsrv.Replying += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Replying);
+            testsrv.SetDataContractResolverAction = i => i.DataContractResolver = new GenericDataContractResolver(new string[] { @"D:\Work\Temp\ClassLibrary2\ClassLibrary2\bin\Debug\ClassLibrary2.dll" });
             testsrv.Open();
+            //Console.ReadLine();
+
             //new WcfServiceHost(typeof(WcfTest), typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
 
             var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
@@ -1902,7 +1904,14 @@ namespace DevLib.Samples
 
             //client2.SetClientCredentialsAction = (c) => { c.UserName.UserName = "a"; c.UserName.Password = "b"; };
 
-            client1.AddAnimal(new Dog());
+
+            //client1.AddAnimal(new Dog());
+
+            //client1.AddAnimal(new Tigar());
+
+            //client1.AddAnimal(new Bird());
+
+            //Console.ReadLine();
 
             client1.Foo("");
 
@@ -1984,12 +1993,20 @@ namespace DevLib.Samples
 
         static void calcsvr_Replying(object sender, WcfServiceHostEventArgs e)
         {
+            Console.WriteLine("Replying");
             Console.WriteLine(e.Message);
+            Console.WriteLine();
+            Console.WriteLine();
+
         }
 
         static void calcsvr_Receiving(object sender, WcfServiceHostEventArgs e)
         {
+            Console.WriteLine("Receiving");
             Console.WriteLine(e.Message);
+            Console.WriteLine();
+            Console.WriteLine();
+
         }
 
         private static void TestDevLibConfiguration()

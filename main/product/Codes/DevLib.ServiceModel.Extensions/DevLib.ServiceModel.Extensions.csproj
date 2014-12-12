@@ -46,6 +46,7 @@
     </Compile>
     <Compile Include="GenericDataContractResolver.cs" />
     <Compile Include="GenericDataContractResolverExtensions.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1829,31 +1829,6 @@ namespace DevLib.ServiceModel
                         {
                             this.RaiseEvent(this.Opening, serviceHost.Description.Name, WcfServiceHostState.Opening);
 
-                            if (this.SetServiceCredentialsAction != null)
-                            {
-                                this.SetServiceCredentialsAction(serviceHost.Credentials);
-                            }
-
-                            if (this.SetDataContractResolverAction != null)
-                            {
-                                foreach (var endpoint in serviceHost.Description.Endpoints)
-                                {
-                                    foreach (var operationDescription in endpoint.Contract.Operations)
-                                    {
-                                        DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
-
-                                        if (serializerBehavior == null)
-                                        {
-                                            serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
-
-                                            operationDescription.Behaviors.Add(serializerBehavior);
-                                        }
-
-                                        this.SetDataContractResolverAction(serializerBehavior);
-                                    }
-                                }
-                            }
-
                             serviceHost.Open();
 
                             this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostState.Opened);
@@ -2219,6 +2194,11 @@ namespace DevLib.ServiceModel
 
                             WcfServiceHostProxy serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new WcfServiceHostProxy(serviceType) : new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
 
+                            if (this.SetServiceCredentialsAction != null)
+                            {
+                                this.SetServiceCredentialsAction(serviceHost.Credentials);
+                            }
+
                             WcfServiceHostServiceBehavior wcfServiceHostServiceBehavior = serviceHost.Description.Behaviors.Find<WcfServiceHostServiceBehavior>();
 
                             if (wcfServiceHostServiceBehavior == null)
@@ -2236,6 +2216,25 @@ namespace DevLib.ServiceModel
 
                                 wcfServiceHostServiceBehavior.Receiving += (s, e) => this.RaiseEvent(this.Receiving, s, serviceHost.Description.Name, e.State, e.Message);
                                 wcfServiceHostServiceBehavior.Replying += (s, e) => this.RaiseEvent(this.Replying, s, serviceHost.Description.Name, e.State, e.Message);
+                            }
+
+                            if (this.SetDataContractResolverAction != null)
+                            {
+                                foreach (var endpoint in serviceHost.Description.Endpoints)
+                                {
+                                    foreach (var operationDescription in endpoint.Contract.Operations)
+                                    {
+                                        DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                                        if (serializerBehavior == null)
+                                        {
+                                            serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+                                            operationDescription.Behaviors.Add(serializerBehavior);
+                                        }
+
+                                        this.SetDataContractResolverAction(serializerBehavior);
+                                    }
+                                }
                             }
 
                             this._serviceHostList.Add(serviceHost);
@@ -2294,6 +2293,11 @@ namespace DevLib.ServiceModel
                             foreach (Type serviceContract in contractList)
                             {
                                 serviceHost.AddServiceEndpoint(serviceContract, binding, baseAddressUri);
+                            }
+
+                            if (this.SetServiceCredentialsAction != null)
+                            {
+                                this.SetServiceCredentialsAction(serviceHost.Credentials);
                             }
 
                             WcfServiceHostServiceBehavior wcfServiceHostServiceBehavior = serviceHost.Description.Behaviors.Find<WcfServiceHostServiceBehavior>();
@@ -2382,6 +2386,11 @@ namespace DevLib.ServiceModel
                                     {
                                         serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
                                         serializerBehavior.IgnoreExtensionDataObject = true;
+                                    }
+
+                                    if (this.SetDataContractResolverAction != null)
+                                    {
+                                        this.SetDataContractResolverAction(serializerBehavior);
                                     }
                                 }
                             }

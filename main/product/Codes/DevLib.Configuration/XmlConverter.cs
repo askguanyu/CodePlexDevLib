@@ -21,42 +21,17 @@ namespace DevLib.Configuration
         /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
         public static bool CanConvert(Type sourceType)
         {
-            switch (Type.GetTypeCode(sourceType))
+            if (Type.GetTypeCode(sourceType) == TypeCode.Object &&
+                !sourceType.IsEnum &&
+                !IsNullableType(sourceType) &&
+                sourceType != typeof(Guid) &&
+                sourceType != typeof(TimeSpan) &&
+                sourceType != typeof(DateTimeOffset))
             {
-                case TypeCode.Boolean:
-                case TypeCode.Byte:
-                case TypeCode.Char:
-                case TypeCode.DBNull:
-                case TypeCode.DateTime:
-                case TypeCode.Decimal:
-                case TypeCode.Double:
-                case TypeCode.Empty:
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                case TypeCode.SByte:
-                case TypeCode.Single:
-                case TypeCode.String:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    return true;
-                case TypeCode.Object:
-                default:
-
-                    if (sourceType.IsEnum ||
-                        IsNullableType(sourceType) ||
-                        sourceType == typeof(Guid) ||
-                        sourceType == typeof(TimeSpan) ||
-                        sourceType == typeof(DateTimeOffset))
-                    {
-                        return true;
-                    }
-
-                    break;
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>

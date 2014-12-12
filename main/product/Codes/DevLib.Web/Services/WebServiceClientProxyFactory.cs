@@ -141,7 +141,7 @@ namespace DevLib.Web.Services
                 throw new FileNotFoundException("The specified assembly file does not exist.", assemblyFile);
             }
 
-            this.ProxyAssembly = Assembly.LoadFrom(assemblyFile);
+            this.ProxyAssembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
             this.Types = this.ProxyAssembly.GetTypes();
         }
 

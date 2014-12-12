@@ -12,16 +12,19 @@
 
         public string MyOperation1(string arg1, int arg2)
         {
+            Console.WriteLine(arg1 + arg2.ToString());
             return arg1 + arg2.ToString();
         }
 
         public void MyOperation2(string value)
         {
+            Console.WriteLine(value);
         }
 
 
         public object Foo(string value)
         {
+            Console.WriteLine(value);
             return value;
         }
 

@@ -101,6 +101,7 @@ namespace DevLib.ServiceModel.Extensions
             {
                 resolver.AddKnownTypeRange(knownTypes);
                 resolver.AddKnownTypeRange(GenericDataContractResolver.GetReflectTypes(Assembly.GetCallingAssembly()));
+                resolver.AddKnownTypeRange(GenericDataContractResolver.GetReflectTypes(Assembly.GetEntryAssembly()));
             }
             else
             {

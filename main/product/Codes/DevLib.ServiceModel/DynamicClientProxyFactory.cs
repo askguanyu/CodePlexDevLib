@@ -201,7 +201,7 @@ namespace DevLib.ServiceModel
 
             this._isLoadFile = isLoadFile;
 
-            this.ProxyAssembly = Assembly.LoadFrom(assemblyFile);
+            this.ProxyAssembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
             this.ImportTypes();
             this.ImportNamespaces();
         }

@@ -23,11 +23,11 @@ namespace DevLib.ServiceModel
     public static class WcfServiceType
     {
         /// <summary>
-        /// Gets the type list of hosted services from assembly file.
+        /// Gets the type list of hosted services from assembly file by using Assembly.Load(byte[]).
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
         /// <returns>The list of hosted services type.</returns>
-        public static List<Type> LoadFile(string assemblyFile)
+        public static List<Type> LoadWcfTypes(string assemblyFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -64,12 +64,12 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets the type list of hosted services from assembly file.
+        /// Gets the type list of hosted services from assembly file by using Assembly.Load(byte[]).
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
         /// <param name="configFile">Wcf configuration file.</param>
         /// <returns>The list of hosted services type.</returns>
-        public static List<Type> LoadFile(string assemblyFile, string configFile)
+        public static List<Type> LoadWcfTypes(string assemblyFile, string configFile)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -127,12 +127,12 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets the System.Type object with the specified name from assembly file.
+        /// Gets the System.Type object with the specified name from assembly file by using Assembly.Load(byte[]).
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
         /// <param name="typeFullName">The full name of the type.</param>
         /// <returns>A System.Type object that represents the specified class.</returns>
-        public static Type LoadFrom(string assemblyFile, string typeFullName)
+        public static Type LoadType(string assemblyFile, string typeFullName)
         {
             if (string.IsNullOrEmpty(assemblyFile))
             {
@@ -243,6 +243,11 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of Binding.</returns>
         public static Binding GetBinding(Type bindingType)
         {
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                return (Binding)null;
+            }
+
             return GetBinding(bindingType.Name);
         }
 
@@ -351,6 +356,22 @@ namespace DevLib.ServiceModel
             if (bindingTypeName.Equals("MetadataExchangeBindings", StringComparison.OrdinalIgnoreCase))
             {
                 return MetadataExchangeBindings.CreateMexHttpsBinding();
+            }
+
+            try
+            {
+                Binding result = (Binding)Activator.CreateInstance(Type.GetType(bindingTypeName, true, true));
+
+                result.OpenTimeout = TimeSpan.FromMinutes(10);
+                result.CloseTimeout = TimeSpan.FromMinutes(10);
+                result.SendTimeout = TimeSpan.FromMinutes(10);
+                result.ReceiveTimeout = TimeSpan.FromMinutes(10);
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
             }
 
             return null;

@@ -477,7 +477,7 @@ namespace DevLib.ModernUI.Forms
 
             using (SolidBrush brush = new SolidBrush(fillColor))
             {
-                Rectangle boxRectangle = new Rectangle(this.StatusTextRightToLeft ? 0 : (this.ShowStatusText ? 32 : 2), 2, this.ClientRectangle.Width - (this.ShowStatusText ? 34 : 4), this.ClientRectangle.Height - 4);
+                Rectangle boxRectangle = new Rectangle(this.StatusTextRightToLeft ? 2 : (this.ShowStatusText ? 32 : 2), 2, this.ClientRectangle.Width - (this.ShowStatusText ? 34 : 4), this.ClientRectangle.Height - 4);
                 e.Graphics.FillRectangle(brush, boxRectangle);
             }
 

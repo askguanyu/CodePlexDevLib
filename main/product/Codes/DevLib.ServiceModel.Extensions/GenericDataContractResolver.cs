@@ -726,10 +726,10 @@ namespace DevLib.ServiceModel.Extensions
         {
             if (Type.GetTypeCode(sourceType) == TypeCode.Object &&
                 !sourceType.IsEnum &&
-                !IsNullableType(sourceType) &&
                 sourceType != typeof(Guid) &&
                 sourceType != typeof(TimeSpan) &&
-                sourceType != typeof(DateTimeOffset))
+                sourceType != typeof(DateTimeOffset) &&
+                !IsNullableCanConvert(sourceType))
             {
                 return false;
             }
@@ -738,13 +738,13 @@ namespace DevLib.ServiceModel.Extensions
         }
 
         /// <summary>
-        /// Method IsNullableType.
+        /// Method IsNullableCanConvert.
         /// </summary>
         /// <param name="value">The type to check.</param>
         /// <returns>true if the type is Nullable{} type; otherwise, false.</returns>
-        private static bool IsNullableType(Type value)
+        private static bool IsNullableCanConvert(Type value)
         {
-            return value.IsGenericType && value.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return value.IsGenericType && value.GetGenericTypeDefinition() == typeof(Nullable<>) && CanConvert(Nullable.GetUnderlyingType(value));
         }
     }
 }

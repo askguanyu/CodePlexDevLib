@@ -19,9 +19,11 @@ namespace DevLib.Main
         public static string AssemblyTitle()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+
             if (attributes.Length > 0)
             {
                 AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+
                 if (!string.IsNullOrEmpty(titleAttribute.Title))
                 {
                     return titleAttribute.Title;
@@ -47,6 +49,7 @@ namespace DevLib.Main
         public static string AssemblyDescription()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+
             if (attributes.Length == 0)
             {
                 return string.Empty;
@@ -62,6 +65,7 @@ namespace DevLib.Main
         public static string AssemblyProduct()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+
             if (attributes.Length == 0)
             {
                 return string.Empty;
@@ -77,6 +81,7 @@ namespace DevLib.Main
         public static string AssemblyCopyright()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+
             if (attributes.Length == 0)
             {
                 return string.Empty;
@@ -92,6 +97,7 @@ namespace DevLib.Main
         public static string AssemblyCompany()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+
             if (attributes.Length == 0)
             {
                 return string.Empty;
@@ -107,6 +113,7 @@ namespace DevLib.Main
         public static string AssemblyFileVersion()
         {
             object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
+
             if (attributes.Length == 0)
             {
                 return string.Empty;

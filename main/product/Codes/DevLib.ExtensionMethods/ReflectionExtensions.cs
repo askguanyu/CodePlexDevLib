@@ -23,7 +23,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The type to check.</param>
         /// <returns>true if the type is Nullable{} type; otherwise, false.</returns>
-        public static bool IsNullableType(this Type source)
+        public static bool IsNullable(this Type source)
         {
             return source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
@@ -37,10 +37,10 @@ namespace DevLib.ExtensionMethods
         {
             if (Type.GetTypeCode(source) == TypeCode.Object &&
                 !source.IsEnum &&
-                !IsNullableType(source) &&
                 source != typeof(Guid) &&
                 source != typeof(TimeSpan) &&
-                source != typeof(DateTimeOffset))
+                source != typeof(DateTimeOffset) &&
+                !source.IsNullableCanConvert())
             {
                 return false;
             }
@@ -318,6 +318,16 @@ namespace DevLib.ExtensionMethods
             source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName).SetValue(source, value, index);
 
             return source;
+        }
+
+        /// <summary>
+        /// Check whether the Type is nullable type and can convert.
+        /// </summary>
+        /// <param name="source">The type to check.</param>
+        /// <returns>true if the type is Nullable{} type; otherwise, false.</returns>
+        private static bool IsNullableCanConvert(this Type source)
+        {
+            return source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>) && Nullable.GetUnderlyingType(source).CanConvert();
         }
     }
 }

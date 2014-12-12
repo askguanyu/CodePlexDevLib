@@ -23,10 +23,10 @@ namespace DevLib.Configuration
         {
             if (Type.GetTypeCode(sourceType) == TypeCode.Object &&
                 !sourceType.IsEnum &&
-                !IsNullableType(sourceType) &&
                 sourceType != typeof(Guid) &&
                 sourceType != typeof(TimeSpan) &&
-                sourceType != typeof(DateTimeOffset))
+                sourceType != typeof(DateTimeOffset) &&
+                !IsNullableCanConvert(sourceType))
             {
                 return false;
             }
@@ -92,7 +92,7 @@ namespace DevLib.Configuration
                         return value.ToString();
                     }
 
-                    if (IsNullableType(sourceType))
+                    if (IsNullableCanConvert(sourceType))
                     {
                         return ToString(Convert.ChangeType(value, Nullable.GetUnderlyingType(sourceType)));
                     }
@@ -184,7 +184,7 @@ namespace DevLib.Configuration
                         return Enum.ToObject(targetType, rawValue);
                     }
 
-                    if (IsNullableType(targetType))
+                    if (IsNullableCanConvert(targetType))
                     {
                         return ToObject(value, Nullable.GetUnderlyingType(targetType));
                     }
@@ -222,13 +222,13 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
-        /// Method IsNullableType.
+        /// Method IsNullableCanConvert.
         /// </summary>
         /// <param name="value">The type to check.</param>
         /// <returns>true if the type is Nullable{} type; otherwise, false.</returns>
-        private static bool IsNullableType(Type value)
+        private static bool IsNullableCanConvert(Type value)
         {
-            return value.IsGenericType && value.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return value.IsGenericType && value.GetGenericTypeDefinition() == typeof(Nullable<>) && CanConvert(Nullable.GetUnderlyingType(value));
         }
     }
 }

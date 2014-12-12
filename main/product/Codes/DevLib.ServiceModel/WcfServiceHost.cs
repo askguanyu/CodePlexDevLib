@@ -794,7 +794,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadFile(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -886,7 +886,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadFile(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -978,7 +978,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadFile(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -1059,7 +1059,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadFile(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -2177,7 +2177,7 @@ namespace DevLib.ServiceModel
             {
                 if (File.Exists(this._assemblyFile))
                 {
-                    serviceTypeList = WcfServiceType.LoadFile(this._assemblyFile, this._configFile);
+                    serviceTypeList = WcfServiceType.LoadWcfTypes(this._assemblyFile, this._configFile);
                 }
                 else
                 {
@@ -2255,7 +2255,7 @@ namespace DevLib.ServiceModel
             {
                 if (File.Exists(this._assemblyFile))
                 {
-                    serviceTypeList = WcfServiceType.LoadFile(this._assemblyFile);
+                    serviceTypeList = WcfServiceType.LoadWcfTypes(this._assemblyFile);
                 }
                 else
                 {

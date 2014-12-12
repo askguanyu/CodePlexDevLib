@@ -35,6 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\DevLib.Diagnostics.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">

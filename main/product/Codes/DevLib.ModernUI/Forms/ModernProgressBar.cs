@@ -45,7 +45,7 @@ namespace DevLib.ModernUI.Forms
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
-            this.TextAlign = ContentAlignment.MiddleRight;
+            this.TextAlign = ContentAlignment.MiddleCenter;
             this.ProgressBarStyle = ProgressBarStyle.Continuous;
             this.FontSize = ModernFontSize.Medium;
             this.FontWeight = ModernFontWeight.Regular;
@@ -234,7 +234,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the alignment of the text on the control.
         /// </summary>
         [Browsable(true)]
-        [DefaultValue(ContentAlignment.MiddleRight)]
+        [DefaultValue(ContentAlignment.MiddleCenter)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ContentAlignment TextAlign
         {

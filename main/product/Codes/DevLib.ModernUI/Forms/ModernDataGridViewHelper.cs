@@ -205,7 +205,18 @@ namespace DevLib.ModernUI.Forms
             {
                 if (this._scrollBar.Value >= 0 && this._scrollBar.Value < this._dataGridView.Rows.Count)
                 {
-                    this._dataGridView.FirstDisplayedScrollingRowIndex = this._scrollBar.Value + (this._scrollBar.Value == 1 ? -1 : 1);
+                    int index = this._scrollBar.Value + (this._scrollBar.Value == 1 ? -1 : 1);
+
+                    if (index < 0)
+                    {
+                        index = 0;
+                    }
+                    else if (index >= this._dataGridView.RowCount)
+                    {
+                        index = this._dataGridView.RowCount - 1;
+                    }
+
+                    this._dataGridView.FirstDisplayedScrollingRowIndex = index;
                 }
             }
             else

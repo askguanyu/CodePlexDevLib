@@ -62,7 +62,7 @@ namespace DevLib.Logging
 
             this._loggerSetup = loggerSetup;
 
-            if (this._loggerSetup.WriteToConsole && this._loggerSetup.WriteToFile)
+            if (this._loggerSetup.WriteToConsole || this._loggerSetup.WriteToFile)
             {
                 this._queueWaitHandle = new AutoResetEvent(false);
 

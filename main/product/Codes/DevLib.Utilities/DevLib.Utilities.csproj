@@ -49,7 +49,6 @@
     <Compile Include="MutexUtilities.cs" />
     <Compile Include="NetUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="RegexUtilities.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="WMIUtilities.cs" />

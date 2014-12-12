@@ -14,6 +14,7 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Channels;
     using System.ServiceModel.Configuration;
     using System.ServiceModel.Description;
+    using System.ServiceModel.MsmqIntegration;
     using System.Xml;
 
     /// <summary>
@@ -42,7 +43,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                Assembly assembly = Assembly.LoadFrom(assemblyFile);
+                Assembly assembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
                 Type[] assemblyTypeList = assembly.GetTypes();
 
                 foreach (Type type in assemblyTypeList)
@@ -94,9 +95,10 @@ namespace DevLib.ServiceModel
 
             try
             {
-                Assembly assembly = Assembly.LoadFrom(assemblyFile);
+                Assembly assembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
                 Configuration configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = configFile }, ConfigurationUserLevel.None);
                 ServiceModelSectionGroup serviceModelSectionGroup = configuration.GetSectionGroup("system.serviceModel") as ServiceModelSectionGroup;
+
                 foreach (ServiceElement serviceElement in serviceModelSectionGroup.Services.Services)
                 {
                     try
@@ -149,7 +151,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                Assembly assembly = Assembly.LoadFrom(assemblyFile);
+                Assembly assembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
                 return assembly.GetType(typeFullName);
             }
             catch (Exception e)
@@ -261,14 +263,14 @@ namespace DevLib.ServiceModel
                 return new WSHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
 
-            if (bindingTypeName.Equals("NetTcpBinding", StringComparison.OrdinalIgnoreCase))
+            if (bindingTypeName.Equals("WSDualHttpBinding", StringComparison.OrdinalIgnoreCase))
             {
-                return new NetTcpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = ushort.MaxValue, PortSharingEnabled = true, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WSDualHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
 
-            if (bindingTypeName.Equals("NetNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
+            if (bindingTypeName.Equals("WSFederationHttpBinding", StringComparison.OrdinalIgnoreCase))
             {
-                return new NetNamedPipeBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WSFederationHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
 
             if (bindingTypeName.Equals("WS2007HttpBinding", StringComparison.OrdinalIgnoreCase))
@@ -281,14 +283,14 @@ namespace DevLib.ServiceModel
                 return new WS2007FederationHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
 
-            if (bindingTypeName.Equals("WSDualHttpBinding", StringComparison.OrdinalIgnoreCase))
+            if (bindingTypeName.Equals("NetTcpBinding", StringComparison.OrdinalIgnoreCase))
             {
-                return new WSDualHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new NetTcpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = ushort.MaxValue, PortSharingEnabled = true, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
 
-            if (bindingTypeName.Equals("WSFederationHttpBinding", StringComparison.OrdinalIgnoreCase))
+            if (bindingTypeName.Equals("NetNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
             {
-                return new WSFederationHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new NetNamedPipeBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
 
             if (bindingTypeName.Equals("NetMsmqBinding", StringComparison.OrdinalIgnoreCase))
@@ -299,6 +301,31 @@ namespace DevLib.ServiceModel
             if (bindingTypeName.Equals("NetPeerTcpBinding", StringComparison.OrdinalIgnoreCase))
             {
                 return new NetPeerTcpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+            }
+
+            if (bindingTypeName.Equals("MsmqIntegrationBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new MsmqIntegrationBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxReceivedMessageSize = int.MaxValue };
+            }
+
+            if (bindingTypeName.Equals("BasicHttpContextBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new BasicHttpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+            }
+
+            if (bindingTypeName.Equals("NetTcpContextBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new NetTcpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = ushort.MaxValue, PortSharingEnabled = true, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+            }
+
+            if (bindingTypeName.Equals("WebHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WebHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+            }
+
+            if (bindingTypeName.Equals("WSHttpContextBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return new WSHttpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
 
             if (bindingTypeName.Equals("CustomBinding", StringComparison.OrdinalIgnoreCase))

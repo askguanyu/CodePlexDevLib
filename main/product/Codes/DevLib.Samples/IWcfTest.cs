@@ -43,4 +43,11 @@ namespace DevLib.Samples
         [DataMember]
         public string B { get; set; }
     }
+
+    [DataContract]
+    public class Bird : Animal
+    {
+        [DataMember]
+        public string C { get; set; }
+    }
 }

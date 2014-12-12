@@ -7,6 +7,7 @@ namespace DevLib.ServiceProcess
 {
     using System;
     using System.Globalization;
+    using System.IO;
     using System.Reflection;
     using System.ServiceProcess;
     using System.Xml.Serialization;
@@ -58,7 +59,7 @@ namespace DevLib.ServiceProcess
                 {
                     if (!string.IsNullOrEmpty(this.ServiceAssemblyPath))
                     {
-                        return Assembly.LoadFrom(this.ServiceAssemblyPath);
+                        return Assembly.Load(File.ReadAllBytes(this.ServiceAssemblyPath));
                     }
                     else
                     {
@@ -68,7 +69,7 @@ namespace DevLib.ServiceProcess
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
-                    return Assembly.LoadFrom(AppDomain.CurrentDomain.SetupInformation.ApplicationName);
+                    return Assembly.Load(File.ReadAllBytes(AppDomain.CurrentDomain.SetupInformation.ApplicationName));
                 }
             }
         }

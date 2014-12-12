@@ -6,6 +6,7 @@
 namespace DevLib.ModernUI.Forms
 {
     using System;
+    using System.ComponentModel;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Windows.Forms;
@@ -121,6 +122,25 @@ namespace DevLib.ModernUI.Forms
                 this._delayedCallTimer = DelayedCall.Start(this.UpdateProgress, 4);
                 this._lastUpdateTime = DateTime.Now;
                 this._thresholdTime = this._closeTime / 1.5d;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the height of the top bar.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(2)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public new int TopBarHeight
+        {
+            get
+            {
+                return base.TopBarHeight;
+            }
+
+            set
+            {
+                base.TopBarHeight = value;
             }
         }
 

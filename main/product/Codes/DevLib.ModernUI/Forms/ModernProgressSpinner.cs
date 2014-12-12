@@ -106,8 +106,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernColorStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -139,8 +140,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernThemeStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get
@@ -183,6 +185,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
@@ -194,6 +197,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomForeColor
@@ -205,7 +209,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
-        [DefaultValue(false)]
+        [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
@@ -217,8 +222,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseSelectable
         {
             get
@@ -235,6 +240,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ModernProgressSpinner"/> is spinning.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool Spinning
@@ -253,7 +259,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the value of progress.
         /// </summary>
-        [DefaultValue(0)]
+        [Browsable(true)]
+        [DefaultValue(15)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int Value
         {
@@ -277,6 +284,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the minimum value of progress.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(0)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int Minimum
@@ -312,7 +320,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the maximum value of progress.
         /// </summary>
-        [DefaultValue(0)]
+        [Browsable(true)]
+        [DefaultValue(60)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int Maximum
         {
@@ -342,6 +351,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether ensure visible.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool EnsureVisible
@@ -361,6 +371,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the speed.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(1f)]
         [Category(ModernConstants.PropertyCategoryName)]
         [Description("Speed value must be bigger than 0 and less than or equal to 10.")]
@@ -390,6 +401,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ModernProgressSpinner"/> is backwards.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool Backwards
@@ -409,6 +421,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom background.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackground

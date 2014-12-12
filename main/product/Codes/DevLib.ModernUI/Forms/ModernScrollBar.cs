@@ -230,15 +230,17 @@ namespace DevLib.ModernUI.Forms
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
 
         /// <summary>
-        /// Occurs when [scroll].
+        /// Occurs when scroll.
         /// </summary>
+        [Category(ModernConstants.PropertyCategoryName)]
         public event ScrollEventHandler Scroll;
 
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernColorStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
             get
@@ -270,8 +272,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [Category(ModernConstants.PropertyCategoryName)]
+        [Browsable(true)]
         [DefaultValue(ModernThemeStyle.Default)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {
             get
@@ -314,6 +317,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseCustomBackColor
@@ -325,7 +329,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
-        [Browsable(false)]
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -338,8 +342,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
-        [Browsable(false)]
-        [DefaultValue(false)]
+        [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool UseStyleColors
@@ -352,8 +356,8 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether the control can receive focus.
         /// </summary>
         [Browsable(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
         [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public bool UseSelectable
         {
             get
@@ -393,7 +397,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether use bar color.
         /// </summary>
-        [DefaultValue(false)]
+        [Browsable(true)]
+        [DefaultValue(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseBarColor
         {
@@ -404,6 +409,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the size of the scrollbar.
         /// </summary>
+        [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int ScrollbarSize
         {
@@ -428,6 +434,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets a value indicating whether highlight on wheel.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool HighlightOnWheel
@@ -439,6 +446,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the orientation.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public ModernScrollBarOrientation Orientation
         {
             get
@@ -472,6 +481,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the minimum value.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int Minimum
         {
             get
@@ -516,6 +527,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the maximum value.
         /// </summary>
+        [Browsable(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int Maximum
         {
             get
@@ -555,7 +568,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the small change.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(1)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int SmallChange
         {
             get
@@ -578,7 +593,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the large change.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(5)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int LargeChange
         {
             get
@@ -609,8 +626,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the value of scroll position.
         /// </summary>
+        [Browsable(true)]
         [DefaultValue(0)]
-        [Browsable(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
         public int Value
         {
             get

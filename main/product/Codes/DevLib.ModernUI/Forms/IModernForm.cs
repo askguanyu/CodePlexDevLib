@@ -46,6 +46,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets modern color style.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(ModernColorStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         ModernColorStyle ColorStyle
         {
@@ -57,6 +58,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets modern theme style.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(ModernThemeStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         ModernThemeStyle ThemeStyle
         {
@@ -79,6 +81,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom BackColor.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         bool UseCustomBackColor
         {
@@ -90,6 +93,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use custom ForeColor.
         /// </summary>
         [Browsable(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         bool UseCustomForeColor
         {

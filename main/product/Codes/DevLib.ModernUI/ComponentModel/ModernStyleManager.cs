@@ -65,7 +65,8 @@ namespace DevLib.ModernUI.ComponentModel
         /// <summary>
         /// Gets or sets modern color style.
         /// </summary>
-        [DefaultValue(ModernConstants.DefaultColorStyle)]
+        [Browsable(true)]
+        [DefaultValue(ModernColorStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernColorStyle ColorStyle
         {
@@ -88,7 +89,8 @@ namespace DevLib.ModernUI.ComponentModel
         /// <summary>
         /// Gets or sets modern theme style.
         /// </summary>
-        [DefaultValue(ModernConstants.DefaultThemeStyle)]
+        [Browsable(true)]
+        [DefaultValue(ModernThemeStyle.Default)]
         [Category(ModernConstants.PropertyCategoryName)]
         public ModernThemeStyle ThemeStyle
         {

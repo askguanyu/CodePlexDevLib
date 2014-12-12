@@ -728,7 +728,7 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
-            var tempp0 = @"\\gytp\d$\Download";
+            //var tempp0 = @"\\gytp\d$\Download";
             var tempp = LogConfigManager.GetFileFullPath(@"\\gytp\d$\Download");
             var tempp1 = LogConfigManager.GetFileFullPath(@"$TMp$\a\Logs\b.log");
             var tempp2 = LogConfigManager.GetFileFullPath(@"%TmP\a\Logs\b.log");

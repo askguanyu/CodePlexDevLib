@@ -58,6 +58,7 @@ namespace DevLib.Samples
             this.modernLabel1 = new DevLib.ModernUI.Forms.ModernLabel();
             this.modernButton4 = new DevLib.ModernUI.Forms.ModernButton();
             this.label1 = new System.Windows.Forms.Label();
+            this.modernTile2 = new DevLib.ModernUI.Forms.ModernTile();
             this.StatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).BeginInit();
             this.modernPanel1.SuspendLayout();
@@ -77,6 +78,7 @@ namespace DevLib.Samples
             // 
             this.modernStyleManager1.ColorStyle = DevLib.ModernUI.Forms.ModernColorStyle.Pink;
             this.modernStyleManager1.Owner = this;
+            this.modernStyleManager1.ThemeStyle = DevLib.ModernUI.Forms.ModernThemeStyle.Light;
             // 
             // modernToggle1
             // 
@@ -89,6 +91,7 @@ namespace DevLib.Samples
             this.modernToggle1.TabIndex = 4;
             this.modernToggle1.Text = "Off";
             this.modernToggle1.UseSelectable = true;
+            this.modernToggle1.UseStyleColors = false;
             this.modernToggle1.UseVisualStyleBackColor = true;
             this.modernToggle1.CheckedChanged += new System.EventHandler(this.modernToggle1_CheckedChanged);
             // 
@@ -100,6 +103,7 @@ namespace DevLib.Samples
             this.modernButton1.TabIndex = 5;
             this.modernButton1.Text = "modernButton1";
             this.modernButton1.UseSelectable = true;
+            this.modernButton1.UseStyleColors = false;
             this.modernButton1.UseVisualStyleBackColor = true;
             this.modernButton1.Click += new System.EventHandler(this.modernButton1_Click);
             // 
@@ -112,6 +116,8 @@ namespace DevLib.Samples
             this.modernDateTime1.Name = "modernDateTime1";
             this.modernDateTime1.Size = new System.Drawing.Size(200, 29);
             this.modernDateTime1.TabIndex = 0;
+            this.modernDateTime1.UseSelectable = true;
+            this.modernDateTime1.UseStyleColors = false;
             // 
             // modernComboBox1
             // 
@@ -123,6 +129,7 @@ namespace DevLib.Samples
             this.modernComboBox1.Size = new System.Drawing.Size(196, 29);
             this.modernComboBox1.TabIndex = 0;
             this.modernComboBox1.UseSelectable = true;
+            this.modernComboBox1.UseStyleColors = false;
             // 
             // modernButton2
             // 
@@ -132,20 +139,20 @@ namespace DevLib.Samples
             this.modernButton2.TabIndex = 7;
             this.modernButton2.Text = "modernButton2";
             this.modernButton2.UseSelectable = true;
+            this.modernButton2.UseStyleColors = false;
             this.modernButton2.UseVisualStyleBackColor = true;
             // 
             // modernPanel1
             // 
             this.modernPanel1.Controls.Add(this.modernButton2);
             this.modernPanel1.Controls.Add(this.modernButton3);
-            this.modernPanel1.HighlightHorizontalScrollBarOnWheel = false;
-            this.modernPanel1.HighlightVerticalScrollBarOnWheel = false;
             this.modernPanel1.HorizontalScrollBarSize = 10;
             this.modernPanel1.Location = new System.Drawing.Point(392, 50);
             this.modernPanel1.Name = "modernPanel1";
             this.modernPanel1.Size = new System.Drawing.Size(223, 141);
             this.modernPanel1.TabIndex = 7;
             this.modernPanel1.UseHorizontalBarColor = true;
+            this.modernPanel1.UseStyleColors = false;
             this.modernPanel1.UseVerticalBarColor = true;
             this.modernPanel1.VerticalScrollBarSize = 10;
             // 
@@ -157,6 +164,7 @@ namespace DevLib.Samples
             this.modernButton3.TabIndex = 2;
             this.modernButton3.Text = "modernButton3";
             this.modernButton3.UseSelectable = true;
+            this.modernButton3.UseStyleColors = false;
             this.modernButton3.UseVisualStyleBackColor = true;
             // 
             // modernTile1
@@ -164,11 +172,12 @@ namespace DevLib.Samples
             this.modernTile1.ActiveControl = null;
             this.modernTile1.Location = new System.Drawing.Point(437, 386);
             this.modernTile1.Name = "modernTile1";
-            this.modernTile1.ShowTileCount = false;
             this.modernTile1.Size = new System.Drawing.Size(144, 117);
             this.modernTile1.TabIndex = 8;
             this.modernTile1.Text = "modernTile1";
+            this.modernTile1.TileCountFontSize = DevLib.ModernUI.Drawing.ModernFontSize.Small;
             this.modernTile1.UseSelectable = true;
+            this.modernTile1.UseStyleColors = false;
             this.modernTile1.UseVisualStyleBackColor = true;
             // 
             // modernTextBox1
@@ -184,7 +193,11 @@ namespace DevLib.Samples
             this.modernTextBox1.Size = new System.Drawing.Size(123, 23);
             this.modernTextBox1.TabIndex = 9;
             this.modernTextBox1.Text = "3";
+            this.modernTextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.modernTextBox1.UseSelectable = true;
+            this.modernTextBox1.UseStyleColors = false;
+            this.modernTextBox1.UseSystemPasswordChar = false;
+            this.modernTextBox1.WordWrap = true;
             // 
             // modernTabControl2
             // 
@@ -200,6 +213,7 @@ namespace DevLib.Samples
             this.modernTabControl2.TabIndex = 10;
             this.modernTabControl2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.modernTabControl2.UseSelectable = true;
+            this.modernTabControl2.UseStyleColors = false;
             // 
             // modernTabPage3
             // 
@@ -214,13 +228,12 @@ namespace DevLib.Samples
             this.modernTabPage3.TabIndex = 0;
             this.modernTabPage3.Text = "modernTabPage3";
             this.modernTabPage3.UseHorizontalBarColor = true;
+            this.modernTabPage3.UseStyleColors = false;
             this.modernTabPage3.UseVerticalBarColor = true;
             this.modernTabPage3.VerticalScrollBarSize = 10;
             // 
             // modernTabPage4
             // 
-            this.modernTabPage4.HighlightHorizontalScrollBarOnWheel = false;
-            this.modernTabPage4.HighlightVerticalScrollBarOnWheel = false;
             this.modernTabPage4.HorizontalScrollBarSize = 10;
             this.modernTabPage4.Location = new System.Drawing.Point(70, 4);
             this.modernTabPage4.Name = "modernTabPage4";
@@ -228,6 +241,7 @@ namespace DevLib.Samples
             this.modernTabPage4.TabIndex = 1;
             this.modernTabPage4.Text = "modernTabPage4";
             this.modernTabPage4.UseHorizontalBarColor = true;
+            this.modernTabPage4.UseStyleColors = false;
             this.modernTabPage4.UseVerticalBarColor = true;
             this.modernTabPage4.VerticalScrollBarSize = 10;
             // 
@@ -241,12 +255,11 @@ namespace DevLib.Samples
             this.modernTabControl1.Size = new System.Drawing.Size(315, 174);
             this.modernTabControl1.TabIndex = 11;
             this.modernTabControl1.UseSelectable = true;
+            this.modernTabControl1.UseStyleColors = false;
             // 
             // modernTabPage1
             // 
             this.modernTabPage1.Controls.Add(this.modernDataGridView1);
-            this.modernTabPage1.HighlightHorizontalScrollBarOnWheel = false;
-            this.modernTabPage1.HighlightVerticalScrollBarOnWheel = false;
             this.modernTabPage1.HorizontalScrollBarSize = 10;
             this.modernTabPage1.Location = new System.Drawing.Point(4, 38);
             this.modernTabPage1.Name = "modernTabPage1";
@@ -254,6 +267,7 @@ namespace DevLib.Samples
             this.modernTabPage1.TabIndex = 0;
             this.modernTabPage1.Text = "modernTabPage1";
             this.modernTabPage1.UseHorizontalBarColor = true;
+            this.modernTabPage1.UseStyleColors = false;
             this.modernTabPage1.UseVerticalBarColor = true;
             this.modernTabPage1.VerticalScrollBarSize = 10;
             // 
@@ -322,8 +336,6 @@ namespace DevLib.Samples
             // 
             // modernTabPage2
             // 
-            this.modernTabPage2.HighlightHorizontalScrollBarOnWheel = false;
-            this.modernTabPage2.HighlightVerticalScrollBarOnWheel = false;
             this.modernTabPage2.HorizontalScrollBarSize = 10;
             this.modernTabPage2.Location = new System.Drawing.Point(4, 38);
             this.modernTabPage2.Name = "modernTabPage2";
@@ -331,6 +343,7 @@ namespace DevLib.Samples
             this.modernTabPage2.TabIndex = 1;
             this.modernTabPage2.Text = "modernTabPage2";
             this.modernTabPage2.UseHorizontalBarColor = true;
+            this.modernTabPage2.UseStyleColors = false;
             this.modernTabPage2.UseVerticalBarColor = true;
             this.modernTabPage2.VerticalScrollBarSize = 10;
             // 
@@ -344,6 +357,7 @@ namespace DevLib.Samples
             this.modernProgressSpinner1.TabIndex = 12;
             this.modernProgressSpinner1.Text = "modernProgressSpinner1";
             this.modernProgressSpinner1.UseSelectable = true;
+            this.modernProgressSpinner1.UseStyleColors = false;
             this.modernProgressSpinner1.Value = 25;
             // 
             // modernLabel1
@@ -354,6 +368,7 @@ namespace DevLib.Samples
             this.modernLabel1.Size = new System.Drawing.Size(94, 19);
             this.modernLabel1.TabIndex = 3;
             this.modernLabel1.Text = "modernLabel1";
+            this.modernLabel1.UseStyleColors = false;
             // 
             // modernButton4
             // 
@@ -363,6 +378,7 @@ namespace DevLib.Samples
             this.modernButton4.TabIndex = 13;
             this.modernButton4.Text = "modernButton4";
             this.modernButton4.UseSelectable = true;
+            this.modernButton4.UseStyleColors = false;
             this.modernButton4.UseVisualStyleBackColor = true;
             // 
             // label1
@@ -374,6 +390,21 @@ namespace DevLib.Samples
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "label1";
+            // 
+            // modernTile2
+            // 
+            this.modernTile2.ActiveControl = null;
+            this.modernTile2.Location = new System.Drawing.Point(506, 211);
+            this.modernTile2.Name = "modernTile2";
+            this.modernTile2.ShowTileCount = true;
+            this.modernTile2.Size = new System.Drawing.Size(75, 68);
+            this.modernTile2.TabIndex = 14;
+            this.modernTile2.Text = "modernTile2";
+            this.modernTile2.TileCount = 8;
+            this.modernTile2.TileCountFontSize = DevLib.ModernUI.Drawing.ModernFontSize.Large;
+            this.modernTile2.TileCountFontWeight = DevLib.ModernUI.Drawing.ModernFontWeight.Regular;
+            this.modernTile2.UseSelectable = true;
+            this.modernTile2.UseStyleColors = false;
             // 
             // DemoForm
             // 
@@ -387,6 +418,7 @@ namespace DevLib.Samples
             this.ControlBox = false;
             this.ControlBoxUseCustomBackColor = true;
             this.ControlBoxUseCustomForeColor = true;
+            this.Controls.Add(this.modernTile2);
             this.Controls.Add(this.modernButton4);
             this.Controls.Add(this.modernProgressSpinner1);
             this.Controls.Add(this.modernTabControl1);
@@ -411,6 +443,7 @@ namespace DevLib.Samples
             this.Controls.SetChildIndex(this.modernProgressSpinner1, 0);
             this.Controls.SetChildIndex(this.modernButton4, 0);
             this.Controls.SetChildIndex(this.StatusStrip, 0);
+            this.Controls.SetChildIndex(this.modernTile2, 0);
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).EndInit();
@@ -453,5 +486,6 @@ namespace DevLib.Samples
         private ModernLabel modernLabel1;
         private ModernButton modernButton4;
         private System.Windows.Forms.Label label1;
+        private ModernTile modernTile2;
     }
 }

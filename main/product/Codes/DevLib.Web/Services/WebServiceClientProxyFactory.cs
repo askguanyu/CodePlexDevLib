@@ -133,8 +133,8 @@ namespace DevLib.Web.Services
         /// Initializes a new instance of the <see cref="WebServiceClientProxyFactory" /> class.
         /// </summary>
         /// <param name="assemblyFile">Client proxy assembly file.</param>
-        /// <param name="isLoadFile">true to indicate WebServiceClientProxyFactory is loaded from assembly file.</param>
-        private WebServiceClientProxyFactory(string assemblyFile, bool isLoadFile)
+        /// <param name="loadFromFile">true to indicate WebServiceClientProxyFactory is loaded from assembly file.</param>
+        private WebServiceClientProxyFactory(string assemblyFile, bool loadFromFile)
         {
             if (!File.Exists(assemblyFile))
             {

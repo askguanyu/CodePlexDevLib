@@ -66,9 +66,11 @@ namespace DevLib.ModernUI.Forms
 
             this.TextAlign = ContentAlignment.BottomLeft;
             this.TileImageAlign = ContentAlignment.TopLeft;
-            this.ShowTileCount = true;
+            this.ShowTileCount = false;
             this.FontSize = ModernFontSize.Medium;
             this.FontWeight = ModernFontWeight.Light;
+            this.TileCountFontSize = ModernFontSize.Large;
+            this.TileCountFontWeight = ModernFontWeight.Regular;
         }
 
         /// <summary>
@@ -253,6 +255,30 @@ namespace DevLib.ModernUI.Forms
         [DefaultValue(0)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int TileCount
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets tile text font size.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ModernFontSize.Large)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public ModernFontSize TileCountFontSize
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets tile text font weight.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ModernFontWeight.Regular)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public ModernFontWeight TileCountFontWeight
         {
             get;
             set;
@@ -543,13 +569,13 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.TileCount > 0 && this.ShowTileCount)
+            if (this.ShowTileCount)
             {
-                Size countSize = TextRenderer.MeasureText(this.TileCount.ToString(), ModernFonts.TileCount);
+                Size countSize = TextRenderer.MeasureText(this.TileCount.ToString(), ModernFonts.Tile(this.TileCountFontSize, this.TileCountFontWeight));
 
                 e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-                TextRenderer.DrawText(e.Graphics, this.TileCount.ToString(), ModernFonts.TileCount, new Point(this.Width - countSize.Width, 0), foreColor);
+                TextRenderer.DrawText(e.Graphics, this.TileCount.ToString(), ModernFonts.Tile(this.TileCountFontSize, this.TileCountFontWeight), new Point(this.Width - countSize.Width, 0), foreColor);
 
                 e.Graphics.TextRenderingHint = TextRenderingHint.SystemDefault;
             }
@@ -565,7 +591,7 @@ namespace DevLib.ModernUI.Forms
                 textRectangle.Inflate(-2, -2);
             }
 
-            TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Tile(this.FontSize, this.FontWeight), textRectangle, foreColor, flags);
+            TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.Tile(this.FontSize, this.FontWeight), textRectangle, foreColor, flags);
 
             if (this._isFocused)
             {

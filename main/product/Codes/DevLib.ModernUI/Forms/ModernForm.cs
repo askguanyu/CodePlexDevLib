@@ -778,7 +778,7 @@ namespace DevLib.ModernUI.Forms
             {
                 Rectangle bounds = new Rectangle(20, 20, this.ClientRectangle.Width - (2 * 20), 40);
                 TextFormatFlags flags = TextFormatFlags.EndEllipsis | this.GetTextFormatFlags();
-                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.GetDefaultFont(this.FontSize, this.FontWeight), bounds, foreColor, flags);
+                TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.GetDefaultFont(this.FontSize, this.FontWeight), bounds, foreColor, flags);
             }
 
             if (this.BackImage != null && this.BackImageMaxSize != 0)

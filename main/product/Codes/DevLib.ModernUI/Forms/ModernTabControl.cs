@@ -673,7 +673,7 @@ namespace DevLib.ModernUI.Forms
                 graphics.FillRectangle(bgBrush, bgRectangle);
             }
 
-            TextRenderer.DrawText(graphics, tabPage.Text ?? string.Empty, ModernFonts.TabControl(this.FontSize, this.FontWeight), tabRectangle, foreColor, backColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
+            TextRenderer.DrawText(graphics, tabPage.Text, ModernFonts.TabControl(this.FontSize, this.FontWeight), tabRectangle, foreColor, backColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
         }
 
         /// <summary>

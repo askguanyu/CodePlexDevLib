@@ -521,7 +521,7 @@ namespace DevLib.ModernUI.Forms
 
             Rectangle textRect = new Rectangle(2, 2, this.Width - 20, this.Height - 4);
 
-            TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.ComboBox(this.FontSize, this.FontWeight), textRect, foreColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+            TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.ComboBox(this.FontSize, this.FontWeight), textRect, foreColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
 
             this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
 

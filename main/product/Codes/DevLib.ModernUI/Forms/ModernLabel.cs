@@ -493,13 +493,13 @@ namespace DevLib.ModernUI.Forms
 
                 if (!this._baseTextBox.Visible)
                 {
-                    TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Label(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
+                    TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.Label(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
                 }
             }
             else
             {
                 this.DestroyBaseTextbox();
-                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Label(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign, this.WordWrap));
+                TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.Label(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign, this.WordWrap));
                 this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
             }
         }

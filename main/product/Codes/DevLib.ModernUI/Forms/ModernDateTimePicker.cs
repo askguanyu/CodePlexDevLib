@@ -456,7 +456,7 @@ namespace DevLib.ModernUI.Forms
 
             Rectangle textRectangle = new Rectangle(2 + check, 2, this.Width - 20, this.Height - 4);
 
-            TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.DateTime(this.FontSize, this.FontWeight), textRectangle, foreColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+            TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.DateTime(this.FontSize, this.FontWeight), textRectangle, foreColor, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
 
             this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
 

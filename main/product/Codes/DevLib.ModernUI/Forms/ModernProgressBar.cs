@@ -45,11 +45,13 @@ namespace DevLib.ModernUI.Forms
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
-            this.TextAlign = ContentAlignment.MiddleCenter;
             this.ProgressBarStyle = ProgressBarStyle.Continuous;
             this.FontSize = ModernFontSize.Medium;
             this.FontWeight = ModernFontWeight.Regular;
-            this.HideProgressText = true;
+            this.ShowPercentText = false;
+            this.PercentTextAlign = ContentAlignment.MiddleCenter;
+            this.ShowText = false;
+            this.TextAlign = ContentAlignment.MiddleRight;
         }
 
         /// <summary>
@@ -231,24 +233,24 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets the alignment of the text on the control.
+        /// Gets or sets a value indicating whether show progress percent text.
         /// </summary>
         [Browsable(true)]
-        [DefaultValue(ContentAlignment.MiddleCenter)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
-        public ContentAlignment TextAlign
+        public bool ShowPercentText
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether hide progress text.
+        /// Gets or sets the alignment of the percent text on the control.
         /// </summary>
         [Browsable(true)]
-        [DefaultValue(true)]
+        [DefaultValue(ContentAlignment.MiddleCenter)]
         [Category(ModernConstants.PropertyCategoryName)]
-        public bool HideProgressText
+        public ContentAlignment PercentTextAlign
         {
             get;
             set;
@@ -267,6 +269,42 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether show text.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(false)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool ShowText
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets progress text.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue("")]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public new string Text
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the alignment of the text on the control.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(ContentAlignment.MiddleRight)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public ContentAlignment TextAlign
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets the current position of the progress bar.
         /// </summary>
         public new int Value
@@ -278,12 +316,8 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                if (value > this.Maximum)
-                {
-                    return;
-                }
+                base.Value = value > this.Maximum ? this.Maximum : value;
 
-                base.Value = value;
                 this.Invalidate();
             }
         }
@@ -370,7 +404,7 @@ namespace DevLib.ModernUI.Forms
             using (var g = this.CreateGraphics())
             {
                 proposedSize = new Size(int.MaxValue, int.MaxValue);
-                preferredSize = TextRenderer.MeasureText(g, this.ProgressPercentText, ModernFonts.ProgressBar(this.FontSize, this.FontWeight), proposedSize, ModernPaint.GetTextFormatFlags(this.TextAlign));
+                preferredSize = TextRenderer.MeasureText(g, this.ProgressPercentText, ModernFonts.ProgressBar(this.FontSize, this.FontWeight), proposedSize, ModernPaint.GetTextFormatFlags(this.PercentTextAlign));
             }
 
             return preferredSize;
@@ -554,23 +588,22 @@ namespace DevLib.ModernUI.Forms
         /// <param name="graphics">Graphics instance.</param>
         private void DrawProgressText(Graphics graphics)
         {
-            if (this.HideProgressText)
+            if (!this.ShowText && !this.ShowPercentText)
             {
                 return;
             }
 
-            Color foreColor;
+            Color foreColor = this.Enabled ? ModernPaint.ForeColor.ProgressBar.Normal(this.ThemeStyle) : ModernPaint.ForeColor.ProgressBar.Disabled(this.ThemeStyle);
 
-            if (!this.Enabled)
+            if (this.ShowText)
             {
-                foreColor = ModernPaint.ForeColor.ProgressBar.Disabled(this.ThemeStyle);
-            }
-            else
-            {
-                foreColor = ModernPaint.ForeColor.ProgressBar.Normal(this.ThemeStyle);
+                TextRenderer.DrawText(graphics, this.Text, ModernFonts.ProgressBar(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
             }
 
-            TextRenderer.DrawText(graphics, this.ProgressPercentText, ModernFonts.ProgressBar(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
+            if (this.ShowPercentText)
+            {
+                TextRenderer.DrawText(graphics, this.ProgressPercentText, ModernFonts.ProgressBar(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.PercentTextAlign));
+            }
         }
 
         /// <summary>

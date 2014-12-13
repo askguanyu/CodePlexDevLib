@@ -110,9 +110,9 @@ namespace DevLib.ServiceModel
         private Assembly _proxyAssembly;
 
         /// <summary>
-        /// Field _isLoadFile.
+        /// Field _loadFromFile.
         /// </summary>
-        private bool _isLoadFile;
+        private bool _loadFromFile;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
@@ -135,7 +135,7 @@ namespace DevLib.ServiceModel
 
             this.Url = url;
             this._setupInfo = setupInfo;
-            this._isLoadFile = false;
+            this._loadFromFile = false;
 
             this.DownloadMetadata();
             this.ImportMetadata();
@@ -191,15 +191,15 @@ namespace DevLib.ServiceModel
         /// Initializes a new instance of the <see cref="DynamicClientProxyFactory" /> class.
         /// </summary>
         /// <param name="assemblyFile">Client proxy assembly file.</param>
-        /// <param name="isLoadFile">true to indicate DynamicClientProxyFactory is loaded from assembly file.</param>
-        private DynamicClientProxyFactory(string assemblyFile, bool isLoadFile)
+        /// <param name="loadFromFile">true to indicate DynamicClientProxyFactory is loaded from assembly file.</param>
+        private DynamicClientProxyFactory(string assemblyFile, bool loadFromFile)
         {
             if (!File.Exists(assemblyFile))
             {
                 throw new FileNotFoundException("The specified assembly file does not exist.", assemblyFile);
             }
 
-            this._isLoadFile = isLoadFile;
+            this._loadFromFile = loadFromFile;
 
             this.ProxyAssembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
             this.ImportTypes();
@@ -496,7 +496,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(string remoteUri)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetClientBaseProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri);
             }
@@ -514,7 +514,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(string remoteHost, int remotePort)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetClientBaseProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
             }
@@ -532,7 +532,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Binding binding, string remoteUri)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetClientBaseProxy(this.ContractTypes[0], binding, remoteUri);
             }
@@ -551,7 +551,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Binding binding, string remoteHost, int remotePort)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetClientBaseProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
             }
@@ -569,7 +569,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Type bindingType, string remoteUri)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetClientBaseProxy(this.ContractTypes[0], bindingType, remoteUri);
             }
@@ -588,7 +588,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetClientBaseProxy(Type bindingType, string remoteHost, int remotePort)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetClientBaseProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
             }
@@ -875,7 +875,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
             }
@@ -896,7 +896,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
             }
@@ -917,7 +917,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
             }
@@ -937,7 +937,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
             }
@@ -956,7 +956,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
             }
@@ -976,7 +976,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionThrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
             }
@@ -1314,7 +1314,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
             }
@@ -1335,7 +1335,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
             }
@@ -1356,7 +1356,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
             }
@@ -1376,7 +1376,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
             }
@@ -1395,7 +1395,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
             }
@@ -1415,7 +1415,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerSessionUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
             }
@@ -1753,7 +1753,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
             }
@@ -1774,7 +1774,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
             }
@@ -1795,7 +1795,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
             }
@@ -1815,7 +1815,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
             }
@@ -1834,7 +1834,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
             }
@@ -1854,7 +1854,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallThrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
             }
@@ -2192,7 +2192,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
             }
@@ -2213,7 +2213,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
             }
@@ -2234,7 +2234,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
             }
@@ -2254,7 +2254,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
             }
@@ -2273,7 +2273,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
             }
@@ -2293,7 +2293,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxy.</returns>
         public DynamicClientProxy GetPerCallUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (this._isLoadFile)
+            if (this._loadFromFile)
             {
                 return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
             }

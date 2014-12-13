@@ -294,7 +294,7 @@ namespace DevLib.ModernUI.Forms
 
             using (Font buttonFont = new Font("Webdings", 9.25f))
             {
-                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, buttonFont, this.ClientRectangle, foreColor, backColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+                TextRenderer.DrawText(e.Graphics, this.Text, buttonFont, this.ClientRectangle, foreColor, backColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
             }
         }
 

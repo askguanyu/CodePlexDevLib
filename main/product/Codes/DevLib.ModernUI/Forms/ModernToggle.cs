@@ -515,7 +515,7 @@ namespace DevLib.ModernUI.Forms
             if (this.ShowStatusText)
             {
                 Rectangle textRectangle = new Rectangle(this.StatusTextRightToLeft ? this.ClientRectangle.Width - (this.ShowStatusText ? 31 : 1) : 0, 0, 30, this.ClientRectangle.Height);
-                TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Link(this.FontSize, this.FontWeight), textRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
+                TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.Link(this.FontSize, this.FontWeight), textRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
             }
 
             if (this.DisplayFocus && this._isFocused)

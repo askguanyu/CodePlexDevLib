@@ -449,7 +449,7 @@ namespace DevLib.ModernUI.Forms
             e.Graphics.SmoothingMode = SmoothingMode.Default;
 
             Rectangle textRectangle = new Rectangle(16, 0, this.Width - 16, this.Height);
-            TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.CheckBox(this.FontSize, this.FontWeight), textRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
+            TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.CheckBox(this.FontSize, this.FontWeight), textRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
 
             this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
 

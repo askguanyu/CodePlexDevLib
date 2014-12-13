@@ -444,7 +444,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            TextRenderer.DrawText(e.Graphics, this.Text ?? string.Empty, ModernFonts.Button(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
+            TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.Button(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
 
             this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
 

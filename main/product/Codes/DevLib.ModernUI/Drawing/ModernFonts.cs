@@ -86,27 +86,35 @@ namespace DevLib.ModernUI.Drawing
                 case ModernFontSize.Small:
                     fontSize = 12f;
                     break;
+
                 case ModernFontSize.Medium:
                     fontSize = 14f;
                     break;
+
                 case ModernFontSize.Large:
                     fontSize = 18f;
                     break;
+
                 case ModernFontSize.XL:
                     fontSize = 24f;
                     break;
+
                 case ModernFontSize.XXL:
                     fontSize = 30f;
                     break;
+
                 case ModernFontSize.XXXL:
                     fontSize = 36f;
                     break;
+
                 case ModernFontSize.XXXXL:
                     fontSize = 48f;
                     break;
+
                 case ModernFontSize.XXXXXL:
                     fontSize = 72f;
                     break;
+
                 default:
                     break;
             }
@@ -238,27 +246,35 @@ namespace DevLib.ModernUI.Drawing
                 case ModernFontSize.Small:
                     fontSize = 11f;
                     break;
+
                 case ModernFontSize.Medium:
                     fontSize = 13f;
                     break;
+
                 case ModernFontSize.Large:
                     fontSize = 16f;
                     break;
+
                 case ModernFontSize.XL:
                     fontSize = 24f;
                     break;
+
                 case ModernFontSize.XXL:
                     fontSize = 30f;
                     break;
+
                 case ModernFontSize.XXXL:
                     fontSize = 36f;
                     break;
+
                 case ModernFontSize.XXXXL:
                     fontSize = 48f;
                     break;
+
                 case ModernFontSize.XXXXXL:
                     fontSize = 72f;
                     break;
+
                 default:
                     break;
             }

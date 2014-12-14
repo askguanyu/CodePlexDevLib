@@ -5,9 +5,6 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ModernUI.Forms
 {
-    using System;
-    using System.Drawing;
-    using System.Security.Permissions;
     using System.Windows.Forms;
 
     /// <summary>

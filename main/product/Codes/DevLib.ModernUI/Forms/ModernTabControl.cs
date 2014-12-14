@@ -11,7 +11,6 @@ namespace DevLib.ModernUI.Forms
     using System.Drawing;
     using System.Drawing.Design;
     using System.Drawing.Drawing2D;
-    using System.Runtime.InteropServices;
     using System.Security;
     using System.Security.Permissions;
     using System.Windows.Forms;
@@ -28,9 +27,14 @@ namespace DevLib.ModernUI.Forms
     public class ModernTabControl : TabControl, IModernControl
     {
         /// <summary>
-        /// Field TabBottomBorderHeight.
+        /// Field WS_EX_LAYOUTRTL.
         /// </summary>
-        private const int TabBottomBorderHeight = 3;
+        private const int WS_EX_LAYOUTRTL = 0x400000;
+
+        /// <summary>
+        /// Field WS_EX_NOINHERITLAYOUT.
+        /// </summary>
+        private const int WS_EX_NOINHERITLAYOUT = 0x100000;
 
         /// <summary>
         /// Field WM_SETFONT.
@@ -41,6 +45,11 @@ namespace DevLib.ModernUI.Forms
         /// Field WM_FONTCHANGE.
         /// </summary>
         private const int WM_FONTCHANGE = 0x1d;
+
+        /// <summary>
+        /// Field TabBottomBorderHeight.
+        /// </summary>
+        private const int TabBottomBorderHeight = 3;
 
         /// <summary>
         /// Field _modernColorStyle.
@@ -205,7 +214,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether use StyleColors.
         /// </summary>
         [Browsable(true)]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
@@ -312,11 +321,9 @@ namespace DevLib.ModernUI.Forms
             [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
             get
             {
-                const int WS_EX_LAYOUTRTL = 0x400000;
-                const int WS_EX_NOINHERITLAYOUT = 0x100000;
                 var cp = base.CreateParams;
 
-                if (this._isMirrored)
+                if (this.IsMirrored)
                 {
                     cp.ExStyle = cp.ExStyle | WS_EX_LAYOUTRTL | WS_EX_NOINHERITLAYOUT;
                 }

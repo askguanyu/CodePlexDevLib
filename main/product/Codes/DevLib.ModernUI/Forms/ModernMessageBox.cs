@@ -163,12 +163,15 @@ namespace DevLib.ModernUI.Forms
                 case MessageBoxIcon.Error:
                     SystemSounds.Hand.Play();
                     break;
+
                 case MessageBoxIcon.Exclamation:
                     SystemSounds.Exclamation.Play();
                     break;
+
                 case MessageBoxIcon.Question:
                     SystemSounds.Beep.Play();
                     break;
+
                 default:
                     SystemSounds.Asterisk.Play();
                     break;

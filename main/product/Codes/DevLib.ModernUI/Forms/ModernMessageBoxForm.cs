@@ -282,15 +282,19 @@ namespace DevLib.ModernUI.Forms
                 case MessageBoxIcon.Error:
                     this._panelBody.BackColor = ErrorColor;
                     break;
+
                 case MessageBoxIcon.Warning:
                     this._panelBody.BackColor = WarningColor;
                     break;
+
                 case MessageBoxIcon.Information:
                     this._panelBody.BackColor = DefaultColor;
                     break;
+
                 case MessageBoxIcon.Question:
                     this._panelBody.BackColor = QuestionColor;
                     break;
+
                 default:
                     this._panelBody.BackColor = Color.DarkGray;
                     break;

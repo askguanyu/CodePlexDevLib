@@ -380,15 +380,19 @@ namespace DevLib.ServiceModel
                 case 0:
                     result = (TChannel)Activator.CreateInstance(InstanceType);
                     break;
+
                 case 1:
                     result = (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName);
                     break;
+
                 case 2:
                     result = (TChannel)Activator.CreateInstance(InstanceType, this._endpointConfigurationName, this._remoteAddress);
                     break;
+
                 case 3:
                     result = (TChannel)Activator.CreateInstance(InstanceType, this._binding, this._remoteAddress);
                     break;
+
                 default:
                     result = (TChannel)Activator.CreateInstance(InstanceType);
                     break;

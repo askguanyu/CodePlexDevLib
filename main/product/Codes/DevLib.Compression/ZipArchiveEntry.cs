@@ -673,6 +673,7 @@ namespace DevLib.Compression
                 case ZipArchiveEntry.CompressionMethodValues.Deflate:
                     stream = (Stream)new DeflateStream(compressedStreamToRead, CompressionMode.Decompress);
                     break;
+
                 default:
                     stream = compressedStreamToRead;
                     break;

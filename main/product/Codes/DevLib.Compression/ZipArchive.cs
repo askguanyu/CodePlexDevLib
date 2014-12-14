@@ -602,6 +602,7 @@ namespace DevLib.Compression
                     this.CloseStreams();
                     this._isDisposed = true;
                     break;
+
                 default:
                     try
                     {
@@ -740,9 +741,11 @@ namespace DevLib.Compression
                     case ZipArchiveMode.Read:
                         this.ReadEndOfCentralDirectory();
                         break;
+
                     case ZipArchiveMode.Create:
                         this._readEntries = true;
                         break;
+
                     default:
                         if (this._archiveStream.Length == 0L)
                         {

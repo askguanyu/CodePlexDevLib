@@ -21,15 +21,13 @@ namespace DevLib.AddIn
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed.")]
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1204:StaticElementsMustAppearBeforeInstanceElements", Justification = "Reviewed.")]
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed.")]
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
-    class Program
+    internal class Program
     {
         /// <summary>
         /// Method Main, entry point.
         /// </summary>
         /// <param name="args">Command line arguments.</param>
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //// args[0] = AddInDomain assembly path
             //// args[1] = GUID
@@ -42,11 +40,11 @@ namespace DevLib.AddIn
                 ProgramInternalLogger.Log(true, new ArgumentNullException("args"));
 
                 Console.WriteLine(@"
-                args[0] = AddInDomain assembly path
-                args[1] = GUID
-                args[2] = PID
-                args[3] = AddInDomainSetup file
-                args[4] = Redirect output or not");
+args[0] = AddInDomain assembly path
+args[1] = GUID
+args[2] = PID
+args[3] = AddInDomainSetup file
+args[4] = Redirect output or not");
 
                 return;
             }
@@ -109,9 +107,9 @@ namespace DevLib.AddIn
     public class AssemblyResolver : MarshalByRefObject
     {
         /// <summary>
-        /// Readonly Field _assemblyDict.
+        /// Readonly Field _assemblyDictionary.
         /// </summary>
-        private readonly Dictionary<string, Dictionary<AssemblyName, string>> _assemblyDict;
+        private readonly Dictionary<string, Dictionary<AssemblyName, string>> _assemblyDictionary;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssemblyResolver" /> class.
@@ -119,7 +117,7 @@ namespace DevLib.AddIn
         /// <param name="dict">Instance of Dictionary.</param>
         public AssemblyResolver(Dictionary<AssemblyName, string> dict)
         {
-            this._assemblyDict = new Dictionary<string, Dictionary<AssemblyName, string>>();
+            this._assemblyDictionary = new Dictionary<string, Dictionary<AssemblyName, string>>();
 
             if (dict != null)
             {
@@ -127,9 +125,9 @@ namespace DevLib.AddIn
                 {
                     Dictionary<AssemblyName, string> subDict;
 
-                    if (!this._assemblyDict.TryGetValue(item.Key.Name, out subDict))
+                    if (!this._assemblyDictionary.TryGetValue(item.Key.Name, out subDict))
                     {
-                        this._assemblyDict[item.Key.Name] = subDict = new Dictionary<AssemblyName, string>();
+                        this._assemblyDictionary[item.Key.Name] = subDict = new Dictionary<AssemblyName, string>();
                     }
 
                     subDict[item.Key] = item.Value;
@@ -243,7 +241,7 @@ namespace DevLib.AddIn
             AssemblyName assemblyName = new AssemblyName(name);
             Dictionary<AssemblyName, string> subDict;
 
-            if (!this._assemblyDict.TryGetValue(assemblyName.Name, out subDict))
+            if (!this._assemblyDictionary.TryGetValue(assemblyName.Name, out subDict))
             {
                 return null;
             }

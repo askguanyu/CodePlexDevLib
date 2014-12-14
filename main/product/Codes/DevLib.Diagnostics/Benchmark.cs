@@ -166,7 +166,6 @@ namespace DevLib.Diagnostics
             return result;
         }
 
-        #region Native Methods Wrap
         [SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass", Justification = "Reviewed.")]
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -229,7 +228,6 @@ namespace DevLib.Diagnostics
 
             return kernelTime + userTimer;
         }
-        #endregion
     }
 
     /// <summary>

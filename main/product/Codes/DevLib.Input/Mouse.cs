@@ -284,15 +284,19 @@ namespace DevLib.Input
                 case MouseButton.Left:
                     virtualKeyCode = NativeMethods.VK_LBUTTON;
                     break;
+
                 case MouseButton.Right:
                     virtualKeyCode = NativeMethods.VK_RBUTTON;
                     break;
+
                 case MouseButton.Middle:
                     virtualKeyCode = NativeMethods.VK_MBUTTON;
                     break;
+
                 case MouseButton.XButton1:
                     virtualKeyCode = NativeMethods.VK_XBUTTON1;
                     break;
+
                 case MouseButton.XButton2:
                     virtualKeyCode = NativeMethods.VK_XBUTTON2;
                     break;

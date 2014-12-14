@@ -507,6 +507,7 @@ namespace DevLib.Net.Sockets
                     case SocketAsyncOperation.Connect:
                         this.ProcessConnect();
                         break;
+
                     default:
                         break;
                 }
@@ -665,6 +666,7 @@ namespace DevLib.Net.Sockets
                     case SocketAsyncOperation.Receive:
                         this.ProcessReceive(receiveSocketAsyncEventArgs);
                         break;
+
                     default:
                         break;
                 }
@@ -690,6 +692,7 @@ namespace DevLib.Net.Sockets
                     case SocketAsyncOperation.Send:
                         this.ProcessSend(sendSocketAsyncEventArgs);
                         break;
+
                     default:
                         break;
                 }

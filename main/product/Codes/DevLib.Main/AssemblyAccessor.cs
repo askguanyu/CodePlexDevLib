@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Main
 {
+    using System.IO;
     using System.Reflection;
 
     /// <summary>
@@ -30,7 +31,7 @@ namespace DevLib.Main
                 }
             }
 
-            return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+            return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
         }
 
         /// <summary>

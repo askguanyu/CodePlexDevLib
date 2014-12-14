@@ -406,11 +406,13 @@ namespace DevLib.Configuration
                         case DialogResult.No:
                         case DialogResult.None:
                             break;
+
                         case DialogResult.OK:
                         case DialogResult.Retry:
                         case DialogResult.Yes:
                             this.OpenConfigFile(this._openConfigFileDialog.FileName);
                             break;
+
                         default:
                             break;
                     }
@@ -466,11 +468,13 @@ namespace DevLib.Configuration
                 case DialogResult.No:
                 case DialogResult.None:
                     break;
+
                 case DialogResult.OK:
                 case DialogResult.Retry:
                 case DialogResult.Yes:
                     this.AddPlugin(this.LoadPluginFile(this._openPluginFileDialog.FileName).ToArray());
                     break;
+
                 default:
                     break;
             }
@@ -620,11 +624,13 @@ namespace DevLib.Configuration
                 case DialogResult.No:
                 case DialogResult.None:
                     break;
+
                 case DialogResult.OK:
                 case DialogResult.Retry:
                 case DialogResult.Yes:
                     this.SaveConfigFile(this._saveConfigFileDialog.FileName);
                     break;
+
                 default:
                     break;
             }

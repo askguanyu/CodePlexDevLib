@@ -165,43 +165,56 @@ namespace DevLib.ServiceProcess
                             this._setupInfo.ServiceName = this._windowsService.ServiceSetupInfo.ServiceName;
                             this._setupInfo.DisplayName = this._windowsService.ServiceSetupInfo.DisplayName;
                             break;
+
                         case "s":
                             this.Start();
                             break;
+
                         case "t":
                             this.Stop();
                             break;
+
                         case "p":
                             this.Pause();
                             break;
+
                         case "r":
                             this.Resume();
                             break;
+
                         case "e":
                             this.Restart();
                             break;
+
                         case "c":
                             this.IsConsoleMode = true;
                             break;
+
                         case "v":
                             this.IsConsoleMode = false;
                             break;
+
                         case "i":
                             this.Install();
                             break;
+
                         case "u":
                             this.Uninstall();
                             break;
+
                         case "a":
                             this.WriteServiceInfo();
                             break;
+
                         case "q":
                             canContinue = false;
                             break;
+
                         case "\r":
                         case "\n":
                         case "\r\n":
                             break;
+
                         default:
                             this.WriteToConsole(ConsoleColor.Red, string.Format("\"{0}\" is not recognized as a valid command.", input), true, false);
                             break;

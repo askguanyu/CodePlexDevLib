@@ -22,7 +22,6 @@ namespace DevLib.WinForms
             this.InitializeRibbonTabContainer();
         }
 
-        #region RibbonLogic
         /// <summary>
         /// Const Field RIBBON_COLLAPSE_HEIGHT.
         /// </summary>
@@ -159,6 +158,5 @@ namespace DevLib.WinForms
                 }
             }
         }
-        #endregion
     }
 }

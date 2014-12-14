@@ -6,7 +6,6 @@
 namespace DevLib.Net.Sockets
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
@@ -795,6 +794,7 @@ namespace DevLib.Net.Sockets
                     case SocketAsyncOperation.Accept:
                         this.ProcessAccept();
                         break;
+
                     default:
                         break;
                 }
@@ -921,6 +921,7 @@ namespace DevLib.Net.Sockets
                     case SocketAsyncOperation.Receive:
                         this.ProcessReceive(receiveSocketAsyncEventArgs);
                         break;
+
                     default:
                         break;
                 }
@@ -1061,6 +1062,7 @@ namespace DevLib.Net.Sockets
                     case SocketAsyncOperation.Send:
                         this.ProcessSend(sendSocketAsyncEventArgs);
                         break;
+
                     default:
                         break;
                 }

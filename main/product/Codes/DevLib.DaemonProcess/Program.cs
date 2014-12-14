@@ -18,15 +18,14 @@ namespace DevLib.DaemonProcess
     /// <summary>
     /// Class Program.
     /// </summary>
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed.")]
-    class Program
+    internal class Program
     {
         /// <summary>
         /// Method Main, entry point.
         /// </summary>
         /// <param name="args">Command line arguments.</param>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //// args[0] = guid                       : daemon process guid
             //// args[1] = process id | -stop         : protected process id | stop protecting
@@ -128,7 +127,7 @@ args[5] = args                       : protected process args");
                     {
                         ServiceController[] services = ServiceController.GetServices();
 
-                        bool isServiceExist = false;
+                        bool serviceExists = false;
 
                         foreach (var item in services)
                         {
@@ -136,7 +135,7 @@ args[5] = args                       : protected process args");
                             {
                                 if (protectedProcessEntryPoint.Equals(item.ServiceName, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    isServiceExist = true;
+                                    serviceExists = true;
 
                                     break;
                                 }
@@ -147,7 +146,7 @@ args[5] = args                       : protected process args");
                             }
                         }
 
-                        if (!isServiceExist)
+                        if (!serviceExists)
                         {
                             Environment.Exit(-1);
                         }

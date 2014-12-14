@@ -461,6 +461,7 @@ namespace DevLib.Net.Sockets
                     case SocketAsyncOperation.SendTo:
                         this.ProcessSend(sendSocketAsyncEventArgs);
                         break;
+
                     default:
                         break;
                 }

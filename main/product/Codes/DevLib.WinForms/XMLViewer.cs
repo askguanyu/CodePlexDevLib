@@ -83,7 +83,7 @@ namespace DevLib.WinForms
                 string rtfFormat = @"{{\rtf1\ansi\ansicpg1252\deff0\deflang1033\deflangfe2052
 {{\fonttbl{{\f0\fnil Fixedsys;}}}}
 {{\colortbl ;{0}}}
-\viewkind4\uc1\pard\lang1033\f0 
+\viewkind4\uc1\pard\lang1033\f0
 {1}}}";
 
                 // Get the XDocument from the Text property.
@@ -98,7 +98,7 @@ namespace DevLib.WinForms
                     // The constants in XMLViewerSettings are used to specify the order
                     // in colortbl of the Rtf.
                     xmlRtfContent.AppendFormat(@"
-\cf{0} <?\cf{1} xml \cf{2} version\cf{0} =\cf0 ""\cf{3} {4}\cf0 "" 
+\cf{0} <?\cf{1} xml \cf{2} version\cf{0} =\cf0 ""\cf{3} {4}\cf0 ""
 \cf{2} encoding\cf{0} =\cf0 ""\cf{3} {5}\cf0 ""\cf{0} ?>\par",
                                                              XMLViewerSettings.TagID,
                                                              XMLViewerSettings.ElementID,
@@ -286,15 +286,19 @@ namespace DevLib.WinForms
                     case '"':
                         encodedText.Append("&quot;");
                         break;
+
                     case '&':
                         encodedText.Append(@"&amp;");
                         break;
+
                     case '\'':
                         encodedText.Append(@"&apos;");
                         break;
+
                     case '<':
                         encodedText.Append(@"&lt;");
                         break;
+
                     case '>':
                         encodedText.Append(@"&gt;");
                         break;

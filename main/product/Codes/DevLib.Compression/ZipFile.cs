@@ -85,16 +85,19 @@ namespace DevLib.Compression
                     access = FileAccess.Read;
                     share = FileShare.Read;
                     break;
+
                 case ZipArchiveMode.Create:
                     mode2 = FileMode.CreateNew;
                     access = FileAccess.Write;
                     share = FileShare.None;
                     break;
+
                 case ZipArchiveMode.Update:
                     mode2 = FileMode.OpenOrCreate;
                     access = FileAccess.ReadWrite;
                     share = FileShare.None;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException("mode");
             }

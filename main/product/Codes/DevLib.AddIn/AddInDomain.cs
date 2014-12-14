@@ -433,9 +433,11 @@ namespace DevLib.AddIn
                         case 1:
                             this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName);
                             break;
+
                         case 2:
                             this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(this._addInAssemblyName, this._addInTypeName, this._addInActivationAttributes);
                             break;
+
                         case 3:
                             this.AddInObject = this._addInActivatorProcess.AddInActivatorClient.CreateInstanceAndUnwrap(
                                 this._addInAssemblyName,
@@ -448,6 +450,7 @@ namespace DevLib.AddIn
                                 this._addInActivationAttributes,
                                 this._addInSecurityAttributes);
                             break;
+
                         default:
                             break;
                     }

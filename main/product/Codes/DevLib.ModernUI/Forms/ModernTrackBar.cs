@@ -31,9 +31,9 @@ namespace DevLib.ModernUI.Forms
         private ModernThemeStyle _modernThemeStyle = ModernThemeStyle.Default;
 
         /// <summary>
-        /// Field _trackerValue.
+        /// Field _value.
         /// </summary>
-        private int _trackerValue = 50;
+        private int _value = 50;
 
         /// <summary>
         /// Field _minimum.
@@ -275,14 +275,14 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._trackerValue;
+                return this._value;
             }
 
             set
             {
-                if (value >= this._minimum & value <= this._maximum)
+                if (value >= this.Minimum & value <= this.Maximum)
                 {
-                    this._trackerValue = value;
+                    this._value = value;
                     this.OnValueChanged();
                     this.Invalidate();
                 }
@@ -307,13 +307,13 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                if (value < this._maximum)
+                if (value < this.Maximum)
                 {
                     this._minimum = value;
 
-                    if (this._trackerValue < this._minimum)
+                    if (this._value < this._minimum)
                     {
-                        this._trackerValue = this._minimum;
+                        this._value = this._minimum;
 
                         if (this.ValueChanged != null)
                         {
@@ -344,13 +344,13 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                if (value > this._minimum)
+                if (value > this.Minimum)
                 {
                     this._maximum = value;
 
-                    if (this._trackerValue > this._maximum)
+                    if (this.Value > this._maximum)
                     {
-                        this._trackerValue = this._maximum;
+                        this.Value = this._maximum;
 
                         if (this.ValueChanged != null)
                         {
@@ -633,11 +633,11 @@ namespace DevLib.ModernUI.Forms
                     break;
 
                 case Keys.Home:
-                    this.Value = this._minimum;
+                    this.Value = this.Minimum;
                     break;
 
                 case Keys.End:
-                    this.Value = this._maximum;
+                    this.Value = this.Maximum;
                     break;
 
                 case Keys.PageDown:
@@ -651,12 +651,12 @@ namespace DevLib.ModernUI.Forms
                     break;
             }
 
-            if (this.Value == this._minimum)
+            if (this.Value == this.Minimum)
             {
                 this.OnScroll(ScrollEventType.First, this.Value);
             }
 
-            if (this.Value == this._maximum)
+            if (this.Value == this.Maximum)
             {
                 this.OnScroll(ScrollEventType.Last, this.Value);
             }
@@ -713,7 +713,7 @@ namespace DevLib.ModernUI.Forms
             if (e.Button == MouseButtons.Left)
             {
                 this.Capture = true;
-                this.OnScroll(ScrollEventType.ThumbTrack, this._trackerValue);
+                this.OnScroll(ScrollEventType.ThumbTrack, this.Value);
                 this.OnValueChanged();
                 this.OnMouseMove(e);
             }
@@ -733,21 +733,21 @@ namespace DevLib.ModernUI.Forms
                 Point pt = e.Location;
                 int p = pt.X;
 
-                float coef = (float)(this._maximum - this._minimum) / (float)(this.ClientSize.Width - 3);
-                this._trackerValue = (int)((p * coef) + this._minimum);
+                float coef = (float)(this.Maximum - this.Minimum) / (float)(this.ClientSize.Width - 3);
+                this.Value = (int)((p * coef) + this.Minimum);
 
-                if (this._trackerValue <= this._minimum)
+                if (this.Value <= this.Minimum)
                 {
-                    this._trackerValue = this._minimum;
+                    this.Value = this.Minimum;
                     set = ScrollEventType.First;
                 }
-                else if (this._trackerValue >= this._maximum)
+                else if (this.Value >= this.Maximum)
                 {
-                    this._trackerValue = this._maximum;
+                    this.Value = this.Maximum;
                     set = ScrollEventType.Last;
                 }
 
-                this.OnScroll(set, this._trackerValue);
+                this.OnScroll(set, this.Value);
                 this.OnValueChanged();
 
                 this.Invalidate();
@@ -785,7 +785,7 @@ namespace DevLib.ModernUI.Forms
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
-            int v = e.Delta / 120 * (this._maximum - this._minimum) / this._mouseWheelBarPartitions;
+            int v = e.Delta / 120 * (this.Maximum - this.Minimum) / this.MouseWheelBarPartitions;
             this.SetProperValue(this.Value + v);
         }
 
@@ -831,7 +831,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="barColor">Color of the bar.</param>
         private void DrawTrackBar(Graphics g, Color thumbColor, Color barColor)
         {
-            int trackX = ((this._trackerValue - this._minimum) * (this.Width - 6)) / (this._maximum - this._minimum);
+            int trackX = ((this.Value - this.Minimum) * (this.Width - 6)) / (this.Maximum - this.Minimum);
 
             using (SolidBrush brush = new SolidBrush(thumbColor))
             {
@@ -855,13 +855,13 @@ namespace DevLib.ModernUI.Forms
         /// <param name="value">The value.</param>
         private void SetProperValue(int value)
         {
-            if (value < this._minimum)
+            if (value < this.Minimum)
             {
-                this.Value = this._minimum;
+                this.Value = this.Minimum;
             }
-            else if (value > this._maximum)
+            else if (value > this.Maximum)
             {
-                this.Value = this._maximum;
+                this.Value = this.Maximum;
             }
             else
             {

@@ -72,9 +72,9 @@ namespace DevLib.ModernUI.Forms
         private bool _bUpDown = false;
 
         /// <summary>
-        /// Field _isMirrored.
+        /// Field _tabRightToLeft.
         /// </summary>
-        private bool _isMirrored;
+        private bool _tabRightToLeft;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernTabControl" /> class.
@@ -84,7 +84,6 @@ namespace DevLib.ModernUI.Forms
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
 
             this.Padding = new Point(6, 8);
-            this.TextAlign = ContentAlignment.MiddleLeft;
             this.FontSize = ModernFontSize.Medium;
             this.FontWeight = ModernFontWeight.Light;
         }
@@ -266,20 +265,9 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets the text align.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(ContentAlignment.MiddleLeft)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public ContentAlignment TextAlign
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets the collection of tab pages in this tab control.
         /// </summary>
+        [Editor(typeof(ModernTabPageCollectionEditor), typeof(UITypeEditor))]
         public new TabPageCollection TabPages
         {
             get
@@ -289,26 +277,22 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the control is mirrored.
+        /// Gets or sets a value indicating whether tab draw from right to left.
         /// </summary>
         [Browsable(true)]
         [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
-        public new bool IsMirrored
+        public bool TabRightToLeft
         {
             get
             {
-                return this._isMirrored;
+                return this._tabRightToLeft;
             }
 
             set
             {
-                if (this._isMirrored == value)
-                {
-                    return;
-                }
+                this._tabRightToLeft = value;
 
-                this._isMirrored = value;
                 this.UpdateStyles();
             }
         }
@@ -323,7 +307,7 @@ namespace DevLib.ModernUI.Forms
             {
                 var cp = base.CreateParams;
 
-                if (this.IsMirrored)
+                if (this.TabRightToLeft)
                 {
                     cp.ExStyle = cp.ExStyle | WS_EX_LAYOUTRTL | WS_EX_NOINHERITLAYOUT;
                 }
@@ -440,9 +424,9 @@ namespace DevLib.ModernUI.Forms
                 return;
             }
 
-            this.DrawTabBottomBorder(this.SelectedIndex, e.Graphics);
+            this.DrawTabBar(this.SelectedIndex, e.Graphics);
             this.DrawTab(this.SelectedIndex, e.Graphics);
-            this.DrawTabSelected(this.SelectedIndex, e.Graphics);
+            this.DrawSelectedTabBar(this.SelectedIndex, e.Graphics);
 
             this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, Color.Empty, e.Graphics));
         }
@@ -586,50 +570,65 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Draws the tab bottom border.
+        /// Draws the tab bar.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="graphics">The graphics.</param>
-        private void DrawTabBottomBorder(int index, Graphics graphics)
+        private void DrawTabBar(int index, Graphics graphics)
         {
+            if (this.Alignment == TabAlignment.Left || this.Alignment == TabAlignment.Right)
+            {
+                return;
+            }
+
             using (Brush bgBrush = new SolidBrush(ModernPaint.BorderColor.TabControl.Normal(this.ThemeStyle)))
             {
-                Rectangle borderRectangle = new Rectangle(this.DisplayRectangle.X, this.GetTabRect(index).Bottom + 2 - TabBottomBorderHeight, this.DisplayRectangle.Width, TabBottomBorderHeight);
+                int y = 0;
+
+                if (this.Alignment == TabAlignment.Top)
+                {
+                    y = this.GetTabRect(index).Bottom + 2 - TabBottomBorderHeight;
+                }
+                else if (this.Alignment == TabAlignment.Bottom)
+                {
+                    y = this.GetTabRect(index).Top - 2;
+                }
+
+                Rectangle borderRectangle = new Rectangle(this.DisplayRectangle.X, y, this.DisplayRectangle.Width, TabBottomBorderHeight);
+
                 graphics.FillRectangle(bgBrush, borderRectangle);
             }
         }
 
         /// <summary>
-        /// Draws the tab selected.
+        /// Draws the selected tab bar.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="graphics">The graphics.</param>
-        private void DrawTabSelected(int index, Graphics graphics)
+        private void DrawSelectedTabBar(int index, Graphics graphics)
         {
+            if (this.Alignment == TabAlignment.Left || this.Alignment == TabAlignment.Right)
+            {
+                return;
+            }
+
             using (Brush selectionBrush = new SolidBrush(ModernPaint.GetStyleColor(this.ColorStyle)))
             {
+                int y = 0;
+
+                if (this.Alignment == TabAlignment.Top)
+                {
+                    y = this.GetTabRect(index).Bottom + 2 - TabBottomBorderHeight;
+                }
+                else if (this.Alignment == TabAlignment.Bottom)
+                {
+                    y = this.GetTabRect(index).Top - 2;
+                }
+
                 Rectangle selectedTabRect = this.GetTabRect(index);
-                Rectangle borderRectangle = new Rectangle(selectedTabRect.X + ((index == 0) ? 2 : 0), this.GetTabRect(index).Bottom + 2 - TabBottomBorderHeight, selectedTabRect.Width + ((index == 0) ? 0 : 2), TabBottomBorderHeight);
+                Rectangle borderRectangle = new Rectangle(selectedTabRect.X + ((index == 0) ? 2 : 0), y, selectedTabRect.Width + ((index == 0) ? 0 : 2), TabBottomBorderHeight);
                 graphics.FillRectangle(selectionBrush, borderRectangle);
             }
-        }
-
-        /// <summary>
-        /// Measures the text.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns>Preferred size.</returns>
-        private Size MeasureText(string text)
-        {
-            Size preferredSize;
-
-            using (Graphics g = CreateGraphics())
-            {
-                Size proposedSize = new Size(int.MaxValue, int.MaxValue);
-                preferredSize = TextRenderer.MeasureText(g, text ?? string.Empty, ModernFonts.TabControl(this.FontSize, this.FontWeight), proposedSize, ModernPaint.GetTextFormatFlags(this.TextAlign) | TextFormatFlags.NoPadding);
-            }
-
-            return preferredSize;
         }
 
         /// <summary>
@@ -680,7 +679,25 @@ namespace DevLib.ModernUI.Forms
                 graphics.FillRectangle(bgBrush, bgRectangle);
             }
 
-            TextRenderer.DrawText(graphics, tabPage.Text, ModernFonts.TabControl(this.FontSize, this.FontWeight), tabRectangle, foreColor, backColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
+            TextRenderer.DrawText(graphics, tabPage.Text, ModernFonts.TabControl(this.FontSize, this.FontWeight), tabRectangle, foreColor, backColor, ModernPaint.GetTextFormatFlags(ContentAlignment.MiddleLeft));
+        }
+
+        /// <summary>
+        /// Measures the text.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns>Preferred size.</returns>
+        private Size MeasureText(string text)
+        {
+            Size preferredSize;
+
+            using (Graphics g = CreateGraphics())
+            {
+                Size proposedSize = new Size(int.MaxValue, int.MaxValue);
+                preferredSize = TextRenderer.MeasureText(g, text ?? string.Empty, ModernFonts.TabControl(this.FontSize, this.FontWeight), proposedSize, ModernPaint.GetTextFormatFlags(ContentAlignment.MiddleLeft) | TextFormatFlags.NoPadding);
+            }
+
+            return preferredSize;
         }
 
         /// <summary>
@@ -715,23 +732,6 @@ namespace DevLib.ModernUI.Forms
                     graphics.FillPath(brush, gp);
                 }
             }
-        }
-
-        /// <summary>
-        /// Returns the bounding rectangle for a specified tab in this tab control.
-        /// </summary>
-        /// <param name="index">The zero-based index of the tab you want.</param>
-        /// <returns>A <see cref="T:System.Drawing.Rectangle" /> that represents the bounds of the specified tab.</returns>
-        private new Rectangle GetTabRect(int index)
-        {
-            if (index < 0)
-            {
-                return new Rectangle();
-            }
-
-            Rectangle baseRectangle = base.GetTabRect(index);
-
-            return baseRectangle;
         }
 
         /// <summary>

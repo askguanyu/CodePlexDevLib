@@ -35,14 +35,14 @@ namespace DevLib.ModernUI.Forms
         private Timer _timer;
 
         /// <summary>
-        /// Field _progress.
-        /// </summary>
-        private int _progress;
-
-        /// <summary>
         /// Field _angle.
         /// </summary>
         private float _angle = 270;
+
+        /// <summary>
+        /// Field _value.
+        /// </summary>
+        private int _value = 45;
 
         /// <summary>
         /// Field _minimum.
@@ -52,7 +52,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Field _maximum.
         /// </summary>
-        private int _maximum = 100;
+        private int _maximum = 60;
 
         /// <summary>
         /// Field _ensureVisible.
@@ -75,13 +75,12 @@ namespace DevLib.ModernUI.Forms
         public ModernProgressSpinner()
         {
             this._timer = new Timer();
-            this._timer.Interval = 20;
+            this._timer.Interval = 10;
             this._timer.Tick += this.TimerTick;
             this._timer.Enabled = true;
 
             this.Width = 16;
             this.Height = 16;
-            this._speed = 1;
             this.DoubleBuffered = true;
         }
 
@@ -260,23 +259,23 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets the value of progress.
         /// </summary>
         [Browsable(true)]
-        [DefaultValue(15)]
+        [DefaultValue(45)]
         [Category(ModernConstants.PropertyCategoryName)]
         public int Value
         {
             get
             {
-                return this._progress;
+                return this._value;
             }
 
             set
             {
-                if (value != -1 && (value < this._minimum || value > this._maximum))
+                if (value != -1 && (value < this.Minimum || value > this.Maximum))
                 {
                     throw new ArgumentOutOfRangeException("Progress value must be -1 or between Minimum and Maximum.", (Exception)null);
                 }
 
-                this._progress = value;
+                this._value = value;
                 this.Refresh();
             }
         }
@@ -301,16 +300,16 @@ namespace DevLib.ModernUI.Forms
                     throw new ArgumentOutOfRangeException("Minimum value must bigger than or equal to 0.", (Exception)null);
                 }
 
-                if (value >= this._maximum)
+                if (value >= this.Maximum)
                 {
                     throw new ArgumentOutOfRangeException("Minimum value must be less than Maximum.", (Exception)null);
                 }
 
                 this._minimum = value;
 
-                if (this._progress != -1 && this._progress < this._minimum)
+                if (this.Value != -1 && this.Value < value)
                 {
-                    this._progress = this._minimum;
+                    this.Value = value;
                 }
 
                 this.Refresh();
@@ -332,16 +331,16 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                if (value <= this._minimum)
+                if (value <= this.Minimum)
                 {
                     throw new ArgumentOutOfRangeException("Maximum value must be bigger than Minimum.", (Exception)null);
                 }
 
                 this._maximum = value;
 
-                if (this._progress > this._maximum)
+                if (this.Value > this.Maximum)
                 {
-                    this._progress = this._maximum;
+                    this.Value = this.Maximum;
                 }
 
                 this.Refresh();
@@ -435,7 +434,7 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         public void Reset()
         {
-            this._progress = this._minimum;
+            this.Value = this.Minimum;
             this._angle = 270;
             this.Refresh();
         }
@@ -566,12 +565,12 @@ namespace DevLib.ModernUI.Forms
 
                 e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
-                if (this._progress != -1)
+                if (this.Value != -1)
                 {
                     float sweepAngle;
-                    float progFrac = (float)(this._progress - this._minimum) / (float)(this._maximum - this._minimum);
+                    float progFrac = (float)(this.Value - this.Minimum) / (float)(this.Maximum - this.Minimum);
 
-                    if (this._ensureVisible)
+                    if (this.EnsureVisible)
                     {
                         sweepAngle = 30 + (300f * progFrac);
                     }
@@ -580,7 +579,7 @@ namespace DevLib.ModernUI.Forms
                         sweepAngle = 360f * progFrac;
                     }
 
-                    if (this._backwards)
+                    if (this.Backwards)
                     {
                         sweepAngle = -sweepAngle;
                     }
@@ -609,8 +608,8 @@ namespace DevLib.ModernUI.Forms
 
                         using (Pen gradPen = new Pen(color, forePen.Width))
                         {
-                            float startAngle = this._angle + ((offset - (this._ensureVisible ? 30 : 0)) * (this._backwards ? 1 : -1));
-                            float sweepAngle = 15 * (this._backwards ? 1 : -1);
+                            float startAngle = this._angle + ((offset - (this.EnsureVisible ? 30 : 0)) * (this.Backwards ? 1 : -1));
+                            float sweepAngle = 15 * (this.Backwards ? 1 : -1);
                             e.Graphics.DrawArc(gradPen, padding, padding, this.Width - (2 * padding) - 1, this.Height - (2 * padding) - 1, startAngle, sweepAngle);
                         }
                     }
@@ -627,7 +626,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void TimerTick(object sender, EventArgs e)
         {
-            this._angle += 6f * this._speed * (this._backwards ? -1 : 1);
+            this._angle += 3.6f * this.Speed * (this.Backwards ? -1 : 1);
             this.Refresh();
         }
     }

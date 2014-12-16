@@ -18,7 +18,7 @@ namespace DevLib.Reflection
         /// <summary>
         /// Field ValueTypeOpCodeDictionary.
         /// </summary>
-        private static readonly Dictionary<Type, OpCode> ValueTypeOpCodeDictionary = new Dictionary<Type, OpCode>();
+        private static readonly Dictionary<Type, OpCode> ValueTypeOpCodeDictionary;
 
         /// <summary>
         /// Field _getFunctionDictionary.
@@ -35,6 +35,8 @@ namespace DevLib.Reflection
         /// </summary>
         static PropertyAccessor()
         {
+            ValueTypeOpCodeDictionary = new Dictionary<Type, OpCode>(12);
+
             ValueTypeOpCodeDictionary[typeof(sbyte)] = OpCodes.Ldind_I1;
             ValueTypeOpCodeDictionary[typeof(byte)] = OpCodes.Ldind_U1;
             ValueTypeOpCodeDictionary[typeof(char)] = OpCodes.Ldind_U2;

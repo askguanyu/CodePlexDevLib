@@ -34,7 +34,8 @@ namespace DevLib.Data
         /// </summary>
         static DbHelper()
         {
-            DbProviderDictionary = new Dictionary<DbProvider, string>();
+            DbProviderDictionary = new Dictionary<DbProvider, string>(9);
+
             DbProviderDictionary.Add(DbProvider.SqlServer, "System.Data.SqlClient");
             DbProviderDictionary.Add(DbProvider.SqlServerCE, "System.Data.SqlServerCe");
             DbProviderDictionary.Add(DbProvider.MySQL, "MySql.Data.MySqlClient");

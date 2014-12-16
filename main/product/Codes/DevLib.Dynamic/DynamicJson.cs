@@ -45,26 +45,25 @@ namespace DevLib.Dynamic
         /// </summary>
         static DynamicJson()
         {
-            XmlConverters = new Dictionary<Type, Func<string, object>>
-            {
-                { typeof(bool), s => XmlConvert.ToBoolean(s) },
-                { typeof(byte), s => XmlConvert.ToByte(s) },
-                { typeof(char), s => XmlConvert.ToChar(s) },
-                { typeof(DateTime), s => XmlConvert.ToDateTime(s, XmlDateTimeSerializationMode.RoundtripKind) },
-                { typeof(DateTimeOffset), s => XmlConvert.ToDateTimeOffset(s) },
-                { typeof(decimal), s => XmlConvert.ToDecimal(s) },
-                { typeof(double), s => XmlConvert.ToDouble(s) },
-                { typeof(Guid), s => XmlConvert.ToGuid(s) },
-                { typeof(short), s => XmlConvert.ToInt16(s) },
-                { typeof(int), s => XmlConvert.ToInt32(s) },
-                { typeof(long), s => XmlConvert.ToInt64(s) },
-                { typeof(sbyte), s => XmlConvert.ToSByte(s) },
-                { typeof(float), s => XmlConvert.ToSingle(s) },
-                { typeof(TimeSpan), s => XmlConvert.ToTimeSpan(s) },
-                { typeof(ushort), s => XmlConvert.ToUInt16(s) },
-                { typeof(uint), s => XmlConvert.ToUInt32(s) },
-                { typeof(ulong), s => XmlConvert.ToUInt64(s) },
-            };
+            XmlConverters = new Dictionary<Type, Func<string, object>>(17);
+
+            XmlConverters.Add(typeof(bool), s => XmlConvert.ToBoolean(s));
+            XmlConverters.Add(typeof(byte), s => XmlConvert.ToByte(s));
+            XmlConverters.Add(typeof(char), s => XmlConvert.ToChar(s));
+            XmlConverters.Add(typeof(DateTime), s => XmlConvert.ToDateTime(s, XmlDateTimeSerializationMode.RoundtripKind));
+            XmlConverters.Add(typeof(DateTimeOffset), s => XmlConvert.ToDateTimeOffset(s));
+            XmlConverters.Add(typeof(decimal), s => XmlConvert.ToDecimal(s));
+            XmlConverters.Add(typeof(double), s => XmlConvert.ToDouble(s));
+            XmlConverters.Add(typeof(Guid), s => XmlConvert.ToGuid(s));
+            XmlConverters.Add(typeof(short), s => XmlConvert.ToInt16(s));
+            XmlConverters.Add(typeof(int), s => XmlConvert.ToInt32(s));
+            XmlConverters.Add(typeof(long), s => XmlConvert.ToInt64(s));
+            XmlConverters.Add(typeof(sbyte), s => XmlConvert.ToSByte(s));
+            XmlConverters.Add(typeof(float), s => XmlConvert.ToSingle(s));
+            XmlConverters.Add(typeof(TimeSpan), s => XmlConvert.ToTimeSpan(s));
+            XmlConverters.Add(typeof(ushort), s => XmlConvert.ToUInt16(s));
+            XmlConverters.Add(typeof(uint), s => XmlConvert.ToUInt32(s));
+            XmlConverters.Add(typeof(ulong), s => XmlConvert.ToUInt64(s));
         }
 
         /// <summary>

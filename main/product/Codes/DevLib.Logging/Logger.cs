@@ -39,7 +39,7 @@ namespace DevLib.Logging
         /// <summary>
         /// The <see cref="Queue{T}" /> that contains the data items.
         /// </summary>
-        private readonly Queue<LogMessage> _queue;
+        private readonly Queue<string> _queue;
 
         /// <summary>
         /// Allows the consumer thread to block when no items are available in the <see cref="_queue" />.
@@ -62,17 +62,6 @@ namespace DevLib.Logging
 
             this._loggerSetup = loggerSetup;
 
-            if (this._loggerSetup.WriteToConsole || this._loggerSetup.WriteToFile)
-            {
-                this._queueWaitHandle = new AutoResetEvent(false);
-
-                this._queue = new Queue<LogMessage>();
-
-                this._consumerThread = new Thread(this.ConsumerThread);
-                this._consumerThread.IsBackground = true;
-                this._consumerThread.Start();
-            }
-
             if (this._loggerSetup.WriteToFile)
             {
                 try
@@ -83,6 +72,17 @@ namespace DevLib.Logging
                 {
                     InternalLogger.Log(e);
                 }
+            }
+
+            if (this._loggerSetup.WriteToFile && this._fileAppender != null)
+            {
+                this._queueWaitHandle = new AutoResetEvent(false);
+
+                this._queue = new Queue<string>();
+
+                this._consumerThread = new Thread(this.ConsumerThread);
+                this._consumerThread.IsBackground = true;
+                this._consumerThread.Start();
             }
         }
 
@@ -143,22 +143,32 @@ namespace DevLib.Logging
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public void Log(int skipFrames, LogLevel logLevel, params object[] objs)
         {
-            if (((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || this._fileAppender != null) && logLevel >= this._loggerSetup.Level)
+            if (logLevel >= this._loggerSetup.Level)
             {
-                try
+                if ((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || (this._loggerSetup.WriteToFile && this._fileAppender != null))
                 {
-                    string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
-
-                    lock (this._queueSyncRoot)
+                    try
                     {
-                        this._queue.Enqueue(new LogMessage(logLevel, logMessage));
+                        string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
 
-                        this._queueWaitHandle.Set();
+                        if (this._loggerSetup.WriteToFile && this._fileAppender != null)
+                        {
+                            lock (this._queueSyncRoot)
+                            {
+                                this._queue.Enqueue(logMessage);
+                                this._queueWaitHandle.Set();
+                            }
+                        }
+
+                        if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                        {
+                            ColoredConsoleAppender.Write(logLevel, logMessage);
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
+                    catch (Exception e)
+                    {
+                        InternalLogger.Log(e);
+                    }
                 }
             }
         }
@@ -172,22 +182,32 @@ namespace DevLib.Logging
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public void Log(int skipFrames, LogLevel logLevel, string message, params object[] objs)
         {
-            if (((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || this._fileAppender != null) && logLevel >= this._loggerSetup.Level)
+            if (logLevel >= this._loggerSetup.Level)
             {
-                try
+                if ((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || (this._loggerSetup.WriteToFile && this._fileAppender != null))
                 {
-                    string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
-
-                    lock (this._queueSyncRoot)
+                    try
                     {
-                        this._queue.Enqueue(new LogMessage(logLevel, logMessage));
+                        string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
 
-                        this._queueWaitHandle.Set();
+                        if (this._loggerSetup.WriteToFile && this._fileAppender != null)
+                        {
+                            lock (this._queueSyncRoot)
+                            {
+                                this._queue.Enqueue(logMessage);
+                                this._queueWaitHandle.Set();
+                            }
+                        }
+
+                        if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                        {
+                            ColoredConsoleAppender.Write(logLevel, logMessage);
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
+                    catch (Exception e)
+                    {
+                        InternalLogger.Log(e);
+                    }
                 }
             }
         }
@@ -199,7 +219,7 @@ namespace DevLib.Logging
         {
             while (true)
             {
-                LogMessage nextItem = null;
+                string nextItem = null;
 
                 bool itemExists;
 
@@ -213,23 +233,15 @@ namespace DevLib.Logging
                     }
                 }
 
-                if (itemExists)
+                if (itemExists && this._fileAppender != null)
                 {
-                    if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                    try
                     {
-                        ColoredConsoleAppender.Write(nextItem);
+                        this._fileAppender.Write(nextItem);
                     }
-
-                    if (this._fileAppender != null)
+                    catch (Exception e)
                     {
-                        try
-                        {
-                            this._fileAppender.Write(nextItem.Message);
-                        }
-                        catch (Exception e)
-                        {
-                            InternalLogger.Log(e);
-                        }
+                        InternalLogger.Log(e);
                     }
                 }
                 else

@@ -21,19 +21,21 @@ namespace DevLib.Logging
         /// <summary>
         /// Field ConsoleColorDictionary.
         /// </summary>
-        private static readonly Dictionary<LogLevel, ConsoleColor> ConsoleColorDictionary = new Dictionary<LogLevel, ConsoleColor>();
+        private static readonly Dictionary<LogLevel, ConsoleColor> ConsoleColorDictionary;
 
         /// <summary>
         /// Initializes static members of the <see cref="ColoredConsoleAppender" /> class.
         /// </summary>
         static ColoredConsoleAppender()
         {
-            ConsoleColorDictionary[LogLevel.DBUG] = ConsoleColor.DarkCyan;
-            ConsoleColorDictionary[LogLevel.INFO] = ConsoleColor.Cyan;
-            ConsoleColorDictionary[LogLevel.EXCP] = ConsoleColor.DarkYellow;
-            ConsoleColorDictionary[LogLevel.WARN] = ConsoleColor.Yellow;
-            ConsoleColorDictionary[LogLevel.ERRO] = ConsoleColor.Red;
-            ConsoleColorDictionary[LogLevel.FAIL] = ConsoleColor.Magenta;
+            ConsoleColorDictionary = new Dictionary<LogLevel, ConsoleColor>(6);
+
+            ConsoleColorDictionary.Add(LogLevel.DBUG, ConsoleColor.DarkCyan);
+            ConsoleColorDictionary.Add(LogLevel.INFO, ConsoleColor.Cyan);
+            ConsoleColorDictionary.Add(LogLevel.EXCP, ConsoleColor.DarkYellow);
+            ConsoleColorDictionary.Add(LogLevel.WARN, ConsoleColor.Yellow);
+            ConsoleColorDictionary.Add(LogLevel.ERRO, ConsoleColor.Red);
+            ConsoleColorDictionary.Add(LogLevel.FAIL, ConsoleColor.Magenta);
         }
 
         /// <summary>
@@ -50,29 +52,6 @@ namespace DevLib.Logging
                 Console.ForegroundColor = ConsoleColorDictionary[level];
 
                 Console.WriteLine(message);
-
-                Console.ForegroundColor = originalForeColor;
-            }
-        }
-
-        /// <summary>
-        /// Writes the specified string value with foreground color, followed by the current line terminator, to the standard output stream.
-        /// </summary>
-        /// <param name="logMessage">The LogMessage instance.</param>
-        public static void Write(LogMessage logMessage)
-        {
-            if (logMessage == null)
-            {
-                return;
-            }
-
-            lock (ConsoleSyncRoot)
-            {
-                ConsoleColor originalForeColor = Console.ForegroundColor;
-
-                Console.ForegroundColor = ConsoleColorDictionary[logMessage.Level];
-
-                Console.WriteLine(logMessage.Message);
 
                 Console.ForegroundColor = originalForeColor;
             }

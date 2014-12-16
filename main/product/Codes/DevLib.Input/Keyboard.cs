@@ -32,14 +32,15 @@ namespace DevLib.Input
         /// <summary>
         /// Field KeyBoardKeys.
         /// </summary>
-        private static readonly Dictionary<Key, KeySpec> KeyBoardKeys = null;
+        private static readonly Dictionary<Key, KeySpec> KeyBoardKeys;
 
         /// <summary>
         /// Initializes static members of the <see cref="Keyboard" /> class.
         /// </summary>
         static Keyboard()
         {
-            KeyBoardKeys = new Dictionary<Key, KeySpec>();
+            KeyBoardKeys = new Dictionary<Key, KeySpec>(173);
+
             KeyBoardKeys.Add(Key.Cancel, new KeySpec((ushort)Key.Cancel, false, "cancel"));
             KeyBoardKeys.Add(Key.Back, new KeySpec((ushort)Key.Back, false, "backspace"));
             KeyBoardKeys.Add(Key.Tab, new KeySpec((ushort)Key.Tab, false, "tab"));

@@ -54,9 +54,6 @@
     <Compile Include="LogLayout.cs" />
     <Compile Include="LogLevel.cs" />
     <Compile Include="LogManager.cs" />
-    <Compile Include="LogMessage.cs">
-      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
-    </Compile>
     <Compile Include="MutexMultiProcessFileAppender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

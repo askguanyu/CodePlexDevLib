@@ -159,8 +159,7 @@ namespace DevLib.Logging
         /// Writes the specified string.
         /// </summary>
         /// <param name="text">The string to write.</param>
-        /// <param name="encoding">Instance of Encoding.</param>
-        public void Write(string text, Encoding encoding = null)
+        public void Write(string text)
         {
             this.CheckDisposed();
 
@@ -179,7 +178,7 @@ namespace DevLib.Logging
             }
             finally
             {
-                byte[] bytes = (encoding ?? Encoding.UTF8).GetBytes(text);
+                byte[] bytes = Encoding.UTF8.GetBytes(text);
 
                 try
                 {

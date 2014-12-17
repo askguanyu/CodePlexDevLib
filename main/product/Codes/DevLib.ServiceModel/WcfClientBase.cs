@@ -10,6 +10,7 @@ namespace DevLib.ServiceModel
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
+    using System.Threading;
 
     /// <summary>
     /// Class WcfClientBase.
@@ -106,6 +107,16 @@ namespace DevLib.ServiceModel
         {
             this.Dispose(false);
         }
+
+        /// <summary>
+        /// Occurs before send request.
+        /// </summary>
+        public event EventHandler<WcfClientBaseEventArgs> SendingRequest;
+
+        /// <summary>
+        /// Occurs after receive reply.
+        /// </summary>
+        public event EventHandler<WcfClientBaseEventArgs> ReceivingReply;
 
         /// <summary>
         /// Gets or sets a delegate to configure ClientCredentials.
@@ -405,6 +416,25 @@ namespace DevLib.ServiceModel
 
             ServiceEndpoint endpoint = (result as ClientBase<TChannel>).Endpoint;
 
+            WcfClientBaseEndpointBehavior wcfClientBaseEndpointBehavior = endpoint.Behaviors.Find<WcfClientBaseEndpointBehavior>();
+
+            if (wcfClientBaseEndpointBehavior == null)
+            {
+                wcfClientBaseEndpointBehavior = new WcfClientBaseEndpointBehavior();
+                wcfClientBaseEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint.Name, endpoint.Address, endpoint.ListenUri, e.ChannelMessage, e.Message);
+                wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint.Name, endpoint.Address, endpoint.ListenUri, e.ChannelMessage, e.Message);
+
+                endpoint.Behaviors.Add(wcfClientBaseEndpointBehavior);
+            }
+            else
+            {
+                wcfClientBaseEndpointBehavior.SendingRequest -= (s, e) => this.RaiseEvent(this.SendingRequest, endpoint.Name, endpoint.Address, endpoint.ListenUri, e.ChannelMessage, e.Message);
+                wcfClientBaseEndpointBehavior.ReceivingReply -= (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint.Name, endpoint.Address, endpoint.ListenUri, e.ChannelMessage, e.Message);
+
+                wcfClientBaseEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint.Name, endpoint.Address, endpoint.ListenUri, e.ChannelMessage, e.Message);
+                wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint.Name, endpoint.Address, endpoint.ListenUri, e.ChannelMessage, e.Message);
+            }
+
             foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
             {
                 DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
@@ -444,6 +474,26 @@ namespace DevLib.ServiceModel
             if (exception != null)
             {
                 throw exception;
+            }
+        }
+
+        /// <summary>
+        /// Raises the event.
+        /// </summary>
+        /// <param name="eventHandler">The event handler.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="address">The address.</param>
+        /// <param name="listenUri">The listen URI.</param>
+        /// <param name="channelMessage">The channel message.</param>
+        /// <param name="message">The message.</param>
+        private void RaiseEvent(EventHandler<WcfClientBaseEventArgs> eventHandler, string name, EndpointAddress address, Uri listenUri, Message channelMessage, string message)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<WcfClientBaseEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, new WcfClientBaseEventArgs(name, address, listenUri, channelMessage, message));
             }
         }
 

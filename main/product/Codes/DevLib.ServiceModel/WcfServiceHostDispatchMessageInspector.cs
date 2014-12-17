@@ -21,12 +21,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs after receive request.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Receiving;
+        public event EventHandler<WcfServiceHostEventArgs> ReceivingRequest;
 
         /// <summary>
         /// Occurs before send reply.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Replying;
+        public event EventHandler<WcfServiceHostEventArgs> SendingReply;
 
         /// <summary>
         /// Called after an inbound message has been received but before the message is dispatched to the intended operation.
@@ -50,7 +50,7 @@ namespace DevLib.ServiceModel
 
             Debug.WriteLine(message);
 
-            this.RaiseEvent(this.Receiving, WcfServiceHostState.Receiving, message);
+            this.RaiseEvent(this.ReceivingRequest, WcfServiceHostState.Receiving, request, message);
 
             return null;
         }
@@ -75,7 +75,7 @@ namespace DevLib.ServiceModel
 
             Debug.WriteLine(message);
 
-            this.RaiseEvent(this.Replying, WcfServiceHostState.Replying, message);
+            this.RaiseEvent(this.SendingReply, WcfServiceHostState.Replying, reply, message);
         }
 
         /// <summary>
@@ -83,15 +83,16 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
         /// <param name="state">The state.</param>
+        /// <param name="channelMessage">The channel message.</param>
         /// <param name="message">The message.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, WcfServiceHostState state, string message)
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, WcfServiceHostState state, Message channelMessage, string message)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostEventArgs(null, state, message));
+                temp(null, new WcfServiceHostEventArgs(null, state, null, channelMessage, message));
             }
         }
     }

@@ -1,39 +1,39 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfServiceHostEventArgs.cs" company="YuGuan Corporation">
+// <copyright file="WcfClientBaseEventArgs.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 namespace DevLib.ServiceModel
 {
     using System;
+    using System.ServiceModel;
     using System.ServiceModel.Channels;
-    using System.ServiceModel.Description;
 
     /// <summary>
-    /// WcfServiceHost EventArgs.
+    /// WcfClientBase EventArgs.
     /// </summary>
     [Serializable]
-    public class WcfServiceHostEventArgs : EventArgs
+    public class WcfClientBaseEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfServiceHostEventArgs" /> class.
+        /// Initializes a new instance of the <see cref="WcfClientBaseEventArgs" /> class.
         /// </summary>
-        /// <param name="name">String of Wcf Service Name.</param>
-        /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
-        /// <param name="endpoints">The endpoints.</param>
+        /// <param name="name">The name of the service endpoint.</param>
+        /// <param name="address">The endpoint address for the service endpoint.</param>
+        /// <param name="listenUri">The URI at which the service endpoint listens.</param>
         /// <param name="channelMessage">The unit of communication between endpoints in a distributed environment.</param>
-        /// <param name="message">The Wcf service message.</param>
-        public WcfServiceHostEventArgs(string name, WcfServiceHostState state, ServiceEndpointCollection endpoints = null, Message channelMessage = null, string message = "")
+        /// <param name="message">The message of the service endpoint.</param>
+        public WcfClientBaseEventArgs(string name, EndpointAddress address, Uri listenUri, Message channelMessage = null, string message = "")
         {
             this.Name = name;
-            this.Endpoints = endpoints;
-            this.State = state;
+            this.Address = address;
+            this.ListenUri = listenUri;
             this.ChannelMessage = channelMessage;
             this.Message = message;
         }
 
         /// <summary>
-        /// Gets Wcf service name.
+        /// Gets the name of the service endpoint.
         /// </summary>
         public string Name
         {
@@ -42,18 +42,18 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets the collection of endpoints from the service description.
+        /// Gets the endpoint address for the service endpoint.
         /// </summary>
-        public ServiceEndpointCollection Endpoints
+        public EndpointAddress Address
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Gets Wcf service state.
+        /// Gets the URI at which the service endpoint listens.
         /// </summary>
-        public WcfServiceHostState State
+        public Uri ListenUri
         {
             get;
             private set;
@@ -69,7 +69,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets Wcf service message.
+        /// Gets the message of the service endpoint.
         /// </summary>
         public string Message
         {

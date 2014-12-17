@@ -22,12 +22,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs after receive request.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Receiving;
+        public event EventHandler<WcfServiceHostEventArgs> ReceivingRequest;
 
         /// <summary>
         /// Occurs before send reply.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> Replying;
+        public event EventHandler<WcfServiceHostEventArgs> SendingReply;
 
         /// <summary>
         /// Provides the ability to pass custom data to binding elements to support the contract implementation.
@@ -56,8 +56,8 @@ namespace DevLib.ServiceModel
                     foreach (EndpointDispatcher endpointDispatcher in channelDispatcher.Endpoints)
                     {
                         WcfServiceHostDispatchMessageInspector inspector = new WcfServiceHostDispatchMessageInspector();
-                        inspector.Receiving += (s, e) => this.RaiseEvent(this.Receiving, s, e);
-                        inspector.Replying += (s, e) => this.RaiseEvent(this.Replying, s, e);
+                        inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, e);
+                        inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, e);
 
                         endpointDispatcher.DispatchRuntime.MessageInspectors.Add(inspector);
                     }
@@ -78,16 +78,15 @@ namespace DevLib.ServiceModel
         /// Method RaiseEvent.
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="WcfServiceHostEventArgs"/> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, object sender, WcfServiceHostEventArgs e)
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, WcfServiceHostEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(sender, e);
+                temp(null, e);
             }
         }
     }

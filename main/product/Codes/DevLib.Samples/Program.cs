@@ -156,7 +156,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibServiceModel();
+                    TestDevLibServiceModel();
                 });
 
                 Benchmark.Run(delegate
@@ -1881,6 +1881,12 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
 
+
+            var factory = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
+            var dyclient = factory.GetProxy();
+            var dyms = dyclient.Methods;
+            dyclient.CallMethod(dyms[1], 1234);
+
             //new WcfServiceHost(typeof(RoutingService), "DevLib.Samples.exe.config", null, true);
 
             //new WcfServiceHost(typeof(WcfTest), "DevLib.Samples.exe.config", "http://127.0.0.1:6000/WcfTest", true);
@@ -1898,7 +1904,7 @@ namespace DevLib.Samples
 
             WcfClientType.SaveGeneratedAssemblyFile = true;
 
-            var client1 = WcfClientProxy<IWcfTest>.GetPerCallUnthrowableInstance(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest");
+            var client1 = WcfClientProxy<IWcfTest>.GetPerSessionThrowableInstance(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest");
 
             client1.SetDataContractResolver(i => i.AddGenericDataContractResolver());
 

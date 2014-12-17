@@ -55,7 +55,12 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DynamicClientObject.cs" />
+    <Compile Include="DynamicClientPerCallThrowableProxy.cs" />
+    <Compile Include="DynamicClientPerCallUnthrowableProxy.cs" />
+    <Compile Include="DynamicClientPerSessionThrowableProxy.cs" />
+    <Compile Include="DynamicClientPerSessionUnthrowableProxy.cs" />
     <Compile Include="DynamicClientProxy.cs" />
+    <Compile Include="DynamicClientProxyBase.cs" />
     <Compile Include="DynamicClientProxyConstants.cs" />
     <Compile Include="DynamicClientProxyException.cs" />
     <Compile Include="DynamicClientProxyFactory.cs" />

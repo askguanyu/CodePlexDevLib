@@ -15,6 +15,34 @@ namespace DevLib.ServiceModel
     public interface IWcfClientBase : IDisposable
     {
         /// <summary>
+        /// Occurs before send request.
+        /// </summary>
+        event EventHandler<WcfClientBaseEventArgs> SendingRequest;
+
+        /// <summary>
+        /// Occurs after receive reply.
+        /// </summary>
+        event EventHandler<WcfClientBaseEventArgs> ReceivingReply;
+
+        /// <summary>
+        /// Gets or sets a delegate to configure ClientCredentials.
+        /// </summary>
+        Action<ClientCredentials> SetClientCredentialsAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a delegate to configure DataContractSerializerOperationBehavior.
+        /// </summary>
+        Action<DataContractSerializerOperationBehavior> SetDataContractResolverAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets a <see cref="T:System.ServiceModel.Description.ClientCredentials" /> that represents the proof of identity presented by the client.
         /// </summary>
         ClientCredentials ClientCredentials

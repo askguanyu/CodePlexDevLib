@@ -477,8 +477,8 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Gets client proxy.
         /// </summary>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy()
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy()
         {
             ServiceEndpoint endpoint = this.Endpoints[0];
 
@@ -493,8 +493,8 @@ namespace DevLib.ServiceModel
         /// Gets client proxy.
         /// </summary>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string remoteUri)
         {
             if (this._loadFromFile)
             {
@@ -511,8 +511,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
@@ -529,8 +529,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Binding binding, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Binding binding, string remoteUri)
         {
             if (this._loadFromFile)
             {
@@ -548,8 +548,8 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Binding binding, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Binding binding, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
@@ -566,8 +566,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Type bindingType, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Type bindingType, string remoteUri)
         {
             if (this._loadFromFile)
             {
@@ -585,8 +585,8 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Type bindingType, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Type bindingType, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
@@ -604,8 +604,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, Type bindingType, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Type bindingType, string remoteUri)
         {
             return this.GetClientBaseProxy(contractName, null, bindingType, remoteUri);
         }
@@ -617,8 +617,8 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
         {
             return this.GetClientBaseProxy(contractName, null, bindingType, remoteHost, remotePort);
         }
@@ -629,8 +629,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, Binding binding, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Binding binding, string remoteUri)
         {
             return this.GetClientBaseProxy(contractName, null, binding, remoteUri);
         }
@@ -642,8 +642,8 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, Binding binding, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Binding binding, string remoteHost, int remotePort)
         {
             return this.GetClientBaseProxy(contractName, null, binding, remoteHost, remotePort);
         }
@@ -655,8 +655,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
@@ -671,8 +671,8 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
@@ -686,8 +686,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, string contractNamespace, Binding binding, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Binding binding, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
@@ -702,8 +702,8 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
@@ -716,8 +716,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractType">Service Contract type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Type contractType, Type bindingType, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Type bindingType, string remoteUri)
         {
             return this.GetClientBaseProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteUri);
         }
@@ -729,8 +729,8 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
         {
             return this.GetClientBaseProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteHost, remotePort);
         }
@@ -741,8 +741,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractType">Service Contract type.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Type contractType, Binding binding, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Binding binding, string remoteUri)
         {
             Type proxyType = this.GetProxyType(contractType);
 
@@ -758,8 +758,8 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -777,8 +777,8 @@ namespace DevLib.ServiceModel
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
@@ -796,8 +796,8 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -819,8 +819,8 @@ namespace DevLib.ServiceModel
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
@@ -838,8 +838,8 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetClientBaseProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -856,287 +856,291 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy()
         {
             ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerSessionThrowableProxy(endpoint, endpoint.Binding, endpoint.Address.ToString(), fromCaching);
+            Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
+
+            return new DynamicClientPerCallThrowableProxy(proxyType, endpoint.Binding, endpoint.Address.ToString());
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerSessionThrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerSessionThrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Binding binding, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteUri);
             }
             else
             {
-                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Binding binding, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type bindingType, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteUri);
             }
             else
             {
-                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. his instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type bindingType, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Type bindingType, string remoteUri)
         {
-            return this.GetPerSessionThrowableProxy(contractName, null, bindingType, remoteUri, fromCaching);
+            return this.GetPerCallThrowableProxy(contractName, null, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
         {
-            return this.GetPerSessionThrowableProxy(contractName, null, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallThrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Binding binding, string remoteUri)
         {
-            return this.GetPerSessionThrowableProxy(contractName, null, binding, remoteUri, fromCaching);
+            return this.GetPerCallThrowableProxy(contractName, null, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
         {
-            return this.GetPerSessionThrowableProxy(contractName, null, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallThrowableProxy(contractName, null, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionThrowableProxy(endpoint, bindingType, remoteUri, fromCaching);
+            return this.GetPerCallThrowableProxy(endpoint, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionThrowableProxy(endpoint, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallThrowableProxy(endpoint, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionThrowableProxy(endpoint, binding, remoteUri, fromCaching);
+            return this.GetPerCallThrowableProxy(endpoint, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionThrowableProxy(endpoint, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallThrowableProxy(endpoint, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
+            return this.GetPerCallThrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteUri);
+        }
+
+        /// <summary>
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        {
+            return this.GetPerCallThrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteHost, remotePort);
+        }
+
+        /// <summary>
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Binding binding, string remoteUri)
+        {
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionThrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallThrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -1145,84 +1149,36 @@ namespace DevLib.ServiceModel
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            return this.GetPerSessionThrowableProxy(contractType, bindingType, remoteUri, fromCaching);
+            return this.GetPerCallThrowableProxy(contractType, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Type contractType, Binding binding, string remoteUri, bool fromCaching = true)
-        {
-            string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
-
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionThrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
-        }
-
-        /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
-
-            return this.GetPerSessionThrowableProxy(contractType, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionThrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallThrowableProxy(proxyType, bindingType, address);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -1231,50 +1187,40 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionThrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallThrowableProxy(proxyType, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionThrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallThrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -1283,299 +1229,299 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionThrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallThrowableProxy(proxyType, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy()
         {
             ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, endpoint.Binding, endpoint.Address.ToString(), fromCaching);
+            Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
+
+            return new DynamicClientPerCallUnthrowableProxy(proxyType, endpoint.Binding, endpoint.Address.ToString());
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerSessionUnthrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerSessionUnthrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Binding binding, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteUri);
             }
             else
             {
-                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Binding binding, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type bindingType, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri);
             }
             else
             {
-                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type bindingType, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Type bindingType, string remoteUri)
         {
-            return this.GetPerSessionUnthrowableProxy(contractName, null, bindingType, remoteUri, fromCaching);
+            return this.GetPerCallUnthrowableProxy(contractName, null, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
         {
-            return this.GetPerSessionUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Binding binding, string remoteUri)
         {
-            return this.GetPerSessionUnthrowableProxy(contractName, null, binding, remoteUri, fromCaching);
+            return this.GetPerCallUnthrowableProxy(contractName, null, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
         {
-            return this.GetPerSessionUnthrowableProxy(contractName, null, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallUnthrowableProxy(contractName, null, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, bindingType, remoteUri, fromCaching);
+            return this.GetPerCallUnthrowableProxy(endpoint, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, binding, remoteUri, fromCaching);
+            return this.GetPerCallUnthrowableProxy(endpoint, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerCallUnthrowableProxy(endpoint, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
+            return this.GetPerCallUnthrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteUri);
+        }
+
+        /// <summary>
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        {
+            return this.GetPerCallUnthrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteHost, remotePort);
+        }
+
+        /// <summary>
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Binding binding, string remoteUri)
+        {
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionUnthrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallUnthrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -1584,84 +1530,36 @@ namespace DevLib.ServiceModel
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            return this.GetPerSessionUnthrowableProxy(contractType, bindingType, remoteUri, fromCaching);
+            return this.GetPerCallUnthrowableProxy(contractType, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Type contractType, Binding binding, string remoteUri, bool fromCaching = true)
-        {
-            string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
-
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionUnthrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
-        }
-
-        /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
-
-            return this.GetPerSessionUnthrowableProxy(contractType, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionUnthrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallUnthrowableProxy(proxyType, bindingType, address);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -1670,50 +1568,40 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionUnthrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallUnthrowableProxy(proxyType, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionUnthrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallUnthrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -1722,299 +1610,299 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerSessionUnthrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerCallUnthrowableProxy(proxyType, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy()
         {
             ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerCallThrowableProxy(endpoint, endpoint.Binding, endpoint.Address.ToString(), fromCaching);
+            Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
+
+            return new DynamicClientPerSessionThrowableProxy(proxyType, endpoint.Binding, endpoint.Address.ToString());
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerCallThrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerCallThrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Binding binding, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteUri);
             }
             else
             {
-                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Binding binding, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type bindingType, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteUri);
             }
             else
             {
-                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type bindingType, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Type bindingType, string remoteUri)
         {
-            return this.GetPerCallThrowableProxy(contractName, null, bindingType, remoteUri, fromCaching);
+            return this.GetPerSessionThrowableProxy(contractName, null, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
         {
-            return this.GetPerCallThrowableProxy(contractName, null, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionThrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Binding binding, string remoteUri)
         {
-            return this.GetPerCallThrowableProxy(contractName, null, binding, remoteUri, fromCaching);
+            return this.GetPerSessionThrowableProxy(contractName, null, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
         {
-            return this.GetPerCallThrowableProxy(contractName, null, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionThrowableProxy(contractName, null, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallThrowableProxy(endpoint, bindingType, remoteUri, fromCaching);
+            return this.GetPerSessionThrowableProxy(endpoint, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallThrowableProxy(endpoint, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionThrowableProxy(endpoint, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallThrowableProxy(endpoint, binding, remoteUri, fromCaching);
+            return this.GetPerSessionThrowableProxy(endpoint, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallThrowableProxy(endpoint, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionThrowableProxy(endpoint, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
+            return this.GetPerSessionThrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteUri);
+        }
+
+        /// <summary>
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        {
+            return this.GetPerSessionThrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteHost, remotePort);
+        }
+
+        /// <summary>
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Binding binding, string remoteUri)
+        {
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallThrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionThrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -2023,84 +1911,36 @@ namespace DevLib.ServiceModel
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            return this.GetPerCallThrowableProxy(contractType, bindingType, remoteUri, fromCaching);
+            return this.GetPerSessionThrowableProxy(contractType, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Type contractType, Binding binding, string remoteUri, bool fromCaching = true)
-        {
-            string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
-
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallThrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
-        }
-
-        /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
-
-            return this.GetPerCallThrowableProxy(contractType, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallThrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionThrowableProxy(proxyType, bindingType, address);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -2109,50 +1949,40 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallThrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionThrowableProxy(proxyType, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallThrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionThrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will throw exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will throw exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -2161,299 +1991,299 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallThrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionThrowableProxy(proxyType, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy()
         {
             ServiceEndpoint endpoint = this.Endpoints[0];
 
-            return this.GetPerCallUnthrowableProxy(endpoint, endpoint.Binding, endpoint.Address.ToString(), fromCaching);
+            Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
+
+            return new DynamicClientPerSessionUnthrowableProxy(proxyType, endpoint.Binding, endpoint.Address.ToString());
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteUri);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerCallUnthrowableProxy(endpoint, endpoint.Binding, remoteUri, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
             }
             else
             {
-                ServiceEndpoint endpoint = this.Endpoints[0];
-
-                return this.GetPerCallUnthrowableProxy(endpoint, endpoint.Binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Binding binding, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteUri, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteUri);
             }
             else
             {
-                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteUri, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Binding binding, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type bindingType, string remoteUri)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteUri);
             }
             else
             {
-                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteUri);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type bindingType, string remoteHost, int remotePort)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
             }
             else
             {
-                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, fromCaching);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
             }
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Type bindingType, string remoteUri)
         {
-            return this.GetPerCallUnthrowableProxy(contractName, null, bindingType, remoteUri, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(contractName, null, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
         {
-            return this.GetPerCallUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Binding binding, string remoteUri)
         {
-            return this.GetPerCallUnthrowableProxy(contractName, null, binding, remoteUri, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(contractName, null, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
         {
-            return this.GetPerCallUnthrowableProxy(contractName, null, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(contractName, null, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallUnthrowableProxy(endpoint, bindingType, remoteUri, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(endpoint, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteUri)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallUnthrowableProxy(endpoint, binding, remoteUri, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(endpoint, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractName">Service Contract name.</param>
         /// <param name="contractNamespace">Service Contract namespace.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallUnthrowableProxy(endpoint, binding, remoteHost, remotePort, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(endpoint, binding, remoteHost, remotePort);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
+            return this.GetPerSessionUnthrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteUri);
+        }
+
+        /// <summary>
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        {
+            return this.GetPerSessionUnthrowableProxy(contractType, WcfServiceType.GetBinding(bindingType), remoteHost, remotePort);
+        }
+
+        /// <summary>
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="contractType">Service Contract type.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Binding binding, string remoteUri)
+        {
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallUnthrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionUnthrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="contractType">Service Contract type.</param>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -2462,84 +2292,36 @@ namespace DevLib.ServiceModel
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            return this.GetPerCallUnthrowableProxy(contractType, bindingType, remoteUri, fromCaching);
+            return this.GetPerSessionUnthrowableProxy(contractType, binding, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Type contractType, Binding binding, string remoteUri, bool fromCaching = true)
-        {
-            string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
-
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallUnthrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
-        }
-
-        /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
-        /// </summary>
-        /// <param name="contractType">Service Contract type.</param>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
-
-            return this.GetPerCallUnthrowableProxy(contractType, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
+
+            Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallUnthrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionUnthrowableProxy(proxyType, bindingType, address);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -2548,50 +2330,40 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallUnthrowableInstance", new Type[] { typeof(Type), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { bindingType, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionUnthrowableProxy(proxyType, bindingType, remoteUri);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string address = string.IsNullOrEmpty(remoteUri) ? endpoint.Address.ToString() : remoteUri;
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallUnthrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, address, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionUnthrowableProxy(proxyType, binding, address);
         }
 
         /// <summary>
-        /// Gets client proxy. A new instance is created for each call then disposed and will not throw any exception.
+        /// Gets client proxy. This instance of the proxy is reused for each session and will not throw any exception.
         /// </summary>
         /// <param name="endpoint">Service endpoint.</param>
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of DynamicClientProxy.</returns>
-        public DynamicClientProxy GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        /// <returns>Instance of DynamicClientProxyBase.</returns>
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
         {
             if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
             {
@@ -2600,15 +2372,11 @@ namespace DevLib.ServiceModel
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
+            Type proxyType = this.GetProxyType(contractType);
+
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
 
-            Type clientProxyType = typeof(WcfClientProxy<>).MakeGenericType(contractType);
-
-            MethodInfo methodInfo = clientProxyType.GetMethod("GetPerCallUnthrowableInstance", new Type[] { typeof(Binding), typeof(string), typeof(bool) });
-
-            object clientProxyObject = methodInfo.Invoke(null, new object[] { binding, remoteUri, fromCaching });
-
-            return new DynamicClientProxy(clientProxyObject);
+            return new DynamicClientPerSessionUnthrowableProxy(proxyType, binding, remoteUri);
         }
 
         /// <summary>

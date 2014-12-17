@@ -376,6 +376,10 @@ namespace DevLib.ServiceModel
             {
                 this.CachedProxy = this.CreateProxyInstance();
             }
+            else
+            {
+                this.ConfigureProxyInstance(this.CachedProxy);
+            }
         }
 
         /// <summary>
@@ -407,11 +411,6 @@ namespace DevLib.ServiceModel
                 default:
                     result = (TChannel)Activator.CreateInstance(InstanceType);
                     break;
-            }
-
-            if (this.SetClientCredentialsAction != null)
-            {
-                this.SetClientCredentialsAction((result as ClientBase<TChannel>).ClientCredentials);
             }
 
             ServiceEndpoint endpoint = (result as ClientBase<TChannel>).Endpoint;
@@ -452,12 +451,9 @@ namespace DevLib.ServiceModel
                     serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
                     serializerBehavior.IgnoreExtensionDataObject = true;
                 }
-
-                if (this.SetDataContractResolverAction != null)
-                {
-                    this.SetDataContractResolverAction(serializerBehavior);
-                }
             }
+
+            this.ConfigureProxyInstance(result);
 
             return result;
         }
@@ -474,6 +470,36 @@ namespace DevLib.ServiceModel
             if (exception != null)
             {
                 throw exception;
+            }
+        }
+
+        /// <summary>
+        /// Configures the proxy instance.
+        /// </summary>
+        /// <param name="proxy">The proxy.</param>
+        private void ConfigureProxyInstance(TChannel proxy)
+        {
+            if (this.SetClientCredentialsAction != null)
+            {
+                this.SetClientCredentialsAction((proxy as ClientBase<TChannel>).ClientCredentials);
+            }
+
+            ServiceEndpoint endpoint = (proxy as ClientBase<TChannel>).Endpoint;
+
+            if (this.SetDataContractResolverAction != null)
+            {
+                foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
+                {
+                    DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                    if (serializerBehavior == null)
+                    {
+                        serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+                        operationDescription.Behaviors.Add(serializerBehavior);
+                    }
+
+                    this.SetDataContractResolverAction(serializerBehavior);
+                }
             }
         }
 

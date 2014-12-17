@@ -173,7 +173,7 @@ namespace DevLib.Web.Services
         /// <param name="methodName">The name of the public method to invoke.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public object CallMethod(string methodName, params object[] parameters)
+        public virtual object CallMethod(string methodName, params object[] parameters)
         {
             object result = this.ObjectType.InvokeMember(
                 methodName,
@@ -192,7 +192,7 @@ namespace DevLib.Web.Services
         /// <param name="types">Method parameter types.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public object CallMethod(string methodName, Type[] types, object[] parameters)
+        public virtual object CallMethod(string methodName, Type[] types, object[] parameters)
         {
             if (types.Length != parameters.Length)
             {
@@ -217,7 +217,7 @@ namespace DevLib.Web.Services
         /// <param name="methodInfo">A <see cref="T:System.Reflection.MethodInfo" /> object representing the method.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public object CallMethod(MethodInfo methodInfo, params object[] parameters)
+        public virtual object CallMethod(MethodInfo methodInfo, params object[] parameters)
         {
             return methodInfo.Invoke(this.ObjectInstance, this.InvokeAttr, null, parameters, null);
         }

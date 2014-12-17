@@ -137,6 +137,82 @@ namespace DevLib.Web.Services
         }
 
         /// <summary>
+        /// Invokes the method represented by the current object, using the specified parameters.
+        /// </summary>
+        /// <param name="methodInfo">A <see cref="T:System.Reflection.MethodInfo" /> object representing the method.</param>
+        /// <param name="parameters">An argument list for the invoked method.</param>
+        /// <returns>An object containing the return value of the invoked method.</returns>
+        public override object CallMethod(MethodInfo methodInfo, params object[] parameters)
+        {
+            try
+            {
+                return base.CallMethod(methodInfo, parameters);
+            }
+            catch (Exception e)
+            {
+                if (e.InnerException != null)
+                {
+                    throw e.InnerException;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Invokes the method represented by the current object, using the specified parameters.
+        /// </summary>
+        /// <param name="methodName">The name of the public method to invoke.</param>
+        /// <param name="parameters">An argument list for the invoked method.</param>
+        /// <returns>An object containing the return value of the invoked method.</returns>
+        public override object CallMethod(string methodName, params object[] parameters)
+        {
+            try
+            {
+                return base.CallMethod(methodName, parameters);
+            }
+            catch (Exception e)
+            {
+                if (e.InnerException != null)
+                {
+                    throw e.InnerException;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Invokes the method represented by the current object, using the specified parameters.
+        /// </summary>
+        /// <param name="methodName">The name of the public method to invoke.</param>
+        /// <param name="types">Method parameter types.</param>
+        /// <param name="parameters">An argument list for the invoked method.</param>
+        /// <returns>An object containing the return value of the invoked method.</returns>
+        public override object CallMethod(string methodName, Type[] types, object[] parameters)
+        {
+            try
+            {
+                return base.CallMethod(methodName, types, parameters);
+            }
+            catch (Exception e)
+            {
+                if (e.InnerException != null)
+                {
+                    throw e.InnerException;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
         /// Releases all resources used by the current instance of the <see cref="WebServiceClientProxy" /> class.
         /// </summary>
         public void Close()

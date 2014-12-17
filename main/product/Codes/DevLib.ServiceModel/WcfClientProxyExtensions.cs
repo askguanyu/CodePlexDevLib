@@ -55,5 +55,15 @@ namespace DevLib.ServiceModel
         {
             return source as WcfClientBase<TChannel>;
         }
+
+        /// <summary>
+        /// Gets the WCF client base interface.
+        /// </summary>
+        /// <param name="source">The source TChannel.</param>
+        /// <returns>IWcfClientBase instance.</returns>
+        public static IWcfClientBase GetIWcfClientBase(this object source)
+        {
+            return source as IWcfClientBase;
+        }
     }
 }

@@ -190,278 +190,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
-        /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="binding">The binding with which to make calls to the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, binding, remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
-        {
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
-        }
-
-        /// <summary>
-        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
-        /// </summary>
-        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
-        /// <param name="remoteHost">The host address of the service endpoint.</param>
-        /// <param name="remotePort">The port number of the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
-        {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
-
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
-
-            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
-        }
-
-        /// <summary>
         /// Get Wcf client instance. A new instance is created for each call then disposed and will throw exception.
         /// </summary>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
@@ -731,6 +459,278 @@ namespace DevLib.ServiceModel
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, binding, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, binding, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will throw exception.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, endpointConfigurationName, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, binding, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="binding">The binding with which to make calls to the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, binding, remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
+        {
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
+        }
+
+        /// <summary>
+        /// Get Wcf client instance. This instance of the proxy is reused for each session and will not throw any exception.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="remoteHost">The host address of the service endpoint.</param>
+        /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="fromCaching">Whether get instance from caching or not.</param>
+        /// <returns>Instance of a ClientBase derived class.</returns>
+        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+
+            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+
+            return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, WcfServiceType.GetBinding(bindingType), remoteUri, fromCaching);
         }
 
         /// <summary>

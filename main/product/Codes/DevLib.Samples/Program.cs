@@ -156,7 +156,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    TestDevLibServiceModel();
+                    //TestDevLibServiceModel();
                 });
 
                 Benchmark.Run(delegate

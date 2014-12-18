@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="MainForm.cs" company="YuGuan Corporation">
+// <copyright file="LoggingViewerMainForm.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -16,7 +16,7 @@ namespace DevLib.Logging.Viewer
     /// <summary>
     /// MainForm class.
     /// </summary>
-    public partial class MainForm : Form
+    public partial class LoggingViewerMainForm : Form
     {
         /// <summary>
         /// Field _isMaximized.
@@ -24,9 +24,9 @@ namespace DevLib.Logging.Viewer
         private bool _isMaximized;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainForm"/> class.
+        /// Initializes a new instance of the <see cref="LoggingViewerMainForm"/> class.
         /// </summary>
-        public MainForm()
+        public LoggingViewerMainForm()
         {
             this.InitializeComponent();
         }

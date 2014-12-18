@@ -181,6 +181,10 @@
       <Project>{BB64005D-AA1A-4F60-B1B0-7295D56750A8}</Project>
       <Name>DevLib.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Logging.Viewer\DevLib.Logging.Viewer.csproj">
+      <Project>{CDD22D14-B977-4F3E-A5DB-CD00D88398F0}</Project>
+      <Name>DevLib.Logging.Viewer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Logging\DevLib.Logging.csproj">
       <Project>{D7BA9F42-E97C-403A-B022-744E367A11F1}</Project>
       <Name>DevLib.Logging</Name>

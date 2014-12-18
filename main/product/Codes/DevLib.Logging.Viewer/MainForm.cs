@@ -28,7 +28,7 @@ namespace DevLib.Logging.Viewer
         /// </summary>
         public MainForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <summary>

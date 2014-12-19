@@ -69,6 +69,7 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
+    using DevLib.Web;
 
     public class Program
     {
@@ -188,7 +189,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    Application.Run(new LoggingViewerMainForm());
+                    //Application.Run(new LoggingViewerMainForm());
                 });
 
                 PrintExitInfo();
@@ -1887,11 +1888,14 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
 
+            string soapMsg = @"D:\soap.txt".ReadTextFile();
+
+            SoapClient soapClient = new SoapClient("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
+
+            string soapresult = soapClient.SendRequestFile(@"D:\soap.txt");
+
 
             var factory = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
-            var dyclient = factory.GetProxy();
-            var dyms = dyclient.Methods;
-            dyclient.CallMethod(dyms[1], 1234);
 
             //new WcfServiceHost(typeof(RoutingService), "DevLib.Samples.exe.config", null, true);
 
@@ -1901,7 +1905,7 @@ namespace DevLib.Samples
             testsrv.ReceivingRequest += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Receiving);
             testsrv.SendingReply += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Replying);
             testsrv.SetDataContractResolverAction = i => i.DataContractResolver = new GenericDataContractResolver(new string[] { @"D:\Work\Temp\ClassLibrary2\ClassLibrary2\bin\Debug\ClassLibrary2.dll" });
-            testsrv.Open();
+            //testsrv.Open();
             //Console.ReadLine();
 
             //new WcfServiceHost(typeof(WcfTest), typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", true);

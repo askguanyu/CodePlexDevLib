@@ -55,6 +55,7 @@
     <Compile Include="Services\WebServiceClientProxyException.cs" />
     <Compile Include="Services\WebServiceClientProxyFactory.cs" />
     <Compile Include="Services\WebServiceClientProxyFactorySetup.cs" />
+    <Compile Include="SoapClient.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

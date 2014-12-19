@@ -23,13 +23,15 @@ namespace DevLib.ServiceModel
         /// <param name="listenUri">The URI at which the service endpoint listens.</param>
         /// <param name="channelMessage">The unit of communication between endpoints in a distributed environment.</param>
         /// <param name="message">The message of the service endpoint.</param>
-        public WcfClientBaseEventArgs(string name, EndpointAddress address, Uri listenUri, Message channelMessage = null, string message = "")
+        /// <param name="messageId">The message identifier.</param>
+        public WcfClientBaseEventArgs(string name, EndpointAddress address, Uri listenUri, Message channelMessage, string message, Guid? messageId)
         {
             this.Name = name;
             this.Address = address;
             this.ListenUri = listenUri;
             this.ChannelMessage = channelMessage;
             this.Message = message;
+            this.MessageId = messageId ?? Guid.Empty;
         }
 
         /// <summary>
@@ -72,6 +74,15 @@ namespace DevLib.ServiceModel
         /// Gets the message of the service endpoint.
         /// </summary>
         public string Message
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the message identifier.
+        /// </summary>
+        public Guid MessageId
         {
             get;
             private set;

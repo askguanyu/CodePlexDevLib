@@ -293,7 +293,7 @@ namespace DevLib.ExtensionMethods
 
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
+            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, CloseOutput = true /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
                 if (removeDefaultNamespace)
                 {
@@ -1144,7 +1144,7 @@ namespace DevLib.ExtensionMethods
 
             DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent }))
+            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, CloseOutput = true }))
             {
                 dataContractSerializer.WriteObject(xmlWriter, source);
                 return fullPath;

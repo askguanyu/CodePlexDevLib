@@ -88,7 +88,7 @@ namespace DevLib.Samples
 
                 var result = Benchmark.Run(i =>
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 Benchmark.Run(i =>
@@ -733,8 +733,28 @@ namespace DevLib.Samples
             }
         }
 
+        private static void ShowArray(Array theArray)
+        {
+            foreach (Object o in theArray)
+            {
+                Console.Write("[{0}]", o);
+            }
+            Console.WriteLine();
+        }
+
         private static void TestCodeSnippets()
         {
+            UTF8Encoding utf8 = new UTF8Encoding();
+            UTF8Encoding utf8EmitBOM = new UTF8Encoding(true);
+
+            Console.WriteLine("utf8 preamble:");
+            ShowArray(utf8.GetPreamble());
+
+            Console.WriteLine("utf8EmitBOM:");
+            ShowArray(utf8EmitBOM.GetPreamble());
+
+            Console.ReadLine();
+
             //var tempp0 = @"\\gytp\d$\Download";
             var tempp = LogConfigManager.GetFileFullPath(@"\\gytp\d$\Download");
             var tempp1 = LogConfigManager.GetFileFullPath(@"$TMp$\a\Logs\b.log");

@@ -88,7 +88,7 @@ namespace DevLib.Samples
 
                 var result = Benchmark.Run(i =>
                 {
-                    TestCodeSnippets();
+                    //TestCodeSnippets();
                 });
 
                 Benchmark.Run(i =>

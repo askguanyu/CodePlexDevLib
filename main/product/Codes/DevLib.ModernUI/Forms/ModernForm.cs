@@ -20,6 +20,7 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// Represents a modern style window or dialog box that makes up an application's user interface.
     /// </summary>
+    [ToolboxBitmap(typeof(Form))]
     public class ModernForm : Form, IModernForm, IDisposable
     {
         /// <summary>

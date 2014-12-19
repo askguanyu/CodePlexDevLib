@@ -15,6 +15,7 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// ModernContextMenuStrip user control.
     /// </summary>
+    [ToolboxBitmap(typeof(ContextMenuStrip))]
     public class ModernContextMenuStrip : ContextMenuStrip, IModernControl
     {
         /// <summary>

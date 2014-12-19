@@ -15,6 +15,7 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// ModernTextBox user control.
     /// </summary>
+    [ToolboxBitmap(typeof(TextBox))]
     public class ModernTextBox : Control, IModernControl
     {
         /// <summary>

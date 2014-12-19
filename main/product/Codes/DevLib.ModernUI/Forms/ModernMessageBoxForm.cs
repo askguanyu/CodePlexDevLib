@@ -15,6 +15,7 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// ModernMessageBoxForm class.
     /// </summary>
+    [ToolboxBitmap(typeof(Form))]
     public class ModernMessageBoxForm : Form
     {
         /// <summary>

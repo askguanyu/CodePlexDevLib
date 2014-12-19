@@ -18,6 +18,7 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// ModernTaskWindow class.
     /// </summary>
+    [ToolboxBitmap(typeof(Form))]
     public class ModernTaskWindow : ModernForm
     {
         /// <summary>

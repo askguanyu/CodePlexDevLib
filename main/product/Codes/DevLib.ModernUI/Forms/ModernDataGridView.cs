@@ -15,6 +15,7 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// ModernDataGridView user control.
     /// </summary>
+    [ToolboxBitmap(typeof(DataGridView))]
     public class ModernDataGridView : DataGridView, IModernControl
     {
         /// <summary>

@@ -21,6 +21,7 @@ namespace DevLib.ModernUI.Forms
     /// </summary>
     [ToolboxItem(false)]
     [Designer(typeof(ScrollableControlDesigner))]
+    [ToolboxBitmap(typeof(TabPage))]
     public class ModernTabPage : TabPage, IModernControl
     {
         /// <summary>

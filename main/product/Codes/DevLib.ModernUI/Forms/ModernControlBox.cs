@@ -14,7 +14,7 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// Form control box.
     /// </summary>
-    internal enum FormControlBox
+    public enum FormControlBox
     {
         /// <summary>
         /// The minimize box.
@@ -35,7 +35,8 @@ namespace DevLib.ModernUI.Forms
     /// <summary>
     /// ModernFormButton class.
     /// </summary>
-    internal class ModernControlBox : Button, IModernControl
+    [ToolboxBitmap(typeof(Button))]
+    public class ModernControlBox : Button, IModernControl
     {
         /// <summary>
         /// Field _modernColorStyle.

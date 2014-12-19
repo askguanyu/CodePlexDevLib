@@ -8,6 +8,7 @@ namespace DevLib.Configuration
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Drawing;
     using System.IO;
     using System.Reflection;
     using System.Security.Permissions;
@@ -16,6 +17,7 @@ namespace DevLib.Configuration
     /// <summary>
     /// Provides a user interface for browsing the properties of an object.
     /// </summary>
+    [ToolboxBitmap(typeof(Form))]
     public partial class WinFormConfigEditor : Form
     {
         /// <summary>

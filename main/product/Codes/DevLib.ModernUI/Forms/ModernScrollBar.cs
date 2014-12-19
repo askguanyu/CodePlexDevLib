@@ -22,6 +22,7 @@ namespace DevLib.ModernUI.Forms
     [DefaultEvent("Scroll")]
     [DefaultProperty("Value")]
     [Designer(typeof(ScrollableControlDesigner), typeof(ParentControlDesigner))]
+    [ToolboxBitmap(typeof(ScrollBar))]
     public class ModernScrollBar : Control, IModernControl
     {
         /// <summary>

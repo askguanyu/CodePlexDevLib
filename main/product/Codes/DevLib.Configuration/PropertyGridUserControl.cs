@@ -8,6 +8,7 @@ namespace DevLib.Configuration
     using System;
     using System.Collections;
     using System.ComponentModel;
+    using System.Drawing;
     using System.Drawing.Design;
     using System.Security.Permissions;
     using System.Threading;
@@ -16,6 +17,7 @@ namespace DevLib.Configuration
     /// <summary>
     /// Class PropertyGridUserControl.
     /// </summary>
+    [ToolboxBitmap(typeof(PropertyGrid))]
     public partial class PropertyGridUserControl : UserControl
     {
         /// <summary>

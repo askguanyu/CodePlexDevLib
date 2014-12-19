@@ -203,6 +203,52 @@ namespace DevLib.Logging
         }
 
         /// <summary>
+        /// Writes the specified lines.
+        /// </summary>
+        /// <param name="lines">The lines to write.</param>
+        public void Write(string[] lines)
+        {
+            this.CheckDisposed();
+
+            if (this._mutex == null)
+            {
+                return;
+            }
+
+            if (lines == null)
+            {
+                return;
+            }
+
+            try
+            {
+            }
+            finally
+            {
+                try
+                {
+                    this._mutex.WaitOne();
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(string.Join(string.Empty, lines));
+                    this.InternalWrite(bytes);
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    this._mutex.ReleaseMutex();
+                }
+            }
+        }
+
+        /// <summary>
         /// Releases all resources used by the current instance of the <see cref="MutexMultiProcessFileAppender" /> class.
         /// </summary>
         public void Close()

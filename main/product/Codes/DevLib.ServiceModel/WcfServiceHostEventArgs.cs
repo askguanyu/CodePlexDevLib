@@ -23,13 +23,15 @@ namespace DevLib.ServiceModel
         /// <param name="endpoints">The endpoints.</param>
         /// <param name="channelMessage">The unit of communication between endpoints in a distributed environment.</param>
         /// <param name="message">The Wcf service message.</param>
-        public WcfServiceHostEventArgs(string name, WcfServiceHostState state, ServiceEndpointCollection endpoints = null, Message channelMessage = null, string message = "")
+        /// <param name="messageId">The message identifier.</param>
+        public WcfServiceHostEventArgs(string name, WcfServiceHostState state, ServiceEndpointCollection endpoints, Message channelMessage, string message, Guid? messageId)
         {
             this.Name = name;
             this.Endpoints = endpoints;
             this.State = state;
             this.ChannelMessage = channelMessage;
             this.Message = message;
+            this.MessageId = messageId ?? Guid.Empty;
         }
 
         /// <summary>
@@ -72,6 +74,15 @@ namespace DevLib.ServiceModel
         /// Gets Wcf service message.
         /// </summary>
         public string Message
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the message identifier.
+        /// </summary>
+        public Guid MessageId
         {
             get;
             private set;

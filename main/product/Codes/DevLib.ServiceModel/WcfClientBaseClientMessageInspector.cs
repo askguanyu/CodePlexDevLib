@@ -35,6 +35,16 @@ namespace DevLib.ServiceModel
         /// <param name="correlationState">Correlation state data.</param>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
+            Guid messageId = Guid.Empty;
+
+            try
+            {
+                messageId = (Guid)correlationState;
+            }
+            catch
+            {
+            }
+
             string message = null;
 
             if (reply != null)
@@ -46,9 +56,10 @@ namespace DevLib.ServiceModel
                 message = string.Empty;
             }
 
+            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.AfterReceiveReply: " + messageId.ToString());
             Debug.WriteLine(message);
 
-            this.RaiseEvent(this.ReceivingReply, reply, message);
+            this.RaiseEvent(this.ReceivingReply, reply, message, messageId);
         }
 
         /// <summary>
@@ -59,6 +70,8 @@ namespace DevLib.ServiceModel
         /// <returns>The object that is returned as the correlationState argument of the <see cref="M:System.ServiceModel.Dispatcher.IClientMessageInspector.AfterReceiveReply(System.ServiceModel.Channels.Message@,System.Object)" /> method. This is null if no correlation state is used.The best practice is to make this a <see cref="T:System.Guid" /> to ensure that no two correlationState objects are the same.</returns>
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
+            Guid messageId = Guid.NewGuid();
+
             string message = null;
 
             if (request != null)
@@ -70,11 +83,12 @@ namespace DevLib.ServiceModel
                 message = string.Empty;
             }
 
+            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.BeforeSendRequest: " + messageId.ToString());
             Debug.WriteLine(message);
 
-            this.RaiseEvent(this.SendingRequest, request, message);
+            this.RaiseEvent(this.SendingRequest, request, message, messageId);
 
-            return null;
+            return messageId;
         }
 
         /// <summary>
@@ -83,14 +97,15 @@ namespace DevLib.ServiceModel
         /// <param name="eventHandler">Instance of EventHandler.</param>
         /// <param name="channelMessage">The channel message.</param>
         /// <param name="message">The message.</param>
-        private void RaiseEvent(EventHandler<WcfClientBaseEventArgs> eventHandler, Message channelMessage, string message)
+        /// <param name="messageId">The message identifier.</param>
+        private void RaiseEvent(EventHandler<WcfClientBaseEventArgs> eventHandler, Message channelMessage, string message, Guid messageId)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfClientBaseEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(null, new WcfClientBaseEventArgs(null, null, null, channelMessage, message));
+                temp(null, new WcfClientBaseEventArgs(null, null, null, channelMessage, message, messageId));
             }
         }
     }

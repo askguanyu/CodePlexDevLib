@@ -2118,16 +2118,33 @@ namespace DevLib.ServiceModel
         /// <param name="name">String of Wcf Service Name.</param>
         /// <param name="state">Instance of WcfServiceHostState.</param>
         /// <param name="endpoints">The endpoints.</param>
-        /// <param name="channelMessage">The channel message.</param>
-        /// <param name="message">The message.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string name, WcfServiceHostState state, ServiceEndpointCollection endpoints = null, Message channelMessage = null, string message = "")
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string name, WcfServiceHostState state, ServiceEndpointCollection endpoints = null)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, channelMessage, message));
+                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, null, null, null));
+            }
+        }
+
+        /// <summary>
+        /// Method RaiseEvent.
+        /// </summary>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        /// <param name="name">String of Wcf Service Name.</param>
+        /// <param name="state">Instance of WcfServiceHostState.</param>
+        /// <param name="endpoints">The endpoints.</param>
+        /// <param name="e">The <see cref="WcfServiceHostEventArgs"/> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string name, WcfServiceHostState state, ServiceEndpointCollection endpoints, WcfServiceHostEventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, e.ChannelMessage, e.Message, e.MessageId));
             }
         }
 
@@ -2187,18 +2204,18 @@ namespace DevLib.ServiceModel
                             if (wcfServiceHostServiceBehavior == null)
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
                             else
                             {
-                                wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
-                                wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
+                                wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
                             }
 
                             if (this.SetDataContractResolverAction != null)
@@ -2288,18 +2305,18 @@ namespace DevLib.ServiceModel
                             if (wcfServiceHostServiceBehavior == null)
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
                             else
                             {
-                                wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
-                                wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
+                                wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e.ChannelMessage, e.Message);
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
                             }
 
                             ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();

@@ -219,7 +219,7 @@ namespace DevLib.Logging
         {
             while (true)
             {
-                string nextItem = null;
+                string[] nextItems = null;
 
                 bool itemExists;
 
@@ -229,15 +229,16 @@ namespace DevLib.Logging
 
                     if (itemExists)
                     {
-                        nextItem = this._queue.Dequeue();
+                        nextItems = this._queue.ToArray();
+                        this._queue.Clear();
                     }
                 }
 
-                if (itemExists && this._fileAppender != null)
+                if (itemExists && this._fileAppender != null && nextItems != null && nextItems.Length > 0)
                 {
                     try
                     {
-                        this._fileAppender.Write(nextItem);
+                        this._fileAppender.Write(nextItems);
                     }
                     catch (Exception e)
                     {

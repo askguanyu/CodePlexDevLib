@@ -39,10 +39,6 @@ namespace DevLib.Samples
             this.modernButton1 = new DevLib.ModernUI.Forms.ModernButton();
             this.modernDateTime1 = new DevLib.ModernUI.Forms.ModernDateTimePicker();
             this.modernComboBox1 = new DevLib.ModernUI.Forms.ModernComboBox();
-            this.modernButton2 = new DevLib.ModernUI.Forms.ModernButton();
-            this.modernPanel1 = new DevLib.ModernUI.Forms.ModernPanel();
-            this.modernButton3 = new DevLib.ModernUI.Forms.ModernButton();
-            this.modernTile1 = new DevLib.ModernUI.Forms.ModernTile();
             this.modernTextBox1 = new DevLib.ModernUI.Forms.ModernTextBox();
             this.modernTabControl1 = new DevLib.ModernUI.Forms.ModernTabControl();
             this.modernTabPage1 = new DevLib.ModernUI.Forms.ModernTabPage();
@@ -53,15 +49,20 @@ namespace DevLib.Samples
             this.modernTabPage2 = new DevLib.ModernUI.Forms.ModernTabPage();
             this.modernProgressSpinner1 = new DevLib.ModernUI.Forms.ModernProgressSpinner();
             this.modernLabel1 = new DevLib.ModernUI.Forms.ModernLabel();
-            this.modernButton4 = new DevLib.ModernUI.Forms.ModernButton();
             this.label1 = new System.Windows.Forms.Label();
             this.modernTile2 = new DevLib.ModernUI.Forms.ModernTile();
+            this.modernRichTextBox1 = new DevLib.ModernUI.Forms.ModernRichTextBox();
+            this.modernTextBox2 = new DevLib.ModernUI.Forms.ModernTextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.StatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).BeginInit();
-            this.modernPanel1.SuspendLayout();
             this.modernTabControl1.SuspendLayout();
             this.modernTabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernDataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusStrip
@@ -127,55 +128,6 @@ namespace DevLib.Samples
             this.modernComboBox1.UseSelectable = true;
             this.modernComboBox1.UseStyleColors = false;
             // 
-            // modernButton2
-            // 
-            this.modernButton2.Location = new System.Drawing.Point(114, 118);
-            this.modernButton2.Name = "modernButton2";
-            this.modernButton2.Size = new System.Drawing.Size(75, 23);
-            this.modernButton2.TabIndex = 7;
-            this.modernButton2.Text = "modernButton2";
-            this.modernButton2.UseSelectable = true;
-            this.modernButton2.UseStyleColors = false;
-            this.modernButton2.UseVisualStyleBackColor = true;
-            // 
-            // modernPanel1
-            // 
-            this.modernPanel1.Controls.Add(this.modernButton2);
-            this.modernPanel1.Controls.Add(this.modernButton3);
-            this.modernPanel1.HorizontalScrollBarSize = 10;
-            this.modernPanel1.Location = new System.Drawing.Point(392, 50);
-            this.modernPanel1.Name = "modernPanel1";
-            this.modernPanel1.Size = new System.Drawing.Size(223, 141);
-            this.modernPanel1.TabIndex = 7;
-            this.modernPanel1.UseHorizontalBarColor = true;
-            this.modernPanel1.UseStyleColors = false;
-            this.modernPanel1.UseVerticalBarColor = true;
-            this.modernPanel1.VerticalScrollBarSize = 10;
-            // 
-            // modernButton3
-            // 
-            this.modernButton3.Location = new System.Drawing.Point(67, 50);
-            this.modernButton3.Name = "modernButton3";
-            this.modernButton3.Size = new System.Drawing.Size(75, 23);
-            this.modernButton3.TabIndex = 2;
-            this.modernButton3.Text = "modernButton3";
-            this.modernButton3.UseSelectable = true;
-            this.modernButton3.UseStyleColors = false;
-            this.modernButton3.UseVisualStyleBackColor = true;
-            // 
-            // modernTile1
-            // 
-            this.modernTile1.ActiveControl = null;
-            this.modernTile1.Location = new System.Drawing.Point(437, 320);
-            this.modernTile1.Name = "modernTile1";
-            this.modernTile1.Size = new System.Drawing.Size(178, 167);
-            this.modernTile1.TabIndex = 8;
-            this.modernTile1.Text = "modernTile1";
-            this.modernTile1.TileCountFontSize = DevLib.ModernUI.Drawing.ModernFontSize.Small;
-            this.modernTile1.UseSelectable = true;
-            this.modernTile1.UseStyleColors = false;
-            this.modernTile1.UseVisualStyleBackColor = true;
-            // 
             // modernTextBox1
             // 
             this.modernTextBox1.Lines = new string[] {
@@ -203,7 +155,7 @@ namespace DevLib.Samples
             this.modernTabControl1.Multiline = true;
             this.modernTabControl1.Name = "modernTabControl1";
             this.modernTabControl1.SelectedIndex = 0;
-            this.modernTabControl1.Size = new System.Drawing.Size(335, 438);
+            this.modernTabControl1.Size = new System.Drawing.Size(83, 438);
             this.modernTabControl1.TabIndex = 11;
             this.modernTabControl1.UseSelectable = true;
             // 
@@ -211,9 +163,9 @@ namespace DevLib.Samples
             // 
             this.modernTabPage1.Controls.Add(this.modernDataGridView1);
             this.modernTabPage1.HorizontalScrollBarSize = 10;
-            this.modernTabPage1.Location = new System.Drawing.Point(4, 38);
+            this.modernTabPage1.Location = new System.Drawing.Point(4, 72);
             this.modernTabPage1.Name = "modernTabPage1";
-            this.modernTabPage1.Size = new System.Drawing.Size(327, 396);
+            this.modernTabPage1.Size = new System.Drawing.Size(75, 362);
             this.modernTabPage1.TabIndex = 0;
             this.modernTabPage1.Text = "modernTabPage1";
             this.modernTabPage1.UseHorizontalBarColor = true;
@@ -266,7 +218,7 @@ namespace DevLib.Samples
             this.modernDataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.modernDataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.modernDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.modernDataGridView1.Size = new System.Drawing.Size(327, 396);
+            this.modernDataGridView1.Size = new System.Drawing.Size(75, 362);
             this.modernDataGridView1.TabIndex = 2;
             // 
             // Column4
@@ -287,9 +239,9 @@ namespace DevLib.Samples
             // modernTabPage2
             // 
             this.modernTabPage2.HorizontalScrollBarSize = 10;
-            this.modernTabPage2.Location = new System.Drawing.Point(4, 38);
+            this.modernTabPage2.Location = new System.Drawing.Point(4, 72);
             this.modernTabPage2.Name = "modernTabPage2";
-            this.modernTabPage2.Size = new System.Drawing.Size(327, 396);
+            this.modernTabPage2.Size = new System.Drawing.Size(75, 362);
             this.modernTabPage2.TabIndex = 1;
             this.modernTabPage2.Text = "modernTabPage2";
             this.modernTabPage2.UseHorizontalBarColor = true;
@@ -299,7 +251,7 @@ namespace DevLib.Samples
             // 
             // modernProgressSpinner1
             // 
-            this.modernProgressSpinner1.Location = new System.Drawing.Point(621, 125);
+            this.modernProgressSpinner1.Location = new System.Drawing.Point(503, 84);
             this.modernProgressSpinner1.Minimum = 1;
             this.modernProgressSpinner1.Name = "modernProgressSpinner1";
             this.modernProgressSpinner1.Size = new System.Drawing.Size(65, 63);
@@ -318,17 +270,6 @@ namespace DevLib.Samples
             this.modernLabel1.Text = "modernLabel1";
             this.modernLabel1.UseStyleColors = false;
             // 
-            // modernButton4
-            // 
-            this.modernButton4.Location = new System.Drawing.Point(483, 514);
-            this.modernButton4.Name = "modernButton4";
-            this.modernButton4.Size = new System.Drawing.Size(175, 226);
-            this.modernButton4.TabIndex = 13;
-            this.modernButton4.Text = "modernButton4";
-            this.modernButton4.UseSelectable = true;
-            this.modernButton4.UseStyleColors = false;
-            this.modernButton4.UseVisualStyleBackColor = true;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -342,7 +283,7 @@ namespace DevLib.Samples
             // modernTile2
             // 
             this.modernTile2.ActiveControl = null;
-            this.modernTile2.Location = new System.Drawing.Point(506, 211);
+            this.modernTile2.Location = new System.Drawing.Point(405, 84);
             this.modernTile2.Name = "modernTile2";
             this.modernTile2.ShowTileCount = true;
             this.modernTile2.Size = new System.Drawing.Size(75, 68);
@@ -351,6 +292,68 @@ namespace DevLib.Samples
             this.modernTile2.TileCount = 8;
             this.modernTile2.UseSelectable = true;
             this.modernTile2.UseStyleColors = false;
+            // 
+            // modernRichTextBox1
+            // 
+            this.modernRichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.modernRichTextBox1.Lines = new string[] {
+        "modernRichTextBox1"};
+            this.modernRichTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.modernRichTextBox1.MaxLength = 2147483647;
+            this.modernRichTextBox1.Multiline = true;
+            this.modernRichTextBox1.Name = "modernRichTextBox1";
+            this.modernRichTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
+            this.modernRichTextBox1.SelectedText = "";
+            this.modernRichTextBox1.Size = new System.Drawing.Size(480, 306);
+            this.modernRichTextBox1.TabIndex = 15;
+            this.modernRichTextBox1.Text = "modernRichTextBox1";
+            this.modernRichTextBox1.UseSelectable = true;
+            this.modernRichTextBox1.UseStyleColors = false;
+            // 
+            // modernTextBox2
+            // 
+            this.modernTextBox2.Lines = new string[] {
+        "modernTextBox2"};
+            this.modernTextBox2.Location = new System.Drawing.Point(298, 171);
+            this.modernTextBox2.MaxLength = 2147483647;
+            this.modernTextBox2.Name = "modernTextBox2";
+            this.modernTextBox2.PasswordChar = '\0';
+            this.modernTextBox2.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.modernTextBox2.SelectedText = "";
+            this.modernTextBox2.Size = new System.Drawing.Size(182, 46);
+            this.modernTextBox2.TabIndex = 17;
+            this.modernTextBox2.Text = "modernTextBox2";
+            this.modernTextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.modernTextBox2.UseSelectable = true;
+            this.modernTextBox2.UseStyleColors = false;
+            this.modernTextBox2.UseSystemPasswordChar = false;
+            this.modernTextBox2.WordWrap = true;
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(657, 559);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 18;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(220, 237);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.modernRichTextBox1);
+            this.splitContainer1.Size = new System.Drawing.Size(509, 306);
+            this.splitContainer1.SplitterDistance = 25;
+            this.splitContainer1.TabIndex = 19;
             // 
             // DemoForm
             // 
@@ -364,13 +367,13 @@ namespace DevLib.Samples
             this.ControlBox = false;
             this.ControlBoxUseCustomBackColor = true;
             this.ControlBoxUseCustomForeColor = true;
+            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.modernTextBox2);
             this.Controls.Add(this.modernTile2);
-            this.Controls.Add(this.modernButton4);
             this.Controls.Add(this.modernProgressSpinner1);
             this.Controls.Add(this.modernTabControl1);
             this.Controls.Add(this.modernTextBox1);
-            this.Controls.Add(this.modernTile1);
-            this.Controls.Add(this.modernPanel1);
             this.Controls.Add(this.modernButton1);
             this.Controls.Add(this.modernToggle1);
             this.Name = "DemoForm";
@@ -380,21 +383,23 @@ namespace DevLib.Samples
             this.Text = "DemoForm";
             this.Controls.SetChildIndex(this.modernToggle1, 0);
             this.Controls.SetChildIndex(this.modernButton1, 0);
-            this.Controls.SetChildIndex(this.modernPanel1, 0);
-            this.Controls.SetChildIndex(this.modernTile1, 0);
             this.Controls.SetChildIndex(this.modernTextBox1, 0);
             this.Controls.SetChildIndex(this.modernTabControl1, 0);
             this.Controls.SetChildIndex(this.modernProgressSpinner1, 0);
-            this.Controls.SetChildIndex(this.modernButton4, 0);
             this.Controls.SetChildIndex(this.StatusStrip, 0);
             this.Controls.SetChildIndex(this.modernTile2, 0);
+            this.Controls.SetChildIndex(this.modernTextBox2, 0);
+            this.Controls.SetChildIndex(this.button1, 0);
+            this.Controls.SetChildIndex(this.splitContainer1, 0);
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).EndInit();
-            this.modernPanel1.ResumeLayout(false);
             this.modernTabControl1.ResumeLayout(false);
             this.modernTabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.modernDataGridView1)).EndInit();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -410,10 +415,6 @@ namespace DevLib.Samples
         private ModernDateTimePicker modernDateTime1;
 
         private ModernComboBox modernComboBox1;
-        private ModernButton modernButton2;
-        private ModernTile modernTile1;
-        private ModernPanel modernPanel1;
-        private ModernButton modernButton3;
         private ModernTextBox modernTextBox1;
         private ModernTabControl modernTabControl1;
         private ModernTabPage modernTabPage1;
@@ -424,8 +425,11 @@ namespace DevLib.Samples
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private ModernTabPage modernTabPage2;
         private ModernLabel modernLabel1;
-        private ModernButton modernButton4;
         private System.Windows.Forms.Label label1;
         private ModernTile modernTile2;
+        private ModernRichTextBox modernRichTextBox1;
+        private ModernTextBox modernTextBox2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }

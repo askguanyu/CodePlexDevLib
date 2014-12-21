@@ -75,6 +75,7 @@ namespace DevLib.ModernUI.Forms
             this.FontSize = ModernFontSize.Small;
             this.FontWeight = ModernFontWeight.Regular;
             this.DisplayIcon = true;
+            this.MaxLength = int.MaxValue;
         }
 
         /// <summary>
@@ -100,6 +101,12 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler AcceptsTabChanged;
+
+        /// <summary>
+        /// Event Pasted.
+        /// </summary>
+        [Category(ModernConstants.PropertyCategoryName)]
+        public event EventHandler<ClipboardEventArgs> Pasted;
 
         /// <summary>
         /// Gets or sets modern color style.
@@ -602,9 +609,9 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                if (this._displayIcon && this._textBoxIcon != null)
+                if (this.DisplayIcon && this.Icon != null)
                 {
-                    Size originalSize = this._textBoxIcon.Size;
+                    Size originalSize = this.Icon.Size;
                     double resizeFactor = (double)(this.ClientRectangle.Height - 2) / (double)originalSize.Height;
                     Point iconLocation = new Point(1, 1);
                     return new Size((int)(originalSize.Width * resizeFactor), (int)(originalSize.Height * resizeFactor));
@@ -703,13 +710,13 @@ namespace DevLib.ModernUI.Forms
             try
             {
                 Color backColor = this.BackColor;
-                this._baseTextBox.BackColor = this.BackColor;
 
                 if (!this.UseCustomBackColor)
                 {
                     backColor = ModernPaint.BackColor.Button.Normal(this.ThemeStyle);
-                    this._baseTextBox.BackColor = ModernPaint.BackColor.Button.Normal(this.ThemeStyle);
                 }
+
+                this._baseTextBox.BackColor = backColor;
 
                 if (backColor.A == 255)
                 {
@@ -755,13 +762,13 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">PaintEventArgs instance.</param>
         protected virtual void OnPaintForeground(PaintEventArgs e)
         {
-            if (this.UseCustomForeColor)
+            if (!this.UseCustomForeColor)
             {
-                this._baseTextBox.ForeColor = this.ForeColor;
+                this._baseTextBox.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
             }
             else
             {
-                this._baseTextBox.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
+                this._baseTextBox.ForeColor = this.ForeColor;
             }
 
             Color borderColor = ModernPaint.BorderColor.Button.Normal(this.ThemeStyle);
@@ -933,21 +940,34 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// BaseTextBoxPasted method.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="ClipboardEventArgs"/> instance containing the event data.</param>
+        private void BaseTextBoxPasted(object sender, ClipboardEventArgs e)
+        {
+            if (this.Pasted != null)
+            {
+                this.Pasted(this, e);
+            }
+        }
+
+        /// <summary>
         /// Draw icon.
         /// </summary>
         /// <param name="g">Graphics instance.</param>
         private void DrawIcon(Graphics g)
         {
-            if (this._displayIcon && this._textBoxIcon != null)
+            if (this.DisplayIcon && this.Icon != null)
             {
                 Point iconLocation = new Point(1, 1);
 
-                if (this._textBoxIconRight)
+                if (this.IconRight)
                 {
                     iconLocation = new Point(this.ClientRectangle.Width - this.IconSize.Width - 1, 1);
                 }
 
-                g.DrawImage(this._textBoxIcon, new Rectangle(iconLocation, this.IconSize));
+                g.DrawImage(this.Icon, new Rectangle(iconLocation, this.IconSize));
 
                 this.UpdateBaseTextBox();
             }
@@ -997,6 +1017,7 @@ namespace DevLib.ModernUI.Forms
             this._baseTextBox.KeyUp += this.BaseTextBoxKeyUp;
             this._baseTextBox.SizeChanged += this.BaseTextBoxSizeChanged;
             this._baseTextBox.TextChanged += this.BaseTextBoxTextChanged;
+            this._baseTextBox.Pasted += this.BaseTextBoxPasted;
         }
 
         /// <summary>
@@ -1011,11 +1032,11 @@ namespace DevLib.ModernUI.Forms
 
             this._baseTextBox.Font = ModernFonts.TextBox(this._modernFontSize, this._modernFontWeight);
 
-            if (this._displayIcon)
+            if (this.DisplayIcon)
             {
                 Point textBoxLocation = new Point(this.IconSize.Width + 4, 3);
 
-                if (this._textBoxIconRight)
+                if (this.IconRight)
                 {
                     textBoxLocation = new Point(3, 3);
                 }
@@ -1046,6 +1067,11 @@ namespace DevLib.ModernUI.Forms
             private const int WM_PAINT = 15;
 
             /// <summary>
+            /// Field WM_PASTE.
+            /// </summary>
+            private const int WM_PASTE = 0x0302;
+
+            /// <summary>
             /// Field _drawPrompt.
             /// </summary>
             private bool _drawPrompt;
@@ -1062,6 +1088,11 @@ namespace DevLib.ModernUI.Forms
             {
                 this._drawPrompt = this.Text == null || string.IsNullOrEmpty(this.Text.Trim());
             }
+
+            /// <summary>
+            /// Event Pasted.
+            /// </summary>
+            public event EventHandler<ClipboardEventArgs> Pasted;
 
             /// <summary>
             /// Gets or sets prompt text.
@@ -1123,12 +1154,20 @@ namespace DevLib.ModernUI.Forms
             /// <param name="m">A Windows Message object.</param>
             protected override void WndProc(ref Message m)
             {
-                base.WndProc(ref m);
+                if (m.Msg == WM_PASTE)
+                {
+                    if (this.Pasted != null)
+                    {
+                        this.Pasted(this, new ClipboardEventArgs(Clipboard.GetText()));
+                    }
+                }
 
                 if (((m.Msg == WM_PAINT) || (m.Msg == OCM_COMMAND)) && (this._drawPrompt && !this.GetStyle(ControlStyles.UserPaint)))
                 {
                     this.DrawTextPrompt();
                 }
+
+                base.WndProc(ref m);
             }
 
             /// <summary>
@@ -1168,7 +1207,7 @@ namespace DevLib.ModernUI.Forms
                         break;
                 }
 
-                TextRenderer.DrawText(g, this._promptText, this.Font, clientRectangle, SystemColors.GrayText, this.BackColor, flags);
+                TextRenderer.DrawText(g, this.PromptText, this.Font, clientRectangle, SystemColors.GrayText, this.BackColor, flags);
             }
         }
     }

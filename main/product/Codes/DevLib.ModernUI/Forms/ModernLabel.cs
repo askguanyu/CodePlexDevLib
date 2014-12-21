@@ -370,7 +370,7 @@ namespace DevLib.ModernUI.Forms
         {
             try
             {
-                Color backColor = BackColor;
+                Color backColor = this.BackColor;
 
                 if (!this.UseCustomBackColor)
                 {

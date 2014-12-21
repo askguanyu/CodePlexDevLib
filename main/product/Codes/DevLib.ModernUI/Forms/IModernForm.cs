@@ -15,32 +15,32 @@ namespace DevLib.ModernUI.Forms
     public interface IModernForm
     {
         /// <summary>
-        /// Event CloseBoxClick.
+        /// Event CloseClick.
         /// </summary>
         [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
-        event EventHandler CloseBoxClick;
+        event EventHandler CloseClick;
 
         /// <summary>
-        /// Event MinimizeBoxClick.
+        /// Event MinimizeClick.
         /// </summary>
         [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
-        event EventHandler MinimizeBoxClick;
+        event EventHandler MinimizeClick;
 
         /// <summary>
-        /// Event MaximizeBoxClick.
+        /// Event MaximizeClick.
         /// </summary>
         [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
-        event EventHandler MaximizeBoxClick;
+        event EventHandler MaximizeClick;
 
         /// <summary>
-        /// Event MaximizeBoxClick.
+        /// Event NormalClick.
         /// </summary>
         [Browsable(true)]
         [Category(ModernConstants.PropertyCategoryName)]
-        event EventHandler NormalBoxClick;
+        event EventHandler NormalClick;
 
         /// <summary>
         /// Gets or sets modern color style.

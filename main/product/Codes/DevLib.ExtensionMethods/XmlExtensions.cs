@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
+    using System.Diagnostics.CodeAnalysis;
+    using System.Text;
     using System.Xml;
 
     /// <summary>
@@ -12,6 +14,249 @@ namespace DevLib.ExtensionMethods
     /// </summary>
     public static class XmlExtensions
     {
+        /// <summary>
+        /// Determines whether the source string is valid Xml string.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <returns>true if string is valid Xml string; otherwise, false.</returns>
+        public static bool IsValidXml(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return false;
+            }
+
+            try
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(source);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Converts valid Xml string to the indent Xml string.
+        /// </summary>
+        /// <param name="source">The source Xml string.</param>
+        /// <returns>Indent Xml string.</returns>
+        public static string ToIndentXml(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return source;
+            }
+
+            try
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(source);
+
+                StringBuilder stringBuilder = new StringBuilder();
+
+                using (XmlWriter xmlWriter = XmlTextWriter.Create(stringBuilder, new XmlWriterSettings() { Indent = true, CloseOutput = true }))
+                {
+                    xmlDocument.Save(xmlWriter);
+                    xmlWriter.Flush();
+                    return stringBuilder.ToString();
+                }
+            }
+            catch
+            {
+                return source;
+            }
+        }
+
+        /// <summary>
+        /// Converts RTF string to the Xml syntax highlight RTF string.
+        /// </summary>
+        /// <param name="source">The source RTF string.</param>
+        /// <param name="indentXml">true to indent Xml string; otherwise, keep the original string.</param>
+        /// <param name="darkStyle">true to use dark style; otherwise, use light style.</param>
+        /// <returns>The Xml syntax highlight RTF string.</returns>
+        public static string ToXmlSyntaxHighlightRtf(this string source, bool indentXml = true, bool darkStyle = false)
+        {
+            string tempRtf = indentXml ? source.ToIndentXml() : source;
+
+            StringBuilder highlightStringBuilder = new StringBuilder(string.Empty);
+
+            bool inTag = false;
+            bool inTagName = false;
+            bool inQuotes = false;
+            bool inComment = false;
+
+            for (int i = 0; i < tempRtf.Length; i++)
+            {
+                bool isAppended = false;
+
+                if (inTagName)
+                {
+                    if (tempRtf[i] == ' ')
+                    {
+                        highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfAttributeNameColor(darkStyle));
+
+                        inTagName = false;
+                    }
+                }
+                else if (inTag)
+                {
+                    if (tempRtf[i] == '"')
+                    {
+                        if (inQuotes)
+                        {
+                            highlightStringBuilder.Append(tempRtf[i]);
+                            highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfAttributeNameColor(darkStyle));
+
+                            isAppended = true;
+                            inQuotes = false;
+                        }
+                        else
+                        {
+                            highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfAttributeValueColor(darkStyle));
+
+                            inQuotes = true;
+                        }
+                    }
+                }
+
+                if (tempRtf[i] == '<')
+                {
+                    if (!inComment)
+                    {
+                        inTag = true;
+
+                        if (tempRtf[i + 1] == '!')
+                        {
+                            if ((tempRtf[i + 2] == '-') && (tempRtf[i + 3] == '-'))
+                            {
+                                highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfCommentColor(darkStyle));
+
+                                inComment = true;
+                            }
+                            else
+                            {
+                                highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfTagNameColor(darkStyle));
+
+                                inTagName = true;
+                            }
+                        }
+
+                        if (!inComment)
+                        {
+                            highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfTagColor(darkStyle));
+                            highlightStringBuilder.Append(tempRtf[i]);
+
+                            isAppended = true;
+
+                            if (tempRtf[i + 1] == '?' || tempRtf[i + 1] == '/')
+                            {
+                                i++;
+                                highlightStringBuilder.Append(tempRtf[i]);
+                            }
+
+                            highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfTagNameColor(darkStyle));
+
+                            inTagName = true;
+                        }
+                    }
+                }
+
+                bool isClosingTag = false;
+
+                if (tempRtf[i] == '>')
+                {
+                    isClosingTag = true;
+                }
+
+                if (i < tempRtf.Length - 1)
+                {
+                    if (tempRtf[i + 1] == '>')
+                    {
+                        if (tempRtf[i] == '?' || tempRtf[i] == '/')
+                        {
+                            isClosingTag = true;
+                        }
+                    }
+                }
+
+                if (isClosingTag)
+                {
+                    if (inComment)
+                    {
+                        if (tempRtf[i - 1] == '-' && tempRtf[i - 2] == '-')
+                        {
+                            highlightStringBuilder.Append(tempRtf[i]);
+                            highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfDefaultColor(darkStyle));
+
+                            isAppended = true;
+                            inComment = false;
+                            inTag = false;
+                        }
+                    }
+
+                    if (inTag)
+                    {
+                        highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfLightTagColor);
+
+                        if ((tempRtf[i] == '/') || (tempRtf[i] == '?'))
+                        {
+                            highlightStringBuilder.Append(tempRtf[i++]);
+                        }
+
+                        highlightStringBuilder.Append(tempRtf[i]);
+                        highlightStringBuilder.Append(XmlSyntaxHighlightColor.RtfDefaultColor(darkStyle));
+
+                        isAppended = true;
+                        inTagName = false;
+                        inTag = false;
+                    }
+                }
+
+                if (!isAppended)
+                {
+                    highlightStringBuilder.Append(tempRtf[i]);
+                }
+            }
+
+            string result = highlightStringBuilder.ToString();
+
+            int colorTableStartIndex = result.IndexOf("{\\colortbl;");
+
+            if (colorTableStartIndex != -1)
+            {
+                int colorTableEndIndex = result.IndexOf('}', colorTableStartIndex);
+
+                result = result.Remove(colorTableStartIndex, colorTableEndIndex - colorTableStartIndex);
+                result = result.Insert(colorTableStartIndex, XmlSyntaxHighlightColor.ColorTable);
+            }
+            else
+            {
+                int rtfIndex = result.IndexOf("\\rtf");
+
+                if (rtfIndex < 0)
+                {
+                    result = result.Insert(0, "{\\rtf\\ansi\\deff0" + XmlSyntaxHighlightColor.ColorTable);
+                    result += "}";
+                }
+                else
+                {
+                    int insertIndex = result.IndexOf('{', rtfIndex);
+
+                    if (insertIndex == -1)
+                    {
+                        insertIndex = result.IndexOf('}', rtfIndex) - 1;
+                    }
+
+                    result = result.Insert(insertIndex, XmlSyntaxHighlightColor.ColorTable);
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Appends a child to a XML node.
         /// </summary>
@@ -204,6 +449,235 @@ namespace DevLib.ExtensionMethods
 
                 attribute.InnerText = value;
             }
+        }
+    }
+
+    /// <summary>
+    /// Xml syntax highlight color.
+    /// </summary>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
+    internal static class XmlSyntaxHighlightColor
+    {
+        /// <summary>
+        /// Represents light style RTF tag color.
+        /// </summary>
+        public const string RtfLightTagColor = "\\cf1 ";
+
+        /// <summary>
+        /// Represents light style RTF tag name color.
+        /// </summary>
+        public const string RtfLightTagNameColor = "\\cf2 ";
+
+        /// <summary>
+        /// Represents light style RTF attribute name color.
+        /// </summary>
+        public const string RtfLightAttributeNameColor = "\\cf3 ";
+
+        /// <summary>
+        /// Represents light style RTF attribute value color.
+        /// </summary>
+        public const string RtfLightAttributeValueColor = "\\cf4 ";
+
+        /// <summary>
+        /// Represents light style RTF comment color.
+        /// </summary>
+        public const string RtfLightCommentColor = "\\cf5 ";
+
+        /// <summary>
+        /// Represents light style RTF default color.
+        /// </summary>
+        public const string RtfLightDefaultColor = "\\cf6 ";
+
+        /// <summary>
+        /// Represents dark style RTF tag color.
+        /// </summary>
+        public const string RtfDarkTagColor = "\\cf7 ";
+
+        /// <summary>
+        /// Represents dark style RTF tag name color.
+        /// </summary>
+        public const string RtfDarkTagNameColor = "\\cf8 ";
+
+        /// <summary>
+        /// Represents dark style RTF attribute name color.
+        /// </summary>
+        public const string RtfDarkAttributeNameColor = "\\cf9 ";
+
+        /// <summary>
+        /// Represents dark style RTF attribute value color.
+        /// </summary>
+        public const string RtfDarkAttributeValueColor = "\\cf10 ";
+
+        /// <summary>
+        /// Represents dark style RTF comment color.
+        /// </summary>
+        public const string RtfDarkCommentColor = "\\cf11 ";
+
+        /// <summary>
+        /// Represents dark style RTF default color.
+        /// </summary>
+        public const string RtfDarkDefaultColor = "\\cf12 ";
+
+        /// <summary>
+        /// Represents color table.
+        /// </summary>
+        public static readonly string ColorTable;
+
+        /// <summary>
+        /// Field LightTagColor.
+        /// </summary>
+        private const string LightTagColor = "\\red0\\green0\\blue255";
+
+        /// <summary>
+        /// Field LightTagNameColor.
+        /// </summary>
+        private const string LightTagNameColor = "\\red163\\green21\\blue21";
+
+        /// <summary>
+        /// Field LightAttributeNameColor.
+        /// </summary>
+        private const string LightAttributeNameColor = "\\red253\\green52\\blue0";
+
+        /// <summary>
+        /// Field LightAttributeValueColor.
+        /// </summary>
+        private const string LightAttributeValueColor = "\\red0\\green0\\blue255";
+
+        /// <summary>
+        /// Field LightCommentTextColor.
+        /// </summary>
+        private const string LightCommentTextColor = "\\red0\\green128\\blue0";
+
+        /// <summary>
+        /// Field LightDefaultColor.
+        /// </summary>
+        private const string LightDefaultColor = "\\red0\\green0\\blue0";
+
+        /// <summary>
+        /// Field DarkTagColor.
+        /// </summary>
+        private const string DarkTagColor = "\\red64\\green196\\blue255";
+
+        /// <summary>
+        /// Field DarkTagNameColor.
+        /// </summary>
+        private const string DarkTagNameColor = "\\red64\\green196\\blue255";
+
+        /// <summary>
+        /// Field DarkAttributeNameColor.
+        /// </summary>
+        private const string DarkAttributeNameColor = "\\red237\\green218\\blue192";
+
+        /// <summary>
+        /// Field DarkAttributeValueColor.
+        /// </summary>
+        private const string DarkAttributeValueColor = "\\red255\\green128\\blue255";
+
+        /// <summary>
+        /// Field DarkCommentTextColor.
+        /// </summary>
+        private const string DarkCommentTextColor = "\\red0\\green128\\blue0";
+
+        /// <summary>
+        /// Field DarkDefaultColor.
+        /// </summary>
+        private const string DarkDefaultColor = "\\red225\\green225\\blue225";
+
+        /// <summary>
+        /// Initializes static members of the <see cref="XmlSyntaxHighlightColor" /> class.
+        /// </summary>
+        static XmlSyntaxHighlightColor()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append("{\\colortbl");
+            stringBuilder.Append(";");
+            stringBuilder.Append(LightTagColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(LightTagNameColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(LightAttributeNameColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(LightAttributeValueColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(LightCommentTextColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(LightDefaultColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(DarkTagColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(DarkTagNameColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(DarkAttributeNameColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(DarkAttributeValueColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(DarkCommentTextColor);
+            stringBuilder.Append(";");
+            stringBuilder.Append(DarkDefaultColor);
+            stringBuilder.Append(";}");
+
+            ColorTable = stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Get RTF tag color.
+        /// </summary>
+        /// <param name="darkStyle">true to use dark style, otherwise, use light style.</param>
+        /// <returns>RTF tag color.</returns>
+        public static string RtfTagColor(bool darkStyle = false)
+        {
+            return darkStyle ? RtfDarkTagColor : RtfLightTagColor;
+        }
+
+        /// <summary>
+        /// Get RTF tag name color.
+        /// </summary>
+        /// <param name="darkStyle">true to use dark style, otherwise, use light style.</param>
+        /// <returns>RTF tag name color.</returns>
+        public static string RtfTagNameColor(bool darkStyle = false)
+        {
+            return darkStyle ? RtfDarkTagNameColor : RtfLightTagNameColor;
+        }
+
+        /// <summary>
+        /// Get RTF attribute name color.
+        /// </summary>
+        /// <param name="darkStyle">true to use dark style, otherwise, use light style.</param>
+        /// <returns>RTF attribute name color.</returns>
+        public static string RtfAttributeNameColor(bool darkStyle = false)
+        {
+            return darkStyle ? RtfDarkAttributeNameColor : RtfLightAttributeNameColor;
+        }
+
+        /// <summary>
+        /// Get RTF attribute value color.
+        /// </summary>
+        /// <param name="darkStyle">true to use dark style, otherwise, use light style.</param>
+        /// <returns>RTF attribute value color.</returns>
+        public static string RtfAttributeValueColor(bool darkStyle = false)
+        {
+            return darkStyle ? RtfDarkAttributeValueColor : RtfLightAttributeValueColor;
+        }
+
+        /// <summary>
+        /// Get RTF comment color.
+        /// </summary>
+        /// <param name="darkStyle">true to use dark style, otherwise, use light style.</param>
+        /// <returns>RTF comment color.</returns>
+        public static string RtfCommentColor(bool darkStyle = false)
+        {
+            return darkStyle ? RtfDarkCommentColor : RtfLightCommentColor;
+        }
+
+        /// <summary>
+        /// Get RTF default color.
+        /// </summary>
+        /// <param name="darkStyle">true to use dark style, otherwise, use light style.</param>
+        /// <returns>RTF default color.</returns>
+        public static string RtfDefaultColor(bool darkStyle = false)
+        {
+            return darkStyle ? RtfDarkDefaultColor : RtfLightDefaultColor;
         }
     }
 }

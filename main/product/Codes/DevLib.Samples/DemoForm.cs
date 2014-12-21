@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using DevLib.ModernUI.Forms;
 using DevLib.ModernUI.ComponentModel;
+using DevLib.ExtensionMethods;
 
 namespace DevLib.Samples
 {
@@ -49,6 +50,11 @@ namespace DevLib.Samples
                 default:
                     break;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            modernRichTextBox1.Text = @"d:\a.txt".ReadTextFile();
         }
     }
 }

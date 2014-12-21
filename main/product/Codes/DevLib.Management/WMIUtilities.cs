@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Utilities
+namespace DevLib.Management
 {
     using System;
     using System.Collections.Generic;
@@ -15,131 +15,131 @@ namespace DevLib.Utilities
     public static class WMIUtilities
     {
         /// <summary>
-        /// Const Field WIN32_ACCOUNT.
+        /// Field WIN32_ACCOUNT.
         /// </summary>
         public const string WIN32_ACCOUNT = @"SELECT Caption FROM Win32_Account";
 
         /// <summary>
-        /// Const Field MAINBOARD_SN.
+        /// Field MAINBOARD_SN.
         /// </summary>
         public const string MAINBOARD_SN = @"SELECT SerialNumber FROM Win32_BaseBoard";
 
         /// <summary>
-        /// Const Field BIOS_SN.
+        /// Field BIOS_SN.
         /// </summary>
         public const string BIOS_SN = @"SELECT SerialNumber FROM Win32_BIOS";
 
         /// <summary>
-        /// Const Field HARDDISK_MODEL.
+        /// Field HARDDISK_MODEL.
         /// </summary>
         public const string HARDDISK_MODEL = @"SELECT Model FROM Win32_DiskDrive";
 
         /// <summary>
-        /// Const Field HARDDISK_SN.
+        /// Field HARDDISK_SN.
         /// </summary>
         public const string HARDDISK_SN = @"SELECT SerialNumber FROM Win32_DiskDrive";
 
         /// <summary>
-        /// Const Field HARDDISK_SIZE.
+        /// Field HARDDISK_SIZE.
         /// </summary>
         public const string HARDDISK_SIZE = @"SELECT Size FROM Win32_DiskDrive";
 
         /// <summary>
-        /// Const Field MACADDRESS.
+        /// Field MACADDRESS.
         /// </summary>
         public const string MACADDRESS = @"SELECT MACAddress FROM Win32_NetworkAdapter";
 
         /// <summary>
-        /// Const Field PHYSICALMEMORY_SN.
+        /// Field PHYSICALMEMORY_SN.
         /// </summary>
         public const string PHYSICALMEMORY_SN = @"SELECT SerialNumber FROM Win32_PhysicalMemory";
 
         /// <summary>
-        /// Const Field PHYSICALMEMORY_SIZE.
+        /// Field PHYSICALMEMORY_SIZE.
         /// </summary>
         public const string PHYSICALMEMORY_SIZE = @"SELECT Capacity FROM Win32_PhysicalMemory";
 
         /// <summary>
-        /// Const Field CPU_ID.
+        /// Field CPU_ID.
         /// </summary>
         public const string CPU_ID = @"SELECT ProcessorId FROM Win32_Processor";
 
         /// <summary>
-        /// Const Field VOLUME_SN.
+        /// Field VOLUME_SN.
         /// </summary>
         public const string VOLUME_SN = @"SELECT SerialNumber FROM Win32_Volume";
 
         /// <summary>
-        /// Const Field LOGICALDISK_SN.
+        /// Field LOGICALDISK_SN.
         /// </summary>
         public const string LOGICALDISK_SN = @"SELECT VolumeSerialNumber FROM Win32_LogicalDisk";
 
         /// <summary>
-        /// Const Field GPU.
+        /// Field GPU.
         /// </summary>
         public const string GPU = @"SELECT VideoProcessor FROM Win32_VideoController";
 
         /// <summary>
-        /// Const Field PC_MODEL.
+        /// Field PC_MODEL.
         /// </summary>
         public const string PC_MODEL = @"SELECT Model FROM Win32_ComputerSystem";
 
         /// <summary>
-        /// Const Field PC_IDENTIFYINGNUMBER.
+        /// Field PC_IDENTIFYINGNUMBER.
         /// </summary>
         public const string PC_IDENTIFYINGNUMBER = "SELECT IdentifyingNumber FROM Win32_ComputerSystemProduct";
 
         /// <summary>
-        /// Const Field PC_UUID.
+        /// Field PC_UUID.
         /// </summary>
         public const string PC_UUID = "SELECT UUID FROM Win32_ComputerSystemProduct";
 
         /// <summary>
-        /// Const Field PC_OEMSTRINGARRAY.
+        /// Field PC_OEMSTRINGARRAY.
         /// </summary>
         public const string PC_OEMSTRINGARRAY = "SELECT OEMStringArray FROM Win32_ComputerSystem";
 
         /// <summary>
         /// Query a WMI class and associated property.
         /// </summary>
-        /// <param name="WMIClass">WMI class, ignore case.</param>
-        /// <param name="ClassProperty">Associated property, ignore case.</param>
+        /// <param name="wmiClass">WMI class, ignore case.</param>
+        /// <param name="classProperty">Associated property, ignore case.</param>
         /// <returns>A string list of query result.</returns>
-        public static List<string> Query(string WMIClass, string ClassProperty)
+        public static List<string> Query(string wmiClass, string classProperty)
         {
-            if (string.IsNullOrEmpty(WMIClass))
+            if (string.IsNullOrEmpty(wmiClass))
             {
                 throw new ArgumentNullException("WMIClass");
             }
 
-            if (string.IsNullOrEmpty(ClassProperty))
+            if (string.IsNullOrEmpty(classProperty))
             {
                 throw new ArgumentNullException("ClassProperty");
             }
 
-            return QueryWQL(string.Format("SELECT {0} FROM {1}", ClassProperty, WMIClass), ClassProperty);
+            return QueryWQL(string.Format("SELECT {0} FROM {1}", classProperty, wmiClass), classProperty);
         }
 
         /// <summary>
         /// Query a WMI class and associated property.
         /// </summary>
-        /// <param name="WQLString">WQL query string, ignore case.</param>
-        /// <param name="ClassProperty">Associated property, ignore case.</param>
+        /// <param name="wqlString">WQL query string, ignore case.</param>
+        /// <param name="classProperty">Associated property, ignore case.</param>
         /// <returns>A string list of query result.</returns>
-        public static List<string> QueryWQL(string WQLString, string ClassProperty = null)
+        public static List<string> QueryWQL(string wqlString, string classProperty = null)
         {
-            if (string.IsNullOrEmpty(WQLString))
+            if (string.IsNullOrEmpty(wqlString))
             {
                 throw new ArgumentNullException("WQLString");
             }
 
-            string classProperty = string.Empty;
+            string classPropertyName = string.Empty;
 
-            if (string.IsNullOrEmpty(ClassProperty))
+            if (string.IsNullOrEmpty(classProperty))
             {
-                if (WQLString.Split(' ')[1] != "*")
+                if (wqlString.Split(' ')[1] != "*")
                 {
-                    classProperty = WQLString.Split(' ')[1];
+                    classPropertyName = wqlString.Split(' ')[1];
                 }
                 else
                 {
@@ -148,24 +148,24 @@ namespace DevLib.Utilities
             }
             else
             {
-                classProperty = ClassProperty;
+                classPropertyName = classProperty;
             }
 
             ManagementObjectSearcher managementObjectSearcher = null;
             List<string> result = new List<string>();
             try
             {
-                managementObjectSearcher = new ManagementObjectSearcher(WQLString);
+                managementObjectSearcher = new ManagementObjectSearcher(wqlString);
                 ManagementObjectCollection managementObjectCollection = managementObjectSearcher.Get();
                 foreach (ManagementObject managementObject in managementObjectCollection)
                 {
                     if (managementObject != null &&
                         managementObject.Properties != null &&
-                        managementObject.Properties[classProperty] != null &&
-                        managementObject.Properties[classProperty].Value != null)
+                        managementObject.Properties[classPropertyName] != null &&
+                        managementObject.Properties[classPropertyName].Value != null)
                     {
                         //// Note: Also can use managementObject.GetPropertyValue(classProperty)
-                        result.Add(managementObject.Properties[classProperty].Value.ToString());
+                        result.Add(managementObject.Properties[classPropertyName].Value.ToString());
                     }
                 }
             }

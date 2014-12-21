@@ -45,6 +45,7 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="NetUtilities.cs" />
     <Compile Include="Sockets\AsyncSocketTcpClientConstants.cs" />
     <Compile Include="Sockets\AsyncSocketErrorCodeEnum.cs" />
     <Compile Include="Sockets\AsyncSocketErrorEventArgs.cs" />

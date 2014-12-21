@@ -648,7 +648,7 @@ namespace DevLib.ExtensionMethods
         {
             if (fileSize < 0D)
             {
-                throw new ArgumentOutOfRangeException("fileSize");
+                return fileSize.ToString();
             }
 
             if (fileSize >= 1099511627776D)
@@ -669,7 +669,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                return fileSize.ToString("####0.00") + " bytes";
+                return fileSize.ToString("####0") + " bytes";
             }
         }
 

@@ -7,6 +7,7 @@ namespace DevLib.Reflection
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Reflection.Emit;
 
@@ -246,6 +247,7 @@ namespace DevLib.Reflection
     /// Class PropertyAccessor is used to get or set the property value.
     /// </summary>
     /// <typeparam name="T">Target type.</typeparam>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public class PropertyAccessor<T> : PropertyAccessor
     {
         /// <summary>

@@ -52,7 +52,6 @@ namespace DevLib.Samples
     using DevLib.Ioc;
     using DevLib.Logging;
     using DevLib.Logging.Viewer;
-    using DevLib.Main;
     using DevLib.Net;
     using DevLib.Net.Ftp;
     using DevLib.Net.Sockets;
@@ -183,7 +182,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibWinForms();
+                    TestDevLibWinForms();
                     //new ThreadStart(() => { TestDevLibWinForms(); }).BeginInvoke((asyncResult) => { Console.WriteLine("WinForm exit..."); }, null);
                 });
 

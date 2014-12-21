@@ -128,28 +128,28 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Event CloseBoxClick.
+        /// Event CloseClick.
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
-        public event EventHandler CloseBoxClick;
+        public event EventHandler CloseClick;
 
         /// <summary>
-        /// Event MinimizeBoxClick.
+        /// Event MinimizeClick.
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
-        public event EventHandler MinimizeBoxClick;
+        public event EventHandler MinimizeClick;
 
         /// <summary>
-        /// Event MaximizeBoxClick.
+        /// Event MaximizeClick.
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
-        public event EventHandler MaximizeBoxClick;
+        public event EventHandler MaximizeClick;
 
         /// <summary>
-        /// Event MaximizeBoxClick.
+        /// Event NormalClick.
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
-        public event EventHandler NormalBoxClick;
+        public event EventHandler NormalClick;
 
         /// <summary>
         /// Gets or sets modern color style.
@@ -985,6 +985,38 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            if (e.Button == MouseButtons.Left && this.Movable)
+            {
+                if (this.WindowState == FormWindowState.Maximized)
+                {
+                    return;
+                }
+
+                if (this.ShowBorder)
+                {
+                    if (this.Width - 1 > e.Location.X && e.Location.X > 1 && e.Location.Y > 1 + this.TopBarHeight)
+                    {
+                        this.MoveControl();
+                    }
+                }
+                else
+                {
+                    if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > 0 + this.TopBarHeight)
+                    {
+                        this.MoveControl();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Raises the <see cref="E:System.Windows.Forms.Form.ResizeEnd" /> event.
         /// </summary>
         /// <param name="e">A <see cref="T:System.EventArgs" /> that contains the event data.</param>
@@ -993,6 +1025,58 @@ namespace DevLib.ModernUI.Forms
             base.OnResizeEnd(e);
 
             this.UpdateControlBoxPosition();
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Control.SizeChanged" /> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+
+            switch (this.WindowState)
+            {
+                case FormWindowState.Maximized:
+
+                    if (this._controlBoxDictionary != null && this._controlBoxDictionary.ContainsKey(FormControlBox.Maximize))
+                    {
+                        this._controlBoxDictionary[FormControlBox.Maximize].Text = "2";
+                    }
+
+                    if (this.MaximizeClick != null)
+                    {
+                        this.MaximizeClick(this, EventArgs.Empty);
+                    }
+
+                    break;
+
+                case FormWindowState.Minimized:
+
+                    if (this.MinimizeClick != null)
+                    {
+                        this.MinimizeClick(this, EventArgs.Empty);
+                    }
+
+                    break;
+
+                case FormWindowState.Normal:
+
+                    if (this._controlBoxDictionary != null && this._controlBoxDictionary.ContainsKey(FormControlBox.Maximize))
+                    {
+                        this._controlBoxDictionary[FormControlBox.Maximize].Text = "1";
+                    }
+
+                    if (this.NormalClick != null)
+                    {
+                        this.NormalClick(this, EventArgs.Empty);
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -1061,38 +1145,6 @@ namespace DevLib.ModernUI.Forms
             }
 
             base.WndProc(ref m);
-        }
-
-        /// <summary>
-        /// Raises the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event.
-        /// </summary>
-        /// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            base.OnMouseDown(e);
-
-            if (e.Button == MouseButtons.Left && this.Movable)
-            {
-                if (this.WindowState == FormWindowState.Maximized)
-                {
-                    return;
-                }
-
-                if (this.ShowBorder)
-                {
-                    if (this.Width - 1 > e.Location.X && e.Location.X > 1 && e.Location.Y > 1 + this.TopBarHeight)
-                    {
-                        this.MoveControl();
-                    }
-                }
-                else
-                {
-                    if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > 0 + this.TopBarHeight)
-                    {
-                        this.MoveControl();
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -1260,9 +1312,9 @@ namespace DevLib.ModernUI.Forms
                 {
                     this.DialogResult = DialogResult.Abort;
 
-                    if (this.CloseBoxClick != null)
+                    if (this.CloseClick != null)
                     {
-                        this.CloseBoxClick(this, EventArgs.Empty);
+                        this.CloseClick(this, EventArgs.Empty);
                     }
 
                     this.Close();
@@ -1270,33 +1322,16 @@ namespace DevLib.ModernUI.Forms
                 else if (controlBoxFlag == FormControlBox.Minimize)
                 {
                     this.WindowState = FormWindowState.Minimized;
-
-                    if (this.MinimizeBoxClick != null)
-                    {
-                        this.MinimizeBoxClick(this, EventArgs.Empty);
-                    }
                 }
                 else if (controlBoxFlag == FormControlBox.Maximize)
                 {
                     if (this.WindowState == FormWindowState.Normal)
                     {
                         this.WindowState = FormWindowState.Maximized;
-                        modernControlBox.Text = "2";
-
-                        if (this.MaximizeBoxClick != null)
-                        {
-                            this.MaximizeBoxClick(this, EventArgs.Empty);
-                        }
                     }
                     else
                     {
                         this.WindowState = FormWindowState.Normal;
-                        modernControlBox.Text = "1";
-
-                        if (this.NormalBoxClick != null)
-                        {
-                            this.NormalBoxClick(this, EventArgs.Empty);
-                        }
                     }
                 }
             }

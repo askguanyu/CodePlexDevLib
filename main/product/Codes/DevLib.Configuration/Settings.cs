@@ -53,6 +53,7 @@ namespace DevLib.Configuration
             WriterSettings.ConformanceLevel = ConformanceLevel.Auto;
             WriterSettings.OmitXmlDeclaration = true;
             WriterSettings.Indent = true;
+            WriterSettings.CloseOutput = true;
 
             ReaderSettings = new XmlReaderSettings();
             ReaderSettings.IgnoreComments = true;
@@ -641,12 +642,12 @@ namespace DevLib.Configuration
         /// <returns>The XML representation for this Settings.</returns>
         public string GetRawXml()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-
             this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
 
             try
             {
+                StringBuilder stringBuilder = new StringBuilder();
+
                 using (XmlWriter writer = XmlWriter.Create(stringBuilder, WriterSettings))
                 {
                     writer.WriteStartElement("settings");
@@ -694,18 +695,21 @@ namespace DevLib.Configuration
                     }
 
                     writer.WriteEndElement();
+
+                    writer.Flush();
+
+                    return stringBuilder.ToString();
                 }
             }
             catch (Exception e)
             {
                 InternalLogger.Log(e);
+                return string.Empty;
             }
             finally
             {
                 this._readerWriterLock.ReleaseWriterLock();
             }
-
-            return stringBuilder.ToString();
         }
 
         /// <summary>
@@ -874,6 +878,8 @@ namespace DevLib.Configuration
                     }
 
                     writer.WriteEndElement();
+
+                    writer.Flush();
                 }
             }
             catch (Exception e)

@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DevLib.Main</RootNamespace>
     <AssemblyName>DevLib.Main</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -19,34 +19,172 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\DevLib.Main.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\DevLib.Main.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AssemblyAccessor.cs" />
     <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="License .txt" />
+    <Content Include="License .txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <ProjectReference Include="..\DevLib.AddIn\DevLib.AddIn.csproj">
+      <Project>{D2B536FD-62D2-46BA-9938-872C120C3FBF}</Project>
+      <Name>DevLib.AddIn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Compression\DevLib.Compression.csproj">
+      <Project>{D43C60CD-B4EE-4589-B3FB-DE4CEEF85A61}</Project>
+      <Name>DevLib.Compression</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Configuration\DevLib.Configuration.csproj">
+      <Project>{29304ED4-092E-4E59-9AE5-36296920D8B5}</Project>
+      <Name>DevLib.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Csv\DevLib.Csv.csproj">
+      <Project>{A4F5E387-C533-4C80-A8A2-DBE4E2A3069A}</Project>
+      <Name>DevLib.Csv</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.DaemonProcess\DevLib.DaemonProcess.csproj">
+      <Project>{5E84B29E-5E05-47D8-B8E3-9A9D2972BC26}</Project>
+      <Name>DevLib.DaemonProcess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Data\DevLib.Data.csproj">
+      <Project>{B4D3C579-7EF9-4FC1-894C-6DCC403EC4F1}</Project>
+      <Name>DevLib.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.DesignPatterns\DevLib.DesignPatterns.csproj">
+      <Project>{FBA87267-25F7-4363-A5E2-D12DCB011222}</Project>
+      <Name>DevLib.DesignPatterns</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Diagnostics\DevLib.Diagnostics.csproj">
+      <Project>{C04A25AA-0F63-4676-882B-A161128F2E7A}</Project>
+      <Name>DevLib.Diagnostics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.DirectoryServices\DevLib.DirectoryServices.csproj">
+      <Project>{4A3025ED-0AF6-46E6-927F-128DF086CFCC}</Project>
+      <Name>DevLib.DirectoryServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Dynamic\DevLib.Dynamic.csproj">
+      <Project>{7AC78159-7869-4615-B918-DC5E410FBB44}</Project>
+      <Name>DevLib.Dynamic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Expressions\DevLib.Expressions.csproj">
+      <Project>{27578DA1-4CA9-4AC8-BBC4-C5A5C6584427}</Project>
+      <Name>DevLib.Expressions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ExtensionMethods\DevLib.ExtensionMethods.csproj">
+      <Project>{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}</Project>
+      <Name>DevLib.ExtensionMethods</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Input\DevLib.Input.csproj">
+      <Project>{1421FFB1-D17E-4674-A313-34B5EC09D83B}</Project>
+      <Name>DevLib.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Ioc\DevLib.Ioc.csproj">
+      <Project>{E13B019D-05DA-4E49-8611-8AC4E1D62775}</Project>
+      <Name>DevLib.Ioc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.IO\DevLib.IO.csproj">
+      <Project>{BB64005D-AA1A-4F60-B1B0-7295D56750A8}</Project>
+      <Name>DevLib.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Logging.Viewer\DevLib.Logging.Viewer.csproj">
+      <Project>{CDD22D14-B977-4F3E-A5DB-CD00D88398F0}</Project>
+      <Name>DevLib.Logging.Viewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Logging\DevLib.Logging.csproj">
+      <Project>{D7BA9F42-E97C-403A-B022-744E367A11F1}</Project>
+      <Name>DevLib.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Management\DevLib.Management.csproj">
+      <Project>{0B4C0DE4-3CFA-4762-A77D-AC523D960DE2}</Project>
+      <Name>DevLib.Management</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ModernUI\DevLib.ModernUI.csproj">
+      <Project>{9532160E-CC80-4B59-B7E6-B7202ED3742A}</Project>
+      <Name>DevLib.ModernUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Net\DevLib.Net.csproj">
+      <Project>{CF145C2E-642F-4EFA-A03D-96B5082E6650}</Project>
+      <Name>DevLib.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Parameters\DevLib.Parameters.csproj">
+      <Project>{2EDCA3CE-68F5-4B8D-B145-A7747C185E0F}</Project>
+      <Name>DevLib.Parameters</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Reflection\DevLib.Reflection.csproj">
+      <Project>{80EDAB7E-57DA-4995-A42C-74D09BDEF78F}</Project>
+      <Name>DevLib.Reflection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Remoting\DevLib.Remoting.csproj">
+      <Project>{BD70852E-8B00-452B-A871-174DEE86E056}</Project>
+      <Name>DevLib.Remoting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Serialization\DevLib.Serialization.csproj">
+      <Project>{E263E10B-9DF6-44F8-9E58-34338316F08E}</Project>
+      <Name>DevLib.Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceModel.Extensions\DevLib.ServiceModel.Extensions.csproj">
+      <Project>{78F68CF9-8C7A-4E4A-8ACF-897AF942CD3B}</Project>
+      <Name>DevLib.ServiceModel.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceModel\DevLib.ServiceModel.csproj">
+      <Project>{61266225-A0B6-4792-A8C2-2B99DD02927A}</Project>
+      <Name>DevLib.ServiceModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceProcess\DevLib.ServiceProcess.csproj">
+      <Project>{40B2A751-81AA-4873-8477-3025C8CE2795}</Project>
+      <Name>DevLib.ServiceProcess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.TerminalServices\DevLib.TerminalServices.csproj">
+      <Project>{254E792E-ECFC-4617-9286-77609816B773}</Project>
+      <Name>DevLib.TerminalServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Threading\DevLib.Threading.csproj">
+      <Project>{84CD5CAA-772D-4A43-ADEA-B790EB61B1AD}</Project>
+      <Name>DevLib.Threading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Timers\DevLib.Timers.csproj">
+      <Project>{7FBD602E-F982-47C4-A7E1-54FFB24C35C0}</Project>
+      <Name>DevLib.Timers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Utilities\DevLib.Utilities.csproj">
+      <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>
+      <Name>DevLib.Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Web\DevLib.Web.csproj">
+      <Project>{9656A664-9CF7-4834-AB8A-49D25DE2BF29}</Project>
+      <Name>DevLib.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.WinForms\DevLib.WinForms.csproj">
+      <Project>{73AF4976-0D28-4EB8-852E-2B375B6EBC33}</Project>
+      <Name>DevLib.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Xml\DevLib.Xml.csproj">
+      <Project>{2D70BC07-DC9D-4B2A-901A-7BBD53988B21}</Project>
+      <Name>DevLib.Xml</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

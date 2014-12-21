@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Utilities
+namespace DevLib.Threading
 {
     using System;
     using System.IO;
@@ -21,7 +21,7 @@ namespace DevLib.Utilities
         /// <summary>
         /// Field SharedMutexFileNamePrefix.
         /// </summary>
-        private const string SharedMutexFileNamePrefix = @"Global\DevLibUtilitiesMutexUtilities_";
+        private const string SharedMutexFileNamePrefix = @"Global\DevLibThreadingMutexUtilities_";
 
         /// <summary>
         /// Create a global shared mutex.

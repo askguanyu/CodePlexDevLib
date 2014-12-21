@@ -43,7 +43,7 @@ namespace DevLib.Serialization
 
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
+            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, CloseOutput = true /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
             {
                 if (removeDefaultNamespace)
                 {
@@ -55,6 +55,8 @@ namespace DevLib.Serialization
                 {
                     xmlSerializer.Serialize(xmlWriter, source);
                 }
+
+                xmlWriter.Flush();
 
                 result = stringBuilder.ToString();
             }
@@ -122,6 +124,8 @@ namespace DevLib.Serialization
                 {
                     xmlSerializer.Serialize(xmlWriter, source);
                 }
+
+                xmlWriter.Flush();
 
                 return fullPath;
             }

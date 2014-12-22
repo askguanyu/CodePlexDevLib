@@ -25,7 +25,7 @@ namespace DevLib.DesignPatterns
         {
             get
             {
-                return Inner._instance;
+                return Inner.InnerInstance;
             }
         }
 
@@ -35,9 +35,9 @@ namespace DevLib.DesignPatterns
         private class Inner
         {
             /// <summary>
-            /// Static Field _instance.
+            /// Static Field InnerInstance.
             /// </summary>
-            internal static T _instance = new T();
+            internal static T InnerInstance = new T();
 
             /// <summary>
             /// Initializes static members of the <see cref="Inner" /> class.

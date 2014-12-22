@@ -65,5 +65,5 @@ namespace DevLib.DaemonProcess.NativeAPI
         ProcessKeepAliveCount, // q: PROCESS_KEEPALIVE_COUNT_INFORMATION
         ProcessRevokeFileHandles, // s: PROCESS_REVOKE_FILE_HANDLES_INFORMATION
         MaxProcessInfoClass
-    };
+    }
 }

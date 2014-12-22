@@ -7,10 +7,13 @@ namespace DevLib.ModernUI.Forms
 {
     using System;
     using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
+    using System.IO;
     using System.Text;
     using System.Windows.Forms;
     using System.Xml;
+    using System.Xml.Schema;
     using DevLib.ModernUI.ComponentModel;
     using DevLib.ModernUI.Drawing;
 
@@ -20,6 +23,16 @@ namespace DevLib.ModernUI.Forms
     [ToolboxBitmap(typeof(RichTextBox))]
     public class ModernRichTextBox : Control, IModernControl
     {
+        /// <summary>
+        /// Field ReaderSettings.
+        /// </summary>
+        private static readonly XmlReaderSettings ReaderSettings;
+
+        /// <summary>
+        /// Field WriterSettings.
+        /// </summary>
+        private static readonly XmlWriterSettings WriterSettings;
+
         /// <summary>
         /// Field _highlightSyncRoot
         /// </summary>
@@ -59,6 +72,28 @@ namespace DevLib.ModernUI.Forms
         /// Field _highlightXmlSyntax.
         /// </summary>
         private bool _highlightXmlSyntax = true;
+
+        /// <summary>
+        /// Initializes static members of the <see cref="ModernRichTextBox" /> class.
+        /// </summary>
+        static ModernRichTextBox()
+        {
+            ReaderSettings = new XmlReaderSettings();
+            ReaderSettings.CheckCharacters = true;
+            ReaderSettings.ConformanceLevel = ConformanceLevel.Document;
+            ReaderSettings.ProhibitDtd = false;
+            ReaderSettings.IgnoreComments = true;
+            ReaderSettings.IgnoreProcessingInstructions = true;
+            ReaderSettings.IgnoreWhitespace = true;
+            ReaderSettings.ValidationFlags = XmlSchemaValidationFlags.None;
+            ReaderSettings.ValidationType = ValidationType.None;
+            ReaderSettings.CloseInput = true;
+
+            WriterSettings = new XmlWriterSettings();
+            WriterSettings.Indent = true;
+            WriterSettings.Encoding = new UTF8Encoding(false);
+            WriterSettings.CloseOutput = true;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernRichTextBox" /> class.
@@ -569,6 +604,7 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         /// <param name="xml">The source string.</param>
         /// <returns>true if string is valid Xml string; otherwise, false.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public bool IsValidXml(string xml)
         {
             if (string.IsNullOrEmpty(xml))
@@ -576,15 +612,27 @@ namespace DevLib.ModernUI.Forms
                 return false;
             }
 
-            try
-            {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.LoadXml(xml);
-                return true;
-            }
-            catch
+            string temp = xml.Trim();
+
+            if (temp[0] != '<' || temp[temp.Length - 1] != '>')
             {
                 return false;
+            }
+
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(xml), ReaderSettings))
+            {
+                try
+                {
+                    while (xmlReader.Read())
+                    {
+                    }
+
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
@@ -600,6 +648,11 @@ namespace DevLib.ModernUI.Forms
                 return xml;
             }
 
+            if (!this.IsValidXml(xml))
+            {
+                return xml;
+            }
+
             try
             {
                 XmlDocument xmlDocument = new XmlDocument();
@@ -607,7 +660,7 @@ namespace DevLib.ModernUI.Forms
 
                 StringBuilder stringBuilder = new StringBuilder();
 
-                using (XmlWriter xmlWriter = XmlTextWriter.Create(stringBuilder, new XmlWriterSettings() { Indent = true, CloseOutput = true }))
+                using (XmlWriter xmlWriter = XmlTextWriter.Create(stringBuilder, WriterSettings))
                 {
                     xmlDocument.Save(xmlWriter);
                     xmlWriter.Flush();
@@ -976,12 +1029,13 @@ namespace DevLib.ModernUI.Forms
         {
             if (!this.UseCustomForeColor)
             {
-                if (this.HighlightXmlSyntax && this.IsValidXml(this.Text))
+                this._baseRichTextBox.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
+
+                if (this.HighlightXmlSyntax)
                 {
                     this.UpdateXmlSyntaxHighlight();
+                    this._baseRichTextBox.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
                 }
-
-                this._baseRichTextBox.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
             }
             else
             {

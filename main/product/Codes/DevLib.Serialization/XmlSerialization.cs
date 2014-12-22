@@ -43,7 +43,7 @@ namespace DevLib.Serialization
 
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, CloseOutput = true /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
+            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
             {
                 if (removeDefaultNamespace)
                 {
@@ -112,7 +112,7 @@ namespace DevLib.Serialization
 
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, CloseOutput = true /*, Encoding = new System.Text.UTF8Encoding(false)*/ }))
+            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
             {
                 if (removeDefaultNamespace)
                 {

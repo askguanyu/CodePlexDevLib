@@ -132,10 +132,12 @@
   <data name="modernRichTextBoxRequest.Text" xml:space="preserve">
     <value>&lt;s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"&gt;
   &lt;s:Header&gt;
-    &lt;Action s:mustUnderstand="1" xmlns="http://schemas.microsoft.com/ws/2005/05/addressing/none"&gt;http://tempuri.org/IKernelContract/Echo&lt;/Action&gt;
+    &lt;Action s:mustUnderstand="1" xmlns="http://schemas.microsoft.com/ws/2005/05/addressing/none"&gt;http://ws.cdyne.com/WeatherWS/GetCityWeatherByZIP&lt;/Action&gt;
   &lt;/s:Header&gt;
   &lt;s:Body&gt;
-    &lt;Echo xmlns="http://tempuri.org/" /&gt;
+    &lt;GetCityWeatherByZIP xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ws.cdyne.com/WeatherWS/"&gt;
+      &lt;ZIP&gt;33133&lt;/ZIP&gt;
+    &lt;/GetCityWeatherByZIP&gt;
   &lt;/s:Body&gt;
 &lt;/s:Envelope&gt;</value>
   </data>

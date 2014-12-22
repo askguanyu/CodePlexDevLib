@@ -63,12 +63,12 @@ namespace DevLib.Samples
     using DevLib.ServiceModel.Extensions;
     using DevLib.ServiceProcess;
     using DevLib.TerminalServices;
+    using DevLib.Text;
     using DevLib.Timers;
-    using DevLib.Utilities;
+    using DevLib.Web;
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
-    using DevLib.Web;
 
     public class Program
     {

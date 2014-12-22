@@ -18,19 +18,29 @@ namespace DevLib.Web
     public class SoapClient : MarshalByRefObject
     {
         /// <summary>
-        /// Field HttpHeaderContentType.
+        /// Field HttpHeaderContentTypeValue.
         /// </summary>
-        public const string HttpHeaderContentType = "text/xml;charset=\"utf-8\"";
+        public const string HttpHeaderContentTypeValue = "text/xml;charset=\"utf-8\"";
 
         /// <summary>
-        /// Field HttpHeaderAccept.
+        /// Field HttpHeaderAcceptValue.
         /// </summary>
-        public const string HttpHeaderAccept = "text/xml";
+        public const string HttpHeaderAcceptValue = "text/xml";
 
         /// <summary>
-        /// Field HttpRequestMethod.
+        /// Field HttpRequestMethodValue.
         /// </summary>
-        public const string HttpRequestMethod = "POST";
+        public const string HttpRequestMethodValue = "POST";
+
+        /// <summary>
+        /// Field HttpHeaderSOAPActionKey.
+        /// </summary>
+        public const string HttpHeaderSOAPActionKey = "SOAPAction";
+
+        /// <summary>
+        /// Field HttpHeaderAuthorizationKey.
+        /// </summary>
+        public const string HttpHeaderAuthorizationKey = "Authorization";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SoapClient"/> class.
@@ -62,9 +72,10 @@ namespace DevLib.Web
         /// </summary>
         /// <param name="uri">The URI that identifies the Internet resource.</param>
         /// <param name="filename">The SOAP envelope file.</param>
-        /// <param name="removeHeaderAction">true to remove Action node in Header; otherwise, false.</param>
+        /// <param name="username">The user name.</param>
+        /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public static string SendRequestFile(string uri, string filename, bool removeHeaderAction = false)
+        public static string SendRequestFile(string uri, string filename, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -81,17 +92,18 @@ namespace DevLib.Web
             XmlDocument soapEnvelopeXml = new XmlDocument();
             soapEnvelopeXml.Load(filename);
 
-            return SendRequest(uri, soapEnvelopeXml, removeHeaderAction);
+            return SendRequest(uri, soapEnvelopeXml, username, password);
         }
 
         /// <summary>
         /// Sends the SOAP request.
         /// </summary>
         /// <param name="uri">The URI that identifies the Internet resource.</param>
-        /// <param name="soapEnvelope">The SOAP envelope text.</param>
-        /// <param name="removeHeaderAction">true to remove Action node in Header; otherwise, false.</param>
+        /// <param name="soapEnvelope">The SOAP envelope string.</param>
+        /// <param name="username">The user name.</param>
+        /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public static string SendRequestText(string uri, string soapEnvelope, bool removeHeaderAction = false)
+        public static string SendRequestString(string uri, string soapEnvelope, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(soapEnvelope))
             {
@@ -101,43 +113,102 @@ namespace DevLib.Web
             XmlDocument soapEnvelopeXml = new XmlDocument();
             soapEnvelopeXml.LoadXml(soapEnvelope);
 
-            return SendRequest(uri, soapEnvelopeXml, removeHeaderAction);
+            return SendRequest(uri, soapEnvelopeXml, username, password);
+        }
+
+        /// <summary>
+        /// Sends the SOAP request.
+        /// </summary>
+        /// <param name="filename">The SOAP envelope file.</param>
+        /// <param name="username">The user name.</param>
+        /// <param name="password">The password.</param>
+        /// <returns>SOAP response.</returns>
+        public string SendRequestFile(string filename, string username = null, string password = null)
+        {
+            if (string.IsNullOrEmpty(filename))
+            {
+                throw new ArgumentNullException("filename");
+            }
+
+            string fullPath = Path.GetFullPath(filename);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            XmlDocument soapEnvelopeXml = new XmlDocument();
+            soapEnvelopeXml.Load(filename);
+
+            return SendRequest(this.Uri, soapEnvelopeXml, username, password);
+        }
+
+        /// <summary>
+        /// Sends the SOAP request.
+        /// </summary>
+        /// <param name="soapEnvelope">The SOAP envelope string.</param>
+        /// <param name="username">The user name.</param>
+        /// <param name="password">The password.</param>
+        /// <returns>SOAP response.</returns>
+        public string SendRequestString(string soapEnvelope, string username = null, string password = null)
+        {
+            if (string.IsNullOrEmpty(soapEnvelope))
+            {
+                return string.Empty;
+            }
+
+            XmlDocument soapEnvelopeXml = new XmlDocument();
+            soapEnvelopeXml.LoadXml(soapEnvelope);
+
+            return SendRequest(this.Uri, soapEnvelopeXml, username, password);
         }
 
         /// <summary>
         /// Sends the SOAP request.
         /// </summary>
         /// <param name="uri">The URI that identifies the Internet resource.</param>
-        /// <param name="soapEnvelopeXml">The SOAP envelope XML.</param>
-        /// <param name="removeHeaderAction">true to remove Action node in Header; otherwise, false.</param>
+        /// <param name="soapEnvelopeXml">The SOAP envelope XmlDocument.</param>
+        /// <param name="username">The user name.</param>
+        /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public static string SendRequest(string uri, XmlDocument soapEnvelopeXml, bool removeHeaderAction = false)
+        private static string SendRequest(string uri, XmlDocument soapEnvelopeXml, string username, string password)
         {
-            if (removeHeaderAction)
-            {
-                foreach (XmlNode childNode in soapEnvelopeXml.DocumentElement.ChildNodes)
-                {
-                    if (childNode.LocalName.Equals("Header"))
-                    {
-                        foreach (XmlNode item in childNode.ChildNodes)
-                        {
-                            if (item.LocalName.Equals("Action"))
-                            {
-                                childNode.RemoveChild(item);
-                                break;
-                            }
-                        }
+            string soapAction = null;
 
-                        break;
+            foreach (XmlNode childNode in soapEnvelopeXml.DocumentElement.ChildNodes)
+            {
+                if (childNode.LocalName.Equals("Header"))
+                {
+                    foreach (XmlNode item in childNode.ChildNodes)
+                    {
+                        if (item.LocalName.Equals("Action"))
+                        {
+                            soapAction = item.InnerText;
+                            childNode.RemoveChild(item);
+                            break;
+                        }
                     }
+
+                    break;
                 }
             }
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
-            request.ContentType = HttpHeaderContentType;
-            request.Accept = HttpHeaderAccept;
-            request.Method = HttpRequestMethod;
+            request.ContentType = HttpHeaderContentTypeValue;
+            request.Accept = HttpHeaderAcceptValue;
+            request.Method = HttpRequestMethodValue;
+
+            if (!string.IsNullOrEmpty(soapAction))
+            {
+                request.Headers[HttpHeaderSOAPActionKey] = soapAction;
+            }
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                string authorizationInfo = username + ":" + password;
+                request.Headers[HttpHeaderAuthorizationKey] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes(authorizationInfo));
+            }
 
             Stream stream = null;
 
@@ -216,62 +287,6 @@ namespace DevLib.Web
                     response = null;
                 }
             }
-        }
-
-        /// <summary>
-        /// Sends the SOAP request.
-        /// </summary>
-        /// <param name="filename">The SOAP envelope file.</param>
-        /// <param name="removeHeaderAction">true to remove Action node in Header; otherwise, false.</param>
-        /// <returns>SOAP response.</returns>
-        public string SendRequestFile(string filename, bool removeHeaderAction = false)
-        {
-            if (string.IsNullOrEmpty(filename))
-            {
-                throw new ArgumentNullException("filename");
-            }
-
-            string fullPath = Path.GetFullPath(filename);
-
-            if (!File.Exists(fullPath))
-            {
-                throw new FileNotFoundException("The specified file does not exist.", fullPath);
-            }
-
-            XmlDocument soapEnvelopeXml = new XmlDocument();
-            soapEnvelopeXml.Load(filename);
-
-            return SendRequest(this.Uri, soapEnvelopeXml, removeHeaderAction);
-        }
-
-        /// <summary>
-        /// Sends the SOAP request.
-        /// </summary>
-        /// <param name="soapEnvelope">The SOAP envelope text.</param>
-        /// <param name="removeHeaderAction">true to remove Action node in Header; otherwise, false.</param>
-        /// <returns>SOAP response.</returns>
-        public string SendRequestText(string soapEnvelope, bool removeHeaderAction = false)
-        {
-            if (string.IsNullOrEmpty(soapEnvelope))
-            {
-                return string.Empty;
-            }
-
-            XmlDocument soapEnvelopeXml = new XmlDocument();
-            soapEnvelopeXml.LoadXml(soapEnvelope);
-
-            return SendRequest(this.Uri, soapEnvelopeXml, removeHeaderAction);
-        }
-
-        /// <summary>
-        /// Sends the SOAP  request.
-        /// </summary>
-        /// <param name="soapEnvelopeXml">The SOAP envelope XML.</param>
-        /// <param name="removeHeaderAction">true to remove Action node in Header; otherwise, false.</param>
-        /// <returns>SOAP response.</returns>
-        public string SendRequest(XmlDocument soapEnvelopeXml, bool removeHeaderAction = false)
-        {
-            return SendRequest(this.Uri, soapEnvelopeXml, removeHeaderAction);
         }
     }
 }

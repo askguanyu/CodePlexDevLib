@@ -30,6 +30,7 @@ namespace DevLib.Serialization
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>An Xml encoded string representation of the source object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static string Serialize(object source, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
@@ -37,13 +38,12 @@ namespace DevLib.Serialization
                 throw new ArgumentNullException("source");
             }
 
-            string result = null;
-
-            StringBuilder stringBuilder = new StringBuilder();
-
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
+            MemoryStream memoryStream = new MemoryStream();
+            StreamReader streamReader = new StreamReader(memoryStream);
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
             {
                 if (removeDefaultNamespace)
                 {
@@ -57,11 +57,10 @@ namespace DevLib.Serialization
                 }
 
                 xmlWriter.Flush();
+                memoryStream.Position = 0;
 
-                result = stringBuilder.ToString();
+                return streamReader.ReadToEnd();
             }
-
-            return result;
         }
 
         /// <summary>

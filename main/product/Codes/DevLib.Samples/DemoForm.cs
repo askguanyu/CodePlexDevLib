@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using DevLib.ModernUI.Forms;
 using DevLib.ModernUI.ComponentModel;
 using DevLib.ExtensionMethods;
+using DevLib.Web;
 
 namespace DevLib.Samples
 {
@@ -55,6 +56,18 @@ namespace DevLib.Samples
         private void button1_Click(object sender, EventArgs e)
         {
             modernRichTextBox1.Text = @"d:\a.txt".ReadTextFile();
+        }
+
+        private void modernButton2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                modernRichTextBoxResponse.Text = SoapClient.SendRequestString(modernTextBoxUri.Text, modernRichTextBoxRequest.Text, "a", "b");
+            }
+            catch (Exception ex)
+            {
+                modernRichTextBoxResponse.Text = ex.ToString();
+            }
         }
     }
 }

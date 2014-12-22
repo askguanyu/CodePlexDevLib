@@ -34,6 +34,7 @@ namespace DevLib.Samples
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DemoForm));
             this.modernStyleManager1 = new DevLib.ModernUI.ComponentModel.ModernStyleManager(this.components);
             this.modernToggle1 = new DevLib.ModernUI.Forms.ModernToggle();
             this.modernButton1 = new DevLib.ModernUI.Forms.ModernButton();
@@ -53,12 +54,23 @@ namespace DevLib.Samples
             this.label1 = new System.Windows.Forms.Label();
             this.modernTile2 = new DevLib.ModernUI.Forms.ModernTile();
             this.button1 = new System.Windows.Forms.Button();
+            this.modernTabPage3 = new DevLib.ModernUI.Forms.ModernTabPage();
+            this.modernTextBoxUri = new DevLib.ModernUI.Forms.ModernTextBox();
+            this.modernButton2 = new DevLib.ModernUI.Forms.ModernButton();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.modernRichTextBoxRequest = new DevLib.ModernUI.Forms.ModernRichTextBox();
+            this.modernRichTextBoxResponse = new DevLib.ModernUI.Forms.ModernRichTextBox();
             this.StatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).BeginInit();
             this.modernTabControl1.SuspendLayout();
             this.modernTabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernDataGridView1)).BeginInit();
             this.modernTabPage2.SuspendLayout();
+            this.modernTabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusStrip
@@ -150,10 +162,11 @@ namespace DevLib.Samples
             | System.Windows.Forms.AnchorStyles.Right)));
             this.modernTabControl1.Controls.Add(this.modernTabPage1);
             this.modernTabControl1.Controls.Add(this.modernTabPage2);
+            this.modernTabControl1.Controls.Add(this.modernTabPage3);
             this.modernTabControl1.Location = new System.Drawing.Point(35, 148);
             this.modernTabControl1.Multiline = true;
             this.modernTabControl1.Name = "modernTabControl1";
-            this.modernTabControl1.SelectedIndex = 1;
+            this.modernTabControl1.SelectedIndex = 2;
             this.modernTabControl1.Size = new System.Drawing.Size(606, 438);
             this.modernTabControl1.TabIndex = 11;
             this.modernTabControl1.UseSelectable = true;
@@ -323,6 +336,115 @@ namespace DevLib.Samples
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // modernTabPage3
+            // 
+            this.modernTabPage3.Controls.Add(this.splitContainer1);
+            this.modernTabPage3.Controls.Add(this.modernButton2);
+            this.modernTabPage3.Controls.Add(this.modernTextBoxUri);
+            this.modernTabPage3.HorizontalScrollBarSize = 10;
+            this.modernTabPage3.Location = new System.Drawing.Point(4, 38);
+            this.modernTabPage3.Name = "modernTabPage3";
+            this.modernTabPage3.Size = new System.Drawing.Size(598, 396);
+            this.modernTabPage3.TabIndex = 2;
+            this.modernTabPage3.Text = "modernTabPage3";
+            this.modernTabPage3.UseHorizontalBarColor = true;
+            this.modernTabPage3.UseStyleColors = false;
+            this.modernTabPage3.UseVerticalBarColor = true;
+            this.modernTabPage3.VerticalScrollBarSize = 10;
+            // 
+            // modernTextBoxUri
+            // 
+            this.modernTextBoxUri.Dock = System.Windows.Forms.DockStyle.Top;
+            this.modernTextBoxUri.Lines = new string[] {
+        "http://localhost:5000/Centris.ScadaBridge.Service.KernelContract.IKernelContract"};
+            this.modernTextBoxUri.Location = new System.Drawing.Point(0, 0);
+            this.modernTextBoxUri.MaxLength = 2147483647;
+            this.modernTextBoxUri.Name = "modernTextBoxUri";
+            this.modernTextBoxUri.PasswordChar = '\0';
+            this.modernTextBoxUri.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.modernTextBoxUri.SelectedText = "";
+            this.modernTextBoxUri.Size = new System.Drawing.Size(598, 23);
+            this.modernTextBoxUri.TabIndex = 2;
+            this.modernTextBoxUri.Text = "http://localhost:5000/Centris.ScadaBridge.Service.KernelContract.IKernelContract";
+            this.modernTextBoxUri.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.modernTextBoxUri.UseSelectable = true;
+            this.modernTextBoxUri.UseStyleColors = false;
+            this.modernTextBoxUri.UseSystemPasswordChar = false;
+            this.modernTextBoxUri.WordWrap = true;
+            // 
+            // modernButton2
+            // 
+            this.modernButton2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.modernButton2.Location = new System.Drawing.Point(0, 373);
+            this.modernButton2.Name = "modernButton2";
+            this.modernButton2.Size = new System.Drawing.Size(598, 23);
+            this.modernButton2.TabIndex = 3;
+            this.modernButton2.Text = "modernButton2";
+            this.modernButton2.UseSelectable = true;
+            this.modernButton2.UseStyleColors = false;
+            this.modernButton2.UseVisualStyleBackColor = true;
+            this.modernButton2.Click += new System.EventHandler(this.modernButton2_Click);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 23);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.modernRichTextBoxRequest);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.modernRichTextBoxResponse);
+            this.splitContainer1.Size = new System.Drawing.Size(598, 350);
+            this.splitContainer1.SplitterDistance = 175;
+            this.splitContainer1.TabIndex = 4;
+            // 
+            // modernRichTextBoxRequest
+            // 
+            this.modernRichTextBoxRequest.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.modernRichTextBoxRequest.Lines = new string[] {
+        "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">",
+        "  <s:Header>",
+        "    <Action s:mustUnderstand=\"1\" xmlns=\"http://schemas.microsoft.com/ws/2005/05/a" +
+            "ddressing/none\">http://tempuri.org/IKernelContract/Echo</Action>",
+        "  </s:Header>",
+        "  <s:Body>",
+        "    <Echo xmlns=\"http://tempuri.org/\" />",
+        "  </s:Body>",
+        "</s:Envelope>"};
+            this.modernRichTextBoxRequest.Location = new System.Drawing.Point(0, 0);
+            this.modernRichTextBoxRequest.MaxLength = 2147483647;
+            this.modernRichTextBoxRequest.Multiline = true;
+            this.modernRichTextBoxRequest.Name = "modernRichTextBoxRequest";
+            this.modernRichTextBoxRequest.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
+            this.modernRichTextBoxRequest.SelectedText = "";
+            this.modernRichTextBoxRequest.Size = new System.Drawing.Size(598, 175);
+            this.modernRichTextBoxRequest.TabIndex = 0;
+            this.modernRichTextBoxRequest.Text = resources.GetString("modernRichTextBoxRequest.Text");
+            this.modernRichTextBoxRequest.UseSelectable = true;
+            this.modernRichTextBoxRequest.UseStyleColors = false;
+            // 
+            // modernRichTextBoxResponse
+            // 
+            this.modernRichTextBoxResponse.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.modernRichTextBoxResponse.Lines = new string[] {
+        "modernRichTextBox3"};
+            this.modernRichTextBoxResponse.Location = new System.Drawing.Point(0, 0);
+            this.modernRichTextBoxResponse.MaxLength = 2147483647;
+            this.modernRichTextBoxResponse.Multiline = true;
+            this.modernRichTextBoxResponse.Name = "modernRichTextBoxResponse";
+            this.modernRichTextBoxResponse.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
+            this.modernRichTextBoxResponse.SelectedText = "";
+            this.modernRichTextBoxResponse.Size = new System.Drawing.Size(598, 171);
+            this.modernRichTextBoxResponse.TabIndex = 0;
+            this.modernRichTextBoxResponse.Text = "modernRichTextBox3";
+            this.modernRichTextBoxResponse.UseSelectable = true;
+            this.modernRichTextBoxResponse.UseStyleColors = false;
+            // 
             // DemoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -362,6 +484,11 @@ namespace DevLib.Samples
             this.modernTabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.modernDataGridView1)).EndInit();
             this.modernTabPage2.ResumeLayout(false);
+            this.modernTabPage3.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -391,5 +518,11 @@ namespace DevLib.Samples
         private ModernTile modernTile2;
         private ModernRichTextBox modernRichTextBox1;
         private System.Windows.Forms.Button button1;
+        private ModernTabPage modernTabPage3;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private ModernRichTextBox modernRichTextBoxRequest;
+        private ModernRichTextBox modernRichTextBoxResponse;
+        private ModernButton modernButton2;
+        private ModernTextBox modernTextBoxUri;
     }
 }

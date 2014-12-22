@@ -24,7 +24,9 @@ namespace DevLib.ServiceModel
         /// <param name="channelMessage">The unit of communication between endpoints in a distributed environment.</param>
         /// <param name="message">The message of the service endpoint.</param>
         /// <param name="messageId">The message identifier.</param>
-        public WcfClientBaseEventArgs(string name, EndpointAddress address, Uri listenUri, Message channelMessage, string message, Guid? messageId)
+        /// <param name="username">The user name.</param>
+        /// <param name="password">The password.</param>
+        public WcfClientBaseEventArgs(string name, EndpointAddress address, Uri listenUri, Message channelMessage, string message, Guid? messageId, string username, string password)
         {
             this.Name = name;
             this.Address = address;
@@ -32,6 +34,8 @@ namespace DevLib.ServiceModel
             this.ChannelMessage = channelMessage;
             this.Message = message;
             this.MessageId = messageId ?? Guid.Empty;
+            this.Username = username;
+            this.Password = password;
         }
 
         /// <summary>
@@ -83,6 +87,24 @@ namespace DevLib.ServiceModel
         /// Gets the message identifier.
         /// </summary>
         public Guid MessageId
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the user name.
+        /// </summary>
+        public string Username
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the password.
+        /// </summary>
+        public string Password
         {
             get;
             private set;

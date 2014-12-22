@@ -123,7 +123,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public string SendRequestFile(string filename, string username = null, string password = null)
+        public string SendSoapRequestFile(string filename, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -150,7 +150,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public string SendRequestString(string soapEnvelope, string username = null, string password = null)
+        public string SendSoapRequestString(string soapEnvelope, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(soapEnvelope))
             {

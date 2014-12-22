@@ -85,6 +85,10 @@
       <Project>{4A3025ED-0AF6-46E6-927F-128DF086CFCC}</Project>
       <Name>DevLib.DirectoryServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Drawing\DevLib.Drawing.csproj">
+      <Project>{2768F32B-7C3F-49E7-B0C8-AE20776C143D}</Project>
+      <Name>DevLib.Drawing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Dynamic\DevLib.Dynamic.csproj">
       <Project>{7AC78159-7869-4615-B918-DC5E410FBB44}</Project>
       <Name>DevLib.Dynamic</Name>
@@ -161,6 +165,10 @@
       <Project>{254E792E-ECFC-4617-9286-77609816B773}</Project>
       <Name>DevLib.TerminalServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Text\DevLib.Text.csproj">
+      <Project>{BBC6BE2A-EFD2-44B2-A60D-163AB876CE99}</Project>
+      <Name>DevLib.Text</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Threading\DevLib.Threading.csproj">
       <Project>{84CD5CAA-772D-4A43-ADEA-B790EB61B1AD}</Project>
       <Name>DevLib.Threading</Name>
@@ -168,10 +176,6 @@
     <ProjectReference Include="..\DevLib.Timers\DevLib.Timers.csproj">
       <Project>{7FBD602E-F982-47C4-A7E1-54FFB24C35C0}</Project>
       <Name>DevLib.Timers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DevLib.Utilities\DevLib.Utilities.csproj">
-      <Project>{BDC5A581-6F83-4422-BAC9-BC4FD752579A}</Project>
-      <Name>DevLib.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.Web\DevLib.Web.csproj">
       <Project>{9656A664-9CF7-4834-AB8A-49D25DE2BF29}</Project>

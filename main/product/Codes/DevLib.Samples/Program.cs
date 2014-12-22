@@ -743,6 +743,24 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            string xmltotest = @"d:\a.txt".ReadTextFile();
+
+            string xmltotest1 = xmltotest.ToIndentXml();
+
+            Console.WriteLine(xmltotest.IsValidXml());
+
+            Benchmark.Initialize();
+
+            Benchmark.Run(i =>
+            {
+                xmltotest.ToIndentXml();
+            }, 100000);
+
+
+            Console.ReadLine();
+
+
+
             UTF8Encoding utf8 = new UTF8Encoding();
             UTF8Encoding utf8EmitBOM = new UTF8Encoding(true);
 

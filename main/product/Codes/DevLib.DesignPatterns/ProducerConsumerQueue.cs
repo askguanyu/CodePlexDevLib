@@ -7,6 +7,7 @@ namespace DevLib.DesignPatterns
 {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents a first-in, first-out collection of objects for <see cref="ProducerConsumer" />.
@@ -98,6 +99,7 @@ namespace DevLib.DesignPatterns
     /// Represents a first-in, first-out collection of objects for <see cref="ProducerConsumer{T}" />.
     /// </summary>
     /// <typeparam name="T">Specifies the type of elements in the queue.</typeparam>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public class ProducerConsumerQueue<T> : IProducerConsumerQueue<T>
     {
         /// <summary>

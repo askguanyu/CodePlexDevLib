@@ -6,8 +6,11 @@
 namespace DevLib.ExtensionMethods
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Text;
     using System.Xml;
+    using System.Xml.Linq;
+    using System.Xml.Schema;
 
     /// <summary>
     /// Xml Extensions.
@@ -15,10 +18,43 @@ namespace DevLib.ExtensionMethods
     public static class XmlExtensions
     {
         /// <summary>
+        /// Field ReaderSettings.
+        /// </summary>
+        private static readonly XmlReaderSettings ReaderSettings;
+
+        /// <summary>
+        /// Field WriterSettings.
+        /// </summary>
+        private static readonly XmlWriterSettings WriterSettings;
+
+        /// <summary>
+        /// Initializes static members of the <see cref="XmlExtensions" /> class.
+        /// </summary>
+        static XmlExtensions()
+        {
+            ReaderSettings = new XmlReaderSettings();
+            ReaderSettings.CheckCharacters = true;
+            ReaderSettings.ConformanceLevel = ConformanceLevel.Document;
+            ReaderSettings.ProhibitDtd = false;
+            ReaderSettings.IgnoreComments = true;
+            ReaderSettings.IgnoreProcessingInstructions = true;
+            ReaderSettings.IgnoreWhitespace = true;
+            ReaderSettings.ValidationFlags = XmlSchemaValidationFlags.None;
+            ReaderSettings.ValidationType = ValidationType.None;
+            ReaderSettings.CloseInput = true;
+
+            WriterSettings = new XmlWriterSettings();
+            WriterSettings.Indent = true;
+            WriterSettings.Encoding = new UTF8Encoding(false);
+            WriterSettings.CloseOutput = true;
+        }
+
+        /// <summary>
         /// Determines whether the source string is valid Xml string.
         /// </summary>
         /// <param name="source">The source string.</param>
         /// <returns>true if string is valid Xml string; otherwise, false.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static bool IsValidXml(this string source)
         {
             if (string.IsNullOrEmpty(source))
@@ -26,15 +62,27 @@ namespace DevLib.ExtensionMethods
                 return false;
             }
 
-            try
-            {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.LoadXml(source);
-                return true;
-            }
-            catch
+            string temp = source.Trim();
+
+            if (temp[0] != '<' || temp[temp.Length - 1] != '>')
             {
                 return false;
+            }
+
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), ReaderSettings))
+            {
+                try
+                {
+                    while (xmlReader.Read())
+                    {
+                    }
+
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
         }
 
@@ -50,16 +98,18 @@ namespace DevLib.ExtensionMethods
                 return source;
             }
 
+            if (!source.IsValidXml())
+            {
+                return source;
+            }
+
             try
             {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.LoadXml(source);
-
                 StringBuilder stringBuilder = new StringBuilder();
 
-                using (XmlWriter xmlWriter = XmlTextWriter.Create(stringBuilder, new XmlWriterSettings() { Indent = true, CloseOutput = true }))
+                using (XmlWriter xmlWriter = XmlTextWriter.Create(stringBuilder, WriterSettings))
                 {
-                    xmlDocument.Save(xmlWriter);
+                    XDocument.Parse(source).Save(xmlWriter);
                     xmlWriter.Flush();
                     return stringBuilder.ToString();
                 }
@@ -79,6 +129,11 @@ namespace DevLib.ExtensionMethods
         /// <returns>The Xml syntax highlight RTF string.</returns>
         public static string ToXmlSyntaxHighlightRtf(this string source, bool indentXml = true, bool darkStyle = false)
         {
+            if (string.IsNullOrEmpty(source))
+            {
+                return source;
+            }
+
             string tempRtf = indentXml ? source.ToIndentXml() : source;
 
             StringBuilder highlightStringBuilder = new StringBuilder(string.Empty);

@@ -8,6 +8,7 @@ namespace DevLib.DesignPatterns
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     /// <summary>
@@ -470,6 +471,7 @@ namespace DevLib.DesignPatterns
     /// Producer Consumer Pattern.
     /// </summary>
     /// <typeparam name="T">The type of item to be produced and consumed.</typeparam>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed.")]
     public class ProducerConsumer<T> : IDisposable
     {
         /// <summary>

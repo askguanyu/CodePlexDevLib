@@ -53,6 +53,7 @@ namespace DevLib.Configuration
             WriterSettings.ConformanceLevel = ConformanceLevel.Auto;
             WriterSettings.OmitXmlDeclaration = true;
             WriterSettings.Indent = true;
+            WriterSettings.Encoding = new UTF8Encoding(false);
             WriterSettings.CloseOutput = true;
 
             ReaderSettings = new XmlReaderSettings();
@@ -60,6 +61,7 @@ namespace DevLib.Configuration
             ReaderSettings.IgnoreProcessingInstructions = true;
             ReaderSettings.IgnoreWhitespace = true;
             ReaderSettings.ConformanceLevel = ConformanceLevel.Auto;
+            ReaderSettings.CloseInput = true;
 
             EmptyXmlSerializerNamespaces = new XmlSerializerNamespaces();
             EmptyXmlSerializerNamespaces.Add(string.Empty, string.Empty);

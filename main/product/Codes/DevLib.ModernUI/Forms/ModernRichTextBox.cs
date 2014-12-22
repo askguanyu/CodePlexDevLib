@@ -29,11 +29,6 @@ namespace DevLib.ModernUI.Forms
         private static readonly XmlReaderSettings ReaderSettings;
 
         /// <summary>
-        /// Field WriterSettings.
-        /// </summary>
-        private static readonly XmlWriterSettings WriterSettings;
-
-        /// <summary>
         /// Field _highlightSyncRoot
         /// </summary>
         private readonly object _highlightSyncRoot = new object();
@@ -69,6 +64,11 @@ namespace DevLib.ModernUI.Forms
         private bool _indentXml = true;
 
         /// <summary>
+        /// Field _omitXmlDeclaration.
+        /// </summary>
+        private bool _omitXmlDeclaration = true;
+
+        /// <summary>
         /// Field _highlightXmlSyntax.
         /// </summary>
         private bool _highlightXmlSyntax = true;
@@ -88,11 +88,6 @@ namespace DevLib.ModernUI.Forms
             ReaderSettings.ValidationFlags = XmlSchemaValidationFlags.None;
             ReaderSettings.ValidationType = ValidationType.None;
             ReaderSettings.CloseInput = true;
-
-            WriterSettings = new XmlWriterSettings();
-            WriterSettings.Indent = true;
-            WriterSettings.Encoding = new UTF8Encoding(false);
-            WriterSettings.CloseOutput = true;
         }
 
         /// <summary>
@@ -114,6 +109,7 @@ namespace DevLib.ModernUI.Forms
             this.WordWrap = false;
             this.MaxLength = int.MaxValue;
             this.ScrollBars = RichTextBoxScrollBars.Both;
+            this.OmitXmlDeclaration = true;
         }
 
         /// <summary>
@@ -161,11 +157,33 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                this._indentXml = value;
-
-                if (this._indentXml)
+                if (this._indentXml != value)
                 {
-                    this.Text = this.ToIndentXml(this.Text);
+                    this._indentXml = value;
+                    this.UpdateXmlSyntaxHighlight(true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether indent Xml string.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool OmitXmlDeclaration
+        {
+            get
+            {
+                return this._omitXmlDeclaration;
+            }
+
+            set
+            {
+                if (this._omitXmlDeclaration != value)
+                {
+                    this._omitXmlDeclaration = value;
+                    this.UpdateXmlSyntaxHighlight(true);
                 }
             }
         }
@@ -185,16 +203,10 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                this._highlightXmlSyntax = value;
-
-                if (this.IndentXml)
+                if (this._highlightXmlSyntax != value)
                 {
-                    this.Text = this.ToIndentXml(this.Text);
-                }
-
-                if (this._highlightXmlSyntax)
-                {
-                    this.Rtf = this.ToXmlSyntaxHighlightRtf(this.Rtf, this.IndentXml, this.ThemeStyle == ModernThemeStyle.Dark);
+                    this._highlightXmlSyntax = value;
+                    this.UpdateXmlSyntaxHighlight(true);
                 }
             }
         }
@@ -640,8 +652,10 @@ namespace DevLib.ModernUI.Forms
         /// Converts valid Xml string to the indent Xml string.
         /// </summary>
         /// <param name="xml">The source Xml string.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <returns>Indent Xml string.</returns>
-        public string ToIndentXml(string xml)
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public string ToIndentXml(string xml, bool omitXmlDeclaration)
         {
             if (string.IsNullOrEmpty(xml))
             {
@@ -658,13 +672,16 @@ namespace DevLib.ModernUI.Forms
                 XmlDocument xmlDocument = new XmlDocument();
                 xmlDocument.LoadXml(xml);
 
-                StringBuilder stringBuilder = new StringBuilder();
+                MemoryStream memoryStream = new MemoryStream();
+                StreamReader streamReader = new StreamReader(memoryStream);
 
-                using (XmlWriter xmlWriter = XmlTextWriter.Create(stringBuilder, WriterSettings))
+                using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, new XmlWriterSettings { OmitXmlDeclaration = omitXmlDeclaration, Indent = true, Encoding = new UTF8Encoding(false), CloseOutput = true }))
                 {
                     xmlDocument.Save(xmlWriter);
                     xmlWriter.Flush();
-                    return stringBuilder.ToString();
+                    memoryStream.Position = 0;
+
+                    return streamReader.ReadToEnd();
                 }
             }
             catch
@@ -678,16 +695,17 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         /// <param name="rtf">The source RTF string.</param>
         /// <param name="indentXml">true to indent Xml string; otherwise, keep the original string.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="darkStyle">true to use dark style; otherwise, use light style.</param>
         /// <returns>The Xml syntax highlight RTF string.</returns>
-        public string ToXmlSyntaxHighlightRtf(string rtf, bool indentXml = true, bool darkStyle = false)
+        public string ToXmlSyntaxHighlightRtf(string rtf, bool indentXml = true, bool omitXmlDeclaration = false, bool darkStyle = false)
         {
             if (string.IsNullOrEmpty(rtf))
             {
                 return rtf;
             }
 
-            string tempRtf = indentXml ? this.ToIndentXml(rtf) : rtf;
+            string tempRtf = indentXml ? this.ToIndentXml(rtf, omitXmlDeclaration) : rtf;
 
             StringBuilder highlightStringBuilder = new StringBuilder(string.Empty);
 
@@ -869,8 +887,9 @@ namespace DevLib.ModernUI.Forms
         /// Highlights the Xml syntax for RichTextBox.
         /// </summary>
         /// <param name="indentXml">true to indent Xml string; otherwise, keep the original string.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="darkStyle">true to use dark style; otherwise, use light style.</param>
-        public void HighlightXml(bool indentXml = true, bool darkStyle = false)
+        public void HighlightXml(bool indentXml = true, bool omitXmlDeclaration = false, bool darkStyle = false)
         {
             if (!this.IsValidXml(this._baseRichTextBox.Text))
             {
@@ -879,10 +898,10 @@ namespace DevLib.ModernUI.Forms
 
             if (indentXml)
             {
-                this._baseRichTextBox.Text = this.ToIndentXml(this._baseRichTextBox.Text);
+                this._baseRichTextBox.Text = this.ToIndentXml(this._baseRichTextBox.Text, omitXmlDeclaration);
             }
 
-            this._baseRichTextBox.Rtf = this.ToXmlSyntaxHighlightRtf(this._baseRichTextBox.Rtf, indentXml, darkStyle);
+            this._baseRichTextBox.Rtf = this.ToXmlSyntaxHighlightRtf(this._baseRichTextBox.Rtf, indentXml, omitXmlDeclaration, darkStyle);
             this._baseRichTextBox.Tag = this._baseRichTextBox.Rtf;
         }
 
@@ -1323,14 +1342,15 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Updates the Xml syntax highlight.
         /// </summary>
-        private void UpdateXmlSyntaxHighlight()
+        /// <param name="force">true to force update; otherwise, false.</param>
+        private void UpdateXmlSyntaxHighlight(bool force = false)
         {
             if (!this.IsValidXml(this.Text))
             {
                 return;
             }
 
-            if (this._baseRichTextBox.Rtf.Equals((string)this._baseRichTextBox.Tag))
+            if (!force && this._baseRichTextBox.Rtf.Equals((string)this._baseRichTextBox.Tag))
             {
                 return;
             }
@@ -1339,12 +1359,12 @@ namespace DevLib.ModernUI.Forms
             {
                 if (this.IndentXml)
                 {
-                    this._baseRichTextBox.Text = this.ToIndentXml(this._baseRichTextBox.Text);
+                    this._baseRichTextBox.Text = this.ToIndentXml(this._baseRichTextBox.Text, this.OmitXmlDeclaration);
                 }
 
                 if (this.HighlightXmlSyntax)
                 {
-                    this._baseRichTextBox.Rtf = this.ToXmlSyntaxHighlightRtf(this._baseRichTextBox.Rtf, this.IndentXml, this.ThemeStyle == ModernThemeStyle.Dark);
+                    this._baseRichTextBox.Rtf = this.ToXmlSyntaxHighlightRtf(this._baseRichTextBox.Rtf, this.IndentXml, this.OmitXmlDeclaration, this.ThemeStyle == ModernThemeStyle.Dark);
                     this._baseRichTextBox.Tag = this._baseRichTextBox.Rtf;
                 }
             }

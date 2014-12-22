@@ -157,7 +157,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibServiceModel();
+                    TestDevLibServiceModel();
                 });
 
                 Benchmark.Run(delegate
@@ -1929,7 +1929,7 @@ namespace DevLib.Samples
 
             SoapClient soapClient = new SoapClient("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
 
-            string soapresult = soapClient.SendRequestFile(@"D:\soap.txt");
+            string soapresult = soapClient.SendRequestFile(@"D:\soap.txt", null, null);
 
 
             var factory = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
@@ -2058,6 +2058,8 @@ namespace DevLib.Samples
         {
             Console.WriteLine("Sending Request");
             Console.WriteLine(e.Message);
+            Console.WriteLine(e.Username);
+            Console.WriteLine(e.Password);
             Console.WriteLine();
             Console.WriteLine();
         }

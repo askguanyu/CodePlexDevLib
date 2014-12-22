@@ -105,7 +105,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(null, new WcfClientBaseEventArgs(null, null, null, channelMessage, message, messageId));
+                temp(null, new WcfClientBaseEventArgs(null, null, null, channelMessage, message, messageId, null, null));
             }
         }
     }

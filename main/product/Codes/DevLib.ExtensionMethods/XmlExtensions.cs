@@ -23,11 +23,6 @@ namespace DevLib.ExtensionMethods
         private static readonly XmlReaderSettings ReaderSettings;
 
         /// <summary>
-        /// Field WriterSettings.
-        /// </summary>
-        private static readonly XmlWriterSettings WriterSettings;
-
-        /// <summary>
         /// Initializes static members of the <see cref="XmlExtensions" /> class.
         /// </summary>
         static XmlExtensions()
@@ -42,11 +37,6 @@ namespace DevLib.ExtensionMethods
             ReaderSettings.ValidationFlags = XmlSchemaValidationFlags.None;
             ReaderSettings.ValidationType = ValidationType.None;
             ReaderSettings.CloseInput = true;
-
-            WriterSettings = new XmlWriterSettings();
-            WriterSettings.Indent = true;
-            WriterSettings.Encoding = new UTF8Encoding(false);
-            WriterSettings.CloseOutput = true;
         }
 
         /// <summary>
@@ -90,8 +80,10 @@ namespace DevLib.ExtensionMethods
         /// Converts valid Xml string to the indent Xml string.
         /// </summary>
         /// <param name="source">The source Xml string.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <returns>Indent Xml string.</returns>
-        public static string ToIndentXml(this string source)
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public static string ToIndentXml(this string source, bool omitXmlDeclaration = false)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -105,13 +97,16 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                StringBuilder stringBuilder = new StringBuilder();
+                MemoryStream memoryStream = new MemoryStream();
+                StreamReader streamReader = new StreamReader(memoryStream);
 
-                using (XmlWriter xmlWriter = XmlTextWriter.Create(stringBuilder, WriterSettings))
+                using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, new XmlWriterSettings { OmitXmlDeclaration = omitXmlDeclaration, Indent = true, Encoding = new UTF8Encoding(false), CloseOutput = true }))
                 {
                     XDocument.Parse(source).Save(xmlWriter);
                     xmlWriter.Flush();
-                    return stringBuilder.ToString();
+                    memoryStream.Position = 0;
+
+                    return streamReader.ReadToEnd();
                 }
             }
             catch
@@ -125,16 +120,17 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The source RTF string.</param>
         /// <param name="indentXml">true to indent Xml string; otherwise, keep the original string.</param>
+        /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="darkStyle">true to use dark style; otherwise, use light style.</param>
         /// <returns>The Xml syntax highlight RTF string.</returns>
-        public static string ToXmlSyntaxHighlightRtf(this string source, bool indentXml = true, bool darkStyle = false)
+        public static string ToXmlSyntaxHighlightRtf(this string source, bool indentXml = true, bool omitXmlDeclaration = false, bool darkStyle = false)
         {
             if (string.IsNullOrEmpty(source))
             {
                 return source;
             }
 
-            string tempRtf = indentXml ? source.ToIndentXml() : source;
+            string tempRtf = indentXml ? source.ToIndentXml(omitXmlDeclaration) : source;
 
             StringBuilder highlightStringBuilder = new StringBuilder(string.Empty);
 

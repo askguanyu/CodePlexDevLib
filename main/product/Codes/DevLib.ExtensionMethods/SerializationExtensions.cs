@@ -213,6 +213,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>An Xml encoded string representation of the source object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static string SerializeXml(this object source, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
@@ -220,13 +221,12 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            string result = null;
-
-            StringBuilder stringBuilder = new StringBuilder();
-
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(source.GetType()) : new XmlSerializer(source.GetType(), extraTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
+            MemoryStream memoryStream = new MemoryStream();
+            StreamReader streamReader = new StreamReader(memoryStream);
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
             {
                 if (removeDefaultNamespace)
                 {
@@ -240,11 +240,10 @@ namespace DevLib.ExtensionMethods
                 }
 
                 xmlWriter.Flush();
+                memoryStream.Position = 0;
 
-                result = stringBuilder.ToString();
+                return streamReader.ReadToEnd();
             }
-
-            return result;
         }
 
         /// <summary>
@@ -530,8 +529,10 @@ namespace DevLib.ExtensionMethods
             {
                 soapFormatter.Serialize(memoryStream, source);
                 memoryStream.Position = 0;
+
                 XmlDocument xmlDocument = new XmlDocument();
                 xmlDocument.Load(memoryStream);
+
                 return xmlDocument.InnerXml;
             }
         }
@@ -593,12 +594,14 @@ namespace DevLib.ExtensionMethods
 
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(source);
+
             SoapFormatter soapFormatter = new SoapFormatter();
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 xmlDocument.Save(memoryStream);
                 memoryStream.Position = 0;
+
                 return soapFormatter.Deserialize(memoryStream);
             }
         }
@@ -645,12 +648,14 @@ namespace DevLib.ExtensionMethods
 
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(source);
+
             SoapFormatter soapFormatter = new SoapFormatter();
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 xmlDocument.Save(memoryStream);
                 memoryStream.Position = 0;
+
                 return (T)soapFormatter.Deserialize(memoryStream);
             }
         }
@@ -703,6 +708,7 @@ namespace DevLib.ExtensionMethods
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 memoryStream.Position = 0;
+
                 return (encoding ?? Encoding.UTF8).GetString(memoryStream.ToArray());
             }
         }
@@ -977,6 +983,7 @@ namespace DevLib.ExtensionMethods
             {
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 memoryStream.Position = 0;
+
                 return memoryStream.ToArray();
             }
         }
@@ -1081,6 +1088,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>An Xml encoded string representation of the source DataContract object.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static string SerializeDataContractXml(this object source, bool indent = false, bool omitXmlDeclaration = true, Type[] knownTypes = null)
         {
             if (source == null)
@@ -1088,20 +1096,19 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("source");
             }
 
-            string result = null;
-
-            StringBuilder stringBuilder = new StringBuilder();
-
             DataContractSerializer dataContractSerializer = (knownTypes == null || knownTypes.Length == 0) ? new DataContractSerializer(source.GetType()) : new DataContractSerializer(source.GetType(), knownTypes);
 
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
+            MemoryStream memoryStream = new MemoryStream();
+            StreamReader streamReader = new StreamReader(memoryStream);
+
+            using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, new XmlWriterSettings() { OmitXmlDeclaration = omitXmlDeclaration, Indent = indent, Encoding = new UTF8Encoding(false), CloseOutput = true }))
             {
                 dataContractSerializer.WriteObject(xmlWriter, source);
                 xmlWriter.Flush();
-                result = stringBuilder.ToString();
-            }
+                memoryStream.Position = 0;
 
-            return result;
+                return streamReader.ReadToEnd();
+            }
         }
 
         /// <summary>
@@ -1374,6 +1381,7 @@ namespace DevLib.ExtensionMethods
             {
                 dataContractSerializer.WriteObject(memoryStream, source);
                 memoryStream.Position = 0;
+
                 return memoryStream.ToArray();
             }
         }

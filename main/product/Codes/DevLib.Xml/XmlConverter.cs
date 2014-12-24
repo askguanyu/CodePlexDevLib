@@ -19,16 +19,16 @@ namespace DevLib.Xml
         /// <summary>
         /// Returns whether this converter can convert the object to a <see cref="T:System.String" /> and vice versa.
         /// </summary>
-        /// <param name="sourceType">A <see cref="T:System.Type" /> that represents the type you want to convert.</param>
+        /// <param name="type">A <see cref="T:System.Type" /> that represents the type you want to convert.</param>
         /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
-        public static bool CanConvert(Type sourceType)
+        public static bool CanConvert(Type type)
         {
-            if (Type.GetTypeCode(sourceType) == TypeCode.Object &&
-                !sourceType.IsEnum &&
-                sourceType != typeof(Guid) &&
-                sourceType != typeof(TimeSpan) &&
-                sourceType != typeof(DateTimeOffset) &&
-                !IsNullableCanConvert(sourceType))
+            if (Type.GetTypeCode(type) == TypeCode.Object &&
+                !type.IsEnum &&
+                type != typeof(Guid) &&
+                type != typeof(TimeSpan) &&
+                type != typeof(DateTimeOffset) &&
+                !IsNullableCanConvert(type))
             {
                 return false;
             }
@@ -314,11 +314,11 @@ namespace DevLib.Xml
         /// <summary>
         /// Method IsNullableCanConvert.
         /// </summary>
-        /// <param name="value">The type to check.</param>
+        /// <param name="type">The type to check.</param>
         /// <returns>true if the type is Nullable{} type; otherwise, false.</returns>
-        private static bool IsNullableCanConvert(Type value)
+        private static bool IsNullableCanConvert(Type type)
         {
-            return value.IsGenericType && value.GetGenericTypeDefinition() == typeof(Nullable<>) && CanConvert(Nullable.GetUnderlyingType(value));
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) && CanConvert(Nullable.GetUnderlyingType(type));
         }
     }
 }

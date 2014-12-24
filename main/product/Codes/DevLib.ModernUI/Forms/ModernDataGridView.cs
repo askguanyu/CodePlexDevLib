@@ -442,12 +442,12 @@ namespace DevLib.ModernUI.Forms
             this.RowHeadersDefaultCellStyle.ForeColor = ModernPaint.ForeColor.Button.Press(this.ThemeStyle);
 
             this.DefaultCellStyle.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
-
             this.DefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
             this.DefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
 
-            this.DefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
-            this.DefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+            this.RowsDefaultCellStyle.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+            this.RowsDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
+            this.RowsDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
 
             this.RowHeadersDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
             this.RowHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);

@@ -1,23 +1,27 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ModernLink.cs" company="YuGuan Corporation">
+// <copyright file="ModernPropertyGrid.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 namespace DevLib.ModernUI.Forms
 {
     using System;
+    using System.Collections;
     using System.ComponentModel;
     using System.Drawing;
+    using System.Security.Permissions;
+    using System.Threading;
     using System.Windows.Forms;
     using DevLib.ModernUI.ComponentModel;
+    using DevLib.ModernUI.ComponentModel.Design;
     using DevLib.ModernUI.Drawing;
 
     /// <summary>
-    /// ModernLink user control.
+    /// Class PropertyGridUserControl.
     /// </summary>
-    [ToolboxBitmap(typeof(LinkLabel))]
-    [DefaultEvent("Click")]
-    public class ModernLink : Button, IModernControl
+    [ToolboxBitmap(typeof(PropertyGrid))]
+    [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+    public class ModernPropertyGrid : PropertyGrid, IModernControl
     {
         /// <summary>
         /// Field _modernColorStyle.
@@ -30,29 +34,30 @@ namespace DevLib.ModernUI.Forms
         private ModernThemeStyle _modernThemeStyle = ModernThemeStyle.Default;
 
         /// <summary>
-        /// Field _isHovered.
+        /// Field _styleManager.
         /// </summary>
-        private bool _isHovered = false;
+        private ModernStyleManager _styleManager = null;
 
         /// <summary>
-        /// Field _isPressed.
+        /// Field _useStyleColors.
         /// </summary>
-        private bool _isPressed = false;
+        private bool _useStyleColors = true;
 
         /// <summary>
-        /// Field _isFocused.
+        /// Field _configObjectType.
         /// </summary>
-        private bool _isFocused = false;
+        private Type _configObjectType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ModernLink" /> class.
+        /// Initializes a new instance of the <see cref="ModernPropertyGrid" /> class.
         /// </summary>
-        public ModernLink()
+        public ModernPropertyGrid()
         {
-            this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
+            base.PropertyValueChanged += this.OnPropertyValueChanged;
+            ModernPropertyGridCollectionEditor.CollectionPropertyValueChanged += this.OnPropertyValueChanged;
 
-            this.FontSize = ModernFontSize.Small;
-            this.FontWeight = ModernFontWeight.Bold;
+            this.UseStyleColors = true;
+            this.ApplyModernStyle();
         }
 
         /// <summary>
@@ -72,6 +77,74 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         [Category(ModernConstants.PropertyCategoryName)]
         public event EventHandler<ModernPaintEventArgs> CustomPaintForeground;
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public new event EventHandler PropertyValueChanged;
+
+        /// <summary>
+        /// Gets or sets the object for which the grid displays properties.
+        /// </summary>
+        public new object SelectedObject
+        {
+            [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+            get
+            {
+                if (base.SelectedObject == null)
+                {
+                    return null;
+                }
+
+                object configObject = null;
+
+                try
+                {
+                    Type configObjectType = base.SelectedObject.GetType();
+
+                    if (configObjectType.IsGenericType && configObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
+                    {
+                        configObject = typeof(InnerConfig<>).MakeGenericType(this._configObjectType).GetProperty("Items").GetValue(base.SelectedObject, null);
+                    }
+                    else
+                    {
+                        configObject = base.SelectedObject;
+                    }
+                }
+                catch
+                {
+                }
+
+                return configObject;
+            }
+
+            [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+            set
+            {
+                if (value == null)
+                {
+                    base.SelectedObject = null;
+                }
+                else
+                {
+                    if ((value is string) || !(value is IEnumerable))
+                    {
+                        base.SelectedObject = value;
+                    }
+                    else
+                    {
+                        this._configObjectType = value.GetType();
+                        object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(this._configObjectType), value);
+                        ModernPropertyGridCollectionEditor.AppendCustomAttributes(innerConfig.GetType());
+                        base.SelectedObject = innerConfig;
+                    }
+                }
+
+                this.PropertySort = PropertySort.NoSort;
+                this.ExpandAllGridItems();
+                this.Refresh();
+            }
+        }
 
         /// <summary>
         /// Gets or sets modern color style.
@@ -104,6 +177,8 @@ namespace DevLib.ModernUI.Forms
             set
             {
                 this._modernColorStyle = value;
+                ModernPropertyGridCollectionEditor.ColorStyle = value;
+                this.ApplyModernStyle();
             }
         }
 
@@ -138,6 +213,8 @@ namespace DevLib.ModernUI.Forms
             set
             {
                 this._modernThemeStyle = value;
+                ModernPropertyGridCollectionEditor.ThemeStyle = value;
+                this.ApplyModernStyle();
             }
         }
 
@@ -148,8 +225,17 @@ namespace DevLib.ModernUI.Forms
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ModernStyleManager StyleManager
         {
-            get;
-            set;
+            get
+            {
+                return this._styleManager;
+            }
+
+            set
+            {
+                this._styleManager = value;
+                ModernPropertyGridCollectionEditor.StyleManager = value;
+                this.ApplyModernStyle();
+            }
         }
 
         /// <summary>
@@ -184,8 +270,16 @@ namespace DevLib.ModernUI.Forms
         [Category(ModernConstants.PropertyCategoryName)]
         public bool UseStyleColors
         {
-            get;
-            set;
+            get
+            {
+                return this._useStyleColors;
+            }
+
+            set
+            {
+                this._useStyleColors = value;
+                ModernPropertyGridCollectionEditor.UseStyleColors = value;
+            }
         }
 
         /// <summary>
@@ -205,42 +299,6 @@ namespace DevLib.ModernUI.Forms
             {
                 this.SetStyle(ControlStyles.Selectable, value);
             }
-        }
-
-        /// <summary>
-        /// Gets or sets text font size.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(ModernFontSize.Small)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public ModernFontSize FontSize
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets text font weight.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(ModernFontWeight.Bold)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public ModernFontWeight FontWeight
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether display focus rectangle.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public bool DisplayFocus
-        {
-            get;
-            set;
         }
 
         /// <summary>
@@ -280,9 +338,9 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// OnPaintBackground method.
+        /// Paints the background of the control.
         /// </summary>
-        /// <param name="e">PaintEventArgs instance.</param>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.</param>
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             try
@@ -301,6 +359,7 @@ namespace DevLib.ModernUI.Forms
                 }
 
                 base.OnPaintBackground(e);
+
                 this.OnCustomPaintBackground(new ModernPaintEventArgs(backColor, Color.Empty, e.Graphics));
             }
             catch
@@ -310,9 +369,10 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// OnPaint method.
+        /// Raises the <see cref="E:System.Windows.Forms.Control.Paint" /> event.
         /// </summary>
-        /// <param name="e">PaintEventArgs instance.</param>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.</param>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         protected override void OnPaint(PaintEventArgs e)
         {
             try
@@ -332,188 +392,87 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// OnPaintForeground method.
+        /// Raises the <see cref="E:PaintForeground" /> event.
         /// </summary>
-        /// <param name="e">PaintEventArgs instance.</param>
+        /// <param name="e">The <see cref="PaintEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPaintForeground(PaintEventArgs e)
         {
-            Color foreColor;
+            this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, Color.Empty, e.Graphics));
+        }
 
-            if (this.UseCustomForeColor)
+        /// <summary>
+        /// Applies the modern style.
+        /// </summary>
+        private void ApplyModernStyle()
+        {
+            this.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+            this.CommandsBackColor = this.BackColor;
+            this.HelpBackColor = this.BackColor;
+            this.ViewBackColor = this.BackColor;
+
+            this.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
+            this.CategoryForeColor = this.ForeColor;
+            this.CommandsForeColor = this.ForeColor;
+            this.HelpForeColor = this.ForeColor;
+            this.ViewForeColor = this.ForeColor;
+
+            this.CommandsLinkColor = ModernPaint.ForeColor.Link.Normal(this.ThemeStyle);
+            this.CommandsActiveLinkColor = ModernPaint.ForeColor.Link.Hover(this.ThemeStyle);
+            this.CommandsDisabledLinkColor = ModernPaint.ForeColor.Link.Disabled(this.ThemeStyle);
+
+            this.LineColor = this.UseStyleColors ? ModernPaint.GetStyleColor(this.ColorStyle) : ModernPaint.BackColor.Button.Normal(this.ThemeStyle);
+
+            this.Refresh();
+        }
+
+        /// <summary>
+        /// Method OnPropertyValueChanged.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Instance of EventArgs.</param>
+        private void OnPropertyValueChanged(object sender, EventArgs e)
+        {
+            this.RaiseEvent(this.PropertyValueChanged);
+        }
+
+        /// <summary>
+        /// Method RaiseEvent.
+        /// </summary>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        private void RaiseEvent(EventHandler eventHandler)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety
+            EventHandler temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
             {
-                foreColor = this.ForeColor;
+                temp(this, EventArgs.Empty);
             }
-            else
+        }
+
+        /// <summary>
+        /// Inner Class InnerConfig.
+        /// </summary>
+        /// <typeparam name="T">Type of configuration object.</typeparam>
+        protected class InnerConfig<T>
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="InnerConfig{T}" /> class.
+            /// </summary>
+            /// <param name="configurationObject">Configuration object.</param>
+            public InnerConfig(T configurationObject)
             {
-                if (this._isHovered && !this._isPressed && this.Enabled)
-                {
-                    foreColor = ModernPaint.ForeColor.Link.Hover(this.ThemeStyle);
-                }
-                else if (this._isHovered && this._isPressed && this.Enabled)
-                {
-                    foreColor = ModernPaint.ForeColor.Link.Press(this.ThemeStyle);
-                }
-                else if (!this.Enabled)
-                {
-                    foreColor = ModernPaint.ForeColor.Link.Disabled(this.ThemeStyle);
-                }
-                else
-                {
-                    foreColor = !this.UseStyleColors ? ModernPaint.ForeColor.Link.Normal(this.ThemeStyle) : ModernPaint.GetStyleColor(this.ColorStyle);
-                }
-            }
-
-            TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.Link(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
-
-            this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
-
-            if (this.DisplayFocus && this._isFocused)
-            {
-                ControlPaint.DrawFocusRectangle(e.Graphics, this.ClientRectangle);
-            }
-        }
-
-        /// <summary>
-        /// Raises the GotFocus event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnGotFocus(EventArgs e)
-        {
-            this._isFocused = true;
-            this.Invalidate();
-
-            base.OnGotFocus(e);
-        }
-
-        /// <summary>
-        /// Raises the LostFocus event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnLostFocus(EventArgs e)
-        {
-            this._isFocused = false;
-            this._isHovered = false;
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnLostFocus(e);
-        }
-
-        /// <summary>
-        /// Raises the Enter event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnEnter(EventArgs e)
-        {
-            this._isFocused = true;
-            this.Invalidate();
-
-            base.OnEnter(e);
-        }
-
-        /// <summary>
-        /// Raises the Leave event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnLeave(EventArgs e)
-        {
-            this._isFocused = false;
-            this._isHovered = false;
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnLeave(e);
-        }
-
-        /// <summary>
-        /// Raises the KeyDown event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Space)
-            {
-                this._isHovered = true;
-                this._isPressed = true;
-                this.Invalidate();
+                this.Items = configurationObject;
             }
 
-            base.OnKeyDown(e);
-        }
-
-        /// <summary>
-        /// Raises the KeyUp event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            this._isHovered = false;
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnKeyUp(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseEnter event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            this._isHovered = true;
-            this.Invalidate();
-
-            base.OnMouseEnter(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseDown event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
+            /// <summary>
+            /// Gets or sets Items.
+            /// </summary>
+            public T Items
             {
-                this._isPressed = true;
-                this.Invalidate();
+                get;
+                set;
             }
-
-            base.OnMouseDown(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseUp event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnMouseUp(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseLeave event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            this._isHovered = false;
-            this.Invalidate();
-
-            base.OnMouseLeave(e);
-        }
-
-        /// <summary>
-        /// Raises the EnabledChanged event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            this.Invalidate();
-
-            base.OnEnabledChanged(e);
         }
     }
 }

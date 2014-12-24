@@ -7,7 +7,7 @@ using DevLib.ExtensionMethods;
 
 namespace DevLib.Samples
 {
-    public class TestConfigEditorPlugin : IWinFormConfigEditorPlugin
+    public class TestConfigEditorPlugin : IConfigEditorPlugin
     {
         public TestConfigEditorPlugin()
         {

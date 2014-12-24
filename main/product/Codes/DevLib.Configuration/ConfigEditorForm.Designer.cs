@@ -1,6 +1,6 @@
 ﻿namespace DevLib.Configuration
 {
-    partial class WinFormConfigEditor
+    partial class ConfigEditorForm
     {
         /// <summary>
         /// Required designer variable.
@@ -72,7 +72,7 @@
             this.toolStripButtonOpenPlugin = new System.Windows.Forms.ToolStripButton();
             this.toolStripComboBoxConfigEditorPlugin = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.propertyGridUserControl = new DevLib.Configuration.PropertyGridUserControl();
+            this.propertyGridUserControl = new DevLib.Configuration.ConfigPropertyGrid();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -183,7 +183,6 @@
             // 
             // propertyGridUserControl
             // 
-            this.propertyGridUserControl.ConfigObject = null;
             this.propertyGridUserControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridUserControl.Location = new System.Drawing.Point(0, 25);
             this.propertyGridUserControl.Name = "propertyGridUserControl";
@@ -223,7 +222,7 @@
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxConfigEditorPlugin;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton toolStripButtonOpenPlugin;
-        private PropertyGridUserControl propertyGridUserControl;
+        private ConfigPropertyGrid propertyGridUserControl;
 
     }
 }

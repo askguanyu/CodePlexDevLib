@@ -18,8 +18,8 @@ namespace DevLib.Samples
         public DemoForm()
         {
             InitializeComponent();
-            
-            
+
+            modernPropertyGrid1.SelectedObject = new List<Person> {  new Person()  };
         }
 
         private void modernToggle1_CheckedChanged(object sender, EventArgs e)

@@ -272,22 +272,6 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets font.
-        /// </summary>
-        public override Font Font
-        {
-            get
-            {
-                return base.Font;
-            }
-
-            set
-            {
-                base.Font = value;
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the foreground color of the control.
         /// </summary>
         public override Color ForeColor

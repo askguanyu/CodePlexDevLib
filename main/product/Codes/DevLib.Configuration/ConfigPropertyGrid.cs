@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="PropertyGridUserControl.cs" company="YuGuan Corporation">
+// <copyright file="ConfigPropertyGrid.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -15,10 +15,11 @@ namespace DevLib.Configuration
     using System.Windows.Forms;
 
     /// <summary>
-    /// Class PropertyGridUserControl.
+    /// Class ConfigPropertyGrid.
     /// </summary>
     [ToolboxBitmap(typeof(PropertyGrid))]
-    public partial class PropertyGridUserControl : UserControl
+    [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+    public class ConfigPropertyGrid : PropertyGrid
     {
         /// <summary>
         /// Field _configObjectType.
@@ -26,44 +27,49 @@ namespace DevLib.Configuration
         private Type _configObjectType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PropertyGridUserControl" /> class.
+        /// Initializes a new instance of the <see cref="ConfigPropertyGrid" /> class.
         /// </summary>
-        public PropertyGridUserControl()
+        public ConfigPropertyGrid()
         {
-            this.InitializeComponent();
+            base.PropertyValueChanged += this.OnPropertyValueChanged;
+            ConfigPropertyGridCollectionEditor.CollectionPropertyValueChanged += this.OnPropertyValueChanged;
         }
 
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event EventHandler PropertyValueChanged;
+        public new event EventHandler PropertyValueChanged;
 
         /// <summary>
         /// Gets or sets the object for which the grid displays properties.
         /// </summary>
-        public object ConfigObject
+        public new object SelectedObject
         {
             [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
             get
             {
+                if (base.SelectedObject == null)
+                {
+                    return null;
+                }
+
                 object configObject = null;
 
                 try
                 {
-                    Type configObjectType = this.propertyGrid.SelectedObject.GetType();
+                    Type configObjectType = base.SelectedObject.GetType();
 
                     if (configObjectType.IsGenericType && configObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
                     {
-                        configObject = typeof(InnerConfig<>).MakeGenericType(this._configObjectType).GetProperty("Items").GetValue(this.propertyGrid.SelectedObject, null);
+                        configObject = typeof(InnerConfig<>).MakeGenericType(this._configObjectType).GetProperty("Items").GetValue(base.SelectedObject, null);
                     }
                     else
                     {
-                        configObject = this.propertyGrid.SelectedObject;
+                        configObject = base.SelectedObject;
                     }
                 }
-                catch (Exception e)
+                catch
                 {
-                    InternalLogger.Log(e);
                 }
 
                 return configObject;
@@ -74,25 +80,26 @@ namespace DevLib.Configuration
             {
                 if (value == null)
                 {
-                    this.propertyGrid.SelectedObject = null;
+                    base.SelectedObject = null;
                 }
                 else
                 {
-                    if (!(value is ICollection))
+                    if ((value is string) || !(value is IEnumerable))
                     {
-                        this.propertyGrid.SelectedObject = value;
+                        base.SelectedObject = value;
                     }
                     else
                     {
                         this._configObjectType = value.GetType();
                         object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(this._configObjectType), value);
-                        this.propertyGrid.SelectedObject = innerConfig;
+                        ConfigPropertyGridCollectionEditor.AppendCustomAttributes(innerConfig.GetType());
+                        base.SelectedObject = innerConfig;
                     }
                 }
 
-                this.propertyGrid.PropertySort = PropertySort.NoSort;
-                this.propertyGrid.ExpandAllGridItems();
-                this.propertyGrid.Refresh();
+                this.PropertySort = PropertySort.NoSort;
+                this.ExpandAllGridItems();
+                this.Refresh();
             }
         }
 
@@ -139,7 +146,7 @@ namespace DevLib.Configuration
             /// <summary>
             /// Gets or sets Items.
             /// </summary>
-            [Editor(typeof(PropertyValueChangedCollectionEditor), typeof(UITypeEditor))]
+            [Editor(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor))]
             public T Items
             {
                 get;

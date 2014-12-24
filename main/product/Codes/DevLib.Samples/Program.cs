@@ -2102,7 +2102,7 @@ namespace DevLib.Samples
 
 
 
-            var form = new WinFormConfigEditor();
+            var form = new ConfigEditorForm();
             form.AddPlugin((filename) => { return ConfigManager.Open(filename).GetValue<TestConfig>("keyA"); }, (filename, obj) => { ConfigManager.Open(filename).SetValue("keyA", obj); ConfigManager.Open(filename).Save(); });
             form.AddPlugin((filename) => { return ConfigManager.Open(filename).GetValue<TestConfig>("keyA"); }, (filename, obj) => { ConfigManager.Open(filename).SetValue("keyA", obj); ConfigManager.Open(filename).Save(); }, "haha");
 
@@ -2228,7 +2228,7 @@ namespace DevLib.Samples
         public int MyInt { get; set; }
         public string MyString { get; set; }
 
-        [Editor(typeof(PropertyValueChangedCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor))]
         public List<SpellingOptions> MySpell { get; set; }
 
         public override string ToString()
@@ -2285,9 +2285,6 @@ namespace DevLib.Samples
         }
     }
 
-    [DataContract]
-    [Serializable]
-    [TypeConverterAttribute(typeof(ExpandableObjectConverter))]
     public class Person
     {
         public event EventHandler<ErrorEventArgs> Error;
@@ -2319,8 +2316,10 @@ namespace DevLib.Samples
 
         public Person()
         {
-
+            MyProperty = new List<FooBar>();
         }
+
+        public List<FooBar> MyProperty { get; set; }
 
         [DataMember]
         public string FirstName { get; set; }
@@ -2399,7 +2398,6 @@ namespace DevLib.Samples
         public string Street { get; set; }
     }
 
-    [TypeConverterAttribute(typeof(ExpandableObjectConverter<SpellingOptions>))]
     [DataContract]
     [Serializable]
     public class SpellingOptions

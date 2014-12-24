@@ -6,10 +6,7 @@
 namespace DevLib.Configuration
 {
     using System;
-    using System.Collections;
-    using System.ComponentModel;
     using System.Drawing;
-    using System.Drawing.Design;
     using System.Security.Permissions;
     using System.Threading;
     using System.Windows.Forms;
@@ -21,11 +18,6 @@ namespace DevLib.Configuration
     [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
     public class ConfigPropertyGrid : PropertyGrid
     {
-        /// <summary>
-        /// Field _configObjectType.
-        /// </summary>
-        private Type _configObjectType;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigPropertyGrid" /> class.
         /// </summary>
@@ -53,26 +45,26 @@ namespace DevLib.Configuration
                     return null;
                 }
 
-                object configObject = null;
+                object selectedObject = null;
 
                 try
                 {
-                    Type configObjectType = base.SelectedObject.GetType();
+                    Type selectedObjectType = base.SelectedObject.GetType();
 
-                    if (configObjectType.IsGenericType && configObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
+                    if (selectedObjectType.IsGenericType && selectedObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
                     {
-                        configObject = typeof(InnerConfig<>).MakeGenericType(this._configObjectType).GetProperty("Items").GetValue(base.SelectedObject, null);
+                        selectedObject = typeof(InnerConfig<>).MakeGenericType(selectedObjectType.GetGenericArguments()[0]).GetProperty("Items").GetValue(base.SelectedObject, null);
                     }
                     else
                     {
-                        configObject = base.SelectedObject;
+                        selectedObject = base.SelectedObject;
                     }
                 }
                 catch
                 {
                 }
 
-                return configObject;
+                return selectedObject;
             }
 
             [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
@@ -84,14 +76,25 @@ namespace DevLib.Configuration
                 }
                 else
                 {
-                    if ((value is string) || !(value is IEnumerable))
+                    Type selectedObjectType = value.GetType();
+
+                    if (selectedObjectType == typeof(string))
                     {
+                        base.SelectedObject = value;
+                    }
+                    else if (selectedObjectType.GetInterface("IEnumerable") == null)
+                    {
+                        if (!ConfigPropertyGridCollectionEditor.CanConvert(selectedObjectType))
+                        {
+                            ConfigPropertyGridCollectionEditor.AppendCustomAttributes(selectedObjectType);
+                        }
+
                         base.SelectedObject = value;
                     }
                     else
                     {
-                        this._configObjectType = value.GetType();
-                        object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(this._configObjectType), value);
+                        object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(selectedObjectType), value);
+                        ConfigPropertyGridCollectionEditor.AppendCustomAttributes(selectedObjectType);
                         ConfigPropertyGridCollectionEditor.AppendCustomAttributes(innerConfig.GetType());
                         base.SelectedObject = innerConfig;
                     }
@@ -146,7 +149,6 @@ namespace DevLib.Configuration
             /// <summary>
             /// Gets or sets Items.
             /// </summary>
-            [Editor(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor))]
             public T Items
             {
                 get;

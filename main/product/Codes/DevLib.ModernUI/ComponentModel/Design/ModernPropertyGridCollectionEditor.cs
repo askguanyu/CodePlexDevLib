@@ -140,9 +140,8 @@ namespace DevLib.ModernUI.ComponentModel.Design
             {
                 TypeDescriptor.AddAttributes(
                     type,
-                    new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(GetEnumerableElementType(type))),
-                    new ReadOnlyAttribute(false),
-                    new EditorAttribute(typeof(ModernPropertyGridCollectionEditor), typeof(UITypeEditor)));
+                    new EditorAttribute(typeof(ModernPropertyGridCollectionEditor), typeof(UITypeEditor)),
+                    new ReadOnlyAttribute(false));
             }
             else
             {
@@ -168,9 +167,8 @@ namespace DevLib.ModernUI.ComponentModel.Design
                     pdNew = TypeDescriptor.CreateProperty(
                         type,
                         pd,
-                        new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(GetEnumerableElementType(pd.PropertyType))),
-                        new ReadOnlyAttribute(false),
-                        new EditorAttribute(typeof(ModernPropertyGridCollectionEditor), typeof(UITypeEditor)));
+                        new EditorAttribute(typeof(ModernPropertyGridCollectionEditor), typeof(UITypeEditor)),
+                        new ReadOnlyAttribute(false));
                 }
                 else
                 {
@@ -204,6 +202,26 @@ namespace DevLib.ModernUI.ComponentModel.Design
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Returns whether this converter can convert the object to a <see cref="T:System.String" /> and vice versa.
+        /// </summary>
+        /// <param name="type">A <see cref="T:System.Type" /> that represents the type you want to convert.</param>
+        /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
+        internal static bool CanConvert(Type type)
+        {
+            if (Type.GetTypeCode(type) == TypeCode.Object &&
+                !type.IsEnum &&
+                type != typeof(Guid) &&
+                type != typeof(TimeSpan) &&
+                type != typeof(DateTimeOffset) &&
+                !IsNullableCanConvert(type))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -275,26 +293,6 @@ namespace DevLib.ModernUI.ComponentModel.Design
             AppendCustomAttributes(result);
 
             return result;
-        }
-
-        /// <summary>
-        /// Returns whether this converter can convert the object to a <see cref="T:System.String" /> and vice versa.
-        /// </summary>
-        /// <param name="type">A <see cref="T:System.Type" /> that represents the type you want to convert.</param>
-        /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
-        private static bool CanConvert(Type type)
-        {
-            if (Type.GetTypeCode(type) == TypeCode.Object &&
-                !type.IsEnum &&
-                type != typeof(Guid) &&
-                type != typeof(TimeSpan) &&
-                type != typeof(DateTimeOffset) &&
-                !IsNullableCanConvert(type))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -372,6 +370,12 @@ namespace DevLib.ModernUI.ComponentModel.Design
                 button.FlatAppearance.MouseOverBackColor = ModernPaint.BackColor.Button.Hover(ThemeStyle);
                 button.FlatAppearance.MouseDownBackColor = ModernPaint.BackColor.Button.Press(ThemeStyle);
                 button.FlatAppearance.CheckedBackColor = ModernPaint.BorderColor.Button.Press(ThemeStyle);
+                button.Height = 25;
+
+                if (string.IsNullOrEmpty(button.Text) || string.IsNullOrEmpty(button.Text.Trim()))
+                {
+                    button.Width = 25;
+                }
             }
 
             if (control is ListBox)

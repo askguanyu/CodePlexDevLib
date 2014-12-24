@@ -69,5 +69,10 @@ namespace DevLib.Samples
                 modernRichTextBoxResponse.Text = ex.ToString();
             }
         }
+
+        private void modernButton3_Click(object sender, EventArgs e)
+        {
+            var obj = modernPropertyGrid1.SelectedObject;
+        }
     }
 }

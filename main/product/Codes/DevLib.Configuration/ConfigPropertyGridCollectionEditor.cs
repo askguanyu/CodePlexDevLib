@@ -49,9 +49,8 @@ namespace DevLib.Configuration
             {
                 TypeDescriptor.AddAttributes(
                     type,
-                    new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(GetEnumerableElementType(type))),
-                    new ReadOnlyAttribute(false),
-                    new EditorAttribute(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor)));
+                    new EditorAttribute(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor)),
+                    new ReadOnlyAttribute(false));
             }
             else
             {
@@ -77,9 +76,8 @@ namespace DevLib.Configuration
                     pdNew = TypeDescriptor.CreateProperty(
                         type,
                         pd,
-                        new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(GetEnumerableElementType(pd.PropertyType))),
-                        new ReadOnlyAttribute(false),
-                        new EditorAttribute(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor)));
+                        new EditorAttribute(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor)),
+                        new ReadOnlyAttribute(false));
                 }
                 else
                 {
@@ -113,6 +111,26 @@ namespace DevLib.Configuration
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Returns whether this converter can convert the object to a <see cref="T:System.String" /> and vice versa.
+        /// </summary>
+        /// <param name="type">A <see cref="T:System.Type" /> that represents the type you want to convert.</param>
+        /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
+        internal static bool CanConvert(Type type)
+        {
+            if (Type.GetTypeCode(type) == TypeCode.Object &&
+                !type.IsEnum &&
+                type != typeof(Guid) &&
+                type != typeof(TimeSpan) &&
+                type != typeof(DateTimeOffset) &&
+                !IsNullableCanConvert(type))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -194,26 +212,6 @@ namespace DevLib.Configuration
             AppendCustomAttributes(result);
 
             return result;
-        }
-
-        /// <summary>
-        /// Returns whether this converter can convert the object to a <see cref="T:System.String" /> and vice versa.
-        /// </summary>
-        /// <param name="type">A <see cref="T:System.Type" /> that represents the type you want to convert.</param>
-        /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
-        private static bool CanConvert(Type type)
-        {
-            if (Type.GetTypeCode(type) == TypeCode.Object &&
-                !type.IsEnum &&
-                type != typeof(Guid) &&
-                type != typeof(TimeSpan) &&
-                type != typeof(DateTimeOffset) &&
-                !IsNullableCanConvert(type))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         /// <summary>

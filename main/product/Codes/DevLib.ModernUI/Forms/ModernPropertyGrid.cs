@@ -6,7 +6,6 @@
 namespace DevLib.ModernUI.Forms
 {
     using System;
-    using System.Collections;
     using System.ComponentModel;
     using System.Drawing;
     using System.Security.Permissions;
@@ -42,11 +41,6 @@ namespace DevLib.ModernUI.Forms
         /// Field _useStyleColors.
         /// </summary>
         private bool _useStyleColors = true;
-
-        /// <summary>
-        /// Field _configObjectType.
-        /// </summary>
-        private Type _configObjectType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernPropertyGrid" /> class.
@@ -96,26 +90,26 @@ namespace DevLib.ModernUI.Forms
                     return null;
                 }
 
-                object configObject = null;
+                object selectedObject = null;
 
                 try
                 {
-                    Type configObjectType = base.SelectedObject.GetType();
+                    Type selectedObjectType = base.SelectedObject.GetType();
 
-                    if (configObjectType.IsGenericType && configObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
+                    if (selectedObjectType.IsGenericType && selectedObjectType.GetGenericTypeDefinition().IsAssignableFrom(typeof(InnerConfig<>)))
                     {
-                        configObject = typeof(InnerConfig<>).MakeGenericType(this._configObjectType).GetProperty("Items").GetValue(base.SelectedObject, null);
+                        selectedObject = typeof(InnerConfig<>).MakeGenericType(selectedObjectType.GetGenericArguments()[0]).GetProperty("Items").GetValue(base.SelectedObject, null);
                     }
                     else
                     {
-                        configObject = base.SelectedObject;
+                        selectedObject = base.SelectedObject;
                     }
                 }
                 catch
                 {
                 }
 
-                return configObject;
+                return selectedObject;
             }
 
             [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
@@ -127,14 +121,25 @@ namespace DevLib.ModernUI.Forms
                 }
                 else
                 {
-                    if ((value is string) || !(value is IEnumerable))
+                    Type selectedObjectType = value.GetType();
+
+                    if (selectedObjectType == typeof(string))
                     {
+                        base.SelectedObject = value;
+                    }
+                    else if (selectedObjectType.GetInterface("IEnumerable") == null)
+                    {
+                        if (!ModernPropertyGridCollectionEditor.CanConvert(selectedObjectType))
+                        {
+                            ModernPropertyGridCollectionEditor.AppendCustomAttributes(selectedObjectType);
+                        }
+
                         base.SelectedObject = value;
                     }
                     else
                     {
-                        this._configObjectType = value.GetType();
-                        object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(this._configObjectType), value);
+                        object innerConfig = Activator.CreateInstance(typeof(InnerConfig<>).MakeGenericType(selectedObjectType), value);
+                        ModernPropertyGridCollectionEditor.AppendCustomAttributes(selectedObjectType);
                         ModernPropertyGridCollectionEditor.AppendCustomAttributes(innerConfig.GetType());
                         base.SelectedObject = innerConfig;
                     }

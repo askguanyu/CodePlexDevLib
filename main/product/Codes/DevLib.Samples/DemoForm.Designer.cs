@@ -34,7 +34,19 @@ namespace DevLib.Samples
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DemoForm));
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Node1");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Node3");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Node4");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Node2", new System.Windows.Forms.TreeNode[] {
+            treeNode2,
+            treeNode3});
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode4});
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Node5");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Node6");
             this.modernStyleManager1 = new DevLib.ModernUI.ComponentModel.ModernStyleManager(this.components);
             this.modernToggle1 = new DevLib.ModernUI.Forms.ModernToggle();
             this.modernButton1 = new DevLib.ModernUI.Forms.ModernButton();
@@ -55,11 +67,15 @@ namespace DevLib.Samples
             this.modernRichTextBoxResponse = new DevLib.ModernUI.Forms.ModernRichTextBox();
             this.modernButton2 = new DevLib.ModernUI.Forms.ModernButton();
             this.modernTextBoxUri = new DevLib.ModernUI.Forms.ModernTextBox();
+            this.modernTabPage4 = new DevLib.ModernUI.Forms.ModernTabPage();
+            this.modernPropertyGrid1 = new DevLib.ModernUI.Forms.ModernPropertyGrid();
             this.modernProgressSpinner1 = new DevLib.ModernUI.Forms.ModernProgressSpinner();
             this.modernLabel1 = new DevLib.ModernUI.Forms.ModernLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.modernTile2 = new DevLib.ModernUI.Forms.ModernTile();
             this.button1 = new System.Windows.Forms.Button();
+            this.modernButton3 = new DevLib.ModernUI.Forms.ModernButton();
+            this.modernTreeView1 = new DevLib.ModernUI.Forms.ModernTreeView();
             this.StatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).BeginInit();
             this.modernTabControl1.SuspendLayout();
@@ -71,6 +87,7 @@ namespace DevLib.Samples
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.modernTabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusStrip
@@ -163,10 +180,11 @@ namespace DevLib.Samples
             this.modernTabControl1.Controls.Add(this.modernTabPage1);
             this.modernTabControl1.Controls.Add(this.modernTabPage2);
             this.modernTabControl1.Controls.Add(this.modernTabPage3);
+            this.modernTabControl1.Controls.Add(this.modernTabPage4);
             this.modernTabControl1.Location = new System.Drawing.Point(35, 148);
             this.modernTabControl1.Multiline = true;
             this.modernTabControl1.Name = "modernTabControl1";
-            this.modernTabControl1.SelectedIndex = 2;
+            this.modernTabControl1.SelectedIndex = 3;
             this.modernTabControl1.Size = new System.Drawing.Size(606, 438);
             this.modernTabControl1.TabIndex = 11;
             this.modernTabControl1.UseSelectable = true;
@@ -229,6 +247,10 @@ namespace DevLib.Samples
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.modernDataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.modernDataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+            this.modernDataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.modernDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.modernDataGridView1.Size = new System.Drawing.Size(598, 396);
             this.modernDataGridView1.TabIndex = 2;
@@ -393,6 +415,43 @@ namespace DevLib.Samples
             this.modernTextBoxUri.UseSystemPasswordChar = false;
             this.modernTextBoxUri.WordWrap = true;
             // 
+            // modernTabPage4
+            // 
+            this.modernTabPage4.Controls.Add(this.modernTreeView1);
+            this.modernTabPage4.Controls.Add(this.modernPropertyGrid1);
+            this.modernTabPage4.HorizontalScrollBarSize = 10;
+            this.modernTabPage4.Location = new System.Drawing.Point(4, 38);
+            this.modernTabPage4.Name = "modernTabPage4";
+            this.modernTabPage4.Size = new System.Drawing.Size(598, 396);
+            this.modernTabPage4.TabIndex = 3;
+            this.modernTabPage4.Text = "modernTabPage4";
+            this.modernTabPage4.UseHorizontalBarColor = true;
+            this.modernTabPage4.UseStyleColors = false;
+            this.modernTabPage4.UseVerticalBarColor = true;
+            this.modernTabPage4.VerticalScrollBarSize = 10;
+            // 
+            // modernPropertyGrid1
+            // 
+            this.modernPropertyGrid1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.modernPropertyGrid1.CategoryForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.modernPropertyGrid1.CommandsActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.modernPropertyGrid1.CommandsBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.modernPropertyGrid1.CommandsDisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(209)))), ((int)(((byte)(209)))), ((int)(((byte)(209)))));
+            this.modernPropertyGrid1.CommandsForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.modernPropertyGrid1.CommandsLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.modernPropertyGrid1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.modernPropertyGrid1.HelpBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.modernPropertyGrid1.HelpForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.modernPropertyGrid1.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+            this.modernPropertyGrid1.Location = new System.Drawing.Point(379, 65);
+            this.modernPropertyGrid1.Name = "modernPropertyGrid1";
+            this.modernPropertyGrid1.PropertySort = System.Windows.Forms.PropertySort.NoSort;
+            this.modernPropertyGrid1.Size = new System.Drawing.Size(198, 269);
+            this.modernPropertyGrid1.TabIndex = 5;
+            this.modernPropertyGrid1.UseSelectable = true;
+            this.modernPropertyGrid1.ViewBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.modernPropertyGrid1.ViewForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            // 
             // modernProgressSpinner1
             // 
             this.modernProgressSpinner1.Location = new System.Drawing.Point(503, 84);
@@ -440,6 +499,7 @@ namespace DevLib.Samples
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Location = new System.Drawing.Point(657, 559);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
@@ -448,8 +508,52 @@ namespace DevLib.Samples
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // modernButton3
+            // 
+            this.modernButton3.Location = new System.Drawing.Point(270, 25);
+            this.modernButton3.Name = "modernButton3";
+            this.modernButton3.Size = new System.Drawing.Size(131, 23);
+            this.modernButton3.TabIndex = 19;
+            this.modernButton3.Text = "modernButton3";
+            this.modernButton3.UseSelectable = true;
+            this.modernButton3.UseStyleColors = false;
+            this.modernButton3.UseVisualStyleBackColor = true;
+            // 
+            // modernTreeView1
+            // 
+            this.modernTreeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.modernTreeView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.modernTreeView1.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawText;
+            this.modernTreeView1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.modernTreeView1.FullRowSelect = true;
+            this.modernTreeView1.Location = new System.Drawing.Point(62, 94);
+            this.modernTreeView1.Name = "modernTreeView1";
+            treeNode1.Name = "Node1";
+            treeNode1.Text = "Node1";
+            treeNode2.Name = "Node3";
+            treeNode2.Text = "Node3";
+            treeNode3.Name = "Node4";
+            treeNode3.Text = "Node4";
+            treeNode4.Name = "Node2";
+            treeNode4.Text = "Node2";
+            treeNode5.Name = "Node0";
+            treeNode5.Text = "Node0";
+            treeNode6.Name = "Node5";
+            treeNode6.Text = "Node5";
+            treeNode7.Name = "Node6";
+            treeNode7.Text = "Node6";
+            this.modernTreeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode5,
+            treeNode6,
+            treeNode7});
+            this.modernTreeView1.Size = new System.Drawing.Size(269, 269);
+            this.modernTreeView1.TabIndex = 6;
+            this.modernTreeView1.UseSelectable = true;
+            this.modernTreeView1.UseStyleColors = false;
+            // 
             // DemoForm
             // 
+            this.AcceptButton = this.modernButton1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackImage = global::DevLib.Samples.Properties.Resources.VS_logo;
@@ -460,6 +564,7 @@ namespace DevLib.Samples
             this.ControlBox = false;
             this.ControlBoxUseCustomBackColor = true;
             this.ControlBoxUseCustomForeColor = true;
+            this.Controls.Add(this.modernButton3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.modernTile2);
             this.Controls.Add(this.modernProgressSpinner1);
@@ -480,6 +585,7 @@ namespace DevLib.Samples
             this.Controls.SetChildIndex(this.StatusStrip, 0);
             this.Controls.SetChildIndex(this.modernTile2, 0);
             this.Controls.SetChildIndex(this.button1, 0);
+            this.Controls.SetChildIndex(this.modernButton3, 0);
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).EndInit();
@@ -492,6 +598,7 @@ namespace DevLib.Samples
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.modernTabPage4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -527,5 +634,9 @@ namespace DevLib.Samples
         private ModernRichTextBox modernRichTextBoxResponse;
         private ModernButton modernButton2;
         private ModernTextBox modernTextBoxUri;
+        private ModernTabPage modernTabPage4;
+        private ModernPropertyGrid modernPropertyGrid1;
+        private ModernButton modernButton3;
+        private ModernTreeView modernTreeView1;
     }
 }

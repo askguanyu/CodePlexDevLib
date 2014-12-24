@@ -57,6 +57,9 @@
     <Compile Include="Animation\TransitionType.cs" />
     <Compile Include="ComponentModel\Design\ModernTabControlDesigner.cs" />
     <Compile Include="ComponentModel\Design\ModernTabPageCollectionEditor.cs" />
+    <Compile Include="ComponentModel\ExpandableObjectConverter.cs" />
+    <Compile Include="ComponentModel\PropertyCustomTypeDescriptor.cs" />
+    <Compile Include="ComponentModel\Design\ModernPropertyGridCollectionEditor.cs" />
     <Compile Include="ComponentModel\ModernStyleExtender.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -64,6 +67,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ComponentModel\Design\ModernStyleManagerDesigner.cs" />
+    <Compile Include="ComponentModel\CustomTypeDescriptorProvider.cs" />
     <Compile Include="Drawing\ModernFontSize.cs" />
     <Compile Include="Drawing\ModernFontWeight.cs" />
     <Compile Include="Forms\ClipboardEventArgs.cs" />
@@ -150,6 +154,9 @@
     <Compile Include="Forms\ModernTrackBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Forms\ModernTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Forms\ModernUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -175,6 +182,9 @@
     <Compile Include="Drawing\ModernBrushes.cs" />
     <Compile Include="Drawing\ModernColors.cs" />
     <Compile Include="Forms\ModernColorStyle.cs" />
+    <Compile Include="Forms\ModernPropertyGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs">
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </Compile>

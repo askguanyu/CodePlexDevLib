@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WinFormConfigEditor.cs" company="YuGuan Corporation">
+// <copyright file="ConfigEditorForm.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -18,7 +18,7 @@ namespace DevLib.Configuration
     /// Provides a user interface for browsing the properties of an object.
     /// </summary>
     [ToolboxBitmap(typeof(Form))]
-    public partial class WinFormConfigEditor : Form
+    public partial class ConfigEditorForm : Form
     {
         /// <summary>
         /// Field FormTitleStringFormat.
@@ -28,12 +28,12 @@ namespace DevLib.Configuration
         /// <summary>
         /// Field _currentConfigEditorPlugin.
         /// </summary>
-        private IWinFormConfigEditorPlugin _currentConfigEditorPlugin;
+        private IConfigEditorPlugin _currentConfigEditorPlugin;
 
         /// <summary>
         /// Field _configEditorPluginList.
         /// </summary>
-        private List<IWinFormConfigEditorPlugin> _configEditorPluginList = new List<IWinFormConfigEditorPlugin>();
+        private List<IConfigEditorPlugin> _configEditorPluginList = new List<IConfigEditorPlugin>();
 
         /// <summary>
         /// Field _configFile.
@@ -61,10 +61,10 @@ namespace DevLib.Configuration
         private bool _isChanged;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WinFormConfigEditor" /> class.
+        /// Initializes a new instance of the <see cref="ConfigEditorForm" /> class.
         /// </summary>
         /// <param name="autoLoadPlugin">Whether automatically load all possible plugins under current folder or not.</param>
-        public WinFormConfigEditor(bool autoLoadPlugin = true)
+        public ConfigEditorForm(bool autoLoadPlugin = true)
         {
             this.InitializeComponent();
             this.Initialize();
@@ -81,10 +81,10 @@ namespace DevLib.Configuration
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WinFormConfigEditor" /> class.
+        /// Initializes a new instance of the <see cref="ConfigEditorForm" /> class.
         /// </summary>
         /// <param name="configEditorPluginList">IWinFormConfigEditorPlugin list.</param>
-        public WinFormConfigEditor(params IWinFormConfigEditorPlugin[] configEditorPluginList)
+        public ConfigEditorForm(params IConfigEditorPlugin[] configEditorPluginList)
         {
             this.InitializeComponent();
             this.Initialize();
@@ -186,7 +186,7 @@ namespace DevLib.Configuration
         /// <param name="configEditorPluginName">IWinFormConfigEditorPlugin PluginName.</param>
         public void AddPlugin<T>(OpenDelegate<string, T> openDelegate, SaveDelegate<string, T> saveDelegate, string configEditorPluginName = null)
         {
-            IWinFormConfigEditorPlugin configEditorPlugin = new InnerPlugin<T>(openDelegate, saveDelegate);
+            IConfigEditorPlugin configEditorPlugin = new InnerPlugin<T>(openDelegate, saveDelegate);
             configEditorPlugin.PluginName = configEditorPluginName;
             this._configEditorPluginList.Add(configEditorPlugin);
             this.toolStripComboBoxConfigEditorPlugin.Items.Add(configEditorPlugin.PluginName);
@@ -197,11 +197,11 @@ namespace DevLib.Configuration
         /// Add configuration editor plugin.
         /// </summary>
         /// <param name="configEditorPluginList">ConfigEditorPlugin list.</param>
-        public void AddPlugin(params IWinFormConfigEditorPlugin[] configEditorPluginList)
+        public void AddPlugin(params IConfigEditorPlugin[] configEditorPluginList)
         {
             if (configEditorPluginList != null && configEditorPluginList.Length > 0)
             {
-                foreach (IWinFormConfigEditorPlugin item in configEditorPluginList)
+                foreach (IConfigEditorPlugin item in configEditorPluginList)
                 {
                     if (!this.ConfigEditorPluginListContainsType(item))
                     {
@@ -238,7 +238,7 @@ namespace DevLib.Configuration
         /// </summary>
         /// <param name="configEditorPlugin">IWinFormConfigEditorPlugin instance.</param>
         /// <returns>true if <paramref name="configEditorPlugin"/> already exists; otherwise, false.</returns>
-        private bool ConfigEditorPluginListContainsType(IWinFormConfigEditorPlugin configEditorPlugin)
+        private bool ConfigEditorPluginListContainsType(IConfigEditorPlugin configEditorPlugin)
         {
             if (this._configEditorPluginList == null || this._configEditorPluginList.Count < 1)
             {
@@ -247,7 +247,7 @@ namespace DevLib.Configuration
 
             Type sourceType = configEditorPlugin.GetType();
 
-            foreach (IWinFormConfigEditorPlugin item in this._configEditorPluginList)
+            foreach (IConfigEditorPlugin item in this._configEditorPluginList)
             {
                 if (sourceType == item.GetType())
                 {
@@ -290,9 +290,9 @@ namespace DevLib.Configuration
         /// </summary>
         /// <param name="assemblyFile">The name or path of the file that contains the manifest of the assembly.</param>
         /// <returns>IWinFormConfigEditorPlugin list.</returns>
-        private List<IWinFormConfigEditorPlugin> LoadPluginFile(string assemblyFile)
+        private List<IConfigEditorPlugin> LoadPluginFile(string assemblyFile)
         {
-            List<IWinFormConfigEditorPlugin> result = new List<IWinFormConfigEditorPlugin>();
+            List<IConfigEditorPlugin> result = new List<IConfigEditorPlugin>();
 
             if (!File.Exists(assemblyFile))
             {
@@ -306,11 +306,11 @@ namespace DevLib.Configuration
 
                 foreach (Type type in assemblyTypeList)
                 {
-                    if (type.IsPublic && !type.IsInterface && typeof(IWinFormConfigEditorPlugin).IsAssignableFrom(type))
+                    if (type.IsPublic && !type.IsInterface && typeof(IConfigEditorPlugin).IsAssignableFrom(type))
                     {
                         try
                         {
-                            result.Add(assembly.CreateInstance(type.FullName) as IWinFormConfigEditorPlugin);
+                            result.Add(assembly.CreateInstance(type.FullName) as IConfigEditorPlugin);
                         }
                         catch (Exception e)
                         {
@@ -359,7 +359,7 @@ namespace DevLib.Configuration
             {
                 try
                 {
-                    object configObject = this.propertyGridUserControl.ConfigObject;
+                    object configObject = this.propertyGridUserControl.SelectedObject;
                     this._currentConfigEditorPlugin.Save(filename, configObject);
                     this.ConfigFile = filename;
                     this.IsChanged = false;
@@ -535,7 +535,7 @@ namespace DevLib.Configuration
         /// <param name="configObject">Instance of T.</param>
         private void RefreshPropertyGrid(object configObject)
         {
-            this.propertyGridUserControl.ConfigObject = configObject;
+            this.propertyGridUserControl.SelectedObject = configObject;
 
             this.IsChanged = false;
         }
@@ -642,7 +642,7 @@ namespace DevLib.Configuration
         /// Inner Class InnerPlugin.
         /// </summary>
         /// <typeparam name="T">Type of configuration object.</typeparam>
-        protected class InnerPlugin<T> : IWinFormConfigEditorPlugin
+        protected class InnerPlugin<T> : IConfigEditorPlugin
         {
             /// <summary>
             /// Field _openDelegate.

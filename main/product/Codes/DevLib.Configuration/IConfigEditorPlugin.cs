@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IWinFormConfigEditorPlugin.cs" company="YuGuan Corporation">
+// <copyright file="IConfigEditorPlugin.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -8,9 +8,9 @@ namespace DevLib.Configuration
     using System;
 
     /// <summary>
-    /// Interface for WinFormConfigEditor to process configuration object plugin.
+    /// Interface for ConfigEditorForm to process configuration object plugin.
     /// </summary>
-    public interface IWinFormConfigEditorPlugin
+    public interface IConfigEditorPlugin
     {
         /// <summary>
         /// Gets or sets plugin name.

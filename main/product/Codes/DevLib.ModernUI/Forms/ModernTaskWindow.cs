@@ -155,6 +155,15 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether finish timer countdown immediately.
+        /// </summary>
+        public bool EndTimer
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Shows the task window.
         /// </summary>
         /// <param name="text">The text.</param>
@@ -386,11 +395,15 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         private void UpdateProgress()
         {
+            if (this.EndTimer)
+            {
+                this.CloseNow();
+                return;
+            }
+
             if (this._elapsedTime >= this._closeTime || this.IsDisposed)
             {
-                this._delayedCallTimer.Dispose();
-                this._delayedCallTimer = null;
-                this.Close();
+                this.CloseNow();
                 return;
             }
 
@@ -423,6 +436,20 @@ namespace DevLib.ModernUI.Forms
             {
                 this._delayedCallTimer.Reset();
             }
+        }
+
+        /// <summary>
+        /// Close current instance immediately.
+        /// </summary>
+        private void CloseNow()
+        {
+            if (this._delayedCallTimer != null)
+            {
+                this._delayedCallTimer.Dispose();
+                this._delayedCallTimer = null;
+            }
+
+            this.Close();
         }
     }
 }

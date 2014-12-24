@@ -352,22 +352,6 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets font.
-        /// </summary>
-        public override Font Font
-        {
-            get
-            {
-                return base.Font;
-            }
-
-            set
-            {
-                base.Font = value;
-            }
-        }
-
-        /// <summary>
         /// Get preferred size.
         /// </summary>
         /// <param name="proposedSize">Proposed size.</param>

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ModernLink.cs" company="YuGuan Corporation">
+// <copyright file="ModernTreeView.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -13,11 +13,10 @@ namespace DevLib.ModernUI.Forms
     using DevLib.ModernUI.Drawing;
 
     /// <summary>
-    /// ModernLink user control.
+    /// ModernTreeView user control.
     /// </summary>
-    [ToolboxBitmap(typeof(LinkLabel))]
-    [DefaultEvent("Click")]
-    public class ModernLink : Button, IModernControl
+    [ToolboxBitmap(typeof(TreeView))]
+    public class ModernTreeView : TreeView, IModernControl
     {
         /// <summary>
         /// Field _modernColorStyle.
@@ -30,29 +29,24 @@ namespace DevLib.ModernUI.Forms
         private ModernThemeStyle _modernThemeStyle = ModernThemeStyle.Default;
 
         /// <summary>
-        /// Field _isHovered.
+        /// Field _styleManager.
         /// </summary>
-        private bool _isHovered = false;
+        private ModernStyleManager _styleManager = null;
 
         /// <summary>
-        /// Field _isPressed.
+        /// Initializes a new instance of the <see cref="ModernTreeView"/> class.
         /// </summary>
-        private bool _isPressed = false;
-
-        /// <summary>
-        /// Field _isFocused.
-        /// </summary>
-        private bool _isFocused = false;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ModernLink" /> class.
-        /// </summary>
-        public ModernLink()
+        public ModernTreeView()
         {
-            this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer, true);
 
-            this.FontSize = ModernFontSize.Small;
-            this.FontWeight = ModernFontWeight.Bold;
+            this.DrawMode = TreeViewDrawMode.OwnerDrawText;
+            this.BorderStyle = BorderStyle.None;
+            this.HideSelection = false;
+            this.FullRowSelect = true;
+            this.HotTracking = true;
+
+            this.ApplyModernStyle();
         }
 
         /// <summary>
@@ -104,6 +98,7 @@ namespace DevLib.ModernUI.Forms
             set
             {
                 this._modernColorStyle = value;
+                this.ApplyModernStyle();
             }
         }
 
@@ -138,6 +133,7 @@ namespace DevLib.ModernUI.Forms
             set
             {
                 this._modernThemeStyle = value;
+                this.ApplyModernStyle();
             }
         }
 
@@ -148,8 +144,16 @@ namespace DevLib.ModernUI.Forms
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ModernStyleManager StyleManager
         {
-            get;
-            set;
+            get
+            {
+                return this._styleManager;
+            }
+
+            set
+            {
+                this._styleManager = value;
+                this.ApplyModernStyle();
+            }
         }
 
         /// <summary>
@@ -208,39 +212,61 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Gets or sets text font size.
+        /// Raises the <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event.
         /// </summary>
-        [Browsable(true)]
-        [DefaultValue(ModernFontSize.Small)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public ModernFontSize FontSize
+        /// <param name="e">A <see cref="T:System.Windows.Forms.DrawTreeNodeEventArgs" /> that contains the event data.</param>
+        protected override void OnDrawNode(DrawTreeNodeEventArgs e)
         {
-            get;
-            set;
-        }
+            if (this.Nodes.Count > 0)
+            {
+                Color backColor = this.BackColor;
+                Color foreColor = this.ForeColor;
 
-        /// <summary>
-        /// Gets or sets text font weight.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(ModernFontWeight.Bold)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public ModernFontWeight FontWeight
-        {
-            get;
-            set;
-        }
+                bool isSelected = (e.State & TreeNodeStates.Selected) != 0;
+                bool isHovered = (e.State & TreeNodeStates.Hot) != 0;
 
-        /// <summary>
-        /// Gets or sets a value indicating whether display focus rectangle.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(false)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public bool DisplayFocus
-        {
-            get;
-            set;
+                if (isHovered)
+                {
+                    backColor = ModernPaint.BackColor.Button.Hover(this.ThemeStyle);
+                    foreColor = ModernPaint.ForeColor.Button.Hover(this.ThemeStyle);
+                }
+                else
+                {
+                    if (isSelected)
+                    {
+                        backColor = (this.Focused || !this.Enabled) ? ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Disabled(this.ThemeStyle);
+                        foreColor = Color.FromArgb(17, 17, 17);
+                    }
+                    else
+                    {
+                        backColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+                        foreColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
+                    }
+                }
+
+                Rectangle rectangle;
+
+                if (this.ShowLines)
+                {
+                    rectangle = new Rectangle(e.Bounds.X, e.Bounds.Y, this.Width - e.Bounds.X, e.Bounds.Height);
+                }
+                else
+                {
+                    rectangle = new Rectangle(0, e.Bounds.Y, this.Width, e.Bounds.Height);
+                }
+
+                using (SolidBrush brush = new SolidBrush(backColor))
+                {
+                    e.Graphics.FillRectangle(brush, rectangle);
+                }
+
+                using (SolidBrush brush = new SolidBrush(foreColor))
+                {
+                    e.Graphics.DrawString(e.Node.Text, this.Font, brush, e.Bounds);
+                }
+            }
+
+            base.OnDrawNode(e);
         }
 
         /// <summary>
@@ -280,9 +306,9 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// OnPaintBackground method.
+        /// Paints the background of the control.
         /// </summary>
-        /// <param name="e">PaintEventArgs instance.</param>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.</param>
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             try
@@ -301,6 +327,7 @@ namespace DevLib.ModernUI.Forms
                 }
 
                 base.OnPaintBackground(e);
+
                 this.OnCustomPaintBackground(new ModernPaintEventArgs(backColor, Color.Empty, e.Graphics));
             }
             catch
@@ -310,9 +337,9 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// OnPaint method.
+        /// Raises the <see cref="E:System.Windows.Forms.Control.Paint" /> event.
         /// </summary>
-        /// <param name="e">PaintEventArgs instance.</param>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.</param>
         protected override void OnPaint(PaintEventArgs e)
         {
             try
@@ -332,188 +359,22 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// OnPaintForeground method.
+        /// Raises the <see cref="E:PaintForeground" /> event.
         /// </summary>
-        /// <param name="e">PaintEventArgs instance.</param>
+        /// <param name="e">The <see cref="PaintEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPaintForeground(PaintEventArgs e)
         {
-            Color foreColor;
-
-            if (this.UseCustomForeColor)
-            {
-                foreColor = this.ForeColor;
-            }
-            else
-            {
-                if (this._isHovered && !this._isPressed && this.Enabled)
-                {
-                    foreColor = ModernPaint.ForeColor.Link.Hover(this.ThemeStyle);
-                }
-                else if (this._isHovered && this._isPressed && this.Enabled)
-                {
-                    foreColor = ModernPaint.ForeColor.Link.Press(this.ThemeStyle);
-                }
-                else if (!this.Enabled)
-                {
-                    foreColor = ModernPaint.ForeColor.Link.Disabled(this.ThemeStyle);
-                }
-                else
-                {
-                    foreColor = !this.UseStyleColors ? ModernPaint.ForeColor.Link.Normal(this.ThemeStyle) : ModernPaint.GetStyleColor(this.ColorStyle);
-                }
-            }
-
-            TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.Link(this.FontSize, this.FontWeight), this.ClientRectangle, foreColor, ModernPaint.GetTextFormatFlags(this.TextAlign));
-
-            this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, foreColor, e.Graphics));
-
-            if (this.DisplayFocus && this._isFocused)
-            {
-                ControlPaint.DrawFocusRectangle(e.Graphics, this.ClientRectangle);
-            }
+            this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, Color.Empty, e.Graphics));
         }
 
         /// <summary>
-        /// Raises the GotFocus event.
+        /// Applies the modern style.
         /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnGotFocus(EventArgs e)
+        private void ApplyModernStyle()
         {
-            this._isFocused = true;
-            this.Invalidate();
-
-            base.OnGotFocus(e);
-        }
-
-        /// <summary>
-        /// Raises the LostFocus event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnLostFocus(EventArgs e)
-        {
-            this._isFocused = false;
-            this._isHovered = false;
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnLostFocus(e);
-        }
-
-        /// <summary>
-        /// Raises the Enter event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnEnter(EventArgs e)
-        {
-            this._isFocused = true;
-            this.Invalidate();
-
-            base.OnEnter(e);
-        }
-
-        /// <summary>
-        /// Raises the Leave event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnLeave(EventArgs e)
-        {
-            this._isFocused = false;
-            this._isHovered = false;
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnLeave(e);
-        }
-
-        /// <summary>
-        /// Raises the KeyDown event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Space)
-            {
-                this._isHovered = true;
-                this._isPressed = true;
-                this.Invalidate();
-            }
-
-            base.OnKeyDown(e);
-        }
-
-        /// <summary>
-        /// Raises the KeyUp event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            this._isHovered = false;
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnKeyUp(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseEnter event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            this._isHovered = true;
-            this.Invalidate();
-
-            base.OnMouseEnter(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseDown event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                this._isPressed = true;
-                this.Invalidate();
-            }
-
-            base.OnMouseDown(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseUp event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            this._isPressed = false;
-            this.Invalidate();
-
-            base.OnMouseUp(e);
-        }
-
-        /// <summary>
-        /// Raises the MouseLeave event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            this._isHovered = false;
-            this.Invalidate();
-
-            base.OnMouseLeave(e);
-        }
-
-        /// <summary>
-        /// Raises the EnabledChanged event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            this.Invalidate();
-
-            base.OnEnabledChanged(e);
+            this.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+            this.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
+            this.LineColor = this.UseStyleColors ? ModernPaint.GetStyleColor(this.ColorStyle) : this.ForeColor;
         }
     }
 }

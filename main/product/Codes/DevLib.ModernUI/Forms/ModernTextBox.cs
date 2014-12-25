@@ -797,6 +797,26 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Control.KeyDown" /> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data.</param>
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if ((e.Modifiers == Keys.Control && e.KeyCode == Keys.V) ||
+                (e.Control && e.KeyCode == Keys.V) ||
+                (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Insert) ||
+                (e.Shift && e.KeyCode == Keys.Insert))
+            {
+                if (this.Pasted != null)
+                {
+                    this.Pasted(this, new ClipboardEventArgs(Clipboard.GetText()));
+                }
+            }
+        }
+
+        /// <summary>
         /// OnModernTextBoxGotFocus method.
         /// </summary>
         /// <param name="sender">Event sender.</param>
@@ -940,19 +960,6 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// BaseTextBoxPasted method.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="ClipboardEventArgs"/> instance containing the event data.</param>
-        private void BaseTextBoxPasted(object sender, ClipboardEventArgs e)
-        {
-            if (this.Pasted != null)
-            {
-                this.Pasted(this, e);
-            }
-        }
-
-        /// <summary>
         /// Draw icon.
         /// </summary>
         /// <param name="g">Graphics instance.</param>
@@ -1017,7 +1024,6 @@ namespace DevLib.ModernUI.Forms
             this._baseTextBox.KeyUp += this.BaseTextBoxKeyUp;
             this._baseTextBox.SizeChanged += this.BaseTextBoxSizeChanged;
             this._baseTextBox.TextChanged += this.BaseTextBoxTextChanged;
-            this._baseTextBox.Pasted += this.BaseTextBoxPasted;
         }
 
         /// <summary>
@@ -1067,11 +1073,6 @@ namespace DevLib.ModernUI.Forms
             private const int WM_PAINT = 15;
 
             /// <summary>
-            /// Field WM_PASTE.
-            /// </summary>
-            private const int WM_PASTE = 0x0302;
-
-            /// <summary>
             /// Field _drawPrompt.
             /// </summary>
             private bool _drawPrompt;
@@ -1088,11 +1089,6 @@ namespace DevLib.ModernUI.Forms
             {
                 this._drawPrompt = this.Text == null || string.IsNullOrEmpty(this.Text.Trim());
             }
-
-            /// <summary>
-            /// Event Pasted.
-            /// </summary>
-            public event EventHandler<ClipboardEventArgs> Pasted;
 
             /// <summary>
             /// Gets or sets prompt text.
@@ -1154,14 +1150,6 @@ namespace DevLib.ModernUI.Forms
             /// <param name="m">A Windows Message object.</param>
             protected override void WndProc(ref Message m)
             {
-                if (m.Msg == WM_PASTE)
-                {
-                    if (this.Pasted != null)
-                    {
-                        this.Pasted(this, new ClipboardEventArgs(Clipboard.GetText()));
-                    }
-                }
-
                 if (((m.Msg == WM_PAINT) || (m.Msg == OCM_COMMAND)) && (this._drawPrompt && !this.GetStyle(ControlStyles.UserPaint)))
                 {
                     this.DrawTextPrompt();

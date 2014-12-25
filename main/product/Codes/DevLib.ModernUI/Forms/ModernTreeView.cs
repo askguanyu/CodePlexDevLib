@@ -235,7 +235,7 @@ namespace DevLib.ModernUI.Forms
                     if (isSelected)
                     {
                         backColor = (this.Focused || !this.Enabled) ? ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Disabled(this.ThemeStyle);
-                        foreColor = Color.FromArgb(17, 17, 17);
+                        foreColor = (this.Focused || !this.Enabled) ? Color.FromArgb(17, 17, 17) : ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
                     }
                     else
                     {

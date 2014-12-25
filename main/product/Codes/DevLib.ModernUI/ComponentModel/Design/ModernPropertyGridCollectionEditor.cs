@@ -136,21 +136,6 @@ namespace DevLib.ModernUI.ComponentModel.Design
                 return;
             }
 
-            if (type.GetInterface("IEnumerable") != null)
-            {
-                TypeDescriptor.AddAttributes(
-                    type,
-                    new EditorAttribute(typeof(ModernPropertyGridCollectionEditor), typeof(UITypeEditor)),
-                    new ReadOnlyAttribute(false));
-            }
-            else
-            {
-                TypeDescriptor.AddAttributes(
-                    type,
-                    new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(type)),
-                    new ReadOnlyAttribute(false));
-            }
-
             PropertyCustomTypeDescriptor propertyOverridingTypeDescriptor = new PropertyCustomTypeDescriptor(TypeDescriptor.GetProvider(GetEnumerableElementType(type)).GetTypeDescriptor(GetEnumerableElementType(type)));
 
             foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(type))
@@ -404,7 +389,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
                             if (isSelected)
                             {
                                 backColor = listBox.Focused ? ControlPaint.Light(ModernPaint.GetStyleColor(ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Disabled(ThemeStyle);
-                                foreColor = Color.FromArgb(17, 17, 17);
+                                foreColor = listBox.Focused ? Color.FromArgb(17, 17, 17) : ModernPaint.ForeColor.Button.Normal(ThemeStyle);
                             }
                             else
                             {
@@ -437,19 +422,31 @@ namespace DevLib.ModernUI.ComponentModel.Design
                 propertyGrid.CommandsBackColor = propertyGrid.BackColor;
                 propertyGrid.HelpBackColor = propertyGrid.BackColor;
                 propertyGrid.ViewBackColor = propertyGrid.BackColor;
+
                 propertyGrid.ForeColor = propertyGrid.ForeColor;
                 propertyGrid.CategoryForeColor = propertyGrid.ForeColor;
                 propertyGrid.CommandsForeColor = propertyGrid.ForeColor;
                 propertyGrid.HelpForeColor = propertyGrid.ForeColor;
                 propertyGrid.ViewForeColor = propertyGrid.ForeColor;
+
                 propertyGrid.CommandsLinkColor = ModernPaint.ForeColor.Link.Normal(ThemeStyle);
                 propertyGrid.CommandsActiveLinkColor = ModernPaint.ForeColor.Link.Hover(ThemeStyle);
                 propertyGrid.CommandsDisabledLinkColor = ModernPaint.ForeColor.Link.Disabled(ThemeStyle);
-                propertyGrid.LineColor = UseStyleColors ? ModernPaint.GetStyleColor(ColorStyle) : ModernPaint.BackColor.Button.Normal(ThemeStyle);
+                propertyGrid.LineColor = UseStyleColors ? ControlPaint.Light(ModernPaint.GetStyleColor(ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Normal(ThemeStyle);
 
                 propertyGrid.HelpVisible = true;
                 propertyGrid.PropertySort = PropertySort.NoSort;
                 propertyGrid.ExpandAllGridItems();
+
+                propertyGrid.Enter += (s, e) =>
+                {
+                    propertyGrid.LineColor = UseStyleColors ? ControlPaint.Light(ModernPaint.GetStyleColor(ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Normal(ThemeStyle);
+                };
+
+                propertyGrid.Leave += (s, e) =>
+                {
+                    propertyGrid.LineColor = ModernPaint.BackColor.Button.Disabled(ThemeStyle);
+                };
             }
 
             if (control.Controls.Count > 0)

@@ -23,6 +23,16 @@ namespace DevLib.ModernUI.Forms
     public class ModernPropertyGrid : PropertyGrid, IModernControl
     {
         /// <summary>
+        /// Field WM_SETFOCUS.
+        /// </summary>
+        private const int WM_SETFOCUS = 0x7;
+
+        /// <summary>
+        /// Field WM_NCPAINT.
+        /// </summary>
+        private const int WM_NCPAINT = 0x85;
+
+        /// <summary>
         /// Field _modernColorStyle.
         /// </summary>
         private ModernColorStyle _modernColorStyle = ModernColorStyle.Default;
@@ -49,8 +59,9 @@ namespace DevLib.ModernUI.Forms
         {
             base.PropertyValueChanged += this.OnPropertyValueChanged;
             ModernPropertyGridCollectionEditor.CollectionPropertyValueChanged += this.OnPropertyValueChanged;
-
             this.UseStyleColors = true;
+
+            this.ApplyModernStyleEvent();
             this.ApplyModernStyle();
         }
 
@@ -406,6 +417,51 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// WndProc method.
+        /// </summary>
+        /// <param name="m">A Windows Message object.</param>
+        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
+        protected override void WndProc(ref Message m)
+        {
+            switch (m.Msg)
+            {
+                case WM_SETFOCUS:
+                    this.LineColor = this.UseStyleColors ? ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Normal(this.ThemeStyle);
+                    break;
+
+                case WM_NCPAINT:
+                    this.LineColor = this.Focused ? (this.UseStyleColors ? ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Normal(this.ThemeStyle)) : ModernPaint.BackColor.Button.Disabled(this.ThemeStyle);
+                    break;
+
+                default:
+                    break;
+            }
+
+            base.WndProc(ref m);
+        }
+
+        /// <summary>
+        /// Applies the modern style event.
+        /// </summary>
+        private void ApplyModernStyleEvent()
+        {
+            this.Enter += (s, e) =>
+            {
+                this.LineColor = UseStyleColors ? ControlPaint.Light(ModernPaint.GetStyleColor(ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Normal(ThemeStyle);
+            };
+
+            this.Leave += (s, e) =>
+            {
+                this.LineColor = ModernPaint.BackColor.Button.Disabled(ThemeStyle);
+            };
+
+            this.EnabledChanged += (s, e) =>
+            {
+                this.LineColor = this.Enabled ? (UseStyleColors ? ControlPaint.Light(ModernPaint.GetStyleColor(ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Normal(ThemeStyle)) : ModernPaint.BackColor.Button.Disabled(ThemeStyle);
+            };
+        }
+
+        /// <summary>
         /// Applies the modern style.
         /// </summary>
         private void ApplyModernStyle()
@@ -425,7 +481,7 @@ namespace DevLib.ModernUI.Forms
             this.CommandsActiveLinkColor = ModernPaint.ForeColor.Link.Hover(this.ThemeStyle);
             this.CommandsDisabledLinkColor = ModernPaint.ForeColor.Link.Disabled(this.ThemeStyle);
 
-            this.LineColor = this.UseStyleColors ? ModernPaint.GetStyleColor(this.ColorStyle) : ModernPaint.BackColor.Button.Normal(this.ThemeStyle);
+            this.LineColor = this.UseStyleColors ? ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), 0.2F) : ModernPaint.BackColor.Button.Normal(this.ThemeStyle);
 
             this.Refresh();
         }

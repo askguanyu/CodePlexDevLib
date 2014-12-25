@@ -45,21 +45,6 @@ namespace DevLib.Configuration
                 return;
             }
 
-            if (type.GetInterface("IEnumerable") != null)
-            {
-                TypeDescriptor.AddAttributes(
-                    type,
-                    new EditorAttribute(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor)),
-                    new ReadOnlyAttribute(false));
-            }
-            else
-            {
-                TypeDescriptor.AddAttributes(
-                    type,
-                    new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(type)),
-                    new ReadOnlyAttribute(false));
-            }
-
             PropertyCustomTypeDescriptor propertyOverridingTypeDescriptor = new PropertyCustomTypeDescriptor(TypeDescriptor.GetProvider(GetEnumerableElementType(type)).GetTypeDescriptor(GetEnumerableElementType(type)));
 
             foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(type))

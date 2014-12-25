@@ -74,5 +74,60 @@ namespace DevLib.Samples
         {
             var obj = modernPropertyGrid1.SelectedObject;
         }
+
+        private void modernPropertyGrid1_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_Validating(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_MouseCaptureChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_Layout(object sender, LayoutEventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_ChangeUICues(object sender, UICuesEventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_Leave(object sender, EventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_PropertyTabChanged(object s, PropertyTabChangedEventArgs e)
+        {
+
+        }
+
+        private void modernPropertyGrid1_VisibleChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

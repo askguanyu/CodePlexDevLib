@@ -1929,7 +1929,7 @@ namespace DevLib.Samples
 
             SoapClient soapClient = new SoapClient("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
 
-            string soapresult = soapClient.SendSoapRequestFile(@"D:\soap.txt");
+            string soapresult = soapClient.SendSoapRequestFile(@"D:\soap.txt").Content;
 
 
             var factory = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");

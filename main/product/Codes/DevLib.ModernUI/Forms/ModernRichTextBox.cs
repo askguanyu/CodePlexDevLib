@@ -505,6 +505,7 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
+                this._baseRichTextBox.Clear();
                 this._baseRichTextBox.Text = value;
                 this.UpdateXmlSyntaxHighlight();
             }
@@ -1049,17 +1050,20 @@ namespace DevLib.ModernUI.Forms
             if (!this.UseCustomForeColor)
             {
                 this._baseRichTextBox.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
-
-                if (this.HighlightXmlSyntax)
-                {
-                    this.UpdateXmlSyntaxHighlight();
-                    this._baseRichTextBox.ForeColor = ModernPaint.ForeColor.Button.Normal(this.ThemeStyle);
-                }
             }
             else
             {
                 this._baseRichTextBox.ForeColor = this.ForeColor;
             }
+
+            Color foreColor = Color.FromArgb(this._baseRichTextBox.ForeColor.A, this._baseRichTextBox.ForeColor);
+
+            if (this.HighlightXmlSyntax)
+            {
+                this.UpdateXmlSyntaxHighlight();
+            }
+
+            this._baseRichTextBox.ForeColor = foreColor;
 
             Color borderColor = ModernPaint.BorderColor.Button.Normal(this.ThemeStyle);
 
@@ -1357,6 +1361,8 @@ namespace DevLib.ModernUI.Forms
 
             lock (this._highlightSyncRoot)
             {
+                Color foreColor = Color.FromArgb(this._baseRichTextBox.ForeColor.A, this._baseRichTextBox.ForeColor);
+
                 if (this.IndentXml)
                 {
                     this._baseRichTextBox.Text = this.ToIndentXml(this._baseRichTextBox.Text, this.OmitXmlDeclaration);
@@ -1367,6 +1373,8 @@ namespace DevLib.ModernUI.Forms
                     this._baseRichTextBox.Rtf = this.ToXmlSyntaxHighlightRtf(this._baseRichTextBox.Rtf, this.IndentXml, this.OmitXmlDeclaration, this.ThemeStyle == ModernThemeStyle.Dark);
                     this._baseRichTextBox.Tag = this._baseRichTextBox.Rtf;
                 }
+
+                this._baseRichTextBox.ForeColor = foreColor;
             }
         }
 

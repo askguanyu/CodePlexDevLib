@@ -75,7 +75,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public static string SendRequestFile(string uri, string filename, string username = null, string password = null)
+        public static SoapResponse SendRequestFile(string uri, string filename, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -103,11 +103,11 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public static string SendRequestString(string uri, string soapEnvelope, string username = null, string password = null)
+        public static SoapResponse SendRequestString(string uri, string soapEnvelope, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(soapEnvelope))
             {
-                return string.Empty;
+                return new SoapResponse { ErrorMessage = "Value cannot be null or empty. Parameter name: soapEnvelope." };
             }
 
             XmlDocument soapEnvelopeXml = new XmlDocument();
@@ -123,7 +123,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public string SendSoapRequestFile(string filename, string username = null, string password = null)
+        public SoapResponse SendSoapRequestFile(string filename, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -150,11 +150,11 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public string SendSoapRequestString(string soapEnvelope, string username = null, string password = null)
+        public SoapResponse SendSoapRequestString(string soapEnvelope, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(soapEnvelope))
             {
-                return string.Empty;
+                return new SoapResponse { ErrorMessage = "Value cannot be null or empty. Parameter name: soapEnvelope." };
             }
 
             XmlDocument soapEnvelopeXml = new XmlDocument();
@@ -171,7 +171,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        private static string SendRequest(string uri, XmlDocument soapEnvelopeXml, string username, string password)
+        private static SoapResponse SendRequest(string uri, XmlDocument soapEnvelopeXml, string username, string password)
         {
             string soapAction = null;
 
@@ -226,38 +226,42 @@ namespace DevLib.Web
                 }
             }
 
-            WebResponse response = null;
+            HttpWebResponse response = null;
 
             try
             {
-                response = request.GetResponse();
+                response = (HttpWebResponse)request.GetResponse();
+
+                SoapResponse result = new SoapResponse(response);
 
                 using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                 {
-                    string result = streamReader.ReadToEnd();
+                    result.Content = streamReader.ReadToEnd();
+                    result.Succeeded = true;
 
                     return result;
                 }
             }
             catch (Exception e)
             {
-                if (e is WebException)
+                WebException webException = e as WebException;
+
+                if (webException != null)
                 {
-                    WebException webException = e as WebException;
+                    HttpWebResponse innerResponse = webException.Response as HttpWebResponse;
 
-                    StringBuilder stringBuilder = new StringBuilder();
-
-                    stringBuilder.AppendLine(webException.Message);
-
-                    if (webException.Response != null)
+                    if (innerResponse != null)
                     {
+                        SoapResponse result = new SoapResponse(innerResponse);
+
+                        result.ErrorMessage = webException.ToString();
+
                         StreamReader streamReader = null;
 
                         try
                         {
-                            streamReader = new StreamReader(webException.Response.GetResponseStream());
-                            string innerMessage = streamReader.ReadToEnd();
-                            stringBuilder.AppendLine(innerMessage);
+                            streamReader = new StreamReader(innerResponse.GetResponseStream());
+                            result.Content = streamReader.ReadToEnd();
                         }
                         catch
                         {
@@ -270,9 +274,19 @@ namespace DevLib.Web
                                 streamReader = null;
                             }
                         }
-                    }
 
-                    throw new WebException(stringBuilder.ToString(), e);
+                        if (innerResponse != null)
+                        {
+                            innerResponse.Close();
+                            innerResponse = null;
+                        }
+
+                        return result;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
                 else
                 {
@@ -283,7 +297,7 @@ namespace DevLib.Web
             {
                 if (response != null)
                 {
-                    (response as IDisposable).Dispose();
+                    response.Close();
                     response = null;
                 }
             }

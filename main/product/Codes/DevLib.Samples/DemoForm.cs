@@ -62,7 +62,7 @@ namespace DevLib.Samples
         {
             try
             {
-                modernRichTextBoxResponse.Text = SoapClient.SendRequestString(modernTextBoxUri.Text, modernRichTextBoxRequest.Text, "a", "b");
+                modernRichTextBoxResponse.Text = SoapClient.SendRequestString(modernTextBoxUri.Text, modernRichTextBoxRequest.Text, "a", "b").Content;
             }
             catch (Exception ex)
             {

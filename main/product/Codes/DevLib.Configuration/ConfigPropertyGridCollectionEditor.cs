@@ -62,7 +62,7 @@ namespace DevLib.Configuration
                         type,
                         pd,
                         new EditorAttribute(typeof(ConfigPropertyGridCollectionEditor), typeof(UITypeEditor)),
-                        new ReadOnlyAttribute(false));
+                        ReadOnlyAttribute.No);
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace DevLib.Configuration
                         type,
                         pd,
                         new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(pd.PropertyType)),
-                        new ReadOnlyAttribute(false));
+                        ReadOnlyAttribute.No);
                 }
 
                 propertyOverridingTypeDescriptor.OverrideProperty(pdNew);

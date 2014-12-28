@@ -153,7 +153,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
                         type,
                         pd,
                         new EditorAttribute(typeof(ModernPropertyGridCollectionEditor), typeof(UITypeEditor)),
-                        new ReadOnlyAttribute(false));
+                        ReadOnlyAttribute.No);
                 }
                 else
                 {
@@ -161,7 +161,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
                         type,
                         pd,
                         new TypeConverterAttribute(typeof(ExpandableObjectConverter<>).MakeGenericType(pd.PropertyType)),
-                        new ReadOnlyAttribute(false));
+                        ReadOnlyAttribute.No);
                 }
 
                 propertyOverridingTypeDescriptor.OverrideProperty(pdNew);

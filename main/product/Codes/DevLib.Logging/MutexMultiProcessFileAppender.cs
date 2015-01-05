@@ -296,7 +296,7 @@ namespace DevLib.Logging
         /// <param name="bytes">The bytes to write.</param>
         private void InternalWrite(byte[] bytes)
         {
-            using (FileStream fileStream = new FileStream(this._fileName, FileMode.Append, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
+            using (FileStream fileStream = new FileStream(this._fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
             {
                 if (this._loggerSetup.RollingByDate)
                 {
@@ -324,6 +324,7 @@ namespace DevLib.Logging
                     }
                 }
 
+                fileStream.Seek(0, SeekOrigin.End);
                 fileStream.Write(bytes, 0, bytes.Length);
             }
         }

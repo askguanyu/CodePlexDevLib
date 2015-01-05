@@ -59,15 +59,19 @@ namespace DevLib.Logging
             {
                 this._fileName = LogConfigManager.GetFileFullPath(filename);
 
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(this._fileName));
+                }
+                catch
+                {
+                }
+
                 this._fileInfo = new FileInfo(this._fileName);
 
                 this._loggerSetup = loggerSetup;
 
                 this._mutex = this.CreateSharedMutex(this.GetMutexName(this._fileName));
-
-                this.OpenTime = DateTime.Now;
-
-                this.LastWriteTime = DateTime.MinValue;
             }
             catch (Exception e)
             {
@@ -90,24 +94,6 @@ namespace DevLib.Logging
         ~MutexMultiProcessFileAppender()
         {
             this.Dispose(false);
-        }
-
-        /// <summary>
-        /// Gets the last write time of the file.
-        /// </summary>
-        public DateTime LastWriteTime
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the open time of the file.
-        /// </summary>
-        public DateTime OpenTime
-        {
-            get;
-            private set;
         }
 
         /// <summary>
@@ -310,14 +296,8 @@ namespace DevLib.Logging
         /// <param name="bytes">The bytes to write.</param>
         private void InternalWrite(byte[] bytes)
         {
-            this.LastWriteTime = DateTime.Now;
-
-            FileStream fileStream = null;
-
-            try
+            using (FileStream fileStream = new FileStream(this._fileName, FileMode.Append, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
             {
-                fileStream = this.CreateSharedFileStream(this._fileName);
-
                 if (this._loggerSetup.RollingByDate)
                 {
                     this._fileInfo.Refresh();
@@ -344,20 +324,7 @@ namespace DevLib.Logging
                     }
                 }
 
-                fileStream.Seek(0, SeekOrigin.End);
                 fileStream.Write(bytes, 0, bytes.Length);
-                fileStream.Flush();
-            }
-            catch
-            {
-            }
-            finally
-            {
-                if (fileStream != null)
-                {
-                    fileStream.Dispose();
-                    fileStream = null;
-                }
             }
         }
 
@@ -523,24 +490,6 @@ namespace DevLib.Logging
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Method CreateSharedFileStream.
-        /// </summary>
-        /// <param name="filename">File to be shared open.</param>
-        /// <returns>Instance of FileStream.</returns>
-        private FileStream CreateSharedFileStream(string filename)
-        {
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
-            }
-            catch
-            {
-            }
-
-            return new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
         }
 
         /// <summary>

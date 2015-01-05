@@ -339,15 +339,33 @@ namespace DevLib.Samples
 
         private static void TestDevLibLogging()
         {
-            var logger = LogManager.Open("d:\\Work\\temp\\1.log");
 
-            Benchmark.Run(index =>
+            for (int j = 0; j < 20; j++)
             {
-                for (int i = 0; i < 1000; i++)
+                Task.Factory.StartNew(() =>
                 {
-                    logger.Log(i, "The quick brown fox jumps over the lazy dog.");
-                }
-            });
+                    for (int i = 0; i < 100000; i++)
+                    {
+                        //Thread.Sleep(25);
+                        LogManager.Open("d:\\Work\\temp\\000.log").Log(i, "The quick brown fox jumps over the lazy dog.");
+                    }
+                });
+            }
+
+            Console.ReadLine();
+
+            //var logger = LogManager.Open("d:\\Work\\temp\\000.log");
+
+            //Benchmark.Run(index =>
+            //{
+            //    for (int i = 0; i < 10000000; i++)
+            //    {
+            //        //Thread.Sleep(10);
+            //        LogManager.Open("d:\\Work\\temp\\000.log").Log(i, "The quick brown fox jumps over the lazy dog.");
+            //    }
+            //});
+
+            //Console.ReadLine();
 
             //Logger logger = LogManager.Open();
             //logger.Log("This is a log message.");
@@ -408,7 +426,7 @@ namespace DevLib.Samples
             //    LogManager.Open(@"C:\\AAA.log").Log(LogLevel.DBUG, i.ToString(), DateTime.Now, Environment.UserName);
             //}
 
-            //Task.Factory.StartNew(() => 
+            //Task.Factory.StartNew(() =>
             //{
             //    for (int i = 0; i < 100; i++)
             //    {

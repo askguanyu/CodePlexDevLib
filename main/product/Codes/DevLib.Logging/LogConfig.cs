@@ -28,17 +28,12 @@ namespace DevLib.Logging
         public static readonly string DefaultLogConfigFile = Path.GetFullPath(Process.GetCurrentProcess().MainModule.FileName + ".config");
 
         /// <summary>
-        /// Field DefaultLoggerSetup.
-        /// </summary>
-        public static readonly LoggerSetup DefaultLoggerSetup = new LoggerSetup();
-
-        /// <summary>
         ///  Initializes a new instance of the <see cref="LogConfig" /> class.
         /// </summary>
         public LogConfig()
         {
             this.LogFile = LogConfig.DefaultLogFile;
-            this.LoggerSetup = LogConfig.DefaultLoggerSetup;
+            this.LoggerSetup = LoggerSetup.DefaultSetup;
         }
 
         /// <summary>

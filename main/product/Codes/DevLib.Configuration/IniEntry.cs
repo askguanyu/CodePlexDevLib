@@ -9,7 +9,6 @@ namespace DevLib.Configuration
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
-    using System.Threading;
 
     /// <summary>
     /// Represents an ini file that is applicable to a particular application. This class cannot be inherited.
@@ -22,14 +21,19 @@ namespace DevLib.Configuration
         private const string CommentKeyStringFormat = "[Key1][{0}][Key2][{1}]";
 
         /// <summary>
-        /// Field _readerWriterLock.
+        /// Field _syncRoot.
         /// </summary>
-        private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
+        private readonly object _syncRoot = new object();
+
+        /// <summary>
+        /// Field _sections.
+        /// </summary>
+        private readonly Dictionary<string, Dictionary<string, string>> _sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Field _comments.
         /// </summary>
-        private Dictionary<string, string> _comments = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> _comments = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IniEntry" /> class.
@@ -38,8 +42,6 @@ namespace DevLib.Configuration
         internal IniEntry(string iniFile)
         {
             this.IniFile = iniFile;
-
-            this.Sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
             try
             {
@@ -72,8 +74,13 @@ namespace DevLib.Configuration
         /// </summary>
         public Dictionary<string, Dictionary<string, string>> Sections
         {
-            get;
-            private set;
+            get
+            {
+                lock (this._syncRoot)
+                {
+                    return this._sections;
+                }
+            }
         }
 
         /// <summary>
@@ -122,22 +129,16 @@ namespace DevLib.Configuration
         {
             this.CheckNullValue(section);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (!this.Sections.ContainsKey(section))
+                if (this._sections.ContainsKey(section))
                 {
-                    return null;
+                    return new Dictionary<string, string>(this._sections[section], StringComparer.OrdinalIgnoreCase);
                 }
                 else
                 {
-                    return new Dictionary<string, string>(this.Sections[section], StringComparer.OrdinalIgnoreCase);
+                    return null;
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -150,26 +151,20 @@ namespace DevLib.Configuration
         {
             this.CheckNullValue(section);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (!this.Sections.ContainsKey(section))
+                if (!this._sections.ContainsKey(section))
                 {
-                    this.Sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    this._sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 }
 
                 if (properties != null && properties.Count > 0)
                 {
                     foreach (var item in properties)
                     {
-                        this.Sections[section][item.Key] = item.Value;
+                        this._sections[section][item.Key] = item.Value;
                     }
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -181,16 +176,10 @@ namespace DevLib.Configuration
         {
             this.CheckNullValue(section);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                this.Sections.Remove(section);
+                this._sections.Remove(section);
                 this._comments.Remove(string.Format(CommentKeyStringFormat, section, string.Empty));
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -212,30 +201,16 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (this.Sections.ContainsKey(section))
+                if (this._sections.ContainsKey(section))
                 {
-                    try
-                    {
-                        return this.Sections[section][key];
-                    }
-                    catch (Exception e)
-                    {
-                        InternalLogger.Log(e);
-                        throw;
-                    }
+                    return this._sections[section][key];
                 }
                 else
                 {
                     throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, section));
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -258,15 +233,13 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (this.Sections.ContainsKey(section))
+                if (this._sections.ContainsKey(section))
                 {
                     try
                     {
-                        return XmlConverter.ToObject<T>(this.Sections[section][key]);
+                        return XmlConverter.ToObject<T>(this._sections[section][key]);
                     }
                     catch (Exception e)
                     {
@@ -278,10 +251,6 @@ namespace DevLib.Configuration
                 {
                     throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, section));
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -305,15 +274,13 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (this.Sections.ContainsKey(section))
+                if (this._sections.ContainsKey(section))
                 {
                     try
                     {
-                        T result = XmlConverter.ToObject<T>(this.Sections[section][key]);
+                        T result = XmlConverter.ToObject<T>(this._sections[section][key]);
                         return result != null ? result : defaultValue;
                     }
                     catch (Exception e)
@@ -326,14 +293,6 @@ namespace DevLib.Configuration
                 {
                     return defaultValue;
                 }
-            }
-            catch
-            {
-                return defaultValue;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -349,20 +308,14 @@ namespace DevLib.Configuration
 
             this.CheckNullValue(key);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (!this.Sections.ContainsKey(section))
+                if (!this._sections.ContainsKey(section))
                 {
-                    this.Sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    this._sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 }
 
-                this.Sections[section][key] = XmlConverter.ToString(value);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                this._sections[section][key] = XmlConverter.ToString(value);
             }
         }
 
@@ -377,19 +330,13 @@ namespace DevLib.Configuration
 
             this.CheckNullValue(key);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (this.Sections.ContainsKey(section))
+                if (this._sections.ContainsKey(section))
                 {
-                    this.Sections[section].Remove(key);
+                    this._sections[section].Remove(key);
                     this._comments.Remove(string.Format(CommentKeyStringFormat, section, key));
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -411,9 +358,7 @@ namespace DevLib.Configuration
 
             string commentKey = string.Format(CommentKeyStringFormat, section, key ?? string.Empty);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._comments.ContainsKey(commentKey))
                 {
@@ -423,10 +368,6 @@ namespace DevLib.Configuration
                 {
                     return string.Empty;
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -442,15 +383,9 @@ namespace DevLib.Configuration
 
             string commentKey = string.Format(CommentKeyStringFormat, section, key ?? string.Empty);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._comments[commentKey] = value ?? string.Empty;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -465,15 +400,9 @@ namespace DevLib.Configuration
 
             string commentKey = string.Format(CommentKeyStringFormat, section, key ?? string.Empty);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._comments.Remove(commentKey);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -482,20 +411,10 @@ namespace DevLib.Configuration
         /// </summary>
         public void Clear()
         {
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                this.Sections.Clear();
                 this._comments.Clear();
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                this._sections.Clear();
             }
         }
 
@@ -508,15 +427,9 @@ namespace DevLib.Configuration
         {
             this.CheckNullValue(section);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                return this.Sections.ContainsKey(section);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
+                return this._sections.ContainsKey(section);
             }
         }
 
@@ -532,15 +445,9 @@ namespace DevLib.Configuration
 
             this.CheckNullValue(key);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                return this.Sections.ContainsKey(section) && this.Sections[section].ContainsKey(key);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
+                return this._sections.ContainsKey(section) && this._sections[section].ContainsKey(key);
             }
         }
 
@@ -553,13 +460,11 @@ namespace DevLib.Configuration
         {
             this.CheckNullValue(key);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 List<string> result = new List<string>();
 
-                foreach (var section in this.Sections)
+                foreach (var section in this._sections)
                 {
                     if (section.Value.ContainsKey(key))
                     {
@@ -568,10 +473,6 @@ namespace DevLib.Configuration
                 }
 
                 return result;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -585,22 +486,11 @@ namespace DevLib.Configuration
                 return;
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                this.Sections.Clear();
                 this._comments.Clear();
-
+                this._sections.Clear();
                 this.InternalLoad();
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -614,21 +504,10 @@ namespace DevLib.Configuration
                 return;
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._comments.Clear();
-
                 this.InternalLoad();
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -642,20 +521,9 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("IniEntry.IniFile", "Didn't specify an ini file.");
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this.InternalSave(this.IniFile);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -670,20 +538,9 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("filename", "Didn't specify an ini file.");
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this.InternalSave(filename);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -718,9 +575,9 @@ namespace DevLib.Configuration
                             {
                                 section = line.TrimStart('[').TrimEnd(']');
 
-                                if (!this.Sections.ContainsKey(section))
+                                if (!this._sections.ContainsKey(section))
                                 {
-                                    this.Sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                                    this._sections[section] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                                 }
 
                                 this._comments[string.Format(CommentKeyStringFormat, section, string.Empty)] = comments.ToString();
@@ -734,7 +591,7 @@ namespace DevLib.Configuration
                                 string key = line.Substring(0, index).Trim();
                                 string value = line.Substring(index + 1).Trim();
 
-                                this.Sections[section][key] = value;
+                                this._sections[section][key] = value;
 
                                 this._comments[string.Format(CommentKeyStringFormat, section, key)] = comments.ToString();
 
@@ -788,7 +645,7 @@ namespace DevLib.Configuration
             {
                 streamWriter = new StreamWriter(fullPath);
 
-                foreach (var section in this.Sections)
+                foreach (var section in this._sections)
                 {
                     string sectionCommentKey = string.Format(CommentKeyStringFormat, section, string.Empty);
                     string sectionComment;

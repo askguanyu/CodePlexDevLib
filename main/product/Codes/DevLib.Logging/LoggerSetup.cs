@@ -16,6 +16,11 @@ namespace DevLib.Logging
     public class LoggerSetup
     {
         /// <summary>
+        /// Field DefaultSetup.
+        /// </summary>
+        public static readonly LoggerSetup DefaultSetup = new LoggerSetup();
+
+        /// <summary>
         /// Field _rollingFileSizeLimit.
         /// </summary>
         private long _rollingFileSizeLimit;

@@ -10,7 +10,6 @@ namespace DevLib.Configuration
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Text;
-    using System.Threading;
     using System.Xml;
     using System.Xml.Serialization;
 
@@ -35,14 +34,14 @@ namespace DevLib.Configuration
         private static readonly XmlSerializerNamespaces EmptyXmlSerializerNamespaces;
 
         /// <summary>
-        /// Field _settingsItemDictionary.
+        /// Field _syncRoot.
         /// </summary>
-        private Dictionary<string, object> _settingsItemDictionary = new Dictionary<string, object>();
+        private readonly object _syncRoot = new object();
 
         /// <summary>
-        /// Field _readerWriterLock.
+        /// Field _settingsItemDictionary.
         /// </summary>
-        private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
+        private readonly Dictionary<string, object> _settingsItemDictionary = new Dictionary<string, object>();
 
         /// <summary>
         /// Initializes static members of the <see cref="Settings" /> class.
@@ -75,14 +74,7 @@ namespace DevLib.Configuration
         {
             this.ConfigFile = configFile;
 
-            try
-            {
-                this.Reload();
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
+            this.Reload();
         }
 
         /// <summary>
@@ -108,15 +100,9 @@ namespace DevLib.Configuration
         {
             get
             {
-                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     return this._settingsItemDictionary.Count;
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -128,17 +114,11 @@ namespace DevLib.Configuration
         {
             get
             {
-                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     string[] result = new string[this._settingsItemDictionary.Count];
                     this._settingsItemDictionary.Keys.CopyTo(result, 0);
                     return result;
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -150,17 +130,11 @@ namespace DevLib.Configuration
         {
             get
             {
-                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     object[] result = new object[this._settingsItemDictionary.Count];
                     this._settingsItemDictionary.Values.CopyTo(result, 0);
                     return result;
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -193,21 +167,7 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("Settings.ConfigFile", "Didn't specify a configuration file.");
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
-            {
-                this.WriteXmlFile(this.ConfigFile);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
+            this.WriteXmlFile(this.ConfigFile);
         }
 
         /// <summary>
@@ -221,21 +181,7 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("filename", "Didn't specify a configuration file.");
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
-            {
-                this.WriteXmlFile(filename);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
+            this.WriteXmlFile(filename);
         }
 
         /// <summary>
@@ -247,15 +193,9 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._settingsItemDictionary[key] = value;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -274,30 +214,16 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._settingsItemDictionary.ContainsKey(key))
                 {
-                    try
-                    {
-                        return this._settingsItemDictionary[key];
-                    }
-                    catch (Exception e)
-                    {
-                        InternalLogger.Log(e);
-                        throw;
-                    }
+                    return this._settingsItemDictionary[key];
                 }
                 else
                 {
                     throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -317,30 +243,16 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._settingsItemDictionary.ContainsKey(key))
                 {
-                    try
-                    {
-                        return (T)this._settingsItemDictionary[key];
-                    }
-                    catch (Exception e)
-                    {
-                        InternalLogger.Log(e);
-                        throw;
-                    }
+                    return (T)this._settingsItemDictionary[key];
                 }
                 else
                 {
                     throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -361,9 +273,7 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._settingsItemDictionary.ContainsKey(key))
                 {
@@ -382,14 +292,6 @@ namespace DevLib.Configuration
                     return defaultValue;
                 }
             }
-            catch
-            {
-                return defaultValue;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
-            }
         }
 
         /// <summary>
@@ -400,15 +302,9 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._settingsItemDictionary.Remove(key);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -417,19 +313,9 @@ namespace DevLib.Configuration
         /// </summary>
         public void Clear()
         {
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._settingsItemDictionary.Clear();
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -442,15 +328,9 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 return this._settingsItemDictionary.ContainsKey(key);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -464,50 +344,61 @@ namespace DevLib.Configuration
                 return;
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
+                try
                 {
-                    if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                    using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
                     {
-                        return;
-                    }
-
-                    xmlReader.ReadStartElement("settings");
-
-                    this._settingsItemDictionary.Clear();
-
-                    while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
-                    {
-                        try
+                        if (xmlReader.IsEmptyElement || !xmlReader.Read())
                         {
-                            string key = xmlReader.GetAttribute("key");
+                            return;
+                        }
 
-                            object value = null;
+                        xmlReader.ReadStartElement("settings");
 
+                        this._settingsItemDictionary.Clear();
+
+                        while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
+                        {
                             try
                             {
-                                xmlReader.ReadStartElement("item");
+                                string key = xmlReader.GetAttribute("key");
 
-                                string valueTypeName = xmlReader.GetAttribute("type");
-
-                                XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+                                object value = null;
 
                                 try
                                 {
-                                    xmlReader.ReadStartElement("value");
+                                    xmlReader.ReadStartElement("item");
 
-                                    value = valueSerializer.Deserialize(xmlReader);
+                                    string valueTypeName = xmlReader.GetAttribute("type");
 
-                                    if (!string.IsNullOrEmpty(key))
+                                    XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+
+                                    try
                                     {
-                                        this._settingsItemDictionary.Add(key, value);
+                                        xmlReader.ReadStartElement("value");
+
+                                        value = valueSerializer.Deserialize(xmlReader);
+
+                                        if (!string.IsNullOrEmpty(key))
+                                        {
+                                            this._settingsItemDictionary.Add(key, value);
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        InternalLogger.Log(e);
+                                    }
+                                    finally
+                                    {
+                                        xmlReader.ReadEndElement();
                                     }
                                 }
                                 catch (Exception e)
                                 {
+                                    xmlReader.Skip();
+
                                     InternalLogger.Log(e);
                                 }
                                 finally
@@ -517,33 +408,19 @@ namespace DevLib.Configuration
                             }
                             catch (Exception e)
                             {
-                                xmlReader.Skip();
-
                                 InternalLogger.Log(e);
                             }
                             finally
                             {
-                                xmlReader.ReadEndElement();
+                                xmlReader.MoveToContent();
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            InternalLogger.Log(e);
-                        }
-                        finally
-                        {
-                            xmlReader.MoveToContent();
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
             }
         }
 
@@ -557,48 +434,59 @@ namespace DevLib.Configuration
                 return;
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
+                try
                 {
-                    if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                    using (XmlReader xmlReader = XmlReader.Create(this.ConfigFile, ReaderSettings))
                     {
-                        return;
-                    }
-
-                    xmlReader.ReadStartElement("settings");
-
-                    while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
-                    {
-                        try
+                        if (xmlReader.IsEmptyElement || !xmlReader.Read())
                         {
-                            string key = xmlReader.GetAttribute("key");
+                            return;
+                        }
 
-                            object value = null;
+                        xmlReader.ReadStartElement("settings");
 
+                        while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
+                        {
                             try
                             {
-                                xmlReader.ReadStartElement("item");
+                                string key = xmlReader.GetAttribute("key");
 
-                                string valueTypeName = xmlReader.GetAttribute("type");
-
-                                XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+                                object value = null;
 
                                 try
                                 {
-                                    xmlReader.ReadStartElement("value");
+                                    xmlReader.ReadStartElement("item");
 
-                                    value = valueSerializer.Deserialize(xmlReader);
+                                    string valueTypeName = xmlReader.GetAttribute("type");
 
-                                    if (!string.IsNullOrEmpty(key))
+                                    XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+
+                                    try
                                     {
-                                        this._settingsItemDictionary[key] = value;
+                                        xmlReader.ReadStartElement("value");
+
+                                        value = valueSerializer.Deserialize(xmlReader);
+
+                                        if (!string.IsNullOrEmpty(key))
+                                        {
+                                            this._settingsItemDictionary[key] = value;
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        InternalLogger.Log(e);
+                                    }
+                                    finally
+                                    {
+                                        xmlReader.ReadEndElement();
                                     }
                                 }
                                 catch (Exception e)
                                 {
+                                    xmlReader.Skip();
+
                                     InternalLogger.Log(e);
                                 }
                                 finally
@@ -608,33 +496,19 @@ namespace DevLib.Configuration
                             }
                             catch (Exception e)
                             {
-                                xmlReader.Skip();
-
                                 InternalLogger.Log(e);
                             }
                             finally
                             {
-                                xmlReader.ReadEndElement();
+                                xmlReader.MoveToContent();
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            InternalLogger.Log(e);
-                        }
-                        finally
-                        {
-                            xmlReader.MoveToContent();
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
             }
         }
 
@@ -644,73 +518,70 @@ namespace DevLib.Configuration
         /// <returns>The XML representation for this Settings.</returns>
         public string GetRawXml()
         {
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                StringBuilder stringBuilder = new StringBuilder();
-
-                using (XmlWriter writer = XmlWriter.Create(stringBuilder, WriterSettings))
+                try
                 {
-                    writer.WriteStartElement("settings");
+                    StringBuilder stringBuilder = new StringBuilder();
 
-                    foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
+                    using (XmlWriter writer = XmlWriter.Create(stringBuilder, WriterSettings))
                     {
-                        XmlSerializer valueSerializer = null;
+                        writer.WriteStartElement("settings");
 
-                        try
+                        foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
                         {
-                            Type valueType = item.Value.GetType();
-                            valueSerializer = new XmlSerializer(valueType);
-
-                            writer.WriteStartElement("item");
-
-                            writer.WriteStartAttribute("key");
-                            writer.WriteValue(item.Key);
-                            writer.WriteEndAttribute();
-
-                            writer.WriteStartElement("value");
-
-                            writer.WriteStartAttribute("type");
-                            writer.WriteValue(valueType.AssemblyQualifiedName);
-                            writer.WriteEndAttribute();
+                            XmlSerializer valueSerializer = null;
 
                             try
                             {
-                                valueSerializer.Serialize(writer, item.Value, EmptyXmlSerializerNamespaces);
+                                Type valueType = item.Value.GetType();
+                                valueSerializer = new XmlSerializer(valueType);
+
+                                writer.WriteStartElement("item");
+
+                                writer.WriteStartAttribute("key");
+                                writer.WriteValue(item.Key);
+                                writer.WriteEndAttribute();
+
+                                writer.WriteStartElement("value");
+
+                                writer.WriteStartAttribute("type");
+                                writer.WriteValue(valueType.AssemblyQualifiedName);
+                                writer.WriteEndAttribute();
+
+                                try
+                                {
+                                    valueSerializer.Serialize(writer, item.Value, EmptyXmlSerializerNamespaces);
+                                }
+                                catch (Exception e)
+                                {
+                                    InternalLogger.Log(e);
+                                }
+                                finally
+                                {
+                                    writer.WriteEndElement();
+                                }
+
+                                writer.WriteEndElement();
                             }
                             catch (Exception e)
                             {
                                 InternalLogger.Log(e);
                             }
-                            finally
-                            {
-                                writer.WriteEndElement();
-                            }
+                        }
 
-                            writer.WriteEndElement();
-                        }
-                        catch (Exception e)
-                        {
-                            InternalLogger.Log(e);
-                        }
+                        writer.WriteEndElement();
+
+                        writer.Flush();
+
+                        return stringBuilder.ToString();
                     }
-
-                    writer.WriteEndElement();
-
-                    writer.Flush();
-
-                    return stringBuilder.ToString();
                 }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                return string.Empty;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                    return string.Empty;
+                }
             }
         }
 
@@ -726,49 +597,60 @@ namespace DevLib.Configuration
                 return;
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), ReaderSettings))
+                try
                 {
-                    if (xmlReader.IsEmptyElement || !xmlReader.Read())
+                    using (XmlReader xmlReader = XmlReader.Create(new StringReader(rawXml), ReaderSettings))
                     {
-                        return;
-                    }
-
-                    xmlReader.ReadStartElement("settings");
-
-                    this._settingsItemDictionary.Clear();
-
-                    while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
-                    {
-                        try
+                        if (xmlReader.IsEmptyElement || !xmlReader.Read())
                         {
-                            string key = xmlReader.GetAttribute("key");
-                            object value = null;
+                            return;
+                        }
 
+                        xmlReader.ReadStartElement("settings");
+
+                        this._settingsItemDictionary.Clear();
+
+                        while (xmlReader.NodeType != (XmlNodeType.None | XmlNodeType.EndElement) && xmlReader.ReadState != (ReadState.Error | ReadState.EndOfFile))
+                        {
                             try
                             {
-                                xmlReader.ReadStartElement("item");
-
-                                string valueTypeName = xmlReader.GetAttribute("type");
-
-                                XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+                                string key = xmlReader.GetAttribute("key");
+                                object value = null;
 
                                 try
                                 {
-                                    xmlReader.ReadStartElement("value");
+                                    xmlReader.ReadStartElement("item");
 
-                                    value = valueSerializer.Deserialize(xmlReader);
+                                    string valueTypeName = xmlReader.GetAttribute("type");
 
-                                    if (!string.IsNullOrEmpty(key))
+                                    XmlSerializer valueSerializer = new XmlSerializer(Type.GetType(valueTypeName, false, true));
+
+                                    try
                                     {
-                                        this._settingsItemDictionary.Add(key, value);
+                                        xmlReader.ReadStartElement("value");
+
+                                        value = valueSerializer.Deserialize(xmlReader);
+
+                                        if (!string.IsNullOrEmpty(key))
+                                        {
+                                            this._settingsItemDictionary.Add(key, value);
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        InternalLogger.Log(e);
+                                    }
+                                    finally
+                                    {
+                                        xmlReader.ReadEndElement();
                                     }
                                 }
                                 catch (Exception e)
                                 {
+                                    xmlReader.Skip();
+
                                     InternalLogger.Log(e);
                                 }
                                 finally
@@ -778,33 +660,19 @@ namespace DevLib.Configuration
                             }
                             catch (Exception e)
                             {
-                                xmlReader.Skip();
-
                                 InternalLogger.Log(e);
                             }
                             finally
                             {
-                                xmlReader.ReadEndElement();
+                                xmlReader.MoveToContent();
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            InternalLogger.Log(e);
-                        }
-                        finally
-                        {
-                            xmlReader.MoveToContent();
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
             }
         }
 
@@ -814,83 +682,80 @@ namespace DevLib.Configuration
         /// <param name="filename"> Xml file name.</param>
         private void WriteXmlFile(string filename)
         {
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                string fullPath = Path.GetFullPath(filename);
-
-                string fullDirectoryPath = Path.GetDirectoryName(fullPath);
-
-                if (!Directory.Exists(fullDirectoryPath))
+                try
                 {
-                    try
-                    {
-                        Directory.CreateDirectory(fullDirectoryPath);
-                    }
-                    catch
-                    {
-                    }
-                }
+                    string fullPath = Path.GetFullPath(filename);
 
-                using (XmlWriter writer = XmlWriter.Create(fullPath, WriterSettings))
-                {
-                    writer.WriteStartElement("settings");
+                    string fullDirectoryPath = Path.GetDirectoryName(fullPath);
 
-                    foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
+                    if (!Directory.Exists(fullDirectoryPath))
                     {
-                        XmlSerializer valueSerializer = null;
-
                         try
                         {
-                            Type valueType = item.Value.GetType();
-                            valueSerializer = new XmlSerializer(valueType);
+                            Directory.CreateDirectory(fullDirectoryPath);
+                        }
+                        catch
+                        {
+                        }
+                    }
 
-                            writer.WriteStartElement("item");
+                    using (XmlWriter writer = XmlWriter.Create(fullPath, WriterSettings))
+                    {
+                        writer.WriteStartElement("settings");
 
-                            writer.WriteStartAttribute("key");
-                            writer.WriteValue(item.Key);
-                            writer.WriteEndAttribute();
-
-                            writer.WriteStartElement("value");
-
-                            writer.WriteStartAttribute("type");
-                            writer.WriteValue(valueType.AssemblyQualifiedName);
-                            writer.WriteEndAttribute();
+                        foreach (KeyValuePair<string, object> item in this._settingsItemDictionary)
+                        {
+                            XmlSerializer valueSerializer = null;
 
                             try
                             {
-                                valueSerializer.Serialize(writer, item.Value, EmptyXmlSerializerNamespaces);
+                                Type valueType = item.Value.GetType();
+                                valueSerializer = new XmlSerializer(valueType);
+
+                                writer.WriteStartElement("item");
+
+                                writer.WriteStartAttribute("key");
+                                writer.WriteValue(item.Key);
+                                writer.WriteEndAttribute();
+
+                                writer.WriteStartElement("value");
+
+                                writer.WriteStartAttribute("type");
+                                writer.WriteValue(valueType.AssemblyQualifiedName);
+                                writer.WriteEndAttribute();
+
+                                try
+                                {
+                                    valueSerializer.Serialize(writer, item.Value, EmptyXmlSerializerNamespaces);
+                                }
+                                catch (Exception e)
+                                {
+                                    InternalLogger.Log(e);
+                                }
+                                finally
+                                {
+                                    writer.WriteEndElement();
+                                }
+
+                                writer.WriteEndElement();
                             }
                             catch (Exception e)
                             {
                                 InternalLogger.Log(e);
                             }
-                            finally
-                            {
-                                writer.WriteEndElement();
-                            }
+                        }
 
-                            writer.WriteEndElement();
-                        }
-                        catch (Exception e)
-                        {
-                            InternalLogger.Log(e);
-                        }
+                        writer.WriteEndElement();
+
+                        writer.Flush();
                     }
-
-                    writer.WriteEndElement();
-
-                    writer.Flush();
                 }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
             }
         }
 

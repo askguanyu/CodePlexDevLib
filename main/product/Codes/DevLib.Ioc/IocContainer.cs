@@ -7,7 +7,6 @@ namespace DevLib.Ioc
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading;
 
     /// <summary>
     /// Inversion of Control container.
@@ -18,6 +17,11 @@ namespace DevLib.Ioc
         /// Field DefaultLabel.
         /// </summary>
         private static readonly string DefaultLabel = Guid.NewGuid().ToString();
+
+        /// <summary>
+        /// Field _syncRoot.
+        /// </summary>
+        private readonly object _syncRoot = new object();
 
         /// <summary>
         /// Field _container.
@@ -33,11 +37,6 @@ namespace DevLib.Ioc
         /// Field _ignoreCase.
         /// </summary>
         private bool _ignoreCase = false;
-
-        /// <summary>
-        /// Field _readerWriterLock.
-        /// </summary>
-        private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IocContainer" /> class.
@@ -86,9 +85,7 @@ namespace DevLib.Ioc
 
             Type instanceType = typeof(T);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._container.ContainsKey(instanceType)
                     && this._container[instanceType] != null
@@ -123,15 +120,6 @@ namespace DevLib.Ioc
                     return this;
                 }
             }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
         }
 
         /// <summary>
@@ -157,9 +145,7 @@ namespace DevLib.Ioc
 
             Type instanceType = typeof(T);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._container.ContainsKey(instanceType)
                     && this._container[instanceType] != null
@@ -194,15 +180,6 @@ namespace DevLib.Ioc
                     return this;
                 }
             }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
         }
 
         /// <summary>
@@ -223,9 +200,7 @@ namespace DevLib.Ioc
 
             Type instanceType = typeof(T);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (!this._container.ContainsKey(instanceType)
                     || this._container[instanceType] == null
@@ -260,15 +235,6 @@ namespace DevLib.Ioc
                     }
                 }
             }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
-            }
         }
 
         /// <summary>
@@ -281,9 +247,7 @@ namespace DevLib.Ioc
 
             List<IocRegistration> result = new List<IocRegistration>();
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 foreach (var itemType in this._container)
                 {
@@ -304,14 +268,6 @@ namespace DevLib.Ioc
                     {
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
 
             return result;
@@ -335,9 +291,7 @@ namespace DevLib.Ioc
 
             Type instanceType = typeof(T);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (!this._container.ContainsKey(instanceType)
                     || this._container[instanceType] == null
@@ -350,10 +304,6 @@ namespace DevLib.Ioc
                 {
                     return createNew ? this._container[instanceType][label].HasCreation : this._container[instanceType][label].HasInstance;
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -376,64 +326,61 @@ namespace DevLib.Ioc
 
             Type instanceType = typeof(T);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (!this._container.ContainsKey(instanceType)
-                    || this._container[instanceType] == null
-                    || !this._container[instanceType].ContainsKey(label)
-                    || this._container[instanceType][label] == null)
+                try
                 {
+                    if (!this._container.ContainsKey(instanceType)
+                        || this._container[instanceType] == null
+                        || !this._container[instanceType].ContainsKey(label)
+                        || this._container[instanceType][label] == null)
+                    {
+                        instance = default(T);
+
+                        return false;
+                    }
+                    else
+                    {
+                        if (createNew)
+                        {
+                            if (this._container[instanceType][label].HasCreation)
+                            {
+                                instance = (T)this._container[instanceType][label].Creation.Invoke();
+
+                                return true;
+                            }
+                            else
+                            {
+                                instance = default(T);
+
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (this._container[instanceType][label].HasInstance)
+                            {
+                                instance = (T)this._container[instanceType][label].Instance;
+
+                                return true;
+                            }
+                            else
+                            {
+                                instance = default(T);
+
+                                return false;
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+
                     instance = default(T);
 
                     return false;
                 }
-                else
-                {
-                    if (createNew)
-                    {
-                        if (this._container[instanceType][label].HasCreation)
-                        {
-                            instance = (T)this._container[instanceType][label].Creation.Invoke();
-
-                            return true;
-                        }
-                        else
-                        {
-                            instance = default(T);
-
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (this._container[instanceType][label].HasInstance)
-                        {
-                            instance = (T)this._container[instanceType][label].Instance;
-
-                            return true;
-                        }
-                        else
-                        {
-                            instance = default(T);
-
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-
-                instance = default(T);
-
-                return false;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -455,9 +402,7 @@ namespace DevLib.Ioc
 
             Type instanceType = typeof(T);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._container.ContainsKey(instanceType)
                     && this._container[instanceType] != null
@@ -480,16 +425,6 @@ namespace DevLib.Ioc
                     return false;
                 }
             }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-
-                return false;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
         }
 
         /// <summary>
@@ -503,9 +438,7 @@ namespace DevLib.Ioc
 
             Type instanceType = typeof(T);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this._container.ContainsKey(instanceType)
                     && this._container[instanceType] != null)
@@ -519,16 +452,6 @@ namespace DevLib.Ioc
                     return false;
                 }
             }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-
-                return false;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
-            }
         }
 
         /// <summary>
@@ -538,9 +461,7 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 foreach (var item in this._container)
                 {
@@ -554,14 +475,6 @@ namespace DevLib.Ioc
                 }
 
                 this._container.Clear();
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -605,15 +518,12 @@ namespace DevLib.Ioc
                 ////    managedResource = null;
                 ////}
 
-                if (this._readerWriterLock != null)
+                lock (this._syncRoot)
                 {
-                    this._readerWriterLock.ReleaseLock();
-                    this._readerWriterLock = null;
-                }
-
-                if (this._container != null)
-                {
-                    this._container.Clear();
+                    if (this._container != null)
+                    {
+                        this._container.Clear();
+                    }
                 }
             }
 

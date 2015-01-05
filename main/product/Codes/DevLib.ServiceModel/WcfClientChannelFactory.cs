@@ -10,7 +10,6 @@ namespace DevLib.ServiceModel
     using System.Diagnostics.CodeAnalysis;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
-    using System.Threading;
 
     /// <summary>
     /// A factory that creates channels of different types that are used by clients to send messages to variously configured service endpoints.
@@ -29,9 +28,9 @@ namespace DevLib.ServiceModel
         private static readonly Dictionary<string, ChannelFactory<TChannel>> ChannelFactoryDictionary = new Dictionary<string, ChannelFactory<TChannel>>();
 
         /// <summary>
-        /// Field Lock.
+        /// Field SyncRoot.
         /// </summary>
-        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Creates a channel of a specified type to a specified endpoint address.
@@ -45,9 +44,12 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, string.Empty, string.Empty);
 
-                Lock.AcquireReaderLock(Timeout.Infinite);
+                if (ChannelFactoryDictionary.ContainsKey(key))
+                {
+                    return ChannelFactoryDictionary[key].CreateChannel();
+                }
 
-                try
+                lock (SyncRoot)
                 {
                     if (ChannelFactoryDictionary.ContainsKey(key))
                     {
@@ -55,32 +57,12 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                        ChannelFactory<TChannel> result = new ChannelFactory<TChannel>();
 
-                        try
-                        {
-                            if (ChannelFactoryDictionary.ContainsKey(key))
-                            {
-                                return ChannelFactoryDictionary[key].CreateChannel();
-                            }
-                            else
-                            {
-                                ChannelFactory<TChannel> result = new ChannelFactory<TChannel>();
+                        ChannelFactoryDictionary.Add(key, result);
 
-                                ChannelFactoryDictionary.Add(key, result);
-
-                                return result.CreateChannel();
-                            }
-                        }
-                        finally
-                        {
-                            Lock.DowngradeFromWriterLock(ref lockCookie);
-                        }
+                        return result.CreateChannel();
                     }
-                }
-                finally
-                {
-                    Lock.ReleaseReaderLock();
                 }
             }
             else
@@ -128,9 +110,12 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, endpointConfigurationName ?? string.Empty, string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
-                Lock.AcquireReaderLock(Timeout.Infinite);
+                if (ChannelFactoryDictionary.ContainsKey(key))
+                {
+                    return ChannelFactoryDictionary[key].CreateChannel();
+                }
 
-                try
+                lock (SyncRoot)
                 {
                     if (ChannelFactoryDictionary.ContainsKey(key))
                     {
@@ -138,34 +123,14 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                        ChannelFactory<TChannel> result = string.IsNullOrEmpty(remoteUri) ?
+                            new ChannelFactory<TChannel>(endpointConfigurationName) :
+                            new ChannelFactory<TChannel>(endpointConfigurationName, new EndpointAddress(remoteUri));
 
-                        try
-                        {
-                            if (ChannelFactoryDictionary.ContainsKey(key))
-                            {
-                                return ChannelFactoryDictionary[key].CreateChannel();
-                            }
-                            else
-                            {
-                                ChannelFactory<TChannel> result = string.IsNullOrEmpty(remoteUri) ?
-                                    new ChannelFactory<TChannel>(endpointConfigurationName) :
-                                    new ChannelFactory<TChannel>(endpointConfigurationName, new EndpointAddress(remoteUri));
+                        ChannelFactoryDictionary.Add(key, result);
 
-                                ChannelFactoryDictionary.Add(key, result);
-
-                                return result.CreateChannel();
-                            }
-                        }
-                        finally
-                        {
-                            Lock.DowngradeFromWriterLock(ref lockCookie);
-                        }
+                        return result.CreateChannel();
                     }
-                }
-                finally
-                {
-                    Lock.ReleaseReaderLock();
                 }
             }
             else
@@ -190,9 +155,12 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, binding.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
-                Lock.AcquireReaderLock(Timeout.Infinite);
+                if (ChannelFactoryDictionary.ContainsKey(key))
+                {
+                    return ChannelFactoryDictionary[key].CreateChannel();
+                }
 
-                try
+                lock (SyncRoot)
                 {
                     if (ChannelFactoryDictionary.ContainsKey(key))
                     {
@@ -200,32 +168,12 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                        ChannelFactory<TChannel> result = new ChannelFactory<TChannel>(binding, new EndpointAddress(remoteUri));
 
-                        try
-                        {
-                            if (ChannelFactoryDictionary.ContainsKey(key))
-                            {
-                                return ChannelFactoryDictionary[key].CreateChannel();
-                            }
-                            else
-                            {
-                                ChannelFactory<TChannel> result = new ChannelFactory<TChannel>(binding, new EndpointAddress(remoteUri));
+                        ChannelFactoryDictionary.Add(key, result);
 
-                                ChannelFactoryDictionary.Add(key, result);
-
-                                return result.CreateChannel();
-                            }
-                        }
-                        finally
-                        {
-                            Lock.DowngradeFromWriterLock(ref lockCookie);
-                        }
+                        return result.CreateChannel();
                     }
-                }
-                finally
-                {
-                    Lock.ReleaseReaderLock();
                 }
             }
             else
@@ -248,9 +196,12 @@ namespace DevLib.ServiceModel
             {
                 string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, bindingType.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
-                Lock.AcquireReaderLock(Timeout.Infinite);
+                if (ChannelFactoryDictionary.ContainsKey(key))
+                {
+                    return ChannelFactoryDictionary[key].CreateChannel();
+                }
 
-                try
+                lock (SyncRoot)
                 {
                     if (ChannelFactoryDictionary.ContainsKey(key))
                     {
@@ -258,32 +209,12 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                        ChannelFactory<TChannel> result = new ChannelFactory<TChannel>(WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri));
 
-                        try
-                        {
-                            if (ChannelFactoryDictionary.ContainsKey(key))
-                            {
-                                return ChannelFactoryDictionary[key].CreateChannel();
-                            }
-                            else
-                            {
-                                ChannelFactory<TChannel> result = new ChannelFactory<TChannel>(WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri));
+                        ChannelFactoryDictionary.Add(key, result);
 
-                                ChannelFactoryDictionary.Add(key, result);
-
-                                return result.CreateChannel();
-                            }
-                        }
-                        finally
-                        {
-                            Lock.DowngradeFromWriterLock(ref lockCookie);
-                        }
+                        return result.CreateChannel();
                     }
-                }
-                finally
-                {
-                    Lock.ReleaseReaderLock();
                 }
             }
             else

@@ -19,6 +19,11 @@ namespace DevLib.Net.Sockets
     public class AsyncSocketTcpServer : MarshalByRefObject, IDisposable
     {
         /// <summary>
+        /// Field _syncRoot.
+        /// </summary>
+        private readonly object _syncRoot = new object();
+
+        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
@@ -36,17 +41,12 @@ namespace DevLib.Net.Sockets
         /// <summary>
         /// Thread-safe dictionary of connected socket client.
         /// </summary>
-        private Dictionary<int, SocketAsyncEventArgs> _sessionDictionary;
+        private readonly Dictionary<int, SocketAsyncEventArgs> _sessionDictionary=new Dictionary<int,SocketAsyncEventArgs>();
 
         /// <summary>
         /// Field _acceptSocketAsyncEventArgs.
         /// </summary>
         private SocketAsyncEventArgs _acceptSocketAsyncEventArgs;
-
-        /// <summary>
-        /// Field _readerWriterLock.
-        /// </summary>
-        private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
 
         /// <summary>
         /// Counter of the total bytes received by AsyncSocketTcpServer.
@@ -77,8 +77,6 @@ namespace DevLib.Net.Sockets
             this.LocalPort = port;
             this.BufferSize = bufferSize;
             this.UseIPv6 = useIPv6;
-
-            this._sessionDictionary = new Dictionary<int, SocketAsyncEventArgs>();
         }
 
         /// <summary>
@@ -287,7 +285,6 @@ namespace DevLib.Net.Sockets
                     this.CloseAcceptSocketAsyncEventArgs();
                     this.CloseListenSocket();
                     this.ClearSessionDictionary();
-                    this._readerWriterLock.ReleaseLock();
 
                     Debug.WriteLine(AsyncSocketTcpServerConstants.TcpServerStopSucceeded);
 
@@ -335,19 +332,12 @@ namespace DevLib.Net.Sockets
 
             SocketAsyncEventArgs sessionSocketAsyncEventArgs = null;
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                this._sessionDictionary.TryGetValue(sessionId, out sessionSocketAsyncEventArgs);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
+                if (this._sessionDictionary.ContainsKey(sessionId))
+                {
+                    sessionSocketAsyncEventArgs = this._sessionDictionary[sessionId];
+                }
             }
 
             if (sessionSocketAsyncEventArgs != null)
@@ -373,9 +363,7 @@ namespace DevLib.Net.Sockets
 
             Dictionary<int, IPEndPoint> result = new Dictionary<int, IPEndPoint>();
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 foreach (KeyValuePair<int, SocketAsyncEventArgs> item in this._sessionDictionary)
                 {
@@ -397,14 +385,6 @@ namespace DevLib.Net.Sockets
                     }
                 }
             }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
-            }
 
             return result;
         }
@@ -423,58 +403,23 @@ namespace DevLib.Net.Sockets
                 return false;
             }
 
-            SocketAsyncEventArgs sessionSocketAsyncEventArgs = null;
-
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                this._sessionDictionary.TryGetValue(sessionId, out sessionSocketAsyncEventArgs);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
-            }
-
-            if (sessionSocketAsyncEventArgs != null)
-            {
-                IPEndPoint sessionIPEndPoint = null;
-
-                try
+                if (this._sessionDictionary.ContainsKey(sessionId))
                 {
-                    sessionIPEndPoint = (sessionSocketAsyncEventArgs.UserToken as Socket).RemoteEndPoint as IPEndPoint;
-                }
-                catch
-                {
-                }
+                    SocketAsyncEventArgs sessionSocketAsyncEventArgs = this._sessionDictionary[sessionId];
 
-                this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-                try
-                {
-                    if (this._sessionDictionary.ContainsKey(sessionId))
-                    {
-                        this._sessionDictionary.Remove(sessionId);
-                        Interlocked.Decrement(ref this._connectedSocketsCount);
-                    }
+                    IPEndPoint sessionIPEndPoint = (sessionSocketAsyncEventArgs.UserToken as Socket).RemoteEndPoint as IPEndPoint;
 
                     this.CloseSessionSocketAsyncEventArgs(sessionSocketAsyncEventArgs);
 
                     this.RaiseEvent(this.Disconnected, new AsyncSocketSessionEventArgs(sessionId, sessionIPEndPoint));
 
+                    this._sessionDictionary.Remove(sessionId);
+
+                    Interlocked.Decrement(ref this._connectedSocketsCount);
+
                     return true;
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseWriterLock();
                 }
             }
 
@@ -499,19 +444,12 @@ namespace DevLib.Net.Sockets
 
             SocketAsyncEventArgs sessionSocketAsyncEventArgs = null;
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                this._sessionDictionary.TryGetValue(sessionId, out sessionSocketAsyncEventArgs);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
+                if (this._sessionDictionary.ContainsKey(sessionId))
+                {
+                    sessionSocketAsyncEventArgs = this._sessionDictionary[sessionId];
+                }
             }
 
             if (sessionSocketAsyncEventArgs != null)
@@ -623,8 +561,6 @@ namespace DevLib.Net.Sockets
                 {
                     this._acceptSocketAsyncEventArgs = null;
                     this._listenSocket = null;
-                    this._sessionDictionary = null;
-                    this._readerWriterLock.ReleaseLock();
                 }
             }
 
@@ -714,9 +650,7 @@ namespace DevLib.Net.Sockets
 
             if (this._sessionDictionary != null)
             {
-                this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     foreach (KeyValuePair<int, SocketAsyncEventArgs> item in this._sessionDictionary)
                     {
@@ -727,14 +661,6 @@ namespace DevLib.Net.Sockets
                     }
 
                     this._sessionDictionary.Clear();
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseWriterLock();
                 }
             }
         }
@@ -826,46 +752,44 @@ namespace DevLib.Net.Sockets
                     int sessionId = receiveSocketAsyncEventArgs.UserToken.GetHashCode();
                     IPEndPoint sessionIPEndPoint = this._acceptSocketAsyncEventArgs.AcceptSocket.RemoteEndPoint as IPEndPoint;
 
-                    this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-                    try
+                    lock (this._syncRoot)
                     {
-                        if (!this._sessionDictionary.ContainsKey(sessionId))
+                        try
                         {
-                            this._sessionDictionary.Add(sessionId, receiveSocketAsyncEventArgs);
-                            Interlocked.Increment(ref this._connectedSocketsCount);
+                            if (!this._sessionDictionary.ContainsKey(sessionId))
+                            {
+                                this._sessionDictionary.Add(sessionId, receiveSocketAsyncEventArgs);
+                                Interlocked.Increment(ref this._connectedSocketsCount);
+                            }
+                            else
+                            {
+                                this._sessionDictionary[sessionId] = receiveSocketAsyncEventArgs;
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
-                            this._sessionDictionary[sessionId] = receiveSocketAsyncEventArgs;
-                        }
+                            InternalLogger.Log(e);
 
-                        if (this._connectedSocketsCount > this.PeakConnectedSocketsCount)
-                        {
-                            this.PeakConnectedSocketsCount = Interlocked.Read(ref this._connectedSocketsCount);
+                            this.RaiseEvent(
+                                            this.ErrorOccurred,
+                                            new AsyncSocketErrorEventArgs(
+                                                                          AsyncSocketTcpServerConstants.TcpServerAcceptSessionException,
+                                                                          e,
+                                                                          AsyncSocketErrorCodeEnum.TcpServerAcceptSessionException));
                         }
-
-                        this.RaiseEvent(this.Connected, new AsyncSocketSessionEventArgs(sessionId, sessionIPEndPoint));
                     }
-                    catch (Exception e)
+
+                    if (this._connectedSocketsCount > this.PeakConnectedSocketsCount)
                     {
-                        InternalLogger.Log(e);
+                        this.PeakConnectedSocketsCount = Interlocked.Read(ref this._connectedSocketsCount);
+                    }
 
-                        this.RaiseEvent(
-                                        this.ErrorOccurred,
-                                        new AsyncSocketErrorEventArgs(
-                                                                      AsyncSocketTcpServerConstants.TcpServerAcceptSessionException,
-                                                                      e,
-                                                                      AsyncSocketErrorCodeEnum.TcpServerAcceptSessionException));
-                    }
-                    finally
-                    {
-                        this._readerWriterLock.ReleaseWriterLock();
-                    }
+                    this.RaiseEvent(this.Connected, new AsyncSocketSessionEventArgs(sessionId, sessionIPEndPoint));
 
                     try
                     {
                         bool willRaiseEvent = this._acceptSocketAsyncEventArgs.AcceptSocket.ReceiveAsync(receiveSocketAsyncEventArgs);
+
                         if (!willRaiseEvent)
                         {
                             this.ProcessReceive(receiveSocketAsyncEventArgs);
@@ -1023,28 +947,18 @@ namespace DevLib.Net.Sockets
                 {
                 }
 
-                this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     if (this._sessionDictionary.ContainsKey(sessionId))
                     {
                         this._sessionDictionary.Remove(sessionId);
                         Interlocked.Decrement(ref this._connectedSocketsCount);
                     }
+                }
 
-                    this.CloseSessionSocketAsyncEventArgs(receiveSocketAsyncEventArgs);
+                this.CloseSessionSocketAsyncEventArgs(receiveSocketAsyncEventArgs);
 
-                    this.RaiseEvent(this.Disconnected, new AsyncSocketSessionEventArgs(sessionId, sessionIPEndPoint));
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseWriterLock();
-                }
+                this.RaiseEvent(this.Disconnected, new AsyncSocketSessionEventArgs(sessionId, sessionIPEndPoint));
             }
         }
 

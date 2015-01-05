@@ -7,7 +7,6 @@ namespace DevLib.ServiceModel
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading;
 
     /// <summary>
     /// Class WcfClientType.
@@ -20,9 +19,9 @@ namespace DevLib.ServiceModel
         private static readonly Dictionary<string, Type> TypeDictionary = new Dictionary<string, Type>();
 
         /// <summary>
-        /// Field Lock.
+        /// Field SyncRoot.
         /// </summary>
-        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Gets or sets a value indicating whether save generated assembly file or not.
@@ -45,9 +44,12 @@ namespace DevLib.ServiceModel
         {
             string typeName = typeof(TChannel).FullName.Replace(".", string.Empty) + typeof(TTypeBuilder).Name;
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (TypeDictionary.ContainsKey(typeName))
+            {
+                return TypeDictionary[typeName];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (TypeDictionary.ContainsKey(typeName))
                 {
@@ -55,32 +57,12 @@ namespace DevLib.ServiceModel
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    Type result = new TTypeBuilder().GenerateType(typeName);
 
-                    try
-                    {
-                        if (TypeDictionary.ContainsKey(typeName))
-                        {
-                            return TypeDictionary[typeName];
-                        }
-                        else
-                        {
-                            Type result = new TTypeBuilder().GenerateType(typeName);
+                    TypeDictionary.Add(typeName, result);
 
-                            TypeDictionary.Add(typeName, result);
-
-                            return TypeDictionary[typeName];
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
     }

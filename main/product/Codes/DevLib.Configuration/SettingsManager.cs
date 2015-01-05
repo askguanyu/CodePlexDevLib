@@ -8,7 +8,6 @@ namespace DevLib.Configuration
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading;
 
     /// <summary>
     /// Provides access to customized configuration files for applications. This class cannot be inherited.
@@ -21,9 +20,9 @@ namespace DevLib.Configuration
         private static readonly Dictionary<string, Settings> SettingsDictionary = new Dictionary<string, Settings>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Field Lock.
+        /// Field SyncRoot.
         /// </summary>
-        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Opens the configuration file for the current application.
@@ -39,9 +38,12 @@ namespace DevLib.Configuration
 
             string key = Path.GetFullPath(configFile);
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (SettingsDictionary.ContainsKey(key))
+            {
+                return SettingsDictionary[key];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (SettingsDictionary.ContainsKey(key))
                 {
@@ -49,32 +51,12 @@ namespace DevLib.Configuration
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    Settings result = new Settings(key);
 
-                    try
-                    {
-                        if (SettingsDictionary.ContainsKey(key))
-                        {
-                            return SettingsDictionary[key];
-                        }
-                        else
-                        {
-                            Settings result = new Settings(key);
+                    SettingsDictionary.Add(key, result);
 
-                            SettingsDictionary.Add(key, result);
-
-                            return result;
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
     }

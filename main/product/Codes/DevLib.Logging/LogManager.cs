@@ -6,7 +6,6 @@
 namespace DevLib.Logging
 {
     using System.Collections.Generic;
-    using System.Threading;
 
     /// <summary>
     /// Provides access to log for applications. This class cannot be inherited.
@@ -19,9 +18,9 @@ namespace DevLib.Logging
         private static readonly Dictionary<int, Logger> LoggerDictionary = new Dictionary<int, Logger>();
 
         /// <summary>
-        /// Field Lock.
+        /// Field SyncRoot.
         /// </summary>
-        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Opens the log file for the current application.
@@ -39,9 +38,12 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (LoggerDictionary.ContainsKey(key))
+            {
+                return LoggerDictionary[key];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -49,32 +51,12 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    Logger result = new Logger(logConfig);
 
-                    try
-                    {
-                        if (LoggerDictionary.ContainsKey(key))
-                        {
-                            return LoggerDictionary[key];
-                        }
-                        else
-                        {
-                            Logger result = new Logger(logConfig);
+                    LoggerDictionary.Add(key, result);
 
-                            LoggerDictionary.Add(key, result);
-
-                            return result;
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
 
@@ -100,9 +82,12 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (LoggerDictionary.ContainsKey(key))
+            {
+                return LoggerDictionary[key];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -110,32 +95,12 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    Logger result = new Logger(logConfig);
 
-                    try
-                    {
-                        if (LoggerDictionary.ContainsKey(key))
-                        {
-                            return LoggerDictionary[key];
-                        }
-                        else
-                        {
-                            Logger result = new Logger(logConfig);
+                    LoggerDictionary.Add(key, result);
 
-                            LoggerDictionary.Add(key, result);
-
-                            return result;
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
 
@@ -159,9 +124,12 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (LoggerDictionary.ContainsKey(key))
+            {
+                return LoggerDictionary[key];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -169,32 +137,12 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    Logger result = new Logger(logConfig);
 
-                    try
-                    {
-                        if (LoggerDictionary.ContainsKey(key))
-                        {
-                            return LoggerDictionary[key];
-                        }
-                        else
-                        {
-                            Logger result = new Logger(logConfig);
+                    LoggerDictionary.Add(key, result);
 
-                            LoggerDictionary.Add(key, result);
-
-                            return result;
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
 
@@ -210,9 +158,12 @@ namespace DevLib.Logging
 
             int key = logConfig.GetHashCode();
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (LoggerDictionary.ContainsKey(key))
+            {
+                return LoggerDictionary[key];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -220,32 +171,12 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    Logger result = new Logger(logConfig);
 
-                    try
-                    {
-                        if (LoggerDictionary.ContainsKey(key))
-                        {
-                            return LoggerDictionary[key];
-                        }
-                        else
-                        {
-                            Logger result = new Logger(logConfig);
+                    LoggerDictionary.Add(key, result);
 
-                            LoggerDictionary.Add(key, result);
-
-                            return result;
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
 
@@ -260,9 +191,12 @@ namespace DevLib.Logging
 
             int key = logConfigInfo.GetHashCode();
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (LoggerDictionary.ContainsKey(key))
+            {
+                return LoggerDictionary[key];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (LoggerDictionary.ContainsKey(key))
                 {
@@ -270,32 +204,12 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    Logger result = new Logger(logConfigInfo);
 
-                    try
-                    {
-                        if (LoggerDictionary.ContainsKey(key))
-                        {
-                            return LoggerDictionary[key];
-                        }
-                        else
-                        {
-                            Logger result = new Logger(logConfigInfo);
+                    LoggerDictionary.Add(key, result);
 
-                            LoggerDictionary.Add(key, result);
-
-                            return result;
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
     }

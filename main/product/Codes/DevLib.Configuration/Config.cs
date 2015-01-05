@@ -8,13 +8,17 @@ namespace DevLib.Configuration
     using System;
     using System.Collections.Generic;
     using System.Configuration;
-    using System.Threading;
 
     /// <summary>
     /// Represents a configuration file that is applicable to a particular application. This class cannot be inherited.
     /// </summary>
     public sealed class Config
     {
+        /// <summary>
+        /// Field _syncRoot.
+        /// </summary>
+        private readonly object _syncRoot = new object();
+
         /// <summary>
         /// Field _configuration.
         /// </summary>
@@ -24,11 +28,6 @@ namespace DevLib.Configuration
         /// Field _settings.
         /// </summary>
         private Settings _settings;
-
-        /// <summary>
-        /// Field _readerWriterLock.
-        /// </summary>
-        private ReaderWriterLock _readerWriterLock = new ReaderWriterLock();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Config" /> class.
@@ -66,15 +65,9 @@ namespace DevLib.Configuration
         {
             get
             {
-                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     return this._configuration.AppSettings.Settings.Count + this._settings.Count;
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -86,18 +79,12 @@ namespace DevLib.Configuration
         {
             get
             {
-                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     List<string> result = new List<string>();
                     result.AddRange(this._configuration.AppSettings.Settings.AllKeys);
                     result.AddRange(this._settings.Keys);
                     return result.ToArray();
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -109,9 +96,7 @@ namespace DevLib.Configuration
         {
             get
             {
-                this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-                try
+                lock (this._syncRoot)
                 {
                     List<object> result = new List<object>();
 
@@ -123,10 +108,6 @@ namespace DevLib.Configuration
                     result.AddRange(this._settings.Values);
 
                     return result.ToArray();
-                }
-                finally
-                {
-                    this._readerWriterLock.ReleaseReaderLock();
                 }
             }
         }
@@ -159,27 +140,24 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("Config.ConfigFile", "Didn't specify a configuration file.");
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (this._settings.Count > 0)
+                try
                 {
-                    this._configuration.Sections.Remove("settings");
-                    this._configuration.Sections.Add("settings", new DefaultSection());
-                    this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
-                }
+                    if (this._settings.Count > 0)
+                    {
+                        this._configuration.Sections.Remove("settings");
+                        this._configuration.Sections.Add("settings", new DefaultSection());
+                        this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+                    }
 
-                this._configuration.Save(ConfigurationSaveMode.Minimal, false);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                    this._configuration.Save(ConfigurationSaveMode.Minimal, false);
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                    throw;
+                }
             }
         }
 
@@ -194,27 +172,24 @@ namespace DevLib.Configuration
                 throw new ArgumentNullException("filename", "Didn't specify a configuration file.");
             }
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                if (this._settings.Count > 0)
+                try
                 {
-                    this._configuration.Sections.Remove("settings");
-                    this._configuration.Sections.Add("settings", new DefaultSection());
-                    this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
-                }
+                    if (this._settings.Count > 0)
+                    {
+                        this._configuration.Sections.Remove("settings");
+                        this._configuration.Sections.Add("settings", new DefaultSection());
+                        this._configuration.Sections["settings"].SectionInformation.SetRawXml(this._settings.GetRawXml());
+                    }
 
-                this._configuration.SaveAs(filename, ConfigurationSaveMode.Minimal, false);
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-                throw;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                    this._configuration.SaveAs(filename, ConfigurationSaveMode.Minimal, false);
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                    throw;
+                }
             }
         }
 
@@ -227,14 +202,12 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            if (XmlConverter.CanConvert(value.GetType()))
             {
-                if (XmlConverter.CanConvert(value.GetType()))
-                {
-                    string valueString = XmlConverter.ToString(value);
+                string valueString = XmlConverter.ToString(value);
 
+                lock (this._syncRoot)
+                {
                     if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
                     {
                         this._configuration.AppSettings.Settings[key].Value = valueString;
@@ -246,16 +219,15 @@ namespace DevLib.Configuration
 
                     this._settings.Remove(key);
                 }
-                else
+            }
+            else
+            {
+                lock (this._syncRoot)
                 {
                     this._settings.SetValue(key, value);
 
                     this._configuration.AppSettings.Settings.Remove(key);
                 }
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -274,9 +246,7 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
                 {
@@ -306,10 +276,6 @@ namespace DevLib.Configuration
 
                 throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
             }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
-            }
         }
 
         /// <summary>
@@ -328,9 +294,7 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
                 {
@@ -360,10 +324,6 @@ namespace DevLib.Configuration
 
                 throw new KeyNotFoundException(string.Format(ConfigurationConstants.KeyNotFoundExceptionStringFormat, key));
             }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
-            }
         }
 
         /// <summary>
@@ -383,9 +343,7 @@ namespace DevLib.Configuration
                 this.Refresh();
             }
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 if (this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key))
                 {
@@ -406,14 +364,6 @@ namespace DevLib.Configuration
 
                 return defaultValue;
             }
-            catch
-            {
-                return defaultValue;
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
-            }
         }
 
         /// <summary>
@@ -424,17 +374,10 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._configuration.AppSettings.Settings.Remove(key);
-
                 this._settings.Remove(key);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -443,16 +386,10 @@ namespace DevLib.Configuration
         /// </summary>
         public void Clear()
         {
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 this._configuration.AppSettings.Settings.Clear();
                 this._settings.Clear();
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
             }
         }
 
@@ -465,15 +402,9 @@ namespace DevLib.Configuration
         {
             this.CheckNullKey(key);
 
-            this._readerWriterLock.AcquireReaderLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
                 return this.ArrayContains(this._configuration.AppSettings.Settings.AllKeys, key) || this._settings.Contains(key);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseReaderLock();
             }
         }
 
@@ -482,24 +413,21 @@ namespace DevLib.Configuration
         /// </summary>
         public void Refresh()
         {
-            this._readerWriterLock.AcquireWriterLock(Timeout.Infinite);
-
-            try
+            lock (this._syncRoot)
             {
-                this._configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = this.ConfigFile }, ConfigurationUserLevel.None);
-
-                if (this._configuration.Sections["settings"] != null)
+                try
                 {
-                    this._settings.SetRawXml(this._configuration.Sections["settings"].SectionInformation.GetRawXml());
+                    this._configuration = ConfigurationManager.OpenMappedExeConfiguration(new ExeConfigurationFileMap() { ExeConfigFilename = this.ConfigFile }, ConfigurationUserLevel.None);
+
+                    if (this._configuration.Sections["settings"] != null)
+                    {
+                        this._settings.SetRawXml(this._configuration.Sections["settings"].SectionInformation.GetRawXml());
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                InternalLogger.Log(e);
-            }
-            finally
-            {
-                this._readerWriterLock.ReleaseWriterLock();
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
             }
         }
 

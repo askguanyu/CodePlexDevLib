@@ -8,7 +8,6 @@ namespace DevLib.Configuration
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading;
 
     /// <summary>
     /// Provides access to ini files for applications. This class cannot be inherited.
@@ -21,9 +20,9 @@ namespace DevLib.Configuration
         private static readonly Dictionary<string, IniEntry> IniDictionary = new Dictionary<string, IniEntry>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Field Lock.
+        /// Field SyncRoot.
         /// </summary>
-        private static readonly ReaderWriterLock Lock = new ReaderWriterLock();
+        private static readonly object SyncRoot = new object();
 
         /// <summary>
         /// Opens the ini file for the current application.
@@ -39,9 +38,12 @@ namespace DevLib.Configuration
 
             string key = Path.GetFullPath(iniFile);
 
-            Lock.AcquireReaderLock(Timeout.Infinite);
+            if (IniDictionary.ContainsKey(key))
+            {
+                return IniDictionary[key];
+            }
 
-            try
+            lock (SyncRoot)
             {
                 if (IniDictionary.ContainsKey(key))
                 {
@@ -49,32 +51,12 @@ namespace DevLib.Configuration
                 }
                 else
                 {
-                    LockCookie lockCookie = Lock.UpgradeToWriterLock(Timeout.Infinite);
+                    IniEntry result = new IniEntry(key);
 
-                    try
-                    {
-                        if (IniDictionary.ContainsKey(key))
-                        {
-                            return IniDictionary[key];
-                        }
-                        else
-                        {
-                            IniEntry result = new IniEntry(key);
+                    IniDictionary.Add(key, result);
 
-                            IniDictionary.Add(key, result);
-
-                            return result;
-                        }
-                    }
-                    finally
-                    {
-                        Lock.DowngradeFromWriterLock(ref lockCookie);
-                    }
+                    return result;
                 }
-            }
-            finally
-            {
-                Lock.ReleaseReaderLock();
             }
         }
     }

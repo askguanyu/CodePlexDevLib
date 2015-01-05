@@ -78,7 +78,7 @@ namespace DevLib.Configuration
             {
                 lock (this._syncRoot)
                 {
-                    return this._sections;
+                    return new Dictionary<string, Dictionary<string, string>>(this._sections, StringComparer.OrdinalIgnoreCase);
                 }
             }
         }

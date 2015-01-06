@@ -19,9 +19,24 @@ namespace DevLib.Remoting
     internal static class InternalLogger
     {
         /// <summary>
+        /// Field ExecutingAssembly.
+        /// </summary>
+        private static readonly string ExecutingAssembly = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
+
+        /// <summary>
+        /// Field GlobalDebugFlagFile.
+        /// </summary>
+        private static readonly string GlobalDebugFlagFile = Path.Combine(Path.GetDirectoryName(ExecutingAssembly), "DevLib#Debug");
+
+        /// <summary>
+        /// Field DebugFlagFile.
+        /// </summary>
+        private static readonly string DebugFlagFile = ExecutingAssembly + "#Debug";
+
+        /// <summary>
         /// Field LogFile.
         /// </summary>
-        private static readonly string LogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".log"));
+        private static readonly string LogFile = ExecutingAssembly + ".log";
 
         /// <summary>
         /// Field LogFileBackup.
@@ -57,6 +72,27 @@ namespace DevLib.Remoting
                         {
                             Debug.WriteLine(e.ToString());
                             Console.WriteLine(e.ToString());
+                        }
+                    }
+                }
+            }
+#else
+            if (File.Exists(GlobalDebugFlagFile) || File.Exists(DebugFlagFile))
+            {
+                if (objs != null)
+                {
+                    lock (SyncRoot)
+                    {
+                        if (objs != null)
+                        {
+                            try
+                            {
+                                string message = RenderLog(objs);
+                                AppendToFile(message);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }

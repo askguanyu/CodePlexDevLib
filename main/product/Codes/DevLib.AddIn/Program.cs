@@ -277,9 +277,24 @@ args[4] = Redirect output or not");
     internal static class ProgramInternalLogger
     {
         /// <summary>
+        /// Field ExecutingAssembly.
+        /// </summary>
+        private static readonly string ExecutingAssembly = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
+
+        /// <summary>
+        /// Field GlobalDebugFlagFile.
+        /// </summary>
+        private static readonly string GlobalDebugFlagFile = Path.Combine(Path.GetDirectoryName(ExecutingAssembly), "DevLib#Debug");
+
+        /// <summary>
+        /// Field DebugFlagFile.
+        /// </summary>
+        private static readonly string DebugFlagFile = ExecutingAssembly + "#Debug";
+
+        /// <summary>
         /// Field LogFile.
         /// </summary>
-        private static readonly string LogFile = Path.GetFullPath(Assembly.GetExecutingAssembly().Location + ".log");
+        private static readonly string LogFile = ExecutingAssembly + ".log";
 
         /// <summary>
         /// Field LogFileBackup.
@@ -298,6 +313,7 @@ args[4] = Redirect output or not");
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public static void Log(bool redirectOutput, params object[] objs)
         {
+#if DEBUG
             if (objs != null)
             {
                 lock (SyncRoot)
@@ -324,6 +340,34 @@ args[4] = Redirect output or not");
                     }
                 }
             }
+#else
+            if (File.Exists(GlobalDebugFlagFile) || File.Exists(DebugFlagFile))
+            {
+                if (objs != null)
+                {
+                    lock (SyncRoot)
+                    {
+                        if (objs != null)
+                        {
+                            try
+                            {
+                                string message = RenderLog(objs);
+
+                                if (redirectOutput)
+                                {
+                                    Console.WriteLine(message);
+                                }
+
+                                AppendToFile(message);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+#endif
         }
 
         /// <summary>

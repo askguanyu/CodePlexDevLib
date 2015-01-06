@@ -19,9 +19,24 @@ namespace DevLib.Samples
     internal static class InternalLogger
     {
         /// <summary>
+        /// Field ExecutingAssembly.
+        /// </summary>
+        private static readonly string ExecutingAssembly = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
+
+        /// <summary>
+        /// Field GlobalDebugFlagFile.
+        /// </summary>
+        private static readonly string GlobalDebugFlagFile = Path.Combine(Path.GetDirectoryName(ExecutingAssembly), "DevLib#Debug");
+
+        /// <summary>
+        /// Field DebugFlagFile.
+        /// </summary>
+        private static readonly string DebugFlagFile = ExecutingAssembly + "#Debug";
+
+        /// <summary>
         /// Field LogFile.
         /// </summary>
-        private static readonly string LogFile = Path.GetFullPath(Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".log"));
+        private static readonly string LogFile = ExecutingAssembly + ".log";
 
         /// <summary>
         /// Field LogFileBackup.
@@ -57,6 +72,27 @@ namespace DevLib.Samples
                         {
                             Debug.WriteLine(e.ToString());
                             Console.WriteLine(e.ToString());
+                        }
+                    }
+                }
+            }
+#else
+            if (File.Exists(GlobalDebugFlagFile) || File.Exists(DebugFlagFile))
+            {
+                if (objs != null)
+                {
+                    lock (SyncRoot)
+                    {
+                        if (objs != null)
+                        {
+                            try
+                            {
+                                string message = RenderLog(objs);
+                                AppendToFile(message);
+                            }
+                            catch
+                            {
+                            }
                         }
                     }
                 }
@@ -162,40 +198,46 @@ namespace DevLib.Samples
         /// <param name="message">Log message to append.</param>
         private static void AppendToFile(string message)
         {
-            FileStream fileStream = null;
-
             try
-            {
-                fileStream = new FileStream(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
-
-                if (fileStream.Length > 10485760)
-                {
-                    try
-                    {
-                        File.Copy(LogFile, LogFileBackup, true);
-                    }
-                    catch
-                    {
-                    }
-
-                    fileStream.SetLength(0);
-                }
-
-                byte[] bytes = Encoding.UTF8.GetBytes(message);
-
-                fileStream.Seek(0, SeekOrigin.End);
-                fileStream.Write(bytes, 0, bytes.Length);
-                fileStream.Flush();
-            }
-            catch
             {
             }
             finally
             {
-                if (fileStream != null)
+                FileStream fileStream = null;
+
+                try
                 {
-                    fileStream.Dispose();
-                    fileStream = null;
+                    fileStream = new FileStream(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+
+                    if (fileStream.Length > 10485760)
+                    {
+                        try
+                        {
+                            File.Copy(LogFile, LogFileBackup, true);
+                        }
+                        catch
+                        {
+                        }
+
+                        fileStream.SetLength(0);
+                    }
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(message);
+
+                    fileStream.Seek(0, SeekOrigin.End);
+                    fileStream.Write(bytes, 0, bytes.Length);
+                    fileStream.Flush();
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    if (fileStream != null)
+                    {
+                        fileStream.Dispose();
+                        fileStream = null;
+                    }
                 }
             }
         }

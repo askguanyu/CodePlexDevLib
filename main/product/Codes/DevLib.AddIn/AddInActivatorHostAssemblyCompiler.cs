@@ -46,7 +46,9 @@ namespace DevLib.AddIn
             CompilerResults results = null;
 
             List<string> compilerArgs = new List<string> { AddInPlatformTarget.GetPlatformTargetCompilerArgument(addInDomainSetup.Platform) };
-
+#if DEBUG
+            compilerArgs.Add("/define:DEBUG");
+#endif
             CompilerParameters compilerParameters = new CompilerParameters();
             compilerParameters.CompilerOptions = string.Join(" ", compilerArgs.ToArray());
             compilerParameters.GenerateExecutable = true;

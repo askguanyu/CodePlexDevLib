@@ -39,6 +39,11 @@ namespace DevLib.Logging
         private string _fileName;
 
         /// <summary>
+        /// Field _directoryName.
+        /// </summary>
+        private string _directoryName;
+
+        /// <summary>
         /// Field _fileInfo.
         /// </summary>
         private FileInfo _fileInfo;
@@ -59,13 +64,7 @@ namespace DevLib.Logging
             {
                 this._fileName = LogConfigManager.GetFileFullPath(filename);
 
-                try
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(this._fileName));
-                }
-                catch
-                {
-                }
+                this._directoryName = Path.GetDirectoryName(this._fileName);
 
                 this._fileInfo = new FileInfo(this._fileName);
 
@@ -94,98 +93,6 @@ namespace DevLib.Logging
         ~MutexMultiProcessFileAppender()
         {
             this.Dispose(false);
-        }
-
-        /// <summary>
-        /// Writes the specified bytes.
-        /// </summary>
-        /// <param name="bytes">The bytes to write.</param>
-        public void Write(byte[] bytes)
-        {
-            this.CheckDisposed();
-
-            if (this._mutex == null)
-            {
-                return;
-            }
-
-            if (bytes == null || bytes.Length < 1)
-            {
-                return;
-            }
-
-            try
-            {
-            }
-            finally
-            {
-                try
-                {
-                    this._mutex.WaitOne();
-                }
-                catch
-                {
-                }
-
-                try
-                {
-                    this.InternalWrite(bytes);
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    this._mutex.ReleaseMutex();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Writes the specified string.
-        /// </summary>
-        /// <param name="text">The string to write.</param>
-        public void Write(string text)
-        {
-            this.CheckDisposed();
-
-            if (this._mutex == null)
-            {
-                return;
-            }
-
-            if (text == null)
-            {
-                return;
-            }
-
-            try
-            {
-            }
-            finally
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(text);
-
-                try
-                {
-                    this._mutex.WaitOne();
-                }
-                catch
-                {
-                }
-
-                try
-                {
-                    this.InternalWrite(bytes);
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    this._mutex.ReleaseMutex();
-                }
-            }
         }
 
         /// <summary>
@@ -222,6 +129,7 @@ namespace DevLib.Logging
                 try
                 {
                     byte[] bytes = Encoding.UTF8.GetBytes(string.Join(string.Empty, lines));
+
                     this.InternalWrite(bytes);
                 }
                 catch
@@ -296,17 +204,65 @@ namespace DevLib.Logging
         /// <param name="bytes">The bytes to write.</param>
         private void InternalWrite(byte[] bytes)
         {
-            using (FileStream fileStream = new FileStream(this._fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
+            if (!Directory.Exists(this._directoryName))
+            {
+                try
+                {
+                    Directory.CreateDirectory(this._directoryName);
+                }
+                catch
+                {
+                }
+            }
+
+            bool isRolling = this.ProcessRollingFile(bytes.LongLength);
+
+            FileStream fileStream = null;
+
+            try
+            {
+                fileStream = new FileStream(this._fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+
+                if (isRolling)
+                {
+                    fileStream.SetLength(0);
+                }
+
+                fileStream.Seek(0, SeekOrigin.End);
+                fileStream.Write(bytes, 0, bytes.Length);
+                fileStream.Flush();
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if (fileStream != null)
+                {
+                    fileStream.Dispose();
+                    fileStream = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Processes the rolling file.
+        /// </summary>
+        /// <param name="byteCount">The byte count.</param>
+        /// <returns>true if created a rolling file; otherwise, false.</returns>
+        private bool ProcessRollingFile(long byteCount)
+        {
+            try
             {
                 if (this._loggerSetup.RollingByDate)
                 {
                     this._fileInfo.Refresh();
 
-                    if ((DateTime.Now.Subtract(this._fileInfo.LastWriteTime).Days > 0) || (this._loggerSetup.RollingFileSizeLimit > 0 && this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit))
+                    if (this._fileInfo.Exists && ((DateTime.Now.Subtract(this._fileInfo.LastWriteTime).Days > 0) || (this._loggerSetup.RollingFileSizeLimit > 0 && this._fileInfo.Length + byteCount > this._loggerSetup.RollingFileSizeLimit)))
                     {
-                        this.ProcessRollingByDateFile();
+                        this.ProcessRollingFileByDate();
 
-                        fileStream.SetLength(0);
+                        return true;
                     }
                 }
                 else
@@ -315,25 +271,26 @@ namespace DevLib.Logging
                     {
                         this._fileInfo.Refresh();
 
-                        if (this._fileInfo.Length + bytes.LongLength > this._loggerSetup.RollingFileSizeLimit)
+                        if (this._fileInfo.Exists && this._fileInfo.Length + byteCount > this._loggerSetup.RollingFileSizeLimit)
                         {
-                            this.ProcessRollingFile();
+                            this.ProcessRollingFileBySize();
 
-                            fileStream.SetLength(0);
+                            return true;
                         }
                     }
                 }
-
-                fileStream.Seek(0, SeekOrigin.End);
-                fileStream.Write(bytes, 0, bytes.Length);
-                fileStream.Flush();
             }
+            catch
+            {
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Method ProcessRollingByDateFile.
+        /// Processes the rolling file by date.
         /// </summary>
-        private void ProcessRollingByDateFile()
+        private void ProcessRollingFileByDate()
         {
             if (this._loggerSetup.RollingFileCountLimit == 0)
             {
@@ -413,9 +370,9 @@ namespace DevLib.Logging
         }
 
         /// <summary>
-        /// Method ProcessRollingFile.
+        /// Processes the rolling file by size.
         /// </summary>
-        private void ProcessRollingFile()
+        private void ProcessRollingFileBySize()
         {
             if (this._loggerSetup.RollingFileCountLimit == 0)
             {

@@ -55,40 +55,6 @@ namespace DevLib.Logging
         /// Initializes a new instance of the <see cref="Logger" /> class.
         /// </summary>
         /// <param name="logFile">Log file.</param>
-        internal Logger(string logFile)
-        {
-            this._logFile = logFile;
-
-            this._loggerSetup = LoggerSetup.DefaultSetup;
-
-            if (this._loggerSetup.WriteToFile)
-            {
-                try
-                {
-                    this._fileAppender = new MutexMultiProcessFileAppender(this._logFile, this._loggerSetup);
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
-                }
-            }
-
-            if (this._loggerSetup.WriteToFile && this._fileAppender != null)
-            {
-                this._queueWaitHandle = new AutoResetEvent(false);
-
-                this._queue = new Queue<string>();
-
-                this._consumerThread = new Thread(this.ConsumerThread);
-                this._consumerThread.IsBackground = true;
-                this._consumerThread.Start();
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Logger" /> class.
-        /// </summary>
-        /// <param name="logFile">Log file.</param>
         /// <param name="loggerSetup">Log setup.</param>
         internal Logger(string logFile, LoggerSetup loggerSetup)
         {
@@ -118,6 +84,15 @@ namespace DevLib.Logging
                 this._consumerThread.IsBackground = true;
                 this._consumerThread.Start();
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Logger" /> class.
+        /// </summary>
+        /// <param name="logFile">Log file.</param>
+        internal Logger(string logFile)
+            : this(logFile, LoggerSetup.DefaultSetup)
+        {
         }
 
         /// <summary>

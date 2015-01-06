@@ -212,7 +212,7 @@ namespace DevLib.ServiceProcess
                 try
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
-                    startInfo.Arguments = string.Format(" /c  {0}", string.Format("sc failure \"{0}\" reset= 60 actions= restart/300000", this.InstallerSetupInfo.ServiceName));
+                    startInfo.Arguments = string.Format(" /C {0}", string.Format("sc failure \"{0}\" reset= 60 actions= restart/300000", this.InstallerSetupInfo.ServiceName));
                     startInfo.CreateNoWindow = true;
                     startInfo.ErrorDialog = false;
                     startInfo.UseShellExecute = true;

@@ -99,6 +99,8 @@ namespace DevLib.ServiceProcess
         {
             this.WriteToConsole(ConsoleColor.Yellow, "[Launching Windows Service in console...]");
             this.WriteServiceInfo();
+            Console.WriteLine();
+            this.WriteCommandInfo();
 
             bool canContinue = true;
 
@@ -109,8 +111,6 @@ namespace DevLib.ServiceProcess
 
             while (canContinue)
             {
-                Console.WriteLine();
-                this.WriteCommandInfo();
                 canContinue = this.HandleConsoleInput(Console.ReadLine());
             }
 
@@ -136,89 +136,123 @@ namespace DevLib.ServiceProcess
         {
             bool canContinue = true;
 
-            Console.WriteLine();
+            input = input == null ? null : input.Trim();
 
-            if (!string.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(input))
             {
-                if (input.StartsWith("n ", true, CultureInfo.InvariantCulture) && input.Length > 2)
+                Console.WriteLine();
+                this.WriteCommandInfo();
+                return canContinue;
+            }
+
+            if (input.StartsWith("n ", true, CultureInfo.InvariantCulture) && input.Length > 2)
+            {
+                this._setupInfo.ServiceName = input.Substring(2);
+                this._setupInfo.DisplayName = this._setupInfo.ServiceName;
+            }
+            else if (input.StartsWith("i ", true, CultureInfo.InvariantCulture) && input.Length > 2)
+            {
+                this._setupInfo.ServiceName = input.Substring(2);
+                this._setupInfo.DisplayName = this._setupInfo.ServiceName;
+                this.Install();
+            }
+            else if (input.StartsWith("u ", true, CultureInfo.InvariantCulture) && input.Length > 2)
+            {
+                this._setupInfo.ServiceName = input.Substring(2);
+                this._setupInfo.DisplayName = this._setupInfo.ServiceName;
+                this.Uninstall();
+            }
+            else
+            {
+                switch (input.ToLowerInvariant())
                 {
-                    this._setupInfo.ServiceName = input.Substring(2);
-                    this._setupInfo.DisplayName = this._setupInfo.ServiceName;
-                }
-                else if (input.StartsWith("i ", true, CultureInfo.InvariantCulture) && input.Length > 2)
-                {
-                    this._setupInfo.ServiceName = input.Substring(2);
-                    this._setupInfo.DisplayName = this._setupInfo.ServiceName;
-                    this.Install();
-                }
-                else if (input.StartsWith("u ", true, CultureInfo.InvariantCulture) && input.Length > 2)
-                {
-                    this._setupInfo.ServiceName = input.Substring(2);
-                    this._setupInfo.DisplayName = this._setupInfo.ServiceName;
-                    this.Uninstall();
-                }
-                else
-                {
-                    switch (input.ToLowerInvariant())
-                    {
-                        case "o":
-                            this._setupInfo.ServiceName = this._windowsService.ServiceSetupInfo.ServiceName;
-                            this._setupInfo.DisplayName = this._windowsService.ServiceSetupInfo.DisplayName;
-                            break;
+                    case "o":
+                        this._setupInfo.ServiceName = this._windowsService.ServiceSetupInfo.ServiceName;
+                        this._setupInfo.DisplayName = this._windowsService.ServiceSetupInfo.DisplayName;
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "s":
-                            this.Start();
-                            break;
+                    case "s":
+                        this.Start();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "t":
-                            this.Stop();
-                            break;
+                    case "t":
+                        this.Stop();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "p":
-                            this.Pause();
-                            break;
+                    case "p":
+                        this.Pause();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "r":
-                            this.Resume();
-                            break;
+                    case "r":
+                        this.Resume();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "e":
-                            this.Restart();
-                            break;
+                    case "e":
+                        this.Restart();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "c":
-                            this.IsConsoleMode = true;
-                            break;
+                    case "c":
+                        this.IsConsoleMode = true;
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "v":
-                            this.IsConsoleMode = false;
-                            break;
+                    case "v":
+                        this.IsConsoleMode = false;
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "i":
-                            this.Install();
-                            break;
+                    case "i":
+                        this.Install();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "u":
-                            this.Uninstall();
-                            break;
+                    case "u":
+                        this.Uninstall();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "a":
-                            this.WriteServiceInfo();
-                            break;
+                    case "a":
+                        Console.WriteLine();
+                        this.WriteServiceInfo();
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
 
-                        case "q":
-                            canContinue = false;
-                            break;
+                    case "q":
+                        canContinue = false;
+                        break;
 
-                        case "\r":
-                        case "\n":
-                        case "\r\n":
-                            break;
+                    case "\r":
+                    case "\n":
+                    case "\r\n":
+                        this.WriteCommandInfo();
+                        break;
 
-                        default:
-                            this.WriteToConsole(ConsoleColor.Red, string.Format("\"{0}\" is not recognized as a valid command.", input), true, false);
-                            break;
-                    }
+                    case "cls":
+                        Console.Clear();
+                        break;
+
+                    default:
+                        this.WriteToConsole(ConsoleColor.Red, string.Format("\"{0}\" is not recognized as a valid command.", input), true, false);
+                        Console.WriteLine();
+                        this.WriteCommandInfo();
+                        break;
                 }
             }
 

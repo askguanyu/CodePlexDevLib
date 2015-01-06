@@ -538,7 +538,7 @@ namespace DevLib.ExtensionMethods
         public static void ExecuteCmdLine(this string sourceCmd, bool runasAdmin = true, bool hidden = true, int milliseconds = 0)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
-            startInfo.Arguments = string.Format(" /c  {0}", sourceCmd);
+            startInfo.Arguments = string.Format(" /C {0}", sourceCmd);
             startInfo.CreateNoWindow = hidden;
             startInfo.ErrorDialog = true;
             startInfo.UseShellExecute = true;

@@ -17,10 +17,8 @@ namespace DevLib.Diagnostics
         {
             get
             {
-                bool isDebug = false;
-#if DEBUG
-                isDebug = true;
-#else
+                bool isDebug = true;
+#if !DEBUG
                 isDebug = false;
 #endif
                 return isDebug;

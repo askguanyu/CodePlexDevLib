@@ -326,6 +326,7 @@ namespace DevLib.Logging
 
                 fileStream.Seek(0, SeekOrigin.End);
                 fileStream.Write(bytes, 0, bytes.Length);
+                fileStream.Flush();
             }
         }
 

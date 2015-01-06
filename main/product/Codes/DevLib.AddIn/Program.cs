@@ -433,7 +433,7 @@ args[4] = Redirect output or not");
 
                 try
                 {
-                    fileStream = File.Open(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    fileStream = new FileStream(LogFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
 
                     if (fileStream.Length > 10485760)
                     {
@@ -448,8 +448,9 @@ args[4] = Redirect output or not");
                         fileStream.SetLength(0);
                     }
 
-                    fileStream.Seek(0, SeekOrigin.End);
                     byte[] bytes = Encoding.UTF8.GetBytes(message);
+
+                    fileStream.Seek(0, SeekOrigin.End);
                     fileStream.Write(bytes, 0, bytes.Length);
                     fileStream.Flush();
                 }

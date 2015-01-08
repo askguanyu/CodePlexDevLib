@@ -39,6 +39,11 @@ namespace DevLib.ModernUI.Forms
         private Timer _marqueeTimer;
 
         /// <summary>
+        /// Field _value.
+        /// </summary>
+        private long _value = 0;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ModernProgressBar" /> class.
         /// </summary>
         public ModernProgressBar()
@@ -307,19 +312,43 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the current position of the progress bar.
         /// </summary>
-        public new int Value
+        [Browsable(true)]
+        [DefaultValue(0)]
+        public new long Value
         {
             get
             {
-                return base.Value;
+                return this._value;
             }
 
             set
             {
-                base.Value = value > this.Maximum ? this.Maximum : value;
+                this._value = value > this.Maximum ? this.Maximum : value;
 
                 this.Invalidate();
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum value of the range of the control.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(100)]
+        public new long Maximum
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the minimum value of the range of the control.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(0)]
+        public new long Minimum
+        {
+            get;
+            set;
         }
 
         /// <summary>

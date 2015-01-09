@@ -495,10 +495,10 @@ namespace DevLib.ServiceModel
                 this.SetClientCredentialsAction((proxy as ClientBase<TChannel>).ClientCredentials);
             }
 
-            ServiceEndpoint endpoint = (proxy as ClientBase<TChannel>).Endpoint;
-
             if (this.SetDataContractResolverAction != null)
             {
+                ServiceEndpoint endpoint = (proxy as ClientBase<TChannel>).Endpoint;
+
                 foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
                 {
                     DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();

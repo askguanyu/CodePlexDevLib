@@ -650,10 +650,10 @@ namespace DevLib.ServiceModel
                 this.SetClientCredentialsAction((ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName));
             }
 
-            ServiceEndpoint endpoint = (ServiceEndpoint)this.GetProperty(proxy, EndpointPropertyName);
-
             if (this.SetDataContractResolverAction != null)
             {
+                ServiceEndpoint endpoint = (ServiceEndpoint)this.GetProperty(proxy, EndpointPropertyName);
+
                 foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
                 {
                     DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();

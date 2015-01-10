@@ -69,6 +69,7 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
+    using DevLib.Data.Repository;
 
     public class Program
     {
@@ -93,6 +94,11 @@ namespace DevLib.Samples
                 Benchmark.Run(i =>
                 {
                     //TestCsv();
+                });
+
+                Benchmark.Run(i =>
+                {
+                    //TestData();
                 });
 
                 Benchmark.Run(i =>
@@ -195,6 +201,16 @@ namespace DevLib.Samples
             }, 1, "DevLib.Samples");
 
             InternalLogger.Log("End");
+        }
+
+        private static void TestData()
+        {
+            XmlFileRepository<int, FooBar> data = new XmlFileRepository<int, FooBar>(@"d:\work\temp\repo.xml", i => i.bar);
+
+            data.Insert(new FooBar());
+            data.Insert(new FooBar() { bar = 2 });
+
+            Console.ReadLine();
         }
 
         private static void TestCsv()
@@ -759,6 +775,19 @@ namespace DevLib.Samples
                 Console.Write("[{0}]", o);
             }
             Console.WriteLine();
+        }
+
+        public class MyClass
+        {
+            public MyClass()
+            {
+                this.MyProperty = true;
+                this.MyProperty1 = new object();
+            }
+
+            public bool MyProperty { get; set; }
+
+            public object MyProperty1 { get; set; }
         }
 
         private static void TestCodeSnippets()
@@ -2387,6 +2416,7 @@ namespace DevLib.Samples
 
     }
 
+    [Serializable]
     public class FooBar : MarshalByRefObject
     {
         [Parameter(Required = true)]

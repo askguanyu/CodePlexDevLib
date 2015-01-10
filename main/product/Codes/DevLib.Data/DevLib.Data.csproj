@@ -47,7 +47,13 @@
     </Compile>
     <Compile Include="DbHelper.cs" />
     <Compile Include="InternalLogger.cs" />
-    <Compile Include="IRepository.cs" />
+    <Compile Include="Repository\BinaryFileRepository.cs" />
+    <Compile Include="Repository\FileBaseRepository.cs" />
+    <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\MemoryRepository.cs" />
+    <Compile Include="Repository\NullablePrimaryKeyEntity.cs" />
+    <Compile Include="Repository\RepositoryHelper.cs" />
+    <Compile Include="Repository\XmlFileRepository.cs" />
     <Compile Include="SqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlHelperParameterCache.cs" />

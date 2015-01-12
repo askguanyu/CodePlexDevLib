@@ -129,5 +129,15 @@ namespace DevLib.Samples
         {
 
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.performanceChart1.AddValue(decimal.Parse(textBox1.Text));
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.performanceChart1.AddValue(new Random().Next(0, 100));
+        }
     }
 }

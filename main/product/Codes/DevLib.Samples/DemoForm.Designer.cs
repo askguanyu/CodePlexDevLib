@@ -31,22 +31,29 @@ namespace DevLib.Samples
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DemoForm));
-            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Node1");
-            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Node3");
-            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Node4");
-            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Node2", new System.Windows.Forms.TreeNode[] {
-            treeNode30,
-            treeNode31});
-            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
-            treeNode29,
-            treeNode32});
-            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Node5");
-            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Node6");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Node1");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Node3");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Node4");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Node2", new System.Windows.Forms.TreeNode[] {
+            treeNode2,
+            treeNode3});
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode4});
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Node5");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Node6");
+            DevLib.WinForms.PerformanceChartPen performanceChartPen1 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen2 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen3 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen4 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen5 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen6 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen7 = new DevLib.WinForms.PerformanceChartPen();
             this.modernStyleManager1 = new DevLib.ModernUI.ComponentModel.ModernStyleManager(this.components);
             this.modernToggle1 = new DevLib.ModernUI.Forms.ModernToggle();
             this.modernButton1 = new DevLib.ModernUI.Forms.ModernButton();
@@ -68,6 +75,9 @@ namespace DevLib.Samples
             this.modernButton2 = new DevLib.ModernUI.Forms.ModernButton();
             this.modernTextBoxUri = new DevLib.ModernUI.Forms.ModernTextBox();
             this.modernTabPage4 = new DevLib.ModernUI.Forms.ModernTabPage();
+            this.button3 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.modernButton3 = new DevLib.ModernUI.Forms.ModernButton();
             this.modernTreeView1 = new DevLib.ModernUI.Forms.ModernTreeView();
             this.modernPropertyGrid1 = new DevLib.ModernUI.Forms.ModernPropertyGrid();
@@ -76,6 +86,7 @@ namespace DevLib.Samples
             this.label1 = new System.Windows.Forms.Label();
             this.modernTile2 = new DevLib.ModernUI.Forms.ModernTile();
             this.button1 = new System.Windows.Forms.Button();
+            this.performanceChart1 = new DevLib.WinForms.PerformanceChart();
             this.StatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).BeginInit();
             this.modernTabControl1.SuspendLayout();
@@ -210,27 +221,27 @@ namespace DevLib.Samples
             this.modernDataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.modernDataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.modernDataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            dataGridViewCellStyle17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.modernDataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.modernDataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.modernDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.modernDataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column4,
             this.Column5,
             this.Column6});
-            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle18.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle18.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            dataGridViewCellStyle18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
-            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.modernDataGridView1.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(136)))), ((int)(((byte)(136)))), ((int)(((byte)(136)))));
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.modernDataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             this.modernDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.modernDataGridView1.EnableHeadersVisualStyles = false;
             this.modernDataGridView1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
@@ -238,19 +249,19 @@ namespace DevLib.Samples
             this.modernDataGridView1.Location = new System.Drawing.Point(0, 0);
             this.modernDataGridView1.Name = "modernDataGridView1";
             this.modernDataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
-            dataGridViewCellStyle19.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            dataGridViewCellStyle19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.modernDataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(174)))), ((int)(((byte)(219)))));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.modernDataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.modernDataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridViewCellStyle20.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            this.modernDataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
+            this.modernDataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.modernDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.modernDataGridView1.Size = new System.Drawing.Size(598, 396);
             this.modernDataGridView1.TabIndex = 2;
@@ -417,6 +428,10 @@ namespace DevLib.Samples
             // 
             // modernTabPage4
             // 
+            this.modernTabPage4.Controls.Add(this.performanceChart1);
+            this.modernTabPage4.Controls.Add(this.button3);
+            this.modernTabPage4.Controls.Add(this.textBox1);
+            this.modernTabPage4.Controls.Add(this.button2);
             this.modernTabPage4.Controls.Add(this.modernButton3);
             this.modernTabPage4.Controls.Add(this.modernTreeView1);
             this.modernTabPage4.Controls.Add(this.modernPropertyGrid1);
@@ -430,6 +445,34 @@ namespace DevLib.Samples
             this.modernTabPage4.UseStyleColors = false;
             this.modernTabPage4.UseVerticalBarColor = true;
             this.modernTabPage4.VerticalScrollBarSize = 10;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(213, 25);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 23;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(90, 27);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 22;
+            this.textBox1.Text = "100";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(9, 25);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 21;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // modernButton3
             // 
@@ -452,27 +495,27 @@ namespace DevLib.Samples
             this.modernTreeView1.FullRowSelect = true;
             this.modernTreeView1.HideSelection = false;
             this.modernTreeView1.HotTracking = true;
-            this.modernTreeView1.Location = new System.Drawing.Point(62, 94);
+            this.modernTreeView1.Location = new System.Drawing.Point(326, 65);
             this.modernTreeView1.Name = "modernTreeView1";
-            treeNode29.Name = "Node1";
-            treeNode29.Text = "Node1";
-            treeNode30.Name = "Node3";
-            treeNode30.Text = "Node3";
-            treeNode31.Name = "Node4";
-            treeNode31.Text = "Node4";
-            treeNode32.Name = "Node2";
-            treeNode32.Text = "Node2";
-            treeNode33.Name = "Node0";
-            treeNode33.Text = "Node0";
-            treeNode34.Name = "Node5";
-            treeNode34.Text = "Node5";
-            treeNode35.Name = "Node6";
-            treeNode35.Text = "Node6";
+            treeNode1.Name = "Node1";
+            treeNode1.Text = "Node1";
+            treeNode2.Name = "Node3";
+            treeNode2.Text = "Node3";
+            treeNode3.Name = "Node4";
+            treeNode3.Text = "Node4";
+            treeNode4.Name = "Node2";
+            treeNode4.Text = "Node2";
+            treeNode5.Name = "Node0";
+            treeNode5.Text = "Node0";
+            treeNode6.Name = "Node5";
+            treeNode6.Text = "Node5";
+            treeNode7.Name = "Node6";
+            treeNode7.Text = "Node6";
             this.modernTreeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode33,
-            treeNode34,
-            treeNode35});
-            this.modernTreeView1.Size = new System.Drawing.Size(269, 269);
+            treeNode5,
+            treeNode6,
+            treeNode7});
+            this.modernTreeView1.Size = new System.Drawing.Size(148, 269);
             this.modernTreeView1.TabIndex = 6;
             this.modernTreeView1.UseSelectable = true;
             this.modernTreeView1.UseStyleColors = false;
@@ -489,8 +532,8 @@ namespace DevLib.Samples
             this.modernPropertyGrid1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.modernPropertyGrid1.HelpBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.modernPropertyGrid1.HelpForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.modernPropertyGrid1.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(198)))), ((int)(((byte)(247)))));
-            this.modernPropertyGrid1.Location = new System.Drawing.Point(379, 65);
+            this.modernPropertyGrid1.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
+            this.modernPropertyGrid1.Location = new System.Drawing.Point(480, 65);
             this.modernPropertyGrid1.Name = "modernPropertyGrid1";
             this.modernPropertyGrid1.PropertySort = System.Windows.Forms.PropertySort.NoSort;
             this.modernPropertyGrid1.Size = new System.Drawing.Size(198, 269);
@@ -566,6 +609,72 @@ namespace DevLib.Samples
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // performanceChart1
+            // 
+            this.performanceChart1.ChartStyle.AntiAliasing = true;
+            performanceChartPen1.Color = System.Drawing.Color.Yellow;
+            performanceChartPen1.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen1.Width = 1F;
+            this.performanceChart1.ChartStyle.AvgLinePen = performanceChartPen1;
+            this.performanceChart1.ChartStyle.AvgTextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.performanceChart1.ChartStyle.BackgroundColorBottom = System.Drawing.Color.Black;
+            this.performanceChart1.ChartStyle.BackgroundColorTop = System.Drawing.Color.Black;
+            performanceChartPen2.Color = System.Drawing.Color.Lime;
+            performanceChartPen2.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen2.Width = 1F;
+            this.performanceChart1.ChartStyle.ChartLinePen = performanceChartPen2;
+            performanceChartPen3.Color = System.Drawing.Color.Lime;
+            performanceChartPen3.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen3.Width = 1F;
+            this.performanceChart1.ChartStyle.CurLinePen = performanceChartPen3;
+            this.performanceChart1.ChartStyle.CurTextAlign = System.Drawing.ContentAlignment.TopRight;
+            performanceChartPen4.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(64)))));
+            performanceChartPen4.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen4.Width = 1F;
+            this.performanceChart1.ChartStyle.HorizontalGridPen = performanceChartPen4;
+            performanceChartPen5.Color = System.Drawing.Color.Red;
+            performanceChartPen5.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen5.Width = 1F;
+            this.performanceChart1.ChartStyle.MaxLinePen = performanceChartPen5;
+            this.performanceChart1.ChartStyle.MaxTextAlign = System.Drawing.ContentAlignment.TopLeft;
+            performanceChartPen6.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            performanceChartPen6.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen6.Width = 1F;
+            this.performanceChart1.ChartStyle.MinLinePen = performanceChartPen6;
+            this.performanceChart1.ChartStyle.MinTextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.performanceChart1.ChartStyle.ShowAvgLine = true;
+            this.performanceChart1.ChartStyle.ShowAvgText = true;
+            this.performanceChart1.ChartStyle.ShowCurLine = true;
+            this.performanceChart1.ChartStyle.ShowCurText = true;
+            this.performanceChart1.ChartStyle.ShowHorizontalGridLines = true;
+            this.performanceChart1.ChartStyle.ShowMaxLine = true;
+            this.performanceChart1.ChartStyle.ShowMaxText = true;
+            this.performanceChart1.ChartStyle.ShowMinLine = true;
+            this.performanceChart1.ChartStyle.ShowMinText = true;
+            this.performanceChart1.ChartStyle.ShowVerticalGridLines = true;
+            performanceChartPen7.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(64)))));
+            performanceChartPen7.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen7.Width = 1F;
+            this.performanceChart1.ChartStyle.VerticalGridPen = performanceChartPen7;
+            this.performanceChart1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.World);
+            this.performanceChart1.Location = new System.Drawing.Point(9, 65);
+            this.performanceChart1.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.performanceChart1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.performanceChart1.Name = "performanceChart1";
+            this.performanceChart1.RefreshInterval = 100;
+            this.performanceChart1.RefreshMode = DevLib.WinForms.RefreshMode.Disabled;
+            this.performanceChart1.ScaleMode = DevLib.WinForms.ScaleMode.Absolute;
+            this.performanceChart1.Size = new System.Drawing.Size(279, 328);
+            this.performanceChart1.TabIndex = 24;
+            // 
             // DemoForm
             // 
             this.AcceptButton = this.modernButton1;
@@ -612,6 +721,7 @@ namespace DevLib.Samples
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.modernTabPage4.ResumeLayout(false);
+            this.modernTabPage4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -651,5 +761,9 @@ namespace DevLib.Samples
         private ModernPropertyGrid modernPropertyGrid1;
         private ModernButton modernButton3;
         private ModernTreeView modernTreeView1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button3;
+        private WinForms.PerformanceChart performanceChart1;
     }
 }

@@ -597,12 +597,21 @@ namespace DevLib.Diagnostics
                 throw new ArgumentNullException("MemorySnapshot.ToFile(): the specified file path \"" + filename + "\" is null or empty.");
             }
 
+            string fullPath = Path.GetFullPath(filename);
+
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                Directory.CreateDirectory(fullDirectoryPath);
+            }
+
             try
             {
                 XmlDocument xmlDocument = new XmlDocument();
                 XmlNode rootNode = this.Serialize(xmlDocument);
                 xmlDocument.AppendChild(rootNode);
-                xmlDocument.Save(filename);
+                xmlDocument.Save(fullPath);
             }
             catch (Exception e)
             {

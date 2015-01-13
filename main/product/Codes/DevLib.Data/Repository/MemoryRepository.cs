@@ -75,7 +75,77 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
                 return this._repository[index];
+            }
+        }
+
+        /// <summary>
+        /// Gets the entity at the specified index, and removes the element at the specified index of the repository.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get and remove.</param>
+        /// <returns>Entity instance.</returns>
+        public TEntity GetIndexAndRemove(int index)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
+                TEntity result = this._repository[index];
+                this._repository.RemoveAt(index);
+                return RepositoryHelper.CloneDeep(result);
+            }
+        }
+
+        /// <summary>
+        /// Gets the entity at the specified last index.
+        /// </summary>
+        /// <param name="index">The last index.</param>
+        /// <returns>Entity instance.</returns>
+        public TEntity GetLastIndex(int index)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
+                return RepositoryHelper.CloneDeep(this._repository[this._repository.Count - index - 1]);
+            }
+        }
+
+        /// <summary>
+        /// Gets the entity at the specified last index, and removes the element at the specified last index of the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last index of the element to get and remove.</param>
+        /// <returns>Entity instance.</returns>
+        public TEntity GetLastIndexAndRemove(int index)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
+                int startIndex = this._repository.Count - index - 1;
+                TEntity result = this._repository[startIndex];
+                this._repository.RemoveAt(startIndex);
+                return RepositoryHelper.CloneDeep(result);
             }
         }
 
@@ -90,7 +160,32 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository[index] = RepositoryHelper.CloneDeep(item);
+            }
+        }
+
+        /// <summary>
+        /// Sets the entity at the specified last index.
+        /// </summary>
+        /// <param name="index">The last index.</param>
+        /// <param name="item">The entity instance.</param>
+        public void SetLastIndex(int index, TEntity item)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return;
+                }
+
+                this._repository[this._repository.Count - index - 1] = RepositoryHelper.CloneDeep(item);
             }
         }
 
@@ -104,6 +199,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.Count < int.MaxValue ? this._repository.Count : RepositoryHelper.LongCount(this._repository);
             }
         }
@@ -117,6 +217,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Clear();
             }
         }
@@ -131,6 +236,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
                 try
                 {
                     this._repository.Clear();
@@ -155,6 +265,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Add(RepositoryHelper.CloneDeep(item));
             }
         }
@@ -174,6 +289,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.AddRange(RepositoryHelper.CloneDeep(collection));
             }
         }
@@ -194,12 +314,17 @@ namespace DevLib.Data.Repository
                 return false;
             }
 
-            try
+            lock (this._syncRoot)
             {
-                TPrimaryKey primaryKey = getPrimaryKey(entity);
-
-                lock (this._syncRoot)
+                if (this._disposed)
                 {
+                    return false;
+                }
+
+                try
+                {
+                    TPrimaryKey primaryKey = getPrimaryKey(entity);
+
                     int index = this._repository.FindIndex(item => getPrimaryKey(item).Equals(primaryKey));
 
                     if (index < 0)
@@ -213,10 +338,10 @@ namespace DevLib.Data.Repository
 
                     return true;
                 }
-            }
-            catch
-            {
-                return false;
+                catch
+                {
+                    return false;
+                }
             }
         }
 
@@ -241,22 +366,27 @@ namespace DevLib.Data.Repository
                 return false;
             }
 
-            List<TPrimaryKey> primaryKeys = new List<TPrimaryKey>();
-
-            try
-            {
-                foreach (TEntity entity in collection)
-                {
-                    primaryKeys.Add(getPrimaryKey(entity));
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
+                List<TPrimaryKey> primaryKeys = new List<TPrimaryKey>();
+
+                try
+                {
+                    foreach (TEntity entity in collection)
+                    {
+                        primaryKeys.Add(getPrimaryKey(entity));
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
                 try
                 {
                     int keyIndex = 0;
@@ -302,12 +432,17 @@ namespace DevLib.Data.Repository
                 return false;
             }
 
-            try
+            lock (this._syncRoot)
             {
-                TPrimaryKey primaryKey = getPrimaryKey(entity);
-
-                lock (this._syncRoot)
+                if (this._disposed)
                 {
+                    return false;
+                }
+
+                try
+                {
+                    TPrimaryKey primaryKey = getPrimaryKey(entity);
+
                     int index = this._repository.FindIndex(item => getPrimaryKey(item).Equals(primaryKey));
 
                     if (index >= 0)
@@ -321,10 +456,10 @@ namespace DevLib.Data.Repository
                         return false;
                     }
                 }
-            }
-            catch
-            {
-                return false;
+                catch
+                {
+                    return false;
+                }
             }
         }
 
@@ -349,22 +484,27 @@ namespace DevLib.Data.Repository
                 return false;
             }
 
-            List<TPrimaryKey> primaryKeys = new List<TPrimaryKey>();
-
-            try
-            {
-                foreach (TEntity entity in collection)
-                {
-                    primaryKeys.Add(getPrimaryKey(entity));
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
+                List<TPrimaryKey> primaryKeys = new List<TPrimaryKey>();
+
+                try
+                {
+                    foreach (TEntity entity in collection)
+                    {
+                        primaryKeys.Add(getPrimaryKey(entity));
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
                 try
                 {
                     int keyIndex = 0;
@@ -401,6 +541,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Insert(index, RepositoryHelper.CloneDeep(item));
             }
         }
@@ -421,6 +566,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.InsertRange(index, RepositoryHelper.CloneDeep(collection));
             }
         }
@@ -435,6 +585,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository).AsReadOnly();
             }
         }
@@ -449,6 +604,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository);
             }
         }
@@ -465,7 +625,80 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository.GetRange(index, count));
+            }
+        }
+
+        /// <summary>
+        /// Creates a copy of a range of elements in the source repository, and removes them from the repository.
+        /// </summary>
+        /// <param name="index">The zero-based index at which the range starts.</param>
+        /// <param name="count">The number of elements in the range.</param>
+        /// <returns>A copy of a range of elements in the source repository.</returns>
+        public List<TEntity> GetRangeAndRemove(int index, int count)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
+                List<TEntity> result = this._repository.GetRange(index, count);
+                this._repository.RemoveRange(index, count);
+                return RepositoryHelper.CloneDeep(result);
+            }
+        }
+
+        /// <summary>
+        /// Creates a copy of a range of elements in the source repository of last index and count.
+        /// </summary>
+        /// <param name="index">The zero-based last index at which the range starts.</param>
+        /// <param name="count">The number of elements in the range.</param>
+        /// <returns>A copy of a range of elements in the source repository.</returns>
+        public List<TEntity> GetLastRange(int index, int count)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
+                return RepositoryHelper.CloneDeep(this._repository.GetRange(this._repository.Count - index - count, count));
+            }
+        }
+
+        /// <summary>
+        /// Creates a copy of a range of elements in the source repository of last index and count, and removes them from the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last index at which the range starts.</param>
+        /// <param name="count">The number of elements in the range.</param>
+        /// <returns>A copy of a range of elements in the source repository.</returns>
+        public List<TEntity> GetLastRangeAndRemove(int index, int count)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
+                int startIndex = this._repository.Count - index - count;
+                List<TEntity> result = this._repository.GetRange(startIndex, count);
+                this._repository.RemoveRange(startIndex, count);
+                return RepositoryHelper.CloneDeep(result);
             }
         }
 
@@ -481,6 +714,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository).ConvertAll(converter);
             }
         }
@@ -495,6 +733,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 RepositoryHelper.CloneDeep(this._repository).CopyTo(array);
             }
         }
@@ -510,6 +753,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 RepositoryHelper.CloneDeep(this._repository).CopyTo(array, arrayIndex);
             }
         }
@@ -527,6 +775,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 RepositoryHelper.CloneDeep(this._repository).CopyTo(index, array, arrayIndex, count);
             }
         }
@@ -541,6 +794,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository).ToArray();
             }
         }
@@ -556,6 +814,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.BinarySearch(item);
             }
         }
@@ -572,6 +835,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.BinarySearch(item, comparer);
             }
         }
@@ -590,6 +858,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.BinarySearch(index, count, item, comparer);
             }
         }
@@ -605,6 +878,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
                 return this._repository.Contains(item);
             }
         }
@@ -620,6 +898,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
                 return this._repository.Exists(match);
             }
         }
@@ -635,7 +918,43 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository.Find(match));
+            }
+        }
+
+        /// <summary>
+        /// Searches for an element that matches the conditions defined by the specified predicate, and returns the first occurrence within the repository, and removes it from the repository.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the element to search for.</param>
+        /// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type TEntity.</returns>
+        public TEntity FindAndRemove(Predicate<TEntity> match)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
+                int index = this._repository.FindIndex(match);
+
+                if (index >= 0)
+                {
+                    TEntity result = this._repository[index];
+                    this._repository.RemoveAt(index);
+                    return RepositoryHelper.CloneDeep(result);
+                }
+                else
+                {
+                    return default(TEntity);
+                }
             }
         }
 
@@ -650,7 +969,34 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository.FindAll(match));
+            }
+        }
+
+        /// <summary>
+        /// Retrieves all the elements that match the conditions defined by the specified predicate, and removes them all from the repository.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the elements to search for.</param>
+        /// <returns>A <see cref="T:System.Collections.Generic.List{T}" /> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty <see cref="T:System.Collections.Generic.List{T}" />.</returns>
+        public List<TEntity> FindAllAndRemove(Predicate<TEntity> match)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return null;
+                }
+
+                List<TEntity> result = this._repository.FindAll(match);
+                this._repository.RemoveAll(match);
+                return RepositoryHelper.CloneDeep(result);
             }
         }
 
@@ -665,6 +1011,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.FindIndex(match);
             }
         }
@@ -681,6 +1032,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.FindIndex(startIndex, match);
             }
         }
@@ -698,6 +1054,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.FindIndex(startIndex, count, match);
             }
         }
@@ -713,7 +1074,43 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
                 return RepositoryHelper.CloneDeep(this._repository.FindLast(match));
+            }
+        }
+
+        /// <summary>
+        /// Searches for an element that matches the conditions defined by the specified predicate, and returns the last occurrence within the repository, and removes it from the repository.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the element to search for.</param>
+        /// <returns>The last element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type TEntity.</returns>
+        public TEntity FindLastAndRemove(Predicate<TEntity> match)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return default(TEntity);
+                }
+
+                int index = this._repository.FindLastIndex(match);
+
+                if (index >= 0)
+                {
+                    TEntity result = this._repository[index];
+                    this._repository.RemoveAt(index);
+                    return RepositoryHelper.CloneDeep(result);
+                }
+                else
+                {
+                    return default(TEntity);
+                }
             }
         }
 
@@ -728,6 +1125,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.FindLastIndex(match);
             }
         }
@@ -744,6 +1146,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.FindLastIndex(startIndex, match);
             }
         }
@@ -761,6 +1168,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.FindLastIndex(startIndex, count, match);
             }
         }
@@ -776,6 +1188,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.IndexOf(item);
             }
         }
@@ -792,6 +1209,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.IndexOf(item, index);
             }
         }
@@ -809,6 +1231,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.IndexOf(item, index, count);
             }
         }
@@ -824,6 +1251,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.LastIndexOf(item);
             }
         }
@@ -840,6 +1272,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.LastIndexOf(item, index);
             }
         }
@@ -857,6 +1294,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.LastIndexOf(item, index, count);
             }
         }
@@ -872,6 +1314,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
                 return this._repository.Remove(item);
             }
         }
@@ -887,6 +1334,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
                 int index = this._repository.FindIndex(match);
 
                 if (index < 0)
@@ -903,6 +1355,66 @@ namespace DevLib.Data.Repository
         }
 
         /// <summary>
+        /// Removes the last occurrence of a specific object from the repository.
+        /// </summary>
+        /// <param name="item">The object to remove from the repository. The value can be null for reference types.</param>
+        /// <returns>true if <paramref name="item" /> is successfully removed; otherwise, false. This method also returns false if <paramref name="item" /> was not found in the repository.</returns>
+        public bool RemoveLast(TEntity item)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
+                int index = this._repository.LastIndexOf(item);
+
+                if (index >= 0)
+                {
+                    this._repository.RemoveAt(index);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes the last occurrence element that match the conditions defined by the specified predicate.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the elements to remove.</param>
+        /// <returns>true if item successfully removed; otherwise, false. This method also returns false if item was not found in the repository.</returns>
+        public bool RemoveLast(Predicate<TEntity> match)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
+                int index = this._repository.FindLastIndex(match);
+
+                if (index >= 0)
+                {
+                    this._repository.RemoveAt(index);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Removes all the elements that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the elements to remove.</param>
@@ -913,6 +1425,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return -1;
+                }
+
                 return this._repository.RemoveAll(match);
             }
         }
@@ -927,7 +1444,31 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.RemoveAt(index);
+            }
+        }
+
+        /// <summary>
+        /// Removes the element at the specified last index of the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last index of the element to remove.</param>
+        public void RemoveLastAt(int index)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return;
+                }
+
+                this._repository.RemoveAt(this._repository.Count - index - 1);
             }
         }
 
@@ -942,7 +1483,32 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.RemoveRange(index, count);
+            }
+        }
+
+        /// <summary>
+        /// Removes a range of elements from the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last starting index of the range of elements to remove.</param>
+        /// <param name="count">The number of elements to remove.</param>
+        public void RemoveLastRange(int index, int count)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return;
+                }
+
+                this._repository.RemoveRange(this._repository.Count - index - count, count);
             }
         }
 
@@ -967,22 +1533,27 @@ namespace DevLib.Data.Repository
                 return false;
             }
 
-            List<TPrimaryKey> primaryKeys = new List<TPrimaryKey>();
-
-            try
-            {
-                foreach (TEntity entity in collection)
-                {
-                    primaryKeys.Add(getPrimaryKey(entity));
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
+                List<TPrimaryKey> primaryKeys = new List<TPrimaryKey>();
+
+                try
+                {
+                    foreach (TEntity entity in collection)
+                    {
+                        primaryKeys.Add(getPrimaryKey(entity));
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+
                 try
                 {
                     int keyIndex = 0;
@@ -1017,6 +1588,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Reverse();
             }
         }
@@ -1032,6 +1608,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Reverse(index, count);
             }
         }
@@ -1045,6 +1626,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Sort();
             }
         }
@@ -1059,6 +1645,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Sort(comparison);
             }
         }
@@ -1073,6 +1664,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Sort(comparer);
             }
         }
@@ -1089,6 +1685,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.Sort(index, count, comparer);
             }
         }
@@ -1103,6 +1704,11 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return;
+                }
+
                 this._repository.ForEach(action);
             }
         }
@@ -1118,7 +1724,54 @@ namespace DevLib.Data.Repository
 
             lock (this._syncRoot)
             {
+                if (this._disposed)
+                {
+                    return false;
+                }
+
                 return this._repository.TrueForAll(match);
+            }
+        }
+
+        /// <summary>
+        /// Calls action on the repository.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <param name="submitChanges">true to submit changes of the repository; otherwise, false.</param>
+        public void ActionOnRepository(Action<List<TEntity>> action, bool submitChanges)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return;
+                }
+
+                action(this._repository);
+            }
+        }
+
+        /// <summary>
+        /// Calls function on the repository.
+        /// </summary>
+        /// <typeparam name="TResult">The type of return value.</typeparam>
+        /// <param name="func">The function.</param>
+        /// <param name="submitChanges">true to submit changes of the repository; otherwise, false.</param>
+        /// <returns>Result of the function.</returns>
+        public TResult FuncOnRepository<TResult>(Converter<List<TEntity>, TResult> func, bool submitChanges)
+        {
+            this.CheckDisposed();
+
+            lock (this._syncRoot)
+            {
+                if (this._disposed)
+                {
+                    return default(TResult);
+                }
+
+                return func(this._repository);
             }
         }
 
@@ -1153,7 +1806,7 @@ namespace DevLib.Data.Repository
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-                
+
                 lock (this._syncRoot)
                 {
                     this._repository.Clear();

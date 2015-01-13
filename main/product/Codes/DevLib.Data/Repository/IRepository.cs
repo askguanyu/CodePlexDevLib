@@ -34,11 +34,39 @@ namespace DevLib.Data.Repository
         TEntity GetIndex(int index);
 
         /// <summary>
+        /// Gets the entity at the specified index, and removes the element at the specified index of the repository.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get and remove.</param>
+        /// <returns>Entity instance.</returns>
+        TEntity GetIndexAndRemove(int index);
+
+        /// <summary>
+        /// Gets the entity at the specified last index.
+        /// </summary>
+        /// <param name="index">The last index.</param>
+        /// <returns>Entity instance.</returns>
+        TEntity GetLastIndex(int index);
+
+        /// <summary>
+        /// Gets the entity at the specified last index, and removes the element at the specified last index of the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last index of the element to get and remove.</param>
+        /// <returns>Entity instance.</returns>
+        TEntity GetLastIndexAndRemove(int index);
+
+        /// <summary>
         /// Sets the entity at the specified index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <param name="item">The entity instance.</param>
         void SetIndex(int index, TEntity item);
+
+        /// <summary>
+        /// Sets the entity at the specified last index.
+        /// </summary>
+        /// <param name="index">The last index.</param>
+        /// <param name="item">The entity instance.</param>
+        void SetLastIndex(int index, TEntity item);
 
         /// <summary>
         /// Gets the number of entities contained in the repository.
@@ -140,6 +168,30 @@ namespace DevLib.Data.Repository
         List<TEntity> GetRange(int index, int count);
 
         /// <summary>
+        /// Creates a copy of a range of elements in the source repository, and removes them from the repository.
+        /// </summary>
+        /// <param name="index">The zero-based index at which the range starts.</param>
+        /// <param name="count">The number of elements in the range.</param>
+        /// <returns>A copy of a range of elements in the source repository.</returns>
+        List<TEntity> GetRangeAndRemove(int index, int count);
+
+        /// <summary>
+        /// Creates a copy of a range of elements in the source repository of last index and count.
+        /// </summary>
+        /// <param name="index">The zero-based last index at which the range starts.</param>
+        /// <param name="count">The number of elements in the range.</param>
+        /// <returns>A copy of a range of elements in the source repository.</returns>
+        List<TEntity> GetLastRange(int index, int count);
+
+        /// <summary>
+        /// Creates a copy of a range of elements in the source repository of last index and count, and removes them from the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last index at which the range starts.</param>
+        /// <param name="count">The number of elements in the range.</param>
+        /// <returns>A copy of a range of elements in the source repository.</returns>
+        List<TEntity> GetLastRangeAndRemove(int index, int count);
+
+        /// <summary>
         /// Converts the elements in the current repository to another type, and returns a list containing the converted elements.
         /// </summary>
         /// <typeparam name="TOutput">The type of the elements of the target array.</typeparam>
@@ -222,11 +274,25 @@ namespace DevLib.Data.Repository
         TEntity Find(Predicate<TEntity> match);
 
         /// <summary>
+        /// Searches for an element that matches the conditions defined by the specified predicate, and returns the first occurrence within the repository, and removes it from the repository.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the element to search for.</param>
+        /// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type TEntity.</returns>
+        TEntity FindAndRemove(Predicate<TEntity> match);
+
+        /// <summary>
         /// Retrieves all the elements that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the elements to search for.</param>
         /// <returns>A <see cref="T:System.Collections.Generic.List{T}" /> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty <see cref="T:System.Collections.Generic.List{T}" />.</returns>
         List<TEntity> FindAll(Predicate<TEntity> match);
+
+        /// <summary>
+        /// Retrieves all the elements that match the conditions defined by the specified predicate, and removes them all from the repository.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the elements to search for.</param>
+        /// <returns>A <see cref="T:System.Collections.Generic.List{T}" /> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty <see cref="T:System.Collections.Generic.List{T}" />.</returns>
+        List<TEntity> FindAllAndRemove(Predicate<TEntity> match);
 
         /// <summary>
         /// Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the repository.
@@ -258,6 +324,13 @@ namespace DevLib.Data.Repository
         /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the element to search for.</param>
         /// <returns>The last element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type TEntity.</returns>
         TEntity FindLast(Predicate<TEntity> match);
+
+        /// <summary>
+        /// Searches for an element that matches the conditions defined by the specified predicate, and returns the last occurrence within the repository, and removes it from the repository.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the element to search for.</param>
+        /// <returns>The last element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type TEntity.</returns>
+        TEntity FindLastAndRemove(Predicate<TEntity> match);
 
         /// <summary>
         /// Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the repository.
@@ -346,6 +419,20 @@ namespace DevLib.Data.Repository
         bool Remove(Predicate<TEntity> match);
 
         /// <summary>
+        /// Removes the last occurrence of a specific object from the repository.
+        /// </summary>
+        /// <param name="item">The object to remove from the repository. The value can be null for reference types.</param>
+        /// <returns>true if <paramref name="item" /> is successfully removed; otherwise, false. This method also returns false if <paramref name="item" /> was not found in the repository.</returns>
+        bool RemoveLast(TEntity item);
+
+        /// <summary>
+        /// Removes the last occurrence element that match the conditions defined by the specified predicate.
+        /// </summary>
+        /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the elements to remove.</param>
+        /// <returns>true if item successfully removed; otherwise, false. This method also returns false if item was not found in the repository.</returns>
+        bool RemoveLast(Predicate<TEntity> match);
+
+        /// <summary>
         /// Removes all the elements that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions of the elements to remove.</param>
@@ -359,11 +446,24 @@ namespace DevLib.Data.Repository
         void RemoveAt(int index);
 
         /// <summary>
+        /// Removes the element at the specified last index of the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last index of the element to remove.</param>
+        void RemoveLastAt(int index);
+
+        /// <summary>
         /// Removes a range of elements from the repository.
         /// </summary>
         /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
         /// <param name="count">The number of elements to remove.</param>
         void RemoveRange(int index, int count);
+
+        /// <summary>
+        /// Removes a range of elements from the repository.
+        /// </summary>
+        /// <param name="index">The zero-based last starting index of the range of elements to remove.</param>
+        /// <param name="count">The number of elements to remove.</param>
+        void RemoveLastRange(int index, int count);
 
         /// <summary>
         /// Removes a range of elements from the repository.
@@ -423,5 +523,21 @@ namespace DevLib.Data.Repository
         /// <param name="match">The <see cref="T:System.Predicate{T}" /> delegate that defines the conditions to check against the elements.</param>
         /// <returns>true if every element in the repository matches the conditions defined by the specified predicate; otherwise, false. If the list has no elements, the return value is true.</returns>
         bool TrueForAll(Predicate<TEntity> match);
+
+        /// <summary>
+        /// Calls action on the repository.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <param name="submitChanges">true to submit changes of the repository; otherwise, false.</param>
+        void ActionOnRepository(Action<List<TEntity>> action, bool submitChanges);
+
+        /// <summary>
+        /// Calls function on the repository.
+        /// </summary>
+        /// <typeparam name="TResult">The type of return value.</typeparam>
+        /// <param name="func">The function.</param>
+        /// <param name="submitChanges">true to submit changes of the repository; otherwise, false.</param>
+        /// <returns>Result of the function.</returns>
+        TResult FuncOnRepository<TResult>(Converter<List<TEntity>, TResult> func, bool submitChanges);
     }
 }

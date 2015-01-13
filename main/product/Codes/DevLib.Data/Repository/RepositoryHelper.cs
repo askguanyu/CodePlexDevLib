@@ -19,24 +19,6 @@ namespace DevLib.Data.Repository
     using System.Xml.Serialization;
 
     /// <summary>
-    /// Encapsulates a method that returns the primary key of an entity.
-    /// </summary>
-    /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    /// <typeparam name="TPrimaryKey">The type of the entity primary key.</typeparam>
-    /// <param name="entity">The entity.</param>
-    /// <returns>The entity primary key.</returns>
-    public delegate TPrimaryKey GetPrimaryKeyFunc<in TEntity, out TPrimaryKey>(TEntity entity);
-
-    /// <summary>
-    /// Encapsulates a method that reads a file and returns the repository.
-    /// </summary>
-    /// <typeparam name="TString">String type.</typeparam>
-    /// <typeparam name="T">The type of the repository.</typeparam>
-    /// <param name="filename">The filename.</param>
-    /// <returns>The repository instance.</returns>
-    public delegate T ReadFileFunc<in TString, out T>(TString filename);
-
-    /// <summary>
     /// Encapsulates a method that writes the repository to a file.
     /// </summary>
     /// <typeparam name="TString">String type.</typeparam>
@@ -196,29 +178,35 @@ namespace DevLib.Data.Repository
                 throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(filename);
-            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
-
-            if (!Directory.Exists(fullDirectoryPath))
+            try
             {
-                try
-                {
-                    Directory.CreateDirectory(fullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
             }
-
-            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
-
-            using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = true, Indent = true, Encoding = new UTF8Encoding(false), CloseOutput = true }))
+            finally
             {
-                XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
-                xmlns.Add(string.Empty, string.Empty);
-                xmlSerializer.Serialize(xmlWriter, source, xmlns);
-                xmlWriter.Flush();
+                string fullPath = Path.GetFullPath(filename);
+                string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+                if (!Directory.Exists(fullDirectoryPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(fullDirectoryPath);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+
+                XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
+
+                using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = true, Indent = true, Encoding = new UTF8Encoding(false), CloseOutput = true }))
+                {
+                    XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
+                    xmlns.Add(string.Empty, string.Empty);
+                    xmlSerializer.Serialize(xmlWriter, source, xmlns);
+                    xmlWriter.Flush();
+                }
             }
         }
 
@@ -267,26 +255,32 @@ namespace DevLib.Data.Repository
                 throw new ArgumentNullException("filename");
             }
 
-            string fullPath = Path.GetFullPath(filename);
-            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
-
-            if (!Directory.Exists(fullDirectoryPath))
+            try
             {
-                try
-                {
-                    Directory.CreateDirectory(fullDirectoryPath);
-                }
-                catch
-                {
-                    throw;
-                }
             }
-
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-            using (FileStream fileStream = File.OpenWrite(fullPath))
+            finally
             {
-                binaryFormatter.Serialize(fileStream, source);
+                string fullPath = Path.GetFullPath(filename);
+                string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+                if (!Directory.Exists(fullDirectoryPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(fullDirectoryPath);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+                using (FileStream fileStream = File.OpenWrite(fullPath))
+                {
+                    binaryFormatter.Serialize(fileStream, source);
+                }
             }
         }
 

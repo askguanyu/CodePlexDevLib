@@ -10,17 +10,15 @@ namespace DevLib.Data.Repository
     /// <summary>
     /// Xml file repository.
     /// </summary>
-    /// <typeparam name="TPrimaryKey">The type of the entity primary key.</typeparam>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    public class XmlFileRepository<TPrimaryKey, TEntity> : FileBaseRepository<TPrimaryKey, TEntity>, IRepository<TPrimaryKey, TEntity>
+    public class XmlFileRepository<TEntity> : FileBaseRepository<TEntity>, IRepository<TEntity>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="XmlFileRepository{TPrimaryKey, TEntity}"/> class.
+        /// Initializes a new instance of the <see cref="XmlFileRepository{TEntity}" /> class.
         /// </summary>
         /// <param name="filename">The filename.</param>
-        /// <param name="getPrimaryKeyFunc">The get entity primary key function.</param>
-        public XmlFileRepository(string filename, GetPrimaryKeyFunc<TEntity, TPrimaryKey> getPrimaryKeyFunc)
-            : base(filename, getPrimaryKeyFunc, file => RepositoryHelper.ReadXml<List<TEntity>>(file), (file, obj) => RepositoryHelper.WriteXml(file, obj))
+        public XmlFileRepository(string filename)
+            : base(filename, file => RepositoryHelper.ReadXml<List<TEntity>>(file), (file, obj) => RepositoryHelper.WriteXml(file, obj))
         {
         }
     }

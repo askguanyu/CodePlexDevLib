@@ -10,17 +10,15 @@ namespace DevLib.Data.Repository
     /// <summary>
     /// Binary file repository.
     /// </summary>
-    /// <typeparam name="TPrimaryKey">The type of the entity primary key.</typeparam>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
-    public class BinaryFileRepository<TPrimaryKey, TEntity> : FileBaseRepository<TPrimaryKey, TEntity>, IRepository<TPrimaryKey, TEntity>
+    public class BinaryFileRepository<TEntity> : FileBaseRepository<TEntity>, IRepository<TEntity>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BinaryFileRepository{TPrimaryKey, TEntity}"/> class.
+        /// Initializes a new instance of the <see cref="BinaryFileRepository{TEntity}" /> class.
         /// </summary>
         /// <param name="filename">The filename.</param>
-        /// <param name="getPrimaryKeyFunc">The get entity primary key function.</param>
-        public BinaryFileRepository(string filename, GetPrimaryKeyFunc<TEntity, TPrimaryKey> getPrimaryKeyFunc)
-            : base(filename, getPrimaryKeyFunc, file => RepositoryHelper.ReadBinary<List<TEntity>>(file), (file, obj) => RepositoryHelper.WriteBinary(file, obj))
+        public BinaryFileRepository(string filename)
+            : base(filename, file => RepositoryHelper.ReadBinary<List<TEntity>>(file), (file, obj) => RepositoryHelper.WriteBinary(file, obj))
         {
         }
     }

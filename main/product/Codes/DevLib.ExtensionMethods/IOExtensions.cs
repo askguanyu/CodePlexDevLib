@@ -524,6 +524,111 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Deletes an empty directory and, if indicated, any subdirectories and files in the directory.
+        /// </summary>
+        /// <param name="source">The name of the directory to remove.</param>
+        /// <param name="recursive">true to remove directories, subdirectories, and files in path; otherwise, false.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public static bool DeleteDirectory(this string source, bool recursive)
+        {
+            DirectoryInfo directory = new DirectoryInfo(source);
+
+            if (!directory.Exists)
+            {
+                return true;
+            }
+
+            foreach (var item in directory.GetFiles("*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+            {
+                try
+                {
+                    item.Attributes = FileAttributes.Normal;
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    item.Delete();
+                }
+                catch
+                {
+                }
+            }
+
+            foreach (var item in directory.GetDirectories("*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+            {
+                try
+                {
+                    item.Attributes = FileAttributes.Normal;
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    item.Delete(recursive);
+                }
+                catch
+                {
+                }
+            }
+
+            try
+            {
+                directory.Attributes = FileAttributes.Normal;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                directory.Delete(recursive);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the specified file.
+        /// </summary>
+        /// <param name="source">The name of the file to be deleted.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public static bool DeleteFile(this string source)
+        {
+            FileInfo file = new FileInfo(source);
+
+            if (!file.Exists)
+            {
+                return true;
+            }
+
+            try
+            {
+                file.Attributes = FileAttributes.Normal;
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                file.Delete();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Execute a command line.
         /// </summary>
         /// <param name="sourceCmd">A command line to execute.</param>

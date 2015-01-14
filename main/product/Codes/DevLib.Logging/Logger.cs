@@ -160,6 +160,11 @@ namespace DevLib.Logging
                     {
                         string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
 
+                        if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                        {
+                            ColoredConsoleAppender.Write(logLevel, logMessage);
+                        }
+
                         if (this._loggerSetup.WriteToFile && this._fileAppender != null)
                         {
                             lock (this._queueSyncRoot)
@@ -167,11 +172,6 @@ namespace DevLib.Logging
                                 this._queue.Enqueue(logMessage);
                                 this._queueWaitHandle.Set();
                             }
-                        }
-
-                        if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
-                        {
-                            ColoredConsoleAppender.Write(logLevel, logMessage);
                         }
                     }
                     catch (Exception e)
@@ -199,6 +199,11 @@ namespace DevLib.Logging
                     {
                         string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
 
+                        if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
+                        {
+                            ColoredConsoleAppender.Write(logLevel, logMessage);
+                        }
+
                         if (this._loggerSetup.WriteToFile && this._fileAppender != null)
                         {
                             lock (this._queueSyncRoot)
@@ -206,11 +211,6 @@ namespace DevLib.Logging
                                 this._queue.Enqueue(logMessage);
                                 this._queueWaitHandle.Set();
                             }
-                        }
-
-                        if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
-                        {
-                            ColoredConsoleAppender.Write(logLevel, logMessage);
                         }
                     }
                     catch (Exception e)

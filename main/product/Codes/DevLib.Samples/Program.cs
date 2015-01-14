@@ -205,10 +205,10 @@ namespace DevLib.Samples
 
         private static void TestData()
         {
-            XmlFileRepository<int, FooBar> data = new XmlFileRepository<int, FooBar>(@"d:\work\temp\repo.xml", i => i.bar);
+            XmlFileRepository<FooBar> data = new XmlFileRepository<FooBar>(@"d:\work\temp\repo.xml");
 
-            data.Insert(new FooBar());
-            data.Insert(new FooBar() { bar = 2 });
+            data.Add(new FooBar());
+            data.Add(new FooBar() { bar = 2 });
 
             Console.ReadLine();
         }

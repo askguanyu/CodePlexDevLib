@@ -36,6 +36,13 @@ namespace DevLib.Samples
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DemoForm));
+            DevLib.WinForms.PerformanceChartPen performanceChartPen1 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen2 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen3 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen4 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen5 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen6 = new DevLib.WinForms.PerformanceChartPen();
+            DevLib.WinForms.PerformanceChartPen performanceChartPen7 = new DevLib.WinForms.PerformanceChartPen();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Node1");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Node3");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Node4");
@@ -47,13 +54,6 @@ namespace DevLib.Samples
             treeNode4});
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Node5");
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Node6");
-            DevLib.WinForms.PerformanceChartPen performanceChartPen1 = new DevLib.WinForms.PerformanceChartPen();
-            DevLib.WinForms.PerformanceChartPen performanceChartPen2 = new DevLib.WinForms.PerformanceChartPen();
-            DevLib.WinForms.PerformanceChartPen performanceChartPen3 = new DevLib.WinForms.PerformanceChartPen();
-            DevLib.WinForms.PerformanceChartPen performanceChartPen4 = new DevLib.WinForms.PerformanceChartPen();
-            DevLib.WinForms.PerformanceChartPen performanceChartPen5 = new DevLib.WinForms.PerformanceChartPen();
-            DevLib.WinForms.PerformanceChartPen performanceChartPen6 = new DevLib.WinForms.PerformanceChartPen();
-            DevLib.WinForms.PerformanceChartPen performanceChartPen7 = new DevLib.WinForms.PerformanceChartPen();
             this.modernStyleManager1 = new DevLib.ModernUI.ComponentModel.ModernStyleManager(this.components);
             this.modernToggle1 = new DevLib.ModernUI.Forms.ModernToggle();
             this.modernButton1 = new DevLib.ModernUI.Forms.ModernButton();
@@ -75,6 +75,7 @@ namespace DevLib.Samples
             this.modernButton2 = new DevLib.ModernUI.Forms.ModernButton();
             this.modernTextBoxUri = new DevLib.ModernUI.Forms.ModernTextBox();
             this.modernTabPage4 = new DevLib.ModernUI.Forms.ModernTabPage();
+            this.performanceChart1 = new DevLib.WinForms.PerformanceChart();
             this.button3 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
@@ -86,7 +87,6 @@ namespace DevLib.Samples
             this.label1 = new System.Windows.Forms.Label();
             this.modernTile2 = new DevLib.ModernUI.Forms.ModernTile();
             this.button1 = new System.Windows.Forms.Button();
-            this.performanceChart1 = new DevLib.WinForms.PerformanceChart();
             this.StatusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.modernStyleManager1)).BeginInit();
             this.modernTabControl1.SuspendLayout();
@@ -446,6 +446,72 @@ namespace DevLib.Samples
             this.modernTabPage4.UseVerticalBarColor = true;
             this.modernTabPage4.VerticalScrollBarSize = 10;
             // 
+            // performanceChart1
+            // 
+            this.performanceChart1.ChartStyle.AntiAliasing = true;
+            performanceChartPen1.Color = System.Drawing.Color.Yellow;
+            performanceChartPen1.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen1.Width = 1F;
+            this.performanceChart1.ChartStyle.AvgLinePen = performanceChartPen1;
+            this.performanceChart1.ChartStyle.AvgTextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.performanceChart1.ChartStyle.BackgroundColorBottom = System.Drawing.Color.Black;
+            this.performanceChart1.ChartStyle.BackgroundColorTop = System.Drawing.Color.Black;
+            performanceChartPen2.Color = System.Drawing.Color.Lime;
+            performanceChartPen2.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen2.Width = 1F;
+            this.performanceChart1.ChartStyle.ChartLinePen = performanceChartPen2;
+            performanceChartPen3.Color = System.Drawing.Color.Lime;
+            performanceChartPen3.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen3.Width = 1F;
+            this.performanceChart1.ChartStyle.CurLinePen = performanceChartPen3;
+            this.performanceChart1.ChartStyle.CurTextAlign = System.Drawing.ContentAlignment.TopRight;
+            performanceChartPen4.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(64)))));
+            performanceChartPen4.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen4.Width = 1F;
+            this.performanceChart1.ChartStyle.HorizontalGridPen = performanceChartPen4;
+            performanceChartPen5.Color = System.Drawing.Color.Red;
+            performanceChartPen5.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen5.Width = 1F;
+            this.performanceChart1.ChartStyle.MaxLinePen = performanceChartPen5;
+            this.performanceChart1.ChartStyle.MaxTextAlign = System.Drawing.ContentAlignment.TopLeft;
+            performanceChartPen6.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            performanceChartPen6.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen6.Width = 1F;
+            this.performanceChart1.ChartStyle.MinLinePen = performanceChartPen6;
+            this.performanceChart1.ChartStyle.MinTextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.performanceChart1.ChartStyle.ShowAvgLine = true;
+            this.performanceChart1.ChartStyle.ShowAvgText = true;
+            this.performanceChart1.ChartStyle.ShowCurLine = true;
+            this.performanceChart1.ChartStyle.ShowCurText = true;
+            this.performanceChart1.ChartStyle.ShowHorizontalGridLines = true;
+            this.performanceChart1.ChartStyle.ShowMaxLine = true;
+            this.performanceChart1.ChartStyle.ShowMaxText = true;
+            this.performanceChart1.ChartStyle.ShowMinLine = true;
+            this.performanceChart1.ChartStyle.ShowMinText = true;
+            this.performanceChart1.ChartStyle.ShowVerticalGridLines = true;
+            performanceChartPen7.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(64)))));
+            performanceChartPen7.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+            performanceChartPen7.Width = 1F;
+            this.performanceChart1.ChartStyle.VerticalGridPen = performanceChartPen7;
+            this.performanceChart1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.World);
+            this.performanceChart1.Location = new System.Drawing.Point(9, 65);
+            this.performanceChart1.Maximum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.performanceChart1.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.performanceChart1.Name = "performanceChart1";
+            this.performanceChart1.RefreshInterval = 100;
+            this.performanceChart1.RefreshMode = DevLib.WinForms.RefreshMode.Disabled;
+            this.performanceChart1.ScaleMode = DevLib.WinForms.ScaleMode.Absolute;
+            this.performanceChart1.Size = new System.Drawing.Size(279, 328);
+            this.performanceChart1.TabIndex = 24;
+            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(213, 25);
@@ -495,7 +561,7 @@ namespace DevLib.Samples
             this.modernTreeView1.FullRowSelect = true;
             this.modernTreeView1.HideSelection = false;
             this.modernTreeView1.HotTracking = true;
-            this.modernTreeView1.Location = new System.Drawing.Point(326, 65);
+            this.modernTreeView1.Location = new System.Drawing.Point(294, 65);
             this.modernTreeView1.Name = "modernTreeView1";
             treeNode1.Name = "Node1";
             treeNode1.Text = "Node1";
@@ -515,7 +581,7 @@ namespace DevLib.Samples
             treeNode5,
             treeNode6,
             treeNode7});
-            this.modernTreeView1.Size = new System.Drawing.Size(148, 269);
+            this.modernTreeView1.Size = new System.Drawing.Size(79, 269);
             this.modernTreeView1.TabIndex = 6;
             this.modernTreeView1.UseSelectable = true;
             this.modernTreeView1.UseStyleColors = false;
@@ -533,7 +599,7 @@ namespace DevLib.Samples
             this.modernPropertyGrid1.HelpBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.modernPropertyGrid1.HelpForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.modernPropertyGrid1.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(204)))), ((int)(((byte)(204)))));
-            this.modernPropertyGrid1.Location = new System.Drawing.Point(480, 65);
+            this.modernPropertyGrid1.Location = new System.Drawing.Point(379, 51);
             this.modernPropertyGrid1.Name = "modernPropertyGrid1";
             this.modernPropertyGrid1.PropertySort = System.Windows.Forms.PropertySort.NoSort;
             this.modernPropertyGrid1.Size = new System.Drawing.Size(198, 269);
@@ -608,72 +674,6 @@ namespace DevLib.Samples
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // performanceChart1
-            // 
-            this.performanceChart1.ChartStyle.AntiAliasing = true;
-            performanceChartPen1.Color = System.Drawing.Color.Yellow;
-            performanceChartPen1.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            performanceChartPen1.Width = 1F;
-            this.performanceChart1.ChartStyle.AvgLinePen = performanceChartPen1;
-            this.performanceChart1.ChartStyle.AvgTextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.performanceChart1.ChartStyle.BackgroundColorBottom = System.Drawing.Color.Black;
-            this.performanceChart1.ChartStyle.BackgroundColorTop = System.Drawing.Color.Black;
-            performanceChartPen2.Color = System.Drawing.Color.Lime;
-            performanceChartPen2.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            performanceChartPen2.Width = 1F;
-            this.performanceChart1.ChartStyle.ChartLinePen = performanceChartPen2;
-            performanceChartPen3.Color = System.Drawing.Color.Lime;
-            performanceChartPen3.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            performanceChartPen3.Width = 1F;
-            this.performanceChart1.ChartStyle.CurLinePen = performanceChartPen3;
-            this.performanceChart1.ChartStyle.CurTextAlign = System.Drawing.ContentAlignment.TopRight;
-            performanceChartPen4.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(64)))));
-            performanceChartPen4.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            performanceChartPen4.Width = 1F;
-            this.performanceChart1.ChartStyle.HorizontalGridPen = performanceChartPen4;
-            performanceChartPen5.Color = System.Drawing.Color.Red;
-            performanceChartPen5.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            performanceChartPen5.Width = 1F;
-            this.performanceChart1.ChartStyle.MaxLinePen = performanceChartPen5;
-            this.performanceChart1.ChartStyle.MaxTextAlign = System.Drawing.ContentAlignment.TopLeft;
-            performanceChartPen6.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            performanceChartPen6.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            performanceChartPen6.Width = 1F;
-            this.performanceChart1.ChartStyle.MinLinePen = performanceChartPen6;
-            this.performanceChart1.ChartStyle.MinTextAlign = System.Drawing.ContentAlignment.BottomLeft;
-            this.performanceChart1.ChartStyle.ShowAvgLine = true;
-            this.performanceChart1.ChartStyle.ShowAvgText = true;
-            this.performanceChart1.ChartStyle.ShowCurLine = true;
-            this.performanceChart1.ChartStyle.ShowCurText = true;
-            this.performanceChart1.ChartStyle.ShowHorizontalGridLines = true;
-            this.performanceChart1.ChartStyle.ShowMaxLine = true;
-            this.performanceChart1.ChartStyle.ShowMaxText = true;
-            this.performanceChart1.ChartStyle.ShowMinLine = true;
-            this.performanceChart1.ChartStyle.ShowMinText = true;
-            this.performanceChart1.ChartStyle.ShowVerticalGridLines = true;
-            performanceChartPen7.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(128)))), ((int)(((byte)(64)))));
-            performanceChartPen7.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-            performanceChartPen7.Width = 1F;
-            this.performanceChart1.ChartStyle.VerticalGridPen = performanceChartPen7;
-            this.performanceChart1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.World);
-            this.performanceChart1.Location = new System.Drawing.Point(9, 65);
-            this.performanceChart1.Maximum = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.performanceChart1.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.performanceChart1.Name = "performanceChart1";
-            this.performanceChart1.RefreshInterval = 100;
-            this.performanceChart1.RefreshMode = DevLib.WinForms.RefreshMode.Disabled;
-            this.performanceChart1.ScaleMode = DevLib.WinForms.ScaleMode.Absolute;
-            this.performanceChart1.Size = new System.Drawing.Size(279, 328);
-            this.performanceChart1.TabIndex = 24;
             // 
             // DemoForm
             // 

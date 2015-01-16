@@ -76,23 +76,18 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">String to decrypt.</param>
         /// <param name="key">Decryption key.</param>
-        /// <returns>The decrypted string or string. Empty if decryption failed.</returns>
-        public static string RSADecrypt(this string source, string key)
+        /// <returns>The decrypted string.</returns>
+        public static string RSADecrypt(this string source, string key = null)
         {
             if (string.IsNullOrEmpty(source))
             {
-                throw new ArgumentException("An empty string value cannot be encrypted.");
-            }
-
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentException("Cannot decrypt using an empty key. Please supply a decryption key.");
+                return source;
             }
 
             string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
             byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, a => Convert.ToByte(byte.Parse(a, NumberStyles.HexNumber)));
 
-            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
+            using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
                 rsa.PersistKeyInCsp = true;
                 byte[] bytes = rsa.Decrypt(decryptByteArray, true);
@@ -106,19 +101,14 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">String to encrypt.</param>
         /// <param name="key">Encryption key.</param>
         /// <returns>A string representing a byte array separated by a minus sign.</returns>
-        public static string RSAEncrypt(this string source, string key)
+        public static string RSAEncrypt(this string source, string key = null)
         {
             if (string.IsNullOrEmpty(source))
             {
-                throw new ArgumentException("An empty string value cannot be encrypted.");
+                return source;
             }
 
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentException("Cannot encrypt using an empty key. Please supply an encryption key.");
-            }
-
-            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
+            using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
                 rsa.PersistKeyInCsp = true;
                 byte[] bytes = rsa.Encrypt(Encoding.UTF8.GetBytes(source), true);

@@ -792,6 +792,13 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            GCNotification.GCDone += new Action<int>(GCNotification_GCDone);
+
+            Thread.Sleep(1000);
+
+            GC.Collect(2, GCCollectionMode.Forced);
+
+            Console.ReadLine();
             string xmltotest = @"d:\a.txt".ReadTextFile();
 
             string xmltotest1 = xmltotest.ToIndentXml();
@@ -1391,6 +1398,11 @@ namespace DevLib.Samples
             //ts.Close();
 
             //CodeTimer.Initialize();
+        }
+
+        static void GCNotification_GCDone(int obj)
+        {
+            Console.WriteLine("GC done.");
         }
 
         private static void TestDevLibDiagnostics()

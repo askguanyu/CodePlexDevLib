@@ -35,11 +35,9 @@ namespace DevLib.ExtensionMethods
 
             for (int bx = 0, sx = 0; bx < result.Length; ++bx, ++sx)
             {
-                // Convert first half of byte
                 tempChar = temp[sx];
                 result[bx] = (byte)((tempChar > '9' ? (tempChar > 'Z' ? (tempChar - 'a' + 10) : (tempChar - 'A' + 10)) : (tempChar - '0')) << 4);
 
-                // Convert second half of byte
                 tempChar = temp[++sx];
                 result[bx] |= (byte)(tempChar > '9' ? (tempChar > 'Z' ? (tempChar - 'a' + 10) : (tempChar - 'A' + 10)) : (tempChar - '0'));
             }

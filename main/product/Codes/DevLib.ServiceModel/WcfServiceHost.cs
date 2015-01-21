@@ -2218,9 +2218,9 @@ namespace DevLib.ServiceModel
                                 wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
                             }
 
-                            if (this.SetDataContractResolverAction != null)
+                            foreach (var endpoint in serviceHost.Description.Endpoints)
                             {
-                                foreach (var endpoint in serviceHost.Description.Endpoints)
+                                if (this.SetDataContractResolverAction != null)
                                 {
                                     foreach (var operationDescription in endpoint.Contract.Operations)
                                     {
@@ -2233,6 +2233,17 @@ namespace DevLib.ServiceModel
                                         }
 
                                         this.SetDataContractResolverAction(serializerBehavior);
+                                    }
+                                }
+
+                                if (endpoint.Binding is WebHttpBinding)
+                                {
+                                    WebHttpBehavior webHttpBehavior = endpoint.Behaviors.Find<WebHttpBehavior>();
+
+                                    if (webHttpBehavior == null)
+                                    {
+                                        webHttpBehavior = new WebHttpBehavior();
+                                        endpoint.Behaviors.Add(webHttpBehavior);
                                     }
                                 }
                             }
@@ -2368,6 +2379,8 @@ namespace DevLib.ServiceModel
                                 }
                             }
 
+                            bool isWebHttpBinding = binding is WebHttpBinding;
+
                             foreach (var endpoint in serviceHost.Description.Endpoints)
                             {
                                 foreach (var operationDescription in endpoint.Contract.Operations)
@@ -2391,6 +2404,17 @@ namespace DevLib.ServiceModel
                                     if (this.SetDataContractResolverAction != null)
                                     {
                                         this.SetDataContractResolverAction(serializerBehavior);
+                                    }
+                                }
+
+                                if (isWebHttpBinding)
+                                {
+                                    WebHttpBehavior webHttpBehavior = endpoint.Behaviors.Find<WebHttpBehavior>();
+
+                                    if (webHttpBehavior == null)
+                                    {
+                                        webHttpBehavior = new WebHttpBehavior();
+                                        endpoint.Behaviors.Add(webHttpBehavior);
                                     }
                                 }
                             }

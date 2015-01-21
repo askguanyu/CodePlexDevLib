@@ -632,7 +632,7 @@ namespace DevLib.ModernUI.Forms
                 return false;
             }
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(xml), ReaderSettings))
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(temp), ReaderSettings))
             {
                 try
                 {

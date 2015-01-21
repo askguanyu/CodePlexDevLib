@@ -59,7 +59,7 @@ namespace DevLib.ExtensionMethods
                 return false;
             }
 
-            using (XmlReader xmlReader = XmlReader.Create(new StringReader(source), ReaderSettings))
+            using (XmlReader xmlReader = XmlReader.Create(new StringReader(temp), ReaderSettings))
             {
                 try
                 {

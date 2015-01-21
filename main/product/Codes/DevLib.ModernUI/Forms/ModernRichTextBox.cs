@@ -507,7 +507,7 @@ namespace DevLib.ModernUI.Forms
             {
                 this._baseRichTextBox.Clear();
                 this._baseRichTextBox.Text = value;
-                this.UpdateXmlSyntaxHighlight();
+                this.UpdateXmlSyntaxHighlight(true);
             }
         }
 
@@ -1060,7 +1060,7 @@ namespace DevLib.ModernUI.Forms
 
             if (this.HighlightXmlSyntax)
             {
-                this.UpdateXmlSyntaxHighlight();
+                this.UpdateXmlSyntaxHighlight(false);
             }
 
             this._baseRichTextBox.ForeColor = foreColor;
@@ -1106,7 +1106,7 @@ namespace DevLib.ModernUI.Forms
                     this.Pasted(this, new ClipboardEventArgs(Clipboard.GetText()));
                 }
 
-                this.UpdateXmlSyntaxHighlight();
+                this.UpdateXmlSyntaxHighlight(true);
             }
         }
 
@@ -1123,7 +1123,7 @@ namespace DevLib.ModernUI.Forms
                 (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Insert) ||
                 (e.Shift && e.KeyCode == Keys.Insert))
             {
-                this.UpdateXmlSyntaxHighlight();
+                this.UpdateXmlSyntaxHighlight(true);
             }
         }
 
@@ -1137,7 +1137,7 @@ namespace DevLib.ModernUI.Forms
 
             if (e.KeyChar == 22)
             {
-                this.UpdateXmlSyntaxHighlight();
+                this.UpdateXmlSyntaxHighlight(true);
             }
         }
 
@@ -1281,6 +1281,11 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">EventArgs instance.</param>
         private void BaseRichTextBoxTextChanged(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(this._baseRichTextBox.Text))
+            {
+                this._baseRichTextBox.Clear();
+            }
+
             this.OnTextChanged(e);
         }
 
@@ -1347,10 +1352,16 @@ namespace DevLib.ModernUI.Forms
         /// Updates the Xml syntax highlight.
         /// </summary>
         /// <param name="force">true to force update; otherwise, false.</param>
-        private void UpdateXmlSyntaxHighlight(bool force = false)
+        private void UpdateXmlSyntaxHighlight(bool force)
         {
             if (!this.IsValidXml(this.Text))
             {
+                string tempText = this._baseRichTextBox.Text;
+                int selectionStart = this._baseRichTextBox.SelectionStart;
+                this._baseRichTextBox.Clear();
+                this._baseRichTextBox.Text = tempText;
+                this._baseRichTextBox.SelectionStart = selectionStart;
+
                 return;
             }
 

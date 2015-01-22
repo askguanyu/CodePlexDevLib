@@ -2379,6 +2379,25 @@ namespace DevLib.ServiceModel
                                 }
                             }
 
+                            if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ServiceMetadataBehavior serviceMetadataBehavior = serviceHost.Description.Behaviors.Find<ServiceMetadataBehavior>();
+
+                                if (serviceMetadataBehavior == null)
+                                {
+                                    serviceMetadataBehavior = new ServiceMetadataBehavior();
+                                    serviceMetadataBehavior.HttpGetEnabled = true;
+                                    serviceMetadataBehavior.HttpsGetEnabled = true;
+
+                                    serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
+                                }
+                                else
+                                {
+                                    serviceMetadataBehavior.HttpGetEnabled = true;
+                                    serviceMetadataBehavior.HttpsGetEnabled = true;
+                                }
+                            }
+
                             bool isWebHttpBinding = binding is WebHttpBinding;
 
                             foreach (var endpoint in serviceHost.Description.Endpoints)

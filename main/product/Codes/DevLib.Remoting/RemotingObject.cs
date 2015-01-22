@@ -234,6 +234,58 @@ namespace DevLib.Remoting
         }
 
         /// <summary>
+        /// Determines whether the specified remoting object instances are the same singleton instance.
+        /// </summary>
+        /// <param name="objA">The first remoting object to compare.</param>
+        /// <param name="objB">The second remoting object to compare.</param>
+        /// <returns>true if objA is the same as objB or if both are null references; otherwise, false.</returns>
+        [SecurityPermission(SecurityAction.Demand)]
+        public static bool RemotingEquals(MarshalByRefObject objA, MarshalByRefObject objB)
+        {
+            if (object.ReferenceEquals(objA, objB))
+            {
+                return true;
+            }
+
+            if (objA == null || objB == null)
+            {
+                return false;
+            }
+
+            if (RemotingServices.IsTransparentProxy(objA))
+            {
+                if (RemotingServices.IsTransparentProxy(objB))
+                {
+                    return string.Equals(RemotingServices.GetObjectUri(objA), RemotingServices.GetObjectUri(objB), StringComparison.Ordinal);
+                }
+                else
+                {
+                    string uriA = RemotingServices.GetObjectUri(objA);
+                    string[] uriB = RemotingServices.GetObjectUri(objB).Split('/');
+
+                    return uriA.Contains(uriB[uriB.Length - 1]);
+                }
+            }
+            else
+            {
+                if (RemotingServices.IsTransparentProxy(objB))
+                {
+                    string[] uriA = RemotingServices.GetObjectUri(objA).Split('/');
+                    string uriB = RemotingServices.GetObjectUri(objB);
+
+                    return uriB.Contains(uriA[uriA.Length - 1]);
+                }
+                else
+                {
+                    string[] uriA = RemotingServices.GetObjectUri(objA).Split('/');
+                    string[] uriB = RemotingServices.GetObjectUri(objB).Split('/');
+
+                    return string.Equals(uriA[uriA.Length - 1], uriB[uriB.Length - 1], StringComparison.Ordinal);
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets object uri.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
@@ -493,6 +545,58 @@ namespace DevLib.Remoting
             }
 
             return (T)Activator.GetObject(ObjectType, string.Format(IpcUrlStringFormat, objectUri));
+        }
+
+        /// <summary>
+        /// Determines whether the specified remoting object instances are the same singleton instance.
+        /// </summary>
+        /// <param name="objA">The first remoting object to compare.</param>
+        /// <param name="objB">The second remoting object to compare.</param>
+        /// <returns>true if objA is the same as objB or if both are null references; otherwise, false.</returns>
+        [SecurityPermission(SecurityAction.Demand)]
+        public static bool RemotingEquals(T objA, T objB)
+        {
+            if (object.ReferenceEquals(objA, objB))
+            {
+                return true;
+            }
+
+            if (objA == null || objB == null)
+            {
+                return false;
+            }
+
+            if (RemotingServices.IsTransparentProxy(objA))
+            {
+                if (RemotingServices.IsTransparentProxy(objB))
+                {
+                    return string.Equals(RemotingServices.GetObjectUri(objA as MarshalByRefObject), RemotingServices.GetObjectUri(objB as MarshalByRefObject), StringComparison.Ordinal);
+                }
+                else
+                {
+                    string uriA = RemotingServices.GetObjectUri(objA as MarshalByRefObject);
+                    string[] uriB = RemotingServices.GetObjectUri(objB as MarshalByRefObject).Split('/');
+
+                    return uriA.Contains(uriB[uriB.Length - 1]);
+                }
+            }
+            else
+            {
+                if (RemotingServices.IsTransparentProxy(objB))
+                {
+                    string[] uriA = RemotingServices.GetObjectUri(objA as MarshalByRefObject).Split('/');
+                    string uriB = RemotingServices.GetObjectUri(objB as MarshalByRefObject);
+
+                    return uriB.Contains(uriA[uriA.Length - 1]);
+                }
+                else
+                {
+                    string[] uriA = RemotingServices.GetObjectUri(objA as MarshalByRefObject).Split('/');
+                    string[] uriB = RemotingServices.GetObjectUri(objB as MarshalByRefObject).Split('/');
+
+                    return string.Equals(uriA[uriA.Length - 1], uriB[uriB.Length - 1], StringComparison.Ordinal);
+                }
+            }
         }
 
         /// <summary>

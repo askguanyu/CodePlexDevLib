@@ -70,6 +70,7 @@ namespace DevLib.Samples
     using DevLib.WinForms;
     using DevLib.Xml;
     using DevLib.Data.Repository;
+    using System.Runtime.Remoting;
 
     public class Program
     {
@@ -792,6 +793,37 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            RemotingObject<Person>.Register();
+            Person aaPerson = RemotingObject<Person>.GetObject();
+            Person bPerson = RemotingObject<Person>.GetObject();
+            Person cPerson = bPerson.Get();
+            Person dPerson = aaPerson.Get();
+
+            var equa = RemotingObject.RemotingEquals(aaPerson, bPerson);
+            var equb = RemotingObject<Person>.RemotingEquals(dPerson, cPerson);
+
+
+            Type ta = Type.GetType("System.MarshalByRefObject, mscorlib");
+            MethodInfo ma = ta.GetMethod("GetIdentity", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeof(MarshalByRefObject) }, null);
+            //var oa = ma.Invoke(null, new object[] { cPerson });
+
+            //Type ta = d.GetType();
+            //var pa = ta.GetProperty("IdentityObject", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            //var oa = pa.GetValue(d);
+            //pa = pa.PropertyType.GetProperty("ObjURI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            //oa = pa.GetValue(oa);
+
+
+
+
+
+
+
+
+
+
+
+
             GCNotification.GCDone += new Action<int>(GCNotification_GCDone);
 
             Thread.Sleep(1000);
@@ -2346,7 +2378,8 @@ namespace DevLib.Samples
         }
     }
 
-    public class Person
+    [Serializable]
+    public class Person : MarshalByRefObject
     {
         public event EventHandler<ErrorEventArgs> Error;
 
@@ -2426,6 +2459,10 @@ namespace DevLib.Samples
             return string.Format("FirstName= {0} LastName= {1} Id= {2}", this.FirstName, this.LastName, this.ID);
         }
 
+        public Person Get()
+        {
+            return this;
+        }
     }
 
     [Serializable]

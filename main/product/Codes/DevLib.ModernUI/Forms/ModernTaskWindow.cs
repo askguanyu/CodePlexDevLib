@@ -82,8 +82,8 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernTaskWindow"/> class.
         /// </summary>
-        /// <param name="autoCloseTime">The auto close window duration in seconds.</param>
-        public ModernTaskWindow(int autoCloseTime)
+        /// <param name="autoCloseTime">The auto close window duration in milliseconds.</param>
+        public ModernTaskWindow(long autoCloseTime)
             : this(autoCloseTime, null)
         {
         }
@@ -105,9 +105,9 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernTaskWindow"/> class.
         /// </summary>
-        /// <param name="autoCloseTime">The auto close window duration in seconds.</param>
+        /// <param name="autoCloseTime">The auto close window duration in milliseconds.</param>
         /// <param name="userControl">The user control.</param>
-        public ModernTaskWindow(int autoCloseTime, Control userControl)
+        public ModernTaskWindow(long autoCloseTime, Control userControl)
             : this()
         {
             if (userControl != null)
@@ -116,7 +116,7 @@ namespace DevLib.ModernUI.Forms
                 userControl.Dock = DockStyle.Fill;
             }
 
-            this._closeTime = autoCloseTime * 1000d;
+            this._closeTime = autoCloseTime;
 
             if (this._closeTime > 0d)
             {
@@ -207,8 +207,8 @@ namespace DevLib.ModernUI.Forms
         /// Shows the task window.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <param name="autoCloseTime">The auto close window duration in seconds.</param>
-        public static void Show(string text, int autoCloseTime)
+        /// <param name="autoCloseTime">The auto close window duration in milliseconds.</param>
+        public static void Show(string text, long autoCloseTime)
         {
             Show(null, text, autoCloseTime, null);
         }
@@ -217,9 +217,9 @@ namespace DevLib.ModernUI.Forms
         /// Shows the task window.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <param name="autoCloseTime">The auto close window duration in seconds.</param>
+        /// <param name="autoCloseTime">The auto close window duration in milliseconds.</param>
         /// <param name="userControl">The user control.</param>
-        public static void Show(string text, int autoCloseTime, Control userControl)
+        public static void Show(string text, long autoCloseTime, Control userControl)
         {
             Show(null, text, autoCloseTime, userControl);
         }
@@ -229,8 +229,8 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         /// <param name="owner">The parent.</param>
         /// <param name="text">The text.</param>
-        /// <param name="autoCloseTime">The auto close window duration in seconds.</param>
-        public static void Show(IWin32Window owner, string text, int autoCloseTime)
+        /// <param name="autoCloseTime">The auto close window duration in milliseconds.</param>
+        public static void Show(IWin32Window owner, string text, long autoCloseTime)
         {
             Show(owner, text, autoCloseTime, null);
         }
@@ -240,9 +240,9 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         /// <param name="owner">The parent.</param>
         /// <param name="text">The text.</param>
-        /// <param name="autoCloseTime">The auto close window duration in seconds.</param>
+        /// <param name="autoCloseTime">The auto close window duration in milliseconds.</param>
         /// <param name="userControl">The user control.</param>
-        public static void Show(IWin32Window owner, string text, int autoCloseTime, Control userControl)
+        public static void Show(IWin32Window owner, string text, long autoCloseTime, Control userControl)
         {
             if (_singletonWindow != null)
             {

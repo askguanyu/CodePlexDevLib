@@ -46,7 +46,7 @@ namespace DevLib.Samples
                 case DialogResult.OK:
                 case DialogResult.Retry:
                 case DialogResult.Yes:
-                    ModernTaskWindow.Show("SubControl in TaskWindow", int.Parse(modernTextBox1.Text));
+                    ModernTaskWindow.Show("SubControl in TaskWindow", long.Parse(modernTextBox1.Text) * 1000);
                     break;
                 default:
                     break;

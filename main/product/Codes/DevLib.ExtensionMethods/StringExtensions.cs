@@ -77,7 +77,7 @@ namespace DevLib.ExtensionMethods
 
             if (ignoreCase)
             {
-                while ((index = source.IndexOf(value, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                while ((index = source.IndexOf(value, index, StringComparison.OrdinalIgnoreCase)) >= 0)
                 {
                     result.Add(index);
                     index += valueLength;
@@ -87,7 +87,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                while ((index = source.IndexOf(value, index)) > -1)
+                while ((index = source.IndexOf(value, index)) >= 0)
                 {
                     result.Add(index);
                     index += valueLength;
@@ -119,7 +119,7 @@ namespace DevLib.ExtensionMethods
             {
                 string stringValue = value.ToString();
 
-                while ((index = source.IndexOf(stringValue, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                while ((index = source.IndexOf(stringValue, index, StringComparison.OrdinalIgnoreCase)) >= 0)
                 {
                     result.Add(index);
                     index += 1;
@@ -129,7 +129,7 @@ namespace DevLib.ExtensionMethods
             }
             else
             {
-                while ((index = source.IndexOf(value, index)) > -1)
+                while ((index = source.IndexOf(value, index)) >= 0)
                 {
                     result.Add(index);
                     index += 1;
@@ -189,7 +189,7 @@ namespace DevLib.ExtensionMethods
                     return true;
                 }
 
-                return source.IndexOf(value.ToString(), StringComparison.OrdinalIgnoreCase) > -1;
+                return source.IndexOf(value.ToString(), StringComparison.OrdinalIgnoreCase) >= 0;
             }
             else
             {
@@ -268,7 +268,7 @@ namespace DevLib.ExtensionMethods
                 int newValueLength = newValue.Length;
                 int index = 0;
 
-                while ((index = result.IndexOf(oldValue, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                while ((index = result.IndexOf(oldValue, index, StringComparison.OrdinalIgnoreCase)) >= 0)
                 {
                     result = result.Remove(index, oldValueLength).Insert(index, newValue);
                     index += newValueLength;
@@ -306,7 +306,7 @@ namespace DevLib.ExtensionMethods
                 int newValueLength = newString.Length;
                 int index = 0;
 
-                while ((index = result.IndexOf(oldString, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                while ((index = result.IndexOf(oldString, index, StringComparison.OrdinalIgnoreCase)) >= 0)
                 {
                     result = result.Remove(index, oldValueLength).Insert(index, newString);
                     index += newValueLength;
@@ -391,7 +391,7 @@ namespace DevLib.ExtensionMethods
                 int valueLength = value.Length;
                 int index = 0;
 
-                while ((index = result.IndexOf(value, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                while ((index = result.IndexOf(value, index, StringComparison.OrdinalIgnoreCase)) >= 0)
                 {
                     result = result.Remove(index, valueLength);
                 }
@@ -425,7 +425,7 @@ namespace DevLib.ExtensionMethods
                 int valueLength = valueString.Length;
                 int index = 0;
 
-                while ((index = result.IndexOf(valueString, index, StringComparison.OrdinalIgnoreCase)) > -1)
+                while ((index = result.IndexOf(valueString, index, StringComparison.OrdinalIgnoreCase)) >= 0)
                 {
                     result = result.Remove(index, valueLength);
                 }

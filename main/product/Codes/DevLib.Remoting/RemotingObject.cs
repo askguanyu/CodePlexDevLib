@@ -256,14 +256,14 @@ namespace DevLib.Remoting
             {
                 if (RemotingServices.IsTransparentProxy(objB))
                 {
-                    return string.Equals(RemotingServices.GetObjectUri(objA), RemotingServices.GetObjectUri(objB), StringComparison.Ordinal);
+                    return string.Equals(RemotingServices.GetObjectUri(objA), RemotingServices.GetObjectUri(objB), StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {
                     string uriA = RemotingServices.GetObjectUri(objA);
                     string[] uriB = RemotingServices.GetObjectUri(objB).Split('/');
 
-                    return uriA.Contains(uriB[uriB.Length - 1]);
+                    return uriA.IndexOf(uriB[uriB.Length - 1], StringComparison.OrdinalIgnoreCase) >= 0;
                 }
             }
             else
@@ -273,14 +273,14 @@ namespace DevLib.Remoting
                     string[] uriA = RemotingServices.GetObjectUri(objA).Split('/');
                     string uriB = RemotingServices.GetObjectUri(objB);
 
-                    return uriB.Contains(uriA[uriA.Length - 1]);
+                    return uriB.IndexOf(uriA[uriA.Length - 1], StringComparison.OrdinalIgnoreCase) >= 0;
                 }
                 else
                 {
                     string[] uriA = RemotingServices.GetObjectUri(objA).Split('/');
                     string[] uriB = RemotingServices.GetObjectUri(objB).Split('/');
 
-                    return string.Equals(uriA[uriA.Length - 1], uriB[uriB.Length - 1], StringComparison.Ordinal);
+                    return string.Equals(uriA[uriA.Length - 1], uriB[uriB.Length - 1], StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
@@ -570,14 +570,14 @@ namespace DevLib.Remoting
             {
                 if (RemotingServices.IsTransparentProxy(objB))
                 {
-                    return string.Equals(RemotingServices.GetObjectUri(objA as MarshalByRefObject), RemotingServices.GetObjectUri(objB as MarshalByRefObject), StringComparison.Ordinal);
+                    return string.Equals(RemotingServices.GetObjectUri(objA as MarshalByRefObject), RemotingServices.GetObjectUri(objB as MarshalByRefObject), StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {
                     string uriA = RemotingServices.GetObjectUri(objA as MarshalByRefObject);
                     string[] uriB = RemotingServices.GetObjectUri(objB as MarshalByRefObject).Split('/');
 
-                    return uriA.Contains(uriB[uriB.Length - 1]);
+                    return uriA.IndexOf(uriB[uriB.Length - 1], StringComparison.OrdinalIgnoreCase) >= 0;
                 }
             }
             else
@@ -587,14 +587,14 @@ namespace DevLib.Remoting
                     string[] uriA = RemotingServices.GetObjectUri(objA as MarshalByRefObject).Split('/');
                     string uriB = RemotingServices.GetObjectUri(objB as MarshalByRefObject);
 
-                    return uriB.Contains(uriA[uriA.Length - 1]);
+                    return uriB.IndexOf(uriA[uriA.Length - 1], StringComparison.OrdinalIgnoreCase) >= 0;
                 }
                 else
                 {
                     string[] uriA = RemotingServices.GetObjectUri(objA as MarshalByRefObject).Split('/');
                     string[] uriB = RemotingServices.GetObjectUri(objB as MarshalByRefObject).Split('/');
 
-                    return string.Equals(uriA[uriA.Length - 1], uriB[uriB.Length - 1], StringComparison.Ordinal);
+                    return string.Equals(uriA[uriA.Length - 1], uriB[uriB.Length - 1], StringComparison.OrdinalIgnoreCase);
                 }
             }
         }

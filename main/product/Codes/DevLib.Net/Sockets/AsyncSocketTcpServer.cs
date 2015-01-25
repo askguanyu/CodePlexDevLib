@@ -24,6 +24,11 @@ namespace DevLib.Net.Sockets
         private readonly object _syncRoot = new object();
 
         /// <summary>
+        /// Dictionary of connected socket client.
+        /// </summary>
+        private readonly Dictionary<int, SocketAsyncEventArgs> _sessionDictionary = new Dictionary<int, SocketAsyncEventArgs>();
+
+        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
@@ -37,11 +42,6 @@ namespace DevLib.Net.Sockets
         /// The total number of clients connected to the server.
         /// </summary>
         private long _connectedSocketsCount;
-
-        /// <summary>
-        /// Thread-safe dictionary of connected socket client.
-        /// </summary>
-        private readonly Dictionary<int, SocketAsyncEventArgs> _sessionDictionary=new Dictionary<int,SocketAsyncEventArgs>();
 
         /// <summary>
         /// Field _acceptSocketAsyncEventArgs.

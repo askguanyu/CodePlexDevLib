@@ -40,7 +40,7 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <summary>
         /// Field VWDName.
         /// </summary>
-        public const string VWDName = "DevLib.Web.Hosting.WebHost40 ASP.NET Development Server";
+        public const string VWDName = "DevLib.Web.Hosting.WebHost40";
 
         /// <summary>
         /// Field VersionString.

@@ -151,7 +151,7 @@ namespace DevLib.ServiceModel.Extensions
 
             try
             {
-                foreach (var item in Directory.GetFiles(assemblyPath, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+                foreach (var item in Directory.GetFiles(assemblyPath, "*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                 {
                     result.AddRange(GetReflectTypes(item));
                 }
@@ -593,7 +593,7 @@ namespace DevLib.ServiceModel.Extensions
 
             try
             {
-                foreach (var item in Directory.GetFiles(assemblyPath, "*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+                foreach (var item in Directory.GetFiles(assemblyPath, "*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                 {
                     this.AddKnownTypeRange(GetReflectTypes(item));
                 }

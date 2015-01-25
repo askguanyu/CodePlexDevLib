@@ -468,7 +468,7 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                string[] files = Directory.GetFiles(sourceFullPath, "*.*", SearchOption.AllDirectories);
+                string[] files = Directory.GetFiles(sourceFullPath, "*", SearchOption.AllDirectories);
 
                 foreach (string file in files)
                 {
@@ -509,6 +509,25 @@ namespace DevLib.ExtensionMethods
         {
             FileInfo fileInfo = new FileInfo(sourcePath);
             return fileInfo.Attributes != (FileAttributes)(-1) && (fileInfo.Attributes & FileAttributes.Directory) != 0;
+        }
+
+        /// <summary>
+        /// Determines whether the specified path is empty directory.
+        /// </summary>
+        /// <param name="sourcePath">The path to check.</param>
+        /// <returns>true if the specified path is empty directory; otherwise, false.</returns>
+        public static bool IsDirectoryEmpty(this string sourcePath)
+        {
+            string[] dirs = Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories);
+
+            if (dirs.Length == 0)
+            {
+                string[] files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
+
+                return files.Length == 0;
+            }
+
+            return false;
         }
 
         /// <summary>

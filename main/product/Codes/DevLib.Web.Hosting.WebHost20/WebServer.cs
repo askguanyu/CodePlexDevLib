@@ -706,14 +706,36 @@ namespace DevLib.Web.Hosting.WebHost20
 
             if (!this._isBinFolderExists)
             {
-                try
+                if (this.IsDirectoryEmpty(this._binFolder))
                 {
-                    Directory.Delete(this._binFolder, true);
-                }
-                catch
-                {
+                    try
+                    {
+                        Directory.Delete(this._binFolder, true);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines whether the specified path is empty directory.
+        /// </summary>
+        /// <param name="sourcePath">The path to check.</param>
+        /// <returns>true if the specified path is empty directory; otherwise, false.</returns>
+        private bool IsDirectoryEmpty(string sourcePath)
+        {
+            string[] dirs = Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories);
+
+            if (dirs.Length == 0)
+            {
+                string[] files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
+
+                return files.Length == 0;
+            }
+
+            return false;
         }
     }
 }

@@ -197,7 +197,7 @@ namespace DevLib.Web.Hosting.WebHost40
         public WebServer(int port, string virtualPath, string physicalPath, bool requireAuthentication, bool disableDirectoryListing, bool startNow)
         {
             this.Port = port;
-            this.VirtualPath = physicalPath == null || string.IsNullOrEmpty(virtualPath.Trim()) ? "/" : "/" + virtualPath.Trim('/') + "/";
+            this.VirtualPath = physicalPath == null || string.IsNullOrEmpty(virtualPath.Trim()) ? "/" : "/" + virtualPath.Trim('/');
             this.PhysicalPath = Path.GetFullPath(physicalPath == null || string.IsNullOrEmpty(physicalPath.Trim()) ? "." : physicalPath).TrimEnd('\\') + "\\";
             this._binFolder = Path.Combine(this.PhysicalPath, "bin");
             this._binFolderReferenceFile = Path.Combine(this._binFolder, CurrentAssemblyFilename);
@@ -540,7 +540,7 @@ namespace DevLib.Web.Hosting.WebHost40
             try
             {
                 socket = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
-                socket.ExclusiveAddressUse = false;
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 socket.Bind(new IPEndPoint(ipAddress, port));
             }
             catch

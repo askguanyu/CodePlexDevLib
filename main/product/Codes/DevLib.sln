@@ -85,9 +85,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Text", "DevLib.Text\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Drawing", "DevLib.Drawing\DevLib.Drawing.csproj", "{2768F32B-7C3F-49E7-B0C8-AE20776C143D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Web.Hosting.WebHost20", "DevLib.Web.Hosting.WebHost20\DevLib.Web.Hosting.WebHost20.csproj", "{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Web.Hosting.WebHost40", "DevLib.Web.Hosting.WebHost40\DevLib.Web.Hosting.WebHost40.csproj", "{137C072D-313C-4AA7-9F26-82615302BFAA}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 39
+		SccNumberOfProjects = 41
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -206,6 +210,12 @@ Global
 		SccProjectUniqueName38 = DevLib.Drawing\\DevLib.Drawing.csproj
 		SccProjectName38 = DevLib.Drawing
 		SccLocalPath38 = DevLib.Drawing
+		SccProjectUniqueName39 = DevLib.Web.Hosting.WebHost20\\DevLib.Web.Hosting.WebHost20.csproj
+		SccProjectName39 = DevLib.Web.Hosting.WebHost20
+		SccLocalPath39 = DevLib.Web.Hosting.WebHost20
+		SccProjectUniqueName40 = DevLib.Web.Hosting.WebHost40\\DevLib.Web.Hosting.WebHost40.csproj
+		SccProjectName40 = DevLib.Web.Hosting.WebHost40
+		SccLocalPath40 = DevLib.Web.Hosting.WebHost40
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -603,6 +613,26 @@ Global
 		{2768F32B-7C3F-49E7-B0C8-AE20776C143D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2768F32B-7C3F-49E7-B0C8-AE20776C143D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2768F32B-7C3F-49E7-B0C8-AE20776C143D}.Release|x86.ActiveCfg = Release|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}.Release|x86.ActiveCfg = Release|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

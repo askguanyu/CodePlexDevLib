@@ -793,6 +793,8 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            string patha = Path.GetFullPath(".");
+
             RemotingObject<Person>.Register();
             Person aaPerson = RemotingObject<Person>.GetObject();
             Person bPerson = RemotingObject<Person>.GetObject();

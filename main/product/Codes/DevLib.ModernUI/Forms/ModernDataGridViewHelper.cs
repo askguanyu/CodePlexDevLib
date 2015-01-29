@@ -91,12 +91,10 @@ namespace DevLib.ModernUI.Forms
 
                 if (this._isVertical)
                 {
-                    int visibleRows = this.GetVisibleRows();
-
                     this._scrollBar.Maximum = this._dataGridView.RowCount;
                     this._scrollBar.Minimum = 1;
                     this._scrollBar.SmallChange = 1;
-                    this._scrollBar.LargeChange = Math.Max(1, visibleRows - 1);
+                    this._scrollBar.LargeChange = Math.Max(1, this.GetVisibleRows() - 1);
                     this._scrollBar.Value = this._dataGridView.FirstDisplayedScrollingRowIndex;
                     this._scrollBar.Location = new Point(this._dataGridView.Width - this._scrollBar.ScrollbarSize, 0);
                     this._scrollBar.Height = this._dataGridView.Height - (this._hScrollBar.Visible ? this._scrollBar.ScrollbarSize : 0);
@@ -105,8 +103,6 @@ namespace DevLib.ModernUI.Forms
                 }
                 else
                 {
-                    int visibleCols = this.GetVisibleColumns();
-
                     this._scrollBar.Maximum = this._hScrollBar.Maximum;
                     this._scrollBar.Minimum = this._hScrollBar.Minimum;
                     this._scrollBar.SmallChange = this._hScrollBar.SmallChange;

@@ -613,7 +613,6 @@ namespace DevLib.ModernUI.Forms
                 {
                     Size originalSize = this.Icon.Size;
                     double resizeFactor = (double)(this.ClientRectangle.Height - 2) / (double)originalSize.Height;
-                    Point iconLocation = new Point(1, 1);
                     return new Size((int)(originalSize.Width * resizeFactor), (int)(originalSize.Height * resizeFactor));
                 }
 
@@ -1087,7 +1086,7 @@ namespace DevLib.ModernUI.Forms
             /// </summary>
             public PromptedTextBox()
             {
-                this._drawPrompt = this.Text == null || string.IsNullOrEmpty(this.Text.Trim());
+                this._drawPrompt = this.IsNullOrWhiteSpace(this.Text);
             }
 
             /// <summary>
@@ -1141,7 +1140,7 @@ namespace DevLib.ModernUI.Forms
             protected override void OnTextChanged(EventArgs e)
             {
                 base.OnTextChanged(e);
-                this._drawPrompt = this.Text == null || string.IsNullOrEmpty(this.Text.Trim());
+                this._drawPrompt = this.IsNullOrWhiteSpace(this.Text);
             }
 
             /// <summary>
@@ -1196,6 +1195,29 @@ namespace DevLib.ModernUI.Forms
                 }
 
                 TextRenderer.DrawText(g, this.PromptText, this.Font, clientRectangle, SystemColors.GrayText, this.BackColor, flags);
+            }
+
+            /// <summary>
+            /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+            /// </summary>
+            /// <param name="value">The string to test.</param>
+            /// <returns>true if the value parameter is null or String.Empty, or if value consists exclusively of white-space characters.</returns>
+            private bool IsNullOrWhiteSpace(string value)
+            {
+                if (value == null)
+                {
+                    return true;
+                }
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (!char.IsWhiteSpace(value[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         }
     }

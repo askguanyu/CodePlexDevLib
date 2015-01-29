@@ -178,6 +178,7 @@ namespace DevLib.ModernUI.Forms
             }
 
             ModernMessageBoxForm modernMessageBoxControl = new ModernMessageBoxForm();
+
             modernMessageBoxControl.BackColor = ownerForm.BackColor;
             modernMessageBoxControl.Properties.Buttons = buttons;
             modernMessageBoxControl.Properties.DefaultButton = defaultbutton;
@@ -190,8 +191,6 @@ namespace DevLib.ModernUI.Forms
             modernMessageBoxControl.Size = new Size(ownerForm.Size.Width, modernMessageBoxControl.Height);
             modernMessageBoxControl.Location = new Point(ownerForm.Location.X, ownerForm.Location.Y + ((ownerForm.Height - modernMessageBoxControl.Height) / 2));
             modernMessageBoxControl.ArrangeAppearance();
-            int overlaySizes = Convert.ToInt32(Math.Floor(modernMessageBoxControl.Size.Height * 0.28));
-
             modernMessageBoxControl.TopLevel = true;
             modernMessageBoxControl.TopMost = true;
             modernMessageBoxControl.ShowDialog();

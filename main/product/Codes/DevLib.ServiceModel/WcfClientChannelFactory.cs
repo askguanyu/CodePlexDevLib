@@ -144,47 +144,6 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Creates a channel of a specified type that is used to send messages to a service endpoint that is configured with a specified binding.
         /// </summary>
-        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> used to configure the endpoint.</param>
-        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
-        /// <param name="fromCaching">Whether get instance from caching or not.</param>
-        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static TChannel CreateChannel(Binding binding, string remoteUri, bool fromCaching = true)
-        {
-            if (fromCaching)
-            {
-                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, binding.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
-
-                if (ChannelFactoryDictionary.ContainsKey(key))
-                {
-                    return ChannelFactoryDictionary[key].CreateChannel();
-                }
-
-                lock (SyncRoot)
-                {
-                    if (ChannelFactoryDictionary.ContainsKey(key))
-                    {
-                        return ChannelFactoryDictionary[key].CreateChannel();
-                    }
-                    else
-                    {
-                        ChannelFactory<TChannel> result = new ChannelFactory<TChannel>(binding, new EndpointAddress(remoteUri));
-
-                        ChannelFactoryDictionary.Add(key, result);
-
-                        return result.CreateChannel();
-                    }
-                }
-            }
-            else
-            {
-                return new ChannelFactory<TChannel>(binding, new EndpointAddress(remoteUri)).CreateChannel();
-            }
-        }
-
-        /// <summary>
-        /// Creates a channel of a specified type that is used to send messages to a service endpoint that is configured with a specified binding.
-        /// </summary>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
@@ -194,7 +153,7 @@ namespace DevLib.ServiceModel
         {
             if (fromCaching)
             {
-                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, bindingType.GetHashCode().ToString(), string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
+                string key = string.Format(ChannelFactoryDictionaryKeyStringFormat, bindingType.FullName, string.IsNullOrEmpty(remoteUri) ? string.Empty : remoteUri.ToLowerInvariant());
 
                 if (ChannelFactoryDictionary.ContainsKey(key))
                 {
@@ -221,6 +180,18 @@ namespace DevLib.ServiceModel
             {
                 return new ChannelFactory<TChannel>(WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri)).CreateChannel();
             }
+        }
+
+        /// <summary>
+        /// Creates a channel of a specified type that is used to send messages to a service endpoint that is configured with a specified binding.
+        /// </summary>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> used to configure the endpoint.</param>
+        /// <param name="remoteUri">The URI that identifies the service endpoint.</param>
+        /// <returns>The <typeparamref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public static TChannel CreateChannel(Binding binding, string remoteUri)
+        {
+            return new ChannelFactory<TChannel>(binding, new EndpointAddress(remoteUri)).CreateChannel();
         }
     }
 }

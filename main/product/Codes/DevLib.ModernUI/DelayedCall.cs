@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ModernUI.Animation
+namespace DevLib.ModernUI
 {
     using System;
     using System.Collections;

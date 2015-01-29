@@ -139,8 +139,11 @@ namespace DevLib.Web.Hosting.WebHost40
             {
                 if (string.IsNullOrEmpty(Connection._defaultLocalhostIP))
                 {
+#if __MonoCS__
+                    bool flag = !Socket.SupportsIPv4 && Socket.OSSupportsIPv6;
+#else
                     bool flag = !Socket.OSSupportsIPv4 && Socket.OSSupportsIPv6;
-
+#endif
                     if (flag)
                     {
                         Connection._defaultLocalhostIP = "::1";

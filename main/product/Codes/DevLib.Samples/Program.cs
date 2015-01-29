@@ -69,7 +69,7 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
-    using DevLib.Data.Repository;
+    //using DevLib.Data.Repository;
     using System.Runtime.Remoting;
 
     public class Program
@@ -164,7 +164,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibServiceModel();
+                    TestDevLibServiceModel();
                 });
 
                 Benchmark.Run(delegate
@@ -206,10 +206,10 @@ namespace DevLib.Samples
 
         private static void TestData()
         {
-            XmlFileRepository<FooBar> data = new XmlFileRepository<FooBar>(@"d:\work\temp\repo.xml");
+            //XmlFileRepository<FooBar> data = new XmlFileRepository<FooBar>(@"d:\work\temp\repo.xml");
 
-            data.Add(new FooBar());
-            data.Add(new FooBar() { bar = 2 });
+            //data.Add(new FooBar());
+            //data.Add(new FooBar() { bar = 2 });
 
             Console.ReadLine();
         }
@@ -2020,13 +2020,11 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
 
-            string soapMsg = @"D:\soap.txt".ReadTextFile();
+            //string soapMsg = @"D:\soap.txt".ReadTextFile();
 
             SoapClient soapClient = new SoapClient("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
 
-            string soapresult = soapClient.SendSoapRequestFile(@"D:\soap.txt").Content;
-
-
+            //string soapresult = soapClient.SendSoapRequestFile(@"D:\soap.txt").Content;
             var factory = new WebServiceClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
 
             //new WcfServiceHost(typeof(RoutingService), "DevLib.Samples.exe.config", null, true);
@@ -2037,8 +2035,8 @@ namespace DevLib.Samples
             testsrv.ReceivingRequest += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Receiving);
             testsrv.SendingReply += new EventHandler<WcfServiceHostEventArgs>(calcsvr_Replying);
             testsrv.SetDataContractResolverAction = i => i.DataContractResolver = new GenericDataContractResolver(new string[] { @"D:\Work\Temp\ClassLibrary2\ClassLibrary2\bin\Debug\ClassLibrary2.dll" });
-            //testsrv.Open();
-            //Console.ReadLine();
+            testsrv.Open();
+            Console.ReadLine();
 
             //new WcfServiceHost(typeof(WcfTest), typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
 

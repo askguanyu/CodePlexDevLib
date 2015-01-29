@@ -49,12 +49,6 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Animation\AnimationBase.cs" />
-    <Compile Include="Animation\ColorBlendAnimation.cs" />
-    <Compile Include="Animation\DelayedCall.cs" />
-    <Compile Include="Animation\ExpandAnimation.cs" />
-    <Compile Include="Animation\MoveAnimation.cs" />
-    <Compile Include="Animation\TransitionType.cs" />
     <Compile Include="ComponentModel\Design\ModernTabControlDesigner.cs" />
     <Compile Include="ComponentModel\Design\ModernTabPageCollectionEditor.cs" />
     <Compile Include="ComponentModel\ExpandableObjectConverter.cs" />
@@ -68,6 +62,7 @@
     </Compile>
     <Compile Include="ComponentModel\Design\ModernStyleManagerDesigner.cs" />
     <Compile Include="ComponentModel\CustomTypeDescriptorProvider.cs" />
+    <Compile Include="DelayedCall.cs" />
     <Compile Include="Drawing\ModernFontSize.cs" />
     <Compile Include="Drawing\ModernFontWeight.cs" />
     <Compile Include="Forms\ClipboardEventArgs.cs" />

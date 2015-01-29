@@ -198,8 +198,8 @@ namespace DevLib.Web.Hosting.WebHost40
         public WebServer(int port, string virtualPath, string physicalPath, bool requireAuthentication, bool disableDirectoryListing, bool startNow)
         {
             this.Port = port;
-            this.VirtualPath = physicalPath == null || string.IsNullOrEmpty(virtualPath.Trim()) ? "/" : "/" + virtualPath.Trim('/');
-            this.PhysicalPath = Path.GetFullPath(physicalPath == null || string.IsNullOrEmpty(physicalPath.Trim()) ? "." : physicalPath).TrimEnd('\\') + "\\";
+            this.VirtualPath = this.IsNullOrWhiteSpace(virtualPath) ? "/" : "/" + virtualPath.Trim('/');
+            this.PhysicalPath = Path.GetFullPath(this.IsNullOrWhiteSpace(physicalPath) ? "." : physicalPath).TrimEnd('\\') + "\\";
             this._binFolder = Path.Combine(this.PhysicalPath, "bin");
             this._binFolderReferenceFile = Path.Combine(this._binFolder, CurrentAssemblyFilename);
             this._requireAuthentication = requireAuthentication;
@@ -323,9 +323,11 @@ namespace DevLib.Web.Hosting.WebHost40
             this.CheckDisposed();
 
             bool flag = false;
-
+#if __MonoCS__
+            flag = Socket.SupportsIPv4;
+#else
             flag = Socket.OSSupportsIPv4;
-
+#endif
             if (Socket.OSSupportsIPv6)
             {
                 try
@@ -728,6 +730,29 @@ namespace DevLib.Web.Hosting.WebHost40
         private bool IsDirectoryEmpty(string sourcePath)
         {
             return !Directory.EnumerateFileSystemEntries(sourcePath, "*", SearchOption.AllDirectories).Any();
+        }
+
+        /// <summary>
+        /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        /// <returns>true if the value parameter is null or String.Empty, or if value consists exclusively of white-space characters.</returns>
+        private bool IsNullOrWhiteSpace(string value)
+        {
+            if (value == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (!char.IsWhiteSpace(value[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

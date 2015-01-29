@@ -1,4 +1,9 @@
-﻿namespace DevLib.Data
+﻿//-----------------------------------------------------------------------
+// <copyright file="DbProvider.cs" company="YuGuan Corporation">
+//     Copyright (c) YuGuan Corporation. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+namespace DevLib.Data
 {
     /// <summary>
     /// DbProvider enum.

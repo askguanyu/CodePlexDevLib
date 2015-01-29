@@ -1647,7 +1647,7 @@ namespace DevLib.ModernUI.Forms
             /// </summary>
             public PromptedRichTextBox()
             {
-                this._drawPrompt = this.Text == null || string.IsNullOrEmpty(this.Text.Trim());
+                this._drawPrompt = this.IsNullOrWhiteSpace(this.Text);
             }
 
             /// <summary>
@@ -1691,7 +1691,7 @@ namespace DevLib.ModernUI.Forms
             protected override void OnTextChanged(EventArgs e)
             {
                 base.OnTextChanged(e);
-                this._drawPrompt = this.Text == null || string.IsNullOrEmpty(this.Text.Trim());
+                this._drawPrompt = this.IsNullOrWhiteSpace(this.Text);
             }
 
             /// <summary>
@@ -1729,6 +1729,29 @@ namespace DevLib.ModernUI.Forms
                 Rectangle clientRectangle = ClientRectangle;
                 clientRectangle.Offset(1, 1);
                 TextRenderer.DrawText(g, this.PromptText, this.Font, clientRectangle, SystemColors.GrayText, this.BackColor, flags);
+            }
+
+            /// <summary>
+            /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+            /// </summary>
+            /// <param name="value">The string to test.</param>
+            /// <returns>true if the value parameter is null or String.Empty, or if value consists exclusively of white-space characters.</returns>
+            private bool IsNullOrWhiteSpace(string value)
+            {
+                if (value == null)
+                {
+                    return true;
+                }
+
+                for (int i = 0; i < value.Length; i++)
+                {
+                    if (!char.IsWhiteSpace(value[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         }
     }

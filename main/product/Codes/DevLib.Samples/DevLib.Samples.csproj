@@ -158,6 +158,10 @@
       <Project>{4A3025ED-0AF6-46E6-927F-128DF086CFCC}</Project>
       <Name>DevLib.DirectoryServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Drawing\DevLib.Drawing.csproj">
+      <Project>{2768F32B-7C3F-49E7-B0C8-AE20776C143D}</Project>
+      <Name>DevLib.Drawing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Dynamic\DevLib.Dynamic.csproj">
       <Project>{7AC78159-7869-4615-B918-DC5E410FBB44}</Project>
       <Name>DevLib.Dynamic</Name>
@@ -245,6 +249,14 @@
     <ProjectReference Include="..\DevLib.Timers\DevLib.Timers.csproj">
       <Project>{7FBD602E-F982-47C4-A7E1-54FFB24C35C0}</Project>
       <Name>DevLib.Timers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Web.Hosting.WebHost20\DevLib.Web.Hosting.WebHost20.csproj">
+      <Project>{0EC21BF0-07BC-40E9-A439-BB5F672F7DCF}</Project>
+      <Name>DevLib.Web.Hosting.WebHost20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Web.Hosting.WebHost40\DevLib.Web.Hosting.WebHost40.csproj">
+      <Project>{137C072D-313C-4AA7-9F26-82615302BFAA}</Project>
+      <Name>DevLib.Web.Hosting.WebHost40</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.Web\DevLib.Web.csproj">
       <Project>{9656A664-9CF7-4834-AB8A-49D25DE2BF29}</Project>

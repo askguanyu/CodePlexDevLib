@@ -2746,7 +2746,7 @@ namespace DevLib.Data
 
             try
             {
-                DbConnection dbConnection = dbConnection = transaction.Connection;
+                DbConnection dbConnection = transaction.Connection;
 
                 insertCommand = this.PrepareCommand(transaction, dbConnection, insertCommandText);
                 deleteCommand = this.PrepareCommand(transaction, dbConnection, deleteCommandText);

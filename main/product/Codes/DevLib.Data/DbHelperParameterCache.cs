@@ -14,7 +14,7 @@ namespace DevLib.Data
     /// <summary>
     /// Provides functions to leverage a static cache of procedure parameters, and the ability to discover parameters for stored procedures at run-time.
     /// </summary>
-    internal static class DbHelperParameterCache
+    public static class DbHelperParameterCache
     {
         /// <summary>
         /// Field ParamCache.

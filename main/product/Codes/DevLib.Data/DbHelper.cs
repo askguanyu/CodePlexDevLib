@@ -3099,6 +3099,7 @@ namespace DevLib.Data
             if (dataRow != null && dataRow.ItemArray.Length > 0)
             {
                 commandParameters = DbHelperParameterCache.GetSpParameterSet(connection, this.DiscoverParametersAction, spName);
+
                 this.AssignParameterValues(commandParameters, dataRow);
             }
 

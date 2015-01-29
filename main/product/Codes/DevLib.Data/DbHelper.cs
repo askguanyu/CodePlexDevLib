@@ -3189,11 +3189,7 @@ namespace DevLib.Data
         {
             bool isNullOrWhiteSpace = true;
 
-            if (value == null)
-            {
-                isNullOrWhiteSpace = true;
-            }
-            else
+            if (value != null)
             {
                 for (int i = 0; i < value.Length; i++)
                 {

@@ -10,7 +10,6 @@ namespace DevLib.ModernUI.Forms
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Windows.Forms;
-    using DevLib.ModernUI.Animation;
     using DevLib.ModernUI.ComponentModel;
     using DevLib.ModernUI.Drawing;
     using DevLib.ModernUI.NativeAPI;
@@ -365,9 +364,6 @@ namespace DevLib.ModernUI.Forms
                 }
 
                 this._isInitialized = true;
-
-                MoveAnimation moveAnimation = new MoveAnimation();
-                moveAnimation.Start(this.ControlContainer, new Point(20, 60), TransitionType.EaseInOutCubic, 4);
             }
 
             base.OnActivated(e);

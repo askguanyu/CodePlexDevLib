@@ -14,8 +14,13 @@ namespace DevLib.Csv
     /// <summary>
     /// Represents a CSV document.
     /// </summary>
-    public class CsvDocument
+    public class CsvDocument : IDisposable
     {
+        /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvDocument" /> class.
         /// </summary>
@@ -147,6 +152,23 @@ namespace DevLib.Csv
         }
 
         /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
+        /// </summary>
+        public void Close()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
         /// Loads the csv document from the specified stream.
         /// </summary>
         /// <param name="inStream">The stream containing the csv document to load.</param>
@@ -155,6 +177,8 @@ namespace DevLib.Csv
         /// <param name="qualifier">Character to use when quoting.</param>
         public void Load(Stream inStream, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
+            this.CheckDisposed();
+
             StreamReader streamReader = null;
 
             try
@@ -186,6 +210,8 @@ namespace DevLib.Csv
         /// <param name="qualifier">Character to use when quoting.</param>
         public void Load(string filename, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
+            this.CheckDisposed();
+
             StreamReader streamReader = null;
 
             try
@@ -217,6 +243,8 @@ namespace DevLib.Csv
         /// <param name="qualifier">Character to use when quoting.</param>
         public void Load(TextReader reader, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
+            this.CheckDisposed();
+
             try
             {
                 this.InternalLoad(reader, hasHeader, delimiter, qualifier);
@@ -237,6 +265,8 @@ namespace DevLib.Csv
         /// <param name="qualifier">Character to use when quoting.</param>
         public void LoadCsv(string csvString, bool hasHeader = true, char delimiter = ',', char qualifier = '"')
         {
+            this.CheckDisposed();
+
             StringReader stringReader = null;
 
             try
@@ -269,6 +299,8 @@ namespace DevLib.Csv
         /// <param name="qualifier">Character to use when quoting.</param>
         public void Save(Stream outStream, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char qualifier = '"')
         {
+            this.CheckDisposed();
+
             this.Save(outStream, hasHeader, quoteAll, delimiter, qualifier, Environment.NewLine);
         }
 
@@ -283,6 +315,8 @@ namespace DevLib.Csv
         /// <param name="newLine">New line characters to use.</param>
         public void Save(Stream outStream, bool hasHeader, bool quoteAll, char delimiter, char qualifier, string newLine)
         {
+            this.CheckDisposed();
+
             StreamWriter streamWriter = null;
 
             try
@@ -317,6 +351,8 @@ namespace DevLib.Csv
         /// <param name="qualifier">Character to use when quoting.</param>
         public void Save(string filename, bool overwrite = false, bool append = false, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char qualifier = '"')
         {
+            this.CheckDisposed();
+
             this.Save(filename, overwrite, append, hasHeader, quoteAll, delimiter, qualifier, Environment.NewLine);
         }
 
@@ -333,6 +369,8 @@ namespace DevLib.Csv
         /// <param name="newLine">New line characters to use.</param>
         public void Save(string filename, bool overwrite, bool append, bool hasHeader, bool quoteAll, char delimiter, char qualifier, string newLine)
         {
+            this.CheckDisposed();
+
             if (string.IsNullOrEmpty(filename))
             {
                 throw new ArgumentNullException("filename");
@@ -392,6 +430,8 @@ namespace DevLib.Csv
         /// <param name="qualifier">Character to use when quoting.</param>
         public void Save(TextWriter writer, bool hasHeader = true, bool quoteAll = false, char delimiter = ',', char qualifier = '"')
         {
+            this.CheckDisposed();
+
             this.Save(writer, hasHeader, quoteAll, delimiter, qualifier, Environment.NewLine);
         }
 
@@ -406,6 +446,8 @@ namespace DevLib.Csv
         /// <param name="newLine">New line characters to use.</param>
         public void Save(TextWriter writer, bool hasHeader, bool quoteAll, char delimiter, char qualifier, string newLine)
         {
+            this.CheckDisposed();
+
             try
             {
                 this.InternalSave(writer, hasHeader, quoteAll, delimiter.ToString(), qualifier.ToString(), newLine);
@@ -414,6 +456,57 @@ namespace DevLib.Csv
             {
                 InternalLogger.Log(e);
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this._disposed)
+            {
+                return;
+            }
+
+            this._disposed = true;
+
+            if (disposing)
+            {
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+
+                if (this.Table != null)
+                {
+                    this.Table.Reset();
+                    this.Table.Dispose();
+
+                    this.Table = null;
+                }
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.Csv.CsvDocument");
             }
         }
 

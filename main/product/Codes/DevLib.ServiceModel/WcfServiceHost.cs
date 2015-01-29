@@ -740,6 +740,15 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Gets or sets a delegate to configure WebHttpBehavior.
+        /// </summary>
+        public Action<WebHttpBehavior> WebHttpBehaviorAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Create an isolated AppDomain to host Wcf service.
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
@@ -2204,19 +2213,14 @@ namespace DevLib.ServiceModel
                             if (wcfServiceHostServiceBehavior == null)
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
-                            else
-                            {
-                                wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                            }
+                            wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                            wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+
+                            wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                            wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
                             foreach (var endpoint in serviceHost.Description.Endpoints)
                             {
@@ -2244,6 +2248,11 @@ namespace DevLib.ServiceModel
                                     {
                                         webHttpBehavior = new WebHttpBehavior();
                                         endpoint.Behaviors.Add(webHttpBehavior);
+                                    }
+
+                                    if (this.WebHttpBehaviorAction != null)
+                                    {
+                                        this.WebHttpBehaviorAction(webHttpBehavior);
                                     }
                                 }
                             }
@@ -2316,51 +2325,36 @@ namespace DevLib.ServiceModel
                             if (wcfServiceHostServiceBehavior == null)
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
-                            else
-                            {
-                                wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                            }
+                            wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                            wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+
+                            wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                            wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
                             ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
 
                             if (serviceDebugBehavior == null)
                             {
                                 serviceDebugBehavior = new ServiceDebugBehavior();
-                                serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
-
                                 serviceHost.Description.Behaviors.Add(serviceDebugBehavior);
                             }
-                            else
-                            {
-                                serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
-                            }
+
+                            serviceDebugBehavior.IncludeExceptionDetailInFaults = true;
 
                             ServiceThrottlingBehavior serviceThrottlingBehavior = serviceHost.Description.Behaviors.Find<ServiceThrottlingBehavior>();
 
                             if (serviceThrottlingBehavior == null)
                             {
                                 serviceThrottlingBehavior = new ServiceThrottlingBehavior();
-                                serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
-
                                 serviceHost.Description.Behaviors.Add(serviceThrottlingBehavior);
                             }
-                            else
-                            {
-                                serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
-                                serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
-                            }
+
+                            serviceThrottlingBehavior.MaxConcurrentCalls = int.MaxValue;
+                            serviceThrottlingBehavior.MaxConcurrentInstances = int.MaxValue;
+                            serviceThrottlingBehavior.MaxConcurrentSessions = int.MaxValue;
 
                             if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
                             {
@@ -2369,14 +2363,10 @@ namespace DevLib.ServiceModel
                                 if (serviceMetadataBehavior == null)
                                 {
                                     serviceMetadataBehavior = new ServiceMetadataBehavior();
-                                    serviceMetadataBehavior.HttpGetEnabled = true;
-
                                     serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
                                 }
-                                else
-                                {
-                                    serviceMetadataBehavior.HttpGetEnabled = true;
-                                }
+
+                                serviceMetadataBehavior.HttpGetEnabled = true;
                             }
 
                             if (baseAddressUri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
@@ -2386,16 +2376,11 @@ namespace DevLib.ServiceModel
                                 if (serviceMetadataBehavior == null)
                                 {
                                     serviceMetadataBehavior = new ServiceMetadataBehavior();
-                                    serviceMetadataBehavior.HttpGetEnabled = true;
-                                    serviceMetadataBehavior.HttpsGetEnabled = true;
-
                                     serviceHost.Description.Behaviors.Add(serviceMetadataBehavior);
                                 }
-                                else
-                                {
-                                    serviceMetadataBehavior.HttpGetEnabled = true;
-                                    serviceMetadataBehavior.HttpsGetEnabled = true;
-                                }
+
+                                serviceMetadataBehavior.HttpGetEnabled = true;
+                                serviceMetadataBehavior.HttpsGetEnabled = true;
                             }
 
                             bool isWebHttpBinding = binding is WebHttpBinding;
@@ -2409,16 +2394,11 @@ namespace DevLib.ServiceModel
                                     if (serializerBehavior == null)
                                     {
                                         serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
-                                        serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
-                                        serializerBehavior.IgnoreExtensionDataObject = true;
-
                                         operationDescription.Behaviors.Add(serializerBehavior);
                                     }
-                                    else
-                                    {
-                                        serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
-                                        serializerBehavior.IgnoreExtensionDataObject = true;
-                                    }
+
+                                    serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                                    serializerBehavior.IgnoreExtensionDataObject = true;
 
                                     if (this.SetDataContractResolverAction != null)
                                     {
@@ -2434,6 +2414,11 @@ namespace DevLib.ServiceModel
                                     {
                                         webHttpBehavior = new WebHttpBehavior();
                                         endpoint.Behaviors.Add(webHttpBehavior);
+                                    }
+
+                                    if (this.WebHttpBehaviorAction != null)
+                                    {
+                                        this.WebHttpBehaviorAction(webHttpBehavior);
                                     }
                                 }
                             }

@@ -580,8 +580,6 @@ namespace DevLib.ModernUI.Forms
                 e.Graphics.TextRenderingHint = TextRenderingHint.SystemDefault;
             }
 
-            Size textSize = TextRenderer.MeasureText(this.Text ?? string.Empty, ModernFonts.Tile(this.FontSize, this.FontWeight));
-
             TextFormatFlags flags = ModernPaint.GetTextFormatFlags(this.TextAlign) | TextFormatFlags.LeftAndRightPadding | TextFormatFlags.EndEllipsis;
 
             Rectangle textRectangle = this.ClientRectangle;

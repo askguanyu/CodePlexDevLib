@@ -28,13 +28,14 @@ namespace DevLib.ServiceProcess
                 throw new ArgumentNullException("windowsService");
             }
 
+            Directory.SetCurrentDirectory(windowsService.ServiceSetupInfo.WorkingDirectory);
+
             if (Environment.UserInteractive)
             {
                 (new WindowsServiceConsole()).Run(windowsService, serviceArgs, true, consoleArgs);
             }
             else
             {
-                Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
                 ServiceBase.Run(new WindowsServiceConcrete(windowsService, serviceArgs));
             }
         }

@@ -3187,24 +3187,18 @@ namespace DevLib.Data
         /// <param name="paramName">The name of the parameter.</param>
         private void CheckStringNullOrWhiteSpace(string value, string paramName)
         {
-            bool isNullOrWhiteSpace = true;
-
             if (value != null)
             {
                 for (int i = 0; i < value.Length; i++)
                 {
                     if (!char.IsWhiteSpace(value[i]))
                     {
-                        isNullOrWhiteSpace = false;
-                        break;
+                        return;
                     }
                 }
             }
 
-            if (isNullOrWhiteSpace)
-            {
-                throw new ArgumentNullException(paramName);
-            }
+            throw new ArgumentNullException(paramName);
         }
     }
 }

@@ -95,6 +95,7 @@ namespace DevLib.DaemonProcess
                 daemonProcessArgs.Add(string.Format("\"{0}\"", delaySeconds.ToString()));
                 daemonProcessArgs.Add(string.Format("\"{0}\"", processMode.ToString()));
                 daemonProcessArgs.Add(string.Format("\"{0}\"", entryPoint));
+
                 foreach (string item in args)
                 {
                     daemonProcessArgs.Add(string.Format("\"{0}\"", item));

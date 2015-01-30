@@ -7,6 +7,7 @@ namespace DevLib.ServiceProcess
 {
     using System;
     using System.Globalization;
+    using System.IO;
     using System.Reflection;
     using System.ServiceProcess;
     using System.Xml.Serialization;
@@ -71,6 +72,15 @@ namespace DevLib.ServiceProcess
                     return Assembly.LoadFrom(AppDomain.CurrentDomain.SetupInformation.ApplicationName);
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the application's current working directory to the specified directory.
+        /// </summary>
+        public string WorkingDirectory
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -242,6 +252,7 @@ namespace DevLib.ServiceProcess
             result.StartAfterInstall = this.StartAfterInstall;
             result.StartType = this.StartType;
             result.Username = this.Username;
+            result.WorkingDirectory = this.WorkingDirectory;
 
             return result;
         }
@@ -252,6 +263,7 @@ namespace DevLib.ServiceProcess
         private void InitializeSetupInfo()
         {
             this.ServiceAssemblyPath = string.Empty;
+            this.WorkingDirectory = Path.GetDirectoryName(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath);
             this.ServiceName = "DefaultServiceName";
             this.DisplayName = this.ServiceName;
             this.Description = string.Format("Installed on {0}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));

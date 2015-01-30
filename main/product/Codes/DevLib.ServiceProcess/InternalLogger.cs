@@ -21,7 +21,7 @@ namespace DevLib.ServiceProcess
         /// <summary>
         /// Field ExecutingAssembly.
         /// </summary>
-        private static readonly string ExecutingAssembly = Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
+        private static readonly string ExecutingAssembly = Path.GetFullPath(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
 
         /// <summary>
         /// Field GlobalDebugFlagFile.

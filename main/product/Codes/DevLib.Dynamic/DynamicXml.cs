@@ -1120,11 +1120,11 @@ namespace DevLib.Dynamic
             }
             else
             {
-                Type elementType = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
-
                 if (targetType.IsArray)
                 {
-                    IList list = new List<dynamic>();
+                    Type elementType = targetType.GetElementType();
+
+                    IList resultTemp = new List<dynamic>();
 
                     foreach (var item in xElement.Elements())
                     {
@@ -1134,18 +1134,21 @@ namespace DevLib.Dynamic
                         {
                             if (element != null)
                             {
-                                list.Add(element);
+                                resultTemp.Add(element);
                             }
                         }
                     }
 
-                    Array result = Array.CreateInstance(elementType, list.Count);
-                    list.CopyTo(result, 0);
+                    Array result = Array.CreateInstance(elementType, resultTemp.Count);
+
+                    resultTemp.CopyTo(result, 0);
 
                     return result;
                 }
                 else
                 {
+                    Type elementType = targetType.GetGenericArguments()[0];
+
                     IList result = (IList)Activator.CreateInstance(targetType);
 
                     foreach (var item in xElement.Elements())

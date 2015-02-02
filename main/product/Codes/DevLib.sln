@@ -89,9 +89,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Web.Hosting.WebHost2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Web.Hosting.WebHost40", "DevLib.Web.Hosting.WebHost40\DevLib.Web.Hosting.WebHost40.csproj", "{137C072D-313C-4AA7-9F26-82615302BFAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Metadata", "DevLib.Metadata\DevLib.Metadata.csproj", "{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 41
+		SccNumberOfProjects = 42
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -216,6 +218,9 @@ Global
 		SccProjectUniqueName40 = DevLib.Web.Hosting.WebHost40\\DevLib.Web.Hosting.WebHost40.csproj
 		SccProjectName40 = DevLib.Web.Hosting.WebHost40
 		SccLocalPath40 = DevLib.Web.Hosting.WebHost40
+		SccProjectUniqueName41 = DevLib.Metadata\\DevLib.Metadata.csproj
+		SccProjectName41 = DevLib.Metadata
+		SccLocalPath41 = DevLib.Metadata
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -633,6 +638,16 @@ Global
 		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{137C072D-313C-4AA7-9F26-82615302BFAA}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

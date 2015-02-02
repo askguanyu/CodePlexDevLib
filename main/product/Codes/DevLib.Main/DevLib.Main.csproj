@@ -125,6 +125,10 @@
       <Project>{0B4C0DE4-3CFA-4762-A77D-AC523D960DE2}</Project>
       <Name>DevLib.Management</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Metadata\DevLib.Metadata.csproj">
+      <Project>{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}</Project>
+      <Name>DevLib.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ModernUI\DevLib.ModernUI.csproj">
       <Project>{9532160E-CC80-4B59-B7E6-B7202ED3742A}</Project>
       <Name>DevLib.ModernUI</Name>

@@ -364,7 +364,7 @@ namespace DevLib.Data
         /// <param name="transaction">A valid DbTransaction, or null.</param>
         /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
         /// <param name="spName">The name of the stored procedure.</param>
-        /// <param name="dataRow">The dataRow used to hold the stored procedure's parameter values.</param>
+        /// <param name="dataRow">The DataRow used to hold the stored procedure's parameter values.</param>
         /// <returns>A new instance of DbCommand.</returns>
         public DbCommand PrepareCommandSpDataRowParams(DbTransaction transaction, DbConnection connection, string spName, DataRow dataRow)
         {
@@ -532,29 +532,57 @@ namespace DevLib.Data
         /// <summary>
         /// Returns a list of the provider's class that implements the System.Data.Common.DbParameter class.
         /// </summary>
-        /// <param name="value">The value for the parameters.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
         /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
         /// <returns>A list of System.Data.Common.DbParameter.</returns>
-        public List<DbParameter> CreateParameters(object value, string parameterNameFormat = "@{0}")
+        public List<DbParameter> CreateObjectParams(object data, string parameterNameFormat = "@{0}")
         {
-            if (value == null)
+            if (data == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException("data");
             }
 
             List<DbParameter> result = new List<DbParameter>();
 
-            foreach (PropertyInfo property in value.GetType().GetProperties())
+            foreach (PropertyInfo property in data.GetType().GetProperties())
             {
                 if (property.CanRead)
                 {
                     DbParameter dbParameter = this.ProviderFactory.CreateParameter();
 
                     dbParameter.ParameterName = string.Format(parameterNameFormat, property.Name);
-                    dbParameter.Value = property.GetValue(value, null);
+                    dbParameter.Value = property.GetValue(data, null);
 
                     result.Add(dbParameter);
                 }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a list of the provider's class that implements the System.Data.Common.DbParameter class.
+        /// </summary>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A list of System.Data.Common.DbParameter.</returns>
+        public List<DbParameter> CreateDataRowParams(DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            if (dataRow == null)
+            {
+                throw new ArgumentNullException("dataRow");
+            }
+
+            List<DbParameter> result = new List<DbParameter>();
+
+            foreach (DataColumn item in dataRow.Table.Columns)
+            {
+                DbParameter dbParameter = this.ProviderFactory.CreateParameter();
+
+                dbParameter.ParameterName = string.Format(parameterNameFormat, item.ColumnName);
+                dbParameter.Value = dataRow[item];
+
+                result.Add(dbParameter);
             }
 
             return result;
@@ -705,17 +733,6 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>The number of rows affected.</returns>
-        public int ExecuteNonQuery(CommandType commandType, string commandText)
-        {
-            return this.ExecuteNonQuery(commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes a SQL statement against a connection object.
-        /// </summary>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows affected.</returns>
         public int ExecuteNonQuery(CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -731,10 +748,35 @@ namespace DevLib.Data
         /// Executes a SQL statement against a connection object.
         /// </summary>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows affected.</returns>
-        public int ExecuteNonQuery(string commandText)
+        public int ExecuteNonQueryText(string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteNonQuery(CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteNonQuery(CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes a SQL statement against a connection object.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows affected.</returns>
+        public int ExecuteNonQueryTextDataRowParams(string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteNonQuery(CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes a SQL statement against a connection object.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows affected.</returns>
+        public int ExecuteNonQueryTextObjectParams(string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteNonQuery(CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -798,18 +840,6 @@ namespace DevLib.Data
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>The number of rows affected.</returns>
-        public int ExecuteNonQuery(DbTransaction transaction, CommandType commandType, string commandText)
-        {
-            return this.ExecuteNonQuery(transaction, commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes a SQL statement against the specified DbTransaction.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows affected.</returns>
         public int ExecuteNonQuery(DbTransaction transaction, CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -827,10 +857,37 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows affected.</returns>
-        public int ExecuteNonQuery(DbTransaction transaction, string commandText)
+        public int ExecuteNonQueryText(DbTransaction transaction, string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteNonQuery(transaction, CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteNonQuery(transaction, CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes a SQL statement against the specified DbTransaction.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows affected.</returns>
+        public int ExecuteNonQueryTextDataRowParams(DbTransaction transaction, string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteNonQuery(transaction, CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes a SQL statement against the specified DbTransaction.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows affected.</returns>
+        public int ExecuteNonQueryTextObjectParams(DbTransaction transaction, string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteNonQuery(transaction, CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -899,17 +956,6 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>The first column of the first row in the result set.</returns>
-        public object ExecuteScalar(CommandType commandType, string commandText)
-        {
-            return this.ExecuteScalar(commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
-        /// </summary>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The first column of the first row in the result set.</returns>
         public object ExecuteScalar(CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -925,10 +971,35 @@ namespace DevLib.Data
         /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
         /// </summary>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The first column of the first row in the result set.</returns>
-        public object ExecuteScalar(string commandText)
+        public object ExecuteScalarText(string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteScalar(CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteScalar(CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The first column of the first row in the result set.</returns>
+        public object ExecuteScalarTextDataRowParams(string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteScalar(CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The first column of the first row in the result set.</returns>
+        public object ExecuteScalarTextObjectParams(string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteScalar(CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -992,18 +1063,6 @@ namespace DevLib.Data
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>The first column of the first row in the result set.</returns>
-        public object ExecuteScalar(DbTransaction transaction, CommandType commandType, string commandText)
-        {
-            return this.ExecuteScalar(transaction, commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The first column of the first row in the result set.</returns>
         public object ExecuteScalar(DbTransaction transaction, CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -1021,10 +1080,37 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The first column of the first row in the result set.</returns>
-        public object ExecuteScalar(DbTransaction transaction, string commandText)
+        public object ExecuteScalarText(DbTransaction transaction, string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteScalar(transaction, CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteScalar(transaction, CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The first column of the first row in the result set.</returns>
+        public object ExecuteScalarTextDataRowParams(DbTransaction transaction, string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteScalar(transaction, CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query and returns the first column of the first row in the result set returned by the query. All other columns and rows are ignored.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The first column of the first row in the result set.</returns>
+        public object ExecuteScalarTextObjectParams(DbTransaction transaction, string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteScalar(transaction, CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -1093,17 +1179,6 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>A DataSet containing the resultset generated by the command.</returns>
-        public DataSet ExecuteDataSet(CommandType commandType, string commandText)
-        {
-            return this.ExecuteDataSet(commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query and returns a DataSet.
-        /// </summary>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DataSet containing the resultset generated by the command.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -1132,10 +1207,35 @@ namespace DevLib.Data
         /// Executes the query and returns a DataSet.
         /// </summary>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DataSet containing the resultset generated by the command.</returns>
-        public DataSet ExecuteDataSet(string commandText)
+        public DataSet ExecuteDataSetText(string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteDataSet(CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteDataSet(CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query and returns a DataSet.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DataSet containing the resultset generated by the command.</returns>
+        public DataSet ExecuteDataSetTextDataRowParams(string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteDataSet(CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query and returns a DataSet.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DataSet containing the resultset generated by the command.</returns>
+        public DataSet ExecuteDataSetTextObjectParams(string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteDataSet(CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -1238,18 +1338,6 @@ namespace DevLib.Data
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>A DataSet containing the resultset generated by the command.</returns>
-        public DataSet ExecuteDataSet(DbTransaction transaction, CommandType commandType, string commandText)
-        {
-            return this.ExecuteDataSet(transaction, commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query against the provided DbTransaction and returns a DataSet.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DataSet containing the resultset generated by the command.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -1280,10 +1368,37 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DataSet containing the resultset generated by the command.</returns>
-        public DataSet ExecuteDataSet(DbTransaction transaction, string commandText)
+        public DataSet ExecuteDataSetText(DbTransaction transaction, string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteDataSet(transaction, CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteDataSet(transaction, CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a DataSet.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DataSet containing the resultset generated by the command.</returns>
+        public DataSet ExecuteDataSetTextDataRowParams(DbTransaction transaction, string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteDataSet(transaction, CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a DataSet.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DataSet containing the resultset generated by the command.</returns>
+        public DataSet ExecuteDataSetTextObjectParams(DbTransaction transaction, string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteDataSet(transaction, CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -1391,17 +1506,6 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public DbDataReader ExecuteReader(CommandType commandType, string commandText)
-        {
-            return this.ExecuteReader(commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query and returns a DbDataReader.
-        /// </summary>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
         public DbDataReader ExecuteReader(CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -1438,10 +1542,35 @@ namespace DevLib.Data
         /// Executes the query and returns a DbDataReader.
         /// </summary>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public DbDataReader ExecuteReader(string commandText)
+        public DbDataReader ExecuteReaderText(string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteReader(CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteReader(CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query and returns a DbDataReader.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public DbDataReader ExecuteReaderTextDataRowParams(string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteReader(CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query and returns a DbDataReader.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public DbDataReader ExecuteReaderTextObjectParams(string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteReader(CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -1568,18 +1697,6 @@ namespace DevLib.Data
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public DbDataReader ExecuteReader(DbTransaction transaction, CommandType commandType, string commandText)
-        {
-            return this.ExecuteReader(transaction, commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query against the provided DbTransaction and returns a DbDataReader.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
         public DbDataReader ExecuteReader(DbTransaction transaction, CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -1617,10 +1734,37 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public DbDataReader ExecuteReader(DbTransaction transaction, string commandText)
+        public DbDataReader ExecuteReaderText(DbTransaction transaction, string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteReader(transaction, CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteReader(transaction, CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a DbDataReader.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public DbDataReader ExecuteReaderTextDataRowParams(DbTransaction transaction, string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteReader(transaction, CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a DbDataReader.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public DbDataReader ExecuteReaderTextObjectParams(DbTransaction transaction, string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteReader(transaction, CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -1753,18 +1897,6 @@ namespace DevLib.Data
         /// <typeparam name="T">The type of the element of the list.</typeparam>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public List<T> ExecuteList<T>(CommandType commandType, string commandText)
-        {
-            return this.ExecuteList<T>(commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query and returns a generic list.
-        /// </summary>
-        /// <typeparam name="T">The type of the element of the list.</typeparam>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
         public List<T> ExecuteList<T>(CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -1802,10 +1934,37 @@ namespace DevLib.Data
         /// </summary>
         /// <typeparam name="T">The type of the element of the list.</typeparam>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public List<T> ExecuteList<T>(string commandText)
+        public List<T> ExecuteListText<T>(string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteList<T>(CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteList<T>(CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query and returns a generic list.
+        /// </summary>
+        /// <typeparam name="T">The type of the element of the list.</typeparam>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public List<T> ExecuteListTextDataRowParams<T>(string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteList<T>(CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query and returns a generic list.
+        /// </summary>
+        /// <typeparam name="T">The type of the element of the list.</typeparam>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public List<T> ExecuteListTextObjectParams<T>(string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteList<T>(CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -1936,19 +2095,6 @@ namespace DevLib.Data
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public List<T> ExecuteList<T>(DbTransaction transaction, CommandType commandType, string commandText)
-        {
-            return this.ExecuteList<T>(transaction, commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query against the provided DbTransaction and returns a generic list.
-        /// </summary>
-        /// <typeparam name="T">The type of the element of the list.</typeparam>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
         public List<T> ExecuteList<T>(DbTransaction transaction, CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -1987,10 +2133,39 @@ namespace DevLib.Data
         /// <typeparam name="T">The type of the element of the list.</typeparam>
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public List<T> ExecuteList<T>(DbTransaction transaction, string commandText)
+        public List<T> ExecuteListText<T>(DbTransaction transaction, string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteList<T>(transaction, CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteList<T>(transaction, CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a generic list.
+        /// </summary>
+        /// <typeparam name="T">The type of the element of the list.</typeparam>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public List<T> ExecuteListTextDataRowParams<T>(DbTransaction transaction, string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteList<T>(transaction, CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a generic list.
+        /// </summary>
+        /// <typeparam name="T">The type of the element of the list.</typeparam>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command.</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public List<T> ExecuteListTextObjectParams<T>(DbTransaction transaction, string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteList<T>(transaction, CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -2125,17 +2300,6 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command using "FOR XML AUTO".</param>
-        /// <returns>An XmlReader containing the resultset generated by the command.</returns>
-        public XmlReader ExecuteXmlReader(CommandType commandType, string commandText)
-        {
-            return this.ExecuteXmlReader(commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query and returns an XmlReader.
-        /// </summary>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command using "FOR XML AUTO".</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>An XmlReader containing the resultset generated by the command.</returns>
         public XmlReader ExecuteXmlReader(CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -2158,10 +2322,35 @@ namespace DevLib.Data
         /// Executes the query and returns an XmlReader.
         /// </summary>
         /// <param name="commandText">The T-SQL command using "FOR XML AUTO".</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>An XmlReader containing the resultset generated by the command.</returns>
-        public XmlReader ExecuteXmlReader(string commandText)
+        public XmlReader ExecuteXmlReaderText(string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteXmlReader(CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteXmlReader(CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query and returns an XmlReader.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command using "FOR XML AUTO".</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>An XmlReader containing the resultset generated by the command.</returns>
+        public XmlReader ExecuteXmlReaderTextDataRowParams(string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteXmlReader(CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query and returns an XmlReader.
+        /// </summary>
+        /// <param name="commandText">The T-SQL command using "FOR XML AUTO".</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>An XmlReader containing the resultset generated by the command.</returns>
+        public XmlReader ExecuteXmlReaderTextObjectParams(string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteXmlReader(CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -2246,18 +2435,6 @@ namespace DevLib.Data
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
         /// <param name="commandText">The stored procedure name or T-SQL command using "FOR XML AUTO".</param>
-        /// <returns>An XmlReader containing the resultset generated by the command.</returns>
-        public XmlReader ExecuteXmlReader(DbTransaction transaction, CommandType commandType, string commandText)
-        {
-            return this.ExecuteXmlReader(transaction, commandType, commandText, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query against the provided DbTransaction and returns an XmlReader.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command using "FOR XML AUTO".</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>An XmlReader containing the resultset generated by the command.</returns>
         public XmlReader ExecuteXmlReader(DbTransaction transaction, CommandType commandType, string commandText, params DbParameter[] commandParameters)
@@ -2282,10 +2459,37 @@ namespace DevLib.Data
         /// </summary>
         /// <param name="transaction">A valid DbTransaction.</param>
         /// <param name="commandText">The T-SQL command using "FOR XML AUTO".</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>An XmlReader containing the resultset generated by the command.</returns>
-        public XmlReader ExecuteXmlReader(DbTransaction transaction, string commandText)
+        public XmlReader ExecuteXmlReaderText(DbTransaction transaction, string commandText, params DbParameter[] commandParameters)
         {
-            return this.ExecuteXmlReader(transaction, CommandType.Text, commandText, (DbParameter[])null);
+            return this.ExecuteXmlReader(transaction, CommandType.Text, commandText, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns an XmlReader.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command using "FOR XML AUTO".</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>An XmlReader containing the resultset generated by the command.</returns>
+        public XmlReader ExecuteXmlReaderTextDataRowParams(DbTransaction transaction, string commandText, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteXmlReader(transaction, CommandType.Text, commandText, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns an XmlReader.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The T-SQL command using "FOR XML AUTO".</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>An XmlReader containing the resultset generated by the command.</returns>
+        public XmlReader ExecuteXmlReaderTextObjectParams(DbTransaction transaction, string commandText, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.ExecuteXmlReader(transaction, CommandType.Text, commandText, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -2377,19 +2581,6 @@ namespace DevLib.Data
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
         /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
-        /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
-        public int FillDataSet(CommandType commandType, string commandText, DataSet dataSet, string[] tableNames)
-        {
-            return this.FillDataSet(commandType, commandText, dataSet, tableNames, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query and adds or refreshes rows in the DataSet.
-        /// </summary>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
-        /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
         public int FillDataSet(CommandType commandType, string commandText, DataSet dataSet, string[] tableNames, params DbParameter[] commandParameters)
@@ -2437,10 +2628,39 @@ namespace DevLib.Data
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
         /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
-        public int FillDataSet(string commandText, DataSet dataSet, string[] tableNames)
+        public int FillDataSetText(string commandText, DataSet dataSet, string[] tableNames, params DbParameter[] commandParameters)
         {
-            return this.FillDataSet(CommandType.Text, commandText, dataSet, tableNames, (DbParameter[])null);
+            return this.FillDataSet(CommandType.Text, commandText, dataSet, tableNames, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query and adds or refreshes rows in the DataSet.
+        /// </summary>
+        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
+        /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
+        /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
+        public int FillDataSetTextDataRowParams(string commandText, DataSet dataSet, string[] tableNames, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.FillDataSet(CommandType.Text, commandText, dataSet, tableNames, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query and adds or refreshes rows in the DataSet.
+        /// </summary>
+        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
+        /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
+        /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
+        public int FillDataSetTextObjectParams(string commandText, DataSet dataSet, string[] tableNames, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.FillDataSet(CommandType.Text, commandText, dataSet, tableNames, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -2602,20 +2822,6 @@ namespace DevLib.Data
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
         /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
-        /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
-        public int FillDataSet(DbTransaction transaction, CommandType commandType, string commandText, DataSet dataSet, string[] tableNames)
-        {
-            return this.FillDataSet(transaction, commandType, commandText, dataSet, tableNames, (DbParameter[])null);
-        }
-
-        /// <summary>
-        /// Executes the query against the provided DbTransaction and adds or refreshes rows in the DataSet.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
-        /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
         /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
         public int FillDataSet(DbTransaction transaction, CommandType commandType, string commandText, DataSet dataSet, string[] tableNames, params DbParameter[] commandParameters)
@@ -2665,10 +2871,41 @@ namespace DevLib.Data
         /// <param name="commandText">The stored procedure name or T-SQL command.</param>
         /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
         /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
         /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
-        public int FillDataSet(DbTransaction transaction, string commandText, DataSet dataSet, string[] tableNames)
+        public int FillDataSetText(DbTransaction transaction, string commandText, DataSet dataSet, string[] tableNames, params DbParameter[] commandParameters)
         {
-            return this.FillDataSet(transaction, CommandType.Text, commandText, dataSet, tableNames, (DbParameter[])null);
+            return this.FillDataSet(transaction, CommandType.Text, commandText, dataSet, tableNames, commandParameters);
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and adds or refreshes rows in the DataSet.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
+        /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
+        /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
+        /// <param name="dataRow">The DataRow used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
+        public int FillDataSetTextDataRowParams(DbTransaction transaction, string commandText, DataSet dataSet, string[] tableNames, DataRow dataRow, string parameterNameFormat = "@{0}")
+        {
+            return this.FillDataSet(transaction, CommandType.Text, commandText, dataSet, tableNames, this.CreateDataRowParams(dataRow, parameterNameFormat).ToArray());
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and adds or refreshes rows in the DataSet.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
+        /// <param name="dataSet">A dataset which will contain the resultset generated by the command.</param>
+        /// <param name="tableNames">This array will be used to create table mappings allowing the DataTables to be referenced by a user defined name (probably the actual table name).</param>
+        /// <param name="data">The object used to hold the parameter values.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>The number of rows successfully added to or refreshed in the DataSet. This does not include rows affected by statements that do not return rows.</returns>
+        public int FillDataSetTextObjectParams(DbTransaction transaction, string commandText, DataSet dataSet, string[] tableNames, object data, string parameterNameFormat = "@{0}")
+        {
+            return this.FillDataSet(transaction, CommandType.Text, commandText, dataSet, tableNames, this.CreateObjectParams(data, parameterNameFormat).ToArray());
         }
 
         /// <summary>
@@ -3532,7 +3769,7 @@ namespace DevLib.Data
 
             foreach (DbParameter commandParameter in commandParameters)
             {
-                if (commandParameter.ParameterName == null || commandParameter.ParameterName.Length <= 1)
+                if (string.IsNullOrEmpty(commandParameter.ParameterName))
                 {
                     throw new Exception(string.Format("Please provide a valid parameter name on the parameter #{0}, the ParameterName property has the following value: '{1}'.", i, commandParameter.ParameterName));
                 }

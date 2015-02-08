@@ -195,28 +195,220 @@ namespace DevLib.Data
         }
 
         /// <summary>
-        /// Returns a new instance of the provider's class that implements the System.Data.Common.DbParameter class.
+        /// Open database connection.
         /// </summary>
-        /// <returns>A new instance of System.Data.Common.DbParameter.</returns>
-        public DbParameter CreateParameter()
+        /// <returns>DbConnection instance.</returns>
+        public DbConnection OpenConnection()
         {
-            return this.ProviderFactory.CreateParameter();
+            DbConnection result = this.ProviderFactory.CreateConnection();
+
+            result.ConnectionString = this.ConnectionString;
+
+            if (result.State != ConnectionState.Open)
+            {
+                result.Open();
+            }
+
+            return result;
         }
 
         /// <summary>
-        /// Returns a new instance of the provider's class that implements the System.Data.Common.DbParameter class.
+        /// Close database connection.
         /// </summary>
-        /// <param name="parameterName">The name of the parameter.</param>
-        /// <param name="value">The value for the parameter.</param>
-        /// <returns>A new instance of System.Data.Common.DbParameter.</returns>
-        public DbParameter CreateParameter(string parameterName, object value)
+        /// <param name="dbConnection">The database connection.</param>
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
+        public void CloseConnection(DbConnection dbConnection)
         {
-            DbParameter result = this.ProviderFactory.CreateParameter();
+            if (dbConnection != null)
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+        }
 
-            result.ParameterName = parameterName;
-            result.Value = value;
+        /// <summary>
+        /// Starts a database transaction.
+        /// </summary>
+        /// <returns>An object representing the new transaction.</returns>
+        public DbTransaction BeginTransaction()
+        {
+            return this.OpenConnection().BeginTransaction();
+        }
 
-            return result;
+        /// <summary>
+        /// Commits the database transaction.
+        /// </summary>
+        /// <param name="transaction">The transaction to commit.</param>
+        public void CommitTransaction(DbTransaction transaction)
+        {
+            if (transaction != null)
+            {
+                transaction.Commit();
+                transaction.Dispose();
+
+                this.CloseConnection(transaction.Connection);
+            }
+        }
+
+        /// <summary>
+        /// Rolls back a transaction from a pending state.
+        /// </summary>
+        /// <param name="transaction">The transaction to roll back.</param>
+        public void RollbackTransaction(DbTransaction transaction)
+        {
+            if (transaction != null)
+            {
+                transaction.Rollback();
+                transaction.Dispose();
+
+                this.CloseConnection(transaction.Connection);
+            }
+        }
+
+        /// <summary>
+        /// Prepares the DbCommand object.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction, or null.</param>
+        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
+        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
+        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter to be associated with the command or 'null' if no parameters are required.</param>
+        /// <returns>A new instance of DbCommand.</returns>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public DbCommand PrepareCommand(DbTransaction transaction, DbConnection connection, CommandType commandType, string commandText, IList<DbParameter> commandParameters)
+        {
+            DbCommand dbCommand = this.ProviderFactory.CreateCommand();
+
+            dbCommand.Connection = connection;
+            dbCommand.CommandText = commandText;
+            dbCommand.CommandType = commandType;
+
+            if (transaction != null)
+            {
+                if (transaction.Connection == null)
+                {
+                    throw new ArgumentException("The transaction was rollbacked or commited, please provide an open transaction.", "transaction");
+                }
+
+                dbCommand.Transaction = transaction;
+            }
+
+            if (commandParameters != null && commandParameters.Count > 0)
+            {
+                this.AttachParameters(dbCommand, commandParameters);
+            }
+
+            return dbCommand;
+        }
+
+        /// <summary>
+        /// Prepares the DbCommand object.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction, or null.</param>
+        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
+        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
+        /// <returns>A new instance of DbCommand.</returns>
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
+        public DbCommand PrepareCommand(DbTransaction transaction, DbConnection connection, string commandText)
+        {
+            DbCommand dbCommand = this.ProviderFactory.CreateCommand();
+
+            dbCommand.Connection = connection;
+            dbCommand.CommandText = commandText;
+            dbCommand.CommandType = CommandType.Text;
+
+            if (transaction != null)
+            {
+                if (transaction.Connection == null)
+                {
+                    throw new ArgumentException("The transaction was rollbacked or commited, please provide an open transaction.", "transaction");
+                }
+
+                dbCommand.Transaction = transaction;
+            }
+
+            return dbCommand;
+        }
+
+        /// <summary>
+        /// Prepares the DbCommand object.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction, or null.</param>
+        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
+        /// <param name="spName">The name of the stored procedure.</param>
+        /// <param name="parameterValues">Array of objects holding the values to be assigned.</param>
+        /// <returns>A new instance of DbCommand.</returns>
+        public DbCommand PrepareCommandSp(DbTransaction transaction, DbConnection connection, string spName, IList<object> parameterValues)
+        {
+            DbCommand dbCommand = null;
+
+            if (parameterValues != null && parameterValues.Count > 0)
+            {
+                DbParameter[] commandParameters = DbHelperParameterCache.GetSpParameterSet(connection, this.DiscoverParametersAction, spName);
+
+                this.AssignParameterValues(commandParameters, parameterValues);
+
+                dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, commandParameters);
+            }
+            else
+            {
+                dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, null);
+            }
+
+            return dbCommand;
+        }
+
+        /// <summary>
+        /// Prepares the DbCommand object.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction, or null.</param>
+        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
+        /// <param name="spName">The name of the stored procedure.</param>
+        /// <param name="dataRow">The dataRow used to hold the stored procedure's parameter values.</param>
+        /// <returns>A new instance of DbCommand.</returns>
+        public DbCommand PrepareCommandSpDataRowParams(DbTransaction transaction, DbConnection connection, string spName, DataRow dataRow)
+        {
+            DbCommand dbCommand = null;
+
+            DbParameter[] commandParameters = null;
+
+            if (dataRow != null && dataRow.ItemArray.Length > 0)
+            {
+                commandParameters = DbHelperParameterCache.GetSpParameterSet(connection, this.DiscoverParametersAction, spName);
+
+                this.AssignParameterValues(commandParameters, dataRow);
+            }
+
+            dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, commandParameters);
+
+            return dbCommand;
+        }
+
+        /// <summary>
+        /// Prepares the DbCommand object.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction, or null.</param>
+        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
+        /// <param name="spName">The name of the stored procedure.</param>
+        /// <param name="data">The object used to hold the stored procedure's parameter values.</param>
+        /// <returns>A new instance of DbCommand.</returns>
+        public DbCommand PrepareCommandSpObjectParams(DbTransaction transaction, DbConnection connection, string spName, object data)
+        {
+            DbCommand dbCommand = null;
+
+            List<DbParameter> commandParameters = new List<DbParameter>();
+
+            foreach (PropertyInfo property in data.GetType().GetProperties())
+            {
+                if (property.CanRead)
+                {
+                    commandParameters.Add(this.CreateParameter(property.Name, property.GetValue(data, null)));
+                }
+            }
+
+            dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, commandParameters);
+
+            return dbCommand;
         }
 
         /// <summary>
@@ -313,41 +505,71 @@ namespace DevLib.Data
         }
 
         /// <summary>
-        /// Starts a database transaction.
+        /// Returns a new instance of the provider's class that implements the System.Data.Common.DbParameter class.
         /// </summary>
-        /// <returns>An object representing the new transaction.</returns>
-        public DbTransaction BeginTransaction()
+        /// <returns>A new instance of System.Data.Common.DbParameter.</returns>
+        public DbParameter CreateParameter()
         {
-            return this.OpenConnection().BeginTransaction();
+            return this.ProviderFactory.CreateParameter();
         }
 
         /// <summary>
-        /// Commits the database transaction.
+        /// Returns a new instance of the provider's class that implements the System.Data.Common.DbParameter class.
         /// </summary>
-        /// <param name="transaction">The transaction to commit.</param>
-        public void CommitTransaction(DbTransaction transaction)
+        /// <param name="parameterName">The name of the parameter.</param>
+        /// <param name="value">The value for the parameter.</param>
+        /// <returns>A new instance of System.Data.Common.DbParameter.</returns>
+        public DbParameter CreateParameter(string parameterName, object value)
         {
-            if (transaction != null)
-            {
-                transaction.Commit();
-                transaction.Dispose();
+            DbParameter result = this.ProviderFactory.CreateParameter();
 
-                this.CloseConnection(transaction.Connection);
+            result.ParameterName = parameterName;
+            result.Value = value;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a list of the provider's class that implements the System.Data.Common.DbParameter class.
+        /// </summary>
+        /// <param name="value">The value for the parameters.</param>
+        /// <param name="parameterNameFormat">A composite format string for parameter name.</param>
+        /// <returns>A list of System.Data.Common.DbParameter.</returns>
+        public List<DbParameter> CreateParameters(object value, string parameterNameFormat = "@{0}")
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
             }
+
+            List<DbParameter> result = new List<DbParameter>();
+
+            foreach (PropertyInfo property in value.GetType().GetProperties())
+            {
+                if (property.CanRead)
+                {
+                    DbParameter dbParameter = this.ProviderFactory.CreateParameter();
+
+                    dbParameter.ParameterName = string.Format(parameterNameFormat, property.Name);
+                    dbParameter.Value = property.GetValue(value, null);
+
+                    result.Add(dbParameter);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
-        /// Rolls back a transaction from a pending state.
+        /// Disposes the command.
         /// </summary>
-        /// <param name="transaction">The transaction to roll back.</param>
-        public void RollbackTransaction(DbTransaction transaction)
+        /// <param name="dbCommand">The database command.</param>
+        public void DisposeCommand(DbCommand dbCommand)
         {
-            if (transaction != null)
+            if (dbCommand != null)
             {
-                transaction.Rollback();
-                transaction.Dispose();
-
-                this.CloseConnection(transaction.Connection);
+                dbCommand.Parameters.Clear();
+                dbCommand.Dispose();
             }
         }
 
@@ -3364,197 +3586,6 @@ namespace DevLib.Data
                 {
                     commandParameters[i].Value = parameterValues[i];
                 }
-            }
-        }
-
-        /// <summary>
-        /// Prepares the DbCommand object.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction, or null.</param>
-        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <param name="commandParameters">An array of DbParameter to be associated with the command or 'null' if no parameters are required.</param>
-        /// <returns>A new instance of DbCommand.</returns>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
-        private DbCommand PrepareCommand(DbTransaction transaction, DbConnection connection, CommandType commandType, string commandText, IList<DbParameter> commandParameters)
-        {
-            DbCommand dbCommand = this.ProviderFactory.CreateCommand();
-
-            dbCommand.Connection = connection;
-            dbCommand.CommandText = commandText;
-            dbCommand.CommandType = commandType;
-
-            if (transaction != null)
-            {
-                if (transaction.Connection == null)
-                {
-                    throw new ArgumentException("The transaction was rollbacked or commited, please provide an open transaction.", "transaction");
-                }
-
-                dbCommand.Transaction = transaction;
-            }
-
-            if (commandParameters != null && commandParameters.Count > 0)
-            {
-                this.AttachParameters(dbCommand, commandParameters);
-            }
-
-            return dbCommand;
-        }
-
-        /// <summary>
-        /// Prepares the DbCommand object.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction, or null.</param>
-        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <returns>A new instance of DbCommand.</returns>
-        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed.")]
-        private DbCommand PrepareCommand(DbTransaction transaction, DbConnection connection, string commandText)
-        {
-            DbCommand dbCommand = this.ProviderFactory.CreateCommand();
-
-            dbCommand.Connection = connection;
-            dbCommand.CommandText = commandText;
-            dbCommand.CommandType = CommandType.Text;
-
-            if (transaction != null)
-            {
-                if (transaction.Connection == null)
-                {
-                    throw new ArgumentException("The transaction was rollbacked or commited, please provide an open transaction.", "transaction");
-                }
-
-                dbCommand.Transaction = transaction;
-            }
-
-            return dbCommand;
-        }
-
-        /// <summary>
-        /// Prepares the DbCommand object.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction, or null.</param>
-        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
-        /// <param name="spName">The name of the stored procedure.</param>
-        /// <param name="parameterValues">Array of objects holding the values to be assigned.</param>
-        /// <returns>A new instance of DbCommand.</returns>
-        private DbCommand PrepareCommandSp(DbTransaction transaction, DbConnection connection, string spName, IList<object> parameterValues)
-        {
-            DbCommand dbCommand = null;
-
-            if (parameterValues != null && parameterValues.Count > 0)
-            {
-                DbParameter[] commandParameters = DbHelperParameterCache.GetSpParameterSet(connection, this.DiscoverParametersAction, spName);
-
-                this.AssignParameterValues(commandParameters, parameterValues);
-
-                dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, commandParameters);
-            }
-            else
-            {
-                dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, null);
-            }
-
-            return dbCommand;
-        }
-
-        /// <summary>
-        /// Prepares the DbCommand object.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction, or null.</param>
-        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
-        /// <param name="spName">The name of the stored procedure.</param>
-        /// <param name="dataRow">The dataRow used to hold the stored procedure's parameter values.</param>
-        /// <returns>A new instance of DbCommand.</returns>
-        private DbCommand PrepareCommandSpDataRowParams(DbTransaction transaction, DbConnection connection, string spName, DataRow dataRow)
-        {
-            DbCommand dbCommand = null;
-
-            DbParameter[] commandParameters = null;
-
-            if (dataRow != null && dataRow.ItemArray.Length > 0)
-            {
-                commandParameters = DbHelperParameterCache.GetSpParameterSet(connection, this.DiscoverParametersAction, spName);
-
-                this.AssignParameterValues(commandParameters, dataRow);
-            }
-
-            dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, commandParameters);
-
-            return dbCommand;
-        }
-
-        /// <summary>
-        /// Prepares the DbCommand object.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction, or null.</param>
-        /// <param name="connection">A valid DbConnection, on which to execute this command.</param>
-        /// <param name="spName">The name of the stored procedure.</param>
-        /// <param name="data">The object used to hold the stored procedure's parameter values.</param>
-        /// <returns>A new instance of DbCommand.</returns>
-        private DbCommand PrepareCommandSpObjectParams(DbTransaction transaction, DbConnection connection, string spName, object data)
-        {
-            DbCommand dbCommand = null;
-
-            List<DbParameter> commandParameters = new List<DbParameter>();
-
-            foreach (PropertyInfo property in data.GetType().GetProperties())
-            {
-                if (property.CanRead)
-                {
-                    commandParameters.Add(this.CreateParameter(property.Name, property.GetValue(data, null)));
-                }
-            }
-
-            dbCommand = this.PrepareCommand(transaction, connection, CommandType.StoredProcedure, spName, commandParameters);
-
-            return dbCommand;
-        }
-
-        /// <summary>
-        /// Open database connection.
-        /// </summary>
-        /// <returns>DbConnection instance.</returns>
-        private DbConnection OpenConnection()
-        {
-            DbConnection result = this.ProviderFactory.CreateConnection();
-
-            result.ConnectionString = this.ConnectionString;
-
-            if (result.State != ConnectionState.Open)
-            {
-                result.Open();
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Close database connection.
-        /// </summary>
-        /// <param name="dbConnection">The database connection.</param>
-        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
-        private void CloseConnection(DbConnection dbConnection)
-        {
-            if (dbConnection != null)
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Disposes the command.
-        /// </summary>
-        /// <param name="dbCommand">The database command.</param>
-        private void DisposeCommand(DbCommand dbCommand)
-        {
-            if (dbCommand != null)
-            {
-                dbCommand.Parameters.Clear();
-                dbCommand.Dispose();
             }
         }
 

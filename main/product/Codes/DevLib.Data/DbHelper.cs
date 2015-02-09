@@ -197,56 +197,120 @@ namespace DevLib.Data
         /// <summary>
         /// Open database connection.
         /// </summary>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>DbConnection instance.</returns>
-        public DbConnection OpenConnection()
+        public DbConnection OpenConnection(bool throwOnError = true)
         {
-            DbConnection result = this.ProviderFactory.CreateConnection();
+            DbConnection result = null;
 
-            result.ConnectionString = this.ConnectionString;
-
-            if (result.State != ConnectionState.Open)
+            try
             {
-                result.Open();
-            }
+                result = this.ProviderFactory.CreateConnection();
 
-            return result;
+                result.ConnectionString = this.ConnectionString;
+
+                if (result.State != ConnectionState.Open)
+                {
+                    result.Open();
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+                else
+                {
+                    return result != null ? result : null;
+                }
+            }
         }
 
         /// <summary>
         /// Close database connection.
         /// </summary>
         /// <param name="dbConnection">The database connection.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
-        public void CloseConnection(DbConnection dbConnection)
+        public void CloseConnection(DbConnection dbConnection, bool throwOnError = false)
         {
             if (dbConnection != null)
             {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                try
+                {
+                    dbConnection.Close();
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+                }
+                finally
+                {
+                    dbConnection.Dispose();
+                }
             }
         }
 
         /// <summary>
         /// Starts a database transaction.
         /// </summary>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
         /// <returns>An object representing the new transaction.</returns>
-        public DbTransaction BeginTransaction()
+        public DbTransaction BeginTransaction(bool throwOnError = true)
         {
-            return this.OpenConnection().BeginTransaction();
+            try
+            {
+                return this.OpenConnection(throwOnError).BeginTransaction();
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         /// <summary>
         /// Commits the database transaction.
         /// </summary>
         /// <param name="transaction">The transaction to commit.</param>
-        public void CommitTransaction(DbTransaction transaction)
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        public void CommitTransaction(DbTransaction transaction, bool throwOnError = true)
         {
             if (transaction != null)
             {
-                transaction.Commit();
-                transaction.Dispose();
+                try
+                {
+                    transaction.Commit();
+                    transaction.Dispose();
+                    this.CloseConnection(transaction.Connection, false);
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
 
-                this.CloseConnection(transaction.Connection);
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+                }
             }
         }
 
@@ -254,14 +318,26 @@ namespace DevLib.Data
         /// Rolls back a transaction from a pending state.
         /// </summary>
         /// <param name="transaction">The transaction to roll back.</param>
-        public void RollbackTransaction(DbTransaction transaction)
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        public void RollbackTransaction(DbTransaction transaction, bool throwOnError = false)
         {
             if (transaction != null)
             {
-                transaction.Rollback();
-                transaction.Dispose();
+                try
+                {
+                    transaction.Rollback();
+                    transaction.Dispose();
+                    this.CloseConnection(transaction.Connection, false);
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
 
-                this.CloseConnection(transaction.Connection);
+                    if (throwOnError)
+                    {
+                        throw;
+                    }
+                }
             }
         }
 

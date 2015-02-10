@@ -1268,6 +1268,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1331,6 +1333,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1364,6 +1368,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1397,6 +1403,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1428,6 +1436,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1496,6 +1506,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1531,6 +1543,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1566,6 +1580,8 @@ namespace DevLib.Data
                 {
                     using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
+                        dbDataAdapter.UpdateBatchSize = 0;
+
                         dbDataAdapter.SelectCommand = command;
 
                         DataSet result = new DataSet();
@@ -1660,29 +1676,29 @@ namespace DevLib.Data
             this.CheckStringNullOrWhiteSpace(spName, "spName");
 
             return this.FuncOnDb<DbDataReader>(
-            connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
+
+                    bool canClear = true;
+
+                    foreach (DbParameter commandParameter in command.Parameters)
                     {
-                        canClear = false;
-                        break;
+                        if (commandParameter.Direction != ParameterDirection.Input)
+                        {
+                            canClear = false;
+                            break;
+                        }
                     }
-                }
 
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
+                    if (canClear)
+                    {
+                        this.DisposeCommand(command);
+                    }
 
-                return dbDataReader;
-            }, false);
+                    return dbDataReader;
+                }, false);
         }
 
         /// <summary>
@@ -1701,29 +1717,29 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<DbDataReader>(
-            connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
+
+                    bool canClear = true;
+
+                    foreach (DbParameter commandParameter in command.Parameters)
                     {
-                        canClear = false;
-                        break;
+                        if (commandParameter.Direction != ParameterDirection.Input)
+                        {
+                            canClear = false;
+                            break;
+                        }
                     }
-                }
 
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
+                    if (canClear)
+                    {
+                        this.DisposeCommand(command);
+                    }
 
-                return dbDataReader;
-            }, false);
+                    return dbDataReader;
+                }, false);
         }
 
         /// <summary>
@@ -1742,29 +1758,29 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<DbDataReader>(
-            connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
+
+                    bool canClear = true;
+
+                    foreach (DbParameter commandParameter in command.Parameters)
                     {
-                        canClear = false;
-                        break;
+                        if (commandParameter.Direction != ParameterDirection.Input)
+                        {
+                            canClear = false;
+                            break;
+                        }
                     }
-                }
 
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
+                    if (canClear)
+                    {
+                        this.DisposeCommand(command);
+                    }
 
-                return dbDataReader;
-            }, false);
+                    return dbDataReader;
+                }, false);
         }
 
         /// <summary>
@@ -1779,30 +1795,31 @@ namespace DevLib.Data
         {
             this.CheckStringNullOrWhiteSpace(commandText, "commandText");
 
-            return this.FuncOnDb<DbDataReader>(
-            connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+            return this.FuncOnDbTransaction<DbDataReader>(
+                transaction,
+                connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
+
+                    bool canClear = true;
+
+                    foreach (DbParameter commandParameter in command.Parameters)
                     {
-                        canClear = false;
-                        break;
+                        if (commandParameter.Direction != ParameterDirection.Input)
+                        {
+                            canClear = false;
+                            break;
+                        }
                     }
-                }
 
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
+                    if (canClear)
+                    {
+                        this.DisposeCommand(command);
+                    }
 
-                return dbDataReader;
-            }, false);
+                    return dbDataReader;
+                }, false);
         }
 
         /// <summary>
@@ -1855,132 +1872,8 @@ namespace DevLib.Data
             this.CheckStringNullOrWhiteSpace(spName, "spName");
 
             return this.FuncOnDbTransaction<DbDataReader>(
-            transaction,
-            connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
-                {
-                    if (commandParameter.Direction != ParameterDirection.Input)
-                    {
-                        canClear = false;
-                        break;
-                    }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return dbDataReader;
-            }, false);
-        }
-
-        /// <summary>
-        /// Executes the query against the provided DbTransaction and returns a DbDataReader.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="spName">The name of the stored procedure.</param>
-        /// <param name="dataRow">The DataRow used to hold the stored procedure's parameter values.</param>
-        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public DbDataReader ExecuteReaderSpDataRowParams(DbTransaction transaction, string spName, DataRow dataRow)
-        {
-            this.CheckStringNullOrWhiteSpace(spName, "spName");
-
-            if (dataRow == null)
-            {
-                throw new ArgumentNullException("dataRow");
-            }
-
-            return this.FuncOnDbTransaction<DbDataReader>(
-            transaction,
-            connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
-                {
-                    if (commandParameter.Direction != ParameterDirection.Input)
-                    {
-                        canClear = false;
-                        break;
-                    }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return dbDataReader;
-            }, false);
-        }
-
-        /// <summary>
-        /// Executes the query against the provided DbTransaction and returns a DbDataReader.
-        /// </summary>
-        /// <param name="transaction">A valid DbTransaction.</param>
-        /// <param name="spName">The name of the stored procedure.</param>
-        /// <param name="data">The object used to hold the stored procedure's parameter values.</param>
-        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public DbDataReader ExecuteReaderSpObjectParams(DbTransaction transaction, string spName, object data)
-        {
-            this.CheckStringNullOrWhiteSpace(spName, "spName");
-
-            if (data == null)
-            {
-                throw new ArgumentNullException("data");
-            }
-
-            return this.FuncOnDbTransaction<DbDataReader>(
-            transaction,
-            connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
-                {
-                    if (commandParameter.Direction != ParameterDirection.Input)
-                    {
-                        canClear = false;
-                        break;
-                    }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return dbDataReader;
-            }, false);
-        }
-
-        /// <summary>
-        /// Executes the query and returns a generic list.
-        /// </summary>
-        /// <typeparam name="T">The type of the element of the list.</typeparam>
-        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
-        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
-        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
-        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
-        public List<T> ExecuteList<T>(CommandType commandType, string commandText, params DbParameter[] commandParameters)
-        {
-            this.CheckStringNullOrWhiteSpace(commandText, "commandText");
-
-            return this.FuncOnDb<List<T>>(
-                connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
+                transaction,
+                connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
                 command =>
                 {
                     DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2001,7 +1894,132 @@ namespace DevLib.Data
                         this.DisposeCommand(command);
                     }
 
-                    return ToList<T>(dbDataReader);
+                    return dbDataReader;
+                }, false);
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a DbDataReader.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="spName">The name of the stored procedure.</param>
+        /// <param name="dataRow">The DataRow used to hold the stored procedure's parameter values.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public DbDataReader ExecuteReaderSpDataRowParams(DbTransaction transaction, string spName, DataRow dataRow)
+        {
+            this.CheckStringNullOrWhiteSpace(spName, "spName");
+
+            if (dataRow == null)
+            {
+                throw new ArgumentNullException("dataRow");
+            }
+
+            return this.FuncOnDbTransaction<DbDataReader>(
+                transaction,
+                connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
+                command =>
+                {
+                    DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
+
+                    bool canClear = true;
+
+                    foreach (DbParameter commandParameter in command.Parameters)
+                    {
+                        if (commandParameter.Direction != ParameterDirection.Input)
+                        {
+                            canClear = false;
+                            break;
+                        }
+                    }
+
+                    if (canClear)
+                    {
+                        this.DisposeCommand(command);
+                    }
+
+                    return dbDataReader;
+                }, false);
+        }
+
+        /// <summary>
+        /// Executes the query against the provided DbTransaction and returns a DbDataReader.
+        /// </summary>
+        /// <param name="transaction">A valid DbTransaction.</param>
+        /// <param name="spName">The name of the stored procedure.</param>
+        /// <param name="data">The object used to hold the stored procedure's parameter values.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public DbDataReader ExecuteReaderSpObjectParams(DbTransaction transaction, string spName, object data)
+        {
+            this.CheckStringNullOrWhiteSpace(spName, "spName");
+
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
+
+            return this.FuncOnDbTransaction<DbDataReader>(
+                transaction,
+                connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
+                command =>
+                {
+                    DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
+
+                    bool canClear = true;
+
+                    foreach (DbParameter commandParameter in command.Parameters)
+                    {
+                        if (commandParameter.Direction != ParameterDirection.Input)
+                        {
+                            canClear = false;
+                            break;
+                        }
+                    }
+
+                    if (canClear)
+                    {
+                        this.DisposeCommand(command);
+                    }
+
+                    return dbDataReader;
+                }, false);
+        }
+
+        /// <summary>
+        /// Executes the query and returns a generic list.
+        /// </summary>
+        /// <typeparam name="T">The type of the element of the list.</typeparam>
+        /// <param name="commandType">The CommandType (stored procedure, text, etc.).</param>
+        /// <param name="commandText">The stored procedure name or T-SQL command.</param>
+        /// <param name="commandParameters">An array of DbParameter used to execute the command.</param>
+        /// <returns>A DbDataReader containing the resultset generated by the command.</returns>
+        public List<T> ExecuteList<T>(CommandType commandType, string commandText, params DbParameter[] commandParameters)
+        {
+            this.CheckStringNullOrWhiteSpace(commandText, "commandText");
+
+            return this.FuncOnDb<List<T>>(
+                connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
+                command =>
+                {
+                    using (DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
+                    }
                 }, false);
         }
 
@@ -2055,29 +2073,30 @@ namespace DevLib.Data
             this.CheckStringNullOrWhiteSpace(spName, "spName");
 
             return this.FuncOnDb<List<T>>(
-            connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    using (DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection))
                     {
-                        canClear = false;
-                        break;
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
                     }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return ToList<T>(dbDataReader);
-            }, false);
+                }, false);
         }
 
         /// <summary>
@@ -2097,29 +2116,30 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<List<T>>(
-            connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    using (DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection))
                     {
-                        canClear = false;
-                        break;
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
                     }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return ToList<T>(dbDataReader);
-            }, false);
+                }, false);
         }
 
         /// <summary>
@@ -2139,29 +2159,30 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<List<T>>(
-            connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    using (DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection))
                     {
-                        canClear = false;
-                        break;
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
                     }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return ToList<T>(dbDataReader);
-            }, false);
+                }, false);
         }
 
         /// <summary>
@@ -2177,30 +2198,32 @@ namespace DevLib.Data
         {
             this.CheckStringNullOrWhiteSpace(commandText, "commandText");
 
-            return this.FuncOnDb<List<T>>(
-            connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+            return this.FuncOnDbTransaction<List<T>>(
+                transaction,
+                connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        canClear = false;
-                        break;
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
                     }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return ToList<T>(dbDataReader);
-            }, false);
+                }, false);
         }
 
         /// <summary>
@@ -2257,30 +2280,31 @@ namespace DevLib.Data
             this.CheckStringNullOrWhiteSpace(spName, "spName");
 
             return this.FuncOnDbTransaction<List<T>>(
-            transaction,
-            connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                transaction,
+                connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        canClear = false;
-                        break;
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
                     }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return ToList<T>(dbDataReader);
-            }, false);
+                }, false);
         }
 
         /// <summary>
@@ -2301,30 +2325,31 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<List<T>>(
-            transaction,
-            connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                transaction,
+                connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        canClear = false;
-                        break;
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
                     }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return ToList<T>(dbDataReader);
-            }, false);
+                }, false);
         }
 
         /// <summary>
@@ -2345,30 +2370,31 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<List<T>>(
-            transaction,
-            connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
-            command =>
-            {
-                DbDataReader dbDataReader = command.ExecuteReader(CommandBehavior.CloseConnection);
-
-                bool canClear = true;
-
-                foreach (DbParameter commandParameter in command.Parameters)
+                transaction,
+                connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
+                command =>
                 {
-                    if (commandParameter.Direction != ParameterDirection.Input)
+                    using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        canClear = false;
-                        break;
+                        bool canClear = true;
+
+                        foreach (DbParameter commandParameter in command.Parameters)
+                        {
+                            if (commandParameter.Direction != ParameterDirection.Input)
+                            {
+                                canClear = false;
+                                break;
+                            }
+                        }
+
+                        if (canClear)
+                        {
+                            this.DisposeCommand(command);
+                        }
+
+                        return ToList<T>(dbDataReader);
                     }
-                }
-
-                if (canClear)
-                {
-                    this.DisposeCommand(command);
-                }
-
-                return ToList<T>(dbDataReader);
-            }, false);
+                }, false);
         }
 
         /// <summary>
@@ -2385,8 +2411,8 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDb<XmlReader>(
-                connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
-                command => this.GetXmlReaderFunc(command));
+                    connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2442,8 +2468,8 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDb<XmlReader>(
-                connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
-                command => this.GetXmlReaderFunc(command));
+                    connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2469,8 +2495,8 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDb<XmlReader>(
-                connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
-                command => this.GetXmlReaderFunc(command));
+                    connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2496,8 +2522,8 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDb<XmlReader>(
-                connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
-                command => this.GetXmlReaderFunc(command));
+                    connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2520,9 +2546,9 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDbTransaction<XmlReader>(
-                transaction,
-                connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
-                command => this.GetXmlReaderFunc(command));
+                    transaction,
+                    connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2582,9 +2608,9 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDbTransaction<XmlReader>(
-                transaction,
-                connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
-                command => this.GetXmlReaderFunc(command));
+                    transaction,
+                    connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2611,9 +2637,9 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDbTransaction<XmlReader>(
-                transaction,
-                connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
-                command => this.GetXmlReaderFunc(command));
+                    transaction,
+                    connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2640,9 +2666,9 @@ namespace DevLib.Data
             if (this.GetXmlReaderFunc != null)
             {
                 return this.FuncOnDbTransaction<XmlReader>(
-                transaction,
-                connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
-                command => this.GetXmlReaderFunc(command));
+                    transaction,
+                    connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
+                    command => this.GetXmlReaderFunc(command));
             }
             else
             {
@@ -2669,33 +2695,35 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<int>(
-            connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -2757,33 +2785,35 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<int>(
-            connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -2809,33 +2839,35 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<int>(
-            connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -2861,33 +2893,35 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<int>(
-            connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -2910,34 +2944,36 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<int>(
-            transaction,
-            connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                transaction,
+                connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -3003,34 +3039,36 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<int>(
-            transaction,
-            connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                transaction,
+                connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -3057,34 +3095,36 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<int>(
-            transaction,
-            connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                transaction,
+                connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -3111,34 +3151,36 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<int>(
-            transaction,
-            connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                transaction,
+                connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    if (tableNames != null && tableNames.Length > 0)
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        string tableName = "Table";
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        for (int i = 0; i < tableNames.Length; i++)
+                        dbDataAdapter.SelectCommand = command;
+
+                        if (tableNames != null && tableNames.Length > 0)
                         {
-                            if (string.IsNullOrEmpty(tableNames[i]))
+                            string tableName = "Table";
+
+                            for (int i = 0; i < tableNames.Length; i++)
                             {
-                                throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                if (string.IsNullOrEmpty(tableNames[i]))
+                                {
+                                    throw new ArgumentException("The tableNames parameter must contain a list of tables, a value was provided as null or empty string.", "tableNames");
+                                }
+
+                                dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
+
+                                tableName += (i + 1).ToString();
                             }
-
-                            dbDataAdapter.TableMappings.Add(tableName, tableNames[i]);
-
-                            tableName += (i + 1).ToString();
                         }
-                    }
 
-                    return dbDataAdapter.Fill(dataSet);
-                }
-            });
+                        return dbDataAdapter.Fill(dataSet);
+                    }
+                });
         }
 
         /// <summary>
@@ -3176,6 +3218,8 @@ namespace DevLib.Data
 
                 using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                 {
+                    dbDataAdapter.UpdateBatchSize = 0;
+
                     dbDataAdapter.UpdateCommand = updateCommand;
                     dbDataAdapter.InsertCommand = insertCommand;
                     dbDataAdapter.DeleteCommand = deleteCommand;
@@ -3238,6 +3282,8 @@ namespace DevLib.Data
 
                 using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                 {
+                    dbDataAdapter.UpdateBatchSize = 0;
+
                     dbDataAdapter.UpdateCommand = updateCommand;
                     dbDataAdapter.InsertCommand = insertCommand;
                     dbDataAdapter.DeleteCommand = deleteCommand;
@@ -3280,25 +3326,27 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<int>(
-            connection => this.PrepareCommand(null, connection, selectCommandText),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                connection => this.PrepareCommand(null, connection, selectCommandText),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        dbCommandBuilder.DataAdapter = dbDataAdapter;
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        int result = dbDataAdapter.Update(dataSet);
+                        dbDataAdapter.SelectCommand = command;
 
-                        dataSet.AcceptChanges();
+                        using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                        {
+                            dbCommandBuilder.DataAdapter = dbDataAdapter;
 
-                        return result;
+                            int result = dbDataAdapter.Update(dataSet);
+
+                            dataSet.AcceptChanges();
+
+                            return result;
+                        }
                     }
-                }
-            });
+                });
         }
 
         /// <summary>
@@ -3318,25 +3366,27 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<int>(
-            connection => this.PrepareCommand(null, connection, selectCommandText),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                connection => this.PrepareCommand(null, connection, selectCommandText),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        dbCommandBuilder.DataAdapter = dbDataAdapter;
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        int result = dbDataAdapter.Update(dataSet, tableName);
+                        dbDataAdapter.SelectCommand = command;
 
-                        dataSet.AcceptChanges();
+                        using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                        {
+                            dbCommandBuilder.DataAdapter = dbDataAdapter;
 
-                        return result;
+                            int result = dbDataAdapter.Update(dataSet, tableName);
+
+                            dataSet.AcceptChanges();
+
+                            return result;
+                        }
                     }
-                }
-            });
+                });
         }
 
         /// <summary>
@@ -3373,6 +3423,8 @@ namespace DevLib.Data
 
                 using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                 {
+                    dbDataAdapter.UpdateBatchSize = 0;
+
                     dbDataAdapter.UpdateCommand = updateCommand;
                     dbDataAdapter.InsertCommand = insertCommand;
                     dbDataAdapter.DeleteCommand = deleteCommand;
@@ -3432,6 +3484,8 @@ namespace DevLib.Data
 
                 using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                 {
+                    dbDataAdapter.UpdateBatchSize = 0;
+
                     dbDataAdapter.UpdateCommand = updateCommand;
                     dbDataAdapter.InsertCommand = insertCommand;
                     dbDataAdapter.DeleteCommand = deleteCommand;
@@ -3473,26 +3527,28 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<int>(
-            transaction,
-            connection => this.PrepareCommand(transaction, connection, selectCommandText),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                transaction,
+                connection => this.PrepareCommand(transaction, connection, selectCommandText),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        dbCommandBuilder.DataAdapter = dbDataAdapter;
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        int result = dbDataAdapter.Update(dataSet);
+                        dbDataAdapter.SelectCommand = command;
 
-                        dataSet.AcceptChanges();
+                        using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                        {
+                            dbCommandBuilder.DataAdapter = dbDataAdapter;
 
-                        return result;
+                            int result = dbDataAdapter.Update(dataSet);
+
+                            dataSet.AcceptChanges();
+
+                            return result;
+                        }
                     }
-                }
-            });
+                });
         }
 
         /// <summary>
@@ -3513,26 +3569,28 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<int>(
-            transaction,
-            connection => this.PrepareCommand(transaction, connection, selectCommandText),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                transaction,
+                connection => this.PrepareCommand(transaction, connection, selectCommandText),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        dbCommandBuilder.DataAdapter = dbDataAdapter;
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        int result = dbDataAdapter.Update(dataSet, tableName);
+                        dbDataAdapter.SelectCommand = command;
 
-                        dataSet.AcceptChanges();
+                        using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                        {
+                            dbCommandBuilder.DataAdapter = dbDataAdapter;
 
-                        return result;
+                            int result = dbDataAdapter.Update(dataSet, tableName);
+
+                            dataSet.AcceptChanges();
+
+                            return result;
+                        }
                     }
-                }
-            });
+                });
         }
 
         /// <summary>
@@ -3570,6 +3628,8 @@ namespace DevLib.Data
 
                 using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                 {
+                    dbDataAdapter.UpdateBatchSize = 0;
+
                     dbDataAdapter.UpdateCommand = updateCommand;
                     dbDataAdapter.InsertCommand = insertCommand;
                     dbDataAdapter.DeleteCommand = deleteCommand;
@@ -3612,25 +3672,27 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDb<int>(
-            connection => this.PrepareCommand(null, connection, selectCommandText),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                connection => this.PrepareCommand(null, connection, selectCommandText),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        dbCommandBuilder.DataAdapter = dbDataAdapter;
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        int result = dbDataAdapter.Update(dataTable);
+                        dbDataAdapter.SelectCommand = command;
 
-                        dataTable.AcceptChanges();
+                        using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                        {
+                            dbCommandBuilder.DataAdapter = dbDataAdapter;
 
-                        return result;
+                            int result = dbDataAdapter.Update(dataTable);
+
+                            dataTable.AcceptChanges();
+
+                            return result;
+                        }
                     }
-                }
-            });
+                });
         }
 
         /// <summary>
@@ -3667,6 +3729,8 @@ namespace DevLib.Data
 
                 using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                 {
+                    dbDataAdapter.UpdateBatchSize = 0;
+
                     dbDataAdapter.UpdateCommand = updateCommand;
                     dbDataAdapter.InsertCommand = insertCommand;
                     dbDataAdapter.DeleteCommand = deleteCommand;
@@ -3708,26 +3772,28 @@ namespace DevLib.Data
             }
 
             return this.FuncOnDbTransaction<int>(
-            transaction,
-            connection => this.PrepareCommand(transaction, connection, selectCommandText),
-            command =>
-            {
-                using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
+                transaction,
+                connection => this.PrepareCommand(transaction, connection, selectCommandText),
+                command =>
                 {
-                    dbDataAdapter.SelectCommand = command;
-
-                    using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                    using (DbDataAdapter dbDataAdapter = this.ProviderFactory.CreateDataAdapter())
                     {
-                        dbCommandBuilder.DataAdapter = dbDataAdapter;
+                        dbDataAdapter.UpdateBatchSize = 0;
 
-                        int result = dbDataAdapter.Update(dataTable);
+                        dbDataAdapter.SelectCommand = command;
 
-                        dataTable.AcceptChanges();
+                        using (DbCommandBuilder dbCommandBuilder = this.ProviderFactory.CreateCommandBuilder())
+                        {
+                            dbCommandBuilder.DataAdapter = dbDataAdapter;
 
-                        return result;
+                            int result = dbDataAdapter.Update(dataTable);
+
+                            dataTable.AcceptChanges();
+
+                            return result;
+                        }
                     }
-                }
-            });
+                });
         }
 
         /// <summary>

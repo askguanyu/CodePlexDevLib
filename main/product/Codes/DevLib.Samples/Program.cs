@@ -199,7 +199,7 @@ namespace DevLib.Samples
                 });
 
                 PrintExitInfo();
-            }, 1, "DevLib.Samples");
+            }, "DevLib.Samples", 1);
 
             InternalLogger.Log("End");
         }
@@ -844,7 +844,7 @@ namespace DevLib.Samples
             Benchmark.Run(i =>
             {
                 xmltotest.ToIndentXml();
-            }, 100000);
+            }, iteration: 100000);
 
 
             Console.ReadLine();
@@ -1112,7 +1112,7 @@ namespace DevLib.Samples
                         }
                     });
                 }
-            }, 2, "ReaderWriterLockSlimDictW");
+            }, "ReaderWriterLockSlimDictW", 2);
 
             Benchmark.Run(delegate
             {
@@ -1136,7 +1136,7 @@ namespace DevLib.Samples
                         }
                     });
                 }
-            }, 2, "ReaderWriterLockSlimDictR");
+            }, "ReaderWriterLockSlimDictR", 2);
 
             var b = new Dictionary<int, string>(1000000);
             ReaderWriterLock rwl = new ReaderWriterLock();
@@ -1162,7 +1162,7 @@ namespace DevLib.Samples
                         }
                     });
                 }
-            }, 2, "ReaderWriterLockDictW");
+            }, "ReaderWriterLockDictW", 2);
 
             Benchmark.Run(delegate
             {
@@ -1186,7 +1186,7 @@ namespace DevLib.Samples
                         }
                     });
                 }
-            }, 2, "ReaderWriterLockDictR");
+            }, "ReaderWriterLockDictR", 2);
 
             var d = new Dictionary<int, string>(1000000);
             Benchmark.Initialize();
@@ -1210,7 +1210,7 @@ namespace DevLib.Samples
                         }
                     });
                 }
-            }, 2, "LockDictW");
+            }, "LockDictW", 2);
 
             Benchmark.Run(delegate
             {
@@ -1232,7 +1232,7 @@ namespace DevLib.Samples
                         }
                     });
                 }
-            }, 2, "LockDictR");
+            }, "LockDictR", 2);
 
 
 
@@ -1247,7 +1247,7 @@ namespace DevLib.Samples
                     int i = loop;
                     c.Add(i, DateTime.Now.ToString());
                 });
-            }, 1, "DictW");
+            }, "DictW", 1);
 
             Benchmark.Run(delegate
             {
@@ -1267,7 +1267,7 @@ namespace DevLib.Samples
                         }
                     });
                 }
-            }, 1, "DictR");
+            }, "DictR", 1);
 
             var e = new ConcurrentDictionary<int, string>(10000, 1000000);
             Benchmark.Initialize();
@@ -1278,7 +1278,7 @@ namespace DevLib.Samples
                     int i = loop;
                     e.TryAdd(i, DateTime.Now.ToString());
                 });
-            }, 1, "ConcurrentDictionaryW");
+            }, "ConcurrentDictionaryW", 1);
 
             Benchmark.Run(delegate
             {
@@ -1288,7 +1288,7 @@ namespace DevLib.Samples
                     string output;
                     e.TryGetValue(2, out output);
                 });
-            }, 1, "ConcurrentDictionaryR");
+            }, "ConcurrentDictionaryR", 1);
 
 
             Console.WriteLine("done!");
@@ -1456,9 +1456,9 @@ namespace DevLib.Samples
             object[] parameters = new object[] { 1, 2 };
             MethodInfo methodInfo = typeof(TestClass).GetMethod("TestAdd");
 
-            Benchmark.Run(delegate { }, 1, string.Empty, delegate { });
+            Benchmark.Run(delegate { }, string.Empty, 1, delegate { });
 
-            Benchmark.Run(delegate { testClass.TestAdd(1, 2); }, times);
+            Benchmark.Run(delegate { testClass.TestAdd(1, 2); }, iteration: times);
 
             //methodInfo.Invoke(testClass, parameters).ConsoleOutput();
             //CodeTimer.Time(new Action(() =>

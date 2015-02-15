@@ -28,7 +28,7 @@ namespace DevLib.Diagnostics
         /// </summary>
         public static void Initialize()
         {
-            DevLib.Diagnostics.Benchmark.Run(delegate { }, 1, string.Empty, delegate { });
+            DevLib.Diagnostics.Benchmark.Run(delegate { }, string.Empty, 1, delegate { });
         }
 
         /// <summary>
@@ -37,13 +37,13 @@ namespace DevLib.Diagnostics
         /// <param name="action">Code snippets to run.
         /// <example>E.g. <code>delegate { Console.WriteLine("Hello"); }</code></example>
         /// </param>
-        /// <param name="iteration">Repeat times.</param>
         /// <param name="name">The name of current benchmark.</param>
+        /// <param name="iteration">Repeat times.</param>
         /// <param name="outputAction">The action to handle the performance test result string.
         /// <example>Default: <code>Console.WriteLine</code></example>
         /// </param>
         /// <returns>Benchmark result.</returns>
-        public static BenchmarkResult Run(Action<int> action, int iteration = 1, string name = null, Action<string> outputAction = null)
+        public static BenchmarkResult Run(Action<int> action, string name = null, int iteration = 1, Action<string> outputAction = null)
         {
             if ((action == null) || (iteration < 1))
             {
@@ -127,20 +127,23 @@ namespace DevLib.Diagnostics
                 gcResultArray[gcArrayLength - 1 - i] = gcCountArray[i].ToString();
             }
 
+            string gcTitle = string.Join("/", gcTitleArray);
+            string gcResult = string.Join("/", gcResultArray);
+
             Console.WriteLine();
 
             // Console output recorded times
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
-            string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "[Stopwatch]", "[ThreadTime]", "[CPUCycles]", string.Format("[{0}]", string.Join("/", gcTitleArray)));
+            string resultTitle = string.Format("{0,18}{1,18}{2,18}{3,18}", "[Stopwatch]", "[ThreadTime]", "[CPUCycles]", string.Format("[{0}]", gcTitle));
             outputAction(resultTitle);
             Debug.WriteLine(resultTitle);
 
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.BackgroundColor = ConsoleColor.Black;
-            string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", stopwatch.ElapsedMilliseconds.ToString(), (threadTime / 10000L).ToString(), cpuCycles.ToString(), string.Join("/", gcResultArray));
+            string resultTime = string.Format("{0,16:N0}ms{1,16:N0}ms{2,18:N0}{3,18}", stopwatch.ElapsedMilliseconds.ToString(), (threadTime / 10000L).ToString(), cpuCycles.ToString(), gcResult);
             outputAction(resultTime);
             Debug.WriteLine(resultTime);
 
@@ -293,6 +296,40 @@ namespace DevLib.Diagnostics
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+        public override string ToString()
+        {
+            string gcTitle = null;
+            string gcResult = null;
+
+            if (this.GCCountArray != null && this.GCCountArray.Length > 0)
+            {
+                int gcArrayLength = this.GCCountArray.Length;
+
+                string[] gcTitleArray = new string[gcArrayLength];
+                string[] gcResultArray = new string[gcArrayLength];
+
+                for (int i = 0; i < gcArrayLength; i++)
+                {
+                    gcTitleArray[gcArrayLength - 1 - i] = string.Format("G{0}", i.ToString());
+                    gcResultArray[gcArrayLength - 1 - i] = this.GCCountArray[i].ToString();
+                }
+
+                gcTitle = string.Join("/", gcTitleArray);
+                gcResult = string.Join("/", gcResultArray);
+            }
+            else
+            {
+                gcTitle = "GC";
+                gcResult = "NA";
+            }
+
+            return string.Format("[Stopwatch]={0}ms [ThreadTime]={1}ms [CPUCycles]={2} [{3}]={4}", this.StopwatchElapsedMilliseconds.ToString(), this.ThreadTimeElapsedMilliseconds.ToString(), this.CPUCycles.ToString(), gcTitle, gcResult);
         }
     }
 }

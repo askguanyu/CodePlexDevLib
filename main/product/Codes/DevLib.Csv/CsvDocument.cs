@@ -529,13 +529,15 @@ namespace DevLib.Csv
 
                 if (!string.IsNullOrEmpty(line))
                 {
-                    List<string> row = this.SplitNested(line, delimiter, qualifier);
+                    string[] row = this.SplitNested(line, delimiter, qualifier);
 
                     if (addedHeader)
                     {
-                        if (row.Count > this.Table.Columns.Count)
+                        if (row.Length > this.Table.Columns.Count)
                         {
-                            for (int i = 0; i < row.Count - this.Table.Columns.Count; i++)
+                            int extraCount = row.Length - this.Table.Columns.Count;
+
+                            for (int i = 0; i < extraCount; i++)
                             {
                                 this.Table.Columns.Add();
                             }
@@ -547,14 +549,14 @@ namespace DevLib.Csv
                     {
                         if (hasHeader)
                         {
-                            for (int i = 0; i < row.Count; i++)
+                            for (int i = 0; i < row.Length; i++)
                             {
                                 this.Table.Columns.Add(row[i]);
                             }
                         }
                         else
                         {
-                            for (int i = 0; i < row.Count; i++)
+                            for (int i = 0; i < row.Length; i++)
                             {
                                 this.Table.Columns.Add();
                             }
@@ -645,7 +647,7 @@ namespace DevLib.Csv
         /// <param name="delimiter">Delimiter character.</param>
         /// <param name="qualifier">Qualifier character.</param>
         /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
-        private List<string> SplitNested(string source, char delimiter, char qualifier)
+        private string[] SplitNested(string source, char delimiter, char qualifier)
         {
             StringBuilder itemStringBuilder = new StringBuilder();
             List<string> result = new List<string>();
@@ -711,7 +713,7 @@ namespace DevLib.Csv
                 result.Add(itemStringBuilder.ToString());
             }
 
-            return result;
+            return result.ToArray();
         }
     }
 }

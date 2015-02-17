@@ -94,7 +94,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(i =>
                 {
-                    //TestCsv();
+                    TestCsv();
                 });
 
                 Benchmark.Run(i =>
@@ -218,6 +218,8 @@ namespace DevLib.Samples
         {
             CsvDocument csv = new CsvDocument();
             csv.Load(@"c:\test.csv", false);
+
+            Console.ReadLine();
             //DataTable dataTable = csv.Table;
             //csv.Table.Rows.RemoveAt(1);
             //csv.Table.Columns.Add("NewColumn");

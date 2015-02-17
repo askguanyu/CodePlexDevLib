@@ -216,8 +216,8 @@ namespace DevLib.Samples
 
         private static void TestCsv()
         {
-            //CsvDocument csv = new CsvDocument();
-            //csv.Load(@"c:\test.csv", true, ';', '~');
+            CsvDocument csv = new CsvDocument();
+            csv.Load(@"c:\test.csv", false);
             //DataTable dataTable = csv.Table;
             //csv.Table.Rows.RemoveAt(1);
             //csv.Table.Columns.Add("NewColumn");

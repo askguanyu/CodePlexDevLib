@@ -533,6 +533,14 @@ namespace DevLib.Csv
 
                     if (addedHeader)
                     {
+                        if (row.Count > this.Table.Columns.Count)
+                        {
+                            for (int i = 0; i < row.Count - this.Table.Columns.Count; i++)
+                            {
+                                this.Table.Columns.Add();
+                            }
+                        }
+
                         this.Table.Rows.Add(row);
                     }
                     else
@@ -548,7 +556,7 @@ namespace DevLib.Csv
                         {
                             for (int i = 0; i < row.Count; i++)
                             {
-                                this.Table.Columns.Add(i.ToString());
+                                this.Table.Columns.Add();
                             }
 
                             this.Table.Rows.Add(row);

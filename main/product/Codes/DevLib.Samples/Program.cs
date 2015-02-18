@@ -217,7 +217,7 @@ namespace DevLib.Samples
         private static void TestCsv()
         {
             CsvDocument csv = new CsvDocument();
-            csv.Load(@"c:\test.csv", false);
+            csv.Load(@"d:\test.csv", false);
 
             Console.ReadLine();
             //DataTable dataTable = csv.Table;

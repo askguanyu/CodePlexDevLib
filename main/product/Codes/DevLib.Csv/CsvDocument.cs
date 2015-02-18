@@ -592,7 +592,7 @@ namespace DevLib.Csv
 
                     if (addedHeader)
                     {
-                        this.Table.Add(new List<string>(row));
+                        this.Table.Add(row);
                     }
                     else
                     {
@@ -607,7 +607,7 @@ namespace DevLib.Csv
                                 this.HeaderColumns.Add("Column" + i.ToString());
                             }
 
-                            this.Table.Add(new List<string>(row));
+                            this.Table.Add(row);
                         }
 
                         addedHeader = true;

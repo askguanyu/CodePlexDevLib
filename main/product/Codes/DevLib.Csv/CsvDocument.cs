@@ -8,6 +8,7 @@ namespace DevLib.Csv
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Text;
 
@@ -26,13 +27,14 @@ namespace DevLib.Csv
         /// </summary>
         public CsvDocument()
         {
-            this.Table = new DataTable();
+            this.Table = new List<List<string>>();
+            this.HeaderColumns = new List<string>();
         }
 
         /// <summary>
-        /// Gets DataTable instance represents csv data.
+        /// Gets instance represents csv data.
         /// </summary>
-        public DataTable Table
+        public List<List<string>> Table
         {
             get;
             private set;
@@ -45,37 +47,28 @@ namespace DevLib.Csv
         {
             get
             {
-                return this.Table.Rows.Count;
+                return this.Table.Count;
             }
         }
 
         /// <summary>
         /// Gets the total number of columns.
         /// </summary>
-        public int ColumnCount
+        public int HeaderColumnCount
         {
             get
             {
-                return this.Table.Columns.Count;
+                return this.HeaderColumns.Count;
             }
         }
 
         /// <summary>
-        /// Gets all column names.
+        /// Gets header column names.
         /// </summary>
-        public List<string> ColumnNames
+        public List<string> HeaderColumns
         {
-            get
-            {
-                List<string> result = new List<string>(this.ColumnCount);
-
-                foreach (DataColumn item in this.Table.Columns)
-                {
-                    result.Add(item.ColumnName ?? string.Empty);
-                }
-
-                return result;
-            }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -91,25 +84,12 @@ namespace DevLib.Csv
         /// Gets the row at the specified index.
         /// </summary>
         /// <param name="rowIndex">The zero-based index of the row to return.</param>
-        /// <returns>The specified System.Data.DataRow.</returns>
-        public DataRow this[int rowIndex]
+        /// <returns>The specified row.</returns>
+        public List<string> this[int rowIndex]
         {
             get
             {
-                return this.Table.Rows[rowIndex];
-            }
-        }
-
-        /// <summary>
-        /// Gets the column with the specified name.
-        /// </summary>
-        /// <param name="columnName">The System.Data.DataColumn.ColumnName of the column to return.</param>
-        /// <returns>The System.Data.DataColumn in the collection with the specified System.Data.DataColumn.ColumnName; otherwise a null value if the System.Data.DataColumn does not exist.</returns>
-        public DataColumn this[string columnName]
-        {
-            get
-            {
-                return this.Table.Columns[columnName];
+                return this.Table[rowIndex];
             }
         }
 
@@ -123,12 +103,12 @@ namespace DevLib.Csv
         {
             get
             {
-                return this.Table.Rows[rowIndex][columnIndex].ToString();
+                return this.Table[rowIndex][columnIndex];
             }
 
             set
             {
-                this.Table.Rows[rowIndex][columnIndex] = value ?? string.Empty;
+                this.Table[rowIndex][columnIndex] = value;
             }
         }
 
@@ -142,30 +122,31 @@ namespace DevLib.Csv
         {
             get
             {
-                return this.Table.Rows[rowIndex][columnName].ToString();
+                int columnIndex = this.HeaderColumns.FindIndex(i => i.Equals(columnName, StringComparison.Ordinal));
+
+                if (columnIndex >= 0)
+                {
+                    return this.Table[rowIndex][columnIndex];
+                }
+                else
+                {
+                    throw new ArgumentException("The column specified by columnName cannot be found.");
+                }
             }
 
             set
             {
-                this.Table.Rows[rowIndex][columnName] = value ?? string.Empty;
+                int columnIndex = this.HeaderColumns.FindIndex(i => i.Equals(columnName, StringComparison.Ordinal));
+
+                if (columnIndex >= 0)
+                {
+                    this.Table[rowIndex][columnIndex] = value;
+                }
+                else
+                {
+                    throw new ArgumentException("The column specified by columnName cannot be found.");
+                }
             }
-        }
-
-        /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
-        /// </summary>
-        public void Close()
-        {
-            this.Dispose();
-        }
-
-        /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -460,6 +441,78 @@ namespace DevLib.Csv
         }
 
         /// <summary>
+        /// Gets the DataTable.
+        /// </summary>
+        /// <param name="startIndex">The zero-based start index.</param>
+        /// <returns>DataTable instance.</returns>
+        public DataTable GetDataTable(int startIndex = 0)
+        {
+            return this.GetDataTable(startIndex, this.RowCount);
+        }
+
+        /// <summary>
+        /// Gets the DataTable.
+        /// </summary>
+        /// <param name="startIndex">The zero-based start index.</param>
+        /// <param name="count">The count of row to get.</param>
+        /// <returns>DataTable instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        public DataTable GetDataTable(int startIndex, int count)
+        {
+            if (startIndex < 0 || startIndex >= this.RowCount || count < 0 || startIndex + count > this.RowCount)
+            {
+                return null;
+            }
+
+            DataTable result = new DataTable();
+
+            foreach (var item in this.HeaderColumns)
+            {
+                result.Columns.Add(item);
+            }
+
+            int currentColumnCount = this.HeaderColumnCount;
+
+            for (int i = startIndex; i < count; i++)
+            {
+                var row = this.Table[i];
+
+                if (row.Count > currentColumnCount)
+                {
+                    int extraColumnCount = row.Count - currentColumnCount;
+
+                    currentColumnCount = row.Count;
+
+                    for (int j = 0; j < extraColumnCount; j++)
+                    {
+                        result.Columns.Add();
+                    }
+                }
+
+                result.Rows.Add(row.ToArray());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
+        /// </summary>
+        public void Close()
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
         /// Releases all resources used by the current instance of the <see cref="CsvDocument" /> class.
         /// protected virtual for non-sealed class; private for sealed class.
         /// </summary>
@@ -484,10 +537,14 @@ namespace DevLib.Csv
 
                 if (this.Table != null)
                 {
-                    this.Table.Reset();
-                    this.Table.Dispose();
-
+                    this.Table.Clear();
                     this.Table = null;
+                }
+
+                if (this.HeaderColumns != null)
+                {
+                    this.HeaderColumns.Clear();
+                    this.HeaderColumns = null;
                 }
             }
 
@@ -520,7 +577,9 @@ namespace DevLib.Csv
         private void InternalLoad(TextReader reader, bool hasHeader, char delimiter, char qualifier)
         {
             this.Table.Clear();
+            this.HeaderColumns.Clear();
             this.HasHeader = hasHeader;
+
             bool addedHeader = false;
 
             while (reader.Peek() >= 0)
@@ -529,39 +588,26 @@ namespace DevLib.Csv
 
                 if (!string.IsNullOrEmpty(line))
                 {
-                    string[] row = this.SplitNested(line, delimiter, qualifier);
+                    List<string> row = this.SplitNested(line, delimiter, qualifier);
 
                     if (addedHeader)
                     {
-                        if (row.Length > this.Table.Columns.Count)
-                        {
-                            int extraCount = row.Length - this.Table.Columns.Count;
-
-                            for (int i = 0; i < extraCount; i++)
-                            {
-                                this.Table.Columns.Add();
-                            }
-                        }
-
-                        this.Table.Rows.Add(row);
+                        this.Table.Add(new List<string>(row));
                     }
                     else
                     {
                         if (hasHeader)
                         {
-                            for (int i = 0; i < row.Length; i++)
-                            {
-                                this.Table.Columns.Add(row[i]);
-                            }
+                            this.HeaderColumns.AddRange(row);
                         }
                         else
                         {
-                            for (int i = 0; i < row.Length; i++)
+                            for (int i = 0; i < row.Count; i++)
                             {
-                                this.Table.Columns.Add();
+                                this.HeaderColumns.Add("Column" + i.ToString());
                             }
 
-                            this.Table.Rows.Add(row);
+                            this.Table.Add(new List<string>(row));
                         }
 
                         addedHeader = true;
@@ -585,9 +631,7 @@ namespace DevLib.Csv
 
             if (hasHeader)
             {
-                List<string> headers = this.ColumnNames;
-
-                string firstColumn = headers[0];
+                string firstColumn = this.HeaderColumns[0];
 
                 if (firstColumn.Contains(delimiter) || quoteAll)
                 {
@@ -596,9 +640,9 @@ namespace DevLib.Csv
 
                 writer.Write(firstColumn);
 
-                for (int index = 1; index < headers.Count; index++)
+                for (int index = 1; index < this.HeaderColumns.Count; index++)
                 {
-                    string cell = headers[index];
+                    string cell = this.HeaderColumns[index];
 
                     if (cell.Contains(delimiter) || quoteAll)
                     {
@@ -611,9 +655,9 @@ namespace DevLib.Csv
                 writer.Write(newLine);
             }
 
-            foreach (DataRow row in this.Table.Rows)
+            foreach (var row in this.Table)
             {
-                string firstColumn = row.ItemArray[0].ToString();
+                string firstColumn = row[0];
 
                 if (firstColumn.Contains(delimiter) || quoteAll)
                 {
@@ -622,9 +666,9 @@ namespace DevLib.Csv
 
                 writer.Write(firstColumn);
 
-                for (int index = 1; index < row.ItemArray.Length; index++)
+                for (int index = 1; index < row.Count; index++)
                 {
-                    string cell = row.ItemArray[index].ToString();
+                    string cell = row[index];
 
                     if (cell.Contains(delimiter) || quoteAll)
                     {
@@ -647,10 +691,11 @@ namespace DevLib.Csv
         /// <param name="delimiter">Delimiter character.</param>
         /// <param name="qualifier">Qualifier character.</param>
         /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
-        private string[] SplitNested(string source, char delimiter, char qualifier)
+        private List<string> SplitNested(string source, char delimiter, char qualifier)
         {
-            StringBuilder itemStringBuilder = new StringBuilder();
             List<string> result = new List<string>();
+
+            StringBuilder itemStringBuilder = new StringBuilder();
             bool inItem = false;
             bool inQuotes = false;
 
@@ -713,7 +758,7 @@ namespace DevLib.Csv
                 result.Add(itemStringBuilder.ToString());
             }
 
-            return result.ToArray();
+            return result;
         }
     }
 }

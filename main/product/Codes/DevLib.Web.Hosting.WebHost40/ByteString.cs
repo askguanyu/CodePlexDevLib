@@ -6,7 +6,7 @@
 namespace DevLib.Web.Hosting.WebHost40
 {
     using System;
-    using System.Collections;
+    using System.Collections.Generic;
     using System.Text;
 
     /// <summary>
@@ -177,9 +177,9 @@ namespace DevLib.Web.Hosting.WebHost40
         /// </summary>
         /// <param name="separator">The separator.</param>
         /// <returns>ByteString array.</returns>
-        public ByteString[] Split(char separator)
+        public List<ByteString> Split(char separator)
         {
-            ArrayList arrayList = new ArrayList();
+            List<ByteString> result = new List<ByteString>();
 
             int i = 0;
 
@@ -189,11 +189,11 @@ namespace DevLib.Web.Hosting.WebHost40
 
                 if (num < 0)
                 {
-                    arrayList.Add(this.Substring(i));
+                    result.Add(this.Substring(i));
                     break;
                 }
 
-                arrayList.Add(this.Substring(i, num - i));
+                result.Add(this.Substring(i, num - i));
 
                 i = num + 1;
 
@@ -203,16 +203,7 @@ namespace DevLib.Web.Hosting.WebHost40
                 }
             }
 
-            int count = arrayList.Count;
-
-            ByteString[] array = new ByteString[count];
-
-            for (int j = 0; j < count; j++)
-            {
-                array[j] = (ByteString)arrayList[j];
-            }
-
-            return array;
+            return result;
         }
     }
 }

@@ -6,7 +6,7 @@
 namespace DevLib.Web.Hosting.WebHost40
 {
     using System;
-    using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
@@ -95,6 +95,21 @@ namespace DevLib.Web.Hosting.WebHost40
         };
 
         /// <summary>
+        /// Field _responseHeadersBuilder.
+        /// </summary>
+        private readonly StringBuilder _responseHeadersBuilder = new StringBuilder();
+
+        /// <summary>
+        /// Field _headerByteStrings.
+        /// </summary>
+        private readonly List<ByteString> _headerByteStrings = new List<ByteString>();
+
+        /// <summary>
+        /// Field _responseBodyBytes.
+        /// </summary>
+        private readonly List<byte[]> _responseBodyBytes = new List<byte[]>();
+
+        /// <summary>
         /// Field _host.
         /// </summary>
         private Host _host;
@@ -128,11 +143,6 @@ namespace DevLib.Web.Hosting.WebHost40
         /// Field _endHeadersOffset.
         /// </summary>
         private int _endHeadersOffset;
-
-        /// <summary>
-        /// Field _headerByteStrings.
-        /// </summary>
-        private ArrayList _headerByteStrings;
 
         /// <summary>
         /// Field _isClientScriptPath.
@@ -228,16 +238,6 @@ namespace DevLib.Web.Hosting.WebHost40
         /// Field _responseStatus.
         /// </summary>
         private int _responseStatus;
-
-        /// <summary>
-        /// Field _responseHeadersBuilder.
-        /// </summary>
-        private StringBuilder _responseHeadersBuilder;
-
-        /// <summary>
-        /// Field _responseBodyBytes.
-        /// </summary>
-        private ArrayList _responseBodyBytes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Request"/> class.
@@ -877,11 +877,11 @@ namespace DevLib.Web.Hosting.WebHost40
 
             for (int i = 0; i < this._responseBodyBytes.Count; i++)
             {
-                byte[] array = (byte[])this._responseBodyBytes[i];
+                byte[] array = this._responseBodyBytes[i];
                 this._connection.WriteBody(array, 0, array.Length);
             }
 
-            this._responseBodyBytes = new ArrayList();
+            this._responseBodyBytes.Clear();
 
             if (finalFlush)
             {
@@ -958,7 +958,7 @@ namespace DevLib.Web.Hosting.WebHost40
             this._headerBytes = null;
             this._startHeadersOffset = 0;
             this._endHeadersOffset = 0;
-            this._headerByteStrings = null;
+            this._headerByteStrings.Clear();
             this._isClientScriptPath = false;
             this._verb = null;
             this._url = null;
@@ -1061,7 +1061,7 @@ namespace DevLib.Web.Hosting.WebHost40
 
             this._startHeadersOffset = -1;
             this._endHeadersOffset = -1;
-            this._headerByteStrings = new ArrayList();
+            this._headerByteStrings.Clear();
             ByteParser byteParser = new ByteParser(this._headerBytes);
 
             while (true)
@@ -1112,19 +1112,19 @@ namespace DevLib.Web.Hosting.WebHost40
         /// </summary>
         private void ParseRequestLine()
         {
-            ByteString byteString = (ByteString)this._headerByteStrings[0];
+            ByteString byteString = this._headerByteStrings[0];
 
-            ByteString[] array = byteString.Split(' ');
+            var byteStringList = byteString.Split(' ');
 
-            if (array == null || array.Length < 2 || array.Length > 3)
+            if (byteStringList == null || byteStringList.Count < 2 || byteStringList.Count > 3)
             {
                 this._connection.WriteErrorAndClose(400);
                 return;
             }
 
-            this._verb = array[0].GetString();
+            this._verb = byteStringList[0].GetString();
 
-            ByteString byteString2 = array[1];
+            ByteString byteString2 = byteStringList[1];
 
             this._url = byteString2.GetString();
 
@@ -1133,9 +1133,9 @@ namespace DevLib.Web.Hosting.WebHost40
                 this._url = byteString2.GetString(Encoding.Default);
             }
 
-            if (array.Length == 3)
+            if (byteStringList.Count == 3)
             {
-                this._port = array[2].GetString();
+                this._port = byteStringList[2].GetString();
             }
             else
             {
@@ -1220,11 +1220,11 @@ namespace DevLib.Web.Hosting.WebHost40
         {
             this._knownRequestHeaders = new string[40];
 
-            ArrayList arrayList = new ArrayList();
+            List<string> list = new List<string>();
 
             for (int i = 1; i < this._headerByteStrings.Count; i++)
             {
-                string string1 = ((ByteString)this._headerByteStrings[i]).GetString();
+                string string1 = this._headerByteStrings[i].GetString();
 
                 int num = string1.IndexOf(':');
 
@@ -1242,13 +1242,13 @@ namespace DevLib.Web.Hosting.WebHost40
                     }
                     else
                     {
-                        arrayList.Add(text);
-                        arrayList.Add(text2);
+                        list.Add(text);
+                        list.Add(text2);
                     }
                 }
             }
 
-            int num2 = arrayList.Count / 2;
+            int num2 = list.Count / 2;
 
             this._unknownRequestHeaders = new string[num2][];
 
@@ -1257,8 +1257,8 @@ namespace DevLib.Web.Hosting.WebHost40
             for (int j = 0; j < num2; j++)
             {
                 this._unknownRequestHeaders[j] = new string[2];
-                this._unknownRequestHeaders[j][0] = (string)arrayList[num3++];
-                this._unknownRequestHeaders[j][1] = (string)arrayList[num3++];
+                this._unknownRequestHeaders[j][0] = (string)list[num3++];
+                this._unknownRequestHeaders[j][1] = (string)list[num3++];
             }
 
             if (this._headerByteStrings.Count > 1)
@@ -1475,8 +1475,8 @@ namespace DevLib.Web.Hosting.WebHost40
         {
             this._headersSent = false;
             this._responseStatus = 200;
-            this._responseHeadersBuilder = new StringBuilder();
-            this._responseBodyBytes = new ArrayList();
+            this._responseHeadersBuilder.Clear();
+            this._responseBodyBytes.Clear();
         }
 
         /// <summary>

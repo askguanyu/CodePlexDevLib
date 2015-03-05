@@ -1521,6 +1521,8 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ExtensionMethods");
 
+            var name1 = "1.txt".RenameFile();
+
             var aa = "abcd".Remove(null, true);
 
             #region SerializationExtensions
@@ -1630,8 +1632,6 @@ namespace DevLib.Samples
 
             #region Security
             string inputString = "Hello I am secret.".ConsoleOutput();
-            inputString.RSAEncrypt("key").ConsoleOutput().RSADecrypt("key").ConsoleOutput();
-            inputString.ToMD5String().ConsoleOutput().MD5VerifyToOriginal(inputString).ConsoleOutput();
 
             #endregion
 

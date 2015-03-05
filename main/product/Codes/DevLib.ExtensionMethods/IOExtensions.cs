@@ -8,14 +8,61 @@ namespace DevLib.ExtensionMethods
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Security.Permissions;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// IO Extensions.
     /// </summary>
     public static class IOExtensions
     {
+        /// <summary>
+        /// Renames the file to "* (n).*" if file already exists.
+        /// </summary>
+        /// <param name="filename">The filename.</param>
+        /// <returns>New file name "* (n).*" if file already exists; otherwise, the original file name.</returns>
+        public static string RenameFile(this string filename)
+        {
+            if (!File.Exists(filename))
+            {
+                return filename;
+            }
+
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+            string fileExtension = Path.GetExtension(filename);
+            string directoryName = Path.GetDirectoryName(Path.GetFullPath(filename));
+
+            string pattern = "^" + fileNameWithoutExtension + "\\s*(\\d+)?";
+            Regex regex = new Regex(pattern);
+            int count = Directory.GetFiles(directoryName, fileNameWithoutExtension + "*" + fileExtension).Where(i => regex.IsMatch(Path.GetFileNameWithoutExtension(i))).Count();
+
+            return fileNameWithoutExtension + " (" + (count + 1).ToString() + ")" + fileExtension;
+        }
+
+        /// <summary>
+        /// Renames the folder to "* (n)" if folder already exists.
+        /// </summary>
+        /// <param name="path">The folder path.</param>
+        /// <returns>New folder name "* (n)" if folder already exists; otherwise, the original folder name.</returns>
+        public static string RenameFolder(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                return path;
+            }
+
+            string folderName = Path.GetFileName(path);
+            string directoryName = Path.GetDirectoryName(Path.GetFullPath(path));
+
+            string pattern = "^" + folderName + "\\s*(\\d+)?";
+            Regex regex = new Regex(pattern);
+            int count = Directory.GetDirectories(directoryName, folderName + "*").Where(i => regex.IsMatch(Path.GetFileName(i))).Count();
+
+            return folderName + " (" + (count + 1).ToString() + ")";
+        }
+
         /// <summary>
         /// Creates a new file, writes the specified string to the file using the specified encoding, and then closes the file.
         /// </summary>

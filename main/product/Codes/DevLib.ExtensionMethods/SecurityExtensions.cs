@@ -5,10 +5,7 @@
 //-----------------------------------------------------------------------
 namespace DevLib.ExtensionMethods
 {
-    using System;
-    using System.Globalization;
     using System.Security.Cryptography;
-    using System.Text;
 
     /// <summary>
     /// Security Extensions.
@@ -16,103 +13,55 @@ namespace DevLib.ExtensionMethods
     public static class SecurityExtensions
     {
         /// <summary>
-        /// Verifies a original string against the passed MD5 hash.
+        /// Encrypts data with the System.Security.Cryptography.RSA algorithm.
         /// </summary>
-        /// <param name="source">The <see cref="string">string</see> to compare.</param>
-        /// <param name="hash">The hash to compare against.</param>
-        /// <returns>true if the input and the hash are the same; otherwise, false.</returns>
-        public static bool MD5VerifyToHash(this string source, string hash)
+        /// <param name="source">The data to be encrypted.</param>
+        /// <param name="key">Represents the key container name for System.Security.Cryptography.CspParameters.</param>
+        /// <returns>The encrypted data.</returns>
+        public static byte[] EncryptRSA(this byte[] source, string key = null)
         {
-            string sourceHash = source.ToMD5String();
-
-            return sourceHash.Equals(hash, StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// Verifies a MD5 hash against the passed original string.
-        /// </summary>
-        /// <param name="source">The MD5 hash to compare.</param>
-        /// <param name="original">The original to compare against.</param>
-        /// <returns>true if the input and the hash are the same; otherwise, false.</returns>
-        public static bool MD5VerifyToOriginal(this string source, string original)
-        {
-            string originalHash = original.ToMD5String();
-
-            return source.Equals(originalHash, StringComparison.OrdinalIgnoreCase);
-        }
-
-        /// <summary>
-        /// MD5 encodes the passed <see cref="string">string</see>.
-        /// </summary>
-        /// <param name="source">The <see cref="string">string</see> to encode.</param>
-        /// <returns>An encoded <see cref="string">string</see>.</returns>
-        public static string ToMD5String(this string source)
-        {
-            byte[] result;
-
-            using (MD5 hasher = MD5.Create())
+            if (source == null)
             {
-                result = hasher.ComputeHash(Encoding.UTF8.GetBytes(source));
-            }
-
-            return result.ToHexString();
-        }
-
-        /// <summary>
-        /// MD5 encodes the passed <see cref="string">string</see>.
-        /// </summary>
-        /// <param name="source">The <see cref="string">string</see> to encode.</param>
-        /// <returns>An encoded byte array.</returns>
-        public static byte[] ToMD5Bytes(this string source)
-        {
-            using (MD5 hasher = MD5.Create())
-            {
-                return hasher.ComputeHash(Encoding.UTF8.GetBytes(source));
-            }
-        }
-
-        /// <summary>
-        /// Decrypts a string using the supplied key. Decoding is done using RSA encryption.
-        /// </summary>
-        /// <param name="source">String to decrypt.</param>
-        /// <param name="key">Decryption key.</param>
-        /// <returns>The decrypted string.</returns>
-        public static string RSADecrypt(this string source, string key = null)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return source;
-            }
-
-            string[] decryptArray = source.Split(new string[] { "-" }, StringSplitOptions.None);
-            byte[] decryptByteArray = Array.ConvertAll<string, byte>(decryptArray, a => Convert.ToByte(byte.Parse(a, NumberStyles.HexNumber)));
-
-            using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
-            {
-                rsa.PersistKeyInCsp = true;
-                byte[] bytes = rsa.Decrypt(decryptByteArray, true);
-                return Encoding.UTF8.GetString(bytes);
-            }
-        }
-
-        /// <summary>
-        /// Encrypts a string using the supplied key. Encoding is done using RSA encryption.
-        /// </summary>
-        /// <param name="source">String to encrypt.</param>
-        /// <param name="key">Encryption key.</param>
-        /// <returns>A string representing a byte array separated by a minus sign.</returns>
-        public static string RSAEncrypt(this string source, string key = null)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return source;
+                return null;
             }
 
             using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
                 rsa.PersistKeyInCsp = true;
-                byte[] bytes = rsa.Encrypt(Encoding.UTF8.GetBytes(source), true);
-                return BitConverter.ToString(bytes);
+                return rsa.Encrypt(source, true);
+            }
+        }
+
+        /// <summary>
+        /// Decrypts data with the System.Security.Cryptography.RSA algorithm.
+        /// </summary>
+        /// <param name="source">The data to be decrypted.</param>
+        /// <param name="key">Represents the key container name for System.Security.Cryptography.CspParameters.</param>
+        /// <returns>The decrypted data, which is the original data before encryption.</returns>
+        public static byte[] DecryptRSA(this byte[] source, string key = null)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
+            {
+                rsa.PersistKeyInCsp = true;
+                return rsa.Decrypt(source, true);
+            }
+        }
+
+        /// <summary>
+        /// Computes the hash value for the specified byte array with System.Security.Cryptography.MD5 hash algorithm.
+        /// </summary>
+        /// <param name="source">The input to compute the hash code for.</param>
+        /// <returns>The computed hash code.</returns>
+        public static byte[] HashMD5(this byte[] source)
+        {
+            using (MD5 hasher = MD5.Create())
+            {
+                return hasher.ComputeHash(source);
             }
         }
     }

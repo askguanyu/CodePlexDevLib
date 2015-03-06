@@ -71,6 +71,7 @@ namespace DevLib.Samples
     using DevLib.Xml;
     using DevLib.Data.Repository;
     using System.Runtime.Remoting;
+    using System.ServiceModel.Web;
 
     public class Program
     {
@@ -2022,6 +2023,14 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
 
+            var testsrv1 = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
+            testsrv1.SetWebHttpBehaviorAction = i =>
+            {
+                i.HelpEnabled = true;
+                i.DefaultBodyStyle = WebMessageBodyStyle.WrappedRequest;
+            };
+            testsrv1.Open();
+            Console.ReadLine();
             //string soapMsg = @"D:\soap.txt".ReadTextFile();
 
             SoapClient soapClient = new SoapClient("http://wsf.cdyne.com/WeatherWS/Weather.asmx");
@@ -2063,7 +2072,7 @@ namespace DevLib.Samples
 
             //Console.ReadLine();
 
-            client1.Foo("");
+            //client1.Foo("");
 
             //clinet2.ClientCredentials
             string a = string.Empty;
@@ -2071,8 +2080,8 @@ namespace DevLib.Samples
 
             try
             {
-                a = client1.MyOperation1("a", 1);
-                b = client1.Foo("aaa");
+                //a = client1.MyOperation1("a", 1);
+                //b = client1.Foo("aaa");
             }
             catch (Exception e)
             {

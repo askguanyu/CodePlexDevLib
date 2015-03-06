@@ -149,6 +149,15 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Gets or sets a delegate to configure Binding.
+        /// </summary>
+        public Action<Binding> SetBindingAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets a delegate to configure ClientCredentials.
         /// </summary>
         public Action<ClientCredentials> SetClientCredentialsAction
@@ -579,14 +588,33 @@ namespace DevLib.ServiceModel
 
             this.ConfigureProxyInstance(result);
 
-            ServiceEndpoint endpoint = (ServiceEndpoint)this.GetProperty(result, EndpointPropertyName);
+            return result;
+        }
+
+        /// <summary>
+        /// Configures the proxy instance.
+        /// </summary>
+        /// <param name="proxy">The proxy.</param>
+        private void ConfigureProxyInstance(object proxy)
+        {
+            if (this.SetClientCredentialsAction != null)
+            {
+                this.SetClientCredentialsAction((ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName));
+            }
+
+            ServiceEndpoint endpoint = (ServiceEndpoint)this.GetProperty(proxy, EndpointPropertyName);
+
+            if (this.SetBindingAction != null)
+            {
+                this.SetBindingAction(endpoint.Binding);
+            }
 
             string username = null;
             string password = null;
 
             try
             {
-                ClientCredentials clientCredentials = (ClientCredentials)this.GetProperty(result, ClientCredentialsPropertyName);
+                ClientCredentials clientCredentials = (ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName);
 
                 if (clientCredentials != null && clientCredentials.UserName != null)
                 {
@@ -634,36 +662,9 @@ namespace DevLib.ServiceModel
                     serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
                     serializerBehavior.IgnoreExtensionDataObject = true;
                 }
-            }
 
-            return result;
-        }
-
-        /// <summary>
-        /// Configures the proxy instance.
-        /// </summary>
-        /// <param name="proxy">The proxy.</param>
-        private void ConfigureProxyInstance(object proxy)
-        {
-            if (this.SetClientCredentialsAction != null)
-            {
-                this.SetClientCredentialsAction((ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName));
-            }
-
-            if (this.SetDataContractResolverAction != null)
-            {
-                ServiceEndpoint endpoint = (ServiceEndpoint)this.GetProperty(proxy, EndpointPropertyName);
-
-                foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
+                if (this.SetDataContractResolverAction != null)
                 {
-                    DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
-
-                    if (serializerBehavior == null)
-                    {
-                        serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
-                        operationDescription.Behaviors.Add(serializerBehavior);
-                    }
-
                     this.SetDataContractResolverAction(serializerBehavior);
                 }
             }

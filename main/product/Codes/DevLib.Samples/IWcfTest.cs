@@ -4,12 +4,17 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Runtime.Serialization;
+using System.ServiceModel.Web;
 
 namespace DevLib.Samples
 {
     [ServiceContract]
     public interface IWcfTest
     {
+        [OperationContract]
+        //[WebGet]
+        string Echo();
+
         [OperationContract]
         string MyOperation1(string arg1, int arg2);
 

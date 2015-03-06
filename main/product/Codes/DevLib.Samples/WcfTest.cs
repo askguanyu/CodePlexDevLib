@@ -35,5 +35,10 @@
             animals.Add(value);
             Console.WriteLine(value.Name);
         }
+
+        public string Echo()
+        {
+            return "Hello";
+        }
     }
 }

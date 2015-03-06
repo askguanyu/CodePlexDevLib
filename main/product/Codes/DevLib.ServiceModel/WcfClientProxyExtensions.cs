@@ -6,6 +6,7 @@
 namespace DevLib.ServiceModel
 {
     using System;
+    using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
 
     /// <summary>
@@ -13,6 +14,22 @@ namespace DevLib.ServiceModel
     /// </summary>
     public static class WcfClientProxyExtensions
     {
+        /// <summary>
+        /// Configure the client binding.
+        /// </summary>
+        /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
+        /// <param name="source">The source TChannel.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        public static void SetBinding<TChannel>(this TChannel source, Action<Binding> setBindingAction) where TChannel : class
+        {
+            WcfClientBase<TChannel> wcfClient = source as WcfClientBase<TChannel>;
+
+            if (wcfClient != null)
+            {
+                wcfClient.SetBindingAction = setBindingAction;
+            }
+        }
+
         /// <summary>
         /// Configure the client credentials.
         /// </summary>

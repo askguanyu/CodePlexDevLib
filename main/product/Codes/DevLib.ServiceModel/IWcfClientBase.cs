@@ -7,6 +7,7 @@ namespace DevLib.ServiceModel
 {
     using System;
     using System.ServiceModel;
+    using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
 
     /// <summary>
@@ -23,6 +24,15 @@ namespace DevLib.ServiceModel
         /// Occurs after receive reply.
         /// </summary>
         event EventHandler<WcfClientBaseEventArgs> ReceivingReply;
+
+        /// <summary>
+        /// Gets or sets a delegate to configure Binding.
+        /// </summary>
+        Action<Binding> SetBindingAction
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets or sets a delegate to configure ClientCredentials.

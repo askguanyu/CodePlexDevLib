@@ -119,6 +119,15 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfClientBaseEventArgs> ReceivingReply;
 
         /// <summary>
+        /// Gets or sets a delegate to configure Binding.
+        /// </summary>
+        public Action<Binding> SetBindingAction
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets a delegate to configure ClientCredentials.
         /// </summary>
         public Action<ClientCredentials> SetClientCredentialsAction
@@ -378,7 +387,7 @@ namespace DevLib.ServiceModel
             }
             else
             {
-                this.ConfigureProxyInstance(this.CachedProxy);
+                this.ConfigureProxyInstance(this.CachedProxy as ClientBase<TChannel>);
             }
         }
 
@@ -413,11 +422,43 @@ namespace DevLib.ServiceModel
                     break;
             }
 
-            this.ConfigureProxyInstance(result);
+            this.ConfigureProxyInstance(result as ClientBase<TChannel>);
 
-            ClientBase<TChannel> clientBase = result as ClientBase<TChannel>;
+            return result;
+        }
+
+        /// <summary>
+        /// Method HandleFaultException.
+        /// </summary>
+        /// <typeparam name="TDetail">The serializable error detail type.</typeparam>
+        /// <param name="faultException">Instance of FaultException{TDetail}.</param>
+        protected virtual void HandleFaultException<TDetail>(FaultException<TDetail> faultException)
+        {
+            Exception exception = faultException.Detail as Exception;
+
+            if (exception != null)
+            {
+                throw exception;
+            }
+        }
+
+        /// <summary>
+        /// Configures the clientBase instance.
+        /// </summary>
+        /// <param name="clientBase">The clientBase.</param>
+        private void ConfigureProxyInstance(ClientBase<TChannel> clientBase)
+        {
+            if (this.SetClientCredentialsAction != null)
+            {
+                this.SetClientCredentialsAction(clientBase.ClientCredentials);
+            }
 
             ServiceEndpoint endpoint = clientBase.Endpoint;
+
+            if (this.SetBindingAction != null)
+            {
+                this.SetBindingAction(endpoint.Binding);
+            }
 
             string username = null;
             string password = null;
@@ -464,51 +505,9 @@ namespace DevLib.ServiceModel
                     serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
                     serializerBehavior.IgnoreExtensionDataObject = true;
                 }
-            }
 
-            return result;
-        }
-
-        /// <summary>
-        /// Method HandleFaultException.
-        /// </summary>
-        /// <typeparam name="TDetail">The serializable error detail type.</typeparam>
-        /// <param name="faultException">Instance of FaultException{TDetail}.</param>
-        protected virtual void HandleFaultException<TDetail>(FaultException<TDetail> faultException)
-        {
-            Exception exception = faultException.Detail as Exception;
-
-            if (exception != null)
-            {
-                throw exception;
-            }
-        }
-
-        /// <summary>
-        /// Configures the proxy instance.
-        /// </summary>
-        /// <param name="proxy">The proxy.</param>
-        private void ConfigureProxyInstance(TChannel proxy)
-        {
-            if (this.SetClientCredentialsAction != null)
-            {
-                this.SetClientCredentialsAction((proxy as ClientBase<TChannel>).ClientCredentials);
-            }
-
-            if (this.SetDataContractResolverAction != null)
-            {
-                ServiceEndpoint endpoint = (proxy as ClientBase<TChannel>).Endpoint;
-
-                foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
+                if (this.SetDataContractResolverAction != null)
                 {
-                    DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
-
-                    if (serializerBehavior == null)
-                    {
-                        serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
-                        operationDescription.Behaviors.Add(serializerBehavior);
-                    }
-
                     this.SetDataContractResolverAction(serializerBehavior);
                 }
             }

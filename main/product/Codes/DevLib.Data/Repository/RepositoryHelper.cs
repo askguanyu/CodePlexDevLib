@@ -166,7 +166,8 @@ namespace DevLib.Data.Repository
         /// </remarks>
         /// <param name="filename">File name.</param>
         /// <param name="source">The object to serialize.</param>
-        public static void WriteXml(string filename, object source)
+        /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
+        public static void WriteXml(string filename, object source, bool removeDefaultNamespace)
         {
             if (source == null)
             {
@@ -202,9 +203,17 @@ namespace DevLib.Data.Repository
 
                 using (XmlWriter xmlWriter = XmlWriter.Create(fullPath, new XmlWriterSettings() { OmitXmlDeclaration = true, Indent = true, Encoding = new UTF8Encoding(false), CloseOutput = true }))
                 {
-                    XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
-                    xmlns.Add(string.Empty, string.Empty);
-                    xmlSerializer.Serialize(xmlWriter, source, xmlns);
+                    if (removeDefaultNamespace)
+                    {
+                        XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
+                        xmlns.Add(string.Empty, string.Empty);
+                        xmlSerializer.Serialize(xmlWriter, source, xmlns);
+                    }
+                    else
+                    {
+                        xmlSerializer.Serialize(xmlWriter, source);
+                    }
+
                     xmlWriter.Flush();
                 }
             }

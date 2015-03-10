@@ -17,8 +17,9 @@ namespace DevLib.Data.Repository
         /// Initializes a new instance of the <see cref="XmlFileRepository{TEntity}" /> class.
         /// </summary>
         /// <param name="filename">The filename.</param>
-        public XmlFileRepository(string filename)
-            : base(filename, file => RepositoryHelper.ReadXml<List<TEntity>>(file), (file, obj) => RepositoryHelper.WriteXml(file, obj))
+        /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
+        public XmlFileRepository(string filename, bool removeDefaultNamespace = true)
+            : base(filename, file => RepositoryHelper.ReadXml<List<TEntity>>(file), (file, obj) => RepositoryHelper.WriteXml(file, obj, removeDefaultNamespace))
         {
         }
     }

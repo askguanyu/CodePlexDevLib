@@ -94,7 +94,7 @@ namespace DevLib.DaemonProcess
                     {
                         splitSwitch += 1;
                         result.Add(stringBuilder.ToString());
-                        stringBuilder.Remove(0, stringBuilder.Length);
+                        stringBuilder.Length = 0;
                         continue;
                     }
                 }
@@ -116,7 +116,7 @@ namespace DevLib.DaemonProcess
                         if (stringBuilder.Length > 0)
                         {
                             result.Add(stringBuilder.ToString());
-                            stringBuilder.Remove(0, stringBuilder.Length);
+                            stringBuilder.Length = 0;
                             continue;
                         }
                     }
@@ -182,7 +182,7 @@ namespace DevLib.DaemonProcess
                     {
                         splitSwitch += 1;
                         result.Add(stringBuilder.ToString());
-                        stringBuilder.Remove(0, stringBuilder.Length);
+                        stringBuilder.Length = 0;
                         continue;
                     }
                 }
@@ -204,7 +204,7 @@ namespace DevLib.DaemonProcess
                         if (stringBuilder.Length > 0)
                         {
                             result.Add(stringBuilder.ToString());
-                            stringBuilder.Remove(0, stringBuilder.Length);
+                            stringBuilder.Length = 0;
                             continue;
                         }
                     }

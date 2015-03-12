@@ -817,7 +817,7 @@ namespace DevLib.ExtensionMethods
                 if (!inItem)
                 {
                     result.Add(itemStringBuilder.ToString());
-                    itemStringBuilder.Remove(0, itemStringBuilder.Length);
+                    itemStringBuilder.Length = 0;
                 }
                 else
                 {
@@ -898,7 +898,7 @@ namespace DevLib.ExtensionMethods
                 if (!inItem)
                 {
                     result.Add(itemStringBuilder.ToString());
-                    itemStringBuilder.Remove(0, itemStringBuilder.Length);
+                    itemStringBuilder.Length = 0;
                 }
                 else
                 {

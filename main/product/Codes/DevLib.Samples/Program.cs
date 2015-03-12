@@ -95,7 +95,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(i =>
                 {
-                    //TestCsv();
+                    TestCsv();
                 });
 
                 Benchmark.Run(i =>

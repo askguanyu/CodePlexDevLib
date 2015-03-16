@@ -640,6 +640,107 @@ namespace DevLib.Net.Ftp
         }
 
         /// <summary>
+        /// Download a file from an FTP server.
+        /// </summary>
+        /// <param name="remoteFile">The source file on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public byte[] DownloadFile(string remoteFile, bool throwOnError = false)
+        {
+            FtpWebResponse response = null;
+            Stream responseStream = null;
+
+            try
+            {
+                FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.DownloadFile, remoteFile, false);
+                response = request.GetResponse() as FtpWebResponse;
+                this.UpdateFtpInfo(response);
+                responseStream = response.GetResponseStream();
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    byte[] buffer = new byte[81920];
+
+                    int count;
+
+                    while ((count = responseStream.Read(buffer, 0, buffer.Length)) != 0)
+                    {
+                        memoryStream.Write(buffer, 0, count);
+                    }
+
+                    return memoryStream.ToArray();
+                }
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return null;
+            }
+            finally
+            {
+                if (responseStream != null)
+                {
+                    responseStream.Close();
+                    responseStream = null;
+                }
+
+                if (response != null)
+                {
+                    if (response != null)
+                    {
+                        try
+                        {
+                            response.Close();
+                        }
+                        catch
+                        {
+                        }
+
+                        response = null;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Download a file from an FTP server.
+        /// </summary>
+        /// <param name="remoteFile">The source file on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public Stream DownloadFileStream(string remoteFile, bool throwOnError = false)
+        {
+            FtpWebResponse response = null;
+            Stream responseStream = null;
+
+            try
+            {
+                FtpWebRequest request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.DownloadFile, remoteFile, false);
+                response = request.GetResponse() as FtpWebResponse;
+                this.UpdateFtpInfo(response);
+                responseStream = response.GetResponseStream();
+                return responseStream;
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Uploads a file to an FTP server.
         /// </summary>
         /// <param name="localFile">The local source file.</param>
@@ -683,7 +784,7 @@ namespace DevLib.Net.Ftp
 
             try
             {
-                this.UploadFileHelper(localFullPath, remoteFile);
+                this.UploadFileHelper(localFullPath, remoteFile, false);
 
                 return true;
             }
@@ -705,7 +806,7 @@ namespace DevLib.Net.Ftp
 
                                 try
                                 {
-                                    this.UploadFileHelper(localFullPath, remoteFile);
+                                    this.UploadFileHelper(localFullPath, remoteFile, false);
 
                                     return true;
                                 }
@@ -727,7 +828,221 @@ namespace DevLib.Net.Ftp
 
                                 try
                                 {
-                                    this.UploadFileHelper(localFullPath, remoteFile);
+                                    this.UploadFileHelper(localFullPath, remoteFile, false);
+
+                                    return true;
+                                }
+                                catch
+                                {
+                                    InternalLogger.Log(e);
+
+                                    if (throwOnError)
+                                    {
+                                        throw;
+                                    }
+
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Uploads a file to an FTP server.
+        /// </summary>
+        /// <param name="stream">The source stream to upload.</param>
+        /// <param name="remoteFile">The destination file on an FTP server.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public bool UploadFile(Stream stream, string remoteFile, bool overwrite = false, bool throwOnError = false)
+        {
+            if (stream == null)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("stream");
+                }
+
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(remoteFile))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("remoteFile");
+                }
+
+                return false;
+            }
+
+            try
+            {
+                this.UploadFileHelper(stream, remoteFile, false);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                WebException webException = e as WebException;
+
+                if (webException != null)
+                {
+                    FtpWebResponse ftpWebResponse = webException.Response as FtpWebResponse;
+
+                    if (ftpWebResponse != null)
+                    {
+                        if (ftpWebResponse.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                        {
+                            if (ftpWebResponse.StatusDescription.Contains("cannot find the path specified"))
+                            {
+                                this.MakeDirectory(FtpFileInfo.GetDirectoryName(remoteFile), false);
+
+                                try
+                                {
+                                    this.UploadFileHelper(stream, remoteFile, false);
+
+                                    return true;
+                                }
+                                catch
+                                {
+                                    InternalLogger.Log(e);
+
+                                    if (throwOnError)
+                                    {
+                                        throw;
+                                    }
+
+                                    return false;
+                                }
+                            }
+                            else if (ftpWebResponse.StatusDescription.Contains("file already exists") && overwrite)
+                            {
+                                this.DeleteFile(remoteFile, false);
+
+                                try
+                                {
+                                    this.UploadFileHelper(stream, remoteFile, false);
+
+                                    return true;
+                                }
+                                catch
+                                {
+                                    InternalLogger.Log(e);
+
+                                    if (throwOnError)
+                                    {
+                                        throw;
+                                    }
+
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Uploads a file to an FTP server.
+        /// </summary>
+        /// <param name="bytes">The source bytes to upload.</param>
+        /// <param name="remoteFile">The destination file on an FTP server.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public bool UploadFile(byte[] bytes, string remoteFile, bool overwrite = false, bool throwOnError = false)
+        {
+            if (bytes == null)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("bytes");
+                }
+
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(remoteFile))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("remoteFile");
+                }
+
+                return false;
+            }
+
+            try
+            {
+                this.UploadFileHelper(bytes, remoteFile, false);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                WebException webException = e as WebException;
+
+                if (webException != null)
+                {
+                    FtpWebResponse ftpWebResponse = webException.Response as FtpWebResponse;
+
+                    if (ftpWebResponse != null)
+                    {
+                        if (ftpWebResponse.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                        {
+                            if (ftpWebResponse.StatusDescription.Contains("cannot find the path specified"))
+                            {
+                                this.MakeDirectory(FtpFileInfo.GetDirectoryName(remoteFile), false);
+
+                                try
+                                {
+                                    this.UploadFileHelper(bytes, remoteFile, false);
+
+                                    return true;
+                                }
+                                catch
+                                {
+                                    InternalLogger.Log(e);
+
+                                    if (throwOnError)
+                                    {
+                                        throw;
+                                    }
+
+                                    return false;
+                                }
+                            }
+                            else if (ftpWebResponse.StatusDescription.Contains("file already exists") && overwrite)
+                            {
+                                this.DeleteFile(remoteFile, false);
+
+                                try
+                                {
+                                    this.UploadFileHelper(bytes, remoteFile, false);
 
                                     return true;
                                 }
@@ -801,7 +1116,7 @@ namespace DevLib.Net.Ftp
 
             try
             {
-                this.AppendFileHelper(localFullPath, remoteFile);
+                this.UploadFileHelper(localFullPath, remoteFile, true);
 
                 return true;
             }
@@ -823,7 +1138,175 @@ namespace DevLib.Net.Ftp
 
                                 try
                                 {
-                                    this.AppendFileHelper(localFullPath, remoteFile);
+                                    this.UploadFileHelper(localFullPath, remoteFile, true);
+
+                                    return true;
+                                }
+                                catch
+                                {
+                                    InternalLogger.Log(e);
+
+                                    if (throwOnError)
+                                    {
+                                        throw;
+                                    }
+
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Append a file to an existing file on an FTP server.
+        /// </summary>
+        /// <param name="stream">The source stream to append.</param>
+        /// <param name="remoteFile">The destination file on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public bool AppendFile(Stream stream, string remoteFile, bool throwOnError = false)
+        {
+            if (stream == null)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("stream");
+                }
+
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(remoteFile))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("remoteFile");
+                }
+
+                return false;
+            }
+
+            try
+            {
+                this.UploadFileHelper(stream, remoteFile, true);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                WebException webException = e as WebException;
+
+                if (webException != null)
+                {
+                    FtpWebResponse ftpWebResponse = webException.Response as FtpWebResponse;
+
+                    if (ftpWebResponse != null)
+                    {
+                        if (ftpWebResponse.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                        {
+                            if (ftpWebResponse.StatusDescription.Contains("cannot find the path specified"))
+                            {
+                                this.MakeDirectory(FtpFileInfo.GetDirectoryName(remoteFile), false);
+
+                                try
+                                {
+                                    this.UploadFileHelper(stream, remoteFile, true);
+
+                                    return true;
+                                }
+                                catch
+                                {
+                                    InternalLogger.Log(e);
+
+                                    if (throwOnError)
+                                    {
+                                        throw;
+                                    }
+
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                InternalLogger.Log(e);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Append a file to an existing file on an FTP server.
+        /// </summary>
+        /// <param name="bytes">The source bytes to append.</param>
+        /// <param name="remoteFile">The destination file on an FTP server.</param>
+        /// <param name="throwOnError">true to throw any exception that occurs.-or- false to ignore any exception that occurs.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public bool AppendFile(byte[] bytes, string remoteFile, bool throwOnError = false)
+        {
+            if (bytes == null)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("bytes");
+                }
+
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(remoteFile))
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentNullException("remoteFile");
+                }
+
+                return false;
+            }
+
+            try
+            {
+                this.UploadFileHelper(bytes, remoteFile, true);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                WebException webException = e as WebException;
+
+                if (webException != null)
+                {
+                    FtpWebResponse ftpWebResponse = webException.Response as FtpWebResponse;
+
+                    if (ftpWebResponse != null)
+                    {
+                        if (ftpWebResponse.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
+                        {
+                            if (ftpWebResponse.StatusDescription.Contains("cannot find the path specified"))
+                            {
+                                this.MakeDirectory(FtpFileInfo.GetDirectoryName(remoteFile), false);
+
+                                try
+                                {
+                                    this.UploadFileHelper(bytes, remoteFile, true);
 
                                     return true;
                                 }
@@ -1260,24 +1743,54 @@ namespace DevLib.Net.Ftp
         /// <summary>
         /// Uploads a file to an FTP server.
         /// </summary>
-        /// <param name="localFile">The local source file.</param>
+        /// <param name="localFile">The local source file to upload.</param>
         /// <param name="remoteFile">The destination file on an FTP server.</param>
-        private void UploadFileHelper(string localFile, string remoteFile)
+        /// <param name="append">true to use append method; false to use upload method.</param>
+        private void UploadFileHelper(string localFile, string remoteFile, bool append)
+        {
+            FileStream fileStream = null;
+
+            try
+            {
+                fileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read);
+                this.UploadFileHelper(fileStream, remoteFile, append);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                    fileStream = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Uploads a file to an FTP server.
+        /// </summary>
+        /// <param name="stream">The source stream to upload.</param>
+        /// <param name="remoteFile">The destination file on an FTP server.</param>
+        /// <param name="append">true to use append method; false to use upload method.</param>
+        private void UploadFileHelper(Stream stream, string remoteFile, bool append)
         {
             FtpWebRequest request = null;
             FtpWebResponse response = null;
-            FileStream fileStream = null;
             Stream requestStream = null;
 
             try
             {
-                request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.UploadFile, remoteFile, false);
+                request = this.CreateFtpWebRequest(append ? WebRequestMethods.Ftp.AppendFile : WebRequestMethods.Ftp.UploadFile, remoteFile, false);
                 requestStream = request.GetRequestStream();
-                fileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read);
 
+                stream.Position = 0;
                 byte[] buffer = new byte[81920];
                 int count;
-                while ((count = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+
+                while ((count = stream.Read(buffer, 0, buffer.Length)) != 0)
                 {
                     requestStream.Write(buffer, 0, count);
                     Interlocked.Add(ref this._totalBytesUploaded, count);
@@ -1293,12 +1806,6 @@ namespace DevLib.Net.Ftp
                 {
                     requestStream.Close();
                     requestStream = null;
-                }
-
-                if (fileStream != null)
-                {
-                    fileStream.Close();
-                    fileStream = null;
                 }
 
                 try
@@ -1328,29 +1835,26 @@ namespace DevLib.Net.Ftp
         }
 
         /// <summary>
-        /// Append a file to an existing file on an FTP server.
+        /// Uploads a file to an FTP server.
         /// </summary>
-        /// <param name="localFile">The local source file.</param>
+        /// <param name="bytes">The source bytes to upload.</param>
         /// <param name="remoteFile">The destination file on an FTP server.</param>
-        private void AppendFileHelper(string localFile, string remoteFile)
+        /// <param name="append">true to use append method; false to use upload method.</param>
+        private void UploadFileHelper(byte[] bytes, string remoteFile, bool append)
         {
             FtpWebRequest request = null;
             FtpWebResponse response = null;
-            FileStream fileStream = null;
             Stream requestStream = null;
 
             try
             {
-                request = this.CreateFtpWebRequest(WebRequestMethods.Ftp.AppendFile, remoteFile, false);
+                request = this.CreateFtpWebRequest(append ? WebRequestMethods.Ftp.AppendFile : WebRequestMethods.Ftp.UploadFile, remoteFile, false);
                 requestStream = request.GetRequestStream();
-                fileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read);
 
-                byte[] buffer = new byte[81920];
-                int count;
-                while ((count = fileStream.Read(buffer, 0, buffer.Length)) != 0)
-                {
-                    requestStream.Write(buffer, 0, count);
-                }
+                int count = bytes.Length;
+
+                requestStream.Write(bytes, 0, count);
+                Interlocked.Add(ref this._totalBytesUploaded, count);
             }
             catch
             {
@@ -1362,12 +1866,6 @@ namespace DevLib.Net.Ftp
                 {
                     requestStream.Close();
                     requestStream = null;
-                }
-
-                if (fileStream != null)
-                {
-                    fileStream.Close();
-                    fileStream = null;
                 }
 
                 try

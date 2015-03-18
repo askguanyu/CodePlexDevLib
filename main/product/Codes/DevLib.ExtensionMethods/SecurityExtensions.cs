@@ -17,8 +17,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The data to be encrypted.</param>
         /// <param name="key">Represents the key container name for System.Security.Cryptography.CspParameters.</param>
+        /// <param name="fOAEP">true to perform direct RSA encryption using OAEP padding (only available on a computer running Microsoft Windows XP or later); otherwise, false to use PKCS#1 v1.5 padding.</param>
         /// <returns>The encrypted data.</returns>
-        public static byte[] EncryptRSA(this byte[] source, string key = null)
+        public static byte[] EncryptRSA(this byte[] source, string key = null, bool fOAEP = false)
         {
             if (source == null)
             {
@@ -27,8 +28,7 @@ namespace DevLib.ExtensionMethods
 
             using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
-                rsa.PersistKeyInCsp = true;
-                return rsa.Encrypt(source, true);
+                return rsa.Encrypt(source, fOAEP);
             }
         }
 
@@ -37,8 +37,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The data to be decrypted.</param>
         /// <param name="key">Represents the key container name for System.Security.Cryptography.CspParameters.</param>
+        /// <param name="fOAEP">true to perform direct RSA encryption using OAEP padding (only available on a computer running Microsoft Windows XP or later); otherwise, false to use PKCS#1 v1.5 padding.</param>
         /// <returns>The decrypted data, which is the original data before encryption.</returns>
-        public static byte[] DecryptRSA(this byte[] source, string key = null)
+        public static byte[] DecryptRSA(this byte[] source, string key = null, bool fOAEP = false)
         {
             if (source == null)
             {
@@ -47,8 +48,7 @@ namespace DevLib.ExtensionMethods
 
             using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
             {
-                rsa.PersistKeyInCsp = true;
-                return rsa.Decrypt(source, true);
+                return rsa.Decrypt(source, fOAEP);
             }
         }
 

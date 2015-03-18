@@ -26,7 +26,7 @@ namespace DevLib.ExtensionMethods
                 return null;
             }
 
-            using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key ?? string.Empty }))
             {
                 return rsa.Encrypt(source, fOAEP);
             }
@@ -46,7 +46,7 @@ namespace DevLib.ExtensionMethods
                 return null;
             }
 
-            using (RSACryptoServiceProvider rsa = string.IsNullOrEmpty(key) ? new RSACryptoServiceProvider() : new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key }))
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = key ?? string.Empty }))
             {
                 return rsa.Decrypt(source, fOAEP);
             }

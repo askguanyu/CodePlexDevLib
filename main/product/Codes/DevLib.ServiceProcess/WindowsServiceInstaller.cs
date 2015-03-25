@@ -48,6 +48,7 @@ namespace DevLib.ServiceProcess
         {
             this.InstallerSetupInfo = windowsServiceSetup;
             this.InitializeInstaller();
+            this.Committed += this.OnWindowsServiceInstallerCommitted;
         }
 
         /// <summary>

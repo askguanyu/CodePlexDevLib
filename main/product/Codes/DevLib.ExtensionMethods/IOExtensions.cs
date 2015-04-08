@@ -781,21 +781,20 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Copy source stream to destination stream.
+        /// Reads the bytes from the current stream and writes them to another stream.
         /// </summary>
-        /// <param name="source">Source stream.</param>
-        /// <param name="destinationStream">Destination stream.</param>
-        /// <returns>This instance.</returns>
-        public static Stream CopyStreamTo(this Stream source, Stream destinationStream)
+        /// <param name="source">The source stream.</param>
+        /// <param name="destination">The stream to which the contents of the current stream will be copied.</param>
+        public static void CopyStreamTo(this Stream source, Stream destination)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (destinationStream == null)
+            if (destination == null)
             {
-                throw new ArgumentNullException("destinationStream");
+                throw new ArgumentNullException("destination");
             }
 
             byte[] buffer = new byte[81920];
@@ -804,10 +803,73 @@ namespace DevLib.ExtensionMethods
 
             while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
             {
-                destinationStream.Write(buffer, 0, count);
+                destination.Write(buffer, 0, count);
+            }
+        }
+
+        /// <summary>
+        /// Reads the bytes from the current stream and writes them to another stream.
+        /// </summary>
+        /// <param name="source">The source stream.</param>
+        /// <param name="startPosition">The zero-based starting position of the source stream to be copied.</param>
+        /// <param name="length">Length of the source stream to be copied.</param>
+        /// <param name="destination">The stream to which the contents of the current stream will be copied.</param>
+        public static void CopyStreamTo(this Stream source, long startPosition, int length, Stream destination)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
             }
 
-            return source;
+            if (destination == null)
+            {
+                throw new ArgumentNullException("destination");
+            }
+
+            source.Position = startPosition;
+
+            byte[] buffer = new byte[81920];
+
+            int count;
+
+            int rest = length;
+
+            while (rest > 0)
+            {
+                if (rest <= buffer.Length)
+                {
+                    count = source.Read(buffer, 0, rest);
+
+                    if (count > 0)
+                    {
+                        destination.Write(buffer, 0, count);
+                    }
+
+                    break;
+                }
+                else
+                {
+                    count = source.Read(buffer, 0, buffer.Length);
+
+                    if (count > 0)
+                    {
+                        destination.Write(buffer, 0, count);
+
+                        if (count == buffer.Length)
+                        {
+                            rest -= buffer.Length;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>

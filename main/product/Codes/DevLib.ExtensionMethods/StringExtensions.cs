@@ -16,36 +16,6 @@ namespace DevLib.ExtensionMethods
     public static class StringExtensions
     {
         /// <summary>
-        /// Convert Hex string to byte array.
-        /// </summary>
-        /// <param name="source">Hex string.</param>
-        /// <returns>Byte array.</returns>
-        public static byte[] HexToBytes(this string source)
-        {
-            string temp = source.RemoveAny(false, ' ', '\n', '\r');
-
-            if (source.Length % 2 == 1)
-            {
-                temp = "0" + temp;
-            }
-
-            byte[] result = new byte[temp.Length / 2];
-
-            char tempChar;
-
-            for (int bx = 0, sx = 0; bx < result.Length; ++bx, ++sx)
-            {
-                tempChar = temp[sx];
-                result[bx] = (byte)((tempChar > '9' ? (tempChar > 'Z' ? (tempChar - 'a' + 10) : (tempChar - 'A' + 10)) : (tempChar - '0')) << 4);
-
-                tempChar = temp[++sx];
-                result[bx] |= (byte)(tempChar > '9' ? (tempChar > 'Z' ? (tempChar - 'a' + 10) : (tempChar - 'A' + 10)) : (tempChar - '0'));
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Formats the value with the parameters using string.Format.
         /// </summary>
         /// <param name = "source">The input string.</param>

@@ -27,7 +27,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">Source bool.</param>
         /// <returns>1 if true; otherwise, 0.</returns>
-        public static int ToBinaryTypeNumber(this bool source)
+        public static int ToBitInt(this bool source)
         {
             return source ? 1 : 0;
         }
@@ -39,7 +39,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if 1; otherwise, false.</returns>
         public static bool ToBool(this int source)
         {
-            return source == 1;
+            return source != 0;
         }
 
         /// <summary>

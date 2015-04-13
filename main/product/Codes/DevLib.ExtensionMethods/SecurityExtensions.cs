@@ -53,6 +53,84 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Computes the hash value of the specified byte array using SHA512Managed algorithm, and signs the resulting hash value.
+        /// </summary>
+        /// <param name="source">The input data for which to compute the hash and to be signed.</param>
+        /// <param name="privateKey">The private key for System.Security.Cryptography.RSA.</param>
+        /// <returns>The System.Security.Cryptography.RSA signature for the specified data.</returns>
+        public static byte[] SignDataRSA(this byte[] source, RSAParameters privateKey)
+        {
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+            {
+                rsa.ImportParameters(privateKey);
+
+                using (SHA512Managed sha = new SHA512Managed())
+                {
+                    return rsa.SignData(source, sha);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Verifies the specified signature data by comparing it to the signature computed for the specified data.
+        /// </summary>
+        /// <param name="source">The original data to be verified.</param>
+        /// <param name="signature">The signature data to be verified.</param>
+        /// <param name="publicKey">The public key for System.Security.Cryptography.RSA.</param>
+        /// <returns>true if the signature verifies as valid; otherwise, false.</returns>
+        public static bool VerifyDataRSA(this byte[] source, byte[] signature, RSAParameters publicKey)
+        {
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+            {
+                rsa.ImportParameters(publicKey);
+
+                using (SHA512Managed sha = new SHA512Managed())
+                {
+                    return rsa.VerifyData(source, sha, signature);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Computes the hash value of the specified byte array using SHA512Managed algorithm, and signs the resulting hash value.
+        /// </summary>
+        /// <param name="source">The input data for which to compute the hash and to be signed.</param>
+        /// <param name="privateKey">A byte array that represents an RSA private key blob.</param>
+        /// <returns>The System.Security.Cryptography.RSA signature for the specified data.</returns>
+        public static byte[] SignDataRSA(this byte[] source, byte[] privateKey)
+        {
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+            {
+                rsa.ImportCspBlob(privateKey);
+
+                using (SHA512Managed sha = new SHA512Managed())
+                {
+                    return rsa.SignData(source, sha);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Verifies the specified signature data by comparing it to the signature computed for the specified data.
+        /// </summary>
+        /// <param name="source">The original data to be verified.</param>
+        /// <param name="signature">The signature data to be verified.</param>
+        /// <param name="publicKey">A byte array that represents an RSA public key blob.</param>
+        /// <returns>true if the signature verifies as valid; otherwise, false.</returns>
+        public static bool VerifyDataRSA(this byte[] source, byte[] signature, byte[] publicKey)
+        {
+            using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+            {
+                rsa.ImportCspBlob(publicKey);
+
+                using (SHA512Managed sha = new SHA512Managed())
+                {
+                    return rsa.VerifyData(source, sha, signature);
+                }
+            }
+        }
+
+        /// <summary>
         /// Computes the hash value for the specified byte array with System.Security.Cryptography.MD5 hash algorithm.
         /// </summary>
         /// <param name="source">The input to compute the hash code for.</param>

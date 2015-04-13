@@ -25,10 +25,13 @@ namespace DevLib.Samples
     using System.Net.Sockets;
     using System.Reflection;
     using System.Reflection.Emit;
+    using System.Runtime.Remoting;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters;
+    using System.Security.Cryptography;
     using System.ServiceModel;
     using System.ServiceModel.Routing;
+    using System.ServiceModel.Web;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -41,6 +44,7 @@ namespace DevLib.Samples
     using DevLib.Configuration;
     using DevLib.Csv;
     using DevLib.DaemonProcess;
+    using DevLib.Data.Repository;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
     using DevLib.DirectoryServices;
@@ -69,9 +73,6 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
-    using DevLib.Data.Repository;
-    using System.Runtime.Remoting;
-    using System.ServiceModel.Web;
 
     public class Program
     {
@@ -796,6 +797,24 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            var privateKey = rsa.ExportParameters(true);
+            var publicKey = rsa.ExportParameters(false);
+
+            var privateKey1 = rsa.ExportCspBlob(true);
+            var publicKey1 = rsa.ExportCspBlob(false);
+
+            RSACryptoServiceProvider rsa2 = new RSACryptoServiceProvider();
+            var privateKey2 = rsa2.ExportParameters(true);
+            var publicKey2 = rsa2.ExportParameters(false);
+
+            var data = new string('a', 100000).ToByteArray();
+
+            var signdata = data.SignDataRSA(privateKey1);
+
+            var veri = data.VerifyDataRSA(signdata, publicKey1);
+
+
             string patha = Path.GetFullPath(".");
 
             RemotingObject<Person>.Register();
@@ -817,16 +836,6 @@ namespace DevLib.Samples
             //var oa = pa.GetValue(d);
             //pa = pa.PropertyType.GetProperty("ObjURI", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             //oa = pa.GetValue(oa);
-
-
-
-
-
-
-
-
-
-
 
 
             GCNotification.GCDone += new Action<int>(GCNotification_GCDone);

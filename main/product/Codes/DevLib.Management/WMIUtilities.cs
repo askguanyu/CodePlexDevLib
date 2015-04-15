@@ -153,10 +153,12 @@ namespace DevLib.Management
 
             ManagementObjectSearcher managementObjectSearcher = null;
             List<string> result = new List<string>();
+
             try
             {
                 managementObjectSearcher = new ManagementObjectSearcher(wqlString);
                 ManagementObjectCollection managementObjectCollection = managementObjectSearcher.Get();
+
                 foreach (ManagementObject managementObject in managementObjectCollection)
                 {
                     if (managementObject != null &&

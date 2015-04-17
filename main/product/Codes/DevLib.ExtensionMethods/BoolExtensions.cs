@@ -33,13 +33,33 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Convert int to bool.
+        /// Converts the value in number format {1 , 0}.
+        /// </summary>
+        /// <param name="source">Source bool.</param>
+        /// <returns>"1" if true; otherwise, "0".</returns>
+        public static string ToBitString(this bool source)
+        {
+            return source ? "1" : "0";
+        }
+
+        /// <summary>
+        /// Convert 0 or 1 to bool.
         /// </summary>
         /// <param name="source">Source int.</param>
         /// <returns>true if 1; otherwise, false.</returns>
-        public static bool ToBool(this int source)
+        public static bool BitIntToBool(this int source)
         {
             return source != 0;
+        }
+
+        /// <summary>
+        /// Convert "0" or "1" to bool.
+        /// </summary>
+        /// <param name="source">Source int.</param>
+        /// <returns>true if "1"; otherwise, false.</returns>
+        public static bool BitStringToBool(this string source)
+        {
+            return source != "0";
         }
 
         /// <summary>
@@ -48,7 +68,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source string.</param>
         /// <param name="ignoreCase">Indicating a case-sensitive or insensitive comparison.</param>
         /// <returns>true if "Yes"; otherwise, false.</returns>
-        public static bool ToBool(this string source, bool ignoreCase = true)
+        public static bool YesNoToBool(this string source, bool ignoreCase = true)
         {
             return "Yes".Equals(source, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
         }

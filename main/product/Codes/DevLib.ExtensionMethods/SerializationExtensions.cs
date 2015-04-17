@@ -14,6 +14,7 @@ namespace DevLib.ExtensionMethods
     using System.Runtime.Serialization.Formatters.Soap;
     using System.Runtime.Serialization.Json;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Xml;
     using System.Xml.Linq;
     using System.Xml.Serialization;
@@ -23,6 +24,11 @@ namespace DevLib.ExtensionMethods
     /// </summary>
     public static class SerializationExtensions
     {
+        /// <summary>
+        /// Field JsonTypeInfoRegex.
+        /// </summary>
+        private static readonly Regex JsonTypeInfoRegex = new Regex("\\s*\"__type\"\\s*:\\s*\"[^\"]*\"\\s*,\\s*", RegexOptions.Compiled);
+
         /// <summary>
         /// Serializes object to bytes.
         /// </summary>
@@ -692,10 +698,11 @@ namespace DevLib.ExtensionMethods
         /// Serializes object to Json string.
         /// </summary>
         /// <param name="source">Object to serialize.</param>
+        /// <param name="omitTypeInfo">Whether to omit type information.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Json string.</returns>
-        public static string SerializeJsonString(this object source, Encoding encoding = null, Type[] knownTypes = null)
+        public static string SerializeJsonString(this object source, bool omitTypeInfo = false, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -709,7 +716,16 @@ namespace DevLib.ExtensionMethods
                 dataContractJsonSerializer.WriteObject(memoryStream, source);
                 memoryStream.Position = 0;
 
-                return (encoding ?? Encoding.UTF8).GetString(memoryStream.ToArray());
+                string result = (encoding ?? Encoding.UTF8).GetString(memoryStream.ToArray());
+
+                if (omitTypeInfo)
+                {
+                    return JsonTypeInfoRegex.Replace(result, string.Empty);
+                }
+                else
+                {
+                    return result;
+                }
             }
         }
 

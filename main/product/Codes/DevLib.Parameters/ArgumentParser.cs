@@ -18,6 +18,16 @@ namespace DevLib.Parameters
     public static class ArgumentParser
     {
         /// <summary>
+        /// Field DelimiterRegex.
+        /// </summary>
+        private static readonly Regex DelimiterRegex = new Regex(@"^-{1,2}|^/|=|:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary>
+        /// Field QualifierRegex.
+        /// </summary>
+        private static readonly Regex QualifierRegex = new Regex(@"^['""]?(.*?)['""]?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary>
         /// Parse arguments to a ignore case dictionary.
         /// </summary>
         /// <param name="arguments">Arguments to parse.</param>
@@ -31,15 +41,12 @@ namespace DevLib.Parameters
                 return result;
             }
 
-            Regex delimiterRegex = new Regex(@"^-{1,2}|^/|=|:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-            Regex qualifierRegex = new Regex(@"^['""]?(.*?)['""]?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
             string parameter = null;
             string[] parts;
 
             foreach (string argument in arguments)
             {
-                parts = delimiterRegex.Split(argument, 3);
+                parts = DelimiterRegex.Split(argument, 3);
 
                 switch (parts.Length)
                 {
@@ -49,7 +56,7 @@ namespace DevLib.Parameters
                         {
                             if (!result.ContainsKey(parameter))
                             {
-                                parts[0] = qualifierRegex.Replace(parts[0], "$1");
+                                parts[0] = QualifierRegex.Replace(parts[0], "$1");
                                 result.Add(parameter, parts[0]);
                             }
 
@@ -64,7 +71,7 @@ namespace DevLib.Parameters
                         {
                             if (!result.ContainsKey(parameter))
                             {
-                                result.Add(parameter, "true");
+                                result.Add(parameter, null);
                             }
                         }
 
@@ -78,7 +85,7 @@ namespace DevLib.Parameters
                         {
                             if (!result.ContainsKey(parameter))
                             {
-                                result.Add(parameter, "true");
+                                result.Add(parameter, null);
                             }
                         }
 
@@ -86,7 +93,7 @@ namespace DevLib.Parameters
 
                         if (!result.ContainsKey(parameter))
                         {
-                            parts[2] = qualifierRegex.Replace(parts[2], "$1");
+                            parts[2] = QualifierRegex.Replace(parts[2], "$1");
                             result.Add(parameter, parts[2]);
                         }
 
@@ -100,7 +107,7 @@ namespace DevLib.Parameters
             {
                 if (!result.ContainsKey(parameter))
                 {
-                    result.Add(parameter, "true");
+                    result.Add(parameter, null);
                 }
             }
 

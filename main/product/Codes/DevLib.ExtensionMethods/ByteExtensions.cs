@@ -216,7 +216,7 @@ namespace DevLib.ExtensionMethods
         {
             string temp = source.RemoveAny(false, ' ', '\n', '\r');
 
-            if (source.Length % 2 == 1)
+            if (temp.Length % 2 == 1)
             {
                 temp = "0" + temp;
             }

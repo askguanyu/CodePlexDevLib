@@ -18,6 +18,22 @@ namespace DevLib.ServiceModel
     public class WcfClientBaseEndpointBehavior : Attribute, IEndpointBehavior
     {
         /// <summary>
+        /// Field _inspector;
+        /// </summary>
+        private WcfClientBaseClientMessageInspector _inspector;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfClientBaseEndpointBehavior"/> class.
+        /// </summary>
+        public WcfClientBaseEndpointBehavior()
+        {
+            this._inspector = new WcfClientBaseClientMessageInspector();
+
+            this._inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, e);
+            this._inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, e);
+        }
+
+        /// <summary>
         /// Occurs before send request.
         /// </summary>
         public event EventHandler<WcfClientBaseEventArgs> SendingRequest;
@@ -43,11 +59,10 @@ namespace DevLib.ServiceModel
         /// <param name="clientRuntime">The client runtime to be customized.</param>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            WcfClientBaseClientMessageInspector inspector = new WcfClientBaseClientMessageInspector();
-            inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, e);
-            inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, e);
-
-            clientRuntime.MessageInspectors.Add(inspector);
+            if (!clientRuntime.MessageInspectors.Contains(this._inspector))
+            {
+                clientRuntime.MessageInspectors.Add(this._inspector);
+            }
         }
 
         /// <summary>

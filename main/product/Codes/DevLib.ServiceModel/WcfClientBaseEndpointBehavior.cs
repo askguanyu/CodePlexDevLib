@@ -43,7 +43,7 @@ namespace DevLib.ServiceModel
         /// <param name="clientRuntime">The client runtime to be customized.</param>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            WcfClientBaseClientMessageInspector inspector = new WcfClientBaseClientMessageInspector();
+            WcfClientBaseClientMessageInspector inspector = new WcfClientBaseClientMessageInspector(endpoint);
 
             inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, e);
             inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, e);

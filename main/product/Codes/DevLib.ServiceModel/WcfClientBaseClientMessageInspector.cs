@@ -6,9 +6,11 @@
 namespace DevLib.ServiceModel
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
     using System.Threading;
 
@@ -18,6 +20,37 @@ namespace DevLib.ServiceModel
     [Serializable]
     public class WcfClientBaseClientMessageInspector : IClientMessageInspector
     {
+        /// <summary>
+        /// Field _oneWayActions.
+        /// </summary>
+        private readonly HashSet<string> _oneWayActions;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfClientBaseClientMessageInspector"/> class.
+        /// </summary>
+        public WcfClientBaseClientMessageInspector()
+        {
+            this._oneWayActions = null;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfClientBaseClientMessageInspector"/> class.
+        /// This new instance will simulate ReceivingReply event for OneWay action.
+        /// </summary>
+        /// <param name="serviceEndpoint">The service endpoint.</param>
+        public WcfClientBaseClientMessageInspector(ServiceEndpoint serviceEndpoint)
+        {
+            this._oneWayActions = new HashSet<string>();
+
+            foreach (var operation in serviceEndpoint.Contract.Operations)
+            {
+                if (operation.IsOneWay)
+                {
+                    this._oneWayActions.Add(operation.Messages[0].Action);
+                }
+            }
+        }
+
         /// <summary>
         /// Occurs before send request.
         /// </summary>
@@ -87,6 +120,13 @@ namespace DevLib.ServiceModel
             Debug.WriteLine(message);
 
             this.RaiseEvent(this.SendingRequest, request, message, messageId);
+
+            if (this._oneWayActions != null && this._oneWayActions.Contains(request.Headers.Action))
+            {
+                Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.BeforeSendRequest(simulate reply for OneWay): " + messageId.ToString());
+
+                this.RaiseEvent(this.ReceivingReply, request, "OneWay", messageId);
+            }
 
             return messageId;
         }

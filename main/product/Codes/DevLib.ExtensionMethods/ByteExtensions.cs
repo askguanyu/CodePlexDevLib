@@ -214,7 +214,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>Byte array.</returns>
         public static byte[] HexToByteArray(this string source)
         {
-            string temp = source.RemoveAny(false, ' ', '\n', '\r');
+            string temp = source.RemoveAny(false, ' ', '-', '\n', '\r');
 
             if (temp.Length % 2 == 1)
             {

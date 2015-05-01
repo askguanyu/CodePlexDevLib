@@ -47,15 +47,15 @@ namespace DevLib.ServiceModel
         /// <param name="serviceHostBase">The host that is currently being built.</param>
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            for (int i = 0; i < serviceHostBase.ChannelDispatchers.Count; i++)
+            foreach (ChannelDispatcher channelDispatcher in serviceHostBase.ChannelDispatchers)
             {
-                ChannelDispatcher channelDispatcher = serviceHostBase.ChannelDispatchers[i] as ChannelDispatcher;
-
                 if (channelDispatcher != null)
                 {
                     foreach (EndpointDispatcher endpointDispatcher in channelDispatcher.Endpoints)
                     {
-                        WcfServiceHostDispatchMessageInspector inspector = new WcfServiceHostDispatchMessageInspector();
+                        ServiceEndpoint serviceEndpoint = serviceDescription.Endpoints.Find(endpointDispatcher.EndpointAddress.Uri);
+
+                        WcfServiceHostDispatchMessageInspector inspector = new WcfServiceHostDispatchMessageInspector(serviceEndpoint);
 
                         inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, e);
                         inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, e);

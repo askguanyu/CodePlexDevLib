@@ -2179,7 +2179,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, null, null, null));
+                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, null, null, null, null));
             }
         }
 
@@ -2198,7 +2198,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, e.ChannelMessage, e.Message, e.MessageId));
+                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, e.ChannelMessage, e.Message, e.MessageId, e.IsOneWay));
             }
         }
 

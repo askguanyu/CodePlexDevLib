@@ -651,7 +651,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfClientBaseEventArgs(name, address, listenUri, e.ChannelMessage, e.Message, e.MessageId, username, password));
+                temp(this, new WcfClientBaseEventArgs(name, address, listenUri, e.ChannelMessage, e.Message, e.MessageId, e.IsOneWay, username, password));
             }
         }
 

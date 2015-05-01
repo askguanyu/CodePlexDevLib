@@ -2258,14 +2258,12 @@ namespace DevLib.ServiceModel
                             if (wcfServiceHostServiceBehavior == null)
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
+
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
-
-                            wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                            wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-
-                            wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                            wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
                             foreach (var endpoint in serviceHost.Description.Endpoints)
                             {
@@ -2380,14 +2378,12 @@ namespace DevLib.ServiceModel
                             if (wcfServiceHostServiceBehavior == null)
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
+
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
-
-                            wcfServiceHostServiceBehavior.ReceivingRequest -= (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                            wcfServiceHostServiceBehavior.SendingReply -= (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-
-                            wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                            wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
 
                             ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
 

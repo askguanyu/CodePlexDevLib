@@ -49,6 +49,36 @@ namespace DevLib.ServiceModel
         private bool _disposed = false;
 
         /// <summary>
+        /// Field _setBindingActionChanged.
+        /// </summary>
+        private bool _setBindingActionChanged = false;
+
+        /// <summary>
+        /// Field _setClientCredentialsActionChanged.
+        /// </summary>
+        private bool _setClientCredentialsActionChanged = false;
+
+        /// <summary>
+        /// Field _setDataContractResolverActionChanged.
+        /// </summary>
+        private bool _setDataContractResolverActionChanged = false;
+
+        /// <summary>
+        /// Field _setBindingAction.
+        /// </summary>
+        private Action<Binding> _setBindingAction;
+
+        /// <summary>
+        /// Field _setClientCredentialsAction.
+        /// </summary>
+        private Action<ClientCredentials> _setClientCredentialsAction;
+
+        /// <summary>
+        /// Field _setDataContractResolverAction.
+        /// </summary>
+        private Action<DataContractSerializerOperationBehavior> _setDataContractResolverAction;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WcfClientBase{TChannel}" /> class.
         /// </summary>
         protected WcfClientBase()
@@ -123,8 +153,19 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<Binding> SetBindingAction
         {
-            get;
-            set;
+            get
+            {
+                return this._setBindingAction;
+            }
+
+            set
+            {
+                if (this._setBindingAction != value)
+                {
+                    this._setBindingAction = value;
+                    this._setBindingActionChanged = true;
+                }
+            }
         }
 
         /// <summary>
@@ -132,8 +173,19 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<ClientCredentials> SetClientCredentialsAction
         {
-            get;
-            set;
+            get
+            {
+                return this._setClientCredentialsAction;
+            }
+
+            set
+            {
+                if (this._setClientCredentialsAction != value)
+                {
+                    this._setClientCredentialsAction = value;
+                    this._setClientCredentialsActionChanged = true;
+                }
+            }
         }
 
         /// <summary>
@@ -141,8 +193,19 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<DataContractSerializerOperationBehavior> SetDataContractResolverAction
         {
-            get;
-            set;
+            get
+            {
+                return this._setDataContractResolverAction;
+            }
+
+            set
+            {
+                if (this._setDataContractResolverAction != value)
+                {
+                    this._setDataContractResolverAction = value;
+                    this._setDataContractResolverActionChanged = true;
+                }
+            }
         }
 
         /// <summary>
@@ -385,10 +448,8 @@ namespace DevLib.ServiceModel
             {
                 this.CachedProxy = this.CreateProxyInstance();
             }
-            else
-            {
-                this.ConfigureProxyInstance(this.CachedProxy as ClientBase<TChannel>);
-            }
+
+            this.ConfigureProxyInstance(this.CachedProxy as ClientBase<TChannel>);
         }
 
         /// <summary>
@@ -422,7 +483,7 @@ namespace DevLib.ServiceModel
                     break;
             }
 
-            this.ConfigureProxyInstance(result as ClientBase<TChannel>);
+            this.InitProxyInstance(result as ClientBase<TChannel>);
 
             return result;
         }
@@ -443,10 +504,10 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Configures the clientBase instance.
+        /// Initializes the proxy instance.
         /// </summary>
         /// <param name="clientBase">The clientBase.</param>
-        private void ConfigureProxyInstance(ClientBase<TChannel> clientBase)
+        private void InitProxyInstance(ClientBase<TChannel> clientBase)
         {
             if (this.SetClientCredentialsAction != null)
             {
@@ -460,28 +521,42 @@ namespace DevLib.ServiceModel
                 this.SetBindingAction(endpoint.Binding);
             }
 
-            string username = null;
-            string password = null;
-
-            if (clientBase.ClientCredentials != null && clientBase.ClientCredentials.UserName != null)
-            {
-                username = clientBase.ClientCredentials.UserName.UserName;
-                password = clientBase.ClientCredentials.UserName.Password;
-            }
-
             WcfClientBaseEndpointBehavior wcfClientBaseEndpointBehavior = endpoint.Behaviors.Find<WcfClientBaseEndpointBehavior>();
 
             if (wcfClientBaseEndpointBehavior == null)
             {
                 wcfClientBaseEndpointBehavior = new WcfClientBaseEndpointBehavior();
+
+                wcfClientBaseEndpointBehavior.SendingRequest += (s, e) =>
+                {
+                    string username = null;
+                    string password = null;
+
+                    if (clientBase.ClientCredentials != null && clientBase.ClientCredentials.UserName != null)
+                    {
+                        username = clientBase.ClientCredentials.UserName.UserName;
+                        password = clientBase.ClientCredentials.UserName.Password;
+                    }
+
+                    this.RaiseEvent(this.SendingRequest, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
+                };
+
+                wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) =>
+                {
+                    string username = null;
+                    string password = null;
+
+                    if (clientBase.ClientCredentials != null && clientBase.ClientCredentials.UserName != null)
+                    {
+                        username = clientBase.ClientCredentials.UserName.UserName;
+                        password = clientBase.ClientCredentials.UserName.Password;
+                    }
+
+                    this.RaiseEvent(this.ReceivingReply, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
+                };
+
                 endpoint.Behaviors.Add(wcfClientBaseEndpointBehavior);
             }
-
-            wcfClientBaseEndpointBehavior.SendingRequest -= (s, e) => this.RaiseEvent(this.SendingRequest, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
-            wcfClientBaseEndpointBehavior.ReceivingReply -= (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
-
-            wcfClientBaseEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
-            wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
 
             foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
             {
@@ -504,6 +579,57 @@ namespace DevLib.ServiceModel
                 if (this.SetDataContractResolverAction != null)
                 {
                     this.SetDataContractResolverAction(serializerBehavior);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Configures the clientBase instance.
+        /// </summary>
+        /// <param name="clientBase">The clientBase.</param>
+        private void ConfigureProxyInstance(ClientBase<TChannel> clientBase)
+        {
+            if (this.SetClientCredentialsAction != null)
+            {
+                if (this._setClientCredentialsActionChanged)
+                {
+                    this._setClientCredentialsActionChanged = false;
+                    this.SetClientCredentialsAction(clientBase.ClientCredentials);
+                }
+            }
+
+            ServiceEndpoint endpoint = clientBase.Endpoint;
+
+            if (this.SetBindingAction != null)
+            {
+                if (this._setBindingActionChanged)
+                {
+                    this._setBindingActionChanged = false;
+                    this.SetBindingAction(endpoint.Binding);
+                }
+            }
+
+            if (this.SetDataContractResolverAction != null)
+            {
+                if (this._setDataContractResolverActionChanged)
+                {
+                    this._setDataContractResolverActionChanged = false;
+
+                    foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
+                    {
+                        DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
+
+                        if (serializerBehavior == null)
+                        {
+                            serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
+                            serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
+                            serializerBehavior.IgnoreExtensionDataObject = true;
+
+                            operationDescription.Behaviors.Add(serializerBehavior);
+                        }
+
+                        this.SetDataContractResolverAction(serializerBehavior);
+                    }
                 }
             }
         }

@@ -24,7 +24,8 @@ namespace DevLib.ServiceModel
         /// <param name="channelMessage">The unit of communication between endpoints in a distributed environment.</param>
         /// <param name="message">The Wcf service message.</param>
         /// <param name="messageId">The message identifier.</param>
-        public WcfServiceHostEventArgs(string name, WcfServiceHostState state, ServiceEndpointCollection endpoints, Message channelMessage, string message, Guid? messageId)
+        /// <param name="isOneWay">Whether the message is one way.</param>
+        public WcfServiceHostEventArgs(string name, WcfServiceHostState state, ServiceEndpointCollection endpoints, Message channelMessage, string message, Guid? messageId, bool? isOneWay)
         {
             this.Name = name;
             this.Endpoints = endpoints;
@@ -32,6 +33,7 @@ namespace DevLib.ServiceModel
             this.ChannelMessage = channelMessage;
             this.Message = message;
             this.MessageId = messageId ?? Guid.Empty;
+            this.IsOneWay = isOneWay;
         }
 
         /// <summary>
@@ -83,6 +85,15 @@ namespace DevLib.ServiceModel
         /// Gets the message identifier.
         /// </summary>
         public Guid MessageId
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the message is one way.
+        /// </summary>
+        public bool? IsOneWay
         {
             get;
             private set;

@@ -20,22 +20,6 @@ namespace DevLib.ServiceModel
     public class WcfServiceHostServiceBehavior : Attribute, IServiceBehavior
     {
         /// <summary>
-        /// Field _inspector.
-        /// </summary>
-        private WcfServiceHostDispatchMessageInspector _inspector;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WcfServiceHostServiceBehavior"/> class.
-        /// </summary>
-        public WcfServiceHostServiceBehavior()
-        {
-            this._inspector = new WcfServiceHostDispatchMessageInspector();
-
-            this._inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, e);
-            this._inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, e);
-        }
-
-        /// <summary>
         /// Occurs after receive request.
         /// </summary>
         public event EventHandler<WcfServiceHostEventArgs> ReceivingRequest;
@@ -71,10 +55,12 @@ namespace DevLib.ServiceModel
                 {
                     foreach (EndpointDispatcher endpointDispatcher in channelDispatcher.Endpoints)
                     {
-                        if (!endpointDispatcher.DispatchRuntime.MessageInspectors.Contains(this._inspector))
-                        {
-                            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(this._inspector);
-                        }
+                        WcfServiceHostDispatchMessageInspector inspector = new WcfServiceHostDispatchMessageInspector();
+
+                        inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, e);
+                        inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, e);
+
+                        endpointDispatcher.DispatchRuntime.MessageInspectors.Add(inspector);
                     }
                 }
             }

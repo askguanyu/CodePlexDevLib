@@ -2032,7 +2032,7 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
 
-            var testsrv1 = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
+            var testsrv1 = new WcfServiceHost(new WcfTest("user defined"), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
             testsrv1.SetWebHttpBehaviorAction = i =>
             {
                 i.HelpEnabled = true;

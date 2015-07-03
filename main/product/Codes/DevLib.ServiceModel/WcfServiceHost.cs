@@ -45,6 +45,12 @@ namespace DevLib.ServiceModel
         private Type _serviceType = null;
 
         /// <summary>
+        /// Field _serviceInstance.
+        /// </summary>
+        [NonSerialized]
+        private object _serviceInstance = null;
+
+        /// <summary>
         /// Field _contractType.
         /// </summary>
         private Type _contractType = null;
@@ -672,6 +678,302 @@ namespace DevLib.ServiceModel
         public WcfServiceHost(Type serviceType, Type contractType, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.Initialize(serviceType, contractType, binding, port);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, string baseAddress, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, baseAddress);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, port);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(object singletonInstance, string configFile, string baseAddress, bool openNow = false)
+        {
+            this.Initialize(singletonInstance, configFile, baseAddress);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        public WcfServiceHost(object singletonInstance, string configFile, int port, bool openNow = false)
+        {
+            this.Initialize(singletonInstance, configFile, port);
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Type bindingType, string baseAddress, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, bindingType, baseAddress);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, bindingType, port);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Binding binding, string baseAddress, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, binding, baseAddress);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, binding, port);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Type contractType, Type bindingType, string baseAddress, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, contractType, bindingType, baseAddress);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Type contractType, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, contractType, bindingType, port);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Type contractType, Binding binding, string baseAddress, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, contractType, binding, baseAddress);
+
+            this.SetBindingAction = setBindingAction;
+
+            this.SetServiceCredentialsAction = setServiceCredentialsAction;
+
+            this.SetDataContractResolverAction = setDataContractResolverAction;
+
+            if (openNow)
+            {
+                this.Open();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHost" /> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
+        /// <param name="setBindingAction">A delegate to configure Binding.</param>
+        /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
+        /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
+        public WcfServiceHost(object singletonInstance, Type contractType, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        {
+            this.Initialize(singletonInstance, contractType, binding, port);
 
             this.SetBindingAction = setBindingAction;
 
@@ -1858,6 +2160,224 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(object singletonInstance, string baseAddress)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), baseAddress);
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(object singletonInstance, int port)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), port);
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(object singletonInstance, string configFile, string baseAddress)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), configFile, baseAddress);
+        }
+
+        /// <summary>
+        /// Create an isolated AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="configFile">Wcf service config file.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(object singletonInstance, string configFile, int port)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), configFile, port);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(object singletonInstance, Type bindingType, string baseAddress)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), bindingType, baseAddress);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(object singletonInstance, Type bindingType, int port)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), bindingType, port);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(object singletonInstance, Binding binding, string baseAddress)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), binding, baseAddress);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(object singletonInstance, Binding binding, int port)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), binding, port);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(object singletonInstance, Type contractType, Type bindingType, string baseAddress)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), baseAddress);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(object singletonInstance, Type contractType, Type bindingType, int port)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), contractType, bindingType, port);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="baseAddress">Wcf service base address.</param>
+        public void Initialize(object singletonInstance, Type contractType, Binding binding, string baseAddress)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), contractType, binding, baseAddress);
+        }
+
+        /// <summary>
+        /// Use current AppDomain to host Wcf service.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="contractType">Wcf contract type.</param>
+        /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
+        /// <param name="port">Wcf service address port.</param>
+        public void Initialize(object singletonInstance, Type contractType, Binding binding, int port)
+        {
+            if (singletonInstance == null)
+            {
+                throw new ArgumentNullException("singletonInstance");
+            }
+
+            this._serviceInstance = singletonInstance;
+
+            this.Initialize(singletonInstance.GetType(), contractType, binding, port);
+        }
+
+        /// <summary>
         /// Open Wcf service.
         /// </summary>
         public void Open()
@@ -2246,7 +2766,16 @@ namespace DevLib.ServiceModel
                         {
                             WcfServiceHostProxy.SetConfigFile(this._tempConfigFile ?? this._configFile);
 
-                            WcfServiceHostProxy serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new WcfServiceHostProxy(serviceType) : new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
+                            WcfServiceHostProxy serviceHost = null;
+
+                            if (this._serviceInstance == null)
+                            {
+                                serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new WcfServiceHostProxy(serviceType) : new WcfServiceHostProxy(serviceType, new Uri(this._baseAddress));
+                            }
+                            else
+                            {
+                                serviceHost = string.IsNullOrEmpty(this._baseAddress) ? new WcfServiceHostProxy(this._serviceInstance) : new WcfServiceHostProxy(this._serviceInstance, new Uri(this._baseAddress));
+                            }
 
                             if (this.SetServiceCredentialsAction != null)
                             {
@@ -2352,14 +2881,14 @@ namespace DevLib.ServiceModel
 
                     try
                     {
-                        foreach (var serviceType in serviceTypeList)
+                        foreach (Type serviceType in serviceTypeList)
                         {
                             if (this._contractType == null)
                             {
                                 contractList = WcfServiceType.GetServiceContract(serviceType);
                             }
 
-                            WcfServiceHostProxy serviceHost = new WcfServiceHostProxy(serviceType, baseAddressUri);
+                            WcfServiceHostProxy serviceHost = this._serviceInstance == null ? new WcfServiceHostProxy(serviceType, baseAddressUri) : new WcfServiceHostProxy(this._serviceInstance, baseAddressUri);
 
                             serviceHost.Description.Endpoints.Clear();
 

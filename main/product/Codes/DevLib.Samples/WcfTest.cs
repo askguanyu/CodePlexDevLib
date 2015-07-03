@@ -4,11 +4,24 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.ServiceModel;
 
-
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class WcfTest : IWcfTest
     {
+        public WcfTest()
+        {
+            this._echo = "Default Ctor";
+        }
+
+        public WcfTest(string echo)
+        {
+            this._echo = echo;
+        }
+
         List<Animal> animals = new List<Animal>();
+
+        private string _echo = "";
 
         public string MyOperation1(string arg1, int arg2)
         {
@@ -38,7 +51,7 @@
 
         public string Echo()
         {
-            return "Hello";
+            return _echo;
         }
     }
 }

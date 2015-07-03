@@ -22,11 +22,11 @@ using System.Reflection;
 //
 //      Major Version
 //      Minor Version
-//      Build Number
 //      Revision
+//      Build Number
 //
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.32.24.*")]
+[assembly: AssemblyVersion("1.32.25.*")]
 ////[assembly: AssemblyFileVersion("1.0.0.0")]

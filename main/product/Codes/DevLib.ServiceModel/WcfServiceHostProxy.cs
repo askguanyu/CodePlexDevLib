@@ -32,10 +32,20 @@ namespace DevLib.ServiceModel
         private static string ConfigFile;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="WcfServiceHostProxy"/> class.
+        /// </summary>
+        /// <param name="singletonInstance">The instance of the hosted service.</param>
+        /// <param name="baseAddresses">An <see cref="T:System.Array" /> of type <see cref="T:System.Uri" /> that contains the base addresses for the hosted service.</param>
+        public WcfServiceHostProxy(object singletonInstance, params Uri[] baseAddresses)
+            : base(singletonInstance, baseAddresses)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHostProxy" /> class.
         /// </summary>
         /// <param name="serviceType">The type of hosted service.</param>
-        /// <param name="baseAddresses">An array of type System.Uri that contains the base addresses for the hosted service.</param>
+        /// <param name="baseAddresses">An <see cref="T:System.Array" /> of type <see cref="T:System.Uri" /> that contains the base addresses for the hosted service.</param>
         public WcfServiceHostProxy(Type serviceType, params Uri[] baseAddresses)
             : base(serviceType, baseAddresses)
         {

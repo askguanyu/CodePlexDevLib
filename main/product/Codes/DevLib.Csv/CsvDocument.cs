@@ -150,6 +150,66 @@ namespace DevLib.Csv
         }
 
         /// <summary>
+        /// Opens the csv document from the specified stream.
+        /// </summary>
+        /// <param name="inStream">The stream containing the csv document to load.</param>
+        /// <param name="delimiter">Delimiter character to use.</param>
+        /// <param name="qualifier">Character to use when quoting.</param>
+        /// <returns>Rows of csv document.</returns>
+        public static IEnumerable<List<string>> Open(Stream inStream, char delimiter = ',', char qualifier = '"')
+        {
+            using (StreamReader streamReader = new StreamReader(inStream))
+            {
+                string line;
+
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    yield return SplitNested(line, delimiter, qualifier);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the csv document from the specified file.
+        /// </summary>
+        /// <param name="filename">The file containing the csv document to load.</param>
+        /// <param name="delimiter">Delimiter character to use.</param>
+        /// <param name="qualifier">Character to use when quoting.</param>
+        /// <returns>Rows of csv document.</returns>
+        public static IEnumerable<List<string>> Open(string filename, char delimiter = ',', char qualifier = '"')
+        {
+            using (StreamReader streamReader = File.OpenText(filename))
+            {
+                string line;
+
+                while ((line = streamReader.ReadLine()) != null)
+                {
+                    yield return SplitNested(line, delimiter, qualifier);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Opens the csv document from the specified System.IO.TextReader.
+        /// </summary>
+        /// <param name="reader">The TextReader used to feed the csv data into the document.</param>
+        /// <param name="delimiter">Delimiter character to use.</param>
+        /// <param name="qualifier">Character to use when quoting.</param>
+        /// <returns>Rows of csv document.</returns>
+        public static IEnumerable<List<string>> Open(TextReader reader, char delimiter = ',', char qualifier = '"')
+        {
+            using (reader)
+            {
+                string line;
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    yield return SplitNested(line, delimiter, qualifier);
+                }
+            }
+        }
+
+        /// <summary>
         /// Loads the csv document from the specified stream.
         /// </summary>
         /// <param name="inStream">The stream containing the csv document to load.</param>
@@ -557,6 +617,84 @@ namespace DevLib.Csv
         }
 
         /// <summary>
+        /// Splits string by a specified delimiter and keep nested string with a specified qualifier.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="delimiter">Delimiter character.</param>
+        /// <param name="qualifier">Qualifier character.</param>
+        /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
+        private static List<string> SplitNested(string source, char delimiter, char qualifier)
+        {
+            List<string> result = new List<string>();
+
+            StringBuilder itemStringBuilder = new StringBuilder();
+            bool inItem = false;
+            bool inQuotes = false;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                char character = source[i];
+
+                if (!inItem)
+                {
+                    if (character == delimiter)
+                    {
+                        result.Add(string.Empty);
+                        continue;
+                    }
+
+                    if (character == qualifier)
+                    {
+                        inQuotes = true;
+                    }
+                    else
+                    {
+                        itemStringBuilder.Append(character);
+                    }
+
+                    inItem = true;
+                    continue;
+                }
+
+                if (inQuotes)
+                {
+                    if (character == qualifier && ((source.Length > (i + 1) && source[i + 1] == delimiter) || ((i + 1) == source.Length)))
+                    {
+                        inQuotes = false;
+                        inItem = false;
+                        i++;
+                    }
+                    else if (character == qualifier && source.Length > (i + 1) && source[i + 1] == qualifier)
+                    {
+                        i++;
+                    }
+                }
+                else if (character == delimiter)
+                {
+                    inItem = false;
+                }
+
+                if (!inItem)
+                {
+                    result.Add(itemStringBuilder.ToString());
+                    itemStringBuilder.Length = 0;
+                }
+                else
+                {
+                    itemStringBuilder.Append(character);
+                }
+            }
+
+            if (inItem)
+            {
+                result.Add(itemStringBuilder.ToString());
+                itemStringBuilder.Length = 0;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Method CheckDisposed.
         /// </summary>
         private void CheckDisposed()
@@ -582,36 +720,33 @@ namespace DevLib.Csv
 
             bool addedHeader = false;
 
-            while (reader.Peek() >= 0)
+            string line;
+
+            while ((line = reader.ReadLine()) != null)
             {
-                string line = reader.ReadLine();
+                List<string> row = SplitNested(line, delimiter, qualifier);
 
-                if (!string.IsNullOrEmpty(line))
+                if (addedHeader)
                 {
-                    List<string> row = this.SplitNested(line, delimiter, qualifier);
-
-                    if (addedHeader)
+                    this.Table.Add(row);
+                }
+                else
+                {
+                    if (hasHeader)
                     {
-                        this.Table.Add(row);
+                        this.HeaderColumns.AddRange(row);
                     }
                     else
                     {
-                        if (hasHeader)
+                        for (int i = 0; i < row.Count; i++)
                         {
-                            this.HeaderColumns.AddRange(row);
-                        }
-                        else
-                        {
-                            for (int i = 0; i < row.Count; i++)
-                            {
-                                this.HeaderColumns.Add("Column" + i.ToString());
-                            }
-
-                            this.Table.Add(row);
+                            this.HeaderColumns.Add("Column" + i.ToString());
                         }
 
-                        addedHeader = true;
+                        this.Table.Add(row);
                     }
+
+                    addedHeader = true;
                 }
             }
         }
@@ -682,83 +817,6 @@ namespace DevLib.Csv
             }
 
             writer.Flush();
-        }
-
-        /// <summary>
-        /// Splits string by a specified delimiter and keep nested string with a specified qualifier.
-        /// </summary>
-        /// <param name="source">Source string.</param>
-        /// <param name="delimiter">Delimiter character.</param>
-        /// <param name="qualifier">Qualifier character.</param>
-        /// <returns>A list whose elements contain the substrings in this instance that are delimited by the delimiter.</returns>
-        private List<string> SplitNested(string source, char delimiter, char qualifier)
-        {
-            List<string> result = new List<string>();
-
-            StringBuilder itemStringBuilder = new StringBuilder();
-            bool inItem = false;
-            bool inQuotes = false;
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                char character = source[i];
-
-                if (!inItem)
-                {
-                    if (character == delimiter)
-                    {
-                        result.Add(string.Empty);
-                        continue;
-                    }
-
-                    if (character == qualifier)
-                    {
-                        inQuotes = true;
-                    }
-                    else
-                    {
-                        itemStringBuilder.Append(character);
-                    }
-
-                    inItem = true;
-                    continue;
-                }
-
-                if (inQuotes)
-                {
-                    if (character == qualifier && ((source.Length > (i + 1) && source[i + 1] == delimiter) || ((i + 1) == source.Length)))
-                    {
-                        inQuotes = false;
-                        inItem = false;
-                        i++;
-                    }
-                    else if (character == qualifier && source.Length > (i + 1) && source[i + 1] == qualifier)
-                    {
-                        i++;
-                    }
-                }
-                else if (character == delimiter)
-                {
-                    inItem = false;
-                }
-
-                if (!inItem)
-                {
-                    result.Add(itemStringBuilder.ToString());
-                    itemStringBuilder.Length = 0;
-                }
-                else
-                {
-                    itemStringBuilder.Append(character);
-                }
-            }
-
-            if (inItem)
-            {
-                result.Add(itemStringBuilder.ToString());
-            }
-
-            return result;
         }
     }
 }

@@ -219,7 +219,12 @@ namespace DevLib.Samples
         private static void TestCsv()
         {
             CsvDocument csv = new CsvDocument();
-            csv.Load(@"d:\test.csv", false);
+            csv.Load(@"d:\test.csv", true);
+
+            foreach (var item in CsvDocument.Open(@"d:\test.csv"))
+            {
+                Console.WriteLine(item[0]);
+            }
 
             Console.ReadLine();
             //DataTable dataTable = csv.Table;

@@ -138,6 +138,17 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Return an empty enumeration of the same type if source is null; otherwise, return source itself.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">Source IEnumerable.</param>
+        /// <returns>An empty enumeration of the same type if source is null; otherwise, source itself.</returns>
+        public static IEnumerable<T> Safe<T>(this IEnumerable<T> source)
+        {
+            return source ?? Enumerable.Empty<T>();
+        }
+
+        /// <summary>
         /// Searches for all elements that matches the conditions defined by the specified predicate, and returns the zero-based index of the all occurrence within the entire System.Collections.Generic.List{T}.
         /// </summary>
         /// <typeparam name="T">The type of elements in the list.</typeparam>

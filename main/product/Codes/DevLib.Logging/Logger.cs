@@ -7,6 +7,7 @@ namespace DevLib.Logging
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
@@ -152,14 +153,20 @@ namespace DevLib.Logging
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public void Log(int skipFrames, LogLevel logLevel, params object[] objs)
         {
+            string logMessage = null;
+#if DEBUG
+            logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
+            Debug.WriteLine(logMessage);
+#endif
             if (logLevel >= this._loggerSetup.Level)
             {
                 if ((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || (this._loggerSetup.WriteToFile && this._fileAppender != null))
                 {
                     try
                     {
-                        string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
-
+#if !DEBUG
+                        logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, (string)null, objs);
+#endif
                         if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                         {
                             ColoredConsoleAppender.Write(logLevel, logMessage);
@@ -191,14 +198,20 @@ namespace DevLib.Logging
         /// <param name="objs">Diagnostic messages or objects to log.</param>
         public void Log(int skipFrames, LogLevel logLevel, string message, params object[] objs)
         {
+            string logMessage = null;
+#if DEBUG
+            logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
+            Debug.WriteLine(logMessage);
+#endif
             if (logLevel >= this._loggerSetup.Level)
             {
                 if ((this._loggerSetup.WriteToConsole && Environment.UserInteractive) || (this._loggerSetup.WriteToFile && this._fileAppender != null))
                 {
                     try
                     {
-                        string logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
-
+#if !DEBUG
+                        logMessage = LogLayout.Render(skipFrames, this._loggerSetup.DateTimeFormat, logLevel, this._loggerSetup.UseBracket, this._loggerSetup.EnableStackInfo, message, objs);
+#endif
                         if (this._loggerSetup.WriteToConsole && Environment.UserInteractive)
                         {
                             ColoredConsoleAppender.Write(logLevel, logMessage);

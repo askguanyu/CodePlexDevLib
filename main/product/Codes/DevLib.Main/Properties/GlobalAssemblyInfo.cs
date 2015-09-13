@@ -9,7 +9,7 @@ using System.Reflection;
 [assembly: AssemblyDescription("dot Net Development Library")]
 [assembly: AssemblyCompany("YuGuan")]
 [assembly: AssemblyProduct("DevLib")]
-[assembly: AssemblyCopyright("YuGuan Copyright © 2007-2015")]
+[assembly: AssemblyCopyright("YuGuan Copyright © 2007-2016")]
 [assembly: AssemblyTrademark("DevLib")]
 [assembly: AssemblyCulture("")]
 #if DEBUG
@@ -28,5 +28,5 @@ using System.Reflection;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.32.27.*")]
+[assembly: AssemblyVersion("1.32.28.*")]
 ////[assembly: AssemblyFileVersion("1.0.0.0")]

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="82f589e5-cc1e-4dc9-9090-9a8dd0aeaae2" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <comments>
+    <comment Id="62694512-a4f2-4db7-a732-7d4efb5d89cc" name="Comment1">
+      <body>Layered Architecture</body>
+    </comment>
+  </comments>
+  <layers>
+    <layer Id="eb4f164d-2c9c-4b70-acd4-90e3f87b9dd3" name="Service Layer">
+      <childLayers>
+        <layer Id="d397f6f9-eaca-4c0f-95b5-9a90fd99b66c" name="Service Contract" />
+        <layer Id="b75fa03d-eae0-4333-926a-889462abc46e" name="Service Implement" />
+        <layer Id="24ce0d35-460b-4d8c-bb9f-d31ffc13cb2c" name="Service Reference" />
+      </childLayers>
+    </layer>
+    <layer Id="603d80a8-ed8a-47fc-a49e-6a5afed92a6d" name="Business Layer">
+      <childLayers>
+        <layer Id="8ff4fb3d-8e24-4ebf-a77c-39b90584c7ff" name="..." />
+        <layer Id="c965f057-2f92-49f0-8b2c-1836740fa555" name="Business Domain" />
+        <layer Id="86862249-e495-4d2f-9264-db19bc3031b4" name="Business Logic" />
+        <layer Id="60cd50d0-3fe2-4f49-a68c-5f8057641ae2" name="Business Facade" />
+      </childLayers>
+    </layer>
+    <layer Id="9ef6cf72-b2cb-4313-83cb-f4d481d81863" name="Data Layer">
+      <childLayers>
+        <layer Id="9573dd6e-bd47-40f8-943a-999e101d09f9" name="Data Access Components" />
+        <layer Id="f50e1424-795e-4020-bbbe-d5accb4dc87e" name="Model" />
+        <layer Id="6aa63a1c-0234-467e-aa49-5ee43d219093" name="Service Agent" />
+        <layer Id="f91f5ca8-e4a7-4f7f-a040-279559bae6f0" name="ORM" />
+        <layer Id="dacbdb91-5f5b-4b27-9b4e-c56f53bda8d1" name="DTO" />
+        <layer Id="2fd5daf1-a78a-47a3-af57-e7e439be7a3b" name="..." />
+      </childLayers>
+    </layer>
+    <layer Id="96566bc4-2c70-45f7-a2bd-637d8304eb4a" name="Cross Cutting">
+      <childLayers>
+        <layer Id="491f74c7-fff1-426e-bcea-cddd896c68a4" name="Security" />
+        <layer Id="45bbd3c4-27d2-4dac-ab2d-d1a6ccd4c159" name="Logging" />
+        <layer Id="1adfcee7-0c99-461a-93e8-6b32a307d582" name="Exception" />
+        <layer Id="77de3b2c-9a6d-47db-abf4-a9a43aff3334" name="Caching" />
+        <layer Id="23885fa4-231c-4df8-8010-3b4d93d20294" name="Configuration" />
+        <layer Id="a07418c7-debe-46f2-a516-4dd773ca88c1" name="..." />
+        <layer Id="60276a0c-ec32-4759-9260-5388d3616bcb" name="Validation" />
+        <layer Id="b1707e64-c7f3-479e-abd2-34cf82681546" name="Utility" />
+      </childLayers>
+    </layer>
+    <layer Id="7d097fc0-113c-427d-878d-f29948255d0a" name="Presentation Layer">
+      <childLayers>
+        <layer Id="8f2f0a0c-170a-494b-8a1d-24be00653930" name="UI Component" />
+        <layer Id="d41f0fe8-1c75-405b-b09a-c758e06ebb82" name="UI Component Logic" />
+      </childLayers>
+    </layer>
+    <layer Id="9d93b715-6125-4069-90be-661c4158fa33" name="External Layer">
+      <childLayers>
+        <layer Id="e5c5522f-7741-4f75-b769-3cb110b36702" name="Project Reference" />
+        <layer Id="9d19e192-16a4-4884-b51a-6c23820d13b4" name="Third Party DLLs" />
+        <layer Id="24cd754e-1b90-48ff-9567-4b6e9072501e" name="..." />
+      </childLayers>
+    </layer>
+    <layer Id="f3ab7d57-4eb2-4433-be7e-9ff9750ef2c5" name="Host Layer">
+      <childLayers>
+        <layer Id="6c9bafb3-de00-45ab-a43c-f1a7f6cef0a2" name="Console" />
+        <layer Id="ce79b482-67b3-49ed-a1ac-e59dcbc3db06" name="..." />
+        <layer Id="8b399160-2294-46a2-9db2-5c35748d1322" name="Windows Service" />
+        <layer Id="ba209265-aac9-43cf-bb8c-47a4fa32e169" name="IIS" />
+      </childLayers>
+    </layer>
+    <layer Id="16b8dc8c-7be2-4eed-aec4-c4836ae394f8" name="Deployment Layer">
+      <childLayers>
+        <layer Id="66eabadc-f75d-4894-b438-6e6eaeaa1a2d" name="Script" />
+        <layer Id="4c704c2a-ebf6-45e7-85c7-c8585a4240da" name="..." />
+        <layer Id="d86abe08-aacc-49bd-9dd7-bb20799e1e0c" name="Setup" />
+        <layer Id="ebf4e437-28d6-4279-b09e-405d9200f440" name="Custom Action" />
+      </childLayers>
+    </layer>
+  </layers>
+</layerModel>

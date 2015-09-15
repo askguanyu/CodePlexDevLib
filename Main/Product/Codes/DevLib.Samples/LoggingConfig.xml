@@ -1,0 +1,14 @@
+﻿<LogConfig>
+    <LogFile>C:\test.log</LogFile>
+    <LoggerSetup>
+        <DateTimeFormat>yyyy-MM-ddTHH:mm:ss.fffffffUzzz</DateTimeFormat>
+        <Level>DBUG</Level>
+        <WriteToConsole>true</WriteToConsole>
+        <WriteToFile>true</WriteToFile>
+        <UseBracket>true</UseBracket>
+        <EnableStackInfo>true</EnableStackInfo>
+        <RollingFileSizeMBLimit>1</RollingFileSizeMBLimit>
+        <RollingFileCountLimit>5</RollingFileCountLimit>
+        <RollingByDate>false</RollingByDate>
+    </LoggerSetup>
+</LogConfig>

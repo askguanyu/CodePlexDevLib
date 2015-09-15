@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9532160E-CC80-4B59-B7E6-B7202ED3742A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DevLib.ModernUI</RootNamespace>
+    <AssemblyName>DevLib.ModernUI</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\DevLib.ModernUI.XML</DocumentationFile>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\DevLib.ModernUI.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ComponentModel\Design\ModernTabControlDesigner.cs" />
+    <Compile Include="ComponentModel\Design\ModernTabPageCollectionEditor.cs" />
+    <Compile Include="ComponentModel\ExpandableObjectConverter.cs" />
+    <Compile Include="ComponentModel\PropertyCustomTypeDescriptor.cs" />
+    <Compile Include="ComponentModel\Design\ModernPropertyGridCollectionEditor.cs" />
+    <Compile Include="ComponentModel\ModernStyleExtender.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComponentModel\ModernStyleManager.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComponentModel\Design\ModernStyleManagerDesigner.cs" />
+    <Compile Include="ComponentModel\CustomTypeDescriptorProvider.cs" />
+    <Compile Include="DelayedCall.cs" />
+    <Compile Include="Drawing\ModernFontSize.cs" />
+    <Compile Include="Drawing\ModernFontWeight.cs" />
+    <Compile Include="Forms\ClipboardEventArgs.cs" />
+    <Compile Include="Forms\ModernRichTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernAeroDropShadow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernControlBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernDataGridViewHelper.cs" />
+    <Compile Include="Forms\ModernFlatDropShadow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernFormBackImageAlign.cs" />
+    <Compile Include="Forms\ModernFormShadowType.cs" />
+    <Compile Include="Forms\ModernFormTextAlign.cs" />
+    <Compile Include="Forms\ModernRealisticDropShadow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernScrollBarOrientation.cs" />
+    <Compile Include="Forms\ModernShadowBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernDateTimePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernLink.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernProgressSpinner.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernScrollBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernTile.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernToggle.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernTrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Drawing\DefaultFontResolver.cs" />
+    <Compile Include="Drawing\ModernBackImageBuffer.cs" />
+    <Compile Include="Drawing\ModernPaint.cs" />
+    <Compile Include="Drawing\ModernPaintEventArgs.cs" />
+    <Compile Include="Forms\ModernForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernTaskWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Drawing\IModernFontResolver.cs" />
+    <Compile Include="ComponentModel\IModernComponent.cs" />
+    <Compile Include="Forms\IModernControl.cs" />
+    <Compile Include="Forms\IModernForm.cs" />
+    <Compile Include="Forms\ModernMessageBox.cs" />
+    <Compile Include="Forms\ModernMessageBoxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ModernMessageBoxProperties.cs" />
+    <Compile Include="Drawing\ModernBrushes.cs" />
+    <Compile Include="Drawing\ModernColors.cs" />
+    <Compile Include="Forms\ModernColorStyle.cs" />
+    <Compile Include="Forms\ModernPropertyGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="ModernConstants.cs" />
+    <Compile Include="Drawing\ModernFonts.cs" />
+    <Compile Include="Drawing\ModernImage.cs" />
+    <Compile Include="Drawing\ModernPens.cs" />
+    <Compile Include="Forms\ModernThemeStyle.cs" />
+    <Compile Include="NativeAPI\DwmApi.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="NativeAPI\SubClass.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="NativeAPI\Taskbar.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="NativeAPI\WinApi.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="NativeAPI\WinCaret.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

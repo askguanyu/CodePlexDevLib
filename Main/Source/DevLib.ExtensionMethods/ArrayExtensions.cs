@@ -120,7 +120,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The array to search in.</param>
         /// <param name="pattern">The array to find.</param>
         /// <returns>The first position of the found array or -1 if not found.</returns>
-        public static int FindArray<T>(this T[] source, T[] pattern) where T : struct
+        public static int FindArray<T>(this T[] source, T[] pattern) where T : IComparable, IConvertible, IEquatable<T>
         {
             if (source == null)
             {

@@ -71,7 +71,7 @@ namespace DevLib.ExtensionMethods
         /// <typeparam name="TEnum">An enumeration type.</typeparam>
         /// <param name="source">Source enum.</param>
         /// <returns>A list of the values of the constants in enumType. The elements of the array are sorted by the binary values of the enumeration constants.</returns>
-        public static List<TEnum> Foo<TEnum>(this TEnum source) where TEnum : struct
+        public static List<TEnum> ToEnumValueList<TEnum>(this TEnum source) where TEnum : struct
         {
             return Enum.GetValues(source.GetType()).Cast<TEnum>().ToList();
         }

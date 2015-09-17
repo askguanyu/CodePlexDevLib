@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <authors>$author$</authors>
+        <copyright>$copyright$</copyright>
+        <projectUrl>https://devlib.codeplex.com/</projectUrl>
+        <licenseUrl>https://devlib.codeplex.com/license</licenseUrl>
+        <summary>https://devlib.codeplex.com/
+
+DevLib is a collection of highly reusable code and components. DevLib was initially designed through a lot of projects that I've worked on. Over time I accumulated a number of classes to handle various tasks and continue to add a number of items in my spare time. The library is written in C# and most of them support from .Net 2.0 to the latest .Net version.
+        </summary>
+        <description>deal with ini/xml/config configuration file</description>
+        <tags>configuration</tags>
+    </metadata>
+</package>

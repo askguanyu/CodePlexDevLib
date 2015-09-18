@@ -9,9 +9,18 @@
         <licenseUrl>https://devlib.codeplex.com/license</licenseUrl>
         <summary>https://devlib.codeplex.com/
 
-DevLib is a collection of highly reusable code and components. DevLib was initially designed through a lot of projects that I've worked on. Over time I accumulated a number of classes to handle various tasks and continue to add a number of items in my spare time. The library is written in C# and most of them support from .Net 2.0 to the latest .Net version.
+DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns. It provides a comprehensive set of features that save development time, minimize costs, reduce the use of precious test resources, and decrease the overall maintenance effort.
+
+It is time to boost your productivity.
         </summary>
-        <description>zip/unzip files</description>
+        <description>https://devlib.codeplex.com/
+
+zip/unzip files
+
+DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns. It provides a comprehensive set of features that save development time, minimize costs, reduce the use of precious test resources, and decrease the overall maintenance effort.
+
+It is time to boost your productivity.
+        </description>
         <tags>zip unzip compression</tags>
     </metadata>
 </package>

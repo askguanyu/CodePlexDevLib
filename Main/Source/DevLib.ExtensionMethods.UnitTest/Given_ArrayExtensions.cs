@@ -1,11 +1,8 @@
 ﻿namespace DevLib.ExtensionMethods.UnitTest
 {
-    using System;
-    using System.Text;
-    using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using DevLib.ExtensionMethods;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class Given_ArrayExtensions
@@ -28,10 +25,7 @@
 
             targetArray.AddRangeTo(ref sourceArray);
 
-            for (int i = 0; i < expectedArray.Length; i++)
-            {
-                Assert.AreEqual(expectedArray[i], sourceArray[i]);
-            }
+            CollectionAssert.AreEqual(expectedArray, sourceArray);
         }
 
         [TestMethod]

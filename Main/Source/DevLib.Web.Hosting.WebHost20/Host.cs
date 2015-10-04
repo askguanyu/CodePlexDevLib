@@ -161,11 +161,11 @@ namespace DevLib.Web.Hosting.WebHost20
             this.VirtualPath = virtualPath;
             this.RequireAuthentication = requireAuthentication;
             this.DisableDirectoryListing = disableDirectoryListing;
-            this._lowerCasedVirtualPath = CultureInfo.InvariantCulture.TextInfo.ToLower(this.VirtualPath);
-            this.NormalizedVirtualPath = CultureInfo.InvariantCulture.TextInfo.ToLower(virtualPath.EndsWith("/", StringComparison.Ordinal) ? virtualPath : (virtualPath + "/"));
+            this._lowerCasedVirtualPath = this.VirtualPath.ToLowerInvariant();
+            this.NormalizedVirtualPath = (virtualPath.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? virtualPath : (virtualPath + "/")).ToLowerInvariant();
             this.PhysicalPath = physicalPath;
             this.PhysicalClientScriptPath = HttpRuntime.AspClientScriptPhysicalPath + "\\";
-            this.NormalizedClientScriptPath = CultureInfo.InvariantCulture.TextInfo.ToLower(HttpRuntime.AspClientScriptVirtualPath + "/");
+            this.NormalizedClientScriptPath = HttpRuntime.AspClientScriptVirtualPath.ToLowerInvariant() + "/";
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace DevLib.Web.Hosting.WebHost20
                 return false;
             }
 
-            path = CultureInfo.InvariantCulture.TextInfo.ToLower(path);
+            path = path.ToLowerInvariant();
 
             if (this.VirtualPath == "/" && path.StartsWith("/", StringComparison.Ordinal))
             {
@@ -267,7 +267,7 @@ namespace DevLib.Web.Hosting.WebHost20
                 return false;
             }
 
-            path = CultureInfo.InvariantCulture.TextInfo.ToLower(path);
+            path = path.ToLowerInvariant();
 
             return path == this._lowerCasedVirtualPath || path == this.NormalizedVirtualPath;
         }

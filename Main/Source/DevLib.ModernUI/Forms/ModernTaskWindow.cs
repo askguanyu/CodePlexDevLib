@@ -23,12 +23,12 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Field _controlContainer.
         /// </summary>
-        protected readonly ModernPanel ControlContainer;
+        protected readonly ModernPanel _controlContainer;
 
         /// <summary>
-        /// Field _singletonWindow.
+        /// Field SingletonWindow.
         /// </summary>
-        private static ModernTaskWindow _singletonWindow;
+        private static ModernTaskWindow SingletonWindow;
 
         /// <summary>
         /// Field _closeTime.
@@ -70,8 +70,8 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         public ModernTaskWindow()
         {
-            this.ControlContainer = new ModernPanel();
-            this.Controls.Add(this.ControlContainer);
+            this._controlContainer = new ModernPanel();
+            this.Controls.Add(this._controlContainer);
             this.Size = new Size(400, 200);
             this.ShowStatusStrip = false;
             this.ShowBorder = false;
@@ -96,7 +96,7 @@ namespace DevLib.ModernUI.Forms
         {
             if (userControl != null)
             {
-                this.ControlContainer.Controls.Add(userControl);
+                this._controlContainer.Controls.Add(userControl);
                 userControl.Dock = DockStyle.Fill;
             }
         }
@@ -111,7 +111,7 @@ namespace DevLib.ModernUI.Forms
         {
             if (userControl != null)
             {
-                this.ControlContainer.Controls.Add(userControl);
+                this._controlContainer.Controls.Add(userControl);
                 userControl.Dock = DockStyle.Fill;
             }
 
@@ -243,19 +243,19 @@ namespace DevLib.ModernUI.Forms
         /// <param name="userControl">The user control.</param>
         public static void Show(IWin32Window owner, string text, long autoCloseTime, Control userControl)
         {
-            if (_singletonWindow != null)
+            if (SingletonWindow != null)
             {
-                _singletonWindow.Close();
-                _singletonWindow.Dispose();
-                _singletonWindow = null;
+                SingletonWindow.Close();
+                SingletonWindow.Dispose();
+                SingletonWindow = null;
             }
 
-            _singletonWindow = new ModernTaskWindow(autoCloseTime, userControl);
-            _singletonWindow.Text = text;
-            _singletonWindow.Resizable = false;
-            _singletonWindow.Movable = true;
-            _singletonWindow.StartPosition = FormStartPosition.Manual;
-            _singletonWindow.Location = new Point(Screen.PrimaryScreen.Bounds.Width - 400 - 5, Screen.PrimaryScreen.Bounds.Height - 200 - 5);
+            SingletonWindow = new ModernTaskWindow(autoCloseTime, userControl);
+            SingletonWindow.Text = text;
+            SingletonWindow.Resizable = false;
+            SingletonWindow.Movable = true;
+            SingletonWindow.StartPosition = FormStartPosition.Manual;
+            SingletonWindow.Location = new Point(Screen.PrimaryScreen.Bounds.Width - 400 - 5, Screen.PrimaryScreen.Bounds.Height - 200 - 5);
 
             IModernForm ownerForm = null;
 
@@ -270,12 +270,12 @@ namespace DevLib.ModernUI.Forms
 
             if (ownerForm != null)
             {
-                _singletonWindow.ThemeStyle = ownerForm.ThemeStyle;
-                _singletonWindow.ColorStyle = ownerForm.ColorStyle;
-                _singletonWindow.StyleManager = ownerForm.StyleManager.Clone(_singletonWindow) as ModernStyleManager;
+                SingletonWindow.ThemeStyle = ownerForm.ThemeStyle;
+                SingletonWindow.ColorStyle = ownerForm.ColorStyle;
+                SingletonWindow.StyleManager = ownerForm.StyleManager.Clone(SingletonWindow) as ModernStyleManager;
             }
 
-            _singletonWindow.Show();
+            SingletonWindow.Show();
         }
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace DevLib.ModernUI.Forms
         /// <returns>true if visible; otherwise, false.</returns>
         public static bool IsVisible()
         {
-            return _singletonWindow != null && _singletonWindow.Visible;
+            return SingletonWindow != null && SingletonWindow.Visible;
         }
 
         /// <summary>
@@ -292,9 +292,9 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         public static void CancelAutoClose()
         {
-            if (_singletonWindow != null)
+            if (SingletonWindow != null)
             {
-                _singletonWindow.CancelTimer = true;
+                SingletonWindow.CancelTimer = true;
             }
         }
 
@@ -303,12 +303,12 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         public static void ForceClose()
         {
-            if (_singletonWindow != null)
+            if (SingletonWindow != null)
             {
                 CancelAutoClose();
-                _singletonWindow.Close();
-                _singletonWindow.Dispose();
-                _singletonWindow = null;
+                SingletonWindow.Close();
+                SingletonWindow.Dispose();
+                SingletonWindow = null;
             }
         }
 
@@ -320,9 +320,9 @@ namespace DevLib.ModernUI.Forms
         {
             if (!this._isInitialized)
             {
-                this.ControlContainer.ThemeStyle = this.ThemeStyle;
-                this.ControlContainer.ColorStyle = this.ColorStyle;
-                this.ControlContainer.StyleManager = this.StyleManager;
+                this._controlContainer.ThemeStyle = this.ThemeStyle;
+                this._controlContainer.ColorStyle = this.ColorStyle;
+                this._controlContainer.StyleManager = this.StyleManager;
 
                 Taskbar taskbar = new Taskbar();
 
@@ -350,13 +350,13 @@ namespace DevLib.ModernUI.Forms
                         break;
                 }
 
-                this.ControlContainer.Location = new Point(0, 60);
-                this.ControlContainer.Size = new Size(this.Width - 40, this.Height - 80);
-                this.ControlContainer.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom | AnchorStyles.Left;
-                this.ControlContainer.AutoScroll = false;
-                this.ControlContainer.ShowHorizontalScrollBar = false;
-                this.ControlContainer.ShowVerticalScrollBar = false;
-                this.ControlContainer.Refresh();
+                this._controlContainer.Location = new Point(0, 60);
+                this._controlContainer.Size = new Size(this.Width - 40, this.Height - 80);
+                this._controlContainer.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom | AnchorStyles.Left;
+                this._controlContainer.AutoScroll = false;
+                this._controlContainer.ShowHorizontalScrollBar = false;
+                this._controlContainer.ShowVerticalScrollBar = false;
+                this._controlContainer.Refresh();
 
                 if (this.StyleManager != null)
                 {

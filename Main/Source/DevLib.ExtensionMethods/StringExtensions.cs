@@ -919,5 +919,51 @@ namespace DevLib.ExtensionMethods
 
             return result;
         }
+
+        /// <summary>
+        /// Concatenates the members of a collection of string, using the specified separator between each member.
+        /// </summary>
+        /// <param name="source">A collection that contains the strings to concatenate.</param>
+        /// <param name="separator">The string to use as a separator. separator is included in the returned string only if values has more than one element.</param>
+        /// <returns>A string that consists of the members of values delimited by the separator string. If values has no members, the method returns System.String.Empty.</returns>
+        public static string JoinBy(this IEnumerable<string> source, string separator)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (separator == null)
+            {
+                separator = string.Empty;
+            }
+
+            using (IEnumerator<string> item = source.GetEnumerator())
+            {
+                if (!item.MoveNext())
+                {
+                    return string.Empty;
+                }
+
+                StringBuilder result = new StringBuilder();
+
+                if (item.Current != null)
+                {
+                    result.Append(item.Current);
+                }
+
+                while (item.MoveNext())
+                {
+                    result.Append(separator);
+
+                    if (item.Current != null)
+                    {
+                        result.Append(item.Current);
+                    }
+                }
+
+                return result.ToString();
+            }
+        }
     }
 }

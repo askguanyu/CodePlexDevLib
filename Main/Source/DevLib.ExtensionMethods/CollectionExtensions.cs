@@ -70,11 +70,6 @@ namespace DevLib.ExtensionMethods
                 throw new ArgumentNullException("sourceKey");
             }
 
-            if (sourceValue == null)
-            {
-                throw new ArgumentNullException("sourceValue");
-            }
-
             if (source.ContainsKey(sourceKey))
             {
                 source[sourceKey] = sourceValue;

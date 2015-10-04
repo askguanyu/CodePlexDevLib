@@ -273,6 +273,23 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Convert Image to bytes.
+        /// </summary>
+        /// <param name="source">Image to convert.</param>
+        /// <returns>Byte array.</returns>
+        public static byte[] ImageToByteArray(this Image source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            ImageConverter imageConverter = new ImageConverter();
+
+            return (byte[])imageConverter.ConvertTo(source, typeof(byte[]));
+        }
+
+        /// <summary>
         /// Compresses byte array using CompressionType.
         /// </summary>
         /// <param name="source">Byte array to compress.</param>

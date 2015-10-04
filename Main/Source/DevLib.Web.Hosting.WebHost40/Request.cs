@@ -1336,7 +1336,7 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <returns>true if the request is for restricted directory; otherwise, false.</returns>
         private bool IsRequestForRestrictedDirectory()
         {
-            string text = CultureInfo.InvariantCulture.TextInfo.ToLower(this._path);
+            string text = this._path.ToLowerInvariant();
 
             if (this._host.VirtualPath != "/")
             {

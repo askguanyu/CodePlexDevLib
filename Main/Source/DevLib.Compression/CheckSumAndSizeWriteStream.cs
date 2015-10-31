@@ -11,23 +11,14 @@ namespace DevLib.Compression
     internal class CheckSumAndSizeWriteStream : Stream
     {
         private readonly Stream _baseStream;
-
         private readonly Stream _baseBaseStream;
-
         private readonly bool _leaveOpenOnClose;
-
         private readonly ActionHelper<long, long, uint> _saveCrcAndSizes;
-
         private long _position;
-
         private uint _checksum;
-
         private bool _canWrite;
-
         private bool _isDisposed;
-
         private bool _everWritten;
-
         private long _initialPosition;
 
         public CheckSumAndSizeWriteStream(Stream baseStream, Stream baseBaseStream, bool leaveOpenOnClose, ActionHelper<long, long, uint> saveCrcAndSizes)

@@ -34,9 +34,9 @@ namespace DevLib.Logging
         private Mutex _mutex;
 
         /// <summary>
-        /// Field _fileName.
+        /// Field _filename.
         /// </summary>
-        private string _fileName;
+        private string _filename;
 
         /// <summary>
         /// Field _directoryName.
@@ -62,15 +62,15 @@ namespace DevLib.Logging
         {
             try
             {
-                this._fileName = LogConfigManager.GetFileFullPath(filename);
+                this._filename = LogConfigManager.GetFileFullPath(filename);
 
-                this._directoryName = Path.GetDirectoryName(this._fileName);
+                this._directoryName = Path.GetDirectoryName(this._filename);
 
-                this._fileInfo = new FileInfo(this._fileName);
+                this._fileInfo = new FileInfo(this._filename);
 
                 this._loggerSetup = loggerSetup;
 
-                this._mutex = this.CreateSharedMutex(this.GetMutexName(this._fileName));
+                this._mutex = this.CreateSharedMutex(this.GetMutexName(this._filename));
             }
             catch (Exception e)
             {
@@ -221,7 +221,7 @@ namespace DevLib.Logging
 
             try
             {
-                fileStream = new FileStream(this._fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+                fileStream = new FileStream(this._filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
 
                 if (isRolling)
                 {
@@ -296,7 +296,7 @@ namespace DevLib.Logging
             {
                 try
                 {
-                    File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), "0"), true);
+                    File.Copy(this._filename, string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), "0"), true);
                 }
                 catch
                 {
@@ -309,14 +309,14 @@ namespace DevLib.Logging
             {
                 int count = 1;
 
-                while (File.Exists(string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000"))))
+                while (File.Exists(string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000"))))
                 {
                     count++;
                 }
 
                 try
                 {
-                    File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000")), true);
+                    File.Copy(this._filename, string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000")), true);
                 }
                 catch
                 {
@@ -326,7 +326,7 @@ namespace DevLib.Logging
             {
                 int count = 1;
 
-                while (File.Exists(string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000"))))
+                while (File.Exists(string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000"))))
                 {
                     count++;
                 }
@@ -335,7 +335,7 @@ namespace DevLib.Logging
                 {
                     try
                     {
-                        File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000")), true);
+                        File.Copy(this._filename, string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), count.ToString("0000")), true);
                     }
                     catch
                     {
@@ -345,9 +345,9 @@ namespace DevLib.Logging
                 {
                     for (int i = 1; i < this._loggerSetup.RollingFileCountLimit; i++)
                     {
-                        string sourceFile = string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), (i + 1).ToString("0000"));
+                        string sourceFile = string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), (i + 1).ToString("0000"));
 
-                        string destFile = string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), i.ToString("0000"));
+                        string destFile = string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), i.ToString("0000"));
 
                         try
                         {
@@ -360,7 +360,7 @@ namespace DevLib.Logging
 
                     try
                     {
-                        File.Copy(this._fileName, string.Format("{0}.{1}.{2}", this._fileName, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), this._loggerSetup.RollingFileCountLimit.ToString("0000")), true);
+                        File.Copy(this._filename, string.Format("{0}.{1}.{2}", this._filename, this._fileInfo.LastWriteTime.ToString("yyyyMMdd"), this._loggerSetup.RollingFileCountLimit.ToString("0000")), true);
                     }
                     catch
                     {
@@ -378,7 +378,7 @@ namespace DevLib.Logging
             {
                 try
                 {
-                    File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, "0"), true);
+                    File.Copy(this._filename, string.Format("{0}.{1}", this._filename, "0"), true);
                 }
                 catch
                 {
@@ -391,14 +391,14 @@ namespace DevLib.Logging
             {
                 int count = 1;
 
-                while (File.Exists(string.Format("{0}.{1}", this._fileName, count.ToString("0000"))))
+                while (File.Exists(string.Format("{0}.{1}", this._filename, count.ToString("0000"))))
                 {
                     count++;
                 }
 
                 try
                 {
-                    File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, count.ToString("0000")), true);
+                    File.Copy(this._filename, string.Format("{0}.{1}", this._filename, count.ToString("0000")), true);
                 }
                 catch
                 {
@@ -408,7 +408,7 @@ namespace DevLib.Logging
             {
                 int count = 1;
 
-                while (File.Exists(string.Format("{0}.{1}", this._fileName, count.ToString("0000"))))
+                while (File.Exists(string.Format("{0}.{1}", this._filename, count.ToString("0000"))))
                 {
                     count++;
                 }
@@ -417,7 +417,7 @@ namespace DevLib.Logging
                 {
                     try
                     {
-                        File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, count.ToString("0000")), true);
+                        File.Copy(this._filename, string.Format("{0}.{1}", this._filename, count.ToString("0000")), true);
                     }
                     catch
                     {
@@ -427,9 +427,9 @@ namespace DevLib.Logging
                 {
                     for (int i = 1; i < this._loggerSetup.RollingFileCountLimit; i++)
                     {
-                        string sourceFile = string.Format("{0}.{1}", this._fileName, (i + 1).ToString("0000"));
+                        string sourceFile = string.Format("{0}.{1}", this._filename, (i + 1).ToString("0000"));
 
-                        string destFile = string.Format("{0}.{1}", this._fileName, i.ToString("0000"));
+                        string destFile = string.Format("{0}.{1}", this._filename, i.ToString("0000"));
 
                         try
                         {
@@ -442,7 +442,7 @@ namespace DevLib.Logging
 
                     try
                     {
-                        File.Copy(this._fileName, string.Format("{0}.{1}", this._fileName, this._loggerSetup.RollingFileCountLimit.ToString("0000")), true);
+                        File.Copy(this._filename, string.Format("{0}.{1}", this._filename, this._loggerSetup.RollingFileCountLimit.ToString("0000")), true);
                     }
                     catch
                     {

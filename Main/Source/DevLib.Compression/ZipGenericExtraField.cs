@@ -11,11 +11,8 @@ namespace DevLib.Compression
     internal struct ZipGenericExtraField
     {
         private const int SizeOfHeader = 4;
-
         private ushort _tag;
-
         private ushort _size;
-
         private byte[] _data;
 
         public ushort Tag
@@ -52,7 +49,6 @@ namespace DevLib.Compression
             }
 
             field._tag = reader.ReadUInt16();
-
             field._size = reader.ReadUInt16();
 
             if (endExtraField - reader.BaseStream.Position < (long)field._size)
@@ -68,6 +64,7 @@ namespace DevLib.Compression
         public static List<ZipGenericExtraField> ParseExtraField(Stream extraFieldData)
         {
             List<ZipGenericExtraField> list = new List<ZipGenericExtraField>();
+
             using (BinaryReader reader = new BinaryReader(extraFieldData))
             {
                 ZipGenericExtraField field;
@@ -104,9 +101,15 @@ namespace DevLib.Compression
         public void WriteBlock(Stream stream)
         {
             BinaryWriter binaryWriter = new BinaryWriter(stream);
-            binaryWriter.Write(this.Tag);
-            binaryWriter.Write(this.Size);
-            binaryWriter.Write(this.Data);
+
+            int num1 = (int)this.Tag;
+            binaryWriter.Write((ushort)num1);
+
+            int num2 = (int)this.Size;
+            binaryWriter.Write((ushort)num2);
+
+            byte[] data = this.Data;
+            binaryWriter.Write(data);
         }
     }
 }

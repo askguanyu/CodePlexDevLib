@@ -11,48 +11,30 @@ namespace DevLib.Compression
     internal struct ZipCentralDirectoryFileHeader
     {
         public const uint SignatureConstant = 33639248U;
-
         public ushort VersionMadeBy;
-
         public ushort VersionNeededToExtract;
-
         public ushort GeneralPurposeBitFlag;
-
         public ushort CompressionMethod;
-
         public uint LastModified;
-
         public uint Crc32;
-
         public long CompressedSize;
-
         public long UncompressedSize;
-
         public ushort FilenameLength;
-
         public ushort ExtraFieldLength;
-
         public ushort FileCommentLength;
-
         public int DiskNumberStart;
-
         public ushort InternalFileAttributes;
-
         public uint ExternalFileAttributes;
-
         public long RelativeOffsetOfLocalHeader;
-
-        public byte[] FileName;
-
+        public byte[] Filename;
         public byte[] FileComment;
-
         public List<ZipGenericExtraField> ExtraFields;
 
         public static bool TryReadBlock(BinaryReader reader, bool saveExtraFieldsAndComments, out ZipCentralDirectoryFileHeader header)
         {
             header = new ZipCentralDirectoryFileHeader();
 
-            if ((int)reader.ReadUInt32() != 33639248)
+            if (reader.ReadUInt32() != 33639248u)
             {
                 return false;
             }
@@ -63,7 +45,7 @@ namespace DevLib.Compression
             header.CompressionMethod = reader.ReadUInt16();
             header.LastModified = reader.ReadUInt32();
             header.Crc32 = reader.ReadUInt32();
-            uint num1 = reader.ReadUInt32();
+            uint num = reader.ReadUInt32();
             uint num2 = reader.ReadUInt32();
             header.FilenameLength = reader.ReadUInt16();
             header.ExtraFieldLength = reader.ReadUInt16();
@@ -72,13 +54,15 @@ namespace DevLib.Compression
             header.InternalFileAttributes = reader.ReadUInt16();
             header.ExternalFileAttributes = reader.ReadUInt32();
             uint num4 = reader.ReadUInt32();
-            header.FileName = reader.ReadBytes((int)header.FilenameLength);
-            bool readUncompressedSize = (int)num2 == -1;
-            bool readCompressedSize = (int)num1 == -1;
-            bool readLocalHeaderOffset = (int)num4 == -1;
-            bool readStartDiskNumber = (int)num3 == (int)ushort.MaxValue;
+            header.Filename = reader.ReadBytes((int)header.FilenameLength);
+            bool readUncompressedSize = num2 == 4294967295u;
+            bool readCompressedSize = num == 4294967295u;
+            bool readLocalHeaderOffset = num4 == 4294967295u;
+            bool readStartDiskNumber = num3 == 65535;
+            long position = reader.BaseStream.Position + (long)((ulong)header.ExtraFieldLength);
             Zip64ExtraField zip64ExtraField;
-            using (Stream stream = (Stream)new SubReadStream(reader.BaseStream, reader.BaseStream.Position, (long)header.ExtraFieldLength))
+
+            using (Stream stream = new SubReadStream(reader.BaseStream, reader.BaseStream.Position, (long)((ulong)header.ExtraFieldLength)))
             {
                 if (saveExtraFieldsAndComments)
                 {
@@ -87,10 +71,12 @@ namespace DevLib.Compression
                 }
                 else
                 {
-                    header.ExtraFields = (List<ZipGenericExtraField>)null;
+                    header.ExtraFields = null;
                     zip64ExtraField = Zip64ExtraField.GetJustZip64Block(stream, readUncompressedSize, readCompressedSize, readLocalHeaderOffset, readStartDiskNumber);
                 }
             }
+
+            ZipHelper.AdvanceToPosition(reader.BaseStream, position);
 
             if (saveExtraFieldsAndComments)
             {
@@ -98,14 +84,15 @@ namespace DevLib.Compression
             }
             else
             {
-                reader.BaseStream.Position += (long)header.FileCommentLength;
-                header.FileComment = (byte[])null;
+                reader.BaseStream.Position += (long)((ulong)header.FileCommentLength);
+                header.FileComment = null;
             }
 
-            header.UncompressedSize = !zip64ExtraField.UncompressedSize.HasValue ? (long)num2 : zip64ExtraField.UncompressedSize.Value;
-            header.CompressedSize = !zip64ExtraField.CompressedSize.HasValue ? (long)num1 : zip64ExtraField.CompressedSize.Value;
-            header.RelativeOffsetOfLocalHeader = !zip64ExtraField.LocalHeaderOffset.HasValue ? (long)num4 : zip64ExtraField.LocalHeaderOffset.Value;
-            header.DiskNumberStart = !zip64ExtraField.StartDiskNumber.HasValue ? (int)num3 : zip64ExtraField.StartDiskNumber.Value;
+            header.UncompressedSize = (long)((!zip64ExtraField.UncompressedSize.HasValue) ? ((ulong)num2) : ((ulong)zip64ExtraField.UncompressedSize.Value));
+            header.CompressedSize = (long)((!zip64ExtraField.CompressedSize.HasValue) ? ((ulong)num) : ((ulong)zip64ExtraField.CompressedSize.Value));
+            header.RelativeOffsetOfLocalHeader = (long)((!zip64ExtraField.LocalHeaderOffset.HasValue) ? ((ulong)num4) : ((ulong)zip64ExtraField.LocalHeaderOffset.Value));
+            header.DiskNumberStart = ((!zip64ExtraField.StartDiskNumber.HasValue) ? ((int)num3) : zip64ExtraField.StartDiskNumber.Value);
+
             return true;
         }
     }

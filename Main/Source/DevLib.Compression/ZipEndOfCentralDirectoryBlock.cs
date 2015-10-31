@@ -10,28 +10,20 @@ namespace DevLib.Compression
     internal struct ZipEndOfCentralDirectoryBlock
     {
         public const uint SignatureConstant = 101010256U;
-
         public const int SizeOfBlockWithoutSignature = 18;
-
         public uint Signature;
-
         public ushort NumberOfThisDisk;
-
         public ushort NumberOfTheDiskWithTheStartOfTheCentralDirectory;
-
         public ushort NumberOfEntriesInTheCentralDirectoryOnThisDisk;
-
         public ushort NumberOfEntriesInTheCentralDirectory;
-
         public uint SizeOfCentralDirectory;
-
         public uint OffsetOfStartOfCentralDirectoryWithRespectToTheStartingDiskNumber;
-
         public byte[] ArchiveComment;
 
         public static void WriteBlock(Stream stream, long numberOfEntries, long startOfCentralDirectory, long sizeOfCentralDirectory, byte[] archiveComment)
         {
             BinaryWriter binaryWriter = new BinaryWriter(stream);
+
             ushort num1 = numberOfEntries > (long)ushort.MaxValue ? ushort.MaxValue : (ushort)numberOfEntries;
             uint num2 = startOfCentralDirectory > (long)uint.MaxValue ? uint.MaxValue : (uint)startOfCentralDirectory;
             uint num3 = sizeOfCentralDirectory > (long)uint.MaxValue ? uint.MaxValue : (uint)sizeOfCentralDirectory;
@@ -44,12 +36,10 @@ namespace DevLib.Compression
             binaryWriter.Write(num2);
             binaryWriter.Write(archiveComment != null ? (ushort)archiveComment.Length : (ushort)0);
 
-            if (archiveComment == null)
+            if (archiveComment != null)
             {
-                return;
+                binaryWriter.Write(archiveComment);
             }
-
-            binaryWriter.Write(archiveComment);
         }
 
         public static bool TryReadBlock(BinaryReader reader, out ZipEndOfCentralDirectoryBlock eocdBlock)
@@ -70,6 +60,7 @@ namespace DevLib.Compression
             eocdBlock.OffsetOfStartOfCentralDirectoryWithRespectToTheStartingDiskNumber = reader.ReadUInt32();
             ushort num = reader.ReadUInt16();
             eocdBlock.ArchiveComment = reader.ReadBytes((int)num);
+
             return true;
         }
     }

@@ -74,41 +74,37 @@ namespace DevLib.Compression
         /// <exception cref="T:System.IO.InvalidDataException"><paramref name="archiveFileName"/> could not be interpreted as a zip archive.-or-<paramref name="mode"/> is <see cref="ZipArchiveMode.Update" />, but an entry is missing or corrupt and cannot be read.-or-<paramref name="mode"/> is <see cref="ZipArchiveMode.Update" />, but an entry is too large to fit into memory.</exception>
         public static ZipArchive Open(string archiveFileName, ZipArchiveMode mode, Encoding entryNameEncoding)
         {
-            FileMode mode2;
+            FileMode fileMode;
             FileAccess access;
             FileShare share;
 
             switch (mode)
             {
                 case ZipArchiveMode.Read:
-                    mode2 = FileMode.Open;
+                    fileMode = FileMode.Open;
                     access = FileAccess.Read;
                     share = FileShare.Read;
                     break;
-
                 case ZipArchiveMode.Create:
-                    mode2 = FileMode.CreateNew;
+                    fileMode = FileMode.CreateNew;
                     access = FileAccess.Write;
                     share = FileShare.None;
                     break;
-
                 case ZipArchiveMode.Update:
-                    mode2 = FileMode.OpenOrCreate;
+                    fileMode = FileMode.OpenOrCreate;
                     access = FileAccess.ReadWrite;
                     share = FileShare.None;
                     break;
-
                 default:
                     throw new ArgumentOutOfRangeException("mode");
             }
 
             FileStream fileStream = null;
-            ZipArchive result;
 
             try
             {
-                fileStream = File.Open(archiveFileName, mode2, access, share);
-                result = new ZipArchive(fileStream, mode, false, entryNameEncoding);
+                fileStream = File.Open(archiveFileName, fileMode, access, share);
+                return new ZipArchive(fileStream, mode, false, entryNameEncoding);
             }
             catch
             {
@@ -119,15 +115,92 @@ namespace DevLib.Compression
 
                 throw;
             }
+        }
 
-            return result;
+        /// <summary>
+        /// Creates a zip archive that contains the files and directories.
+        /// </summary>
+        /// <param name="destinationArchiveFileName">The path of the archive to be created, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="entryNameEncoding">The encoding to use when reading or writing entry names in this archive. Specify a value for this parameter only when required for interoperability with ZIP archive tools and libraries that do not support UTF-8 encoding for entry names.</param>
+        /// <param name="sourceFileNames">The files to compress.</param>
+        public static void CreateFromFiles(string destinationArchiveFileName, Encoding entryNameEncoding, params string[] sourceFileNames)
+        {
+            if (destinationArchiveFileName == null)
+            {
+                throw new ArgumentNullException("destinationArchiveFileName");
+            }
+
+            destinationArchiveFileName = Path.GetFullPath(destinationArchiveFileName);
+
+            if (sourceFileNames == null)
+            {
+                sourceFileNames = new string[0];
+            }
+
+            using (ZipArchive destination = ZipFile.Open(destinationArchiveFileName, ZipArchiveMode.Create, entryNameEncoding))
+            {
+                foreach (string sourceFileName in sourceFileNames)
+                {
+                    if (ZipHelper.IsFile(sourceFileName))
+                    {
+                        FileInfo sourceFile = new FileInfo(sourceFileName);
+                        destination.CreateEntryFromFile(sourceFile.FullName, sourceFile.Name);
+                    }
+                    else
+                    {
+                        DirectoryInfo sourceFile = new DirectoryInfo(sourceFileName);
+                        destination.CreateEntryFromDirectory(sourceFile.FullName, sourceFile.Name);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a zip archive that contains the files and directories.
+        /// </summary>
+        /// <param name="destinationArchiveFileName">The path of the archive to be created, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="entryNameEncoding">The encoding to use when reading or writing entry names in this archive. Specify a value for this parameter only when required for interoperability with ZIP archive tools and libraries that do not support UTF-8 encoding for entry names.</param>
+        /// <param name="sourceFiles">The files to compress.</param>
+        public static void CreateFromFiles(string destinationArchiveFileName, Encoding entryNameEncoding, params FileSystemInfo[] sourceFiles)
+        {
+            if (destinationArchiveFileName == null)
+            {
+                throw new ArgumentNullException("destinationArchiveFileName");
+            }
+
+            destinationArchiveFileName = Path.GetFullPath(destinationArchiveFileName);
+
+            if (sourceFiles == null)
+            {
+                sourceFiles = new FileSystemInfo[0];
+            }
+
+            using (ZipArchive destination = ZipFile.Open(destinationArchiveFileName, ZipArchiveMode.Create, entryNameEncoding))
+            {
+                foreach (FileSystemInfo sourceFile in sourceFiles)
+                {
+                    if (sourceFile is FileInfo)
+                    {
+                        destination.CreateEntryFromFile(sourceFile.FullName, sourceFile.Name);
+                    }
+                    else
+                    {
+                        DirectoryInfo possiblyEmptyDir = sourceFile as DirectoryInfo;
+
+                        if (possiblyEmptyDir != null && ZipHelper.IsDirEmpty(possiblyEmptyDir))
+                        {
+                            destination.CreateEntryFromDirectory(possiblyEmptyDir.FullName, sourceFile.Name);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Creates a zip archive that contains the files and directories from the specified directory.
         /// </summary>
-        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="destinationArchiveFileName">The path of the archive to be created, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <exception cref="T:System.ArgumentException"><paramref name="sourceDirectoryName"/> or <paramref name="destinationArchiveFileName"/> is <see cref="F:System.String.Empty"/>, contains only white space, or contains at least one invalid character.</exception>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="sourceDirectoryName"/> or <paramref name="destinationArchiveFileName"/> is null.</exception>
         /// <exception cref="T:System.IO.PathTooLongException">In <paramref name="sourceDirectoryName"/> or <paramref name="destinationArchiveFileName"/>, the specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters.</exception>
@@ -135,16 +208,16 @@ namespace DevLib.Compression
         /// <exception cref="T:System.IO.IOException"><paramref name="destinationArchiveFileName"/> already exists.-or-A file in the specified directory could not be opened.</exception>
         /// <exception cref="T:System.UnauthorizedAccessException"><paramref name="destinationArchiveFileName"/> specifies a directory.-or-The caller does not have the required permission to access the directory specified in <paramref name="sourceDirectoryName"/> or the file specified in <paramref name="destinationArchiveFileName"/>.</exception>
         /// <exception cref="T:System.NotSupportedException"><paramref name="sourceDirectoryName"/> or <paramref name="destinationArchiveFileName"/> contains an invalid format.-or-The zip archive does not support writing.</exception>
-        public static void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName)
+        public static void CreateFromDirectory(string destinationArchiveFileName, string sourceDirectoryName)
         {
-            ZipFile.DoCreateFromDirectory(sourceDirectoryName, destinationArchiveFileName, false, true, null);
+            ZipFile.DoCreateFromDirectory(destinationArchiveFileName, sourceDirectoryName, false, true, null);
         }
 
         /// <summary>
         /// Creates a zip archive that contains the files and directories from the specified directory, uses the specified compression level, and optionally includes the base directory.
         /// </summary>
-        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="destinationArchiveFileName">The path of the archive to be created, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="includeBaseDirectory">true to include the directory name from <paramref name="sourceDirectoryName"/> at the root of the archive; false to include only the contents of the directory.</param>
         /// <param name="includeSubDirectories">true to include all subdirectories from <paramref name="sourceDirectoryName"/>; false to include only the contents of the top directory.</param>
         /// <exception cref="T:System.ArgumentException"><paramref name="sourceDirectoryName"/> or <paramref name="destinationArchiveFileName"/> is <see cref="F:System.String.Empty"/>, contains only white space, or contains at least one invalid character.</exception>
@@ -154,16 +227,16 @@ namespace DevLib.Compression
         /// <exception cref="T:System.IO.IOException"><paramref name="destinationArchiveFileName"/> already exists.-or-A file in the specified directory could not be opened.</exception>
         /// <exception cref="T:System.UnauthorizedAccessException"><paramref name="destinationArchiveFileName"/> specifies a directory.-or-The caller does not have the required permission to access the directory specified in <paramref name="sourceDirectoryName"/> or the file specified in <paramref name="destinationArchiveFileName"/>.</exception>
         /// <exception cref="T:System.NotSupportedException"><paramref name="sourceDirectoryName"/> or <paramref name="destinationArchiveFileName"/> contains an invalid format.-or-The zip archive does not support writing.</exception>
-        public static void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, bool includeBaseDirectory, bool includeSubDirectories)
+        public static void CreateFromDirectory(string destinationArchiveFileName, string sourceDirectoryName, bool includeBaseDirectory, bool includeSubDirectories)
         {
-            ZipFile.DoCreateFromDirectory(sourceDirectoryName, destinationArchiveFileName, includeBaseDirectory, includeSubDirectories, null);
+            ZipFile.DoCreateFromDirectory(destinationArchiveFileName, sourceDirectoryName, includeBaseDirectory, includeSubDirectories, null);
         }
 
         /// <summary>
         /// Creates a zip archive that contains the files and directories from the specified directory, uses the specified compression level and character encoding for entry names, and optionally includes the base directory.
         /// </summary>
-        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="destinationArchiveFileName">The path of the archive to be created, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="includeBaseDirectory">true to include the directory name from <paramref name="sourceDirectoryName"/> at the root of the archive; false to include only the contents of the directory.</param>
         /// <param name="includeSubDirectories">true to include all subdirectories from <paramref name="sourceDirectoryName"/>; false to include only the contents of the top directory.</param>
         /// <param name="entryNameEncoding">The encoding to use when reading or writing entry names in this archive. Specify a value for this parameter only when required for interoperability with ZIP archive tools and libraries that do not support UTF-8 encoding for entry names.</param>
@@ -174,9 +247,9 @@ namespace DevLib.Compression
         /// <exception cref="T:System.IO.IOException"><paramref name="destinationArchiveFileName"/> already exists.-or-A file in the specified directory could not be opened.</exception>
         /// <exception cref="T:System.UnauthorizedAccessException"><paramref name="destinationArchiveFileName"/> specifies a directory.-or-The caller does not have the required permission to access the directory specified in <paramref name="sourceDirectoryName"/> or the file specified in <paramref name="destinationArchiveFileName"/>.</exception>
         /// <exception cref="T:System.NotSupportedException"><paramref name="sourceDirectoryName"/> or <paramref name="destinationArchiveFileName"/> contains an invalid format.-or-The zip archive does not support writing.</exception>
-        public static void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, bool includeBaseDirectory, bool includeSubDirectories, Encoding entryNameEncoding)
+        public static void CreateFromDirectory(string destinationArchiveFileName, string sourceDirectoryName, bool includeBaseDirectory, bool includeSubDirectories, Encoding entryNameEncoding)
         {
-            ZipFile.DoCreateFromDirectory(sourceDirectoryName, destinationArchiveFileName, includeBaseDirectory, includeSubDirectories, entryNameEncoding);
+            ZipFile.DoCreateFromDirectory(destinationArchiveFileName, sourceDirectoryName, includeBaseDirectory, includeSubDirectories, entryNameEncoding);
         }
 
         /// <summary>
@@ -233,12 +306,12 @@ namespace DevLib.Compression
         /// <summary>
         /// Creates a zip archive that contains the files and directories from the specified directory, uses the specified compression level and character encoding for entry names, and optionally includes the base directory.
         /// </summary>
-        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="destinationArchiveFileName">The path of the archive to be created, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
+        /// <param name="sourceDirectoryName">The path to the directory to be archived, specified as a relative or absolute path. A relative path is interpreted as relative to the current working directory.</param>
         /// <param name="includeBaseDirectory">true to include the directory name from <paramref name="sourceDirectoryName"/> at the root of the archive; false to include only the contents of the directory.</param>
         /// <param name="includeSubDirectories">true to include all subdirectories from <paramref name="sourceDirectoryName"/>; false to include only the contents of the top directory.</param>
         /// <param name="entryNameEncoding">The encoding to use when reading or writing entry names in this archive. Specify a value for this parameter only when required for interoperability with ZIP archive tools and libraries that do not support UTF-8 encoding for entry names.</param>
-        private static void DoCreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, bool includeBaseDirectory, bool includeSubDirectories, Encoding entryNameEncoding)
+        private static void DoCreateFromDirectory(string destinationArchiveFileName, string sourceDirectoryName, bool includeBaseDirectory, bool includeSubDirectories, Encoding entryNameEncoding)
         {
             if (sourceDirectoryName == null)
             {
@@ -265,11 +338,11 @@ namespace DevLib.Compression
 
                 DirectoryInfo directoryInfo = new DirectoryInfo(sourceDirectoryName);
 
-                string fullName = directoryInfo.FullName;
+                string directoryFullName = directoryInfo.FullName;
 
                 if (includeBaseDirectory && directoryInfo.Parent != null)
                 {
-                    fullName = directoryInfo.Parent.FullName;
+                    directoryFullName = directoryInfo.Parent.FullName;
                 }
 
                 List<FileSystemInfo> list = new List<FileSystemInfo>();
@@ -287,8 +360,8 @@ namespace DevLib.Compression
                 foreach (FileSystemInfo fileSystemInfo in list)
                 {
                     flag = false;
-                    int length = fileSystemInfo.FullName.Length - fullName.Length;
-                    string entryName = fileSystemInfo.FullName.Substring(fullName.Length, length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    int length = fileSystemInfo.FullName.Length - directoryFullName.Length;
+                    string entryName = fileSystemInfo.FullName.Substring(directoryFullName.Length, length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
                     if (fileSystemInfo is FileInfo)
                     {
@@ -300,17 +373,15 @@ namespace DevLib.Compression
 
                         if (possiblyEmptyDir != null && ZipHelper.IsDirEmpty(possiblyEmptyDir))
                         {
-                            destination.CreateEntryFromDirectory(possiblyEmptyDir.FullName, entryName + Path.DirectorySeparatorChar);
+                            destination.CreateEntryFromDirectory(possiblyEmptyDir.FullName, entryName);
                         }
                     }
                 }
 
-                if (!includeBaseDirectory || !flag)
+                if (includeBaseDirectory & flag)
                 {
-                    return;
+                    destination.CreateEntryFromDirectory(directoryInfo.FullName, directoryInfo.Name);
                 }
-
-                destination.CreateEntryFromDirectory(directoryInfo.FullName, directoryInfo.Name + Path.DirectorySeparatorChar);
             }
         }
     }

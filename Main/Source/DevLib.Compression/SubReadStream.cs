@@ -11,15 +11,10 @@ namespace DevLib.Compression
     internal class SubReadStream : Stream
     {
         private readonly long _startInSuperStream;
-
         private readonly long _endInSuperStream;
-
         private readonly Stream _superStream;
-
         private long _positionInSuperStream;
-
         private bool _canRead;
-
         private bool _isDisposed;
 
         public SubReadStream(Stream superStream, long startPosition, long maxLength)
@@ -64,10 +59,8 @@ namespace DevLib.Compression
                 {
                     return this._canRead;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
 
@@ -90,7 +83,6 @@ namespace DevLib.Compression
         public override int Read(byte[] buffer, int offset, int count)
         {
             this.ThrowIfDisposed();
-
             this.ThrowIfCantRead();
 
             if (this._superStream.Position != this._positionInSuperStream)
@@ -104,7 +96,6 @@ namespace DevLib.Compression
             }
 
             int num = this._superStream.Read(buffer, offset, count);
-
             this._positionInSuperStream += (long)num;
 
             return num;

@@ -53,5 +53,7 @@ namespace DevLib.Compression
         internal const string ExtractingResultsInOutside = "Extracting Zip entry would have resulted in a file outside the specified destination directory.";
         internal const string DirectoryNameWithData = "Zip entry name ends in directory separator character but contains data.";
         internal const string NotDirectory = "Zip entry is not a directory.";
+        internal const string IO_DirectoryNameWithData = "Zip entry name ends in directory separator character but contains data.";
+        internal const string IO_ExtractingResultsInOutside = "Extracting Zip entry would have resulted in a file outside the specified destination directory.";
     }
 }

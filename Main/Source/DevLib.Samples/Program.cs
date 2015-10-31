@@ -549,11 +549,67 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.Compression");
 
-            ZipFile.CreateFromDirectory("E:\\A", "E:\\1.zip", false, true);
+            //File.Delete("d:\\1.zip");
 
-            Console.ReadLine();
 
-            ZipFile.OpenRead("E:\\1.zip").ExtractToDirectory("E:\\B", true);
+            //using (FileStream file = File.Create("d:\\1.zip"))
+            //using (ZipArchive zip = new ZipArchive(file, ZipArchiveMode.Create, false))
+            //{
+            //    zip.CreateEntryFromDirectory(@"D:\test\New folder", "New folder" + Path.DirectorySeparatorChar);
+            //    zip.CreateEntryFromDirectory(@"D:\test\New folder (2)", "New folder2" + Path.DirectorySeparatorChar);
+            //    zip.CreateEntryFromFile("d:\\test\\1.txt", "1.txt");
+            //    zip.CreateEntryFromFile("d:\\test\\2.txt", "2.txt");
+
+            //    //using (Stream stream = File.Open("d:\\test\\1.txt", FileMode.Open, FileAccess.Read, FileShare.Read))
+            //    //{
+            //    //    ZipArchiveEntry zipArchiveEntry = zip.CreateEntry("1.txt", FileAttributes.Directory);
+            //    //    DateTime lastWriteTime = File.GetLastWriteTime("d:\\test\\1.txt");
+            //    //    if (lastWriteTime.Year < 1980 || lastWriteTime.Year > 2107)
+            //    //    {
+            //    //        lastWriteTime = new DateTime(1980, 1, 1, 0, 0, 0);
+            //    //    }
+            //    //    zipArchiveEntry.LastWriteTime = lastWriteTime;
+            //    //    using (Stream stream2 = zipArchiveEntry.Open())
+            //    //    {
+            //    //        stream.CopyStreamTo(stream2);
+            //    //    }
+            //    //}
+
+            //    //using (Stream stream = File.Open("d:\\test\\2.txt", FileMode.Open, FileAccess.Read, FileShare.Read))
+            //    //{
+            //    //    ZipArchiveEntry zipArchiveEntry = zip.CreateEntry("2.txt", FileAttributes.Directory);
+            //    //    DateTime lastWriteTime = File.GetLastWriteTime("d:\\test\\2.txt");
+            //    //    if (lastWriteTime.Year < 1980 || lastWriteTime.Year > 2107)
+            //    //    {
+            //    //        lastWriteTime = new DateTime(1980, 1, 1, 0, 0, 0);
+            //    //    }
+            //    //    zipArchiveEntry.LastWriteTime = lastWriteTime;
+            //    //    using (Stream stream2 = zipArchiveEntry.Open())
+            //    //    {
+            //    //        stream.CopyStreamTo(stream2);
+            //    //    }
+            //    //}
+            //}
+
+
+            //ZipFile.CreateFromDirectory("d:\\1.zip", "d:\\test", true, true);
+
+            //ZipFile.ExtractToDirectory("d:\\1.zip", "d:\\test2", true, true);
+
+            ////Environment.Exit(-1);
+
+            //ZipFile.ExtractToDirectory("d:\\test.zip", "d:\\test1", true);
+
+            //using (ZipArchive destination = ZipFile.Open("test.zip", ZipArchiveMode.Create))
+            //{
+            //    destination.CreateEntryFromFile("DevLib.Compression.xml", "DevLib.Compression.xml");
+            //}
+
+            //ZipFile.CreateFromDirectory("E:\\A", "E:\\1.zip", false, true);
+
+            //Console.ReadLine();
+
+            //ZipFile.OpenRead("E:\\1.zip").ExtractToDirectory("E:\\B", true);
             //var zip = ZipFile.OpenRead("c:\\22.zip");
             //foreach (ZipArchiveEntry item in zip.Entries)
             //{

@@ -10,13 +10,9 @@ namespace DevLib.Compression
     internal struct Zip64EndOfCentralDirectoryLocator
     {
         public const uint SignatureConstant = 117853008U;
-
         public const int SizeOfBlockWithoutSignature = 16;
-
         public uint NumberOfDiskWithZip64EOCD;
-
         public ulong OffsetOfZip64EOCD;
-
         public uint TotalNumberOfDisks;
 
         public static bool TryReadBlock(BinaryReader reader, out Zip64EndOfCentralDirectoryLocator zip64EOCDLocator)
@@ -38,10 +34,18 @@ namespace DevLib.Compression
         public static void WriteBlock(Stream stream, long zip64EOCDRecordStart)
         {
             BinaryWriter binaryWriter = new BinaryWriter(stream);
-            binaryWriter.Write(117853008U);
-            binaryWriter.Write(0U);
-            binaryWriter.Write(zip64EOCDRecordStart);
-            binaryWriter.Write(1U);
+
+            int num1 = 117853008;
+            binaryWriter.Write((uint)num1);
+
+            int num2 = 0;
+            binaryWriter.Write((uint)num2);
+
+            long num3 = zip64EOCDRecordStart;
+            binaryWriter.Write(num3);
+
+            int num4 = 1;
+            binaryWriter.Write((uint)num4);
         }
     }
 }

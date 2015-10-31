@@ -13,13 +13,9 @@ namespace DevLib.Compression
     internal struct ZipLocalFileHeader
     {
         public const uint DataDescriptorSignature = 134695760U;
-
         public const uint SignatureConstant = 67324752U;
-
         public const int OffsetToCrcFromHeaderStart = 14;
-
         public const int OffsetToBitFlagFromHeaderStart = 6;
-
         public const int SizeOfLocalHeader = 30;
 
         public static List<ZipGenericExtraField> GetExtraFields(BinaryReader reader)
@@ -36,6 +32,7 @@ namespace DevLib.Compression
             }
 
             Zip64ExtraField.RemoveZip64Blocks(extraFields);
+
             return extraFields;
         }
 
@@ -49,12 +46,14 @@ namespace DevLib.Compression
             reader.BaseStream.Seek(22L, SeekOrigin.Current);
             ushort num1 = reader.ReadUInt16();
             ushort num2 = reader.ReadUInt16();
+
             if (reader.BaseStream.Length < reader.BaseStream.Position + (long)num1 + (long)num2)
             {
                 return false;
             }
 
             reader.BaseStream.Seek((long)((int)num1 + (int)num2), SeekOrigin.Current);
+
             return true;
         }
     }

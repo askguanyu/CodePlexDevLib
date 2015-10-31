@@ -8,8 +8,12 @@ namespace DevLib.Compression
     using System;
     using System.IO;
 
+    internal delegate void ActionHelper<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3);
+
     internal static class ZipHelper
     {
+        private static readonly DateTime InvalidDateIndicator = new DateTime(1980, 1, 1, 0, 0, 0);
+
         internal const uint Mask32Bit = 4294967295U;
 
         internal const ushort Mask16Bit = (ushort)65535;
@@ -20,16 +24,19 @@ namespace DevLib.Compression
 
         private const int BackwardsSeekingBufferSize = 32;
 
-        private static readonly DateTime InvalidDateIndicator = new DateTime(1980, 1, 1, 0, 0, 0);
-
         internal static bool EndsWithDirChar(string test)
         {
-            return Path.GetFileName(test) == string.Empty;
+            return Path.GetFileName(test) == "";
         }
 
         internal static bool IsDirEmpty(DirectoryInfo possiblyEmptyDir)
         {
             return possiblyEmptyDir.GetFileSystemInfos("*").Length == 0;
+        }
+
+        internal static bool IsFile(string path)
+        {
+            return (File.GetAttributes(path) & FileAttributes.Directory) == 0;
         }
 
         internal static bool RequiresUnicode(string test)
@@ -72,6 +79,7 @@ namespace DevLib.Compression
             int hour = (int)(dateTime >> 11) & 31;
             int minute = (int)(dateTime >> 5) & 63;
             int second = ((int)dateTime & 31) * 2;
+
             try
             {
                 return new DateTime(year, month, day, hour, minute, second, 0);
@@ -88,12 +96,7 @@ namespace DevLib.Compression
 
         internal static uint DateTimeToDosTime(DateTime dateTime)
         {
-            int num = dateTime.Year - 1980 & 127;
-            num = (num << 4) + dateTime.Month;
-            num = (num << 5) + dateTime.Day;
-            num = (num << 5) + dateTime.Hour;
-            num = (num << 6) + dateTime.Minute;
-            return (uint)((num << 5) + (dateTime.Second / 2));
+            return (uint)(((((((dateTime.Year - 1980 & (int)sbyte.MaxValue) << 4) + dateTime.Month << 5) + dateTime.Day << 5) + dateTime.Hour << 6) + dateTime.Minute << 5) + dateTime.Second / 2);
         }
 
         internal static bool SeekBackwardsToSignature(Stream stream, uint signatureToFind)
@@ -107,9 +110,11 @@ namespace DevLib.Compression
             while (!flag2 && !flag)
             {
                 flag = ZipHelper.SeekBackwardsAndRead(stream, array, out num);
+
                 while (num >= 0 && !flag2)
                 {
-                    num2 = num2 << 8 | (uint)array[num];
+                    num2 = (num2 << 8 | (uint)array[num]);
+
                     if (num2 == signatureToFind)
                     {
                         flag2 = true;
@@ -131,25 +136,58 @@ namespace DevLib.Compression
             return true;
         }
 
+        internal static void AdvanceToPosition(Stream stream, long position)
+        {
+            long num1 = position - stream.Position;
+
+            while (num1 != 0L)
+            {
+                int count = num1 > 64L ? 64 : (int)num1;
+                int num2 = stream.Read(new byte[64], 0, count);
+
+                if (num2 == 0)
+                {
+                    throw new IOException(CompressionConstants.UnexpectedEndOfStream);
+                }
+
+                num1 -= (long)num2;
+            }
+        }
+
+        internal static void CopyStreamTo(Stream source, Stream destination)
+        {
+            byte[] buffer = new byte[81920];
+
+            int count;
+
+            while ((count = source.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                destination.Write(buffer, 0, count);
+            }
+        }
+
         private static bool SeekBackwardsAndRead(Stream stream, byte[] buffer, out int bufferPointer)
         {
             if (stream.Position >= (long)buffer.Length)
             {
                 stream.Seek((long)-buffer.Length, SeekOrigin.Current);
-                ZipHelper.ReadBytes(stream, buffer, buffer.Length);
+                Stream stream1 = stream;
+                byte[] buffer1 = buffer;
+                int length = buffer1.Length;
+                ZipHelper.ReadBytes(stream1, buffer1, length);
                 stream.Seek((long)-buffer.Length, SeekOrigin.Current);
                 bufferPointer = buffer.Length - 1;
+
                 return false;
             }
-            else
-            {
-                int bytesToRead = (int)stream.Position;
-                stream.Seek(0L, SeekOrigin.Begin);
-                ZipHelper.ReadBytes(stream, buffer, bytesToRead);
-                stream.Seek(0L, SeekOrigin.Begin);
-                bufferPointer = bytesToRead - 1;
-                return true;
-            }
+
+            int bytesToRead = (int)stream.Position;
+            stream.Seek(0L, SeekOrigin.Begin);
+            ZipHelper.ReadBytes(stream, buffer, bytesToRead);
+            stream.Seek(0L, SeekOrigin.Begin);
+            bufferPointer = bytesToRead - 1;
+
+            return true;
         }
     }
 }

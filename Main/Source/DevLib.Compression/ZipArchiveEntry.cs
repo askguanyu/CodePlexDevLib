@@ -19,51 +19,28 @@ namespace DevLib.Compression
     public class ZipArchiveEntry
     {
         private const ushort DefaultVersionToExtract = (ushort)10;
-
         private readonly bool _originallyInArchive;
-
         private readonly int _diskNumberStart;
-
         private ZipArchive _archive;
-
         private ZipVersionNeededValues _versionToExtract;
-
         private ZipArchiveEntry.BitFlagValues _generalPurposeBitFlag;
-
         private ZipArchiveEntry.CompressionMethodValues _storedCompressionMethod;
-
         private DateTimeOffset _lastModified;
-
         private long _compressedSize;
-
         private long _uncompressedSize;
-
         private long _offsetOfLocalHeader;
-
         private long? _storedOffsetOfCompressedData;
-
         private uint _crc32;
-
         private byte[] _compressedBytes;
-
         private MemoryStream _storedUncompressedData;
-
         private bool _currentlyOpenForWrite;
-
         private bool _everOpenedForWrite;
-
         private Stream _outstandingWriteStream;
-
         private string _storedEntryName;
-
         private byte[] _storedEntryNameBytes;
-
         private List<ZipGenericExtraField> _cdUnknownExtraFields;
-
         private List<ZipGenericExtraField> _lhUnknownExtraFields;
-
         private byte[] _fileComment;
-
         private uint _externalFileAttributes;
 
         internal ZipArchiveEntry(ZipArchive archive, ZipCentralDirectoryFileHeader cd)
@@ -80,19 +57,19 @@ namespace DevLib.Compression
             this._offsetOfLocalHeader = cd.RelativeOffsetOfLocalHeader;
             this._storedOffsetOfCompressedData = new long?();
             this._crc32 = cd.Crc32;
-            this._compressedBytes = (byte[])null;
-            this._storedUncompressedData = (MemoryStream)null;
+            this._compressedBytes = null;
+            this._storedUncompressedData = null;
             this._currentlyOpenForWrite = false;
             this._everOpenedForWrite = false;
-            this._outstandingWriteStream = (Stream)null;
-            this.FullName = this.DecodeEntryName(cd.FileName);
-            this._lhUnknownExtraFields = (List<ZipGenericExtraField>)null;
+            this._outstandingWriteStream = null;
+            this.FullName = this.DecodeEntryName(cd.Filename);
+            this._lhUnknownExtraFields = null;
             this._cdUnknownExtraFields = cd.ExtraFields;
             this._fileComment = cd.FileComment;
             this._externalFileAttributes = cd.ExternalFileAttributes;
         }
 
-        internal ZipArchiveEntry(ZipArchive archive, string entryName, FileAttributes entryFileAttributes)
+        internal ZipArchiveEntry(ZipArchive archive, string entryName, FileAttributes entryAttributes)
         {
             this._archive = archive;
             this._originallyInArchive = false;
@@ -106,16 +83,16 @@ namespace DevLib.Compression
             this._offsetOfLocalHeader = 0L;
             this._storedOffsetOfCompressedData = new long?();
             this._crc32 = 0U;
-            this._compressedBytes = (byte[])null;
-            this._storedUncompressedData = (MemoryStream)null;
+            this._compressedBytes = null;
+            this._storedUncompressedData = null;
             this._currentlyOpenForWrite = false;
             this._everOpenedForWrite = false;
-            this._outstandingWriteStream = (Stream)null;
+            this._outstandingWriteStream = null;
             this.FullName = entryName;
-            this._cdUnknownExtraFields = (List<ZipGenericExtraField>)null;
-            this._lhUnknownExtraFields = (List<ZipGenericExtraField>)null;
-            this._fileComment = (byte[])null;
-            this._externalFileAttributes = (uint)entryFileAttributes;
+            this._cdUnknownExtraFields = null;
+            this._lhUnknownExtraFields = null;
+            this._fileComment = null;
+            this._externalFileAttributes = (uint)entryAttributes;
 
             if (this._storedEntryNameBytes.Length > (int)ushort.MaxValue)
             {
@@ -151,9 +128,8 @@ namespace DevLib.Compression
         }
 
         /// <summary>
-        /// Gets the zip archive that the entry belongs to.
+        /// Gets the zip archive that the entry belongs to, or null if the entry has been deleted.
         /// </summary>
-        /// <returns>The zip archive that the entry belongs to, or null if the entry has been deleted.</returns>
         public ZipArchive Archive
         {
             get
@@ -165,8 +141,6 @@ namespace DevLib.Compression
         /// <summary>
         /// Gets the compressed size of the entry in the zip archive.
         /// </summary>
-        /// <returns>The compressed size of the entry in the zip archive.</returns>
-        /// <exception cref="T:System.InvalidOperationException">The value of the property is not available because the entry has been modified.</exception>
         public long CompressedLength
         {
             get
@@ -175,17 +149,14 @@ namespace DevLib.Compression
                 {
                     throw new InvalidOperationException(CompressionConstants.LengthAfterWrite);
                 }
-                else
-                {
-                    return this._compressedSize;
-                }
+
+                return this._compressedSize;
             }
         }
 
         /// <summary>
         /// Gets the relative path of the entry in the zip archive.
         /// </summary>
-        /// <returns>The relative path of the entry in the zip archive.</returns>
         public string FullName
         {
             get
@@ -203,32 +174,18 @@ namespace DevLib.Compression
                 bool isUTF8;
                 this._storedEntryNameBytes = this.EncodeEntryName(value, out isUTF8);
                 this._storedEntryName = value;
+                this._generalPurposeBitFlag = !isUTF8 ? this._generalPurposeBitFlag & ~ZipArchiveEntry.BitFlagValues.UnicodeFileName : this._generalPurposeBitFlag | ZipArchiveEntry.BitFlagValues.UnicodeFileName;
 
-                if (isUTF8)
+                if (ZipHelper.EndsWithDirChar(value))
                 {
-                    this._generalPurposeBitFlag |= ZipArchiveEntry.BitFlagValues.UnicodeFileName;
+                    this.VersionToExtractAtLeast(ZipVersionNeededValues.ExplicitDirectory);
                 }
-                else
-                {
-                    this._generalPurposeBitFlag &= ~ZipArchiveEntry.BitFlagValues.UnicodeFileName;
-                }
-
-                if (!ZipHelper.EndsWithDirChar(value))
-                {
-                    return;
-                }
-
-                this.VersionToExtractAtLeast(ZipVersionNeededValues.ExplicitDirectory);
             }
         }
 
         /// <summary>
         /// Gets or sets the last time the entry in the zip archive was changed.
         /// </summary>
-        /// <returns>The last time the entry in the zip archive was changed.</returns>
-        /// <exception cref="T:System.NotSupportedException">The attempt to set this property failed, because the zip archive for the entry is in <see cref="ZipArchiveMode.Read" /> mode.</exception>
-        /// <exception cref="T:System.IO.IOException">The archive mode is set to <see cref="ZipArchiveMode.Create"/>.- or -The archive mode is set to <see cref="ZipArchiveMode.Update"/> and the entry has been opened.</exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">An attempt was made to set this property to a value that is either earlier than 1980 January 1 0:00:00 (midnight) or later than 2107 December 31 23:59:58 (one second before midnight).</exception>
         public DateTimeOffset LastWriteTime
         {
             get
@@ -260,6 +217,33 @@ namespace DevLib.Compression
         }
 
         /// <summary>
+        /// Gets the uncompressed size of the entry in the zip archive.
+        /// </summary>
+        public long Length
+        {
+            get
+            {
+                if (this._everOpenedForWrite)
+                {
+                    throw new InvalidOperationException(CompressionConstants.LengthAfterWrite);
+                }
+
+                return this._uncompressedSize;
+            }
+        }
+
+        /// <summary>
+        /// Gets the file name of the entry in the zip archive.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return Path.GetFileName(this.FullName);
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this entry is directory or not.
         /// </summary>
         public bool IsDirectory
@@ -271,34 +255,13 @@ namespace DevLib.Compression
         }
 
         /// <summary>
-        /// Gets the uncompressed size of the entry in the zip archive.
+        /// Gets the attributes.
         /// </summary>
-        /// <returns>The uncompressed size of the entry in the zip archive.</returns>
-        /// <exception cref="T:System.InvalidOperationException">The value of the property is not available because the entry has been modified.</exception>
-        public long Length
+        public FileAttributes Attributes
         {
             get
             {
-                if (this._everOpenedForWrite)
-                {
-                    throw new InvalidOperationException(CompressionConstants.LengthAfterWrite);
-                }
-                else
-                {
-                    return this._uncompressedSize;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the file name of the entry in the zip archive.
-        /// </summary>
-        /// <returns>The file name of the entry in the zip archive.</returns>
-        public string Name
-        {
-            get
-            {
-                return Path.GetFileName(this.FullName);
+                return (FileAttributes)this._externalFileAttributes;
             }
         }
 
@@ -344,14 +307,15 @@ namespace DevLib.Compression
                         {
                             try
                             {
-                                StreamHelper.Copy(stream, (Stream)this._storedUncompressedData);
+                                ZipHelper.CopyStreamTo(stream, this._storedUncompressedData);
                             }
                             catch (InvalidDataException)
                             {
                                 this._storedUncompressedData.Dispose();
-                                this._storedUncompressedData = (MemoryStream)null;
+                                this._storedUncompressedData = null;
                                 this._currentlyOpenForWrite = false;
                                 this._everOpenedForWrite = false;
+
                                 throw;
                             }
                         }
@@ -386,7 +350,7 @@ namespace DevLib.Compression
         /// Deletes the entry from the zip archive.
         /// </summary>
         /// <exception cref="T:System.IO.IOException">The entry is already open for reading or writing.</exception>
-        /// <exception cref="T:System.NotSupportedException">The zip archive for this entry was opened in a mode other than <see cref="ZipArchiveMode.Update" />.</exception>
+        /// <exception cref="T:System.NotSupportedException">The zip archive for this entry was opened in a mode other than <see cref="F:DevLib.Compression.ZipArchiveMode.Update" />.</exception>
         /// <exception cref="T:System.ObjectDisposedException">The zip archive for this entry has been disposed.</exception>
         public void Delete()
         {
@@ -407,7 +371,7 @@ namespace DevLib.Compression
 
             this._archive.ThrowIfDisposed();
             this._archive.RemoveEntry(this);
-            this._archive = (ZipArchive)null;
+            this._archive = null;
             this.UnloadStreams();
         }
 
@@ -415,7 +379,7 @@ namespace DevLib.Compression
         /// Opens the entry from the zip archive.
         /// </summary>
         /// <returns>The stream that represents the contents of the entry.</returns>
-        /// <exception cref="T:System.IO.IOException">The entry is already currently open for writing.-or-The entry has been deleted from the archive.-or-The archive for this entry was opened with the <see cref="ZipArchiveMode.Create"/> mode, and this entry has already been written to.</exception>
+        /// <exception cref="T:System.IO.IOException">The entry is already currently open for writing.-or-The entry has been deleted from the archive.-or-The archive for this entry was opened with the <see cref="F:DevLib.Compression.ZipArchiveMode.Create" /> mode, and this entry has already been written to.</exception>
         /// <exception cref="T:System.IO.InvalidDataException">The entry is either missing from the archive or is corrupt and cannot be read. -or-The entry has been compressed by using a compression method that is not supported.</exception>
         /// <exception cref="T:System.ObjectDisposedException">The zip archive for this entry has been disposed.</exception>
         public Stream Open()
@@ -434,19 +398,10 @@ namespace DevLib.Compression
         }
 
         /// <summary>
-        /// Extracts an entry in the zip archive to a file, and optionally overwrites an existing file that has the same name.
+        /// Extracts an entry in the zip archive to a directory, and optionally overwrites an existing directory attributes that has the same name.
         /// </summary>
         /// <param name="destinationFileName">The path of the file to create from the contents of the entry. You can specify either a relative or an absolute path. A relative path is interpreted as relative to the current working directory.</param>
-        /// <param name="overwrite">true to overwrite an existing file that has the same name as the destination file; otherwise, false.</param>
-        /// <exception cref="T:System.ArgumentException"><paramref name="destinationFileName"/> is a zero-length string, contains only white space, or contains one or more invalid characters as defined by <see cref="F:System.IO.Path.InvalidPathChars"/>.-or-<paramref name="destinationFileName"/> specifies a directory.</exception>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="destinationFileName"/> is null. </exception>
-        /// <exception cref="T:System.IO.PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 248 characters, and file names must not exceed 260 characters. </exception>
-        /// <exception cref="T:System.IO.DirectoryNotFoundException">The specified path is invalid (for example, it is on an unmapped drive). </exception>
-        /// <exception cref="T:System.IO.IOException"><paramref name="destinationFileName"/> already exists and <paramref name="overwrite"/> is false.-or- An I/O error occurred.-or-The entry is currently open for writing.-or-The entry has been deleted from the archive.</exception>
-        /// <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission to create the new file.</exception>
-        /// <exception cref="T:System.IO.InvalidDataException">The entry is missing from the archive or is corrupt and cannot be read.-or-The entry has been compressed by using a compression method that is not supported.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">The zip archive that this entry belongs to has been disposed.</exception>
-        /// <exception cref="T:System.NotSupportedException"><paramref name="destinationFileName"/> is in an invalid format. -or-The zip archive for this entry was opened in <see cref="ZipArchiveMode.Create" /> mode, which does not permit the retrieval of entries.</exception>
+        /// <param name="overwrite">true to overwrite an existing directory attributes that has the same name as the destination directory; otherwise, false.</param>
         public void ExtractToFile(string destinationFileName, bool overwrite)
         {
             if (destinationFileName == null)
@@ -454,19 +409,21 @@ namespace DevLib.Compression
                 throw new ArgumentNullException("destinationFileName");
             }
 
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationFileName));
+
             FileMode mode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
-            using (Stream stream = File.Open(destinationFileName, mode, FileAccess.Write, FileShare.None))
+            using (Stream destination = File.Open(destinationFileName, mode, FileAccess.Write, FileShare.None))
             {
-                using (Stream stream2 = this.Open())
+                using (Stream stream = this.Open())
                 {
-                    StreamHelper.Copy(stream2, stream);
+                    ZipHelper.CopyStreamTo(stream, destination);
                 }
             }
 
             File.SetLastWriteTime(destinationFileName, this.LastWriteTime.DateTime);
 
-            File.SetAttributes(destinationFileName, (FileAttributes)this._externalFileAttributes);
+            File.SetAttributes(destinationFileName, this.Attributes);
         }
 
         /// <summary>
@@ -492,7 +449,7 @@ namespace DevLib.Compression
             {
                 try
                 {
-                    File.SetAttributes(destinationDirectoryName, (FileAttributes)this._externalFileAttributes);
+                    File.SetAttributes(destinationDirectoryName, this.Attributes);
                     Directory.SetLastWriteTime(destinationDirectoryName, this.LastWriteTime.DateTime);
                 }
                 catch
@@ -504,7 +461,7 @@ namespace DevLib.Compression
         /// <summary>
         /// Retrieves the relative path of the entry in the zip archive.
         /// </summary>
-        /// <returns>The relative path of the entry, which is the value stored in the <see cref="ZipArchiveEntry.FullName" /> property.</returns>
+        /// <returns>The relative path of the entry, which is the value stored in the <see cref="P:DevLib.Compression.ZipArchiveEntry.FullName" /> property.</returns>
         public override string ToString()
         {
             return this.FullName;
@@ -524,6 +481,7 @@ namespace DevLib.Compression
             bool flag = false;
             uint num1;
             uint num2;
+
             if (this.SizesTooLarge())
             {
                 flag = true;
@@ -557,13 +515,12 @@ namespace DevLib.Compression
             }
 
             int num4 = (flag ? (int)zip64ExtraField.TotalSize : 0) + (this._cdUnknownExtraFields != null ? ZipGenericExtraField.TotalSize(this._cdUnknownExtraFields) : 0);
-
             ushort num5;
 
             if (num4 > (int)ushort.MaxValue)
             {
                 num5 = flag ? zip64ExtraField.TotalSize : (ushort)0;
-                this._cdUnknownExtraFields = (List<ZipGenericExtraField>)null;
+                this._cdUnknownExtraFields = null;
             }
             else
             {
@@ -584,7 +541,7 @@ namespace DevLib.Compression
             binaryWriter.Write(this._fileComment != null ? (ushort)this._fileComment.Length : (ushort)0);
             binaryWriter.Write((ushort)0);
             binaryWriter.Write((ushort)0);
-            binaryWriter.Write(this._externalFileAttributes);
+            binaryWriter.Write((uint)this._externalFileAttributes);
             binaryWriter.Write(num3);
             binaryWriter.Write(this._storedEntryNameBytes);
 
@@ -634,23 +591,25 @@ namespace DevLib.Compression
 
         private string DecodeEntryName(byte[] entryNameBytes)
         {
-            return ((this._generalPurposeBitFlag & ZipArchiveEntry.BitFlagValues.UnicodeFileName) != (ZipArchiveEntry.BitFlagValues)0 ? Encoding.UTF8 : (this._archive == null ? Encoding.Unicode : this._archive.EntryNameEncoding ?? Encoding.Unicode)).GetString(entryNameBytes);
+            return new string(((this._generalPurposeBitFlag & ZipArchiveEntry.BitFlagValues.UnicodeFileName) != (ZipArchiveEntry.BitFlagValues)0 ? Encoding.UTF8 : (this._archive == null ? Encoding.GetEncoding(0) : this._archive.EntryNameEncoding ?? Encoding.GetEncoding(0))).GetChars(entryNameBytes));
         }
 
         private byte[] EncodeEntryName(string entryName, out bool isUTF8)
         {
-            Encoding encoding = this._archive == null || this._archive.EntryNameEncoding == null ? (ZipHelper.RequiresUnicode(entryName) ? Encoding.UTF8 : Encoding.Unicode) : this._archive.EntryNameEncoding;
-            isUTF8 = encoding is UTF8Encoding && encoding.Equals((object)Encoding.UTF8);
+            Encoding encoding = this._archive == null || this._archive.EntryNameEncoding == null ? (ZipHelper.RequiresUnicode(entryName) ? Encoding.UTF8 : Encoding.GetEncoding(0)) : this._archive.EntryNameEncoding;
+            isUTF8 = encoding is UTF8Encoding && encoding.Equals(Encoding.UTF8);
             return encoding.GetBytes(entryName);
         }
 
         private CheckSumAndSizeWriteStream GetDataCompressor(Stream backingStream, bool leaveBackingStreamOpen, EventHandler onClose)
         {
-            Stream baseStream = (Stream)new DeflateStream(backingStream, CompressionMode.Compress, leaveBackingStreamOpen);
-            bool flag = true;
-            bool leaveOpenOnClose = leaveBackingStreamOpen && !flag;
+            DeflateStream deflateStream = new DeflateStream(backingStream, CompressionMode.Compress, leaveBackingStreamOpen);
+            bool flag1 = true;
+            bool flag2 = leaveBackingStreamOpen && !flag1;
+            Stream baseBaseStream = backingStream;
+            int num = flag2 ? 1 : 0;
 
-            return new CheckSumAndSizeWriteStream(baseStream, backingStream, leaveOpenOnClose, (ActionHelper<long, long, uint>)((initialPosition, currentPosition, checkSum) =>
+            ActionHelper<long, long, uint> saveCrcAndSizes = (ActionHelper<long, long, uint>)((initialPosition, currentPosition, checkSum) =>
             {
                 this._crc32 = checkSum;
                 this._uncompressedSize = currentPosition;
@@ -661,19 +620,21 @@ namespace DevLib.Compression
                     return;
                 }
 
-                onClose((object)this, EventArgs.Empty);
-            }));
+                onClose(this, EventArgs.Empty);
+            });
+
+            return new CheckSumAndSizeWriteStream(deflateStream, baseBaseStream, num != 0, saveCrcAndSizes);
         }
 
         private Stream GetDataDecompressor(Stream compressedStreamToRead)
         {
             Stream stream;
+
             switch (this.CompressionMethod)
             {
                 case ZipArchiveEntry.CompressionMethodValues.Deflate:
-                    stream = (Stream)new DeflateStream(compressedStreamToRead, CompressionMode.Decompress);
+                    stream = new DeflateStream(compressedStreamToRead, CompressionMode.Decompress);
                     break;
-
                 default:
                     stream = compressedStreamToRead;
                     break;
@@ -689,7 +650,7 @@ namespace DevLib.Compression
                 this.ThrowIfNotOpenable(true, false);
             }
 
-            return this.GetDataDecompressor((Stream)new SubReadStream(this._archive.ArchiveStream, this.OffsetOfCompressedData, this._compressedSize));
+            return this.GetDataDecompressor(new SubReadStream(this._archive.ArchiveStream, this.OffsetOfCompressedData, this._compressedSize));
         }
 
         private Stream OpenInWriteMode()
@@ -700,13 +661,14 @@ namespace DevLib.Compression
             }
 
             this._everOpenedForWrite = true;
-            this._outstandingWriteStream = (Stream)new ZipArchiveEntry.DirectToArchiveWriterStream(this.GetDataCompressor(this._archive.ArchiveStream, true, (EventHandler)((o, e) =>
+
+            this._outstandingWriteStream = new ZipArchiveEntry.DirectToArchiveWriterStream(this.GetDataCompressor(this._archive.ArchiveStream, true, (EventHandler)((o, e) =>
             {
                 this._archive.ReleaseArchiveStream(this);
                 this._outstandingWriteStream = (Stream)null;
             })), this);
 
-            return (Stream)new WrappedStream(this._outstandingWriteStream, (EventHandler)((o, e) => this._outstandingWriteStream.Close()));
+            return new WrappedStream(this._outstandingWriteStream, (EventHandler)((o, e) => this._outstandingWriteStream.Close()));
         }
 
         private Stream OpenInUpdateMode()
@@ -721,12 +683,12 @@ namespace DevLib.Compression
             this._currentlyOpenForWrite = true;
             this.UncompressedData.Seek(0L, SeekOrigin.Begin);
 
-            return (Stream)new WrappedStream((Stream)this.UncompressedData, (EventHandler)((o, e) => this._currentlyOpenForWrite = false));
+            return new WrappedStream(this.UncompressedData, (EventHandler)((o, e) => this._currentlyOpenForWrite = false));
         }
 
         private bool IsOpenable(bool needToUncompress, bool needToLoadIntoMemory, out string message)
         {
-            message = (string)null;
+            message = null;
 
             if (this._originallyInArchive)
             {
@@ -735,34 +697,37 @@ namespace DevLib.Compression
                     message = CompressionConstants.UnsupportedCompression;
                     return false;
                 }
-                else if ((long)this._diskNumberStart != (long)this._archive.NumberOfThisDisk)
+
+                if ((long)this._diskNumberStart != (long)this._archive.NumberOfThisDisk)
                 {
                     message = CompressionConstants.SplitSpanned;
                     return false;
                 }
-                else if (this._offsetOfLocalHeader > this._archive.ArchiveStream.Length)
+
+                if (this._offsetOfLocalHeader > this._archive.ArchiveStream.Length)
                 {
                     message = CompressionConstants.LocalFileHeaderCorrupt;
                     return false;
                 }
-                else
+
+                this._archive.ArchiveStream.Seek(this._offsetOfLocalHeader, SeekOrigin.Begin);
+
+                if (!ZipLocalFileHeader.TrySkipBlock(this._archive.ArchiveReader))
                 {
-                    this._archive.ArchiveStream.Seek(this._offsetOfLocalHeader, SeekOrigin.Begin);
-                    if (!ZipLocalFileHeader.TrySkipBlock(this._archive.ArchiveReader))
-                    {
-                        message = CompressionConstants.LocalFileHeaderCorrupt;
-                        return false;
-                    }
-                    else if (this.OffsetOfCompressedData + this._compressedSize > this._archive.ArchiveStream.Length)
-                    {
-                        message = CompressionConstants.LocalFileHeaderCorrupt;
-                        return false;
-                    }
-                    else if (needToLoadIntoMemory && this._compressedSize > (long)int.MaxValue)
-                    {
-                        message = CompressionConstants.EntryTooLarge;
-                        return false;
-                    }
+                    message = CompressionConstants.LocalFileHeaderCorrupt;
+                    return false;
+                }
+
+                if (this.OffsetOfCompressedData + this._compressedSize > this._archive.ArchiveStream.Length)
+                {
+                    message = CompressionConstants.LocalFileHeaderCorrupt;
+                    return false;
+                }
+
+                if (needToLoadIntoMemory && this._compressedSize > (long)int.MaxValue)
+                {
+                    message = CompressionConstants.EntryTooLarge;
+                    return false;
                 }
             }
 
@@ -775,10 +740,8 @@ namespace DevLib.Compression
             {
                 return this._uncompressedSize > (long)uint.MaxValue;
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
 
         private bool WriteLocalFileHeader(bool isEmptyFile)
@@ -797,7 +760,7 @@ namespace DevLib.Compression
             }
             else if (this._archive.Mode == ZipArchiveMode.Create && !this._archive.ArchiveStream.CanSeek && !isEmptyFile)
             {
-                this._generalPurposeBitFlag |= ZipArchiveEntry.BitFlagValues.DataDescriptor;
+                this._generalPurposeBitFlag = this._generalPurposeBitFlag | ZipArchiveEntry.BitFlagValues.DataDescriptor;
                 flag = false;
                 num1 = 0U;
                 num2 = 0U;
@@ -818,14 +781,14 @@ namespace DevLib.Compression
                 num2 = (uint)this._uncompressedSize;
             }
 
-            this._offsetOfLocalHeader = (long)(uint)binaryWriter.BaseStream.Position;
+            this._offsetOfLocalHeader = binaryWriter.BaseStream.Position;
             int num3 = (flag ? (int)zip64ExtraField.TotalSize : 0) + (this._lhUnknownExtraFields != null ? ZipGenericExtraField.TotalSize(this._lhUnknownExtraFields) : 0);
             ushort num4;
 
             if (num3 > (int)ushort.MaxValue)
             {
                 num4 = flag ? zip64ExtraField.TotalSize : (ushort)0;
-                this._lhUnknownExtraFields = (List<ZipGenericExtraField>)null;
+                this._lhUnknownExtraFields = null;
             }
             else
             {
@@ -864,12 +827,13 @@ namespace DevLib.Compression
                 if (this._storedUncompressedData != null)
                 {
                     this._uncompressedSize = this._storedUncompressedData.Length;
-                    using (Stream destination = (Stream)new ZipArchiveEntry.DirectToArchiveWriterStream(this.GetDataCompressor(this._archive.ArchiveStream, true, (EventHandler)null), this))
+
+                    using (Stream destination = new ZipArchiveEntry.DirectToArchiveWriterStream(this.GetDataCompressor(this._archive.ArchiveStream, true, (EventHandler)null), this))
                     {
                         this._storedUncompressedData.Seek(0L, SeekOrigin.Begin);
-                        StreamHelper.Copy(this._storedUncompressedData, destination);
+                        ZipHelper.CopyStreamTo(this._storedUncompressedData, destination);
                         this._storedUncompressedData.Close();
-                        this._storedUncompressedData = (MemoryStream)null;
+                        this._storedUncompressedData = null;
                     }
                 }
                 else
@@ -883,7 +847,7 @@ namespace DevLib.Compression
 
                     using (MemoryStream memoryStream = new MemoryStream(this._compressedBytes))
                     {
-                        StreamHelper.Copy(memoryStream, this._archive.ArchiveStream);
+                        ZipHelper.CopyStreamTo(memoryStream, this._archive.ArchiveStream);
                     }
                 }
             }
@@ -903,25 +867,25 @@ namespace DevLib.Compression
         {
             long position = this._archive.ArchiveStream.Position;
             BinaryWriter binaryWriter = new BinaryWriter(this._archive.ArchiveStream);
-            bool flag1 = this.SizesTooLarge();
-            bool flag2 = flag1 && !zip64HeaderUsed;
-            uint num1 = flag1 ? uint.MaxValue : (uint)this._compressedSize;
-            uint num2 = flag1 ? uint.MaxValue : (uint)this._uncompressedSize;
+            int num1 = this.SizesTooLarge() ? 1 : 0;
+            bool flag = num1 != 0 && !zip64HeaderUsed;
+            uint num2 = num1 != 0 ? uint.MaxValue : (uint)this._compressedSize;
+            uint num3 = num1 != 0 ? uint.MaxValue : (uint)this._uncompressedSize;
 
-            if (flag2)
+            if (flag)
             {
-                this._generalPurposeBitFlag |= ZipArchiveEntry.BitFlagValues.DataDescriptor;
+                this._generalPurposeBitFlag = this._generalPurposeBitFlag | ZipArchiveEntry.BitFlagValues.DataDescriptor;
                 this._archive.ArchiveStream.Seek(this._offsetOfLocalHeader + 6L, SeekOrigin.Begin);
                 binaryWriter.Write((ushort)this._generalPurposeBitFlag);
             }
 
             this._archive.ArchiveStream.Seek(this._offsetOfLocalHeader + 14L, SeekOrigin.Begin);
 
-            if (!flag2)
+            if (!flag)
             {
                 binaryWriter.Write(this._crc32);
-                binaryWriter.Write(num1);
                 binaryWriter.Write(num2);
+                binaryWriter.Write(num3);
             }
             else
             {
@@ -940,19 +904,18 @@ namespace DevLib.Compression
 
             this._archive.ArchiveStream.Seek(position, SeekOrigin.Begin);
 
-            if (!flag2)
+            if (flag)
             {
-                return;
+                binaryWriter.Write(this._crc32);
+                binaryWriter.Write(this._compressedSize);
+                binaryWriter.Write(this._uncompressedSize);
             }
-
-            binaryWriter.Write(this._crc32);
-            binaryWriter.Write(this._compressedSize);
-            binaryWriter.Write(this._uncompressedSize);
         }
 
         private void WriteDataDescriptor()
         {
             BinaryWriter binaryWriter = new BinaryWriter(this._archive.ArchiveStream);
+
             binaryWriter.Write(134695760U);
             binaryWriter.Write(this._crc32);
 
@@ -975,28 +938,24 @@ namespace DevLib.Compression
                 this._storedUncompressedData.Close();
             }
 
-            this._compressedBytes = (byte[])null;
-            this._outstandingWriteStream = (Stream)null;
+            this._compressedBytes = null;
+            this._outstandingWriteStream = null;
         }
 
         private void CloseStreams()
         {
-            if (this._outstandingWriteStream == null)
+            if (this._outstandingWriteStream != null)
             {
-                return;
+                this._outstandingWriteStream.Close();
             }
-
-            this._outstandingWriteStream.Close();
         }
 
         private void VersionToExtractAtLeast(ZipVersionNeededValues value)
         {
-            if (this._versionToExtract >= value)
+            if (this._versionToExtract < value)
             {
-                return;
+                this._versionToExtract = value;
             }
-
-            this._versionToExtract = value;
         }
 
         private void ThrowIfInvalidArchive()
@@ -1011,18 +970,12 @@ namespace DevLib.Compression
 
         private class DirectToArchiveWriterStream : Stream
         {
-            private bool _isDisposed;
-
             private long _position;
-
             private CheckSumAndSizeWriteStream _crcSizeStream;
-
             private bool _everWritten;
-
+            private bool _isDisposed;
             private ZipArchiveEntry _entry;
-
             private bool _usedZip64inLH;
-
             private bool _canWrite;
 
             public DirectToArchiveWriterStream(CheckSumAndSizeWriteStream crcSizeStream, ZipArchiveEntry entry)
@@ -1138,7 +1091,7 @@ namespace DevLib.Compression
                 }
 
                 this._crcSizeStream.Write(buffer, offset, count);
-                this._position += (long)count;
+                this._position = this._position + (long)count;
             }
 
             public override void Flush()

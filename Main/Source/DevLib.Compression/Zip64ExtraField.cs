@@ -11,17 +11,11 @@ namespace DevLib.Compression
     internal struct Zip64ExtraField
     {
         public const int OffsetToFirstField = 4;
-
         private const ushort TagConstant = (ushort)1;
-
         private ushort _size;
-
         private long? _uncompressedSize;
-
         private long? _compressedSize;
-
         private long? _localHeaderOffset;
-
         private int? _startDiskNumber;
 
         public ushort TotalSize
@@ -87,9 +81,11 @@ namespace DevLib.Compression
             using (BinaryReader reader = new BinaryReader(extraFieldStream))
             {
                 ZipGenericExtraField field;
+
                 while (ZipGenericExtraField.TryReadBlock(reader, extraFieldStream.Length, out field))
                 {
                     Zip64ExtraField zip64Block;
+
                     if (Zip64ExtraField.TryGetZip64BlockFromGenericExtraField(field, readUncompressedSize, readCompressedSize, readLocalHeaderOffset, readStartDiskNumber, out zip64Block))
                     {
                         return zip64Block;
@@ -115,11 +111,13 @@ namespace DevLib.Compression
             zip64Block._startDiskNumber = new int?();
             List<ZipGenericExtraField> list = new List<ZipGenericExtraField>();
             bool flag = false;
+
             foreach (ZipGenericExtraField extraField in extraFields)
             {
                 if ((int)extraField.Tag == 1)
                 {
                     list.Add(extraField);
+
                     if (!flag && Zip64ExtraField.TryGetZip64BlockFromGenericExtraField(extraField, readUncompressedSize, readCompressedSize, readLocalHeaderOffset, readStartDiskNumber, out zip64Block))
                     {
                         flag = true;
@@ -138,6 +136,7 @@ namespace DevLib.Compression
         public static void RemoveZip64Blocks(List<ZipGenericExtraField> extraFields)
         {
             List<ZipGenericExtraField> list = new List<ZipGenericExtraField>();
+
             foreach (ZipGenericExtraField genericExtraField in extraFields)
             {
                 if ((int)genericExtraField.Tag == 1)
@@ -155,6 +154,7 @@ namespace DevLib.Compression
         public void WriteBlock(Stream stream)
         {
             BinaryWriter binaryWriter = new BinaryWriter(stream);
+
             binaryWriter.Write((ushort)1);
             binaryWriter.Write(this._size);
 
@@ -173,12 +173,10 @@ namespace DevLib.Compression
                 binaryWriter.Write(this._localHeaderOffset.Value);
             }
 
-            if (!this._startDiskNumber.HasValue)
+            if (this._startDiskNumber.HasValue)
             {
-                return;
+                binaryWriter.Write(this._startDiskNumber.Value);
             }
-
-            binaryWriter.Write(this._startDiskNumber.Value);
         }
 
         private static bool TryGetZip64BlockFromGenericExtraField(ZipGenericExtraField extraField, bool readUncompressedSize, bool readCompressedSize, bool readLocalHeaderOffset, bool readStartDiskNumber, out Zip64ExtraField zip64Block)
@@ -194,37 +192,39 @@ namespace DevLib.Compression
                 return false;
             }
 
-            MemoryStream memoryStream = (MemoryStream)null;
+            MemoryStream memoryStream = null;
+
             try
             {
                 memoryStream = new MemoryStream(extraField.Data);
-                using (BinaryReader binaryReader = new BinaryReader((Stream)memoryStream))
+
+                using (BinaryReader binaryReader = new BinaryReader(memoryStream))
                 {
-                    memoryStream = (MemoryStream)null;
+                    memoryStream = null;
                     zip64Block._size = extraField.Size;
-                    ushort num = (ushort)0;
+                    ushort num1 = (ushort)0;
 
                     if (readUncompressedSize)
                     {
-                        num += (ushort)8;
+                        num1 += (ushort)8;
                     }
 
                     if (readCompressedSize)
                     {
-                        num += (ushort)8;
+                        num1 += (ushort)8;
                     }
 
                     if (readLocalHeaderOffset)
                     {
-                        num += (ushort)8;
+                        num1 += (ushort)8;
                     }
 
                     if (readStartDiskNumber)
                     {
-                        num += (ushort)4;
+                        num1 += (ushort)4;
                     }
 
-                    if ((int)num != (int)zip64Block._size)
+                    if ((int)num1 != (int)zip64Block._size)
                     {
                         return false;
                     }
@@ -250,36 +250,38 @@ namespace DevLib.Compression
                     }
 
                     long? nullable1 = zip64Block._uncompressedSize;
+                    long num2 = 0L;
 
-                    if ((nullable1.GetValueOrDefault() >= 0L ? 0 : (nullable1.HasValue ? 1 : 0)) != 0)
+                    if ((nullable1.GetValueOrDefault() < num2 ? (nullable1.HasValue ? 1 : 0) : 0) != 0)
                     {
                         throw new InvalidDataException(CompressionConstants.FieldTooBigUncompressedSize);
                     }
 
                     long? nullable2 = zip64Block._compressedSize;
+                    long num3 = 0L;
 
-                    if ((nullable2.GetValueOrDefault() >= 0L ? 0 : (nullable2.HasValue ? 1 : 0)) != 0)
+                    if ((nullable2.GetValueOrDefault() < num3 ? (nullable2.HasValue ? 1 : 0) : 0) != 0)
                     {
                         throw new InvalidDataException(CompressionConstants.FieldTooBigCompressedSize);
                     }
 
                     long? nullable3 = zip64Block._localHeaderOffset;
+                    long num4 = 0L;
 
-                    if ((nullable3.GetValueOrDefault() >= 0L ? 0 : (nullable3.HasValue ? 1 : 0)) != 0)
+                    if ((nullable3.GetValueOrDefault() < num4 ? (nullable3.HasValue ? 1 : 0) : 0) != 0)
                     {
                         throw new InvalidDataException(CompressionConstants.FieldTooBigLocalHeaderOffset);
                     }
 
                     int? nullable4 = zip64Block._startDiskNumber;
+                    int num5 = 0;
 
-                    if ((nullable4.GetValueOrDefault() >= 0 ? 0 : (nullable4.HasValue ? 1 : 0)) != 0)
+                    if ((nullable4.GetValueOrDefault() < num5 ? (nullable4.HasValue ? 1 : 0) : 0) != 0)
                     {
                         throw new InvalidDataException(CompressionConstants.FieldTooBigStartDiskNumber);
                     }
-                    else
-                    {
-                        return true;
-                    }
+
+                    return true;
                 }
             }
             finally
@@ -297,25 +299,23 @@ namespace DevLib.Compression
 
             if (this._uncompressedSize.HasValue)
             {
-                this._size += (ushort)8;
+                this._size = (ushort)((uint)this._size + 8U);
             }
 
             if (this._compressedSize.HasValue)
             {
-                this._size += (ushort)8;
+                this._size = (ushort)((uint)this._size + 8U);
             }
 
             if (this._localHeaderOffset.HasValue)
             {
-                this._size += (ushort)8;
+                this._size = (ushort)((uint)this._size + 8U);
             }
 
-            if (!this._startDiskNumber.HasValue)
+            if (this._startDiskNumber.HasValue)
             {
-                return;
+                this._size = (ushort)((uint)this._size + 4U);
             }
-
-            this._size += (ushort)4;
         }
     }
 }

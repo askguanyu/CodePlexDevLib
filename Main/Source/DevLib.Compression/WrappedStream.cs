@@ -11,17 +11,11 @@ namespace DevLib.Compression
     internal class WrappedStream : Stream
     {
         private readonly Stream _baseStream;
-
         private readonly EventHandler _onClosed;
-
         private readonly bool _closeBaseStream;
-
         private bool _canRead;
-
         private bool _canWrite;
-
         private bool _canSeek;
-
         private bool _isDisposed;
 
         internal WrappedStream(Stream baseStream, bool canRead, bool canWrite, bool canSeek, EventHandler onClosed)
@@ -78,10 +72,8 @@ namespace DevLib.Compression
                 {
                     return this._baseStream.CanRead;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
 
@@ -93,10 +85,8 @@ namespace DevLib.Compression
                 {
                     return this._baseStream.CanSeek;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
 
@@ -108,10 +98,8 @@ namespace DevLib.Compression
                 {
                     return this._baseStream.CanWrite;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
 
@@ -157,7 +145,7 @@ namespace DevLib.Compression
             {
                 if (this._onClosed != null)
                 {
-                    this._onClosed((object)this, (EventArgs)null);
+                    this._onClosed(this, EventArgs.Empty);
                 }
 
                 if (this._closeBaseStream)

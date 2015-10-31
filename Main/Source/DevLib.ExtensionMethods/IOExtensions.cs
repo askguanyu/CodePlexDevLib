@@ -30,15 +30,15 @@ namespace DevLib.ExtensionMethods
                 return filename;
             }
 
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+            string filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
             string fileExtension = Path.GetExtension(filename);
             string directoryName = Path.GetDirectoryName(Path.GetFullPath(filename));
 
-            string pattern = "^" + fileNameWithoutExtension + "\\s*(\\d+)?";
+            string pattern = "^" + filenameWithoutExtension + "\\s*(\\d+)?";
             Regex regex = new Regex(pattern);
-            int count = Directory.GetFiles(directoryName, fileNameWithoutExtension + "*" + fileExtension).Where(i => regex.IsMatch(Path.GetFileNameWithoutExtension(i))).Count();
+            int count = Directory.GetFiles(directoryName, filenameWithoutExtension + "*" + fileExtension).Where(i => regex.IsMatch(Path.GetFileNameWithoutExtension(i))).Count();
 
-            return fileNameWithoutExtension + " (" + (count + 1).ToString() + ")" + fileExtension;
+            return filenameWithoutExtension + " (" + (count + 1).ToString() + ")" + fileExtension;
         }
 
         /// <summary>

@@ -6,12 +6,6 @@
 namespace DevLib.Ioc
 {
     /// <summary>
-    /// Delegate of method to create a new instance.
-    /// </summary>
-    /// <returns>Return object of the method.</returns>
-    public delegate object CreationFunc();
-
-    /// <summary>
     /// Represents the registration of a resolution.
     /// </summary>
     public class IocRegistration
@@ -39,7 +33,7 @@ namespace DevLib.Ioc
         /// <summary>
         /// Gets or sets delegate method to create a new instance.
         /// </summary>
-        public CreationFunc Creation
+        public BuilderFunc Builder
         {
             get;
             set;
@@ -48,11 +42,11 @@ namespace DevLib.Ioc
         /// <summary>
         /// Gets a value indicating whether a delegate method of creation a new instance exists.
         /// </summary>
-        public bool HasCreation
+        public bool HasBuilder
         {
             get
             {
-                return this.Creation != null;
+                return this.Builder != null;
             }
         }
     }

@@ -67,10 +67,10 @@
         [TestMethod()]
         public void When_Scenario1()
         {
-            StringBuilder source = StringBuilderCache.Acquire();
-            source.Append("hello");
-            source.Append("string");
-            string actual = StringBuilderCache.GetStringAndRelease(source);
+            StringBuilder SUT = StringBuilderCache.Acquire();
+            SUT.Append("hello");
+            SUT.Append("string");
+            string actual = StringBuilderCache.GetStringAndRelease(SUT);
             string expected = "hellostring";
 
             Assert.AreEqual(expected, actual);
@@ -104,16 +104,16 @@
 
             Benchmark.Run(i =>
             {
-                StringBuilder sb = StringBuilderCache.Acquire();
+                StringBuilder SUT = StringBuilderCache.Acquire();
 
                 for (int j = 0; j < 1; j++)
                 {
-                    sb.Append(DateTime.Now.ToLongDateString());
-                    sb.Append(DateTime.Now.ToLongTimeString());
-                    sb.AppendLine(j.ToString());
+                    SUT.Append(DateTime.Now.ToLongDateString());
+                    SUT.Append(DateTime.Now.ToLongTimeString());
+                    SUT.AppendLine(j.ToString());
                 }
 
-                string result = StringBuilderCache.GetStringAndRelease(sb);
+                string result = StringBuilderCache.GetStringAndRelease(SUT);
             }, "StringBuilderCache", loop);
         }
     }

@@ -9,6 +9,12 @@ namespace DevLib.Ioc
     using System.Collections.Generic;
 
     /// <summary>
+    /// Delegate of method to create a new instance.
+    /// </summary>
+    /// <returns>Return object of the method.</returns>
+    public delegate object BuilderFunc();
+
+    /// <summary>
     /// Inversion of Control container.
     /// </summary>
     public class IocContainer : IDisposable
@@ -126,16 +132,16 @@ namespace DevLib.Ioc
         /// Register a type mapping with the container.
         /// </summary>
         /// <typeparam name="T">Type to register.</typeparam>
-        /// <param name="creation">Delegate method to create a new instance.</param>
+        /// <param name="builder">Delegate method to create a new instance.</param>
         /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
         /// <returns>The current IocContainer instance.</returns>
-        public IocContainer Register<T>(CreationFunc creation, string label = null)
+        public IocContainer Register<T>(BuilderFunc builder, string label = null)
         {
             this.CheckDisposed();
 
-            if (creation == null)
+            if (builder == null)
             {
-                throw new ArgumentNullException("creation");
+                throw new ArgumentNullException("builder");
             }
 
             if (label == null)
@@ -152,13 +158,13 @@ namespace DevLib.Ioc
                     && this._container[instanceType].ContainsKey(label)
                     && this._container[instanceType][label] != null)
                 {
-                    if (this._container[instanceType][label].HasCreation)
+                    if (this._container[instanceType][label].HasBuilder)
                     {
                         throw new InvalidOperationException(string.Format("A definition of type {0} for label {1} already exists. Unregister the definition first.", instanceType.FullName, label));
                     }
                     else
                     {
-                        this._container[instanceType][label].Creation = creation;
+                        this._container[instanceType][label].Builder = builder;
 
                         return this;
                     }
@@ -175,7 +181,7 @@ namespace DevLib.Ioc
                         this._container[instanceType].Add(label, new IocRegistration());
                     }
 
-                    this._container[instanceType][label].Creation = creation;
+                    this._container[instanceType][label].Builder = builder;
 
                     return this;
                 }
@@ -213,9 +219,9 @@ namespace DevLib.Ioc
                 {
                     if (createNew)
                     {
-                        if (this._container[instanceType][label].HasCreation)
+                        if (this._container[instanceType][label].HasBuilder)
                         {
-                            return (T)this._container[instanceType][label].Creation.Invoke();
+                            return (T)this._container[instanceType][label].Builder.Invoke();
                         }
                         else
                         {
@@ -302,7 +308,7 @@ namespace DevLib.Ioc
                 }
                 else
                 {
-                    return createNew ? this._container[instanceType][label].HasCreation : this._container[instanceType][label].HasInstance;
+                    return createNew ? this._container[instanceType][label].HasBuilder : this._container[instanceType][label].HasInstance;
                 }
             }
         }
@@ -343,9 +349,9 @@ namespace DevLib.Ioc
                     {
                         if (createNew)
                         {
-                            if (this._container[instanceType][label].HasCreation)
+                            if (this._container[instanceType][label].HasBuilder)
                             {
-                                instance = (T)this._container[instanceType][label].Creation.Invoke();
+                                instance = (T)this._container[instanceType][label].Builder.Invoke();
 
                                 return true;
                             }
@@ -416,7 +422,7 @@ namespace DevLib.Ioc
                     }
                     else
                     {
-                        this._container[instanceType][label].Creation = null;
+                        this._container[instanceType][label].Builder = null;
                         return true;
                     }
                 }

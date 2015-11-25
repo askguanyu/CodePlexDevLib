@@ -26,6 +26,9 @@ namespace DevLib.Samples
 
         [OperationContract]
         void AddAnimal(Animal value);
+
+        [OperationContract(IsOneWay = true)]
+        void TestOneWay(string a);
     }
 
     [DataContract]

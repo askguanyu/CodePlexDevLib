@@ -1043,12 +1043,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs after receive request.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> ReceivingRequest;
+        public event EventHandler<WcfServiceHostMessageEventArgs> ReceivingRequest;
 
         /// <summary>
         /// Occurs before send reply.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> SendingReply;
+        public event EventHandler<WcfServiceHostMessageEventArgs> SendingReply;
 
         /// <summary>
         /// Gets a value indicating whether service host is opened or not.
@@ -2401,11 +2401,11 @@ namespace DevLib.ServiceModel
                     {
                         if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
                         {
-                            this.RaiseEvent(this.Opening, serviceHost.Description.Name, WcfServiceHostState.Opening, serviceHost.Description.Endpoints);
+                            this.RaiseEvent(this.Opening, serviceHost, WcfServiceHostState.Opening);
 
                             serviceHost.Open();
 
-                            this.RaiseEvent(this.Opened, serviceHost.Description.Name, WcfServiceHostState.Opened, serviceHost.Description.Endpoints);
+                            this.RaiseEvent(this.Opened, serviceHost, WcfServiceHostState.Opened);
 
                             InternalLogger.Log(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Open", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
@@ -2441,7 +2441,7 @@ namespace DevLib.ServiceModel
             {
                 foreach (var serviceHost in this._serviceHostList)
                 {
-                    this.RaiseEvent(this.Closing, serviceHost.Description.Name, WcfServiceHostState.Closing, serviceHost.Description.Endpoints);
+                    this.RaiseEvent(this.Closing, serviceHost, WcfServiceHostState.Closing);
 
                     try
                     {
@@ -2456,7 +2456,7 @@ namespace DevLib.ServiceModel
                         InternalLogger.Log(e);
                     }
 
-                    this.RaiseEvent(this.Closed, serviceHost.Description.Name, WcfServiceHostState.Closed, serviceHost.Description.Endpoints);
+                    this.RaiseEvent(this.Closed, serviceHost, WcfServiceHostState.Closed);
                 }
             }
 
@@ -2476,7 +2476,7 @@ namespace DevLib.ServiceModel
             {
                 foreach (var serviceHost in this._serviceHostList)
                 {
-                    this.RaiseEvent(this.Aborting, serviceHost.Description.Name, WcfServiceHostState.Aborting, serviceHost.Description.Endpoints);
+                    this.RaiseEvent(this.Aborting, serviceHost, WcfServiceHostState.Aborting);
 
                     try
                     {
@@ -2489,7 +2489,7 @@ namespace DevLib.ServiceModel
                         InternalLogger.Log(e);
                     }
 
-                    this.RaiseEvent(this.Aborted, serviceHost.Description.Name, WcfServiceHostState.Aborted, serviceHost.Description.Endpoints);
+                    this.RaiseEvent(this.Aborted, serviceHost, WcfServiceHostState.Aborted);
                 }
             }
 
@@ -2515,11 +2515,11 @@ namespace DevLib.ServiceModel
                     {
                         if (!(serviceHost.State == CommunicationState.Opening || serviceHost.State == CommunicationState.Opened))
                         {
-                            this.RaiseEvent(this.Restarting, serviceHost.Description.Name, WcfServiceHostState.Restarting, serviceHost.Description.Endpoints);
+                            this.RaiseEvent(this.Restarting, serviceHost, WcfServiceHostState.Restarting);
 
                             serviceHost.Open();
 
-                            this.RaiseEvent(this.Restarted, serviceHost.Description.Name, WcfServiceHostState.Restarted, serviceHost.Description.Endpoints);
+                            this.RaiseEvent(this.Restarted, serviceHost, WcfServiceHostState.Restarted);
 
                             InternalLogger.Log(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.Restart", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
@@ -2689,36 +2689,33 @@ namespace DevLib.ServiceModel
         /// Method RaiseEvent.
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="name">String of Wcf Service Name.</param>
+        /// <param name="serviceHost">The service host.</param>
         /// <param name="state">Instance of WcfServiceHostState.</param>
-        /// <param name="endpoints">The endpoints.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string name, WcfServiceHostState state, ServiceEndpointCollection endpoints = null)
+        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, ServiceHostBase serviceHost, WcfServiceHostState state)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, null, null, null, null));
+                temp(this, new WcfServiceHostEventArgs(serviceHost, state));
             }
         }
 
         /// <summary>
         /// Method RaiseEvent.
         /// </summary>
-        /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="name">String of Wcf Service Name.</param>
-        /// <param name="state">Instance of WcfServiceHostState.</param>
-        /// <param name="endpoints">The endpoints.</param>
-        /// <param name="e">The <see cref="WcfServiceHostEventArgs"/> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, string name, WcfServiceHostState state, ServiceEndpointCollection endpoints, WcfServiceHostEventArgs e)
+        /// <param name="eventHandler">The event handler.</param>
+        /// <param name="serviceHost">The service host.</param>
+        /// <param name="e">The <see cref="WcfServiceHostMessageEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfServiceHostMessageEventArgs> eventHandler, ServiceHostBase serviceHost, WcfServiceHostMessageEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfServiceHostMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostEventArgs(name, state, endpoints, e.ChannelMessage, e.Message, e.MessageId, e.IsOneWay));
+                temp(this, new WcfServiceHostMessageEventArgs(e.Message, e.MessageId, e.Endpoint, e.IsOneWay, serviceHost));
             }
         }
 
@@ -2788,8 +2785,8 @@ namespace DevLib.ServiceModel
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
 
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
 
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
@@ -2836,7 +2833,7 @@ namespace DevLib.ServiceModel
 
                             this._serviceHostList.Add(serviceHost);
 
-                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostState.Created, serviceHost.Description.Endpoints);
+                            this.RaiseEvent(this.Created, serviceHost, WcfServiceHostState.Created);
 
                             Debug.WriteLine(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }
@@ -2908,8 +2905,8 @@ namespace DevLib.ServiceModel
                             {
                                 wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
 
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost.Description.Name, e.State, serviceHost.Description.Endpoints, e);
+                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
+                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
 
                                 serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
@@ -3003,7 +3000,7 @@ namespace DevLib.ServiceModel
 
                             this._serviceHostList.Add(serviceHost);
 
-                            this.RaiseEvent(this.Created, this._assemblyFile ?? this._serviceType.Name, WcfServiceHostState.Created, serviceHost.Description.Endpoints);
+                            this.RaiseEvent(this.Created, serviceHost, WcfServiceHostState.Created);
 
                             InternalLogger.Log(string.Format(WcfServiceHostConstants.WcfServiceHostSucceededStringFormat, "DevLib.ServiceModel.WcfServiceHost.InitWcfServiceHostProxy", serviceHost.Description.ServiceType.FullName, serviceHost.BaseAddresses.Count > 0 ? serviceHost.BaseAddresses[0].AbsoluteUri : string.Empty));
                         }

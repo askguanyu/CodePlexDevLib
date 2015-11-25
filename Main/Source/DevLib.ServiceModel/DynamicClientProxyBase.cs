@@ -129,12 +129,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs before send request.
         /// </summary>
-        public event EventHandler<WcfClientBaseEventArgs> SendingRequest;
+        public event EventHandler<WcfClientMessageEventArgs> SendingRequest;
 
         /// <summary>
         /// Occurs after receive reply.
         /// </summary>
-        public event EventHandler<WcfClientBaseEventArgs> ReceivingReply;
+        public event EventHandler<WcfClientMessageEventArgs> ReceivingReply;
 
         /// <summary>
         /// Gets the type of current service client proxy.
@@ -676,49 +676,10 @@ namespace DevLib.ServiceModel
             {
                 wcfClientBaseEndpointBehavior = new WcfClientBaseEndpointBehavior();
 
-                wcfClientBaseEndpointBehavior.SendingRequest += (s, e) =>
-                {
-                    string username = null;
-                    string password = null;
+                ClientCredentials clientCredentials = (ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName);
 
-                    try
-                    {
-                        ClientCredentials clientCredentials = (ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName);
-
-                        if (clientCredentials != null && clientCredentials.UserName != null)
-                        {
-                            username = clientCredentials.UserName.UserName;
-                            password = clientCredentials.UserName.Password;
-                        }
-                    }
-                    catch
-                    {
-                    }
-
-                    this.RaiseEvent(this.SendingRequest, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
-                };
-
-                wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) =>
-                {
-                    string username = null;
-                    string password = null;
-
-                    try
-                    {
-                        ClientCredentials clientCredentials = (ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName);
-
-                        if (clientCredentials != null && clientCredentials.UserName != null)
-                        {
-                            username = clientCredentials.UserName.UserName;
-                            password = clientCredentials.UserName.Password;
-                        }
-                    }
-                    catch
-                    {
-                    }
-
-                    this.RaiseEvent(this.ReceivingReply, endpoint.Name, endpoint.Address, endpoint.ListenUri, e, username, password);
-                };
+                wcfClientBaseEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientCredentials, e);
+                wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientCredentials, e);
 
                 endpoint.Behaviors.Add(wcfClientBaseEndpointBehavior);
             }
@@ -821,20 +782,17 @@ namespace DevLib.ServiceModel
         /// Raises the event.
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="address">The address.</param>
-        /// <param name="listenUri">The listen URI.</param>
-        /// <param name="e">The <see cref="WcfClientBaseEventArgs" /> instance containing the event data.</param>
-        /// <param name="username">The user name.</param>
-        /// <param name="password">The password.</param>
-        private void RaiseEvent(EventHandler<WcfClientBaseEventArgs> eventHandler, string name, EndpointAddress address, Uri listenUri, WcfClientBaseEventArgs e, string username, string password)
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="credentials">The credentials.</param>
+        /// <param name="e">The <see cref="WcfClientMessageEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials credentials, WcfClientMessageEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfClientBaseEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfClientMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfClientBaseEventArgs(name, address, listenUri, e.ChannelMessage, e.Message, e.MessageId, e.IsOneWay, username, password));
+                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, endpoint, e.IsOneWay, credentials));
             }
         }
 

@@ -53,5 +53,12 @@
         {
             return _echo;
         }
+
+        public void TestOneWay(string a)
+        {
+            Console.WriteLine("one way call: " + a);
+
+            //throw new NotSupportedException();
+        }
     }
 }

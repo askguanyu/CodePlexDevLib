@@ -20,12 +20,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs before send request.
         /// </summary>
-        public event EventHandler<WcfClientBaseEventArgs> SendingRequest;
+        public event EventHandler<WcfClientMessageEventArgs> SendingRequest;
 
         /// <summary>
         /// Occurs after receive reply.
         /// </summary>
-        public event EventHandler<WcfClientBaseEventArgs> ReceivingReply;
+        public event EventHandler<WcfClientMessageEventArgs> ReceivingReply;
 
         /// <summary>
         /// Implement to pass data at runtime to bindings to support custom behavior.
@@ -45,8 +45,8 @@ namespace DevLib.ServiceModel
         {
             WcfClientBaseClientMessageInspector inspector = new WcfClientBaseClientMessageInspector(endpoint);
 
-            inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, e);
-            inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, e);
+            inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, e);
+            inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, e);
 
             clientRuntime.MessageInspectors.Add(inspector);
         }
@@ -72,15 +72,16 @@ namespace DevLib.ServiceModel
         /// Method RaiseEvent.
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="e">The <see cref="WcfClientBaseEventArgs"/> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfClientBaseEventArgs> eventHandler, WcfClientBaseEventArgs e)
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="e">The <see cref="WcfClientMessageEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, WcfClientMessageEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfClientBaseEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfClientMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(null, e);
+                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, endpoint, e.IsOneWay, null));
             }
         }
     }

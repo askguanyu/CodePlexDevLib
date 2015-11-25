@@ -6,8 +6,7 @@
 namespace DevLib.ServiceModel
 {
     using System;
-    using System.ServiceModel.Channels;
-    using System.ServiceModel.Description;
+    using System.ServiceModel;
 
     /// <summary>
     /// WcfServiceHost EventArgs.
@@ -18,37 +17,18 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHostEventArgs" /> class.
         /// </summary>
-        /// <param name="name">String of Wcf Service Name.</param>
-        /// <param name="state">Instance of WcfServiceHostStateEnum.</param>
-        /// <param name="endpoints">The endpoints.</param>
-        /// <param name="channelMessage">The unit of communication between endpoints in a distributed environment.</param>
-        /// <param name="message">The Wcf service message.</param>
-        /// <param name="messageId">The message identifier.</param>
-        /// <param name="isOneWay">Whether the message is one way.</param>
-        public WcfServiceHostEventArgs(string name, WcfServiceHostState state, ServiceEndpointCollection endpoints, Message channelMessage, string message, Guid? messageId, bool? isOneWay)
+        /// <param name="serviceHost">The service host.</param>
+        /// <param name="state">The state of WcfServiceHost.</param>
+        public WcfServiceHostEventArgs(ServiceHostBase serviceHost, WcfServiceHostState state)
         {
-            this.Name = name;
-            this.Endpoints = endpoints;
+            this.ServiceHost = serviceHost;
             this.State = state;
-            this.ChannelMessage = channelMessage;
-            this.Message = message;
-            this.MessageId = messageId ?? Guid.Empty;
-            this.IsOneWay = isOneWay;
         }
 
         /// <summary>
-        /// Gets Wcf service name.
+        /// Gets the service host.
         /// </summary>
-        public string Name
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the collection of endpoints from the service description.
-        /// </summary>
-        public ServiceEndpointCollection Endpoints
+        public ServiceHostBase ServiceHost
         {
             get;
             private set;
@@ -58,42 +38,6 @@ namespace DevLib.ServiceModel
         /// Gets Wcf service state.
         /// </summary>
         public WcfServiceHostState State
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the unit of communication between endpoints in a distributed environment.
-        /// </summary>
-        public Message ChannelMessage
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets Wcf service message.
-        /// </summary>
-        public string Message
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the message identifier.
-        /// </summary>
-        public Guid MessageId
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether the message is one way.
-        /// </summary>
-        public bool? IsOneWay
         {
             get;
             private set;

@@ -21,6 +21,12 @@ namespace DevLib.ServiceModel
     public class WcfClientBaseClientMessageInspector : IClientMessageInspector
     {
         /// <summary>
+        /// Field _serviceEndpoint.
+        /// </summary>
+        [NonSerialized]
+        private readonly ServiceEndpoint _serviceEndpoint;
+
+        /// <summary>
         /// Field _oneWayActions.
         /// </summary>
         private readonly HashSet<string> _oneWayActions;
@@ -32,9 +38,11 @@ namespace DevLib.ServiceModel
         /// <param name="serviceEndpoint">The service endpoint.</param>
         public WcfClientBaseClientMessageInspector(ServiceEndpoint serviceEndpoint)
         {
+            this._serviceEndpoint = serviceEndpoint;
+
             this._oneWayActions = new HashSet<string>();
 
-            foreach (var operation in serviceEndpoint.Contract.Operations)
+            foreach (var operation in this._serviceEndpoint.Contract.Operations)
             {
                 if (operation.IsOneWay)
                 {
@@ -46,12 +54,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs before send request.
         /// </summary>
-        public event EventHandler<WcfClientBaseEventArgs> SendingRequest;
+        public event EventHandler<WcfClientMessageEventArgs> SendingRequest;
 
         /// <summary>
         /// Occurs after receive reply.
         /// </summary>
-        public event EventHandler<WcfClientBaseEventArgs> ReceivingReply;
+        public event EventHandler<WcfClientMessageEventArgs> ReceivingReply;
 
         /// <summary>
         /// Enables inspection or modification of a message after a reply message is received but prior to passing it back to the client application.
@@ -70,21 +78,14 @@ namespace DevLib.ServiceModel
             {
             }
 
-            string message = null;
+            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.AfterReceiveReply: " + messageId.ToString());
 
             if (reply != null)
             {
-                message = reply.ToString();
-            }
-            else
-            {
-                message = string.Empty;
+                Debug.WriteLine(reply.ToString());
             }
 
-            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.AfterReceiveReply: " + messageId.ToString());
-            Debug.WriteLine(message);
-
-            this.RaiseEvent(this.ReceivingReply, reply, message, messageId, false);
+            this.RaiseEvent(this.ReceivingReply, reply, messageId, false);
         }
 
         /// <summary>
@@ -97,31 +98,23 @@ namespace DevLib.ServiceModel
         {
             Guid messageId = Guid.NewGuid();
 
-            string message = null;
-
             bool isOneWay = false;
+
+            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.BeforeSendRequest: " + messageId.ToString());
 
             if (request != null)
             {
-                message = request.ToString();
-
                 isOneWay = this._oneWayActions.Contains(request.Headers.Action);
-            }
-            else
-            {
-                message = string.Empty;
+                Debug.WriteLine(request.ToString());
             }
 
-            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.BeforeSendRequest: " + messageId.ToString());
-            Debug.WriteLine(message);
-
-            this.RaiseEvent(this.SendingRequest, request, message, messageId, isOneWay);
+            this.RaiseEvent(this.SendingRequest, request, messageId, isOneWay);
 
             if (isOneWay)
             {
-                Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.BeforeSendRequest(simulate reply for OneWay): " + messageId.ToString());
+                Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.AfterReceiveReply(simulate reply for OneWay): " + messageId.ToString());
 
-                this.RaiseEvent(this.ReceivingReply, request, message, messageId, isOneWay);
+                this.RaiseEvent(this.ReceivingReply, request, messageId, isOneWay);
             }
 
             return messageId;
@@ -131,18 +124,17 @@ namespace DevLib.ServiceModel
         /// Method RaiseEvent.
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="channelMessage">The channel message.</param>
         /// <param name="message">The message.</param>
         /// <param name="messageId">The message identifier.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
-        private void RaiseEvent(EventHandler<WcfClientBaseEventArgs> eventHandler, Message channelMessage, string message, Guid messageId, bool isOneWay)
+        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, Message message, Guid messageId, bool isOneWay)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfClientBaseEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfClientMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(null, new WcfClientBaseEventArgs(null, null, null, channelMessage, message, messageId, isOneWay, null, null));
+                temp(this, new WcfClientMessageEventArgs(message, messageId, this._serviceEndpoint, isOneWay, null));
             }
         }
     }

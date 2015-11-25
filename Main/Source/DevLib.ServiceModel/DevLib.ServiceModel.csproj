@@ -71,7 +71,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WcfClientBaseClientMessageInspector.cs" />
     <Compile Include="WcfClientBaseEndpointBehavior.cs" />
-    <Compile Include="WcfClientBaseEventArgs.cs" />
+    <Compile Include="WcfClientMessageEventArgs.cs" />
+    <Compile Include="WcfMessageBaseEventArgs.cs" />
     <Compile Include="WcfClientProxyExtensions.cs" />
     <Compile Include="WcfClientPerCallBaseClassBuilder.cs" />
     <Compile Include="WcfClientChannelFactory.cs" />
@@ -93,8 +94,10 @@
     <Compile Include="WcfServiceHostDispatchMessageInspector.cs" />
     <Compile Include="WcfServiceHostInfo.cs" />
     <Compile Include="WcfServiceHostEventArgs.cs" />
+    <Compile Include="WcfServiceHostMessageEventArgs.cs" />
     <Compile Include="WcfServiceHostProxy.cs" />
     <Compile Include="WcfServiceHostServiceBehavior.cs" />
+    <Compile Include="WcfServiceHostState.cs" />
     <Compile Include="WcfServiceType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

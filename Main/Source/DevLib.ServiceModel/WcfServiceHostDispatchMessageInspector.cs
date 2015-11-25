@@ -21,19 +21,36 @@ namespace DevLib.ServiceModel
     public class WcfServiceHostDispatchMessageInspector : IDispatchMessageInspector
     {
         /// <summary>
+        /// Field _serviceEndpoint.
+        /// </summary>
+        [NonSerialized]
+        private readonly ServiceEndpoint _serviceEndpoint;
+
+        /// <summary>
+        /// Field _serviceEndpoint.
+        /// </summary>
+        [NonSerialized]
+        private readonly ServiceHostBase _serviceHost;
+
+        /// <summary>
         /// Field _oneWayActions.
         /// </summary>
         private readonly HashSet<string> _oneWayActions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfServiceHostDispatchMessageInspector"/> class.
+        /// Initializes a new instance of the <see cref="WcfServiceHostDispatchMessageInspector" /> class.
         /// </summary>
         /// <param name="serviceEndpoint">The service endpoint.</param>
-        public WcfServiceHostDispatchMessageInspector(ServiceEndpoint serviceEndpoint)
+        /// <param name="serviceHost">The service host.</param>
+        public WcfServiceHostDispatchMessageInspector(ServiceEndpoint serviceEndpoint, ServiceHostBase serviceHost)
         {
+            this._serviceEndpoint = serviceEndpoint;
+
+            this._serviceHost = serviceHost;
+
             this._oneWayActions = new HashSet<string>();
 
-            foreach (var operation in serviceEndpoint.Contract.Operations)
+            foreach (var operation in this._serviceEndpoint.Contract.Operations)
             {
                 if (operation.IsOneWay)
                 {
@@ -45,12 +62,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs after receive request.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> ReceivingRequest;
+        public event EventHandler<WcfServiceHostMessageEventArgs> ReceivingRequest;
 
         /// <summary>
         /// Occurs before send reply.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> SendingReply;
+        public event EventHandler<WcfServiceHostMessageEventArgs> SendingReply;
 
         /// <summary>
         /// Called after an inbound message has been received but before the message is dispatched to the intended operation.
@@ -63,27 +80,19 @@ namespace DevLib.ServiceModel
         {
             Guid messageId = Guid.NewGuid();
 
-            string message = null;
-
             bool isOneWay = false;
+
+            Debug.WriteLine("DevLib.ServiceModel.WcfServiceHostDispatchMessageInspector.AfterReceiveRequest: " + messageId.ToString());
 
             if (request != null)
             {
-                message = request.ToString();
-
                 isOneWay = this._oneWayActions.Contains(request.Headers.Action);
-            }
-            else
-            {
-                message = string.Empty;
+                Debug.WriteLine(request.ToString());
             }
 
-            Debug.WriteLine("DevLib.ServiceModel.WcfServiceHostDispatchMessageInspector.AfterReceiveRequest: " + messageId.ToString());
-            Debug.WriteLine(message);
+            this.RaiseEvent(this.ReceivingRequest, request, messageId, isOneWay);
 
-            this.RaiseEvent(this.ReceivingRequest, WcfServiceHostState.Receiving, request, message, messageId, isOneWay);
-
-            return messageId;
+            return new CorrelationState(messageId, isOneWay);
         }
 
         /// <summary>
@@ -93,59 +102,82 @@ namespace DevLib.ServiceModel
         /// <param name="correlationState">State of the correlation.</param>
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
+            CorrelationState state = correlationState as CorrelationState;
+
             Guid messageId = Guid.Empty;
 
-            try
+            bool isOneWay = false;
+
+            if (state != null)
             {
-                messageId = (Guid)correlationState;
-            }
-            catch
-            {
-            }
-
-            string message = null;
-
-            bool? isOneWay = false;
-
-            if (reply != null)
-            {
-                message = reply.ToString();
-
-                if (reply.IsFault)
-                {
-                    isOneWay = null;
-                }
-            }
-            else
-            {
-                message = string.Empty;
-
-                isOneWay = true;
+                messageId = state.MessageId;
+                isOneWay = state.IsOneWay;
             }
 
             Debug.WriteLine("DevLib.ServiceModel.WcfServiceHostDispatchMessageInspector.BeforeSendReply: " + messageId.ToString());
-            Debug.WriteLine(message);
 
-            this.RaiseEvent(this.SendingReply, WcfServiceHostState.Replying, reply, message, messageId, isOneWay);
+            if (reply != null)
+            {
+                Debug.WriteLine(reply.ToString());
+            }
+            else
+            {
+                isOneWay = true;
+            }
+
+            this.RaiseEvent(this.SendingReply, reply, messageId, isOneWay);
         }
 
         /// <summary>
         /// Method RaiseEvent.
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="state">The state.</param>
-        /// <param name="channelMessage">The channel message.</param>
         /// <param name="message">The message.</param>
         /// <param name="messageId">The message identifier.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, WcfServiceHostState state, Message channelMessage, string message, Guid messageId, bool? isOneWay)
+        private void RaiseEvent(EventHandler<WcfServiceHostMessageEventArgs> eventHandler, Message message, Guid messageId, bool isOneWay)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfServiceHostMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(null, new WcfServiceHostEventArgs(null, state, null, channelMessage, message, messageId, isOneWay));
+                temp(this, new WcfServiceHostMessageEventArgs(message, messageId, this._serviceEndpoint, isOneWay, this._serviceHost));
+            }
+        }
+
+        /// <summary>
+        /// State of the correlation.
+        /// </summary>
+        private class CorrelationState
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="CorrelationState"/> class.
+            /// </summary>
+            /// <param name="messageId">The message identifier.</param>
+            /// <param name="isOneWay">Whether the message is one way.</param>
+            public CorrelationState(Guid messageId, bool isOneWay)
+            {
+                this.MessageId = messageId;
+                this.IsOneWay = isOneWay;
+            }
+
+            /// <summary>
+            /// Gets the message identifier.
+            /// </summary>
+            public Guid MessageId
+            {
+                get;
+                private set;
+            }
+
+            /// <summary>
+            /// Gets a value indicating whether the message is one way.
+            /// </summary>
+            public bool IsOneWay
+            {
+                get;
+                private set;
             }
         }
     }

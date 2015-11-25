@@ -22,12 +22,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs after receive request.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> ReceivingRequest;
+        public event EventHandler<WcfServiceHostMessageEventArgs> ReceivingRequest;
 
         /// <summary>
         /// Occurs before send reply.
         /// </summary>
-        public event EventHandler<WcfServiceHostEventArgs> SendingReply;
+        public event EventHandler<WcfServiceHostMessageEventArgs> SendingReply;
 
         /// <summary>
         /// Provides the ability to pass custom data to binding elements to support the contract implementation.
@@ -55,10 +55,10 @@ namespace DevLib.ServiceModel
                     {
                         ServiceEndpoint serviceEndpoint = serviceDescription.Endpoints.Find(endpointDispatcher.EndpointAddress.Uri);
 
-                        WcfServiceHostDispatchMessageInspector inspector = new WcfServiceHostDispatchMessageInspector(serviceEndpoint);
+                        WcfServiceHostDispatchMessageInspector inspector = new WcfServiceHostDispatchMessageInspector(serviceEndpoint, serviceHostBase);
 
-                        inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, e);
-                        inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, e);
+                        inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceEndpoint, serviceHostBase, e);
+                        inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceEndpoint, serviceHostBase, e);
 
                         endpointDispatcher.DispatchRuntime.MessageInspectors.Add(inspector);
                     }
@@ -78,16 +78,18 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Method RaiseEvent.
         /// </summary>
-        /// <param name="eventHandler">Instance of EventHandler.</param>
-        /// <param name="e">The <see cref="WcfServiceHostEventArgs"/> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, WcfServiceHostEventArgs e)
+        /// <param name="eventHandler">The event handler.</param>
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="serviceHost">The service host.</param>
+        /// <param name="e">The <see cref="WcfServiceHostMessageEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfServiceHostMessageEventArgs> eventHandler, ServiceEndpoint endpoint, ServiceHostBase serviceHost, WcfServiceHostMessageEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfServiceHostMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(null, e);
+                temp(this, new WcfServiceHostMessageEventArgs(e.Message, e.MessageId, endpoint, e.IsOneWay, serviceHost));
             }
         }
     }

@@ -16,23 +16,23 @@ namespace DevLib.ServiceModel
     public class WcfClientMessageEventArgs : WcfMessageBaseEventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfClientMessageEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="WcfClientMessageEventArgs" /> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="messageId">The message identifier.</param>
-        /// <param name="endpoint">The endpoint.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
-        /// <param name="credentials">The client credentials.</param>
-        public WcfClientMessageEventArgs(Message message, Guid messageId, ServiceEndpoint endpoint, bool isOneWay, ClientCredentials credentials)
-            : base(message, messageId, endpoint, isOneWay)
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="clientBase">The client base.</param>
+        public WcfClientMessageEventArgs(Message message, Guid messageId, bool isOneWay, ServiceEndpoint endpoint, ClientBase clientBase)
+            : base(message, messageId, isOneWay, endpoint)
         {
-            this.Credentials = credentials;
+            this.Client = clientBase;
         }
 
         /// <summary>
         /// Gets the client credentials used to call an operation.
         /// </summary>
-        public ClientCredentials Credentials
+        public ClientBase Client
         {
             get;
             private set;

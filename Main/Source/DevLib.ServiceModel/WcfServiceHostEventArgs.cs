@@ -17,11 +17,11 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfServiceHostEventArgs" /> class.
         /// </summary>
-        /// <param name="serviceHost">The service host.</param>
+        /// <param name="serviceHostBase">The service host.</param>
         /// <param name="state">The state of WcfServiceHost.</param>
-        public WcfServiceHostEventArgs(ServiceHostBase serviceHost, WcfServiceHostState state)
+        public WcfServiceHostEventArgs(ServiceHostBase serviceHostBase, WcfServiceHostState state)
         {
-            this.ServiceHost = serviceHost;
+            this.ServiceHost = serviceHostBase;
             this.State = state;
         }
 

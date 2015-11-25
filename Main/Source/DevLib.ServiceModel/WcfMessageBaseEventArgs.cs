@@ -20,9 +20,9 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="message">The message of the service endpoint.</param>
         /// <param name="messageId">The message identifier.</param>
-        /// <param name="endpoint">The endpoint.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
-        public WcfMessageBaseEventArgs(Message message, Guid messageId, ServiceEndpoint endpoint, bool isOneWay)
+        /// <param name="endpoint">The endpoint.</param>
+        public WcfMessageBaseEventArgs(Message message, Guid messageId, bool isOneWay, ServiceEndpoint endpoint)
         {
             this.Message = message;
             this.MessageId = messageId;
@@ -49,18 +49,18 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets the target endpoint for the service to which the WCF client can connect.
+        /// Gets a value indicating whether the message is one way.
         /// </summary>
-        public ServiceEndpoint Endpoint
+        public bool IsOneWay
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Gets a value indicating whether the message is one way.
+        /// Gets the target endpoint for the service to which the WCF client can connect.
         /// </summary>
-        public bool IsOneWay
+        public ServiceEndpoint Endpoint
         {
             get;
             private set;

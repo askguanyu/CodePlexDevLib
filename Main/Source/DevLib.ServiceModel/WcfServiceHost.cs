@@ -2715,7 +2715,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostMessageEventArgs(e.Message, e.MessageId, e.Endpoint, e.IsOneWay, serviceHost));
+                temp(this, new WcfServiceHostMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, e.Endpoint, serviceHost));
             }
         }
 
@@ -2779,18 +2779,6 @@ namespace DevLib.ServiceModel
                                 this.SetServiceCredentialsAction(serviceHost.Credentials);
                             }
 
-                            WcfServiceHostServiceBehavior wcfServiceHostServiceBehavior = serviceHost.Description.Behaviors.Find<WcfServiceHostServiceBehavior>();
-
-                            if (wcfServiceHostServiceBehavior == null)
-                            {
-                                wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
-
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
-
-                                serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
-                            }
-
                             foreach (var endpoint in serviceHost.Description.Endpoints)
                             {
                                 if (this.SetDataContractResolverAction != null)
@@ -2828,6 +2816,18 @@ namespace DevLib.ServiceModel
                                     {
                                         this.SetWebHttpBehaviorAction(webHttpBehavior);
                                     }
+                                }
+
+                                WcfMessageInspectorEndpointBehavior wcfMessageInspectorEndpointBehavior = endpoint.Behaviors.Find<WcfMessageInspectorEndpointBehavior>();
+
+                                if (wcfMessageInspectorEndpointBehavior == null)
+                                {
+                                    wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior();
+
+                                    wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
+
+                                    endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
                                 }
                             }
 
@@ -2897,18 +2897,6 @@ namespace DevLib.ServiceModel
                             if (this.SetServiceCredentialsAction != null)
                             {
                                 this.SetServiceCredentialsAction(serviceHost.Credentials);
-                            }
-
-                            WcfServiceHostServiceBehavior wcfServiceHostServiceBehavior = serviceHost.Description.Behaviors.Find<WcfServiceHostServiceBehavior>();
-
-                            if (wcfServiceHostServiceBehavior == null)
-                            {
-                                wcfServiceHostServiceBehavior = new WcfServiceHostServiceBehavior();
-
-                                wcfServiceHostServiceBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
-                                wcfServiceHostServiceBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
-
-                                serviceHost.Description.Behaviors.Add(wcfServiceHostServiceBehavior);
                             }
 
                             ServiceDebugBehavior serviceDebugBehavior = serviceHost.Description.Behaviors.Find<ServiceDebugBehavior>();
@@ -2995,6 +2983,18 @@ namespace DevLib.ServiceModel
                                     {
                                         this.SetWebHttpBehaviorAction(webHttpBehavior);
                                     }
+                                }
+
+                                WcfMessageInspectorEndpointBehavior wcfMessageInspectorEndpointBehavior = endpoint.Behaviors.Find<WcfMessageInspectorEndpointBehavior>();
+
+                                if (wcfMessageInspectorEndpointBehavior == null)
+                                {
+                                    wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior();
+
+                                    wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
+
+                                    endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
                                 }
                             }
 

@@ -521,16 +521,18 @@ namespace DevLib.ServiceModel
                 this.SetBindingAction(endpoint.Binding);
             }
 
-            WcfClientBaseEndpointBehavior wcfClientBaseEndpointBehavior = endpoint.Behaviors.Find<WcfClientBaseEndpointBehavior>();
+            WcfMessageInspectorEndpointBehavior wcfMessageInspectorEndpointBehavior = endpoint.Behaviors.Find<WcfMessageInspectorEndpointBehavior>();
 
-            if (wcfClientBaseEndpointBehavior == null)
+            if (wcfMessageInspectorEndpointBehavior == null)
             {
-                wcfClientBaseEndpointBehavior = new WcfClientBaseEndpointBehavior();
+                ClientBase client = new ClientBase(clientBase.ClientCredentials, clientBase.Endpoint, clientBase.InnerChannel, clientBase.State);
 
-                wcfClientBaseEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientBase.ClientCredentials, e);
-                wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientBase.ClientCredentials, e);
+                wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior();
 
-                endpoint.Behaviors.Add(wcfClientBaseEndpointBehavior);
+                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, client, e);
+                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, client, e);
+
+                endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
             }
 
             foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
@@ -614,16 +616,16 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
         /// <param name="endpoint">The endpoint.</param>
-        /// <param name="credentials">The credentials.</param>
+        /// <param name="clientBase">The client base.</param>
         /// <param name="e">The <see cref="WcfClientMessageEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials credentials, WcfClientMessageEventArgs e)
+        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, ClientBase clientBase, WcfClientMessageEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfClientMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, endpoint, e.IsOneWay, credentials));
+                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, clientBase));
             }
         }
 

@@ -27,26 +27,51 @@ namespace DevLib.ServiceModel
         private readonly ServiceEndpoint _serviceEndpoint;
 
         /// <summary>
+        /// Field _clientBase.
+        /// </summary>
+        private readonly ClientBase _clientBase;
+
+        /// <summary>
         /// Field _oneWayActions.
         /// </summary>
         private readonly HashSet<string> _oneWayActions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfClientBaseClientMessageInspector"/> class.
+        /// </summary>
+        public WcfClientBaseClientMessageInspector()
+            : this(null, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfClientBaseClientMessageInspector" /> class.
         /// This new instance will simulate ReceivingReply event for OneWay action.
         /// </summary>
         /// <param name="serviceEndpoint">The service endpoint.</param>
-        public WcfClientBaseClientMessageInspector(ServiceEndpoint serviceEndpoint)
+        /// <param name="clientBase">The client base.</param>
+        public WcfClientBaseClientMessageInspector(ServiceEndpoint serviceEndpoint, ClientBase clientBase)
         {
             this._serviceEndpoint = serviceEndpoint;
+            this._clientBase = clientBase;
 
-            this._oneWayActions = new HashSet<string>();
-
-            foreach (var operation in this._serviceEndpoint.Contract.Operations)
+            if (this._serviceEndpoint != null)
             {
-                if (operation.IsOneWay)
+                this._oneWayActions = new HashSet<string>();
+
+                try
                 {
-                    this._oneWayActions.Add(operation.Messages[0].Action);
+                    foreach (var operation in this._serviceEndpoint.Contract.Operations)
+                    {
+                        if (operation.IsOneWay)
+                        {
+                            this._oneWayActions.Add(operation.Messages[0].Action);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
                 }
             }
         }
@@ -104,7 +129,11 @@ namespace DevLib.ServiceModel
 
             if (request != null)
             {
-                isOneWay = this._oneWayActions.Contains(request.Headers.Action);
+                if (this._oneWayActions != null)
+                {
+                    isOneWay = this._oneWayActions.Contains(request.Headers.Action);
+                }
+
                 Debug.WriteLine(request.ToString());
             }
 
@@ -134,7 +163,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfClientMessageEventArgs(message, messageId, this._serviceEndpoint, isOneWay, null));
+                temp(this, new WcfClientMessageEventArgs(message, messageId, isOneWay, this._serviceEndpoint, this._clientBase));
             }
         }
     }

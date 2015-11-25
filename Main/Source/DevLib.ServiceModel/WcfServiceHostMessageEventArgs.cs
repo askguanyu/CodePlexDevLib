@@ -21,13 +21,13 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="messageId">The message identifier.</param>
-        /// <param name="endpoint">The endpoint.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
-        /// <param name="serviceHost">The service host.</param>
-        public WcfServiceHostMessageEventArgs(Message message, Guid messageId, ServiceEndpoint endpoint, bool isOneWay, ServiceHostBase serviceHost)
-            : base(message, messageId, endpoint, isOneWay)
+        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="serviceHostBase">The service host.</param>
+        public WcfServiceHostMessageEventArgs(Message message, Guid messageId, bool isOneWay, ServiceEndpoint endpoint, ServiceHostBase serviceHostBase)
+            : base(message, messageId, isOneWay, endpoint)
         {
-            this.ServiceHost = serviceHost;
+            this.ServiceHost = serviceHostBase;
         }
 
         /// <summary>

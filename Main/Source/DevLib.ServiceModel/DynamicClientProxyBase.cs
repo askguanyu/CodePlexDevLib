@@ -36,6 +36,11 @@ namespace DevLib.ServiceModel
         private const string InnerChannelPropertyName = "InnerChannel";
 
         /// <summary>
+        /// Field StatePropertyName.
+        /// </summary>
+        private const string StatePropertyName = "State";
+
+        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
@@ -282,7 +287,7 @@ namespace DevLib.ServiceModel
                 }
                 else
                 {
-                    return (ServiceEndpoint)this.GetProperty(this.CachedProxy, EndpointPropertyName);
+                    return this.GetProperty<ServiceEndpoint>(this.CachedProxy, EndpointPropertyName);
                 }
             }
         }
@@ -294,7 +299,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return (IClientChannel)this.GetProperty(this.ProxyInstance, InnerChannelPropertyName);
+                return this.GetProperty<IClientChannel>(this.ProxyInstance, InnerChannelPropertyName);
             }
         }
 
@@ -660,28 +665,32 @@ namespace DevLib.ServiceModel
         {
             if (this.SetClientCredentialsAction != null)
             {
-                this.SetClientCredentialsAction((ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName));
+                this.SetClientCredentialsAction(this.GetProperty<ClientCredentials>(proxy, ClientCredentialsPropertyName));
             }
 
-            ServiceEndpoint endpoint = (ServiceEndpoint)this.GetProperty(proxy, EndpointPropertyName);
+            ServiceEndpoint endpoint = this.GetProperty<ServiceEndpoint>(proxy, EndpointPropertyName);
 
             if (this.SetBindingAction != null)
             {
                 this.SetBindingAction(endpoint.Binding);
             }
 
-            WcfClientBaseEndpointBehavior wcfClientBaseEndpointBehavior = endpoint.Behaviors.Find<WcfClientBaseEndpointBehavior>();
+            WcfMessageInspectorEndpointBehavior wcfMessageInspectorEndpointBehavior = endpoint.Behaviors.Find<WcfMessageInspectorEndpointBehavior>();
 
-            if (wcfClientBaseEndpointBehavior == null)
+            if (wcfMessageInspectorEndpointBehavior == null)
             {
-                wcfClientBaseEndpointBehavior = new WcfClientBaseEndpointBehavior();
+                wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior();
 
-                ClientCredentials clientCredentials = (ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName);
+                ClientBase client = new ClientBase(
+                    this.GetProperty<ClientCredentials>(proxy, ClientCredentialsPropertyName),
+                    this.GetProperty<ServiceEndpoint>(proxy, EndpointPropertyName),
+                    this.GetProperty<IClientChannel>(proxy, InnerChannelPropertyName),
+                    this.GetProperty<CommunicationState>(proxy, StatePropertyName));
 
-                wcfClientBaseEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientCredentials, e);
-                wcfClientBaseEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientCredentials, e);
+                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, client, e);
+                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, client, e);
 
-                endpoint.Behaviors.Add(wcfClientBaseEndpointBehavior);
+                endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
             }
 
             foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
@@ -720,11 +729,11 @@ namespace DevLib.ServiceModel
                 if (this._setClientCredentialsActionChanged)
                 {
                     this._setClientCredentialsActionChanged = false;
-                    this.SetClientCredentialsAction((ClientCredentials)this.GetProperty(proxy, ClientCredentialsPropertyName));
+                    this.SetClientCredentialsAction(this.GetProperty<ClientCredentials>(proxy, ClientCredentialsPropertyName));
                 }
             }
 
-            ServiceEndpoint endpoint = (ServiceEndpoint)this.GetProperty(proxy, EndpointPropertyName);
+            ServiceEndpoint endpoint = this.GetProperty<ServiceEndpoint>(proxy, EndpointPropertyName);
 
             if (this.SetBindingAction != null)
             {
@@ -763,10 +772,11 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Gets property value by name.
         /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="source">The source.</param>
         /// <param name="propertyName">Property name to get.</param>
         /// <returns>Property value.</returns>
-        private object GetProperty(object source, string propertyName)
+        private TResult GetProperty<TResult>(object source, string propertyName)
         {
             object result = this.ProxyType.InvokeMember(
                 propertyName,
@@ -775,7 +785,7 @@ namespace DevLib.ServiceModel
                 source,
                 null /* args */);
 
-            return result;
+            return (TResult)result;
         }
 
         /// <summary>
@@ -783,16 +793,16 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
         /// <param name="endpoint">The endpoint.</param>
-        /// <param name="credentials">The credentials.</param>
+        /// <param name="clientBase">The client base.</param>
         /// <param name="e">The <see cref="WcfClientMessageEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials credentials, WcfClientMessageEventArgs e)
+        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, ClientBase clientBase, WcfClientMessageEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
             EventHandler<WcfClientMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, endpoint, e.IsOneWay, credentials));
+                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, clientBase));
             }
         }
 

@@ -18,12 +18,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs before send request.
         /// </summary>
-        event EventHandler<WcfClientMessageEventArgs> SendingRequest;
+        event EventHandler<WcfMessageInspectorEventArgs> SendingRequest;
 
         /// <summary>
         /// Occurs after receive reply.
         /// </summary>
-        event EventHandler<WcfClientMessageEventArgs> ReceivingReply;
+        event EventHandler<WcfMessageInspectorEventArgs> ReceivingReply;
 
         /// <summary>
         /// Gets or sets a delegate to configure Binding.

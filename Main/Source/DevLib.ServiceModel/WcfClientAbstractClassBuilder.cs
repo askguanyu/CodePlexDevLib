@@ -122,19 +122,19 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method GenerateMethodImpl.
+        /// Generates the method implementation.
         /// </summary>
-        /// <param name="typeBuilder">Instance of TypeBuilder.</param>
+        /// <param name="typeBuilder">The type builder.</param>
         protected virtual void GenerateMethodImpl(TypeBuilder typeBuilder)
         {
             this.GenerateMethodImpl(typeBuilder, typeof(TChannel));
         }
 
         /// <summary>
-        /// Method GenerateMethodImpl.
+        /// Generates the method implementation.
         /// </summary>
-        /// <param name="typeBuilder">Instance of TypeBuilder.</param>
-        /// <param name="currentType">Type to be processed.</param>
+        /// <param name="typeBuilder">The type builder.</param>
+        /// <param name="currentType">Type of the current.</param>
         protected virtual void GenerateMethodImpl(TypeBuilder typeBuilder, Type currentType)
         {
             MethodInfo[] methods = currentType.GetMethods();
@@ -161,11 +161,11 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method GenerateMethodImpl.
+        /// Generates the method implementation.
         /// </summary>
-        /// <param name="methodInfo">Instance of MethodInfo.</param>
-        /// <param name="parameterTypes">Parameter type array.</param>
-        /// <param name="ilGenerator">Instance of ILGenerator.</param>
+        /// <param name="methodInfo">The method information.</param>
+        /// <param name="parameterTypes">The parameter types.</param>
+        /// <param name="ilGenerator">The il generator.</param>
         protected abstract void GenerateMethodImpl(MethodInfo methodInfo, Type[] parameterTypes, ILGenerator ilGenerator);
 
         /// <summary>

@@ -25,7 +25,7 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Method GenerateMethodImpl.
+        /// Generates the method implementation.
         /// </summary>
         /// <param name="methodInfo">Instance of MethodInfo.</param>
         /// <param name="parameterTypes">Parameter type array.</param>

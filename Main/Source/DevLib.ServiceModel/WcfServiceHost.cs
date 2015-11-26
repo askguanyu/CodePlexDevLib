@@ -17,6 +17,7 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Description;
     using System.Threading;
     using System.Xml;
+    using DevLib.ServiceModel.Description;
 
     /// <summary>
     /// Class WcfServiceHost.
@@ -1043,12 +1044,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs after receive request.
         /// </summary>
-        public event EventHandler<WcfServiceHostMessageEventArgs> ReceivingRequest;
+        public event EventHandler<WcfMessageInspectorEventArgs> ReceivingRequest;
 
         /// <summary>
         /// Occurs before send reply.
         /// </summary>
-        public event EventHandler<WcfServiceHostMessageEventArgs> SendingReply;
+        public event EventHandler<WcfMessageInspectorEventArgs> SendingReply;
 
         /// <summary>
         /// Gets a value indicating whether service host is opened or not.
@@ -2707,20 +2708,20 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
         /// <param name="serviceHost">The service host.</param>
-        /// <param name="e">The <see cref="WcfServiceHostMessageEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostMessageEventArgs> eventHandler, ServiceHostBase serviceHost, WcfServiceHostMessageEventArgs e)
+        /// <param name="e">The <see cref="WcfMessageInspectorEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceHostBase serviceHost, WcfMessageInspectorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfServiceHostMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfServiceHostMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, e.Endpoint, serviceHost));
+                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.Endpoint, null, serviceHost));
             }
         }
 
         /// <summary>
-        /// Method InitWcfServiceHostProxy.
+        /// Initializes the WCF service host proxy.
         /// </summary>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         private void InitWcfServiceHostProxy()
@@ -2781,9 +2782,9 @@ namespace DevLib.ServiceModel
 
                             foreach (var endpoint in serviceHost.Description.Endpoints)
                             {
-                                if (this.SetDataContractResolverAction != null)
+                                foreach (var operationDescription in endpoint.Contract.Operations)
                                 {
-                                    foreach (var operationDescription in endpoint.Contract.Operations)
+                                    if (this.SetDataContractResolverAction != null)
                                     {
                                         DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
 
@@ -2794,6 +2795,14 @@ namespace DevLib.ServiceModel
                                         }
 
                                         this.SetDataContractResolverAction(serializerBehavior);
+                                    }
+
+                                    WcfMessageFormatterOperationBehavior wcfMessageFormatterOperationBehavior = operationDescription.Behaviors.Find<WcfMessageFormatterOperationBehavior>();
+
+                                    if (wcfMessageFormatterOperationBehavior == null)
+                                    {
+                                        wcfMessageFormatterOperationBehavior = new WcfMessageFormatterOperationBehavior();
+                                        operationDescription.Behaviors.Add(wcfMessageFormatterOperationBehavior);
                                     }
                                 }
 
@@ -2966,6 +2975,14 @@ namespace DevLib.ServiceModel
                                     if (this.SetDataContractResolverAction != null)
                                     {
                                         this.SetDataContractResolverAction(serializerBehavior);
+                                    }
+
+                                    WcfMessageFormatterOperationBehavior wcfMessageFormatterOperationBehavior = operationDescription.Behaviors.Find<WcfMessageFormatterOperationBehavior>();
+
+                                    if (wcfMessageFormatterOperationBehavior == null)
+                                    {
+                                        wcfMessageFormatterOperationBehavior = new WcfMessageFormatterOperationBehavior();
+                                        operationDescription.Behaviors.Add(wcfMessageFormatterOperationBehavior);
                                     }
                                 }
 

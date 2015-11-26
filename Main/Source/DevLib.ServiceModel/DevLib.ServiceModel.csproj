@@ -69,10 +69,10 @@
     <Compile Include="IWcfClientBase.cs" />
     <Compile Include="IWcfClientTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WcfClientMessageInspector.cs" />
-    <Compile Include="WcfMessageInspectorEndpointBehavior.cs" />
-    <Compile Include="WcfClientMessageEventArgs.cs" />
-    <Compile Include="WcfMessageBaseEventArgs.cs" />
+    <Compile Include="Dispatcher\WcfMessageInspector.cs" />
+    <Compile Include="Description\WcfMessageFormatterOperationBehavior.cs" />
+    <Compile Include="Description\WcfMessageInspectorEndpointBehavior.cs" />
+    <Compile Include="WcfMessageInspectorEventArgs.cs" />
     <Compile Include="WcfClientProxyExtensions.cs" />
     <Compile Include="WcfClientPerCallBaseClassBuilder.cs" />
     <Compile Include="WcfClientChannelFactory.cs" />
@@ -91,10 +91,9 @@
     <Compile Include="WcfClientPerSessionBaseClassBuilder.cs" />
     <Compile Include="WcfServiceHost.cs" />
     <Compile Include="WcfServiceHostConstants.cs" />
-    <Compile Include="WcfServiceHostMessageInspector.cs" />
+    <Compile Include="Dispatcher\WcfMessageFormatter.cs" />
     <Compile Include="WcfServiceHostInfo.cs" />
     <Compile Include="WcfServiceHostEventArgs.cs" />
-    <Compile Include="WcfServiceHostMessageEventArgs.cs" />
     <Compile Include="WcfServiceHostProxy.cs" />
     <Compile Include="WcfServiceHostState.cs" />
     <Compile Include="WcfServiceType.cs" />

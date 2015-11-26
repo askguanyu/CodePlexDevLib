@@ -11,6 +11,7 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.Threading;
+    using DevLib.ServiceModel.Description;
 
     /// <summary>
     /// Class WcfClientBase.
@@ -141,12 +142,12 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Occurs before send request.
         /// </summary>
-        public event EventHandler<WcfClientMessageEventArgs> SendingRequest;
+        public event EventHandler<WcfMessageInspectorEventArgs> SendingRequest;
 
         /// <summary>
         /// Occurs after receive reply.
         /// </summary>
-        public event EventHandler<WcfClientMessageEventArgs> ReceivingReply;
+        public event EventHandler<WcfMessageInspectorEventArgs> ReceivingReply;
 
         /// <summary>
         /// Gets or sets a delegate to configure Binding.
@@ -525,10 +526,10 @@ namespace DevLib.ServiceModel
 
             if (wcfMessageInspectorEndpointBehavior == null)
             {
-                wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(clientBase.ClientCredentials, clientBase.State);
+                wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(clientBase.ClientCredentials);
 
-                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientBase.ClientCredentials, clientBase.State, e);
-                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientBase.ClientCredentials, clientBase.State, e);
+                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientBase.ClientCredentials, e);
+                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientBase.ClientCredentials, e);
 
                 endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
             }
@@ -554,6 +555,14 @@ namespace DevLib.ServiceModel
                 if (this.SetDataContractResolverAction != null)
                 {
                     this.SetDataContractResolverAction(serializerBehavior);
+                }
+
+                WcfMessageFormatterOperationBehavior wcfMessageFormatterOperationBehavior = operationDescription.Behaviors.Find<WcfMessageFormatterOperationBehavior>();
+
+                if (wcfMessageFormatterOperationBehavior == null)
+                {
+                    wcfMessageFormatterOperationBehavior = new WcfMessageFormatterOperationBehavior();
+                    operationDescription.Behaviors.Add(wcfMessageFormatterOperationBehavior);
                 }
             }
         }
@@ -615,16 +624,15 @@ namespace DevLib.ServiceModel
         /// <param name="eventHandler">The event handler.</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="clientCredentials">The client credentials.</param>
-        /// <param name="clientState">State of the client.</param>
-        /// <param name="e">The <see cref="WcfClientMessageEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials clientCredentials, CommunicationState clientState, WcfClientMessageEventArgs e)
+        /// <param name="e">The <see cref="WcfMessageInspectorEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials clientCredentials, WcfMessageInspectorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfClientMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, clientCredentials, clientState));
+                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, clientCredentials, null));
             }
         }
 

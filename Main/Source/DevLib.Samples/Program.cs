@@ -2132,8 +2132,8 @@ namespace DevLib.Samples
             //new WcfServiceHost(typeof(WcfTest), "DevLib.Samples.exe.config", "http://127.0.0.1:6000/WcfTest", true);
 
             var testsrv = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
-            testsrv.ReceivingRequest += new EventHandler<WcfServiceHostMessageEventArgs>(calcsvr_Receiving);
-            testsrv.SendingReply += new EventHandler<WcfServiceHostMessageEventArgs>(calcsvr_Replying);
+            testsrv.ReceivingRequest += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Receiving);
+            testsrv.SendingReply += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Replying);
             testsrv.SetDataContractResolverAction = i => i.DataContractResolver = new GenericDataContractResolver(new string[] { @"D:\Work\Temp\ClassLibrary2\ClassLibrary2\bin\Debug\ClassLibrary2.dll" });
             testsrv.Open();
             Console.ReadLine();
@@ -2148,8 +2148,8 @@ namespace DevLib.Samples
 
             client1.SetDataContractResolver(i => i.AddGenericDataContractResolver());
 
-            client1.GetWcfClientBase().SendingRequest += new EventHandler<WcfClientMessageEventArgs>(Program_SendingRequest);
-            client1.GetWcfClientBase().ReceivingReply += new EventHandler<WcfClientMessageEventArgs>(Program_ReceivingReply);
+            client1.GetWcfClientBase().SendingRequest += new EventHandler<WcfMessageInspectorEventArgs>(Program_SendingRequest);
+            client1.GetWcfClientBase().ReceivingReply += new EventHandler<WcfMessageInspectorEventArgs>(Program_ReceivingReply);
             //client2.SetClientCredentialsAction = (c) => { c.UserName.UserName = "a"; c.UserName.Password = "b"; };
 
 
@@ -2239,7 +2239,7 @@ namespace DevLib.Samples
             //host.Dispose();
         }
 
-        static void Program_ReceivingReply(object sender, WcfClientMessageEventArgs e)
+        static void Program_ReceivingReply(object sender, WcfMessageInspectorEventArgs e)
         {
             Console.WriteLine("Receiving Reply");
             Console.WriteLine(e.Message);
@@ -2247,7 +2247,7 @@ namespace DevLib.Samples
             Console.WriteLine();
         }
 
-        static void Program_SendingRequest(object sender, WcfClientMessageEventArgs e)
+        static void Program_SendingRequest(object sender, WcfMessageInspectorEventArgs e)
         {
             Console.WriteLine("Sending Request");
             Console.WriteLine(e.Message);
@@ -2257,7 +2257,7 @@ namespace DevLib.Samples
             Console.WriteLine();
         }
 
-        static void calcsvr_Replying(object sender, WcfServiceHostMessageEventArgs e)
+        static void calcsvr_Replying(object sender, WcfMessageInspectorEventArgs e)
         {
             Console.WriteLine("Sending Reply");
             Console.WriteLine(e);
@@ -2266,7 +2266,7 @@ namespace DevLib.Samples
 
         }
 
-        static void calcsvr_Receiving(object sender, WcfServiceHostMessageEventArgs e)
+        static void calcsvr_Receiving(object sender, WcfMessageInspectorEventArgs e)
         {
             Console.WriteLine("Receiving Request");
             Console.WriteLine(e);

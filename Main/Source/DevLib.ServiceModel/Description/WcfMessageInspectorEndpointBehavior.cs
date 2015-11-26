@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceModel
+namespace DevLib.ServiceModel.Description
 {
     using System;
     using System.ServiceModel;
@@ -11,6 +11,7 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
     using System.Threading;
+    using DevLib.ServiceModel.Dispatcher;
 
     /// <summary>
     /// WcfMessageInspector EndpointBehavior.
@@ -31,15 +32,19 @@ namespace DevLib.ServiceModel
         private readonly ClientCredentials _clientCredentials;
 
         /// <summary>
-        /// Field _clientState.
-        /// </summary>
-        private readonly CommunicationState _clientState;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior"/> class.
         /// </summary>
         public WcfMessageInspectorEndpointBehavior()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior" /> class.
+        /// </summary>
+        /// <param name="clientCredentials">The client credentials.</param>
+        public WcfMessageInspectorEndpointBehavior(ClientCredentials clientCredentials)
+        {
+            this._clientCredentials = clientCredentials;
         }
 
         /// <summary>
@@ -52,48 +57,35 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior"/> class.
+        /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior" /> class.
         /// </summary>
         /// <param name="clientCredentials">The client credentials.</param>
-        /// <param name="clientState">State of the client.</param>
-        public WcfMessageInspectorEndpointBehavior(ClientCredentials clientCredentials, CommunicationState clientState)
-        {
-            this._clientCredentials = clientCredentials;
-            this._clientState = clientState;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior"/> class.
-        /// </summary>
         /// <param name="serviceHostBase">The service host base.</param>
-        /// <param name="clientCredentials">The client credentials.</param>
-        /// <param name="clientState">State of the client.</param>
-        public WcfMessageInspectorEndpointBehavior(ServiceHostBase serviceHostBase, ClientCredentials clientCredentials, CommunicationState clientState)
+        public WcfMessageInspectorEndpointBehavior(ClientCredentials clientCredentials, ServiceHostBase serviceHostBase)
         {
-            this._serviceHostBase = serviceHostBase;
             this._clientCredentials = clientCredentials;
-            this._clientState = clientState;
+            this._serviceHostBase = serviceHostBase;
         }
 
         /// <summary>
         /// Occurs before send request.
         /// </summary>
-        public event EventHandler<WcfClientMessageEventArgs> SendingRequest;
+        public event EventHandler<WcfMessageInspectorEventArgs> SendingRequest;
 
         /// <summary>
         /// Occurs after receive reply.
         /// </summary>
-        public event EventHandler<WcfClientMessageEventArgs> ReceivingReply;
+        public event EventHandler<WcfMessageInspectorEventArgs> ReceivingReply;
 
         /// <summary>
         /// Occurs after receive request.
         /// </summary>
-        public event EventHandler<WcfServiceHostMessageEventArgs> ReceivingRequest;
+        public event EventHandler<WcfMessageInspectorEventArgs> ReceivingRequest;
 
         /// <summary>
         /// Occurs before send reply.
         /// </summary>
-        public event EventHandler<WcfServiceHostMessageEventArgs> SendingReply;
+        public event EventHandler<WcfMessageInspectorEventArgs> SendingReply;
 
         /// <summary>
         /// Implement to pass data at runtime to bindings to support custom behavior.
@@ -111,7 +103,7 @@ namespace DevLib.ServiceModel
         /// <param name="clientRuntime">The client runtime to be customized.</param>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            WcfClientMessageInspector inspector = new WcfClientMessageInspector(endpoint, this._clientCredentials, this._clientState);
+            WcfMessageInspector inspector = new WcfMessageInspector(endpoint, this._clientCredentials);
 
             inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, e);
             inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, e);
@@ -126,7 +118,7 @@ namespace DevLib.ServiceModel
         /// <param name="endpointDispatcher">The endpoint dispatcher to be modified or extended.</param>
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
-            WcfServiceHostMessageInspector inspector = new WcfServiceHostMessageInspector(endpoint, this._serviceHostBase);
+            WcfMessageInspector inspector = new WcfMessageInspector(endpoint, this._serviceHostBase);
 
             inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, endpoint, e);
             inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, endpoint, e);
@@ -147,32 +139,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler">Instance of EventHandler.</param>
         /// <param name="endpoint">The endpoint.</param>
-        /// <param name="e">The <see cref="WcfClientMessageEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfClientMessageEventArgs> eventHandler, ServiceEndpoint endpoint, WcfClientMessageEventArgs e)
+        /// <param name="e">The <see cref="WcfMessageInspectorEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceEndpoint endpoint, WcfMessageInspectorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfClientMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+            EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, this._clientCredentials, this._clientState));
-            }
-        }
-
-        /// <summary>
-        /// Method RaiseEvent.
-        /// </summary>
-        /// <param name="eventHandler">The event handler.</param>
-        /// <param name="endpoint">The endpoint.</param>
-        /// <param name="e">The <see cref="WcfServiceHostMessageEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfServiceHostMessageEventArgs> eventHandler, ServiceEndpoint endpoint, WcfServiceHostMessageEventArgs e)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
-            EventHandler<WcfServiceHostMessageEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
-
-            if (temp != null)
-            {
-                temp(this, new WcfServiceHostMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, this._serviceHostBase));
+                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, this._clientCredentials, this._serviceHostBase));
             }
         }
     }

@@ -381,7 +381,7 @@ namespace DevLib.ServiceModel
         /// Static Method GetBinding.
         /// </summary>
         /// <param name="address">Binding address.</param>
-        /// <param name="isMexBinding">Whether the binding is mex.</param>
+        /// <param name="isMexBinding">Whether the binding is MetadataExchange.</param>
         /// <returns>Instance of Binding.</returns>
         internal static Binding GetBinding(string address, bool isMexBinding)
         {

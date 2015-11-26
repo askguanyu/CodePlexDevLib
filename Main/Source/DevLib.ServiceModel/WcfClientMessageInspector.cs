@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfClientBaseClientMessageInspector.cs" company="YuGuan Corporation">
+// <copyright file="WcfClientMessageInspector.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -15,10 +15,10 @@ namespace DevLib.ServiceModel
     using System.Threading;
 
     /// <summary>
-    /// WcfClientBase ClientMessageInspector.
+    /// WcfClient MessageInspector.
     /// </summary>
     [Serializable]
-    public class WcfClientBaseClientMessageInspector : IClientMessageInspector
+    public class WcfClientMessageInspector : IClientMessageInspector
     {
         /// <summary>
         /// Field _serviceEndpoint.
@@ -27,9 +27,15 @@ namespace DevLib.ServiceModel
         private readonly ServiceEndpoint _serviceEndpoint;
 
         /// <summary>
-        /// Field _clientBase.
+        /// Field _clientCredentials.
         /// </summary>
-        private readonly ClientBase _clientBase;
+        [NonSerialized]
+        private readonly ClientCredentials _clientCredentials;
+
+        /// <summary>
+        /// Field _clientState.
+        /// </summary>
+        private readonly CommunicationState _clientState;
 
         /// <summary>
         /// Field _oneWayActions.
@@ -37,23 +43,24 @@ namespace DevLib.ServiceModel
         private readonly HashSet<string> _oneWayActions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfClientBaseClientMessageInspector"/> class.
+        /// Initializes a new instance of the <see cref="WcfClientMessageInspector"/> class.
         /// </summary>
-        public WcfClientBaseClientMessageInspector()
-            : this(null, null)
+        public WcfClientMessageInspector()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfClientBaseClientMessageInspector" /> class.
+        /// Initializes a new instance of the <see cref="WcfClientMessageInspector" /> class.
         /// This new instance will simulate ReceivingReply event for OneWay action.
         /// </summary>
         /// <param name="serviceEndpoint">The service endpoint.</param>
-        /// <param name="clientBase">The client base.</param>
-        public WcfClientBaseClientMessageInspector(ServiceEndpoint serviceEndpoint, ClientBase clientBase)
+        /// <param name="clientCredentials">The client credentials.</param>
+        /// <param name="clientState">State of the client.</param>
+        public WcfClientMessageInspector(ServiceEndpoint serviceEndpoint, ClientCredentials clientCredentials, CommunicationState clientState)
         {
             this._serviceEndpoint = serviceEndpoint;
-            this._clientBase = clientBase;
+            this._clientCredentials = clientCredentials;
+            this._clientState = clientState;
 
             if (this._serviceEndpoint != null)
             {
@@ -103,7 +110,7 @@ namespace DevLib.ServiceModel
             {
             }
 
-            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.AfterReceiveReply: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfClientMessageInspector.AfterReceiveReply: " + messageId.ToString());
 
             if (reply != null)
             {
@@ -125,7 +132,7 @@ namespace DevLib.ServiceModel
 
             bool isOneWay = false;
 
-            Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.BeforeSendRequest: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfClientMessageInspector.BeforeSendRequest: " + messageId.ToString());
 
             if (request != null)
             {
@@ -141,7 +148,7 @@ namespace DevLib.ServiceModel
 
             if (isOneWay)
             {
-                Debug.WriteLine("DevLib.ServiceModel.WcfClientBaseClientMessageInspector.AfterReceiveReply(simulate reply for OneWay): " + messageId.ToString());
+                Debug.WriteLine("DevLib.ServiceModel.WcfClientMessageInspector.AfterReceiveReply(simulate reply for OneWay): " + messageId.ToString());
 
                 this.RaiseEvent(this.ReceivingReply, request, messageId, isOneWay);
             }
@@ -163,7 +170,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfClientMessageEventArgs(message, messageId, isOneWay, this._serviceEndpoint, this._clientBase));
+                temp(this, new WcfClientMessageEventArgs(message, messageId, isOneWay, this._serviceEndpoint, this._clientCredentials, this._clientState));
             }
         }
     }

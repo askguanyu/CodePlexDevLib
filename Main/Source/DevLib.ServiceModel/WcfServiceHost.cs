@@ -2822,7 +2822,7 @@ namespace DevLib.ServiceModel
 
                                 if (wcfMessageInspectorEndpointBehavior == null)
                                 {
-                                    wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior();
+                                    wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(serviceHost);
 
                                     wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
                                     wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
@@ -2989,7 +2989,7 @@ namespace DevLib.ServiceModel
 
                                 if (wcfMessageInspectorEndpointBehavior == null)
                                 {
-                                    wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior();
+                                    wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(serviceHost);
 
                                     wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
                                     wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);

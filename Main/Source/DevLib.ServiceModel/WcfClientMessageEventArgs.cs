@@ -6,6 +6,7 @@
 namespace DevLib.ServiceModel
 {
     using System;
+    using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
 
@@ -22,17 +23,28 @@ namespace DevLib.ServiceModel
         /// <param name="messageId">The message identifier.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
         /// <param name="endpoint">The endpoint.</param>
-        /// <param name="clientBase">The client base.</param>
-        public WcfClientMessageEventArgs(Message message, Guid messageId, bool isOneWay, ServiceEndpoint endpoint, ClientBase clientBase)
+        /// <param name="clientCredentials">The client credentials.</param>
+        /// <param name="state">The communication state.</param>
+        public WcfClientMessageEventArgs(Message message, Guid messageId, bool isOneWay, ServiceEndpoint endpoint, ClientCredentials clientCredentials, CommunicationState state)
             : base(message, messageId, isOneWay, endpoint)
         {
-            this.Client = clientBase;
+            this.ClientCredentials = clientCredentials;
+            this.State = state;
         }
 
         /// <summary>
         /// Gets the client credentials used to call an operation.
         /// </summary>
-        public ClientBase Client
+        public ClientCredentials ClientCredentials
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the current state of the <see cref="T:System.ServiceModel.ClientBase{}" /> object.
+        /// </summary>
+        public CommunicationState State
         {
             get;
             private set;

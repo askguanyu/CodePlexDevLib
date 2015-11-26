@@ -49,7 +49,9 @@ namespace DevLib.ServiceModel.Dispatcher
         /// <returns>Reply object.</returns>
         public object DeserializeReply(Message message, object[] parameters)
         {
-            return this._innerClientMessageFormatter.DeserializeReply(message, parameters);
+            var result = this._innerClientMessageFormatter.DeserializeReply(message, parameters);
+
+            return result;
         }
 
         /// <summary>
@@ -60,7 +62,9 @@ namespace DevLib.ServiceModel.Dispatcher
         /// <returns>Request message.</returns>
         public Message SerializeRequest(MessageVersion messageVersion, object[] parameters)
         {
-            return this._innerClientMessageFormatter.SerializeRequest(messageVersion, parameters);
+            var message = this._innerClientMessageFormatter.SerializeRequest(messageVersion, parameters);
+
+            return message;
         }
 
         /// <summary>
@@ -82,7 +86,9 @@ namespace DevLib.ServiceModel.Dispatcher
         /// <returns>Reply message.</returns>
         public Message SerializeReply(MessageVersion messageVersion, object[] parameters, object result)
         {
-            return this._innerDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+            var message = this._innerDispatchMessageFormatter.SerializeReply(messageVersion, parameters, result);
+
+            return message;
         }
     }
 }

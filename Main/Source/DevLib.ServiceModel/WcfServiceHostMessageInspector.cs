@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfServiceHostDispatchMessageInspector.cs" company="YuGuan Corporation">
+// <copyright file="WcfServiceHostMessageInspector.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -15,10 +15,10 @@ namespace DevLib.ServiceModel
     using System.Threading;
 
     /// <summary>
-    /// WcfServiceHost DispatchMessageInspector.
+    /// WcfServiceHost MessageInspector.
     /// </summary>
     [Serializable]
-    public class WcfServiceHostDispatchMessageInspector : IDispatchMessageInspector
+    public class WcfServiceHostMessageInspector : IDispatchMessageInspector
     {
         /// <summary>
         /// Field _serviceEndpoint.
@@ -38,19 +38,18 @@ namespace DevLib.ServiceModel
         private readonly HashSet<string> _oneWayActions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfServiceHostDispatchMessageInspector"/> class.
+        /// Initializes a new instance of the <see cref="WcfServiceHostMessageInspector"/> class.
         /// </summary>
-        public WcfServiceHostDispatchMessageInspector()
-            : this(null, null)
+        public WcfServiceHostMessageInspector()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfServiceHostDispatchMessageInspector" /> class.
+        /// Initializes a new instance of the <see cref="WcfServiceHostMessageInspector" /> class.
         /// </summary>
         /// <param name="serviceEndpoint">The service endpoint.</param>
         /// <param name="serviceHostBase">The service host base.</param>
-        public WcfServiceHostDispatchMessageInspector(ServiceEndpoint serviceEndpoint, ServiceHostBase serviceHostBase)
+        public WcfServiceHostMessageInspector(ServiceEndpoint serviceEndpoint, ServiceHostBase serviceHostBase)
         {
             this._serviceEndpoint = serviceEndpoint;
             this._serviceHostBase = serviceHostBase;
@@ -99,7 +98,7 @@ namespace DevLib.ServiceModel
 
             bool isOneWay = false;
 
-            Debug.WriteLine("DevLib.ServiceModel.WcfServiceHostDispatchMessageInspector.AfterReceiveRequest: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfServiceHostMessageInspector.AfterReceiveRequest: " + messageId.ToString());
 
             if (request != null)
             {
@@ -135,7 +134,7 @@ namespace DevLib.ServiceModel
                 isOneWay = state.IsOneWay;
             }
 
-            Debug.WriteLine("DevLib.ServiceModel.WcfServiceHostDispatchMessageInspector.BeforeSendReply: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfServiceHostMessageInspector.BeforeSendReply: " + messageId.ToString());
 
             if (reply != null)
             {

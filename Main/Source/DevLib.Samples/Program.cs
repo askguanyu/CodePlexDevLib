@@ -2251,8 +2251,8 @@ namespace DevLib.Samples
         {
             Console.WriteLine("Sending Request");
             Console.WriteLine(e.Message);
-            Console.WriteLine(e.Client.ClientCredentials.UserName.UserName);
-            Console.WriteLine(e.Client.ClientCredentials.UserName.Password);
+            Console.WriteLine(e.ClientCredentials.UserName.UserName);
+            Console.WriteLine(e.ClientCredentials.UserName.Password);
             Console.WriteLine();
             Console.WriteLine();
         }

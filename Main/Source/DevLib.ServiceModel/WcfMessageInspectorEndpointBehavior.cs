@@ -25,27 +25,54 @@ namespace DevLib.ServiceModel
         private readonly ServiceHostBase _serviceHostBase;
 
         /// <summary>
-        /// Field _clientBase.
+        /// Field _clientCredentials.
         /// </summary>
-        private readonly ClientBase _clientBase;
+        [NonSerialized]
+        private readonly ClientCredentials _clientCredentials;
+
+        /// <summary>
+        /// Field _clientState.
+        /// </summary>
+        private readonly CommunicationState _clientState;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior"/> class.
         /// </summary>
         public WcfMessageInspectorEndpointBehavior()
-            : this(null, null)
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior" /> class.
+        /// </summary>
+        /// <param name="serviceHostBase">The service host.</param>
+        public WcfMessageInspectorEndpointBehavior(ServiceHostBase serviceHostBase)
+        {
+            this._serviceHostBase = serviceHostBase;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior"/> class.
         /// </summary>
-        /// <param name="serviceHostBase">The service host.</param>
-        /// <param name="clientBase">The client base.</param>
-        public WcfMessageInspectorEndpointBehavior(ServiceHostBase serviceHostBase, ClientBase clientBase)
+        /// <param name="clientCredentials">The client credentials.</param>
+        /// <param name="clientState">State of the client.</param>
+        public WcfMessageInspectorEndpointBehavior(ClientCredentials clientCredentials, CommunicationState clientState)
+        {
+            this._clientCredentials = clientCredentials;
+            this._clientState = clientState;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfMessageInspectorEndpointBehavior"/> class.
+        /// </summary>
+        /// <param name="serviceHostBase">The service host base.</param>
+        /// <param name="clientCredentials">The client credentials.</param>
+        /// <param name="clientState">State of the client.</param>
+        public WcfMessageInspectorEndpointBehavior(ServiceHostBase serviceHostBase, ClientCredentials clientCredentials, CommunicationState clientState)
         {
             this._serviceHostBase = serviceHostBase;
-            this._clientBase = clientBase;
+            this._clientCredentials = clientCredentials;
+            this._clientState = clientState;
         }
 
         /// <summary>
@@ -84,7 +111,7 @@ namespace DevLib.ServiceModel
         /// <param name="clientRuntime">The client runtime to be customized.</param>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            WcfClientBaseClientMessageInspector inspector = new WcfClientBaseClientMessageInspector(endpoint, this._clientBase);
+            WcfClientMessageInspector inspector = new WcfClientMessageInspector(endpoint, this._clientCredentials, this._clientState);
 
             inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, e);
             inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, e);
@@ -99,7 +126,7 @@ namespace DevLib.ServiceModel
         /// <param name="endpointDispatcher">The endpoint dispatcher to be modified or extended.</param>
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
-            WcfServiceHostDispatchMessageInspector inspector = new WcfServiceHostDispatchMessageInspector(endpoint, this._serviceHostBase);
+            WcfServiceHostMessageInspector inspector = new WcfServiceHostMessageInspector(endpoint, this._serviceHostBase);
 
             inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, endpoint, e);
             inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, endpoint, e);
@@ -128,7 +155,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, this._clientBase));
+                temp(this, new WcfClientMessageEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, this._clientCredentials, this._clientState));
             }
         }
 

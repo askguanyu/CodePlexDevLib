@@ -336,7 +336,7 @@ namespace DevLib.Timers
         /// <param name="obj">An object containing application-specific information relevant to the method invoked by this delegate, or null.</param>
         private void OnTimerElapsed(object obj)
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler temp = Interlocked.CompareExchange(ref this.Elapsed, null, null);
 
             if (temp != null)

@@ -22,15 +22,17 @@ namespace DevLib.ServiceModel
         /// <param name="message">The message of the service endpoint.</param>
         /// <param name="messageId">The message identifier.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
+        /// <param name="validationError">The validation error.</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="clientCredentials">The client credentials.</param>
         /// <param name="serviceHostBase">The service host base.</param>
-        public WcfMessageInspectorEventArgs(Message message, Guid messageId, bool isOneWay, ServiceEndpoint endpoint, ClientCredentials clientCredentials, ServiceHostBase serviceHostBase)
+        public WcfMessageInspectorEventArgs(Message message, Guid messageId, bool isOneWay, string validationError, ServiceEndpoint endpoint, ClientCredentials clientCredentials, ServiceHostBase serviceHostBase)
         {
             this.Message = message;
             this.MessageId = messageId;
             this.Endpoint = endpoint;
             this.IsOneWay = isOneWay;
+            this.ValidationError = validationError;
             this.ClientCredentials = clientCredentials;
             this.ServiceHost = serviceHostBase;
         }
@@ -60,6 +62,26 @@ namespace DevLib.ServiceModel
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets the validation error against schema.
+        /// </summary>
+        public string ValidationError
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the message has validation error.
+        /// </summary>
+        public bool HasValidationError
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(this.ValidationError);
+            }
         }
 
         /// <summary>
@@ -95,7 +117,13 @@ namespace DevLib.ServiceModel
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return string.Format("MessageId={0}, IsOneWay={1}, Message=\r\n{2}", this.MessageId.ToString(), this.IsOneWay.ToString(), this.Message != null ? this.Message.ToString() : string.Empty);
+            return string.Format(
+                "MessageId={0}, IsOneWay={1}, HasValidationError={2}, Message=\r\n{3}\r\n{4}",
+                this.MessageId.ToString(),
+                this.IsOneWay.ToString(),
+                this.HasValidationError.ToString(),
+                this.Message != null ? this.Message.ToString() : string.Empty,
+                this.HasValidationError ? string.Format("ValidationError={0}", this.ValidationError) : string.Empty);
         }
     }
 }

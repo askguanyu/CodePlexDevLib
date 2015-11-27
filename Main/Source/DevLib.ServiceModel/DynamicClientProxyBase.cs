@@ -143,6 +143,11 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfMessageInspectorEventArgs> ReceivingReply;
 
         /// <summary>
+        /// Occurs when has error.
+        /// </summary>
+        public event EventHandler<WcfErrorEventArgs> ErrorOccurred;
+
+        /// <summary>
         /// Gets the type of current service client proxy.
         /// </summary>
         public Type ProxyType
@@ -686,6 +691,7 @@ namespace DevLib.ServiceModel
 
                 wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientCredentials, e);
                 wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientCredentials, e);
+                wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, e);
 
                 endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
             }
@@ -711,14 +717,6 @@ namespace DevLib.ServiceModel
                 if (this.SetDataContractResolverAction != null)
                 {
                     this.SetDataContractResolverAction(serializerBehavior);
-                }
-
-                WcfMessageFormatterOperationBehavior wcfMessageFormatterOperationBehavior = operationDescription.Behaviors.Find<WcfMessageFormatterOperationBehavior>();
-
-                if (wcfMessageFormatterOperationBehavior == null)
-                {
-                    wcfMessageFormatterOperationBehavior = new WcfMessageFormatterOperationBehavior();
-                    operationDescription.Behaviors.Add(wcfMessageFormatterOperationBehavior);
                 }
             }
         }
@@ -802,12 +800,28 @@ namespace DevLib.ServiceModel
         /// <param name="e">The <see cref="WcfMessageInspectorEventArgs" /> instance containing the event data.</param>
         private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials clientCredentials, WcfMessageInspectorEventArgs e)
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, endpoint, clientCredentials, null));
+                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.ValidationError, endpoint, clientCredentials, null));
+            }
+        }
+
+        /// <summary>
+        /// Raises the event.
+        /// </summary>
+        /// <param name="eventHandler">The event handler.</param>
+        /// <param name="e">The <see cref="WcfErrorEventArgs"/> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, WcfErrorEventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
+            EventHandler<WcfErrorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, e);
             }
         }
 

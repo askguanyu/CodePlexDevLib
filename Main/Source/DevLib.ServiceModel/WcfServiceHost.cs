@@ -1052,6 +1052,11 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfMessageInspectorEventArgs> SendingReply;
 
         /// <summary>
+        /// Occurs when has error.
+        /// </summary>
+        public event EventHandler<WcfErrorEventArgs> ErrorOccurred;
+
+        /// <summary>
         /// Gets a value indicating whether service host is opened or not.
         /// </summary>
         public bool IsOpened
@@ -2694,7 +2699,7 @@ namespace DevLib.ServiceModel
         /// <param name="state">Instance of WcfServiceHostState.</param>
         private void RaiseEvent(EventHandler<WcfServiceHostEventArgs> eventHandler, ServiceHostBase serviceHost, WcfServiceHostState state)
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfServiceHostEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
@@ -2707,16 +2712,33 @@ namespace DevLib.ServiceModel
         /// Method RaiseEvent.
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
+        /// <param name="endpoint">The endpoint.</param>
         /// <param name="serviceHost">The service host.</param>
         /// <param name="e">The <see cref="WcfMessageInspectorEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceHostBase serviceHost, WcfMessageInspectorEventArgs e)
+        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceEndpoint endpoint, ServiceHostBase serviceHost, WcfMessageInspectorEventArgs e)
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.Endpoint, null, serviceHost));
+                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.ValidationError, endpoint, null, serviceHost));
+            }
+        }
+
+        /// <summary>
+        /// Raises the event.
+        /// </summary>
+        /// <param name="eventHandler">The event handler.</param>
+        /// <param name="e">The <see cref="WcfErrorEventArgs"/> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, WcfErrorEventArgs e)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
+            EventHandler<WcfErrorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, e);
             }
         }
 
@@ -2796,14 +2818,6 @@ namespace DevLib.ServiceModel
 
                                         this.SetDataContractResolverAction(serializerBehavior);
                                     }
-
-                                    WcfMessageFormatterOperationBehavior wcfMessageFormatterOperationBehavior = operationDescription.Behaviors.Find<WcfMessageFormatterOperationBehavior>();
-
-                                    if (wcfMessageFormatterOperationBehavior == null)
-                                    {
-                                        wcfMessageFormatterOperationBehavior = new WcfMessageFormatterOperationBehavior();
-                                        operationDescription.Behaviors.Add(wcfMessageFormatterOperationBehavior);
-                                    }
                                 }
 
                                 if (this.SetBindingAction != null)
@@ -2833,8 +2847,9 @@ namespace DevLib.ServiceModel
                                 {
                                     wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(serviceHost);
 
-                                    wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
-                                    wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, endpoint, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, endpoint, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, e);
 
                                     endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
                                 }
@@ -2976,14 +2991,6 @@ namespace DevLib.ServiceModel
                                     {
                                         this.SetDataContractResolverAction(serializerBehavior);
                                     }
-
-                                    WcfMessageFormatterOperationBehavior wcfMessageFormatterOperationBehavior = operationDescription.Behaviors.Find<WcfMessageFormatterOperationBehavior>();
-
-                                    if (wcfMessageFormatterOperationBehavior == null)
-                                    {
-                                        wcfMessageFormatterOperationBehavior = new WcfMessageFormatterOperationBehavior();
-                                        operationDescription.Behaviors.Add(wcfMessageFormatterOperationBehavior);
-                                    }
                                 }
 
                                 if (endpoint.Binding is WebHttpBinding)
@@ -3008,8 +3015,9 @@ namespace DevLib.ServiceModel
                                 {
                                     wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(serviceHost);
 
-                                    wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, serviceHost, e);
-                                    wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, endpoint, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, endpoint, serviceHost, e);
+                                    wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, e);
 
                                     endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
                                 }

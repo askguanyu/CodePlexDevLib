@@ -12,7 +12,10 @@ namespace DevLib.ServiceModel.Dispatcher
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
+    using System.Text;
     using System.Threading;
+    using System.Xml.Linq;
+    using System.Xml.Schema;
 
     /// <summary>
     /// WcfClient MessageInspector.
@@ -44,10 +47,56 @@ namespace DevLib.ServiceModel.Dispatcher
         private readonly HashSet<string> _oneWayActions;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WcfMessageInspector" /> class.
+        /// Field _xmlSchemaSet.
+        /// </summary>
+        [NonSerialized]
+        private readonly XmlSchemaSet _xmlSchemaSet;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfMessageInspector"/> class.
         /// </summary>
         public WcfMessageInspector()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfMessageInspector" /> class.
+        /// </summary>
+        /// <param name="serviceEndpoint">The service endpoint.</param>
+        public WcfMessageInspector(ServiceEndpoint serviceEndpoint)
+        {
+            this._serviceEndpoint = serviceEndpoint;
+
+            if (this._serviceEndpoint != null)
+            {
+                this._oneWayActions = new HashSet<string>();
+
+                try
+                {
+                    foreach (var operation in this._serviceEndpoint.Contract.Operations)
+                    {
+                        if (operation.IsOneWay)
+                        {
+                            this._oneWayActions.Add(operation.Messages[0].Action);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
+
+                try
+                {
+                    WsdlExporter wsdlExporter = new WsdlExporter();
+                    wsdlExporter.ExportContract(this._serviceEndpoint.Contract);
+                    this._xmlSchemaSet = wsdlExporter.GeneratedXmlSchemas;
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
+            }
         }
 
         /// <summary>
@@ -57,29 +106,9 @@ namespace DevLib.ServiceModel.Dispatcher
         /// <param name="serviceEndpoint">The service endpoint.</param>
         /// <param name="clientCredentials">The client credentials.</param>
         public WcfMessageInspector(ServiceEndpoint serviceEndpoint, ClientCredentials clientCredentials)
+            : this(serviceEndpoint)
         {
-            this._serviceEndpoint = serviceEndpoint;
             this._clientCredentials = clientCredentials;
-
-            if (this._serviceEndpoint != null)
-            {
-                this._oneWayActions = new HashSet<string>();
-
-                try
-                {
-                    foreach (var operation in this._serviceEndpoint.Contract.Operations)
-                    {
-                        if (operation.IsOneWay)
-                        {
-                            this._oneWayActions.Add(operation.Messages[0].Action);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
-                }
-            }
         }
 
         /// <summary>
@@ -88,29 +117,22 @@ namespace DevLib.ServiceModel.Dispatcher
         /// <param name="serviceEndpoint">The service endpoint.</param>
         /// <param name="serviceHostBase">The service host base.</param>
         public WcfMessageInspector(ServiceEndpoint serviceEndpoint, ServiceHostBase serviceHostBase)
+            : this(serviceEndpoint)
         {
-            this._serviceEndpoint = serviceEndpoint;
             this._serviceHostBase = serviceHostBase;
+        }
 
-            if (this._serviceEndpoint != null)
-            {
-                this._oneWayActions = new HashSet<string>();
-
-                try
-                {
-                    foreach (var operation in this._serviceEndpoint.Contract.Operations)
-                    {
-                        if (operation.IsOneWay)
-                        {
-                            this._oneWayActions.Add(operation.Messages[0].Action);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
-                }
-            }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WcfMessageInspector" /> class.
+        /// </summary>
+        /// <param name="serviceEndpoint">The service endpoint.</param>
+        /// <param name="clientCredentials">The client credentials.</param>
+        /// <param name="serviceHostBase">The service host base.</param>
+        public WcfMessageInspector(ServiceEndpoint serviceEndpoint, ClientCredentials clientCredentials, ServiceHostBase serviceHostBase)
+            : this(serviceEndpoint)
+        {
+            this._clientCredentials = clientCredentials;
+            this._serviceHostBase = serviceHostBase;
         }
 
         /// <summary>
@@ -132,6 +154,11 @@ namespace DevLib.ServiceModel.Dispatcher
         /// Occurs before send reply.
         /// </summary>
         public event EventHandler<WcfMessageInspectorEventArgs> SendingReply;
+
+        /// <summary>
+        /// Occurs when has error.
+        /// </summary>
+        public event EventHandler<WcfErrorEventArgs> ErrorOccurred;
 
         /// <summary>
         /// Enables inspection or modification of a message after a reply message is received but prior to passing it back to the client application.
@@ -157,7 +184,7 @@ namespace DevLib.ServiceModel.Dispatcher
                 Debug.WriteLine(reply.ToString());
             }
 
-            this.RaiseEvent(this.ReceivingReply, reply, messageId, false);
+            this.RaiseEvent(this.ReceivingReply, reply, messageId, false, this.ValidateMessage(reply, messageId));
         }
 
         /// <summary>
@@ -184,13 +211,15 @@ namespace DevLib.ServiceModel.Dispatcher
                 Debug.WriteLine(request.ToString());
             }
 
-            this.RaiseEvent(this.SendingRequest, request, messageId, isOneWay);
+            string validationError = this.ValidateMessage(request, messageId);
+
+            this.RaiseEvent(this.SendingRequest, request, messageId, isOneWay, validationError);
 
             if (isOneWay)
             {
                 Debug.WriteLine("DevLib.ServiceModel.Dispatcher.WcfMessageInspector.AfterReceiveReply(simulate reply for OneWay): " + messageId.ToString());
 
-                this.RaiseEvent(this.ReceivingReply, request, messageId, isOneWay);
+                this.RaiseEvent(this.ReceivingReply, request, messageId, isOneWay, validationError);
             }
 
             return messageId;
@@ -221,7 +250,7 @@ namespace DevLib.ServiceModel.Dispatcher
                 Debug.WriteLine(request.ToString());
             }
 
-            this.RaiseEvent(this.ReceivingRequest, request, messageId, isOneWay);
+            this.RaiseEvent(this.ReceivingRequest, request, messageId, isOneWay, this.ValidateMessage(request, messageId));
 
             return new CorrelationState(messageId, isOneWay);
         }
@@ -256,7 +285,52 @@ namespace DevLib.ServiceModel.Dispatcher
                 isOneWay = true;
             }
 
-            this.RaiseEvent(this.SendingReply, reply, messageId, isOneWay);
+            this.RaiseEvent(this.SendingReply, reply, messageId, isOneWay, this.ValidateMessage(reply, messageId));
+        }
+
+        /// <summary>
+        /// Validates the message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="messageId">The message identifier.</param>
+        /// <returns>The validation error.</returns>
+        private string ValidateMessage(Message message, Guid messageId)
+        {
+            if (message == null || message.IsFault || message.IsEmpty)
+            {
+                return null;
+            }
+
+            StringBuilder stringBuilder = null;
+
+            try
+            {
+                XDocument xDocument = XDocument.Parse(message.ToString());
+
+                stringBuilder = new StringBuilder();
+
+                xDocument.Validate(this._xmlSchemaSet, (s, e) => stringBuilder.AppendLine(e.Message), true);
+
+                string result = stringBuilder.ToString();
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    this.RaiseEvent(this.ErrorOccurred, new XmlSchemaValidationException(result, new Exception(message.ToString())) { Source = messageId.ToString() });
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                return e.ToString();
+            }
+            finally
+            {
+                if (stringBuilder != null)
+                {
+                    stringBuilder.Length = 0;
+                }
+            }
         }
 
         /// <summary>
@@ -266,14 +340,31 @@ namespace DevLib.ServiceModel.Dispatcher
         /// <param name="message">The message.</param>
         /// <param name="messageId">The message identifier.</param>
         /// <param name="isOneWay">Whether the message is one way.</param>
-        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, Message message, Guid messageId, bool isOneWay)
+        /// <param name="validationError">The validation error.</param>
+        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, Message message, Guid messageId, bool isOneWay, string validationError)
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfMessageInspectorEventArgs(message, messageId, isOneWay, this._serviceEndpoint, this._clientCredentials, this._serviceHostBase));
+                temp(this, new WcfMessageInspectorEventArgs(message, messageId, isOneWay, validationError, this._serviceEndpoint, this._clientCredentials, this._serviceHostBase));
+            }
+        }
+
+        /// <summary>
+        /// Raises the event.
+        /// </summary>
+        /// <param name="eventHandler">The event handler.</param>
+        /// <param name="exception">The exception.</param>
+        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, Exception exception)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
+            EventHandler<WcfErrorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, new WcfErrorEventArgs(exception));
             }
         }
 

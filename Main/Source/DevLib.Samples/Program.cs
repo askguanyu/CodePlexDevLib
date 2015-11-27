@@ -2134,6 +2134,7 @@ namespace DevLib.Samples
             var testsrv = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
             testsrv.ReceivingRequest += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Receiving);
             testsrv.SendingReply += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Replying);
+            testsrv.ErrorOccurred += new EventHandler<WcfErrorEventArgs>(testsrv_ErrorOccurred);
             testsrv.SetDataContractResolverAction = i => i.DataContractResolver = new GenericDataContractResolver(new string[] { @"D:\Work\Temp\ClassLibrary2\ClassLibrary2\bin\Debug\ClassLibrary2.dll" });
             testsrv.Open();
             Console.ReadLine();
@@ -2237,6 +2238,11 @@ namespace DevLib.Samples
 
             //Console.ReadKey();
             //host.Dispose();
+        }
+
+        static void testsrv_ErrorOccurred(object sender, WcfErrorEventArgs e)
+        {
+            Console.WriteLine(e);
         }
 
         static void Program_ReceivingReply(object sender, WcfMessageInspectorEventArgs e)

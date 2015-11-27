@@ -471,7 +471,7 @@ namespace DevLib.AddIn
         /// <param name="eventHandler">Instance of EventHandler.</param>
         private void RaiseEvent(EventHandler eventHandler)
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
@@ -486,7 +486,7 @@ namespace DevLib.AddIn
         /// <param name="e">Instance of DataReceivedEventArgs.</param>
         private void RaiseDataReceivedEvent(DataReceivedEventArgs e)
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             DataReceivedEventHandler temp = Interlocked.CompareExchange(ref this.DataReceived, null, null);
 
             if (temp != null)

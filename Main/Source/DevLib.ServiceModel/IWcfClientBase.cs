@@ -26,6 +26,11 @@ namespace DevLib.ServiceModel
         event EventHandler<WcfMessageInspectorEventArgs> ReceivingReply;
 
         /// <summary>
+        /// Occurs when has error.
+        /// </summary>
+        event EventHandler<WcfErrorEventArgs> ErrorOccurred;
+
+        /// <summary>
         /// Gets or sets a delegate to configure Binding.
         /// </summary>
         Action<Binding> SetBindingAction

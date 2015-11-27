@@ -666,7 +666,7 @@ namespace DevLib.IO.Ports
         /// <param name="e">A System.EventArgs that contains the event data.</param>
         private void RaiseEvent<T>(EventHandler<T> source, object sender, T e) where T : EventArgs
         {
-            // Copy a reference to the delegate field now into a temporary field for thread safety
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<T> safeHandler = Interlocked.CompareExchange(ref source, null, null);
 
             if (safeHandler != null)

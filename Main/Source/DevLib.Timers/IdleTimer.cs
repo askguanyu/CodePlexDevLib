@@ -245,7 +245,7 @@ namespace DevLib.Timers
                     this.Stop();
                 }
 
-                // Copy a reference to the delegate field now into a temporary field for thread safety
+                // Copy a reference to the delegate field now into a temporary field for thread safety.
                 EventHandler temp = Interlocked.CompareExchange(ref this.IdleOccurred, null, null);
 
                 if (temp != null)

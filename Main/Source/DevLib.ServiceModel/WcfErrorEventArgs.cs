@@ -36,7 +36,7 @@ namespace DevLib.ServiceModel
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
         public override string ToString()
         {
-            return this.InnerException != null ? string.Format("Message={0}, Source={1}", this.InnerException.ToString(), this.InnerException.Source ?? string.Empty) : "Message=, Source=";
+            return this.InnerException != null ? string.Format("Exception={0}, Source={1}", this.InnerException.ToString(), this.InnerException.Source ?? string.Empty) : "Exception=null, Source=null";
         }
     }
 }

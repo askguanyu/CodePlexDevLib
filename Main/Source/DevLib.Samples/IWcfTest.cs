@@ -29,6 +29,12 @@ namespace DevLib.Samples
 
         [OperationContract(IsOneWay = true)]
         void TestOneWay(string a);
+
+        [OperationContract(IsOneWay = true)]
+        void TestOneWayException(string a);
+
+        [OperationContract(IsOneWay = false)]
+        void TestException(string a);
     }
 
     [DataContract]

@@ -57,8 +57,20 @@
         public void TestOneWay(string a)
         {
             Console.WriteLine("one way call: " + a);
+        }
 
-            //throw new NotSupportedException();
+
+        public void TestOneWayException(string a)
+        {
+            Console.WriteLine("one way call with exception: " + a);
+
+            throw new NotSupportedException();
+        }
+
+
+        public void TestException(string a)
+        {
+            throw new NotSupportedException();
         }
     }
 }

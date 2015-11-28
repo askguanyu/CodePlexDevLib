@@ -168,7 +168,7 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        ChannelFactory<TChannel> result = new ChannelFactory<TChannel>(WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri));
+                        ChannelFactory<TChannel> result = new ChannelFactory<TChannel>(WcfServiceUtilities.GetBinding(bindingType), new EndpointAddress(remoteUri));
 
                         ChannelFactoryDictionary.Add(key, result);
 
@@ -178,7 +178,7 @@ namespace DevLib.ServiceModel
             }
             else
             {
-                return new ChannelFactory<TChannel>(WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri)).CreateChannel();
+                return new ChannelFactory<TChannel>(WcfServiceUtilities.GetBinding(bindingType), new EndpointAddress(remoteUri)).CreateChannel();
             }
         }
 

@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceModel.Dispatcher
+namespace DevLib.ServiceModel
 {
     using System;
     using System.ServiceModel.Channels;

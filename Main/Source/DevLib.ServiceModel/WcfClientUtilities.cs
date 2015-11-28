@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="WcfClientType.cs" company="YuGuan Corporation">
+// <copyright file="WcfClientUtilities.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -9,9 +9,9 @@ namespace DevLib.ServiceModel
     using System.Collections.Generic;
 
     /// <summary>
-    /// Class WcfClientType.
+    /// WcfClient Utilities.
     /// </summary>
-    public static class WcfClientType
+    public static class WcfClientUtilities
     {
         /// <summary>
         /// Field TypeDictionary.

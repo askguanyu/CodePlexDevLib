@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceModel.Dispatcher
+namespace DevLib.ServiceModel
 {
     using System;
     using System.Collections.Generic;
@@ -88,9 +88,27 @@ namespace DevLib.ServiceModel.Dispatcher
 
                 try
                 {
+                    List<MessageDescription> wildcardActions = new List<MessageDescription>();
+
+                    foreach (OperationDescription operation in this._serviceEndpoint.Contract.Operations)
+                    {
+                        foreach (MessageDescription message in operation.Messages)
+                        {
+                            if (message.RemoveActionWildcard())
+                            {
+                                wildcardActions.Add(message);
+                            }
+                        }
+                    }
+
                     WsdlExporter wsdlExporter = new WsdlExporter();
                     wsdlExporter.ExportContract(this._serviceEndpoint.Contract);
                     this._xmlSchemaSet = wsdlExporter.GeneratedXmlSchemas;
+
+                    foreach (MessageDescription message in wildcardActions)
+                    {
+                        message.SetActionWildcard();
+                    }
                 }
                 catch (Exception e)
                 {

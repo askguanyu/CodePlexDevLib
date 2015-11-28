@@ -17,7 +17,6 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Description;
     using System.Threading;
     using System.Xml;
-    using DevLib.ServiceModel.Description;
 
     /// <summary>
     /// Class WcfServiceHost.
@@ -1156,7 +1155,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(WcfServiceUtilities.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -1248,7 +1247,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(WcfServiceUtilities.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -1340,7 +1339,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(WcfServiceUtilities.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -1421,7 +1420,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(WcfServiceType.LoadWcfTypes(assemblyFile)[0])[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(WcfServiceUtilities.LoadWcfTypes(assemblyFile)[0])[0].FullName;
             }
             catch
             {
@@ -1464,7 +1463,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("bindingType");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -1516,7 +1515,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("bindingType");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -1568,7 +1567,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("binding");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -1615,7 +1614,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("binding");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -1645,7 +1644,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1674,7 +1673,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1688,7 +1687,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(serviceType)[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(serviceType)[0].FullName;
             }
             catch
             {
@@ -1715,7 +1714,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1756,7 +1755,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1780,7 +1779,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(serviceType)[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(serviceType)[0].FullName;
             }
             catch
             {
@@ -1808,7 +1807,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1848,7 +1847,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1872,7 +1871,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(serviceType)[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(serviceType)[0].FullName;
             }
             catch
             {
@@ -1899,7 +1898,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1934,7 +1933,7 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("serviceType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
@@ -1953,7 +1952,7 @@ namespace DevLib.ServiceModel
 
             try
             {
-                contractName = WcfServiceType.GetServiceContract(serviceType)[0].FullName;
+                contractName = WcfServiceUtilities.GetServiceContract(serviceType)[0].FullName;
             }
             catch
             {
@@ -1986,12 +1985,12 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("contractType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -2038,12 +2037,12 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("contractType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -2090,12 +2089,12 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("contractType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -2137,12 +2136,12 @@ namespace DevLib.ServiceModel
                 throw new ArgumentNullException("contractType");
             }
 
-            if (!WcfServiceType.IsWcfServiceClass(serviceType))
+            if (!WcfServiceUtilities.IsWcfServiceClass(serviceType))
             {
                 throw new ArgumentException("The parameter serviceType is not a Wcf service.", "serviceType");
             }
 
-            if (!WcfServiceType.HasServiceContractAttribute(contractType))
+            if (!WcfServiceUtilities.HasServiceContractAttribute(contractType))
             {
                 throw new ArgumentException("The parameter contractType is not a Wcf contract.", "contractType");
             }
@@ -2771,7 +2770,7 @@ namespace DevLib.ServiceModel
             {
                 if (File.Exists(this._assemblyFile))
                 {
-                    serviceTypeList = WcfServiceType.LoadWcfTypes(this._assemblyFile, this._configFile);
+                    serviceTypeList = WcfServiceUtilities.LoadWcfTypes(this._assemblyFile, this._configFile);
                 }
                 else
                 {
@@ -2873,7 +2872,7 @@ namespace DevLib.ServiceModel
             {
                 if (File.Exists(this._assemblyFile))
                 {
-                    serviceTypeList = WcfServiceType.LoadWcfTypes(this._assemblyFile);
+                    serviceTypeList = WcfServiceUtilities.LoadWcfTypes(this._assemblyFile);
                 }
                 else
                 {
@@ -2882,7 +2881,7 @@ namespace DevLib.ServiceModel
 
                 Uri baseAddressUri = new Uri(this._baseAddress);
 
-                Binding binding = this._binding ?? WcfServiceType.GetBinding(this._bindingType);
+                Binding binding = this._binding ?? WcfServiceUtilities.GetBinding(this._bindingType);
 
                 if (this.SetBindingAction != null)
                 {
@@ -2906,7 +2905,7 @@ namespace DevLib.ServiceModel
                         {
                             if (this._contractType == null)
                             {
-                                contractList = WcfServiceType.GetServiceContract(serviceType);
+                                contractList = WcfServiceUtilities.GetServiceContract(serviceType);
                             }
 
                             WcfServiceHostProxy serviceHost = this._serviceInstance == null ? new WcfServiceHostProxy(serviceType, baseAddressUri) : new WcfServiceHostProxy(this._serviceInstance, baseAddressUri);

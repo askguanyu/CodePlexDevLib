@@ -71,7 +71,7 @@ namespace DevLib.ServiceModel
         protected WcfClientAbstractClassBuilder(Type baseClassType)
         {
             this._baseClassType = baseClassType;
-            this._saveGeneratedAssembly = WcfClientType.SaveGeneratedAssemblyFile;
+            this._saveGeneratedAssembly = WcfClientUtilities.SaveGeneratedAssemblyFile;
         }
 
         /// <summary>

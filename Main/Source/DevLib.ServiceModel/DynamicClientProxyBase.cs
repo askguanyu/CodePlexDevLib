@@ -13,7 +13,6 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.Threading;
-    using DevLib.ServiceModel.Description;
 
     /// <summary>
     /// Represents service client proxy object.
@@ -117,7 +116,7 @@ namespace DevLib.ServiceModel
             paramTypes[1] = typeof(EndpointAddress);
 
             object[] paramValues = new object[2];
-            paramValues[0] = WcfServiceType.GetBinding(bindingType);
+            paramValues[0] = WcfServiceUtilities.GetBinding(bindingType);
             paramValues[1] = new EndpointAddress(remoteUri);
 
             this.ParamTypes = paramTypes;

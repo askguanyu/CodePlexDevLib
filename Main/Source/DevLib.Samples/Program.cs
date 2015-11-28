@@ -166,7 +166,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    TestDevLibServiceModel();
+                    //TestDevLibServiceModel();
                 });
 
                 Benchmark.Run(delegate
@@ -2170,7 +2170,7 @@ namespace DevLib.Samples
 
             try
             {
-                //a = client1.MyOperation1("a", 1);
+                a = client1.MyOperation1("a", 1);
                 //b = client1.Foo("aaa");
             }
             catch (Exception e)

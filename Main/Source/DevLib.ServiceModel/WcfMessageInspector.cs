@@ -195,7 +195,7 @@ namespace DevLib.ServiceModel
             {
             }
 
-            Debug.WriteLine("DevLib.ServiceModel.Dispatcher.WcfMessageInspector.AfterReceiveReply: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.AfterReceiveReply: " + messageId.ToString());
 
             if (reply != null)
             {
@@ -217,7 +217,7 @@ namespace DevLib.ServiceModel
 
             bool isOneWay = false;
 
-            Debug.WriteLine("DevLib.ServiceModel.Dispatcher.WcfMessageInspector.BeforeSendRequest: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.BeforeSendRequest: " + messageId.ToString());
 
             if (request != null)
             {
@@ -235,7 +235,7 @@ namespace DevLib.ServiceModel
 
             if (isOneWay)
             {
-                Debug.WriteLine("DevLib.ServiceModel.Dispatcher.WcfMessageInspector.AfterReceiveReply(simulate reply for OneWay): " + messageId.ToString());
+                Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.AfterReceiveReply(simulate reply for OneWay): " + messageId.ToString());
 
                 this.RaiseEvent(this.ReceivingReply, request, messageId, isOneWay, validationError);
             }
@@ -256,7 +256,7 @@ namespace DevLib.ServiceModel
 
             bool isOneWay = false;
 
-            Debug.WriteLine("DevLib.ServiceModel.Dispatcher.WcfMessageInspector.AfterReceiveRequest: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.AfterReceiveRequest: " + messageId.ToString());
 
             if (request != null)
             {
@@ -292,7 +292,7 @@ namespace DevLib.ServiceModel
                 isOneWay = state.IsOneWay;
             }
 
-            Debug.WriteLine("DevLib.ServiceModel.Dispatcher.WcfMessageInspector.BeforeSendReply: " + messageId.ToString());
+            Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.BeforeSendReply: " + messageId.ToString());
 
             if (reply != null)
             {

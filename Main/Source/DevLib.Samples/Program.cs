@@ -166,7 +166,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibServiceModel();
+                    TestDevLibServiceModel();
                 });
 
                 Benchmark.Run(delegate
@@ -2143,7 +2143,7 @@ namespace DevLib.Samples
 
             var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
 
-            WcfClientType.SaveGeneratedAssemblyFile = true;
+            WcfClientUtilities.SaveGeneratedAssemblyFile = true;
 
             var client1 = WcfClientProxy<IWcfTest>.GetPerSessionThrowableInstance(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest");
 

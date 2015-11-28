@@ -11,7 +11,6 @@ namespace DevLib.ServiceModel
     using System.ServiceModel.Channels;
     using System.ServiceModel.Description;
     using System.Threading;
-    using DevLib.ServiceModel.Description;
 
     /// <summary>
     /// Class WcfClientBase.
@@ -22,7 +21,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Field _InstanceType.
         /// </summary>
-        private static readonly Type InstanceType = WcfClientType.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
+        private static readonly Type InstanceType = WcfClientUtilities.BuildType<TChannel, WcfClientClientBaseClassBuilder<TChannel>>();
 
         /// <summary>
         /// Field _endpointConfigurationName.

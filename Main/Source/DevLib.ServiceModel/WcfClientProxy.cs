@@ -769,7 +769,7 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                        Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
                         TChannel result = (TChannel)Activator.CreateInstance(type);
 
@@ -781,7 +781,7 @@ namespace DevLib.ServiceModel
             }
             else
             {
-                Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
                 return (TChannel)Activator.CreateInstance(type);
             }
@@ -830,7 +830,7 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                        Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
                         TChannel result = string.IsNullOrEmpty(remoteUri) ?
                             (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
@@ -844,7 +844,7 @@ namespace DevLib.ServiceModel
             }
             else
             {
-                Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
                 return string.IsNullOrEmpty(remoteUri) ?
                     (TChannel)Activator.CreateInstance(type, endpointConfigurationName) :
@@ -881,9 +881,9 @@ namespace DevLib.ServiceModel
                     }
                     else
                     {
-                        Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                        Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
-                        TChannel result = (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri));
+                        TChannel result = (TChannel)Activator.CreateInstance(type, WcfServiceUtilities.GetBinding(bindingType), new EndpointAddress(remoteUri));
 
                         caching.Add(key, result);
 
@@ -893,9 +893,9 @@ namespace DevLib.ServiceModel
             }
             else
             {
-                Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+                Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
-                return (TChannel)Activator.CreateInstance(type, WcfServiceType.GetBinding(bindingType), new EndpointAddress(remoteUri));
+                return (TChannel)Activator.CreateInstance(type, WcfServiceUtilities.GetBinding(bindingType), new EndpointAddress(remoteUri));
             }
         }
 
@@ -908,7 +908,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         private static TChannel GetInstance<TTypeBuilder>(Binding binding, string remoteUri) where TTypeBuilder : IWcfClientTypeBuilder, new()
         {
-            Type type = WcfClientType.BuildType<TChannel, TTypeBuilder>();
+            Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
             return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteUri));
         }

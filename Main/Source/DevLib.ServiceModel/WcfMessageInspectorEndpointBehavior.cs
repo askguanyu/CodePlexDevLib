@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceModel.Description
+namespace DevLib.ServiceModel
 {
     using System;
     using System.ServiceModel;
@@ -11,7 +11,6 @@ namespace DevLib.ServiceModel.Description
     using System.ServiceModel.Description;
     using System.ServiceModel.Dispatcher;
     using System.Threading;
-    using DevLib.ServiceModel.Dispatcher;
 
     /// <summary>
     /// WcfMessageInspector EndpointBehavior.

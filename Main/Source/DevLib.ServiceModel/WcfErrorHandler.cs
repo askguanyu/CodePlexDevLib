@@ -61,7 +61,7 @@ namespace DevLib.ServiceModel
 
             if (temp != null)
             {
-                temp(this, new WcfErrorEventArgs(exception));
+                temp(this, new WcfErrorEventArgs(exception, exception != null ? exception.Source : null));
             }
         }
     }

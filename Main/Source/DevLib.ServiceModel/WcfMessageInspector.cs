@@ -333,13 +333,15 @@ namespace DevLib.ServiceModel
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    this.RaiseEvent(this.ErrorOccurred, new XmlSchemaValidationException(result, new Exception(message.ToString())) { Source = messageId.ToString() });
+                    this.RaiseEvent(this.ErrorOccurred, new XmlSchemaValidationException(result, new Exception(message.ToString())) { Source = messageId.ToString() }, messageId.ToString());
                 }
 
                 return result;
             }
             catch (Exception e)
             {
+                this.RaiseEvent(this.ErrorOccurred, e, messageId.ToString());
+
                 return e.ToString();
             }
             finally
@@ -375,14 +377,15 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
         /// <param name="exception">The exception.</param>
-        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, Exception exception)
+        /// <param name="source">The source.</param>
+        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, Exception exception, string source)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfErrorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfErrorEventArgs(exception));
+                temp(this, new WcfErrorEventArgs(exception, source));
             }
         }
 

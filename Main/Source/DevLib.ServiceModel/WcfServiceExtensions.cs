@@ -96,7 +96,7 @@ namespace DevLib.ServiceModel
         /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
         /// <param name="source">The source TChannel.</param>
         /// <returns>WcfClientBase{TChannel} instance.</returns>
-        public static WcfClientBase<TChannel> GetWcfClientBase<TChannel>(this TChannel source) where TChannel : class
+        public static WcfClientBase<TChannel> AsWcfClientBase<TChannel>(this TChannel source) where TChannel : class
         {
             return source as WcfClientBase<TChannel>;
         }
@@ -106,9 +106,20 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="source">The source TChannel.</param>
         /// <returns>IWcfClientBase instance.</returns>
-        public static IWcfClientBase GetIWcfClientBase(this object source)
+        public static IWcfClientBase AsIWcfClientBase(this object source)
         {
             return source as IWcfClientBase;
+        }
+
+        /// <summary>
+        /// Gets the client base.
+        /// </summary>
+        /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
+        /// <param name="source">The source TChannel.</param>
+        /// <returns>WcfClientBase{TChannel} instance.</returns>
+        public static ClientBase<TChannel> AsClientBase<TChannel>(this TChannel source) where TChannel : class
+        {
+            return source as ClientBase<TChannel>;
         }
 
         /// <summary>

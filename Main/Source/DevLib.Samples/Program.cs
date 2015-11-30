@@ -2132,25 +2132,53 @@ namespace DevLib.Samples
             //new WcfServiceHost(typeof(WcfTest), "DevLib.Samples.exe.config", "http://127.0.0.1:6000/WcfTest", true);
 
             var testsrv = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
-            testsrv.ReceivingRequest += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Receiving);
-            testsrv.SendingReply += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Replying);
-            testsrv.ErrorOccurred += new EventHandler<WcfErrorEventArgs>(testsrv_ErrorOccurred);
+            //testsrv.ReceivingRequest += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Receiving);
+            //testsrv.SendingReply += new EventHandler<WcfMessageInspectorEventArgs>(calcsvr_Replying);
+            //testsrv.ErrorOccurred += new EventHandler<WcfErrorEventArgs>(testsrv_ErrorOccurred);
             testsrv.SetDataContractResolverAction = i => i.DataContractResolver = new GenericDataContractResolver(new string[] { @"D:\Work\Temp\ClassLibrary2\ClassLibrary2\bin\Debug\ClassLibrary2.dll" });
             testsrv.Open();
             Console.ReadLine();
 
+            var client = WcfClientProxy<IWcfTest>.GetClientBaseInstance("http://127.0.0.1:6000/WcfTest");
+
+            WcfMessageInspectorEndpointBehavior bh = (WcfMessageInspectorEndpointBehavior)client.AsClientBase<IWcfTest>().AddEndpointBehavior(new WcfMessageInspectorEndpointBehavior());
+            bh.ReceivingReply += (s, e) => Console.WriteLine(e);
+            bh.SendingRequest += (s, e) => Console.WriteLine(e);
+            //client.Foo("a");
+
+            Console.ReadLine();
+
+            client.AsClientBase<IWcfTest>().Close();
+
+            try
+            {
+                client.Foo("a");
+            }
+            catch (Exception)
+            {
+
+            }
+
+            client.AsIWcfClientBase().Close();
+
+            client.Foo("a");
+
+            client.Foo("a");
+
+            Console.ReadLine();
+
             //new WcfServiceHost(typeof(WcfTest), typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", true);
 
-            var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
+            //var client = WcfClientChannelFactory<IWcfTest>.CreateChannel(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest", false);
 
-            WcfClientUtilities.SaveGeneratedAssemblyFile = true;
+            //WcfClientUtilities.SaveGeneratedAssemblyFile = true;
 
             var client1 = WcfClientProxy<IWcfTest>.GetPerSessionThrowableInstance(typeof(BasicHttpBinding), "http://127.0.0.1:6000/WcfTest");
 
-            client1.SetDataContractResolver(i => i.AddGenericDataContractResolver());
+            //client1.SetDataContractResolver(i => i.AddGenericDataContractResolver());
 
-            client1.GetWcfClientBase().SendingRequest += new EventHandler<WcfMessageInspectorEventArgs>(Program_SendingRequest);
-            client1.GetWcfClientBase().ReceivingReply += new EventHandler<WcfMessageInspectorEventArgs>(Program_ReceivingReply);
+            //client1.GetWcfClientBase().SendingRequest += new EventHandler<WcfMessageInspectorEventArgs>(Program_SendingRequest);
+            //client1.GetWcfClientBase().ReceivingReply += new EventHandler<WcfMessageInspectorEventArgs>(Program_ReceivingReply);
             //client2.SetClientCredentialsAction = (c) => { c.UserName.UserName = "a"; c.UserName.Password = "b"; };
 
 

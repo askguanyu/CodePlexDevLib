@@ -13,6 +13,7 @@ echo y | DevLib.Drawing.Publish.Release.bat
 echo y | DevLib.Dynamic.Publish.Release.bat
 echo y | DevLib.Expressions.Publish.Release.bat
 echo y | DevLib.ExtensionMethods.Publish.Release.bat
+echo y | DevLib.ExtensionProperties.Publish.Release.bat
 echo y | DevLib.Input.Publish.Release.bat
 echo y | DevLib.IO.Publish.Release.bat
 echo y | DevLib.Ioc.Publish.Release.bat

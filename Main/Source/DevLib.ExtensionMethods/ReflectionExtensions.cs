@@ -19,6 +19,21 @@ namespace DevLib.ExtensionMethods
     public static class ReflectionExtensions
     {
         /// <summary>
+        /// The BindingFlags for public only lookup.
+        /// </summary>
+        public const BindingFlags PublicOnlyLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
+
+        /// <summary>
+        /// The BindingFlags for non public only lookup.
+        /// </summary>
+        public const BindingFlags NonPublicOnlyLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic;
+
+        /// <summary>
+        /// The BindingFlags for public and non public lookup.
+        /// </summary>
+        public const BindingFlags AllLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+        /// <summary>
         /// Check whether the Type is nullable type.
         /// </summary>
         /// <param name="source">The type to check.</param>
@@ -158,9 +173,10 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The instance of the invoked method.</param>
         /// <param name="method">The name of the invoked method.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
         /// <param name="parameters">The parameters of the invoked method.</param>
         /// <returns>The return value of the invoked method.</returns>
-        public static object InvokeMethod(this object source, string method, params object[] parameters)
+        public static object InvokeMethod(this object source, string method, bool isPublicOnly = true, params object[] parameters)
         {
             MethodInfo methodInfo = null;
 
@@ -168,11 +184,11 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                methodInfo = source.GetType().GetMethod(method, parameterTypes);
+                methodInfo = source.GetType().GetMethod(method, isPublicOnly ? PublicOnlyLookup : AllLookup, null, CallingConventions.Any, parameterTypes, null);
             }
             catch (AmbiguousMatchException)
             {
-                var methods = source.GetType().GetMethods().Where(p => p.Name.Equals(method, StringComparison.OrdinalIgnoreCase) && !p.IsGenericMethod);
+                var methods = source.GetType().GetMethods(isPublicOnly ? PublicOnlyLookup : AllLookup).Where(p => p.Name.Equals(method, StringComparison.OrdinalIgnoreCase) && !p.IsGenericMethod);
 
                 foreach (MethodInfo item in methods)
                 {
@@ -206,9 +222,10 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The instance of the invoked method.</param>
         /// <param name="method">The name of the invoked method.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
         /// <param name="parameters">The parameters of the invoked method.</param>
         /// <returns>The return value of the invoked method.</returns>
-        public static object InvokeMethodGeneric(this object source, string method, Type[] typeArguments, params object[] parameters)
+        public static object InvokeMethodGeneric(this object source, string method, Type[] typeArguments, bool isPublicOnly = true, params object[] parameters)
         {
             MethodInfo methodInfo = null;
 
@@ -225,11 +242,11 @@ namespace DevLib.ExtensionMethods
 
             try
             {
-                methodInfo = source.GetType().GetMethod(method, parameterTypes).MakeGenericMethod(typeArguments);
+                methodInfo = source.GetType().GetMethod(method, isPublicOnly ? PublicOnlyLookup : AllLookup, null, CallingConventions.Any, parameterTypes, null).MakeGenericMethod(typeArguments);
             }
             catch (AmbiguousMatchException)
             {
-                var methods = source.GetType().GetMethods().Where(p => p.Name.Equals(method, StringComparison.OrdinalIgnoreCase) && p.IsGenericMethod);
+                var methods = source.GetType().GetMethods(isPublicOnly ? PublicOnlyLookup : AllLookup).Where(p => p.Name.Equals(method, StringComparison.OrdinalIgnoreCase) && p.IsGenericMethod);
 
                 foreach (MethodInfo item in methods)
                 {
@@ -269,11 +286,12 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The object whose property value will be returned.</param>
         /// <param name="propertyName">The string containing the name of the public property to get.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
         /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The property value for the <paramref name="source" /> parameter.</returns>
-        public static object GetPropertyValue(this object source, string propertyName, params object[] index)
+        public static object GetPropertyValue(this object source, string propertyName, bool isPublicOnly = true, params object[] index)
         {
-            return source.GetType().GetProperty(propertyName).GetValue(source, index);
+            return source.GetType().GetProperty(propertyName, isPublicOnly ? PublicOnlyLookup : AllLookup).GetValue(source, index);
         }
 
         /// <summary>
@@ -282,11 +300,12 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The object whose property value will be returned.</param>
         /// <param name="propertyName">The string containing the name of the public property to get.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
         /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The property value for the <paramref name="source" /> parameter.</returns>
-        public static object GetPropertyValueGeneric(this object source, string propertyName, Type[] typeArguments, params object[] index)
+        public static object GetPropertyValueGeneric(this object source, string propertyName, Type[] typeArguments, bool isPublicOnly = true, params object[] index)
         {
-            return source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName).GetValue(source, index);
+            return source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName, isPublicOnly ? PublicOnlyLookup : AllLookup).GetValue(source, index);
         }
 
         /// <summary>
@@ -295,11 +314,12 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The object whose property value will be set.</param>
         /// <param name="propertyName">The string containing the name of the public property to set.</param>
         /// <param name="value">The new value for this property.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
         /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The source object.</returns>
-        public static object SetPropertyValue(this object source, string propertyName, object value, params object[] index)
+        public static object SetPropertyValue(this object source, string propertyName, object value, bool isPublicOnly = true, params object[] index)
         {
-            source.GetType().GetProperty(propertyName).SetValue(source, value, index);
+            source.GetType().GetProperty(propertyName, isPublicOnly ? PublicOnlyLookup : AllLookup).SetValue(source, value, index);
 
             return source;
         }
@@ -311,13 +331,63 @@ namespace DevLib.ExtensionMethods
         /// <param name="propertyName">The string containing the name of the public property to set.</param>
         /// <param name="value">The new value for this property.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
         /// <param name="index">Optional index values for indexed properties. This value should be null for non-indexed properties.</param>
         /// <returns>The source object.</returns>
-        public static object SetPropertyValueGeneric(this object source, string propertyName, object value, Type[] typeArguments, params object[] index)
+        public static object SetPropertyValueGeneric(this object source, string propertyName, object value, Type[] typeArguments, bool isPublicOnly = true, params object[] index)
         {
-            source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName).SetValue(source, value, index);
+            source.GetType().MakeGenericType(typeArguments).GetProperty(propertyName, isPublicOnly ? PublicOnlyLookup : AllLookup).SetValue(source, value, index);
 
             return source;
+        }
+
+        /// <summary>
+        /// Retrieves object's all properties value.
+        /// </summary>
+        /// <param name="source">The source object.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
+        /// <returns>Instance of Dictionary{string, object}.</returns>
+        public static Dictionary<string, object> RetrieveProperties(this object source, bool isPublicOnly = true)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            Dictionary<string, object> result = new Dictionary<string, object>();
+
+            foreach (PropertyInfo property in source.GetType().GetProperties(isPublicOnly ? PublicOnlyLookup : AllLookup))
+            {
+                if (property.CanRead)
+                {
+                    result.Add(property.Name, property.GetValue(source, null));
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets object's all properties with get value function.
+        /// </summary>
+        /// <param name="source">The source object.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
+        /// <returns>Instance of Dictionary{string, Func{object}}.</returns>
+        public static Dictionary<string, Func<object>> RetrievePropertiesLazy(this object source, bool isPublicOnly = true)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            Dictionary<string, Func<object>> result = new Dictionary<string, Func<object>>();
+
+            foreach (PropertyInfo property in source.GetType().GetProperties(isPublicOnly ? PublicOnlyLookup : AllLookup))
+            {
+                result.Add(property.Name, () => property.GetValue(source, null));
+            }
+
+            return result;
         }
 
         /// <summary>

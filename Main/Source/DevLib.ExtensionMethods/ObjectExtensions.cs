@@ -298,30 +298,5 @@ namespace DevLib.ExtensionMethods
                 }
             }
         }
-
-        /// <summary>
-        /// Retrieve object's all properties value.
-        /// </summary>
-        /// <param name="source">The source object.</param>
-        /// <returns>Instance of Dictionary{string, object}.</returns>
-        public static Dictionary<string, object> RetrieveProperties(this object source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            Dictionary<string, object> result = new Dictionary<string, object>();
-
-            foreach (PropertyInfo property in source.GetType().GetProperties())
-            {
-                if (property.CanRead)
-                {
-                    result.Add(property.Name, property.GetValue(source, null));
-                }
-            }
-
-            return result;
-        }
     }
 }

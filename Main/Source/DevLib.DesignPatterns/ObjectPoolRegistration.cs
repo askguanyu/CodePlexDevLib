@@ -61,11 +61,11 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Performs an implicit conversion from <see cref="ObjectPoolRegistration{T}"/> to T.
         /// </summary>
-        /// <param name="registration">The object pool registration.</param>
+        /// <param name="source">The object pool registration.</param>
         /// <returns>The result of the conversion.</returns>
-        public static implicit operator T(ObjectPoolRegistration<T> registration)
+        public static implicit operator T(ObjectPoolRegistration<T> source)
         {
-            return registration.Value;
+            return source.Value;
         }
 
         /// <summary>

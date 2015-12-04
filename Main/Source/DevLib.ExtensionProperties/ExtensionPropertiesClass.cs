@@ -15,6 +15,11 @@ namespace DevLib.ExtensionProperties
     public class ExtensionPropertiesClass<T> : IDisposable
     {
         /// <summary>
+        /// Field _disposeAction.
+        /// </summary>
+        private readonly Action<T> _disposeAction;
+
+        /// <summary>
         /// Field _extensionProperties.
         /// </summary>
         private readonly Dictionary<string, object> _extensionProperties;
@@ -25,12 +30,14 @@ namespace DevLib.ExtensionProperties
         private bool _disposed = false;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ExtensionPropertiesClass{T}"/> class.
+        /// Initializes a new instance of the <see cref="ExtensionPropertiesClass{T}" /> class.
         /// </summary>
         /// <param name="value">The value.</param>
-        public ExtensionPropertiesClass(T value)
+        /// <param name="disposeAction">The dispose action.</param>
+        public ExtensionPropertiesClass(T value, Action<T> disposeAction = null)
         {
             this.Value = value;
+            this._disposeAction = disposeAction;
             this._extensionProperties = new Dictionary<string, object>();
         }
 
@@ -71,6 +78,26 @@ namespace DevLib.ExtensionProperties
             {
                 this.SetExtensionProperty(propertyName, value);
             }
+        }
+
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="ExtensionPropertiesClass{T}" /> to T.
+        /// </summary>
+        /// <param name="source">The extension properties class.</param>
+        /// <returns>The result of the conversion.</returns>
+        public static implicit operator T(ExtensionPropertiesClass<T> source)
+        {
+            return source.Value;
+        }
+
+        /// <summary>
+        /// Performs an implicit conversion from T to <see cref="ExtensionPropertiesClass{T}" />.
+        /// </summary>
+        /// <param name="source">The source object.</param>
+        /// <returns>The result of the conversion.</returns>
+        public static implicit operator ExtensionPropertiesClass<T>(T source)
+        {
+            return new ExtensionPropertiesClass<T>(source);
         }
 
         /// <summary>
@@ -209,13 +236,48 @@ namespace DevLib.ExtensionProperties
                 ////    managedResource = null;
                 ////}
 
+                if (this._disposeAction != null)
+                {
+                    try
+                    {
+                        this._disposeAction(this.Value);
+                    }
+                    catch (Exception e)
+                    {
+                        InternalLogger.Log(e);
+                    }
+                }
+                else
+                {
+                    IDisposable source = this.Value as IDisposable;
+
+                    if (source != null)
+                    {
+                        try
+                        {
+                            source.Dispose();
+                        }
+                        catch (Exception e)
+                        {
+                            InternalLogger.Log(e);
+                        }
+                    }
+                }
+
                 foreach (var item in this._extensionProperties)
                 {
                     IDisposable disposable = item.Value as IDisposable;
 
                     if (disposable != null)
                     {
-                        disposable.Dispose();
+                        try
+                        {
+                            disposable.Dispose();
+                        }
+                        catch (Exception e)
+                        {
+                            InternalLogger.Log(e);
+                        }
                     }
                 }
 

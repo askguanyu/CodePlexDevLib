@@ -51,6 +51,7 @@ namespace DevLib.Samples
     using DevLib.Dynamic;
     using DevLib.Expressions;
     using DevLib.ExtensionMethods;
+    using DevLib.ExtensionProperties;
     using DevLib.Input;
     using DevLib.IO.Ports;
     using DevLib.Ioc;
@@ -142,6 +143,11 @@ namespace DevLib.Samples
                 Benchmark.Run(delegate
                 {
                     //TestDevLibExtensionMethods();
+                });
+
+                Benchmark.Run(delegate
+                {
+                    //TestDevLibExtensionProperties();
                 });
 
                 Benchmark.Run(delegate
@@ -1042,6 +1048,9 @@ namespace DevLib.Samples
 
             FooBar fb = ArgumentParser.ParseTo<FooBar>(" /bar:123 --ok -foo=aaa");
 
+            Expression<Func<Company, object>> exp1 = p => p.Bosses[3].Home.Street;
+
+            exp1.ExtractPropertyName();
 
             string expression1 = PropertyEvaluator.ExtractPropertyName<Company>(p => p.Bosses[3].Home.Street); // will return Bosses[3].Home.Street
 
@@ -1586,6 +1595,17 @@ namespace DevLib.Samples
             //{
             //    safeBag.Add("hello");
             //});
+        }
+
+        private static void TestDevLibExtensionProperties()
+        {
+            FooBar a = new FooBar();
+
+            ExtensionPropertiesClass<FooBar> xa = new ExtensionPropertiesClass<FooBar>(a);
+
+            xa["A"] = "hello";
+
+            var xaA = xa["A"];
         }
 
         private static void TestDevLibExtensionMethods()

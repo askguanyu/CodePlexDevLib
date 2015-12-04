@@ -175,6 +175,10 @@
       <Project>{F5F97EFD-8C16-4018-94F9-DE2F5950D4C0}</Project>
       <Name>DevLib.ExtensionMethods</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.ExtensionProperties\DevLib.ExtensionProperties.csproj">
+      <Project>{849809A2-39D1-49C6-A78E-50003391438F}</Project>
+      <Name>DevLib.ExtensionProperties</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Input\DevLib.Input.csproj">
       <Project>{1421FFB1-D17E-4674-A313-34B5EC09D83B}</Project>
       <Name>DevLib.Input</Name>

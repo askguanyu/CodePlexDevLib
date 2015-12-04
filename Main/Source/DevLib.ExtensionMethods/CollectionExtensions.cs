@@ -101,6 +101,42 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Gets the value associated with the specified key, if the key is found; otherwise, the default value for the type of the value parameter.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key of the value to get.</param>
+        /// <returns>The value associated with the specified key, if the key is found; otherwise, the default value for the type of the value parameter.</returns>
+        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key)
+        {
+            TValue result;
+
+            source.TryGetValue(key, out result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Adds the elements of the specified dictionary to the source.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="dictionary">The dictionary to add.</param>
+        /// <param name="forceUpdate">true to update the source dictionary if the key exists; otherwise, ignore the value.</param>
+        public static void AddRange<TKey, TValue>(this IDictionary<TKey, TValue> source, IDictionary<TKey, TValue> dictionary, bool forceUpdate = true)
+        {
+            foreach (KeyValuePair<TKey, TValue> current in dictionary)
+            {
+                if (forceUpdate || !source.ContainsKey(current.Key))
+                {
+                    source[current.Key] = current.Value;
+                }
+            }
+        }
+
+        /// <summary>
         /// Determines whether a sequence is null or empty.
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
@@ -133,14 +169,26 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Return an empty enumeration of the same type if source is null; otherwise, return source itself.
+        /// Returns an empty enumeration of the same type if source is null; otherwise, return source itself.
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>
         /// <param name="source">Source IEnumerable.</param>
         /// <returns>An empty enumeration of the same type if source is null; otherwise, source itself.</returns>
-        public static IEnumerable<T> Safe<T>(this IEnumerable<T> source)
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> source)
         {
             return source ?? Enumerable.Empty<T>();
+        }
+
+        /// <summary>
+        /// Returns an enumeration of the specified source type.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of source.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <returns>An enumeration of the source type </returns>
+        public static IEnumerable<T> Enumerate<T>(this T source)
+        {
+            yield return source;
+            yield break;
         }
 
         /// <summary>

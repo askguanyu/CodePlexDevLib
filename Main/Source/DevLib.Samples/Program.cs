@@ -1155,7 +1155,7 @@ namespace DevLib.Samples
 
             object aPerson = new Person();
             aPerson.InvokeMethod("ShowName");
-            aPerson.InvokeMethodGeneric("ShowName", null, typeof(string));
+            aPerson.InvokeMethodGeneric("ShowName", null, false, typeof(string));
 
 
             DateTime a = new DateTime();

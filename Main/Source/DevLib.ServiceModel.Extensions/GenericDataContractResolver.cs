@@ -436,9 +436,9 @@ namespace DevLib.ServiceModel.Extensions
         /// Gets the assembly types.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        /// <param name="onlyPublic">true to get only public; otherwise, false.</param>
+        /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
         /// <returns>Assembly types.</returns>
-        public static List<Type> GetAssemblyTypes(Assembly assembly, bool onlyPublic)
+        public static List<Type> GetAssemblyTypes(Assembly assembly, bool isPublicOnly)
         {
             List<Type> result = new List<Type>();
 
@@ -466,7 +466,7 @@ namespace DevLib.ServiceModel.Extensions
             {
                 if (!type.IsEnum && !type.IsInterface && !type.IsGenericTypeDefinition && !CanConvert(type))
                 {
-                    if (onlyPublic && !type.IsPublic)
+                    if (isPublicOnly && !type.IsPublic)
                     {
                         if (!type.IsNested || type.IsNestedPrivate)
                         {

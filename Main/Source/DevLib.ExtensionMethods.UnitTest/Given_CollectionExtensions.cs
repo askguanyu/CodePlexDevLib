@@ -180,11 +180,11 @@
         }
 
         [TestMethod()]
-        public void When_Safe()
+        public void When_EmptyIfNull()
         {
             List<string> source = null;
             var expected = Enumerable.Empty<string>();
-            var actual = CollectionExtensions.Safe(source);
+            var actual = CollectionExtensions.EmptyIfNull(source);
 
             Assert.AreEqual(expected, actual);
         }

@@ -74,14 +74,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets the current endpoint for the service to which the client connected.
-        /// </summary>
-        ServiceEndpoint CurrentEndpoint
-        {
-            get;
-        }
-
-        /// <summary>
         /// Gets the underlying <see cref="T:System.ServiceModel.IClientChannel" /> implementation.
         /// </summary>
         IClientChannel InnerChannel

@@ -45,12 +45,11 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Configure the client binding.
         /// </summary>
-        /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
         /// <param name="source">The source TChannel.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
-        public static void SetBinding<TChannel>(this TChannel source, Action<Binding> setBindingAction) where TChannel : class
+        public static void SetClientBinding(this object source, Action<Binding> setBindingAction)
         {
-            WcfClientBase<TChannel> wcfClient = source as WcfClientBase<TChannel>;
+            IWcfClientBase wcfClient = source as IWcfClientBase;
 
             if (wcfClient != null)
             {
@@ -61,12 +60,11 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Configure the client credentials.
         /// </summary>
-        /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
         /// <param name="source">The source TChannel.</param>
         /// <param name="setClientCredentialsAction">A delegate to configure ClientCredentials.</param>
-        public static void SetClientCredentials<TChannel>(this TChannel source, Action<ClientCredentials> setClientCredentialsAction) where TChannel : class
+        public static void SetClientCredentials(this object source, Action<ClientCredentials> setClientCredentialsAction)
         {
-            WcfClientBase<TChannel> wcfClient = source as WcfClientBase<TChannel>;
+            IWcfClientBase wcfClient = source as IWcfClientBase;
 
             if (wcfClient != null)
             {
@@ -77,12 +75,11 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Configure DataContractResolver.
         /// </summary>
-        /// <typeparam name="TChannel">The channel to be used to connect to the service.</typeparam>
         /// <param name="source">The source TChannel.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractSerializerOperationBehavior.</param>
-        public static void SetDataContractResolver<TChannel>(this TChannel source, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction) where TChannel : class
+        public static void SetClientDataContractResolver(this object source, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction)
         {
-            WcfClientBase<TChannel> wcfClient = source as WcfClientBase<TChannel>;
+            IWcfClientBase wcfClient = source as IWcfClientBase;
 
             if (wcfClient != null)
             {

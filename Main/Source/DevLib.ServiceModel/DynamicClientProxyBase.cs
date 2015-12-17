@@ -6,7 +6,8 @@
 namespace DevLib.ServiceModel
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Net;
     using System.Reflection;
     using System.ServiceModel;
@@ -36,9 +37,9 @@ namespace DevLib.ServiceModel
         private const string InnerChannelPropertyName = "InnerChannel";
 
         /// <summary>
-        /// Field StatePropertyName.
+        /// Field _proxySyncRoot.
         /// </summary>
-        private const string StatePropertyName = "State";
+        private readonly object _proxySyncRoot = new object();
 
         /// <summary>
         /// Field _disposed.
@@ -46,34 +47,14 @@ namespace DevLib.ServiceModel
         private bool _disposed = false;
 
         /// <summary>
-        /// Field _setBindingActionChanged.
+        /// Field _proxy.
         /// </summary>
-        private bool _setBindingActionChanged = false;
+        private object _proxy;
 
         /// <summary>
-        /// Field _setClientCredentialsActionChanged.
+        /// Field _methods.
         /// </summary>
-        private bool _setClientCredentialsActionChanged = false;
-
-        /// <summary>
-        /// Field _setDataContractResolverActionChanged.
-        /// </summary>
-        private bool _setDataContractResolverActionChanged = false;
-
-        /// <summary>
-        /// Field _setBindingAction.
-        /// </summary>
-        private Action<Binding> _setBindingAction;
-
-        /// <summary>
-        /// Field _setClientCredentialsAction.
-        /// </summary>
-        private Action<ClientCredentials> _setClientCredentialsAction;
-
-        /// <summary>
-        /// Field _setDataContractResolverAction.
-        /// </summary>
-        private Action<DataContractSerializerOperationBehavior> _setDataContractResolverAction;
+        private ReadOnlyCollection<MethodInfo> _methods;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DynamicClientProxyBase" /> class.
@@ -158,33 +139,45 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Gets the instance of current service client proxy.
         /// </summary>
-        public object ProxyInstance
+        public object Proxy
         {
             get
             {
-                this.RefreshCachedProxy();
-                return this.CachedProxy;
+                this.CheckDisposed();
+
+                if (this._proxy == null)
+                {
+                    lock (this._proxySyncRoot)
+                    {
+                        if (this._proxy == null)
+                        {
+                            this._proxy = this.CreateProxyInstance();
+                        }
+                    }
+                }
+
+                return this._proxy;
             }
         }
 
         /// <summary>
         /// Gets all the public methods of the current service client proxy.
         /// </summary>
-        public List<MethodInfo> Methods
+        public ReadOnlyCollection<MethodInfo> Methods
         {
             get
             {
-                List<MethodInfo> result = new List<MethodInfo>();
-
-                foreach (var item in this.ProxyType.GetMethods())
+                if (this._methods == null)
                 {
-                    if (item.DeclaringType == this.ProxyType)
-                    {
-                        result.Add(item);
-                    }
+                    this._methods = new ReadOnlyCollection<MethodInfo>(
+                        this
+                        .ProxyType
+                        .GetMethods()
+                        .Where(item => item.DeclaringType == this.ProxyType)
+                        .ToArray());
                 }
 
-                return result;
+                return this._methods;
             }
         }
 
@@ -193,19 +186,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<Binding> SetBindingAction
         {
-            get
-            {
-                return this._setBindingAction;
-            }
-
-            set
-            {
-                if (this._setBindingAction != value)
-                {
-                    this._setBindingAction = value;
-                    this._setBindingActionChanged = true;
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -213,19 +195,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<ClientCredentials> SetClientCredentialsAction
         {
-            get
-            {
-                return this._setClientCredentialsAction;
-            }
-
-            set
-            {
-                if (this._setClientCredentialsAction != value)
-                {
-                    this._setClientCredentialsAction = value;
-                    this._setClientCredentialsActionChanged = true;
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -233,19 +204,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<DataContractSerializerOperationBehavior> SetDataContractResolverAction
         {
-            get
-            {
-                return this._setDataContractResolverAction;
-            }
-
-            set
-            {
-                if (this._setDataContractResolverAction != value)
-                {
-                    this._setDataContractResolverAction = value;
-                    this._setDataContractResolverActionChanged = true;
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -271,40 +231,13 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets or sets BindingFlags for invoke attribute.
-        /// </summary>
-        public BindingFlags InvokeAttr
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets the current endpoint for the service to which the client connected.
-        /// </summary>
-        public ServiceEndpoint CurrentEndpoint
-        {
-            get
-            {
-                if (this._disposed || this.CachedProxy == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return this.GetProperty<ServiceEndpoint>(this.CachedProxy, EndpointPropertyName);
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets the underlying <see cref="T:System.ServiceModel.IClientChannel" /> implementation.
         /// </summary>
         public IClientChannel InnerChannel
         {
             get
             {
-                return this.GetProperty<IClientChannel>(this.ProxyInstance, InnerChannelPropertyName);
+                return (IClientChannel)this.GetProperty(InnerChannelPropertyName);
             }
         }
 
@@ -315,9 +248,9 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                if (this.CachedProxy != null)
+                if (this._proxy != null)
                 {
-                    return (this.CachedProxy as ICommunicationObject).State;
+                    return (this._proxy as ICommunicationObject).State;
                 }
                 else
                 {
@@ -330,6 +263,15 @@ namespace DevLib.ServiceModel
         /// Gets or sets user defined tag on the proxy.
         /// </summary>
         public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets BindingFlags for invoke attribute.
+        /// </summary>
+        public BindingFlags InvokeAttr
         {
             get;
             set;
@@ -354,15 +296,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets or sets the cached proxy.
-        /// </summary>
-        protected object CachedProxy
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Invokes Constructor of the object.
         /// </summary>
         /// <returns>New instance.</returns>
@@ -379,6 +312,8 @@ namespace DevLib.ServiceModel
         /// <returns>New instance.</returns>
         public object CallConstructor(Type[] paramTypes, object[] paramValues)
         {
+            this.CheckDisposed();
+
             ConstructorInfo ctor = this.ProxyType.GetConstructor(paramTypes);
 
             if (ctor == null)
@@ -396,12 +331,19 @@ namespace DevLib.ServiceModel
         /// <returns>Property value.</returns>
         public object GetProperty(string propertyName)
         {
-            object result = this.ProxyType.InvokeMember(
-                propertyName,
-                BindingFlags.GetProperty | this.InvokeAttr,
-                null /* Binder */,
-                this.ProxyInstance,
-                null /* args */);
+            this.CheckDisposed();
+
+            object result = null;
+
+            if (this._proxy != null)
+            {
+                result = this.ProxyType.InvokeMember(
+                    propertyName,
+                    BindingFlags.GetProperty | this.InvokeAttr,
+                    null /* Binder */,
+                    this._proxy,
+                    null /* args */);
+            }
 
             return result;
         }
@@ -414,12 +356,19 @@ namespace DevLib.ServiceModel
         /// <returns>Null value.</returns>
         public object SetProperty(string propertyName, object value)
         {
-            object result = this.ProxyType.InvokeMember(
-                propertyName,
-                BindingFlags.SetProperty | this.InvokeAttr,
-                null /* Binder */,
-                this.ProxyInstance,
-                new object[] { value });
+            this.CheckDisposed();
+
+            object result = null;
+
+            if (this._proxy != null)
+            {
+                result = this.ProxyType.InvokeMember(
+                    propertyName,
+                    BindingFlags.SetProperty | this.InvokeAttr,
+                    null /* Binder */,
+                    this._proxy,
+                    new object[] { value });
+            }
 
             return result;
         }
@@ -431,12 +380,19 @@ namespace DevLib.ServiceModel
         /// <returns>Field value.</returns>
         public object GetField(string fieldName)
         {
-            object result = this.ProxyType.InvokeMember(
-                fieldName,
-                BindingFlags.GetField | this.InvokeAttr,
-                null /* Binder */,
-                this.ProxyInstance,
-                null /* args */);
+            this.CheckDisposed();
+
+            object result = null;
+
+            if (this._proxy != null)
+            {
+                result = this.ProxyType.InvokeMember(
+                    fieldName,
+                    BindingFlags.GetField | this.InvokeAttr,
+                    null /* Binder */,
+                    this._proxy,
+                    null /* args */);
+            }
 
             return result;
         }
@@ -449,12 +405,19 @@ namespace DevLib.ServiceModel
         /// <returns>Null value.</returns>
         public object SetField(string fieldName, object value)
         {
-            object result = this.ProxyType.InvokeMember(
-                fieldName,
-                BindingFlags.SetField | this.InvokeAttr,
-                null /* Binder */,
-                this.ProxyInstance,
-                new object[] { value });
+            this.CheckDisposed();
+
+            object result = null;
+
+            if (this._proxy != null)
+            {
+                result = this.ProxyType.InvokeMember(
+                    fieldName,
+                    BindingFlags.SetField | this.InvokeAttr,
+                    null /* Binder */,
+                    this._proxy,
+                    new object[] { value });
+            }
 
             return result;
         }
@@ -465,16 +428,9 @@ namespace DevLib.ServiceModel
         /// <param name="methodName">The name of the public method to invoke.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public virtual object CallMethod(string methodName, params object[] parameters)
+        public virtual object Call(string methodName, params object[] parameters)
         {
-            object result = this.ProxyType.InvokeMember(
-                methodName,
-                BindingFlags.InvokeMethod | this.InvokeAttr,
-                null /* Binder */,
-                this.ProxyInstance,
-                parameters /* args */);
-
-            return result;
+            return this.CallMethod(this._proxy, methodName, parameters);
         }
 
         /// <summary>
@@ -484,23 +440,9 @@ namespace DevLib.ServiceModel
         /// <param name="types">Method parameter types.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public virtual object CallMethod(string methodName, Type[] types, object[] parameters)
+        public virtual object Call(string methodName, Type[] types, object[] parameters)
         {
-            if (types.Length != parameters.Length)
-            {
-                throw new ArgumentException(DynamicClientProxyConstants.ParameterValueMismatch);
-            }
-
-            MethodInfo methodInfo = this.ProxyType.GetMethod(methodName, types);
-
-            if (methodInfo == null)
-            {
-                throw new ArgumentException(string.Format(DynamicClientProxyConstants.MethodNotFoundStringFormat, methodName), "methodName");
-            }
-
-            object result = methodInfo.Invoke(this.ProxyInstance, this.InvokeAttr, null, parameters, null);
-
-            return result;
+            return this.CallMethod(this._proxy, methodName, types, parameters);
         }
 
         /// <summary>
@@ -509,9 +451,9 @@ namespace DevLib.ServiceModel
         /// <param name="methodInfo">A <see cref="T:System.Reflection.MethodInfo" /> object representing the method.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public virtual object CallMethod(MethodInfo methodInfo, params object[] parameters)
+        public virtual object Call(MethodInfo methodInfo, params object[] parameters)
         {
-            return methodInfo.Invoke(this.ProxyInstance, this.InvokeAttr, null, parameters, null);
+            return this.CallMethod(this._proxy, methodInfo, parameters);
         }
 
         /// <summary>
@@ -519,9 +461,11 @@ namespace DevLib.ServiceModel
         /// </summary>
         public void Open()
         {
+            this.CheckDisposed();
+
             try
             {
-                (this.ProxyInstance as ICommunicationObject).Open();
+                (this.Proxy as ICommunicationObject).Open();
             }
             catch
             {
@@ -537,14 +481,14 @@ namespace DevLib.ServiceModel
         {
             try
             {
-                if (this.CachedProxy != null)
+                if (this._proxy != null)
                 {
-                    (this.CachedProxy as ICommunicationObject).Close();
+                    (this._proxy as ICommunicationObject).Close();
                 }
             }
             finally
             {
-                this.CloseProxy();
+                this._proxy = null;
             }
         }
 
@@ -555,14 +499,14 @@ namespace DevLib.ServiceModel
         {
             try
             {
-                if (this.CachedProxy != null)
+                if (this._proxy != null)
                 {
-                    (this.CachedProxy as ICommunicationObject).Abort();
+                    (this._proxy as ICommunicationObject).Abort();
                 }
             }
             finally
             {
-                this.CloseProxy();
+                this._proxy = null;
             }
         }
 
@@ -573,6 +517,64 @@ namespace DevLib.ServiceModel
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Invokes the method represented by the current object, using the specified parameters.
+        /// </summary>
+        /// <param name="proxy">The proxy.</param>
+        /// <param name="methodName">The name of the public method to invoke.</param>
+        /// <param name="parameters">An argument list for the invoked method.</param>
+        /// <returns>An object containing the return value of the invoked method.</returns>
+        protected object CallMethod(object proxy, string methodName, params object[] parameters)
+        {
+            object result = this.ProxyType.InvokeMember(
+                methodName,
+                BindingFlags.InvokeMethod | this.InvokeAttr,
+                null /* Binder */,
+                proxy,
+                parameters /* args */);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Invokes the method represented by the current object, using the specified parameters.
+        /// </summary>
+        /// <param name="proxy">The proxy.</param>
+        /// <param name="methodName">The name of the public method to invoke.</param>
+        /// <param name="types">Method parameter types.</param>
+        /// <param name="parameters">An argument list for the invoked method.</param>
+        /// <returns>An object containing the return value of the invoked method.</returns>
+        protected object CallMethod(object proxy, string methodName, Type[] types, object[] parameters)
+        {
+            if (types.Length != parameters.Length)
+            {
+                throw new ArgumentException(DynamicClientProxyConstants.ParameterValueMismatch);
+            }
+
+            MethodInfo methodInfo = this.ProxyType.GetMethod(methodName, types);
+
+            if (methodInfo == null)
+            {
+                throw new ArgumentException(string.Format(DynamicClientProxyConstants.MethodNotFoundStringFormat, methodName), "methodName");
+            }
+
+            object result = methodInfo.Invoke(proxy, this.InvokeAttr, null, parameters, null);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Invokes the method represented by the current object, using the specified parameters.
+        /// </summary>
+        /// <param name="proxy">The proxy.</param>
+        /// <param name="methodInfo">A <see cref="T:System.Reflection.MethodInfo" /> object representing the method.</param>
+        /// <param name="parameters">An argument list for the invoked method.</param>
+        /// <returns>An object containing the return value of the invoked method.</returns>
+        protected object CallMethod(object proxy, MethodInfo methodInfo, params object[] parameters)
+        {
+            return methodInfo.Invoke(proxy, this.InvokeAttr, null, parameters, null);
         }
 
         /// <summary>
@@ -614,9 +616,9 @@ namespace DevLib.ServiceModel
         /// </summary>
         protected void CloseProxy()
         {
-            if (this.CachedProxy != null)
+            if (this._proxy != null)
             {
-                ICommunicationObject communicationObject = this.CachedProxy as ICommunicationObject;
+                ICommunicationObject communicationObject = this._proxy as ICommunicationObject;
 
                 if (communicationObject != null)
                 {
@@ -630,23 +632,36 @@ namespace DevLib.ServiceModel
                     }
                 }
 
-                this.CachedProxy = null;
+                this._proxy = null;
             }
         }
 
         /// <summary>
-        /// Method RefreshCachedProxy.
+        /// Closes the proxy instance.
         /// </summary>
-        protected void RefreshCachedProxy()
+        /// <param name="value">The value.</param>
+        protected void CloseProxyInstance(object value)
         {
-            this.CheckDisposed();
-
-            if (this.CachedProxy == null)
+            if (value != null)
             {
-                this.CachedProxy = this.CreateProxyInstance();
+                ICommunicationObject communicationObject = value as ICommunicationObject;
+
+                if (communicationObject != null)
+                {
+                    try
+                    {
+                        communicationObject.Close();
+                    }
+                    catch
+                    {
+                        communicationObject.Abort();
+                    }
+                }
+
+                value = null;
             }
 
-            this.ConfigureProxyInstance(this.CachedProxy);
+            this.CloseProxy();
         }
 
         /// <summary>
@@ -655,6 +670,8 @@ namespace DevLib.ServiceModel
         /// <returns>The proxy instance.</returns>
         protected object CreateProxyInstance()
         {
+            this.CheckDisposed();
+
             object result = this.CallConstructor(this.ParamTypes, this.ParamValues);
 
             this.InitProxyInstance(result);
@@ -688,9 +705,9 @@ namespace DevLib.ServiceModel
 
                 wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(clientCredentials);
 
-                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientCredentials, e);
-                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientCredentials, e);
-                wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, e);
+                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, proxy, endpoint, clientCredentials, e);
+                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, proxy, endpoint, clientCredentials, e);
+                wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, proxy, e);
 
                 endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
             }
@@ -721,57 +738,6 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Configures the proxy instance.
-        /// </summary>
-        /// <param name="proxy">The proxy.</param>
-        private void ConfigureProxyInstance(object proxy)
-        {
-            if (this.SetClientCredentialsAction != null)
-            {
-                if (this._setClientCredentialsActionChanged)
-                {
-                    this._setClientCredentialsActionChanged = false;
-                    this.SetClientCredentialsAction(this.GetProperty<ClientCredentials>(proxy, ClientCredentialsPropertyName));
-                }
-            }
-
-            ServiceEndpoint endpoint = this.GetProperty<ServiceEndpoint>(proxy, EndpointPropertyName);
-
-            if (this.SetBindingAction != null)
-            {
-                if (this._setBindingActionChanged)
-                {
-                    this._setBindingActionChanged = false;
-                    this.SetBindingAction(endpoint.Binding);
-                }
-            }
-
-            if (this.SetDataContractResolverAction != null)
-            {
-                if (this._setDataContractResolverActionChanged)
-                {
-                    this._setDataContractResolverActionChanged = false;
-
-                    foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
-                    {
-                        DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
-
-                        if (serializerBehavior == null)
-                        {
-                            serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
-                            serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
-                            serializerBehavior.IgnoreExtensionDataObject = true;
-
-                            operationDescription.Behaviors.Add(serializerBehavior);
-                        }
-
-                        this.SetDataContractResolverAction(serializerBehavior);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets property value by name.
         /// </summary>
         /// <typeparam name="TResult">The type of the result.</typeparam>
@@ -794,17 +760,18 @@ namespace DevLib.ServiceModel
         /// Raises the event.
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
+        /// <param name="sender">The sender.</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="clientCredentials">The client credentials.</param>
         /// <param name="e">The <see cref="WcfMessageInspectorEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials clientCredentials, WcfMessageInspectorEventArgs e)
+        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, object sender, ServiceEndpoint endpoint, ClientCredentials clientCredentials, WcfMessageInspectorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.ValidationError, endpoint, clientCredentials, null));
+                temp(sender, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.ValidationError, endpoint, clientCredentials, null));
             }
         }
 
@@ -812,15 +779,16 @@ namespace DevLib.ServiceModel
         /// Raises the event.
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
-        /// <param name="e">The <see cref="WcfErrorEventArgs"/> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, WcfErrorEventArgs e)
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="WcfErrorEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, object sender, WcfErrorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfErrorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, e);
+                temp(sender, e);
             }
         }
 

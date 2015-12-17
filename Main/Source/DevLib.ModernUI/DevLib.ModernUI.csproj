@@ -62,7 +62,6 @@
     </Compile>
     <Compile Include="ComponentModel\Design\ModernStyleManagerDesigner.cs" />
     <Compile Include="ComponentModel\CustomTypeDescriptorProvider.cs" />
-    <Compile Include="DelayedCall.cs" />
     <Compile Include="Drawing\ModernFontSize.cs" />
     <Compile Include="Drawing\ModernFontWeight.cs" />
     <Compile Include="Forms\ClipboardEventArgs.cs" />

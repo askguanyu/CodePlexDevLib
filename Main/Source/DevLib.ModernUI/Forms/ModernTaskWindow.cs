@@ -51,9 +51,9 @@ namespace DevLib.ModernUI.Forms
         private int _progressWidth = 0;
 
         /// <summary>
-        /// Field _delayedCallTimer.
+        /// Field _timer.
         /// </summary>
-        private DelayedCall _delayedCallTimer;
+        private Timer _timer;
 
         /// <summary>
         /// Field _isInitialized.
@@ -119,7 +119,18 @@ namespace DevLib.ModernUI.Forms
 
             if (this._closeTime > 0d)
             {
-                this._delayedCallTimer = DelayedCall.Start(this.UpdateProgress, 4);
+                if (this._timer != null)
+                {
+                    this._timer.Stop();
+                    this._timer.Dispose();
+                    this._timer = null;
+                }
+
+                this._timer = new Timer();
+                this._timer.Interval = 4;
+                this._timer.Tick += (s, e) => this.UpdateProgress();
+                this._timer.Start();
+
                 this._lastUpdateTime = DateTime.Now;
                 this._thresholdTime = this._closeTime / 1.5d;
             }
@@ -430,7 +441,8 @@ namespace DevLib.ModernUI.Forms
 
             if (!this.CancelTimer)
             {
-                this._delayedCallTimer.Reset();
+                this._timer.Stop();
+                this._timer.Start();
             }
         }
 
@@ -439,10 +451,11 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         private void CloseNow()
         {
-            if (this._delayedCallTimer != null)
+            if (this._timer != null)
             {
-                this._delayedCallTimer.Dispose();
-                this._delayedCallTimer = null;
+                this._timer.Stop();
+                this._timer.Dispose();
+                this._timer = null;
             }
 
             this.Close();

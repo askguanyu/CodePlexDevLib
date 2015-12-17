@@ -6,6 +6,7 @@
 namespace DevLib.ServiceModel
 {
     using System;
+    using System.Reflection;
     using System.ServiceModel.Channels;
 
     /// <summary>
@@ -41,11 +42,11 @@ namespace DevLib.ServiceModel
         /// <param name="methodName">The name of the public method to invoke.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(string methodName, params object[] parameters)
+        public override object Call(string methodName, params object[] parameters)
         {
             try
             {
-                return base.CallMethod(methodName, parameters);
+                return this.CallMethod(this.Proxy, methodName, parameters);
             }
             catch
             {
@@ -61,11 +62,11 @@ namespace DevLib.ServiceModel
         /// <param name="types">Method parameter types.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(string methodName, Type[] types, object[] parameters)
+        public override object Call(string methodName, Type[] types, object[] parameters)
         {
             try
             {
-                return base.CallMethod(methodName, types, parameters);
+                return this.CallMethod(this.Proxy, methodName, types, parameters);
             }
             catch
             {
@@ -80,11 +81,11 @@ namespace DevLib.ServiceModel
         /// <param name="methodInfo">A <see cref="T:System.Reflection.MethodInfo" /> object representing the method.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(System.Reflection.MethodInfo methodInfo, params object[] parameters)
+        public override object Call(MethodInfo methodInfo, params object[] parameters)
         {
             try
             {
-                return base.CallMethod(methodInfo, parameters);
+                return this.CallMethod(this.Proxy, methodInfo, parameters);
             }
             catch
             {

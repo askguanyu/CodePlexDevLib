@@ -172,7 +172,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibServiceModel();
+                    TestDevLibServiceModel();
                 });
 
                 Benchmark.Run(delegate
@@ -2131,6 +2131,65 @@ namespace DevLib.Samples
         private static void TestDevLibServiceModel()
         {
             PrintMethodName("Test Dev.Lib.ServiceModel");
+
+            WcfClientUtilities.SaveGeneratedAssemblyFile = true;
+
+            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6001/WcfTest", true);
+
+            var client0 = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "client0.dll", true).GetPerSessionThrowableProxy();
+
+            //var client0 = WcfClientProxy<IWcfTest>.GetPerCallThrowableInstance("http://127.0.0.1:6001/WcfTest");
+
+            client0.AsIWcfClientBase().SendingRequest += (s, e) =>
+            {
+                try
+                {
+                    Console.WriteLine(((ClientBase<IWcfTest>)s).ClientCredentials.UserName.UserName);
+                }
+                catch
+                {
+                    
+                }
+                Console.WriteLine(e.ClientCredentials.UserName.UserName);
+            };
+
+            client0.SetClientCredentials(c =>
+            {
+                c.UserName.UserName = "abc";
+            });
+
+            try
+            {
+                //client0.MyOperation1("", 1);
+                client0.Call("GetCityForecastByZIP", "33133");
+            }
+            catch (Exception e)
+            {
+
+            }
+            //client0.CallMethod("GetCityForecastByZIP", "");
+
+            Console.ReadLine();
+
+            client0.SetClientCredentials(c =>
+            {
+                c.UserName.UserName = "def";
+            });
+
+            try
+            {
+                //client0.MyOperation1("", 1);
+                client0.Call(client0.Methods[1], "33133");
+            }
+            catch (Exception e)
+            {
+                
+            }
+
+            //client0.CallMethod("GetCityForecastByZIP", "");
+
+            Console.ReadLine();
+            //var client0 = WcfClientProxy<IWcfTest>.GetPerSessionUnthrowableInstance("http://127.0.0.1:6000/WcfTest");
 
             //var testsrv1 = new WcfServiceHost(new WcfTest("user defined"), new BasicHttpBinding(), "http://127.0.0.1:6000/WcfTest", false);
             //testsrv1.SetWebHttpBehaviorAction = i =>

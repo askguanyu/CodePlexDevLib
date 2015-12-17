@@ -44,39 +44,19 @@ namespace DevLib.ServiceModel
         private readonly int _overloadCreateProxyInstance;
 
         /// <summary>
+        /// Field _proxySyncRoot.
+        /// </summary>
+        private readonly object _proxySyncRoot = new object();
+
+        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
 
         /// <summary>
-        /// Field _setBindingActionChanged.
+        /// Field _proxy.
         /// </summary>
-        private bool _setBindingActionChanged = false;
-
-        /// <summary>
-        /// Field _setClientCredentialsActionChanged.
-        /// </summary>
-        private bool _setClientCredentialsActionChanged = false;
-
-        /// <summary>
-        /// Field _setDataContractResolverActionChanged.
-        /// </summary>
-        private bool _setDataContractResolverActionChanged = false;
-
-        /// <summary>
-        /// Field _setBindingAction.
-        /// </summary>
-        private Action<Binding> _setBindingAction;
-
-        /// <summary>
-        /// Field _setClientCredentialsAction.
-        /// </summary>
-        private Action<ClientCredentials> _setClientCredentialsAction;
-
-        /// <summary>
-        /// Field _setDataContractResolverAction.
-        /// </summary>
-        private Action<DataContractSerializerOperationBehavior> _setDataContractResolverAction;
+        private TChannel _proxy;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WcfClientBase{TChannel}" /> class.
@@ -158,19 +138,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<Binding> SetBindingAction
         {
-            get
-            {
-                return this._setBindingAction;
-            }
-
-            set
-            {
-                if (this._setBindingAction != value)
-                {
-                    this._setBindingAction = value;
-                    this._setBindingActionChanged = true;
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -178,19 +147,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<ClientCredentials> SetClientCredentialsAction
         {
-            get
-            {
-                return this._setClientCredentialsAction;
-            }
-
-            set
-            {
-                if (this._setClientCredentialsAction != value)
-                {
-                    this._setClientCredentialsAction = value;
-                    this._setClientCredentialsActionChanged = true;
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -198,19 +156,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public Action<DataContractSerializerOperationBehavior> SetDataContractResolverAction
         {
-            get
-            {
-                return this._setDataContractResolverAction;
-            }
-
-            set
-            {
-                if (this._setDataContractResolverAction != value)
-                {
-                    this._setDataContractResolverAction = value;
-                    this._setDataContractResolverActionChanged = true;
-                }
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -220,25 +167,14 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return (this.Proxy as ClientBase<TChannel>).ClientCredentials;
-            }
-        }
+                this.CheckDisposed();
 
-        /// <summary>
-        /// Gets the current endpoint for the service to which the client connected.
-        /// </summary>
-        public virtual ServiceEndpoint CurrentEndpoint
-        {
-            get
-            {
-                if (this._disposed || this.CachedProxy == null)
+                if (this._proxy == null)
                 {
-                    return null;
+                    return (this._proxy as ClientBase<TChannel>).ClientCredentials;
                 }
-                else
-                {
-                    return (this.CachedProxy as ClientBase<TChannel>).Endpoint;
-                }
+
+                return null;
             }
         }
 
@@ -249,14 +185,14 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                if (this._disposed)
+                this.CheckDisposed();
+
+                if (this._proxy == null)
                 {
-                    return null;
+                    return (this._proxy as ClientBase<TChannel>).Endpoint;
                 }
-                else
-                {
-                    return (this.Proxy as ClientBase<TChannel>).Endpoint;
-                }
+
+                return null;
             }
         }
 
@@ -267,7 +203,14 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return (this.Proxy as ClientBase<TChannel>).InnerChannel;
+                this.CheckDisposed();
+
+                if (this._proxy == null)
+                {
+                    return (this._proxy as ClientBase<TChannel>).InnerChannel;
+                }
+
+                return null;
             }
         }
 
@@ -278,9 +221,9 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                if (this.CachedProxy != null)
+                if (this._proxy != null)
                 {
-                    return (this.CachedProxy as ICommunicationObject).State;
+                    return (this._proxy as ICommunicationObject).State;
                 }
                 else
                 {
@@ -299,23 +242,26 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Gets or sets Proxy caching.
-        /// </summary>
-        protected TChannel CachedProxy
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets client proxy.
         /// </summary>
         protected TChannel Proxy
         {
             get
             {
-                this.RefreshCachedProxy();
-                return this.CachedProxy;
+                this.CheckDisposed();
+
+                if (this._proxy == null)
+                {
+                    lock (this._proxySyncRoot)
+                    {
+                        if (this._proxy == null)
+                        {
+                            this._proxy = this.CreateProxyInstance();
+                        }
+                    }
+                }
+
+                return this._proxy;
             }
         }
 
@@ -346,14 +292,14 @@ namespace DevLib.ServiceModel
         {
             try
             {
-                if (this.CachedProxy != null)
+                if (this._proxy != null)
                 {
-                    (this.CachedProxy as ICommunicationObject).Abort();
+                    (this._proxy as ICommunicationObject).Abort();
                 }
             }
             finally
             {
-                this.CloseProxy();
+                this._proxy = null;
             }
         }
 
@@ -364,14 +310,14 @@ namespace DevLib.ServiceModel
         {
             try
             {
-                if (this.CachedProxy != null)
+                if (this._proxy != null)
                 {
-                    (this.CachedProxy as ICommunicationObject).Close();
+                    (this._proxy as ICommunicationObject).Close();
                 }
             }
             finally
             {
-                this.CloseProxy();
+                this._proxy = null;
             }
         }
 
@@ -380,6 +326,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         public virtual void Open()
         {
+            this.CheckDisposed();
+
             try
             {
                 (this.Proxy as ICommunicationObject).Open();
@@ -396,9 +344,9 @@ namespace DevLib.ServiceModel
         /// </summary>
         protected void CloseProxy()
         {
-            if (this.CachedProxy != null && this.CachedProxy != default(TChannel))
+            if (this._proxy != null)
             {
-                ICommunicationObject communicationObject = this.CachedProxy as ICommunicationObject;
+                ICommunicationObject communicationObject = this._proxy as ICommunicationObject;
 
                 if (communicationObject != null)
                 {
@@ -412,7 +360,7 @@ namespace DevLib.ServiceModel
                     }
                 }
 
-                this.CachedProxy = null;
+                this._proxy = null;
             }
         }
 
@@ -424,7 +372,7 @@ namespace DevLib.ServiceModel
         {
             if (value != null)
             {
-                ICommunicationObject communicationObject = this.CachedProxy as ICommunicationObject;
+                ICommunicationObject communicationObject = value as ICommunicationObject;
 
                 if (communicationObject != null)
                 {
@@ -440,21 +388,8 @@ namespace DevLib.ServiceModel
 
                 value = null;
             }
-        }
 
-        /// <summary>
-        /// Method RefreshCachedProxy.
-        /// </summary>
-        protected void RefreshCachedProxy()
-        {
-            this.CheckDisposed();
-
-            if (this.CachedProxy == null || this.CachedProxy == default(TChannel))
-            {
-                this.CachedProxy = this.CreateProxyInstance();
-            }
-
-            this.ConfigureProxyInstance(this.CachedProxy as ClientBase<TChannel>);
+            this.CloseProxy();
         }
 
         /// <summary>
@@ -463,6 +398,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of TChannel.</returns>
         protected virtual TChannel CreateProxyInstance()
         {
+            this.CheckDisposed();
+
             TChannel result = null;
 
             switch (this._overloadCreateProxyInstance)
@@ -532,9 +469,9 @@ namespace DevLib.ServiceModel
             {
                 wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(clientBase.ClientCredentials);
 
-                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, clientBase.ClientCredentials, e);
-                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, clientBase.ClientCredentials, e);
-                wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, e);
+                wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, clientBase, endpoint, clientBase.ClientCredentials, e);
+                wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, clientBase, endpoint, clientBase.ClientCredentials, e);
+                wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, clientBase, e);
 
                 endpoint.Behaviors.Add(wcfMessageInspectorEndpointBehavior);
             }
@@ -565,71 +502,21 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
-        /// Configures the clientBase instance.
-        /// </summary>
-        /// <param name="clientBase">The clientBase.</param>
-        private void ConfigureProxyInstance(ClientBase<TChannel> clientBase)
-        {
-            if (this.SetClientCredentialsAction != null)
-            {
-                if (this._setClientCredentialsActionChanged)
-                {
-                    this._setClientCredentialsActionChanged = false;
-                    this.SetClientCredentialsAction(clientBase.ClientCredentials);
-                }
-            }
-
-            ServiceEndpoint endpoint = clientBase.Endpoint;
-
-            if (this.SetBindingAction != null)
-            {
-                if (this._setBindingActionChanged)
-                {
-                    this._setBindingActionChanged = false;
-                    this.SetBindingAction(endpoint.Binding);
-                }
-            }
-
-            if (this.SetDataContractResolverAction != null)
-            {
-                if (this._setDataContractResolverActionChanged)
-                {
-                    this._setDataContractResolverActionChanged = false;
-
-                    foreach (OperationDescription operationDescription in endpoint.Contract.Operations)
-                    {
-                        DataContractSerializerOperationBehavior serializerBehavior = operationDescription.Behaviors.Find<DataContractSerializerOperationBehavior>();
-
-                        if (serializerBehavior == null)
-                        {
-                            serializerBehavior = new DataContractSerializerOperationBehavior(operationDescription);
-                            serializerBehavior.MaxItemsInObjectGraph = int.MaxValue;
-                            serializerBehavior.IgnoreExtensionDataObject = true;
-
-                            operationDescription.Behaviors.Add(serializerBehavior);
-                        }
-
-                        this.SetDataContractResolverAction(serializerBehavior);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Raises the event.
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
+        /// <param name="sender">The sender.</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="clientCredentials">The client credentials.</param>
         /// <param name="e">The <see cref="WcfMessageInspectorEventArgs" /> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, ServiceEndpoint endpoint, ClientCredentials clientCredentials, WcfMessageInspectorEventArgs e)
+        private void RaiseEvent(EventHandler<WcfMessageInspectorEventArgs> eventHandler, object sender, ServiceEndpoint endpoint, ClientCredentials clientCredentials, WcfMessageInspectorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfMessageInspectorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.ValidationError, endpoint, clientCredentials, null));
+                temp(sender, new WcfMessageInspectorEventArgs(e.Message, e.MessageId, e.IsOneWay, e.ValidationError, endpoint, clientCredentials, null));
             }
         }
 
@@ -637,15 +524,16 @@ namespace DevLib.ServiceModel
         /// Raises the event.
         /// </summary>
         /// <param name="eventHandler">The event handler.</param>
-        /// <param name="e">The <see cref="WcfErrorEventArgs"/> instance containing the event data.</param>
-        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, WcfErrorEventArgs e)
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="WcfErrorEventArgs" /> instance containing the event data.</param>
+        private void RaiseEvent(EventHandler<WcfErrorEventArgs> eventHandler, object sender, WcfErrorEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety.
             EventHandler<WcfErrorEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
 
             if (temp != null)
             {
-                temp(this, e);
+                temp(sender, e);
             }
         }
 

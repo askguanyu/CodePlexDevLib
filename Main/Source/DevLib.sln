@@ -113,9 +113,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.DesignPatterns.UnitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.ExtensionProperties", "DevLib.ExtensionProperties\DevLib.ExtensionProperties.csproj", "{849809A2-39D1-49C6-A78E-50003391438F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Web.UnitTest", "DevLib.Web.UnitTest\DevLib.Web.UnitTest.csproj", "{34655001-2A97-40EB-93D9-C9C68E9CD038}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 48
+		SccNumberOfProjects = 49
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -266,6 +268,10 @@ Global
 		SccProjectUniqueName47 = DevLib.ExtensionProperties\\DevLib.ExtensionProperties.csproj
 		SccProjectName47 = DevLib.ExtensionProperties
 		SccLocalPath47 = DevLib.ExtensionProperties
+		SccProjectUniqueName48 = DevLib.Web.UnitTest\\DevLib.Web.UnitTest.csproj
+		SccProjectTopLevelParentUniqueName48 = DevLib.sln
+		SccProjectName48 = DevLib.Web.UnitTest
+		SccLocalPath48 = DevLib.Web.UnitTest
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = DevLib.vsmdi
@@ -756,6 +762,16 @@ Global
 		{849809A2-39D1-49C6-A78E-50003391438F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{849809A2-39D1-49C6-A78E-50003391438F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{849809A2-39D1-49C6-A78E-50003391438F}.Release|x86.ActiveCfg = Release|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -768,5 +784,6 @@ Global
 		{02CAC454-0142-4B68-BFAA-E01D64BCD057} = {68032739-160A-4A10-83D6-ACEF9AB28701}
 		{916E181A-58FF-4D1D-B171-731D7827610B} = {68032739-160A-4A10-83D6-ACEF9AB28701}
 		{11A02ACD-84AE-4653-95F0-5F61281262A3} = {68032739-160A-4A10-83D6-ACEF9AB28701}
+		{34655001-2A97-40EB-93D9-C9C68E9CD038} = {68032739-160A-4A10-83D6-ACEF9AB28701}
 	EndGlobalSection
 EndGlobal

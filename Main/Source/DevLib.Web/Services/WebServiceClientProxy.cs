@@ -7,6 +7,7 @@ namespace DevLib.Web.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Net;
     using System.Reflection;
 
@@ -30,6 +31,11 @@ namespace DevLib.Web.Services
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
+
+        /// <summary>
+        /// Field _methods.
+        /// </summary>
+        private ReadOnlyCollection<MethodInfo> _methods;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebServiceClientProxy" /> class.
@@ -118,21 +124,26 @@ namespace DevLib.Web.Services
         /// <summary>
         /// Gets all the public methods of the current service client proxy.
         /// </summary>
-        public List<MethodInfo> Methods
+        public ReadOnlyCollection<MethodInfo> Methods
         {
             get
             {
-                List<MethodInfo> result = new List<MethodInfo>();
-
-                foreach (var item in this.ObjectType.GetMethods())
+                if (this._methods == null)
                 {
-                    if (item.DeclaringType == this.ProxyType)
+                    List<MethodInfo> result = new List<MethodInfo>();
+
+                    foreach (var item in this.ObjectType.GetMethods())
                     {
-                        result.Add(item);
+                        if (item.DeclaringType == this.ProxyType)
+                        {
+                            result.Add(item);
+                        }
                     }
+
+                    this._methods = result.AsReadOnly();
                 }
 
-                return result;
+                return this._methods;
             }
         }
 
@@ -142,11 +153,11 @@ namespace DevLib.Web.Services
         /// <param name="methodInfo">A <see cref="T:System.Reflection.MethodInfo" /> object representing the method.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(MethodInfo methodInfo, params object[] parameters)
+        public override object Call(MethodInfo methodInfo, params object[] parameters)
         {
             try
             {
-                return base.CallMethod(methodInfo, parameters);
+                return base.Call(methodInfo, parameters);
             }
             catch (Exception e)
             {
@@ -167,11 +178,11 @@ namespace DevLib.Web.Services
         /// <param name="methodName">The name of the public method to invoke.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(string methodName, params object[] parameters)
+        public override object Call(string methodName, params object[] parameters)
         {
             try
             {
-                return base.CallMethod(methodName, parameters);
+                return base.Call(methodName, parameters);
             }
             catch (Exception e)
             {
@@ -193,11 +204,11 @@ namespace DevLib.Web.Services
         /// <param name="types">Method parameter types.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(string methodName, Type[] types, object[] parameters)
+        public override object Call(string methodName, Type[] types, object[] parameters)
         {
             try
             {
-                return base.CallMethod(methodName, types, parameters);
+                return base.Call(methodName, types, parameters);
             }
             catch (Exception e)
             {
@@ -252,7 +263,7 @@ namespace DevLib.Web.Services
                 ////    managedResource = null;
                 ////}
 
-                this.CallMethod("Dispose");
+                this.Call("Dispose");
             }
 
             // free native resources

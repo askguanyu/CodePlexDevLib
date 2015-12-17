@@ -56,7 +56,6 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="WcfErrorHandler.cs" />
-    <Compile Include="DynamicClientObject.cs" />
     <Compile Include="DynamicClientPerCallThrowableProxy.cs" />
     <Compile Include="DynamicClientPerCallUnthrowableProxy.cs" />
     <Compile Include="DynamicClientPerSessionThrowableProxy.cs" />

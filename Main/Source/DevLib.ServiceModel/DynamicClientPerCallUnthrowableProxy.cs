@@ -6,6 +6,7 @@
 namespace DevLib.ServiceModel
 {
     using System;
+    using System.Reflection;
     using System.ServiceModel.Channels;
 
     /// <summary>
@@ -41,13 +42,15 @@ namespace DevLib.ServiceModel
         /// <param name="methodName">The name of the public method to invoke.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(string methodName, params object[] parameters)
+        public override object Call(string methodName, params object[] parameters)
         {
-            this.CachedProxy = null;
+            object proxy = null;
 
             try
             {
-                return base.CallMethod(methodName, parameters);
+                proxy = this.CreateProxyInstance();
+
+                return this.CallMethod(proxy, methodName, parameters);
             }
             catch
             {
@@ -55,7 +58,7 @@ namespace DevLib.ServiceModel
             }
             finally
             {
-                this.CloseProxy();
+                this.CloseProxyInstance(proxy);
             }
         }
 
@@ -66,13 +69,15 @@ namespace DevLib.ServiceModel
         /// <param name="types">Method parameter types.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(string methodName, Type[] types, object[] parameters)
+        public override object Call(string methodName, Type[] types, object[] parameters)
         {
-            this.CachedProxy = null;
+            object proxy = null;
 
             try
             {
-                return base.CallMethod(methodName, types, parameters);
+                proxy = this.CreateProxyInstance();
+
+                return this.CallMethod(proxy, methodName, types, parameters);
             }
             catch
             {
@@ -80,7 +85,7 @@ namespace DevLib.ServiceModel
             }
             finally
             {
-                this.CloseProxy();
+                this.CloseProxyInstance(proxy);
             }
         }
 
@@ -90,13 +95,15 @@ namespace DevLib.ServiceModel
         /// <param name="methodInfo">A <see cref="T:System.Reflection.MethodInfo" /> object representing the method.</param>
         /// <param name="parameters">An argument list for the invoked method.</param>
         /// <returns>An object containing the return value of the invoked method.</returns>
-        public override object CallMethod(System.Reflection.MethodInfo methodInfo, params object[] parameters)
+        public override object Call(MethodInfo methodInfo, params object[] parameters)
         {
-            this.CachedProxy = null;
+            object proxy = null;
 
             try
             {
-                return base.CallMethod(methodInfo, parameters);
+                proxy = this.CreateProxyInstance();
+
+                return this.CallMethod(proxy, methodInfo, parameters);
             }
             catch
             {
@@ -104,7 +111,7 @@ namespace DevLib.ServiceModel
             }
             finally
             {
-                this.CloseProxy();
+                this.CloseProxyInstance(proxy);
             }
         }
     }

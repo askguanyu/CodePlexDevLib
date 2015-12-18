@@ -8,13 +8,6 @@ namespace DevLib.ServiceModel
     using System;
 
     /// <summary>
-    /// Delegate method allows the user of the proxy factory to modify the generated proxy code before it is compiled and used.
-    /// </summary>
-    /// <param name="proxyCode">The proxy code to modify.</param>
-    /// <returns>Modified code.</returns>
-    public delegate string ProxyCodeModifier(string proxyCode);
-
-    /// <summary>
     /// Represents setup information for DynamicClientProxyFactory.
     /// </summary>
     [Serializable]
@@ -98,7 +91,7 @@ namespace DevLib.ServiceModel
         /// <summary>
         /// Gets or sets a delegate method that allows the user of the proxy factory to modify the generated proxy code before it is compiled and used.
         /// </summary>
-        public ProxyCodeModifier CodeModifier
+        public Func<string, string> CodeModifier
         {
             get;
             set;

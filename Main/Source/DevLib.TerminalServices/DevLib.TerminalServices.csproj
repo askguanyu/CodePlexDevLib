@@ -52,7 +52,9 @@
     <Compile Include="LocalServerHandle.cs" />
     <Compile Include="NativeAPI\CACHE_STATISTICS.cs" />
     <Compile Include="NativeAPI\NativeMethods.cs" />
-    <Compile Include="NativeAPI\NativeMethodsHelper.cs" />
+    <Compile Include="NativeAPI\NativeMethodsHelper.cs">
+      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="NativeAPI\PROCESS_INFORMATION.cs" />
     <Compile Include="NativeAPI\PROTOCOLCOUNTERS.cs" />
     <Compile Include="NativeAPI\PROTOCOLSTATUS.cs" />

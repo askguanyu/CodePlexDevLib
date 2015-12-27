@@ -18,10 +18,14 @@ namespace DevLib.TerminalServices.NativeAPI
     /// </summary>
     internal static class NativeMethodsHelper
     {
-        public delegate void ListProcessInfosCallback(WTS_PROCESS_INFO processInfo);
-
         private delegate T ProcessSessionCallback<T>(IntPtr buffer, int returnedBytes);
 
+        /// <summary>
+        /// Gets the state of the connect.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <returns>Connect state.</returns>
         public static ConnectState GetConnectState(ITerminalServerHandle server, int sessionId)
         {
             return QuerySessionInformation(
@@ -31,6 +35,13 @@ namespace DevLib.TerminalServices.NativeAPI
                 (buffer, returned) => (ConnectState)Marshal.ReadInt32(buffer));
         }
 
+        /// <summary>
+        /// Queries the session information for string.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="infoClass">The information class.</param>
+        /// <returns>Session information.</returns>
         public static string QuerySessionInformationForString(ITerminalServerHandle server, int sessionId, WTS_INFO_CLASS infoClass)
         {
             return QuerySessionInformation(
@@ -40,6 +51,14 @@ namespace DevLib.TerminalServices.NativeAPI
                 (buffer, returned) => buffer == IntPtr.Zero ? null : Marshal.PtrToStringAuto(buffer));
         }
 
+        /// <summary>
+        /// Queries the session information for structure.
+        /// </summary>
+        /// <typeparam name="T">Type of structure</typeparam>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="infoClass">The information class.</param>
+        /// <returns>Structure instance.</returns>
         public static T QuerySessionInformationForStruct<T>(ITerminalServerHandle server, int sessionId, WTS_INFO_CLASS infoClass) where T : struct
         {
             return QuerySessionInformation(
@@ -49,6 +68,12 @@ namespace DevLib.TerminalServices.NativeAPI
                 (buffer, returned) => (T)Marshal.PtrToStructure(buffer, typeof(T)));
         }
 
+        /// <summary>
+        /// Gets the win station information.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <returns>WINSTATIONINFORMATIONW instance.</returns>
         public static WINSTATIONINFORMATIONW GetWinStationInformation(ITerminalServerHandle server, int sessionId)
         {
             var retLen = 0;
@@ -69,6 +94,11 @@ namespace DevLib.TerminalServices.NativeAPI
             throw new Win32Exception();
         }
 
+        /// <summary>
+        /// Converts FileTime to DateTime.
+        /// </summary>
+        /// <param name="fileTime">The file time.</param>
+        /// <returns>DateTime instance.</returns>
         public static DateTime? FileTimeToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME fileTime)
         {
             var sysTime = new SYSTEMTIME();
@@ -94,6 +124,11 @@ namespace DevLib.TerminalServices.NativeAPI
                 DateTimeKind.Utc).ToLocalTime();
         }
 
+        /// <summary>
+        /// Gets the session information.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <returns>List of WTS_SESSION_INFO.</returns>
         public static List<WTS_SESSION_INFO> GetSessionInfos(ITerminalServerHandle server)
         {
             IntPtr ppSessionInfo;
@@ -119,6 +154,12 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Logoffs the session.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="wait">Whether to wait logoff.</param>
         public static void LogoffSession(ITerminalServerHandle server, int sessionId, bool wait)
         {
             if (NativeMethods.WTSLogoffSession(server.Handle, sessionId, wait) == 0)
@@ -127,6 +168,12 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Disconnects the session.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="wait">Whether to wait disconnect.</param>
         public static void DisconnectSession(ITerminalServerHandle server, int sessionId, bool wait)
         {
             if (NativeMethods.WTSDisconnectSession(server.Handle, sessionId, wait) == 0)
@@ -135,6 +182,17 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Sends the message.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="title">The title.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="style">The style.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <param name="wait">Whether to wait send.</param>
+        /// <returns>RemoteMessageBoxResult instance.</returns>
         public static RemoteMessageBoxResult SendMessage(ITerminalServerHandle server, int sessionId, string title, string message, int style, int timeout, bool wait)
         {
             RemoteMessageBoxResult result;
@@ -161,6 +219,11 @@ namespace DevLib.TerminalServices.NativeAPI
             return result;
         }
 
+        /// <summary>
+        /// Enumerates the servers.
+        /// </summary>
+        /// <param name="domainName">Name of the domain.</param>
+        /// <returns>List of WTS_SERVER_INFO.</returns>
         public static List<WTS_SERVER_INFO> EnumerateServers(string domainName)
         {
             IntPtr ppServerInfo;
@@ -186,7 +249,12 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
-        public static void ForEachProcessInfo(ITerminalServerHandle server, ListProcessInfosCallback callback)
+        /// <summary>
+        /// Executes action on each process information.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="callback">The callback.</param>
+        public static void ForEachProcessInfo(ITerminalServerHandle server, Action<WTS_PROCESS_INFO> callback)
         {
             IntPtr ppProcessInfo;
 
@@ -219,6 +287,12 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Terminates the process.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="processId">The process identifier.</param>
+        /// <param name="exitCode">The exit code.</param>
         public static void TerminateProcess(ITerminalServerHandle server, int processId, int exitCode)
         {
             if (NativeMethods.WTSTerminateProcess(server.Handle, processId, exitCode) == 0)
@@ -227,11 +301,23 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Queries the session information for int.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="infoClass">The information class.</param>
+        /// <returns>Query result.</returns>
         public static int QuerySessionInformationForInt(ITerminalServerHandle server, int sessionId, WTS_INFO_CLASS infoClass)
         {
             return QuerySessionInformation(server, sessionId, infoClass, (buffer, returned) => Marshal.ReadInt32(buffer));
         }
 
+        /// <summary>
+        /// Shutdowns the system.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="flags">The flags.</param>
         public static void ShutdownSystem(ITerminalServerHandle server, int flags)
         {
             if (NativeMethods.WTSShutdownSystem(server.Handle, flags) == 0)
@@ -240,6 +326,11 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Converts FileTime to DateTime.
+        /// </summary>
+        /// <param name="fileTime">The file time.</param>
+        /// <returns>DateTime instance.</returns>
         public static DateTime? FileTimeToDateTime(long fileTime)
         {
             if (fileTime == 0)
@@ -250,11 +341,24 @@ namespace DevLib.TerminalServices.NativeAPI
             return DateTime.FromFileTime(fileTime);
         }
 
+        /// <summary>
+        /// Queries the session information for short.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="infoClass">The information class.</param>
+        /// <returns>Query result.</returns>
         public static short QuerySessionInformationForShort(ITerminalServerHandle server, int sessionId, WTS_INFO_CLASS infoClass)
         {
             return QuerySessionInformation(server, sessionId, infoClass, (buffer, returned) => Marshal.ReadInt16(buffer));
         }
 
+        /// <summary>
+        /// Extracts the ip address.
+        /// </summary>
+        /// <param name="family">The family.</param>
+        /// <param name="rawAddress">The raw address.</param>
+        /// <returns>IPAddress instance.</returns>
         public static IPAddress ExtractIPAddress(AddressFamily family, byte[] rawAddress)
         {
             switch (family)
@@ -272,6 +376,12 @@ namespace DevLib.TerminalServices.NativeAPI
             return null;
         }
 
+        /// <summary>
+        /// Queries the session information for end point.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <returns>EndPoint instance.</returns>
         public static EndPoint QuerySessionInformationForEndPoint(ITerminalServerHandle server, int sessionId)
         {
             int retLen;
@@ -296,6 +406,13 @@ namespace DevLib.TerminalServices.NativeAPI
             throw new Win32Exception();
         }
 
+        /// <summary>
+        /// Legacies the start remote control.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="hotkey">The hotkey.</param>
+        /// <param name="hotkeyModifiers">The hotkey modifiers.</param>
         public static void LegacyStartRemoteControl(ITerminalServerHandle server, int sessionId, ConsoleKey hotkey, RemoteControlHotkeyModifiers hotkeyModifiers)
         {
             if (NativeMethods.WinStationShadow(
@@ -309,6 +426,13 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Starts the remote control.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="hotkey">The hotkey.</param>
+        /// <param name="hotkeyModifiers">The hotkey modifiers.</param>
         public static void StartRemoteControl(ITerminalServerHandle server, int sessionId, ConsoleKey hotkey, RemoteControlHotkeyModifiers hotkeyModifiers)
         {
             if (NativeMethods.WTSStartRemoteControlSession(
@@ -321,6 +445,12 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Legacies the stop remote control.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="wait">Whether to wait stop.</param>
         public static void LegacyStopRemoteControl(ITerminalServerHandle server, int sessionId, bool wait)
         {
             if (NativeMethods.WinStationShadowStop(server.Handle, sessionId, wait) == 0)
@@ -329,6 +459,10 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Stops the remote control.
+        /// </summary>
+        /// <param name="sessionId">The session identifier.</param>
         public static void StopRemoteControl(int sessionId)
         {
             if (NativeMethods.WTSStopRemoteControlSession(sessionId) == 0)
@@ -337,6 +471,14 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Legacies the connect.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="sourceSessionId">The source session identifier.</param>
+        /// <param name="targetSessionId">The target session identifier.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="wait">Whether to wait connect.</param>
         public static void LegacyConnect(ITerminalServerHandle server, int sourceSessionId, int targetSessionId, string password, bool wait)
         {
             if (NativeMethods.WinStationConnectW(server.Handle, targetSessionId, sourceSessionId, password, wait) == 0)
@@ -345,6 +487,13 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Connects the specified source session identifier.
+        /// </summary>
+        /// <param name="sourceSessionId">The source session identifier.</param>
+        /// <param name="targetSessionId">The target session identifier.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="wait">Whether to wait connect.</param>
         public static void Connect(int sourceSessionId, int targetSessionId, string password, bool wait)
         {
             if (NativeMethods.WTSConnectSession(targetSessionId, sourceSessionId, password, wait) == 0)
@@ -353,6 +502,10 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Gets the active console session identifier.
+        /// </summary>
+        /// <returns>Session identifier.</returns>
         public static int? GetActiveConsoleSessionId()
         {
             var sessionId = NativeMethods.WTSGetActiveConsoleSessionId();
@@ -360,6 +513,13 @@ namespace DevLib.TerminalServices.NativeAPI
             return sessionId == -1 ? (int?)null : sessionId;
         }
 
+        /// <summary>
+        /// Creates the process.
+        /// </summary>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="filename">The filename.</param>
+        /// <param name="arguments">The arguments.</param>
+        /// <returns>Whether succeeded.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         public static bool CreateProcess(int sessionId, string filename, string arguments)
         {
@@ -406,6 +566,15 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Queries the session information.
+        /// </summary>
+        /// <typeparam name="T">Type of Session information.</typeparam>
+        /// <param name="server">The server.</param>
+        /// <param name="sessionId">The session identifier.</param>
+        /// <param name="infoClass">The information class.</param>
+        /// <param name="callback">The callback.</param>
+        /// <returns>Session information.</returns>
         private static T QuerySessionInformation<T>(ITerminalServerHandle server, int sessionId, WTS_INFO_CLASS infoClass, ProcessSessionCallback<T> callback)
         {
             int returned;
@@ -433,6 +602,13 @@ namespace DevLib.TerminalServices.NativeAPI
             }
         }
 
+        /// <summary>
+        /// Converts pointer to structure list.
+        /// </summary>
+        /// <typeparam name="T">Type of structure.</typeparam>
+        /// <param name="ppList">The pointer of list.</param>
+        /// <param name="count">The count.</param>
+        /// <returns>List of structure.</returns>
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private static List<T> PtrToStructureList<T>(IntPtr ppList, int count) where T : struct
         {

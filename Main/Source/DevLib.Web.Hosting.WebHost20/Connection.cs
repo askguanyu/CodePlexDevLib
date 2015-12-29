@@ -492,50 +492,7 @@ namespace DevLib.Web.Hosting.WebHost20
         /// <returns>Content type header string.</returns>
         private static string MakeContentTypeHeader(string filename)
         {
-            string text = null;
-
-            string key = new FileInfo(filename).Extension.ToLowerInvariant();
-
-            switch (key)
-            {
-                case ".bmp":
-                    text = "image/bmp";
-                    break;
-
-                case ".css":
-                    text = "text/css";
-                    break;
-
-                case ".gif":
-                    text = "image/gif";
-                    break;
-
-                case ".ico":
-                    text = "image/x-icon";
-                    break;
-
-                case ".htm":
-                case ".html":
-                    text = "text/html";
-                    break;
-
-                case ".jpe":
-                case ".jpeg":
-                case ".jpg":
-                    text = "image/jpeg";
-                    break;
-
-                case ".js":
-                    text = "application/x-javascript";
-                    break;
-            }
-
-            if (text == null)
-            {
-                return null;
-            }
-
-            return "Content-Type: " + text + "\r\n";
+            return "Content-Type: " + MimeMapping.GetMimeMapping(filename) + "\r\n";
         }
 
         /// <summary>

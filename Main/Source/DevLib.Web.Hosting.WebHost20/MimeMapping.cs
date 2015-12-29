@@ -409,7 +409,7 @@ namespace DevLib.Web.Hosting.WebHost20
         /// Gets the name of the file. This method is similar to Path.GetFileName(), but it doesn't fail on invalid path characters.
         /// </summary>
         /// <param name="path">The file path.</param>
-        /// <returns>The name of the file</returns>
+        /// <returns>The name of the file.</returns>
         private static string GetFileName(string path)
         {
             int pathSeparatorIndex = path.LastIndexOfAny(PathSeparatorChars);

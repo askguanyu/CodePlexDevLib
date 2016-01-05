@@ -42,5 +42,17 @@ namespace DevLib.ServiceModel
             get;
             private set;
         }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
+        public override string ToString()
+        {
+            return string.Format(
+                "BaseAddress: {0} \r\nState: {1}",
+                (this.ServiceHost != null && this.ServiceHost.BaseAddresses != null && this.ServiceHost.BaseAddresses.Count > 0) ? this.ServiceHost.BaseAddresses[0].ToString() : string.Empty,
+                this.State.ToString());
+        }
     }
 }

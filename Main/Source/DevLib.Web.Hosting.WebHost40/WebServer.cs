@@ -18,6 +18,7 @@ namespace DevLib.Web.Hosting.WebHost40
     using System.Security.Principal;
     using System.Threading;
     using System.Web.Hosting;
+    using DevLib.Web.Hosting.WebHost40.NativeAPI;
 
     /// <summary>
     /// Web service or Asp.net hosting.

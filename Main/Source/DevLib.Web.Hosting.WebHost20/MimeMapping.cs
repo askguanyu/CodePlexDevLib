@@ -31,18 +31,27 @@ namespace DevLib.Web.Hosting.WebHost20
         {
             MimeMappingDictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+            MimeMappingDictionary.Add(".*", "application/octet-stream");
             MimeMappingDictionary.Add(".323", "text/h323");
+            MimeMappingDictionary.Add(".3g2", "video/3gpp2");
+            MimeMappingDictionary.Add(".3gp2", "video/3gpp2");
+            MimeMappingDictionary.Add(".3gp", "video/3gpp");
+            MimeMappingDictionary.Add(".3gpp", "video/3gpp");
             MimeMappingDictionary.Add(".aaf", "application/octet-stream");
+            MimeMappingDictionary.Add(".aac", "audio/aac");
             MimeMappingDictionary.Add(".aca", "application/octet-stream");
             MimeMappingDictionary.Add(".accdb", "application/msaccess");
             MimeMappingDictionary.Add(".accde", "application/msaccess");
             MimeMappingDictionary.Add(".accdt", "application/msaccess");
             MimeMappingDictionary.Add(".acx", "application/internet-property-stream");
+            MimeMappingDictionary.Add(".adt", "audio/vnd.dlna.adts");
+            MimeMappingDictionary.Add(".adts", "audio/vnd.dlna.adts");
             MimeMappingDictionary.Add(".afm", "application/octet-stream");
             MimeMappingDictionary.Add(".ai", "application/postscript");
             MimeMappingDictionary.Add(".aif", "audio/x-aiff");
             MimeMappingDictionary.Add(".aifc", "audio/aiff");
             MimeMappingDictionary.Add(".aiff", "audio/aiff");
+            MimeMappingDictionary.Add(".appcache", "text/cache-manifest");
             MimeMappingDictionary.Add(".application", "application/x-ms-application");
             MimeMappingDictionary.Add(".art", "image/x-jg");
             MimeMappingDictionary.Add(".asd", "application/octet-stream");
@@ -53,14 +62,14 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".asx", "video/x-ms-asf");
             MimeMappingDictionary.Add(".atom", "application/atom+xml");
             MimeMappingDictionary.Add(".au", "audio/basic");
-            MimeMappingDictionary.Add(".avi", "video/x-msvideo");
+            MimeMappingDictionary.Add(".avi", "video/avi");
             MimeMappingDictionary.Add(".axs", "application/olescript");
             MimeMappingDictionary.Add(".bas", "text/plain");
             MimeMappingDictionary.Add(".bcpio", "application/x-bcpio");
             MimeMappingDictionary.Add(".bin", "application/octet-stream");
             MimeMappingDictionary.Add(".bmp", "image/bmp");
             MimeMappingDictionary.Add(".c", "text/plain");
-            MimeMappingDictionary.Add(".cab", "application/octet-stream");
+            MimeMappingDictionary.Add(".cab", "application/vnd.ms-cab-compressed");
             MimeMappingDictionary.Add(".calx", "application/vnd.ms-office.calx");
             MimeMappingDictionary.Add(".cat", "application/vnd.ms-pki.seccat");
             MimeMappingDictionary.Add(".cdf", "application/x-cdf");
@@ -97,12 +106,13 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".dsp", "application/octet-stream");
             MimeMappingDictionary.Add(".dtd", "text/xml");
             MimeMappingDictionary.Add(".dvi", "application/x-dvi");
+            MimeMappingDictionary.Add(".dvr-ms", "video/x-ms-dvr");
             MimeMappingDictionary.Add(".dwf", "drawing/x-dwf");
             MimeMappingDictionary.Add(".dwp", "application/octet-stream");
             MimeMappingDictionary.Add(".dxr", "application/x-director");
             MimeMappingDictionary.Add(".eml", "message/rfc822");
             MimeMappingDictionary.Add(".emz", "application/octet-stream");
-            MimeMappingDictionary.Add(".eot", "application/octet-stream");
+            MimeMappingDictionary.Add(".eot", "application/vnd.ms-fontobject");
             MimeMappingDictionary.Add(".eps", "application/postscript");
             MimeMappingDictionary.Add(".etx", "text/x-setext");
             MimeMappingDictionary.Add(".evy", "application/envoy");
@@ -131,7 +141,7 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".htt", "text/webviewhtml");
             MimeMappingDictionary.Add(".hxt", "text/html");
             MimeMappingDictionary.Add(".ico", "image/x-icon");
-            MimeMappingDictionary.Add(".ics", "application/octet-stream");
+            MimeMappingDictionary.Add(".ics", "text/calendar");
             MimeMappingDictionary.Add(".ief", "image/ief");
             MimeMappingDictionary.Add(".iii", "application/x-iphone");
             MimeMappingDictionary.Add(".inf", "application/octet-stream");
@@ -147,9 +157,12 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".jpe", "image/jpeg");
             MimeMappingDictionary.Add(".jpeg", "image/jpeg");
             MimeMappingDictionary.Add(".jpg", "image/jpeg");
-            MimeMappingDictionary.Add(".js", "application/x-javascript");
+            MimeMappingDictionary.Add(".js", "application/javascript");
+            MimeMappingDictionary.Add(".json", "application/json");
+            MimeMappingDictionary.Add(".jsonld", "application/ld+json");
             MimeMappingDictionary.Add(".jsx", "text/jscript");
             MimeMappingDictionary.Add(".latex", "application/x-latex");
+            MimeMappingDictionary.Add(".less", "text/css");
             MimeMappingDictionary.Add(".lit", "application/x-ms-reader");
             MimeMappingDictionary.Add(".lpk", "application/octet-stream");
             MimeMappingDictionary.Add(".lsf", "video/x-la-asf");
@@ -158,7 +171,10 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".m13", "application/x-msmediaview");
             MimeMappingDictionary.Add(".m14", "application/x-msmediaview");
             MimeMappingDictionary.Add(".m1v", "video/mpeg");
+            MimeMappingDictionary.Add(".m2ts", "video/vnd.dlna.mpeg-tts");
             MimeMappingDictionary.Add(".m3u", "audio/x-mpegurl");
+            MimeMappingDictionary.Add(".m4a", "audio/mp4");
+            MimeMappingDictionary.Add(".m4v", "video/mp4");
             MimeMappingDictionary.Add(".man", "application/x-troff-man");
             MimeMappingDictionary.Add(".manifest", "application/x-ms-manifest");
             MimeMappingDictionary.Add(".map", "text/plain");
@@ -177,6 +193,8 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".movie", "video/x-sgi-movie");
             MimeMappingDictionary.Add(".mp2", "video/mpeg");
             MimeMappingDictionary.Add(".mp3", "audio/mpeg");
+            MimeMappingDictionary.Add(".mp4", "video/mp4");
+            MimeMappingDictionary.Add(".mp4v", "video/mp4");
             MimeMappingDictionary.Add(".mpa", "video/mpeg");
             MimeMappingDictionary.Add(".mpe", "video/mpeg");
             MimeMappingDictionary.Add(".mpeg", "video/mpeg");
@@ -195,6 +213,9 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".oda", "application/oda");
             MimeMappingDictionary.Add(".odc", "text/x-ms-odc");
             MimeMappingDictionary.Add(".ods", "application/oleobject");
+            MimeMappingDictionary.Add(".oga", "audio/ogg");
+            MimeMappingDictionary.Add(".ogg", "video/ogg");
+            MimeMappingDictionary.Add(".ogv", "video/ogg");
             MimeMappingDictionary.Add(".one", "application/onenote");
             MimeMappingDictionary.Add(".onea", "application/onenote");
             MimeMappingDictionary.Add(".onetoc", "application/onenote");
@@ -202,6 +223,7 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".onetmp", "application/onenote");
             MimeMappingDictionary.Add(".onepkg", "application/onenote");
             MimeMappingDictionary.Add(".osdx", "application/opensearchdescription+xml");
+            MimeMappingDictionary.Add(".otf", "font/otf");
             MimeMappingDictionary.Add(".p10", "application/pkcs10");
             MimeMappingDictionary.Add(".p12", "application/x-pkcs12");
             MimeMappingDictionary.Add(".p7b", "application/x-pkcs7-certificates");
@@ -279,6 +301,7 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".snp", "application/octet-stream");
             MimeMappingDictionary.Add(".spc", "application/x-pkcs7-certificates");
             MimeMappingDictionary.Add(".spl", "application/futuresplash");
+            MimeMappingDictionary.Add(".spx", "audio/ogg");
             MimeMappingDictionary.Add(".src", "application/x-wais-source");
             MimeMappingDictionary.Add(".ssm", "application/streamingmedia");
             MimeMappingDictionary.Add(".sst", "application/vnd.ms-pki.certstore");
@@ -286,6 +309,7 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".sv4cpio", "application/x-sv4cpio");
             MimeMappingDictionary.Add(".sv4crc", "application/x-sv4crc");
             MimeMappingDictionary.Add(".svg", "image/svg+xml");
+            MimeMappingDictionary.Add(".svgz", "image/svg+xml");
             MimeMappingDictionary.Add(".swf", "application/x-shockwave-flash");
             MimeMappingDictionary.Add(".t", "application/x-troff");
             MimeMappingDictionary.Add(".tar", "application/x-tar");
@@ -301,8 +325,10 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".toc", "application/octet-stream");
             MimeMappingDictionary.Add(".tr", "application/x-troff");
             MimeMappingDictionary.Add(".trm", "application/x-msterminal");
+            MimeMappingDictionary.Add(".ts", "video/vnd.dlna.mpeg-tts");
             MimeMappingDictionary.Add(".tsv", "text/tab-separated-values");
             MimeMappingDictionary.Add(".ttf", "application/octet-stream");
+            MimeMappingDictionary.Add(".tts", "video/vnd.dlna.mpeg-tts");
             MimeMappingDictionary.Add(".txt", "text/plain");
             MimeMappingDictionary.Add(".u32", "application/octet-stream");
             MimeMappingDictionary.Add(".uls", "text/iuls");
@@ -324,6 +350,7 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".wbmp", "image/vnd.wap.wbmp");
             MimeMappingDictionary.Add(".wcm", "application/vnd.ms-works");
             MimeMappingDictionary.Add(".wdb", "application/vnd.ms-works");
+            MimeMappingDictionary.Add(".webm", "video/webm");
             MimeMappingDictionary.Add(".wks", "application/vnd.ms-works");
             MimeMappingDictionary.Add(".wm", "video/x-ms-wm");
             MimeMappingDictionary.Add(".wma", "audio/x-ms-wma");
@@ -337,11 +364,14 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".wmv", "video/x-ms-wmv");
             MimeMappingDictionary.Add(".wmx", "video/x-ms-wmx");
             MimeMappingDictionary.Add(".wmz", "application/x-ms-wmz");
+            MimeMappingDictionary.Add(".woff", "font/x-woff");
+            MimeMappingDictionary.Add(".woff2", "application/font-woff2");
             MimeMappingDictionary.Add(".wps", "application/vnd.ms-works");
             MimeMappingDictionary.Add(".wri", "application/x-mswrite");
             MimeMappingDictionary.Add(".wrl", "x-world/x-vrml");
             MimeMappingDictionary.Add(".wrz", "x-world/x-vrml");
             MimeMappingDictionary.Add(".wsdl", "text/xml");
+            MimeMappingDictionary.Add(".wtv", "video/x-ms-wtv");
             MimeMappingDictionary.Add(".wvx", "video/x-ms-wvx");
             MimeMappingDictionary.Add(".x", "application/directx");
             MimeMappingDictionary.Add(".xaf", "x-world/x-vrml");
@@ -377,7 +407,6 @@ namespace DevLib.Web.Hosting.WebHost20
             MimeMappingDictionary.Add(".xwd", "image/x-xwindowdump");
             MimeMappingDictionary.Add(".z", "application/x-compress");
             MimeMappingDictionary.Add(".zip", "application/x-zip-compressed");
-            MimeMappingDictionary.Add(".*", "application/octet-stream");
         }
 
         /// <summary>

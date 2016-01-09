@@ -1019,9 +1019,78 @@ namespace DevLib.Web.Hosting.WebHost40
         /// Tries to check NTLM authenticate.
         /// </summary>
         /// <returns>true if succeeded; otherwise, false.</returns>
+        [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
+        [SecurityPermission(SecurityAction.Assert, ControlPrincipal = true)]
         private bool TryNtlmAuthenticate()
         {
-            return true;
+            try
+            {
+                using (NtlmAuth ntlmAuth = new NtlmAuth())
+                {
+                    do
+                    {
+                        string blobString = null;
+                        string extraHeaders = this._knownRequestHeaders[24];
+
+                        if (extraHeaders != null && extraHeaders.StartsWith("NTLM ", StringComparison.Ordinal))
+                        {
+                            blobString = extraHeaders.Substring(5);
+                        }
+
+                        if (blobString != null)
+                        {
+                            if (!ntlmAuth.Authenticate(blobString))
+                            {
+                                this._connection.WriteErrorAndClose(403);
+
+                                return false;
+                            }
+
+                            if (!ntlmAuth.Completed)
+                            {
+                                extraHeaders = "WWW-Authenticate: NTLM " + ntlmAuth.Blob + "\r\n";
+                            }
+                            else
+                            {
+                                if (this._host.GetProcessSID() != ntlmAuth.SID)
+                                {
+                                    this._connection.WriteErrorAndClose(403);
+
+                                    return false;
+                                }
+                                else
+                                {
+                                    return true;
+                                }
+                            }
+
+                            extraHeaders = "WWW-Authenticate: NTLM " + ntlmAuth.Blob + "\r\n";
+                        }
+                        else
+                        {
+                            extraHeaders = "WWW-Authenticate: NTLM\r\n";
+                        }
+
+                        this.SkipAllPostedContent();
+                        this._connection.WriteErrorWithExtraHeadersAndKeepAlive(401, extraHeaders);
+                    }
+                    while (this.TryParseRequest());
+
+                    return false;
+                }
+            }
+            catch
+            {
+                try
+                {
+                    this._connection.WriteErrorAndClose(500);
+                }
+                catch
+                {
+                }
+
+                return false;
+            }
         }
 
         /// <summary>

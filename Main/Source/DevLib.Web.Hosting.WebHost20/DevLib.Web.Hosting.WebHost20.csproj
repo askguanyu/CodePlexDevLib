@@ -26,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\DevLib.Web.Hosting.WebHost20.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\DevLib.Web.Hosting.WebHost20.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -51,7 +53,11 @@
     <Compile Include="Host.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MimeMapping.cs" />
-    <Compile Include="NativeMethods.cs" />
+    <Compile Include="NativeAPI\NativeMethods.cs" />
+    <Compile Include="NativeAPI\SecBuffer.cs" />
+    <Compile Include="NativeAPI\SecBufferDesc.cs" />
+    <Compile Include="NativeAPI\SecHandle.cs" />
+    <Compile Include="NtlmAuth.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="WebServer.cs" />

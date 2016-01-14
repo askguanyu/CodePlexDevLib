@@ -483,13 +483,13 @@ namespace DevLib.Samples
             //container.Register<IPerson>(new Person("aaaa", "bbbb", 0));
 
             var iocReg = container.Register<IPerson>(new Person("aaaa", "bbbb", 1));
-            container.Register<IPerson>(new Person("aaaa", "bbbb", 2), "A");
+            //container.Register<IPerson>(new Person("aaaa", "bbbb", 2), "A");
 
-            container.Register<IPerson>(new Person("ccccc", "ddddd", 3));
+            //container.Register<IPerson>(new Person("ccccc", "ddddd", 3));
 
-            container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().LastName, c.Resolve<IPerson>().FirstName, 4));
+            //container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().LastName, c.Resolve<IPerson>().FirstName, 4));
             container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().FirstName, c.Resolve<IPerson>().FirstName, 5));
-            //container.Register<IPerson>(c => new Person("eeeee", "fffff", 6));
+            container.Register<IPerson>(c => new Person("eeeee", "fffff", 6));
 
             //container.Register<Person>(new Person("e", "f", 3));
 
@@ -497,7 +497,7 @@ namespace DevLib.Samples
 
             Console.WriteLine(container.Resolve<IPerson>());
 
-            iocReg.Dispose();
+            //iocReg.Dispose();
 
             Console.WriteLine(container.Resolve<IPerson>());
 

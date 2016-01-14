@@ -1327,6 +1327,7 @@ namespace DevLib.ModernUI.Forms
                 {
                     if (this.WindowState == FormWindowState.Normal)
                     {
+                        this.MaximumSize = new Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
                         this.WindowState = FormWindowState.Maximized;
                     }
                     else

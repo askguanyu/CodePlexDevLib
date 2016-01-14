@@ -90,6 +90,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, SyncRootClientBase, remoteUri, fromCaching);
         }
 
@@ -102,10 +104,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -121,6 +120,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, SyncRootClientBase, endpointConfigurationName, remoteUri, fromCaching);
         }
 
@@ -134,10 +135,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -152,6 +150,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(Binding binding, string remoteUri)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(binding, remoteUri);
         }
 
@@ -164,10 +164,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(Binding binding, string remoteHost, int remotePort)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingInstance(binding);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -183,6 +181,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
+            CheckBindingType(bindingType);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, SyncRootClientBase, bindingType, remoteUri, fromCaching);
         }
 
@@ -196,10 +197,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetClientBaseInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingType(bindingType);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -224,6 +223,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, SyncRootPerCallThrowable, remoteUri, fromCaching);
         }
 
@@ -236,10 +237,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -255,6 +253,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, SyncRootPerCallThrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
 
@@ -268,10 +268,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -286,6 +283,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(Binding binding, string remoteUri)
         {
+            CheckBindingInstance(binding);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
 
@@ -298,10 +298,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(Binding binding, string remoteHost, int remotePort)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingInstance(binding);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -317,6 +315,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
+            CheckBindingType(bindingType);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, SyncRootPerCallThrowable, bindingType, remoteUri, fromCaching);
         }
 
@@ -330,10 +331,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallThrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingType(bindingType);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -358,6 +357,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, SyncRootPerCallUnthrowable, remoteUri, fromCaching);
         }
 
@@ -370,10 +371,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -389,6 +387,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, SyncRootPerCallUnthrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
 
@@ -402,10 +402,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -420,6 +417,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(Binding binding, string remoteUri)
         {
+            CheckBindingInstance(binding);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
 
@@ -432,10 +432,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(Binding binding, string remoteHost, int remotePort)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingInstance(binding);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -451,6 +449,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
+            CheckBindingType(bindingType);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, SyncRootPerCallUnthrowable, bindingType, remoteUri, fromCaching);
         }
 
@@ -464,10 +465,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerCallUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingType(bindingType);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -492,6 +491,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, SyncRootPerSessionThrowable, remoteUri, fromCaching);
         }
 
@@ -504,10 +505,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -523,6 +521,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, SyncRootPerSessionThrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
 
@@ -536,10 +536,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -554,6 +551,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteUri)
         {
+            CheckBindingInstance(binding);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
 
@@ -566,10 +566,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteHost, int remotePort)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingInstance(binding);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -585,6 +583,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
+            CheckBindingType(bindingType);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, SyncRootPerSessionThrowable, bindingType, remoteUri, fromCaching);
         }
 
@@ -598,10 +599,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingType(bindingType);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -626,6 +625,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, SyncRootPerSessionUnthrowable, remoteUri, fromCaching);
         }
 
@@ -638,10 +639,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -657,6 +655,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteUri, bool fromCaching = true)
         {
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, SyncRootPerSessionUnthrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
 
@@ -670,10 +670,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -688,6 +685,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteUri)
         {
+            CheckBindingInstance(binding);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
 
@@ -700,10 +700,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteHost, int remotePort)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingInstance(binding);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -719,6 +717,9 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteUri, bool fromCaching = true)
         {
+            CheckBindingType(bindingType);
+            CheckUri(remoteUri);
+
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, SyncRootPerSessionUnthrowable, bindingType, remoteUri, fromCaching);
         }
 
@@ -732,10 +733,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of a ClientBase derived class.</returns>
         public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            CheckBindingType(bindingType);
+            CheckPort(remotePort);
 
             string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
 
@@ -911,6 +910,59 @@ namespace DevLib.ServiceModel
             Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
             return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteUri));
+        }
+
+        /// <summary>
+        /// Checks the type of the binding.
+        /// </summary>
+        /// <param name="bindingType">Type of the binding to check.</param>
+        private static void CheckBindingType(Type bindingType)
+        {
+            if (bindingType == null)
+            {
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException(string.Format("The parameter bindingType {0} is not a System.ServiceModel.Channels.Binding type.", bindingType.FullName), "bindingType");
+            }
+        }
+
+        /// <summary>
+        /// Checks the binding instance.
+        /// </summary>
+        /// <param name="binding">The binding to check.</param>
+        private static void CheckBindingInstance(Binding binding)
+        {
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+        }
+
+        /// <summary>
+        /// Checks the port.
+        /// </summary>
+        /// <param name="remotePort">The port to check.</param>
+        private static void CheckPort(int remotePort)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+        }
+
+        /// <summary>
+        /// Checks the URI.
+        /// </summary>
+        /// <param name="remoteUri">The remote URI to check.</param>
+        private static void CheckUri(string remoteUri)
+        {
+            if (!string.IsNullOrEmpty(remoteUri) && !Uri.IsWellFormedUriString(remoteUri, UriKind.Absolute))
+            {
+                throw new UriFormatException(remoteUri);
+            }
         }
     }
 }

@@ -82,7 +82,7 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
-        /// Method CheckDisposed.
+        /// Checks whether this instance is disposed.
         /// </summary>
         private void CheckDisposed()
         {

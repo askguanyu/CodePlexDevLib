@@ -478,11 +478,43 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.Ioc");
 
-            IocContainer container = new IocContainer(true);
+            IocContainer container = new IocContainer();
 
-            container.Register<Person>(new Person("a", "b", 1));
-            Console.WriteLine(container.Resolve<Person>());
+            //container.Register<IPerson>(new Person("aaaa", "bbbb", 0));
 
+            var iocReg = container.Register<IPerson>(new Person("aaaa", "bbbb", 1));
+            container.Register<IPerson>(new Person("aaaa", "bbbb", 2), "A");
+
+            container.Register<IPerson>(new Person("ccccc", "ddddd", 3));
+
+            container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().LastName, c.Resolve<IPerson>().FirstName, 4));
+            container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().FirstName, c.Resolve<IPerson>().FirstName, 5));
+            //container.Register<IPerson>(c => new Person("eeeee", "fffff", 6));
+
+            //container.Register<Person>(new Person("e", "f", 3));
+
+            //var list = container.GetAllInstances<Person>();
+
+            Console.WriteLine(container.Resolve<IPerson>());
+
+            iocReg.Dispose();
+
+            Console.WriteLine(container.Resolve<IPerson>());
+
+            container.Unregister<IPerson>();
+
+            Console.WriteLine(container.Resolve<IPerson>());
+            Console.WriteLine(container.Resolve<IPerson>());
+
+            var list = container.GetAllInstances<IPerson>();
+
+            Console.WriteLine(container.Resolve<IPerson>());
+            Console.WriteLine(container.Resolve<IPerson>());
+
+            container.Clear();
+
+
+            container.Dispose();
 
         }
 
@@ -2134,7 +2166,7 @@ namespace DevLib.Samples
 
             WcfClientUtilities.SaveGeneratedAssemblyFile = true;
 
-            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new BasicHttpBinding(), "http://127.0.0.1:6001/WcfTest", true);
+            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new[] { typeof(IWcfTest), typeof(IWcfAnotherTest) }, WcfBinding.BasicHttp, "http://127.0.0.1:6001/WcfTest", true);
 
             var client0 = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "client0.dll", true).GetPerSessionThrowableProxy();
 
@@ -2591,8 +2623,17 @@ namespace DevLib.Samples
         }
     }
 
+    public interface IPerson
+    {
+        [DataMember]
+        string FirstName { get; set; }
+
+        [DataMember]
+        string LastName { get; set; }
+    }
+
     [Serializable]
-    public class Person : MarshalByRefObject
+    public class Person : MarshalByRefObject, IPerson
     {
         public event EventHandler<ErrorEventArgs> Error;
 

@@ -5,48 +5,102 @@
 //-----------------------------------------------------------------------
 namespace DevLib.Ioc
 {
+    using System;
+
     /// <summary>
-    /// Represents the registration of a resolution.
+    /// Registration context.
     /// </summary>
-    public class IocRegistration
+    public class IocRegistration : IDisposable
     {
         /// <summary>
-        /// Gets or sets a shared instance.
+        /// Field _releaseAction.
         /// </summary>
-        public object Instance
+        private readonly Action<IocRegistration> _releaseAction;
+
+        /// <summary>
+        /// Field _disposed.
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IocRegistration" /> class.
+        /// </summary>
+        /// <param name="releaseAction">The release action.</param>
+        /// <param name="name">The name of the registration.</param>
+        public IocRegistration(Action<IocRegistration> releaseAction, string name)
         {
-            get;
-            set;
+            this._releaseAction = releaseAction;
+            this.Name = name;
         }
 
         /// <summary>
-        /// Gets a value indicating whether a shared instance has been created.
+        /// Finalizes an instance of the <see cref="IocRegistration" /> class.
         /// </summary>
-        public bool HasInstance
+        ~IocRegistration()
         {
-            get
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Gets the name of this registration.
+        /// </summary>
+        public string Name
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="IocRegistration" /> class.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="IocRegistration" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this._disposed)
             {
-                return this.Instance != null;
+                return;
             }
-        }
 
-        /// <summary>
-        /// Gets or sets delegate method to create a new instance.
-        /// </summary>
-        public BuilderFunc Builder
-        {
-            get;
-            set;
-        }
+            this._disposed = true;
 
-        /// <summary>
-        /// Gets a value indicating whether a delegate method of creation a new instance exists.
-        /// </summary>
-        public bool HasBuilder
-        {
-            get
+            if (disposing)
             {
-                return this.Builder != null;
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+
+                this._releaseAction(this);
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.Ioc.IocRegistration");
             }
         }
     }

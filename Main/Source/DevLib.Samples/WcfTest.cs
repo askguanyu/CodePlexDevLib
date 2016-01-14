@@ -7,7 +7,7 @@
     using System.ServiceModel;
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class WcfTest : IWcfTest
+    public class WcfTest : IWcfTest, IWcfAnotherTest
     {
         public WcfTest()
         {
@@ -71,6 +71,11 @@
         public void TestException(string a)
         {
             throw new NotSupportedException();
+        }
+
+        public string MyAnotherOperation(string arg1, int arg2)
+        {
+            return arg1 + arg2;
         }
     }
 }

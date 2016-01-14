@@ -6,33 +6,39 @@
 namespace DevLib.Ioc
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
-
-    /// <summary>
-    /// Delegate of method to create a new instance.
-    /// </summary>
-    /// <returns>Return object of the method.</returns>
-    public delegate object BuilderFunc();
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
 
     /// <summary>
     /// Inversion of Control container.
     /// </summary>
-    public class IocContainer : IDisposable
+    [DebuggerDisplay("Name={ContainerName}, Registrations={RegistrationsCount}, RegisterTypes={_registrations.Count}, Resolvers={_resolvers.Count}, Parent={_parent.ContainerName}")]
+    public class IocContainer : IServiceLocator, IResolver, IDisposable
     {
         /// <summary>
-        /// Field DefaultLabel.
+        /// Field NullStringKey.
         /// </summary>
-        private static readonly string DefaultLabel = Guid.NewGuid().ToString();
+        private static readonly string NullStringKey = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// Field _syncRoot.
+        /// Field _registrations.
         /// </summary>
-        private readonly object _syncRoot = new object();
+        private readonly Dictionary<Type, OrderedDictionary> _registrations = new Dictionary<Type, OrderedDictionary>();
 
         /// <summary>
-        /// Field _container.
+        /// Field _resolvers.
         /// </summary>
-        private readonly Dictionary<Type, Dictionary<string, IocRegistration>> _container = new Dictionary<Type, Dictionary<string, IocRegistration>>();
+        private readonly List<IResolver> _resolvers = new List<IResolver>();
+
+        /// <summary>
+        /// Field _parent.
+        /// </summary>
+        private readonly IocContainer _parent;
 
         /// <summary>
         /// Field _disposed.
@@ -40,24 +46,28 @@ namespace DevLib.Ioc
         private bool _disposed = false;
 
         /// <summary>
-        /// Field _ignoreCase.
+        /// Initializes a new instance of the <see cref="IocContainer"/> class.
         /// </summary>
-        private bool _ignoreCase = false;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IocContainer" /> class.
-        /// </summary>
-        public IocContainer()
+        /// <param name="containerName">Name of the container.</param>
+        public IocContainer(string containerName = null)
         {
+            this.ContainerName = containerName;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IocContainer" /> class.
+        /// Initializes a new instance of the <see cref="IocContainer"/> class.
         /// </summary>
-        /// <param name="ignoreCase">true to ignore case when resolve object by label; otherwise, false.</param>
-        public IocContainer(bool ignoreCase)
+        /// <param name="parent">The parent container.</param>
+        /// <param name="containerName">Name of the container.</param>
+        private IocContainer(IocContainer parent, string containerName = null)
         {
-            this._ignoreCase = ignoreCase;
+            this._parent = parent;
+            this.ContainerName = containerName;
+
+            if (this._parent != null)
+            {
+                this._parent.Disposed += this.OnParentDisposed;
+            }
         }
 
         /// <summary>
@@ -69,209 +79,562 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
-        /// Register a type mapping with the container.
+        /// Occurs when disposed.
         /// </summary>
-        /// <typeparam name="T">Type of instance to register.</typeparam>
-        /// <param name="instance">Object to return.</param>
-        /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
-        /// <returns>The current IocContainer instance.</returns>
-        public IocContainer Register<T>(T instance, string label = null)
+        private event EventHandler Disposed;
+
+        /// <summary>
+        /// Gets the registrations count.
+        /// </summary>
+        public int RegistrationsCount
         {
-            this.CheckDisposed();
-
-            if (instance == null)
+            get
             {
-                throw new ArgumentNullException("instance");
-            }
+                int result = 0;
 
-            if (label == null)
-            {
-                label = DefaultLabel;
-            }
-
-            Type instanceType = typeof(T);
-
-            lock (this._syncRoot)
-            {
-                if (this._container.ContainsKey(instanceType)
-                    && this._container[instanceType] != null
-                    && this._container[instanceType].ContainsKey(label)
-                    && this._container[instanceType][label] != null)
+                foreach (var item in this._registrations.Values)
                 {
-                    if (this._container[instanceType][label].HasInstance)
+                    if (item != null)
                     {
-                        throw new InvalidOperationException(string.Format("An instance of type {0} for label {1} already exists. Unregister the instance first.", instanceType.FullName, label));
-                    }
-                    else
-                    {
-                        this._container[instanceType][label].Instance = instance;
-
-                        return this;
+                        result += item.Count;
                     }
                 }
-                else
-                {
-                    if (!this._container.ContainsKey(instanceType) || this._container[instanceType] == null)
-                    {
-                        this._container.Add(instanceType, new Dictionary<string, IocRegistration>(this._ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.CurrentCulture));
-                    }
 
-                    if (!this._container[instanceType].ContainsKey(label) || this._container[instanceType][label] == null)
-                    {
-                        this._container[instanceType].Add(label, new IocRegistration());
-                    }
-
-                    this._container[instanceType][label].Instance = instance;
-
-                    return this;
-                }
+                return result;
             }
         }
 
         /// <summary>
-        /// Register a type mapping with the container.
+        /// Gets the resolve providers.
         /// </summary>
-        /// <typeparam name="T">Type to register.</typeparam>
+        public ReadOnlyCollection<IResolver> ResolveProviders
+        {
+            get
+            {
+                return this._resolvers.AsReadOnly();
+            }
+        }
+
+        /// <summary>
+        /// Gets the name of the container.
+        /// </summary>
+        public string ContainerName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Adds the resolve provider.
+        /// </summary>
+        /// <param name="resolveProvider">The resolve provider.</param>
+        public void AddResolveProvider(IResolver resolveProvider)
+        {
+            this.CheckDisposed();
+
+            this._resolvers.Add(resolveProvider);
+        }
+
+        /// <summary>
+        /// Registers the specified type with builder function.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
         /// <param name="builder">Delegate method to create a new instance.</param>
-        /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
-        /// <returns>The current IocContainer instance.</returns>
-        public IocContainer Register<T>(BuilderFunc builder, string label = null)
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register(Type type, Converter<IocContainer, object> builder)
         {
             this.CheckDisposed();
 
-            if (builder == null)
+            return this.InnerRegister(type, new RegistrationBuilder(type, container => builder(container)));
+        }
+
+        /// <summary>
+        /// Registers the specified type with builder function.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="builder">Delegate method to create a new instance.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register<T>(Converter<IocContainer, T> builder)
+        {
+            this.CheckDisposed();
+
+            Type type = typeof(T);
+
+            return this.InnerRegister(type, new RegistrationBuilder(type, container => (T)builder(container)));
+        }
+
+        /// <summary>
+        /// Registers the specified type with the specified name.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="builder">Delegate method to create a new instance.</param>
+        /// <param name="name">The name of registration to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register(Type type, Converter<IocContainer, object> builder, string name)
+        {
+            this.CheckDisposed();
+
+            return this.InnerRegister(type, new RegistrationBuilder(type, container => builder(container), name), name);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the specified name.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="builder">Delegate method to create a new instance.</param>
+        /// <param name="name">The name of registration to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register<T>(Converter<IocContainer, T> builder, string name)
+        {
+            this.CheckDisposed();
+
+            Type type = typeof(T);
+
+            return this.InnerRegister(type, new RegistrationBuilder(type, container => (T)builder(container), name), name);
+        }
+
+        /// <summary>
+        /// Registers the specified type.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="instance">The instance to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register(Type type, object instance)
+        {
+            this.CheckDisposed();
+
+            return this.InnerRegister(type, new RegistrationBuilder(type, instance));
+        }
+
+        /// <summary>
+        /// Registers the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="instance">The instance to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register<T>(T instance)
+        {
+            this.CheckDisposed();
+
+            Type type = typeof(T);
+
+            return this.InnerRegister(type, new RegistrationBuilder(type, instance));
+        }
+
+        /// <summary>
+        /// Registers the specified type.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="instance">The instance to register.</param>
+        /// <param name="name">The name of registration to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register(Type type, object instance, string name)
+        {
+            this.CheckDisposed();
+
+            return this.InnerRegister(type, new RegistrationBuilder(type, instance, name), name);
+        }
+
+        /// <summary>
+        /// Registers the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="instance">The instance to register.</param>
+        /// <param name="name">The name of registration to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register<T>(T instance, string name)
+        {
+            this.CheckDisposed();
+
+            Type type = typeof(T);
+
+            return this.InnerRegister(type, new RegistrationBuilder(type, instance, name), name);
+        }
+
+        /// <summary>
+        /// Resolves the specified type with the specified name.
+        /// </summary>
+        /// <param name="type">The type to resolve.</param>
+        /// <returns>The registered instance.</returns>
+        public virtual object Resolve(Type type)
+        {
+            object result;
+
+            if (!this.TryResolve(type, out result) || result == null)
             {
-                throw new ArgumentNullException("builder");
+                throw new InvalidOperationException(string.Format("The registration [{0}] does not exist.", type.FullName));
             }
 
-            if (label == null)
+            return result;
+        }
+
+        /// <summary>
+        /// Resolves the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to resolve.</typeparam>
+        /// <returns>The registered instance.</returns>
+        public virtual T Resolve<T>()
+        {
+            return (T)this.Resolve(typeof(T));
+        }
+
+        /// <summary>
+        /// Resolves the specified type with the specified name.
+        /// </summary>
+        /// <param name="type">The type to resolve.</param>
+        /// <param name="name">The name of registration to resolve.</param>
+        /// <returns>The registered instance.</returns>
+        public virtual object Resolve(Type type, string name)
+        {
+            object result;
+
+            if (!this.TryResolve(type, name, out result) || result == null)
             {
-                label = DefaultLabel;
+                throw new InvalidOperationException(string.Format("The registration [{0} with name {1}] does not exist.", type.FullName, name));
             }
 
-            Type instanceType = typeof(T);
+            return result;
+        }
 
-            lock (this._syncRoot)
+        /// <summary>
+        /// Resolves the specified type with the specified name.
+        /// </summary>
+        /// <typeparam name="T">The type to resolve.</typeparam>
+        /// <param name="name">The name of registration to resolve.</param>
+        /// <returns>The registered instance.</returns>
+        public virtual T Resolve<T>(string name)
+        {
+            return (T)this.Resolve(typeof(T), name);
+        }
+
+        /// <summary>
+        /// Determines whether this specified type can resolve.
+        /// </summary>
+        /// <param name="type">The type to resolve.</param>
+        /// <returns>true if can resolve; otherwise, false.</returns>
+        public bool CanResolve(Type type)
+        {
+            this.CheckDisposed();
+
+            lock (((ICollection)this._registrations).SyncRoot)
             {
-                if (this._container.ContainsKey(instanceType)
-                    && this._container[instanceType] != null
-                    && this._container[instanceType].ContainsKey(label)
-                    && this._container[instanceType][label] != null)
-                {
-                    if (this._container[instanceType][label].HasBuilder)
-                    {
-                        throw new InvalidOperationException(string.Format("A definition of type {0} for label {1} already exists. Unregister the definition first.", instanceType.FullName, label));
-                    }
-                    else
-                    {
-                        this._container[instanceType][label].Builder = builder;
+                OrderedDictionary value;
 
-                        return this;
-                    }
-                }
-                else
-                {
-                    if (!this._container.ContainsKey(instanceType) || this._container[instanceType] == null)
-                    {
-                        this._container.Add(instanceType, new Dictionary<string, IocRegistration>(this._ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.CurrentCulture));
-                    }
-
-                    if (!this._container[instanceType].ContainsKey(label) || this._container[instanceType][label] == null)
-                    {
-                        this._container[instanceType].Add(label, new IocRegistration());
-                    }
-
-                    this._container[instanceType][label].Builder = builder;
-
-                    return this;
-                }
+                return this._registrations.TryGetValue(type, out value) && value != null && value.Count > 0;
             }
         }
 
         /// <summary>
-        /// Resolve an instance of the requested type from the container.
+        /// Determines whether this specified type can resolve.
         /// </summary>
-        /// <typeparam name="T">Type to resolve.</typeparam>
-        /// <param name="createNew">true to call delegate method to create a new instance; false to return a shared instance.</param>
-        /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
-        /// <returns>The retrieved object.</returns>
-        public T Resolve<T>(bool createNew = false, string label = null)
+        /// <typeparam name="T">The type to resolve.</typeparam>
+        /// <returns>true if can resolve; otherwise, false.</returns>
+        public bool CanResolve<T>()
+        {
+            return this.CanResolve(typeof(T));
+        }
+
+        /// <summary>
+        /// Determines whether this specified type can resolve.
+        /// </summary>
+        /// <param name="type">The type to resolve.</param>
+        /// <param name="name">The name of registration to resolve.</param>
+        /// <returns>true if can resolve; otherwise, false.</returns>
+        public bool CanResolve(Type type, string name)
         {
             this.CheckDisposed();
 
-            if (label == null)
+            lock (((ICollection)this._registrations).SyncRoot)
             {
-                label = DefaultLabel;
-            }
+                OrderedDictionary value;
 
-            Type instanceType = typeof(T);
-
-            lock (this._syncRoot)
-            {
-                if (!this._container.ContainsKey(instanceType)
-                    || this._container[instanceType] == null
-                    || !this._container[instanceType].ContainsKey(label)
-                    || this._container[instanceType][label] == null)
-                {
-                    throw new InvalidOperationException(string.Format("Type {0} for label {1} does not exist as a registration.", instanceType.FullName, label));
-                }
-                else
-                {
-                    if (createNew)
-                    {
-                        if (this._container[instanceType][label].HasBuilder)
-                        {
-                            return (T)this._container[instanceType][label].Builder.Invoke();
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException(string.Format("A definition of type {0} for label {1} does not exist as a registration.", instanceType.FullName, label));
-                        }
-                    }
-                    else
-                    {
-                        if (this._container[instanceType][label].HasInstance)
-                        {
-                            return (T)this._container[instanceType][label].Instance;
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException(string.Format("An instance of type {0} for label {1} does not exist as a registration.", instanceType.FullName, label));
-                        }
-                    }
-                }
+                return this._registrations.TryGetValue(type, out value)
+                    && value != null
+                    && value.Count > 0
+                    && value.Contains(name)
+                    && value[name] != null;
             }
         }
 
         /// <summary>
-        /// Resolve all from the container.
+        /// Determines whether this specified type can resolve.
         /// </summary>
-        /// <returns>The retrieved IocRegistration list.</returns>
-        public List<IocRegistration> ResolveAll()
+        /// <typeparam name="T">The type to resolve.</typeparam>
+        /// <param name="name">The name of registration to resolve.</param>
+        /// <returns>true if can resolve; otherwise, false.</returns>
+        public bool CanResolve<T>(string name)
+        {
+            return this.CanResolve(typeof(T), name);
+        }
+
+        /// <summary>
+        /// Tries to resolve the specified type with the specified name.
+        /// </summary>
+        /// <param name="type">The type to resolve.</param>
+        /// <param name="value">The registered instance.</param>
+        /// <returns>true if resolve succeeded; otherwise, false.</returns>
+        public bool TryResolve(Type type, out object value)
         {
             this.CheckDisposed();
 
-            List<IocRegistration> result = new List<IocRegistration>();
-
-            lock (this._syncRoot)
+            lock (((ICollection)this._registrations).SyncRoot)
             {
-                foreach (var itemType in this._container)
+                object result = null;
+
+                OrderedDictionary valueDictionary;
+
+                if (this._registrations.TryGetValue(type, out valueDictionary) && valueDictionary != null && valueDictionary.Count > 0)
                 {
-                    try
+                    if (valueDictionary.Count == 1)
                     {
-                        foreach (var item in itemType.Value)
+                        RegistrationBuilder builder = valueDictionary[0] as RegistrationBuilder;
+
+                        if (builder != null && !builder.IsEvaluated)
                         {
                             try
                             {
-                                result.Add(item.Value);
+                                result = builder.GetValue(this);
                             }
-                            catch
+                            catch (Exception e)
                             {
+                                InternalLogger.Log(e);
                             }
                         }
                     }
-                    catch
+                    else
                     {
+                        List<RegistrationBuilder> builders = new List<RegistrationBuilder>(valueDictionary.Count);
+
+                        foreach (var item in valueDictionary.Values)
+                        {
+                            builders.Add((RegistrationBuilder)item);
+                        }
+
+                        RegistrationBuilder builder = builders.FindLast(b => b.HasInstance || !b.IsEvaluated);
+
+                        if (builder != null)
+                        {
+                            try
+                            {
+                                result = builder.GetValue(this);
+                            }
+                            catch (Exception e)
+                            {
+                                InternalLogger.Log(e);
+                            }
+                        }
+                    }
+                }
+
+                if (result == null)
+                {
+                    foreach (var resolveProvider in this._resolvers)
+                    {
+                        try
+                        {
+                            result = resolveProvider.Resolve(type);
+                        }
+                        catch (Exception e)
+                        {
+                            InternalLogger.Log(e);
+                        }
+
+                        if (result != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                if (result == null && this._parent != null)
+                {
+                    this._parent.TryResolve(type, out result);
+                }
+
+                value = result;
+
+                return result != null;
+            }
+        }
+
+        /// <summary>
+        /// Tries to resolve the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to resolve.</typeparam>
+        /// <param name="value">The registered instance.</param>
+        /// <returns>true if resolve succeeded; otherwise, false.</returns>
+        public virtual bool TryResolve<T>(out T value)
+        {
+            object outValue;
+
+            bool result = this.TryResolve(typeof(T), out outValue);
+
+            value = (T)outValue;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Tries to resolve the specified type with the specified name.
+        /// </summary>
+        /// <param name="type">The type to resolve.</param>
+        /// <param name="name">The name of registration to resolve.</param>
+        /// <param name="value">The registered instance.</param>
+        /// <returns>true if resolve succeeded; otherwise, false.</returns>
+        public bool TryResolve(Type type, string name, out object value)
+        {
+            this.CheckDisposed();
+
+            if (name == null)
+            {
+                name = NullStringKey;
+            }
+
+            lock (((ICollection)this._registrations).SyncRoot)
+            {
+                object result = null;
+
+                OrderedDictionary valueDictionary;
+
+                if (this._registrations.TryGetValue(type, out valueDictionary)
+                    && valueDictionary != null
+                    && valueDictionary.Count > 0
+                    && valueDictionary.Contains(name))
+                {
+                    RegistrationBuilder builder = valueDictionary[name] as RegistrationBuilder;
+
+                    if (builder != null)
+                    {
+                        try
+                        {
+                            result = builder.GetValue(this);
+                        }
+                        catch (Exception e)
+                        {
+                            InternalLogger.Log(e);
+                        }
+                    }
+                }
+
+                if (result == null)
+                {
+                    foreach (var resolveProvider in this._resolvers)
+                    {
+                        try
+                        {
+                            result = resolveProvider.Resolve(type, name);
+                        }
+                        catch (Exception e)
+                        {
+                            InternalLogger.Log(e);
+                        }
+
+                        if (result != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                if (result == null && this._parent != null)
+                {
+                    this._parent.TryResolve(type, name, out result);
+                }
+
+                value = result;
+
+                return result != null;
+            }
+        }
+
+        /// <summary>
+        /// Tries to resolve the specified type with the specified name.
+        /// </summary>
+        /// <typeparam name="T">The type to resolve.</typeparam>
+        /// <param name="name">The name of registration to resolve.</param>
+        /// <param name="value">The registered instance.</param>
+        /// <returns>true if resolve succeeded; otherwise, false. </returns>
+        public virtual bool TryResolve<T>(string name, out T value)
+        {
+            object outValue;
+
+            bool result = this.TryResolve(typeof(T), name, out outValue);
+
+            value = (T)outValue;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets an instance of the given serviceType.
+        /// </summary>
+        /// <param name="serviceType">Type of object requested.</param>
+        /// <returns>The requested service instance.</returns>
+        public object GetInstance(Type serviceType)
+        {
+            return this.Resolve(serviceType);
+        }
+
+        /// <summary>
+        /// Gets an instance of the given TService.
+        /// </summary>
+        /// <typeparam name="TService">Type of object requested.</typeparam>
+        /// <returns>The requested service instance.</returns>
+        public TService GetInstance<TService>()
+        {
+            return this.Resolve<TService>();
+        }
+
+        /// <summary>
+        /// Gets an instance of the given named serviceType.
+        /// </summary>
+        /// <param name="serviceType">Type of object requested.</param>
+        /// <param name="key">Name the object was registered with.</param>
+        /// <returns>The requested service instance.</returns>
+        public object GetInstance(Type serviceType, string key)
+        {
+            return this.Resolve(serviceType, key);
+        }
+
+        /// <summary>
+        /// Gets an instance of the given named TService.
+        /// </summary>
+        /// <typeparam name="TService">Name the object was registered with.</typeparam>
+        /// <param name="key">Type of object requested.</param>
+        /// <returns>The requested service instance.</returns>
+        public TService GetInstance<TService>(string key)
+        {
+            return this.Resolve<TService>(key);
+        }
+
+        /// <summary>
+        /// Gets all instances of the given serviceType currently registered in the container.
+        /// </summary>
+        /// <param name="serviceType">Type of object requested.</param>
+        /// <returns>A sequence of instances of the requested serviceType.</returns>
+        public IEnumerable<object> GetAllInstances(Type serviceType)
+        {
+            this.CheckDisposed();
+
+            List<object> result = new List<object>();
+
+            lock (((ICollection)this._registrations).SyncRoot)
+            {
+                OrderedDictionary value;
+
+                if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
+                {
+                    foreach (var item in value.Values)
+                    {
+                        result.Add(((RegistrationBuilder)item).GetValue(this));
                     }
                 }
             }
@@ -280,216 +643,216 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
-        /// Check whether it is possible to resolve a type.
+        /// Gets all instances of the given TService currently registered in the container.
         /// </summary>
-        /// <typeparam name="T">Type to resolve.</typeparam>
-        /// <param name="createNew">true to check delegate method exists; false to check a shared instance exists.</param>
-        /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
-        /// <returns>true if can resolve; otherwise, false.</returns>
-        public bool CanResolve<T>(bool createNew = false, string label = null)
+        /// <typeparam name="TService">Type of object requested.</typeparam>
+        /// <returns>A sequence of instances of the requested TService.</returns>
+        public IEnumerable<TService> GetAllInstances<TService>()
         {
             this.CheckDisposed();
 
-            if (label == null)
-            {
-                label = DefaultLabel;
-            }
+            Type serviceType = typeof(TService);
 
-            Type instanceType = typeof(T);
+            List<TService> result = new List<TService>();
 
-            lock (this._syncRoot)
+            lock (((ICollection)this._registrations).SyncRoot)
             {
-                if (!this._container.ContainsKey(instanceType)
-                    || this._container[instanceType] == null
-                    || !this._container[instanceType].ContainsKey(label)
-                    || this._container[instanceType][label] == null)
+                OrderedDictionary value;
+
+                if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
                 {
-                    return false;
-                }
-                else
-                {
-                    return createNew ? this._container[instanceType][label].HasBuilder : this._container[instanceType][label].HasInstance;
+                    foreach (var item in value.Values)
+                    {
+                        result.Add((TService)((RegistrationBuilder)item).GetValue(this));
+                    }
                 }
             }
+
+            return result;
         }
 
         /// <summary>
-        /// Try to resolve an instance of the requested type from the container.
+        /// Gets the service object of the specified type.
         /// </summary>
-        /// <typeparam name="T">Type to resolve.</typeparam>
-        /// <param name="instance">The retrieved object, if it is possible to resolve one.</param>
-        /// <param name="createNew">true to call delegate method to create a new instance; false to return a shared instance.</param>
-        /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
-        /// <returns>true if resolve successfully; otherwise, false.</returns>
-        public bool TryResolve<T>(out T instance, bool createNew = false, string label = null)
+        /// <param name="serviceType">An object that specifies the type of service object to get.</param>
+        /// <returns>A service object of type <paramref name="serviceType" />.-or- null if there is no service object of type <paramref name="serviceType" />.</returns>
+        public object GetService(Type serviceType)
+        {
+            return this.Resolve(serviceType);
+        }
+
+        /// <summary>
+        /// Gets the service object of the specified type.
+        /// </summary>
+        /// <param name="serviceType">An object that specifies the type of service object to get.</param>
+        /// <param name="name">The name of registration to resolve.</param>
+        /// <returns>A service object of type <paramref name="serviceType" />.-or- null if there is no service object of type <paramref name="serviceType" />.</returns>
+        public object GetService(Type serviceType, string name)
+        {
+            return this.Resolve(serviceType, name);
+        }
+
+        /// <summary>
+        /// Unregisters the specified type, all named registrations will be kept.
+        /// </summary>
+        /// <param name="type">The type to unregister.</param>
+        public void Unregister(Type type)
         {
             this.CheckDisposed();
 
-            if (label == null)
+            lock (((ICollection)this._registrations).SyncRoot)
             {
-                label = DefaultLabel;
-            }
+                OrderedDictionary value;
 
-            Type instanceType = typeof(T);
-
-            lock (this._syncRoot)
-            {
-                try
+                if (this._registrations.TryGetValue(type, out value)
+                    && value != null
+                    && value.Count > 0)
                 {
-                    if (!this._container.ContainsKey(instanceType)
-                        || this._container[instanceType] == null
-                        || !this._container[instanceType].ContainsKey(label)
-                        || this._container[instanceType][label] == null)
+                    List<DictionaryEntry> result = new List<DictionaryEntry>();
+
+                    foreach (DictionaryEntry item in value)
                     {
-                        instance = default(T);
+                        RegistrationBuilder builder = item.Value as RegistrationBuilder;
 
-                        return false;
-                    }
-                    else
-                    {
-                        if (createNew)
+                        if (builder != null && !builder.IsNamed)
                         {
-                            if (this._container[instanceType][label].HasBuilder)
-                            {
-                                instance = (T)this._container[instanceType][label].Builder.Invoke();
-
-                                return true;
-                            }
-                            else
-                            {
-                                instance = default(T);
-
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            if (this._container[instanceType][label].HasInstance)
-                            {
-                                instance = (T)this._container[instanceType][label].Instance;
-
-                                return true;
-                            }
-                            else
-                            {
-                                instance = default(T);
-
-                                return false;
-                            }
+                            result.Add(item);
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    InternalLogger.Log(e);
 
-                    instance = default(T);
+                    foreach (var item in result)
+                    {
+                        IDisposable disposable = item.Value as IDisposable;
 
-                    return false;
+                        if (disposable != null)
+                        {
+                            disposable.Dispose();
+                        }
+
+                        value.Remove(item.Key);
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Unregister a type mapping with the container.
+        /// Unregisters the specified type, all named registrations will be kept.
         /// </summary>
-        /// <typeparam name="T">Type to unregister.</typeparam>
-        /// <param name="instance">true to unregister the shared instance; false to unregister delegate method.</param>
-        /// <param name="label">A unique label that allows multiple implementations of the same type.</param>
-        /// <returns>true if unregister successfully; otherwise, false.</returns>
-        public bool Unregister<T>(bool instance = true, string label = null)
+        /// <typeparam name="T">The type to unregister.</typeparam>
+        public void Unregister<T>()
+        {
+            this.Unregister(typeof(T));
+        }
+
+        /// <summary>
+        /// Unregisters the specified type.
+        /// </summary>
+        /// <param name="type">The type to unregister.</param>
+        /// <param name="name">The name of the registration.</param>
+        public void Unregister(Type type, string name)
         {
             this.CheckDisposed();
 
-            if (label == null)
+            lock (((ICollection)this._registrations).SyncRoot)
             {
-                label = DefaultLabel;
-            }
+                OrderedDictionary value;
 
-            Type instanceType = typeof(T);
+                if (this._registrations.TryGetValue(type, out value)
+                    && value != null
+                    && value.Count > 0
+                    && value.Contains(name)
+                    && value[name] != null)
+                {
+                    IDisposable disposable = value[name] as IDisposable;
 
-            lock (this._syncRoot)
-            {
-                if (this._container.ContainsKey(instanceType)
-                    && this._container[instanceType] != null
-                    && this._container[instanceType].ContainsKey(label)
-                    && this._container[instanceType][label] != null)
-                {
-                    if (instance)
+                    if (disposable != null)
                     {
-                        this._container[instanceType][label].Instance = null;
-                        return true;
+                        disposable.Dispose();
                     }
-                    else
-                    {
-                        this._container[instanceType][label].Builder = null;
-                        return true;
-                    }
-                }
-                else
-                {
-                    return false;
+
+                    value.Remove(name);
                 }
             }
         }
 
         /// <summary>
-        /// Destroy a type mapping with the container.
+        /// Unregisters the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to unregister.</typeparam>
+        /// <param name="name">The name of the registration.</param>
+        public void Unregister<T>(string name)
+        {
+            this.Unregister(typeof(T), name);
+        }
+
+        /// <summary>
+        /// Destroys all registrations of the specified type.
+        /// </summary>
+        /// <param name="type">Type to destroy.</param>
+        public void Destroy(Type type)
+        {
+            this.CheckDisposed();
+
+            lock (((ICollection)this._registrations).SyncRoot)
+            {
+                OrderedDictionary valueDictionary;
+
+                if (this._registrations.TryGetValue(type, out valueDictionary) && valueDictionary != null)
+                {
+                    foreach (IDisposable registrationBuilder in valueDictionary.Values)
+                    {
+                        registrationBuilder.Dispose();
+                    }
+
+                    valueDictionary.Clear();
+                }
+
+                this._registrations.Remove(type);
+            }
+        }
+
+        /// <summary>
+        /// Destroys all registrations of the specified type.
         /// </summary>
         /// <typeparam name="T">Type to destroy.</typeparam>
-        /// <returns>true if destroy successfully; otherwise, false.</returns>
-        public bool Destroy<T>()
+        public void Destroy<T>()
         {
-            this.CheckDisposed();
-
-            Type instanceType = typeof(T);
-
-            lock (this._syncRoot)
-            {
-                if (this._container.ContainsKey(instanceType)
-                    && this._container[instanceType] != null)
-                {
-                    this._container[instanceType].Clear();
-                    this._container[instanceType] = null;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            this.Destroy(typeof(T));
         }
 
         /// <summary>
-        /// Removes all values from container.
+        /// Clears all registrations of this container.
         /// </summary>
         public void Clear()
         {
             this.CheckDisposed();
 
-            lock (this._syncRoot)
+            lock (((ICollection)this._registrations).SyncRoot)
             {
-                foreach (var item in this._container)
+                foreach (var item in this._registrations.Values)
                 {
-                    try
+                    foreach (IDisposable registrationBuilder in item.Values)
                     {
-                        item.Value.Clear();
+                        registrationBuilder.Dispose();
                     }
-                    catch
-                    {
-                    }
+
+                    item.Clear();
                 }
 
-                this._container.Clear();
+                this._registrations.Clear();
             }
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="IocContainer" /> class.
+        /// Creates the child container.
         /// </summary>
-        public void Close()
+        /// <param name="containerName">Name of the container.</param>
+        /// <returns>Child container instance.</returns>
+        public IocContainer CreateChildContainer(string containerName = null)
         {
-            this.Dispose();
+            this.CheckDisposed();
+
+            return new IocContainer(this, containerName);
         }
 
         /// <summary>
@@ -499,6 +862,115 @@ namespace DevLib.Ioc
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Thread safety raise event.
+        /// </summary>
+        /// <param name="source">Source EventHandler.</param>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">A System.EventArgs that contains the event data.</param>
+        public void RaiseEvent(EventHandler source, object sender, EventArgs e = null)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
+            EventHandler safeHandler = Interlocked.CompareExchange(ref source, null, null);
+
+            if (safeHandler != null)
+            {
+                safeHandler(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// InnerRegister method.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="builder">The registration builder.</param>
+        /// <param name="name">The name to register..</param>
+        /// <returns>Registration instance.</returns>
+        protected virtual IocRegistration InnerRegister(Type type, RegistrationBuilder builder, string name)
+        {
+            try
+            {
+                if (name == null)
+                {
+                    name = NullStringKey;
+                }
+
+                lock (((ICollection)this._registrations).SyncRoot)
+                {
+                    if (!this._registrations.ContainsKey(type) || this._registrations[type] == null)
+                    {
+                        this._registrations[type] = new OrderedDictionary();
+                    }
+
+                    this._registrations[type][name] = builder;
+                }
+
+                return new IocRegistration(
+                    registration =>
+                    {
+                        lock (((ICollection)this._registrations).SyncRoot)
+                        {
+                            this._registrations[type].Remove(registration.Name);
+                        }
+
+                        builder.Dispose();
+                    },
+                    name);
+            }
+            catch (Exception e)
+            {
+                InvalidOperationException invalidOperationException = new InvalidOperationException(string.Format("Failed to register service [{0}]", type.FullName), e);
+
+                InternalLogger.Log(invalidOperationException);
+
+                throw invalidOperationException;
+            }
+        }
+
+        /// <summary>
+        /// InnerRegister method.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="builder">The registration builder.</param>
+        /// <returns>Registration instance.</returns>
+        protected virtual IocRegistration InnerRegister(Type type, RegistrationBuilder builder)
+        {
+            try
+            {
+                string id = Guid.NewGuid().ToString();
+
+                lock (((ICollection)this._registrations).SyncRoot)
+                {
+                    if (!this._registrations.ContainsKey(type) || this._registrations[type] == null)
+                    {
+                        this._registrations[type] = new OrderedDictionary();
+                    }
+
+                    this._registrations[type][id] = builder;
+                }
+
+                return new IocRegistration(
+                    registration =>
+                    {
+                        lock (((ICollection)this._registrations).SyncRoot)
+                        {
+                            this._registrations[type].Remove(registration.Name);
+                        }
+
+                        builder.Dispose();
+                    },
+                    id);
+            }
+            catch (Exception e)
+            {
+                InvalidOperationException invalidOperationException = new InvalidOperationException(string.Format("Failed to register service [{0}]", type.FullName), e);
+
+                InternalLogger.Log(invalidOperationException);
+
+                throw invalidOperationException;
+            }
         }
 
         /// <summary>
@@ -524,13 +996,29 @@ namespace DevLib.Ioc
                 ////    managedResource = null;
                 ////}
 
-                lock (this._syncRoot)
+                if (this._parent != null)
                 {
-                    if (this._container != null)
-                    {
-                        this._container.Clear();
-                    }
+                    this._parent.Disposed -= this.OnParentDisposed;
                 }
+
+                lock (((ICollection)this._registrations).SyncRoot)
+                {
+                    foreach (var item in this._registrations.Values)
+                    {
+                        foreach (IDisposable registrationBuilder in item.Values)
+                        {
+                            registrationBuilder.Dispose();
+                        }
+
+                        item.Clear();
+                    }
+
+                    this._registrations.Clear();
+                }
+
+                this._resolvers.Clear();
+
+                this.RaiseEvent(this.Disposed, this, EventArgs.Empty);
             }
 
             // free native resources
@@ -542,6 +1030,16 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
+        /// Called when parent disposed.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected virtual void OnParentDisposed(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
         /// Method CheckDisposed.
         /// </summary>
         private void CheckDisposed()
@@ -549,6 +1047,210 @@ namespace DevLib.Ioc
             if (this._disposed)
             {
                 throw new ObjectDisposedException("DevLib.Ioc.IocContainer");
+            }
+        }
+
+        /// <summary>
+        /// Registration builder.
+        /// </summary>
+        protected class RegistrationBuilder : IDisposable
+        {
+            /// <summary>
+            /// Field _registrationType.
+            /// </summary>
+            private readonly Type _registrationType;
+
+            /// <summary>
+            /// Field _registrationName.
+            /// </summary>
+            private readonly string _registrationName;
+
+            /// <summary>
+            /// Field _cachedRegistrationValue.
+            /// </summary>
+            private object _cachedRegistrationValue;
+
+            /// <summary>
+            /// Field _registrationBuilder.
+            /// </summary>
+            private Converter<IocContainer, object> _registrationBuilder;
+
+            /// <summary>
+            /// Field _disposed.
+            /// </summary>
+            private bool _disposed = false;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
+            /// </summary>
+            /// <param name="registrationType">Type of the registration.</param>
+            /// <param name="registrationBuilder">The registration builder.</param>
+            /// <param name="name">The name of the registration.</param>
+            public RegistrationBuilder(Type registrationType, Converter<IocContainer, object> registrationBuilder, string name)
+            {
+                this._registrationType = registrationType;
+                this._registrationName = name;
+                this._registrationBuilder = registrationBuilder;
+                this.IsNamed = true;
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
+            /// </summary>
+            /// <param name="registrationType">Type of the registration.</param>
+            /// <param name="registrationBuilder">The registration builder.</param>
+            public RegistrationBuilder(Type registrationType, Converter<IocContainer, object> registrationBuilder)
+            {
+                this._registrationType = registrationType;
+                this._registrationName = Guid.NewGuid().ToString();
+                this._registrationBuilder = registrationBuilder;
+                this.IsNamed = false;
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
+            /// </summary>
+            /// <param name="registrationType">Type of the registration.</param>
+            /// <param name="registrationValue">The registration value.</param>
+            /// <param name="name">The name of the registration.</param>
+            public RegistrationBuilder(Type registrationType, object registrationValue, string name)
+            {
+                this._registrationType = registrationType;
+                this._registrationName = name;
+                this._cachedRegistrationValue = registrationValue;
+                this.IsNamed = true;
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
+            /// </summary>
+            /// <param name="registrationType">Type of the registration.</param>
+            /// <param name="registrationValue">The registration value.</param>
+            public RegistrationBuilder(Type registrationType, object registrationValue)
+            {
+                this._registrationType = registrationType;
+                this._registrationName = Guid.NewGuid().ToString();
+                this._cachedRegistrationValue = registrationValue;
+                this.IsNamed = false;
+            }
+
+            /// <summary>
+            /// Finalizes an instance of the <see cref="RegistrationBuilder" /> class.
+            /// </summary>
+            ~RegistrationBuilder()
+            {
+                this.Dispose(false);
+            }
+
+            /// <summary>
+            /// Gets a value indicating whether this registration has a cached instance.
+            /// </summary>
+            public bool HasInstance
+            {
+                get
+                {
+                    return this._cachedRegistrationValue != null;
+                }
+            }
+
+            /// <summary>
+            /// Gets a value indicating whether this registration builder delegate is evaluated.
+            /// </summary>
+            public bool IsEvaluated
+            {
+                get;
+                private set;
+            }
+
+            /// <summary>
+            /// Gets a value indicating whether this instance is named registration.
+            /// </summary>
+            public bool IsNamed { get; private set; }
+
+            /// <summary>
+            /// Gets the registration value.
+            /// </summary>
+            /// <param name="container">The container to use.</param>
+            /// <returns>The registration value.</returns>
+            public object GetValue(IocContainer container)
+            {
+                this.CheckDisposed();
+
+                return this._cachedRegistrationValue ?? (this._cachedRegistrationValue = this.CreateService(container));
+            }
+
+            /// <summary>
+            /// Releases all resources used by the current instance of the <see cref="RegistrationBuilder" /> class.
+            /// </summary>
+            public void Dispose()
+            {
+                this.Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            /// <summary>
+            /// Releases all resources used by the current instance of the <see cref="RegistrationBuilder" /> class.
+            /// protected virtual for non-sealed class; private for sealed class.
+            /// </summary>
+            /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+            protected virtual void Dispose(bool disposing)
+            {
+                if (this._disposed)
+                {
+                    return;
+                }
+
+                this._disposed = true;
+
+                if (disposing)
+                {
+                    // dispose managed resources
+                    ////if (managedResource != null)
+                    ////{
+                    ////    managedResource.Dispose();
+                    ////    managedResource = null;
+                    ////}
+
+                    this._registrationBuilder = null;
+
+                    IDisposable disposable = this._cachedRegistrationValue as IDisposable;
+
+                    if (disposable != null)
+                    {
+                        disposable.Dispose();
+                        this._cachedRegistrationValue = null;
+                    }
+                }
+
+                // free native resources
+                ////if (nativeResource != IntPtr.Zero)
+                ////{
+                ////    Marshal.FreeHGlobal(nativeResource);
+                ////    nativeResource = IntPtr.Zero;
+                ////}
+            }
+
+            /// <summary>
+            /// Creates the service.
+            /// </summary>
+            /// <param name="container">The container to use.</param>
+            /// <returns>The registration value.</returns>
+            private object CreateService(IocContainer container)
+            {
+                this.IsEvaluated = true;
+
+                return this._registrationBuilder(container);
+            }
+
+            /// <summary>
+            /// Method CheckDisposed.
+            /// </summary>
+            private void CheckDisposed()
+            {
+                if (this._disposed)
+                {
+                    throw new ObjectDisposedException("DevLib.Ioc.RegistrationBuilder");
+                }
             }
         }
     }

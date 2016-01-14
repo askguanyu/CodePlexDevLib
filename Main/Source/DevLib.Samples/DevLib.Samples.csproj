@@ -102,6 +102,7 @@
       <DependentUpon>DemoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="InternalLogger.cs" />
+    <Compile Include="IWcfAnotherTest.cs" />
     <Compile Include="IWcfTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

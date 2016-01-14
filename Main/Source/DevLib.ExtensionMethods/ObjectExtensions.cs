@@ -23,6 +23,25 @@ namespace DevLib.ExtensionMethods
         /// <typeparam name="T">The type of input object.</typeparam>
         /// <param name="source">Object to check.</param>
         /// <param name="action">Delegate method.
+        /// <example>E.g. <code>() => DoSomething();</code></example>
+        /// </param>
+        /// <returns>Source object.</returns>
+        public static T IfNotNull<T>(this T source, Action action)
+        {
+            if (source != null)
+            {
+                action();
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// If object is not null, invoke method.
+        /// </summary>
+        /// <typeparam name="T">The type of input object.</typeparam>
+        /// <param name="source">Object to check.</param>
+        /// <param name="action">Delegate method.
         /// <example>E.g. <code>source => DoSomething(source);</code></example>
         /// </param>
         /// <returns>Source object.</returns>
@@ -31,6 +50,25 @@ namespace DevLib.ExtensionMethods
             if (source != null)
             {
                 action(source);
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// If object is null, invoke method.
+        /// </summary>
+        /// <typeparam name="T">The type of input object.</typeparam>
+        /// <param name="source">Object to check.</param>
+        /// <param name="action">Delegate method.
+        /// <example>E.g. <code>() => DoSomething();</code></example>
+        /// </param>
+        /// <returns>Source object.</returns>
+        public static T IfNull<T>(this T source, Action action)
+        {
+            if (source == null)
+            {
+                action();
             }
 
             return source;
@@ -297,6 +335,25 @@ namespace DevLib.ExtensionMethods
                     property.SetValue(source, value, null);
                 }
             }
+        }
+
+        /// <summary>
+        /// Tries to dispose the object if not null and if it implements IDisposable.
+        /// </summary>
+        /// <param name="source">The source to dispose.</param>
+        /// <returns>true if call Dispose succeeded; otherwise, false.</returns>
+        public static bool TryDispose(this object source)
+        {
+            IDisposable disposable = source as IDisposable;
+
+            if (disposable != null)
+            {
+                disposable.Dispose();
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

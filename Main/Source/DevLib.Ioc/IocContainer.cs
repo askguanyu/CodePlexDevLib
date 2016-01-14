@@ -18,12 +18,12 @@ namespace DevLib.Ioc
     /// Inversion of Control container.
     /// </summary>
     [DebuggerDisplay("Name={ContainerName}, Registrations={RegistrationsCount}, RegisterTypes={_registrations.Count}, Resolvers={_resolvers.Count}, Parent={_parent.ContainerName}")]
-    public class IocContainer : IServiceLocator, IResolver, IDisposable
+    public class IocContainer : ServiceLocatorImplBase, IServiceLocator, IResolver, IDisposable
     {
         /// <summary>
         /// Field NullStringKey.
         /// </summary>
-        private static readonly string NullStringKey = Guid.NewGuid().ToString();
+        public const string NullStringKey = "23DEA637-6844-4451-AC06-A5570F37F2D4";
 
         /// <summary>
         /// Field _registrations.
@@ -146,7 +146,7 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, container => builder(container)));
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, container => builder(container)));
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace DevLib.Ioc
 
             Type type = typeof(T);
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, container => (T)builder(container)));
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, container => (T)builder(container)));
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, container => builder(container), name), name);
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, container => builder(container), name), name);
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace DevLib.Ioc
 
             Type type = typeof(T);
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, container => (T)builder(container), name), name);
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, container => (T)builder(container), name), name);
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, instance));
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instance));
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace DevLib.Ioc
 
             Type type = typeof(T);
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, instance));
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instance));
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, instance, name), name);
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instance, name), name);
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace DevLib.Ioc
 
             Type type = typeof(T);
 
-            return this.InnerRegister(type, new RegistrationBuilder(type, instance, name), name);
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instance, name), name);
         }
 
         /// <summary>
@@ -266,14 +266,7 @@ namespace DevLib.Ioc
         /// <returns>The registered instance.</returns>
         public virtual object Resolve(Type type)
         {
-            object result;
-
-            if (!this.TryResolve(type, out result) || result == null)
-            {
-                throw new InvalidOperationException(string.Format("The registration [{0}] does not exist.", type.FullName));
-            }
-
-            return result;
+            return this.DoGetInstance(type);
         }
 
         /// <summary>
@@ -294,14 +287,7 @@ namespace DevLib.Ioc
         /// <returns>The registered instance.</returns>
         public virtual object Resolve(Type type, string name)
         {
-            object result;
-
-            if (!this.TryResolve(type, name, out result) || result == null)
-            {
-                throw new InvalidOperationException(string.Format("The registration [{0} with name {1}] does not exist.", type.FullName, name));
-            }
-
-            return result;
+            return this.DoGetInstance(type, name);
         }
 
         /// <summary>
@@ -320,7 +306,7 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="type">The type to resolve.</param>
         /// <returns>true if can resolve; otherwise, false.</returns>
-        public bool CanResolve(Type type)
+        public virtual bool CanResolve(Type type)
         {
             this.CheckDisposed();
 
@@ -337,7 +323,7 @@ namespace DevLib.Ioc
         /// </summary>
         /// <typeparam name="T">The type to resolve.</typeparam>
         /// <returns>true if can resolve; otherwise, false.</returns>
-        public bool CanResolve<T>()
+        public virtual bool CanResolve<T>()
         {
             return this.CanResolve(typeof(T));
         }
@@ -348,7 +334,7 @@ namespace DevLib.Ioc
         /// <param name="type">The type to resolve.</param>
         /// <param name="name">The name of registration to resolve.</param>
         /// <returns>true if can resolve; otherwise, false.</returns>
-        public bool CanResolve(Type type, string name)
+        public virtual bool CanResolve(Type type, string name)
         {
             this.CheckDisposed();
 
@@ -370,7 +356,7 @@ namespace DevLib.Ioc
         /// <typeparam name="T">The type to resolve.</typeparam>
         /// <param name="name">The name of registration to resolve.</param>
         /// <returns>true if can resolve; otherwise, false.</returns>
-        public bool CanResolve<T>(string name)
+        public virtual bool CanResolve<T>(string name)
         {
             return this.CanResolve(typeof(T), name);
         }
@@ -381,7 +367,7 @@ namespace DevLib.Ioc
         /// <param name="type">The type to resolve.</param>
         /// <param name="value">The registered instance.</param>
         /// <returns>true if resolve succeeded; otherwise, false.</returns>
-        public bool TryResolve(Type type, out object value)
+        public virtual bool TryResolve(Type type, out object value)
         {
             this.CheckDisposed();
 
@@ -395,7 +381,7 @@ namespace DevLib.Ioc
                 {
                     if (valueDictionary.Count == 1)
                     {
-                        RegistrationBuilder builder = valueDictionary[0] as RegistrationBuilder;
+                        IocRegistrationBuilder builder = valueDictionary[0] as IocRegistrationBuilder;
 
                         if (builder != null && !builder.IsEvaluated)
                         {
@@ -411,14 +397,14 @@ namespace DevLib.Ioc
                     }
                     else
                     {
-                        List<RegistrationBuilder> builders = new List<RegistrationBuilder>(valueDictionary.Count);
+                        List<IocRegistrationBuilder> builders = new List<IocRegistrationBuilder>(valueDictionary.Count);
 
                         foreach (var item in valueDictionary.Values)
                         {
-                            builders.Add((RegistrationBuilder)item);
+                            builders.Add((IocRegistrationBuilder)item);
                         }
 
-                        RegistrationBuilder builder = builders.FindLast(b => b.HasInstance || !b.IsEvaluated);
+                        IocRegistrationBuilder builder = builders.FindLast(b => b.HasInstance || !b.IsEvaluated);
 
                         if (builder != null)
                         {
@@ -489,7 +475,7 @@ namespace DevLib.Ioc
         /// <param name="name">The name of registration to resolve.</param>
         /// <param name="value">The registered instance.</param>
         /// <returns>true if resolve succeeded; otherwise, false.</returns>
-        public bool TryResolve(Type type, string name, out object value)
+        public virtual bool TryResolve(Type type, string name, out object value)
         {
             this.CheckDisposed();
 
@@ -509,7 +495,7 @@ namespace DevLib.Ioc
                     && valueDictionary.Count > 0
                     && valueDictionary.Contains(name))
                 {
-                    RegistrationBuilder builder = valueDictionary[name] as RegistrationBuilder;
+                    IocRegistrationBuilder builder = valueDictionary[name] as IocRegistrationBuilder;
 
                     if (builder != null)
                     {
@@ -574,120 +560,12 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
-        /// Gets an instance of the given serviceType.
-        /// </summary>
-        /// <param name="serviceType">Type of object requested.</param>
-        /// <returns>The requested service instance.</returns>
-        public object GetInstance(Type serviceType)
-        {
-            return this.Resolve(serviceType);
-        }
-
-        /// <summary>
-        /// Gets an instance of the given TService.
-        /// </summary>
-        /// <typeparam name="TService">Type of object requested.</typeparam>
-        /// <returns>The requested service instance.</returns>
-        public TService GetInstance<TService>()
-        {
-            return this.Resolve<TService>();
-        }
-
-        /// <summary>
-        /// Gets an instance of the given named serviceType.
-        /// </summary>
-        /// <param name="serviceType">Type of object requested.</param>
-        /// <param name="key">Name the object was registered with.</param>
-        /// <returns>The requested service instance.</returns>
-        public object GetInstance(Type serviceType, string key)
-        {
-            return this.Resolve(serviceType, key);
-        }
-
-        /// <summary>
-        /// Gets an instance of the given named TService.
-        /// </summary>
-        /// <typeparam name="TService">Name the object was registered with.</typeparam>
-        /// <param name="key">Type of object requested.</param>
-        /// <returns>The requested service instance.</returns>
-        public TService GetInstance<TService>(string key)
-        {
-            return this.Resolve<TService>(key);
-        }
-
-        /// <summary>
-        /// Gets all instances of the given serviceType currently registered in the container.
-        /// </summary>
-        /// <param name="serviceType">Type of object requested.</param>
-        /// <returns>A sequence of instances of the requested serviceType.</returns>
-        public IEnumerable<object> GetAllInstances(Type serviceType)
-        {
-            this.CheckDisposed();
-
-            List<object> result = new List<object>();
-
-            lock (((ICollection)this._registrations).SyncRoot)
-            {
-                OrderedDictionary value;
-
-                if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
-                {
-                    foreach (var item in value.Values)
-                    {
-                        result.Add(((RegistrationBuilder)item).GetValue(this));
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets all instances of the given TService currently registered in the container.
-        /// </summary>
-        /// <typeparam name="TService">Type of object requested.</typeparam>
-        /// <returns>A sequence of instances of the requested TService.</returns>
-        public IEnumerable<TService> GetAllInstances<TService>()
-        {
-            this.CheckDisposed();
-
-            Type serviceType = typeof(TService);
-
-            List<TService> result = new List<TService>();
-
-            lock (((ICollection)this._registrations).SyncRoot)
-            {
-                OrderedDictionary value;
-
-                if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
-                {
-                    foreach (var item in value.Values)
-                    {
-                        result.Add((TService)((RegistrationBuilder)item).GetValue(this));
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets the service object of the specified type.
-        /// </summary>
-        /// <param name="serviceType">An object that specifies the type of service object to get.</param>
-        /// <returns>A service object of type <paramref name="serviceType" />.-or- null if there is no service object of type <paramref name="serviceType" />.</returns>
-        public object GetService(Type serviceType)
-        {
-            return this.Resolve(serviceType);
-        }
-
-        /// <summary>
         /// Gets the service object of the specified type.
         /// </summary>
         /// <param name="serviceType">An object that specifies the type of service object to get.</param>
         /// <param name="name">The name of registration to resolve.</param>
         /// <returns>A service object of type <paramref name="serviceType" />.-or- null if there is no service object of type <paramref name="serviceType" />.</returns>
-        public object GetService(Type serviceType, string name)
+        public virtual object GetService(Type serviceType, string name)
         {
             return this.Resolve(serviceType, name);
         }
@@ -696,7 +574,7 @@ namespace DevLib.Ioc
         /// Unregisters the specified type, all named registrations will be kept.
         /// </summary>
         /// <param name="type">The type to unregister.</param>
-        public void Unregister(Type type)
+        public virtual void Unregister(Type type)
         {
             this.CheckDisposed();
 
@@ -712,7 +590,7 @@ namespace DevLib.Ioc
 
                     foreach (DictionaryEntry item in value)
                     {
-                        RegistrationBuilder builder = item.Value as RegistrationBuilder;
+                        IocRegistrationBuilder builder = item.Value as IocRegistrationBuilder;
 
                         if (builder != null && !builder.IsNamed)
                         {
@@ -739,7 +617,7 @@ namespace DevLib.Ioc
         /// Unregisters the specified type, all named registrations will be kept.
         /// </summary>
         /// <typeparam name="T">The type to unregister.</typeparam>
-        public void Unregister<T>()
+        public virtual void Unregister<T>()
         {
             this.Unregister(typeof(T));
         }
@@ -749,7 +627,7 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="type">The type to unregister.</param>
         /// <param name="name">The name of the registration.</param>
-        public void Unregister(Type type, string name)
+        public virtual void Unregister(Type type, string name)
         {
             this.CheckDisposed();
 
@@ -780,7 +658,7 @@ namespace DevLib.Ioc
         /// </summary>
         /// <typeparam name="T">The type to unregister.</typeparam>
         /// <param name="name">The name of the registration.</param>
-        public void Unregister<T>(string name)
+        public virtual void Unregister<T>(string name)
         {
             this.Unregister(typeof(T), name);
         }
@@ -789,7 +667,7 @@ namespace DevLib.Ioc
         /// Destroys all registrations of the specified type.
         /// </summary>
         /// <param name="type">Type to destroy.</param>
-        public void Destroy(Type type)
+        public virtual void Destroy(Type type)
         {
             this.CheckDisposed();
 
@@ -815,7 +693,7 @@ namespace DevLib.Ioc
         /// Destroys all registrations of the specified type.
         /// </summary>
         /// <typeparam name="T">Type to destroy.</typeparam>
-        public void Destroy<T>()
+        public virtual void Destroy<T>()
         {
             this.Destroy(typeof(T));
         }
@@ -823,7 +701,7 @@ namespace DevLib.Ioc
         /// <summary>
         /// Clears all registrations of this container.
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
             this.CheckDisposed();
 
@@ -888,7 +766,7 @@ namespace DevLib.Ioc
         /// <param name="builder">The registration builder.</param>
         /// <param name="name">The name to register..</param>
         /// <returns>Registration instance.</returns>
-        protected virtual IocRegistration InnerRegister(Type type, RegistrationBuilder builder, string name)
+        protected virtual IocRegistration InnerRegister(Type type, IocRegistrationBuilder builder, string name)
         {
             try
             {
@@ -935,7 +813,7 @@ namespace DevLib.Ioc
         /// <param name="type">The type to register.</param>
         /// <param name="builder">The registration builder.</param>
         /// <returns>Registration instance.</returns>
-        protected virtual IocRegistration InnerRegister(Type type, RegistrationBuilder builder)
+        protected virtual IocRegistration InnerRegister(Type type, IocRegistrationBuilder builder)
         {
             try
             {
@@ -952,15 +830,15 @@ namespace DevLib.Ioc
                 }
 
                 return new IocRegistration(
-                    registration =>
+                registration =>
+                {
+                    lock (((ICollection)this._registrations).SyncRoot)
                     {
-                        lock (((ICollection)this._registrations).SyncRoot)
-                        {
-                            this._registrations[type].Remove(registration.Name);
-                        }
+                        this._registrations[type].Remove(registration.Name);
+                    }
 
-                        builder.Dispose();
-                    },
+                    builder.Dispose();
+                },
                     id);
             }
             catch (Exception e)
@@ -971,6 +849,111 @@ namespace DevLib.Ioc
 
                 throw invalidOperationException;
             }
+        }
+
+        /// <summary>
+        /// Called when parent disposed.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected virtual void OnParentDisposed(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
+
+        /// <summary>
+        /// When implemented by inheriting classes, this method will do the actual work of resolving the requested service instance.
+        /// </summary>
+        /// <param name="serviceType">Type of instance requested.</param>
+        /// <returns>The requested service instance.</returns>
+        protected override object DoGetInstance(Type serviceType)
+        {
+            this.CheckDisposed();
+
+            object result;
+
+            if (!this.TryResolve(serviceType, out result) || result == null)
+            {
+                throw new InvalidOperationException(string.Format("The registration [{0}] does not exist.", serviceType.FullName));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// When implemented by inheriting classes, this method will do the actual work of resolving the requested service instance.
+        /// </summary>
+        /// <param name="serviceType">Type of instance requested.</param>
+        /// <param name="key">Name of registered service you want. May be null.</param>
+        /// <returns>The requested service instance.</returns>
+        protected override object DoGetInstance(Type serviceType, string key)
+        {
+            this.CheckDisposed();
+
+            object result;
+
+            if (!this.TryResolve(serviceType, key, out result) || result == null)
+            {
+                throw new InvalidOperationException(string.Format("The registration [{0} with name {1}] does not exist.", serviceType.FullName, key));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// When implemented by inheriting classes, this method will do the actual work of resolving all the requested service instances.
+        /// </summary>
+        /// <param name="serviceType">Type of service requested.</param>
+        /// <returns>Sequence of service instance objects.</returns>
+        protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
+        {
+            this.CheckDisposed();
+
+            List<object> result = new List<object>();
+
+            lock (((ICollection)this._registrations).SyncRoot)
+            {
+                OrderedDictionary value;
+
+                if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
+                {
+                    foreach (var item in value.Values)
+                    {
+                        result.Add(((IocRegistrationBuilder)item).GetValue(this));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// When implemented by inheriting classes, this method will do the actual work of resolving all the requested service instances.
+        /// </summary>
+        /// <typeparam name="TService">Type of object requested.</typeparam>
+        /// <returns>Sequence of service instance objects.</returns>
+        protected override IEnumerable<TService> DoGetAllInstances<TService>()
+        {
+            this.CheckDisposed();
+
+            Type serviceType = typeof(TService);
+
+            List<TService> result = new List<TService>();
+
+            lock (((ICollection)this._registrations).SyncRoot)
+            {
+                OrderedDictionary value;
+
+                if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
+                {
+                    foreach (var item in value.Values)
+                    {
+                        result.Add((TService)((IocRegistrationBuilder)item).GetValue(this));
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -1030,16 +1013,6 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
-        /// Called when parent disposed.
-        /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnParentDisposed(object sender, EventArgs e)
-        {
-            this.Dispose();
-        }
-
-        /// <summary>
         /// Method CheckDisposed.
         /// </summary>
         private void CheckDisposed()
@@ -1047,210 +1020,6 @@ namespace DevLib.Ioc
             if (this._disposed)
             {
                 throw new ObjectDisposedException("DevLib.Ioc.IocContainer");
-            }
-        }
-
-        /// <summary>
-        /// Registration builder.
-        /// </summary>
-        protected class RegistrationBuilder : IDisposable
-        {
-            /// <summary>
-            /// Field _registrationType.
-            /// </summary>
-            private readonly Type _registrationType;
-
-            /// <summary>
-            /// Field _registrationName.
-            /// </summary>
-            private readonly string _registrationName;
-
-            /// <summary>
-            /// Field _cachedRegistrationValue.
-            /// </summary>
-            private object _cachedRegistrationValue;
-
-            /// <summary>
-            /// Field _registrationBuilder.
-            /// </summary>
-            private Converter<IocContainer, object> _registrationBuilder;
-
-            /// <summary>
-            /// Field _disposed.
-            /// </summary>
-            private bool _disposed = false;
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
-            /// </summary>
-            /// <param name="registrationType">Type of the registration.</param>
-            /// <param name="registrationBuilder">The registration builder.</param>
-            /// <param name="name">The name of the registration.</param>
-            public RegistrationBuilder(Type registrationType, Converter<IocContainer, object> registrationBuilder, string name)
-            {
-                this._registrationType = registrationType;
-                this._registrationName = name;
-                this._registrationBuilder = registrationBuilder;
-                this.IsNamed = true;
-            }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
-            /// </summary>
-            /// <param name="registrationType">Type of the registration.</param>
-            /// <param name="registrationBuilder">The registration builder.</param>
-            public RegistrationBuilder(Type registrationType, Converter<IocContainer, object> registrationBuilder)
-            {
-                this._registrationType = registrationType;
-                this._registrationName = Guid.NewGuid().ToString();
-                this._registrationBuilder = registrationBuilder;
-                this.IsNamed = false;
-            }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
-            /// </summary>
-            /// <param name="registrationType">Type of the registration.</param>
-            /// <param name="registrationValue">The registration value.</param>
-            /// <param name="name">The name of the registration.</param>
-            public RegistrationBuilder(Type registrationType, object registrationValue, string name)
-            {
-                this._registrationType = registrationType;
-                this._registrationName = name;
-                this._cachedRegistrationValue = registrationValue;
-                this.IsNamed = true;
-            }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="RegistrationBuilder"/> class.
-            /// </summary>
-            /// <param name="registrationType">Type of the registration.</param>
-            /// <param name="registrationValue">The registration value.</param>
-            public RegistrationBuilder(Type registrationType, object registrationValue)
-            {
-                this._registrationType = registrationType;
-                this._registrationName = Guid.NewGuid().ToString();
-                this._cachedRegistrationValue = registrationValue;
-                this.IsNamed = false;
-            }
-
-            /// <summary>
-            /// Finalizes an instance of the <see cref="RegistrationBuilder" /> class.
-            /// </summary>
-            ~RegistrationBuilder()
-            {
-                this.Dispose(false);
-            }
-
-            /// <summary>
-            /// Gets a value indicating whether this registration has a cached instance.
-            /// </summary>
-            public bool HasInstance
-            {
-                get
-                {
-                    return this._cachedRegistrationValue != null;
-                }
-            }
-
-            /// <summary>
-            /// Gets a value indicating whether this registration builder delegate is evaluated.
-            /// </summary>
-            public bool IsEvaluated
-            {
-                get;
-                private set;
-            }
-
-            /// <summary>
-            /// Gets a value indicating whether this instance is named registration.
-            /// </summary>
-            public bool IsNamed { get; private set; }
-
-            /// <summary>
-            /// Gets the registration value.
-            /// </summary>
-            /// <param name="container">The container to use.</param>
-            /// <returns>The registration value.</returns>
-            public object GetValue(IocContainer container)
-            {
-                this.CheckDisposed();
-
-                return this._cachedRegistrationValue ?? (this._cachedRegistrationValue = this.CreateService(container));
-            }
-
-            /// <summary>
-            /// Releases all resources used by the current instance of the <see cref="RegistrationBuilder" /> class.
-            /// </summary>
-            public void Dispose()
-            {
-                this.Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-
-            /// <summary>
-            /// Releases all resources used by the current instance of the <see cref="RegistrationBuilder" /> class.
-            /// protected virtual for non-sealed class; private for sealed class.
-            /// </summary>
-            /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-            protected virtual void Dispose(bool disposing)
-            {
-                if (this._disposed)
-                {
-                    return;
-                }
-
-                this._disposed = true;
-
-                if (disposing)
-                {
-                    // dispose managed resources
-                    ////if (managedResource != null)
-                    ////{
-                    ////    managedResource.Dispose();
-                    ////    managedResource = null;
-                    ////}
-
-                    this._registrationBuilder = null;
-
-                    IDisposable disposable = this._cachedRegistrationValue as IDisposable;
-
-                    if (disposable != null)
-                    {
-                        disposable.Dispose();
-                        this._cachedRegistrationValue = null;
-                    }
-                }
-
-                // free native resources
-                ////if (nativeResource != IntPtr.Zero)
-                ////{
-                ////    Marshal.FreeHGlobal(nativeResource);
-                ////    nativeResource = IntPtr.Zero;
-                ////}
-            }
-
-            /// <summary>
-            /// Creates the service.
-            /// </summary>
-            /// <param name="container">The container to use.</param>
-            /// <returns>The registration value.</returns>
-            private object CreateService(IocContainer container)
-            {
-                this.IsEvaluated = true;
-
-                return this._registrationBuilder(container);
-            }
-
-            /// <summary>
-            /// Method CheckDisposed.
-            /// </summary>
-            private void CheckDisposed()
-            {
-                if (this._disposed)
-                {
-                    throw new ObjectDisposedException("DevLib.Ioc.RegistrationBuilder");
-                }
             }
         }
     }

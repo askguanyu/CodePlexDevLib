@@ -20,7 +20,16 @@ namespace DevLib.Ioc
         /// <returns>The requested service instance.</returns>
         public virtual object GetInstance(Type serviceType)
         {
-            return this.GetInstance(serviceType, null);
+            try
+            {
+                return this.DoGetInstance(serviceType);
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -30,7 +39,7 @@ namespace DevLib.Ioc
         /// <returns>The requested service instance.</returns>
         public virtual TService GetInstance<TService>()
         {
-            return (TService)this.GetInstance(typeof(TService), null);
+            return (TService)this.GetInstance(typeof(TService));
         }
 
         /// <summary>
@@ -91,9 +100,15 @@ namespace DevLib.Ioc
         /// <returns>A sequence of instances of the requested <typeparamref name="TService"/>.</returns>
         public virtual IEnumerable<TService> GetAllInstances<TService>()
         {
-            foreach (object item in this.GetAllInstances(typeof(TService)))
+            try
             {
-                yield return (TService)item;
+                return this.DoGetAllInstances<TService>();
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+
+                throw;
             }
         }
 
@@ -111,6 +126,13 @@ namespace DevLib.Ioc
         /// When implemented by inheriting classes, this method will do the actual work of resolving the requested service instance.
         /// </summary>
         /// <param name="serviceType">Type of instance requested.</param>
+        /// <returns>The requested service instance.</returns>
+        protected abstract object DoGetInstance(Type serviceType);
+
+        /// <summary>
+        /// When implemented by inheriting classes, this method will do the actual work of resolving the requested service instance.
+        /// </summary>
+        /// <param name="serviceType">Type of instance requested.</param>
         /// <param name="key">Name of registered service you want. May be null.</param>
         /// <returns>The requested service instance.</returns>
         protected abstract object DoGetInstance(Type serviceType, string key);
@@ -121,5 +143,18 @@ namespace DevLib.Ioc
         /// <param name="serviceType">Type of service requested.</param>
         /// <returns>Sequence of service instance objects.</returns>
         protected abstract IEnumerable<object> DoGetAllInstances(Type serviceType);
+
+        /// <summary>
+        /// When implemented by inheriting classes, this method will do the actual work of resolving all the requested service instances.
+        /// </summary>
+        /// <typeparam name="TService">Type of object requested.</typeparam>
+        /// <returns>Sequence of service instance objects.</returns>
+        protected virtual IEnumerable<TService> DoGetAllInstances<TService>()
+        {
+            foreach (object item in this.GetAllInstances(typeof(TService)))
+            {
+                yield return (TService)item;
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new BasicHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new BasicHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max, AllowCookies = true };
             }
         }
 
@@ -35,7 +35,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new WSHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WSHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max, AllowCookies = true };
             }
         }
 
@@ -46,7 +46,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new WSDualHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WSDualHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -57,7 +57,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new WSFederationHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WSFederationHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -68,7 +68,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new WS2007HttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WS2007HttpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max, AllowCookies = true };
             }
         }
 
@@ -79,7 +79,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new WS2007FederationHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WS2007FederationHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -90,7 +90,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new NetTcpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = ushort.MaxValue, PortSharingEnabled = true, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new NetTcpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = ushort.MaxValue, PortSharingEnabled = true, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -101,7 +101,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new NetNamedPipeBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new NetNamedPipeBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, MaxConnections = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -112,7 +112,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new NetMsmqBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new NetMsmqBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -123,7 +123,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new NetPeerTcpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new NetPeerTcpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -134,7 +134,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new MsmqIntegrationBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxReceivedMessageSize = int.MaxValue };
+                return new MsmqIntegrationBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxReceivedMessageSize = int.MaxValue };
             }
         }
 
@@ -145,7 +145,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new WebHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WebHttpBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max, AllowCookies = true };
             }
         }
 
@@ -156,7 +156,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new CustomBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10) };
+                return new CustomBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15) };
             }
         }
 #if !__MonoCS__
@@ -167,7 +167,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new BasicHttpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new BasicHttpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max, AllowCookies = true };
             }
         }
 
@@ -178,7 +178,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new NetTcpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = ushort.MaxValue, PortSharingEnabled = true, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new NetTcpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxBufferSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ListenBacklog = int.MaxValue, MaxConnections = ushort.MaxValue, PortSharingEnabled = true, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
             }
         }
 
@@ -189,7 +189,7 @@ namespace DevLib.ServiceModel
         {
             get
             {
-                return new WSHttpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(10), CloseTimeout = TimeSpan.FromMinutes(10), SendTimeout = TimeSpan.FromMinutes(10), ReceiveTimeout = TimeSpan.FromMinutes(10), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max };
+                return new WSHttpContextBinding() { OpenTimeout = TimeSpan.FromMinutes(15), CloseTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15), ReceiveTimeout = TimeSpan.FromMinutes(15), MaxBufferPoolSize = int.MaxValue, MaxReceivedMessageSize = int.MaxValue, ReaderQuotas = XmlDictionaryReaderQuotas.Max, AllowCookies = true };
             }
         }
 #endif
@@ -202,10 +202,10 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexHttpBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(10);
-                result.CloseTimeout = TimeSpan.FromMinutes(10);
-                result.SendTimeout = TimeSpan.FromMinutes(10);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(10);
+                result.OpenTimeout = TimeSpan.FromMinutes(15);
+                result.CloseTimeout = TimeSpan.FromMinutes(15);
+                result.SendTimeout = TimeSpan.FromMinutes(15);
+                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
 
                 return result;
             }
@@ -220,10 +220,10 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexHttpsBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(10);
-                result.CloseTimeout = TimeSpan.FromMinutes(10);
-                result.SendTimeout = TimeSpan.FromMinutes(10);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(10);
+                result.OpenTimeout = TimeSpan.FromMinutes(15);
+                result.CloseTimeout = TimeSpan.FromMinutes(15);
+                result.SendTimeout = TimeSpan.FromMinutes(15);
+                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
 
                 return result;
             }
@@ -238,10 +238,10 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexTcpBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(10);
-                result.CloseTimeout = TimeSpan.FromMinutes(10);
-                result.SendTimeout = TimeSpan.FromMinutes(10);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(10);
+                result.OpenTimeout = TimeSpan.FromMinutes(15);
+                result.CloseTimeout = TimeSpan.FromMinutes(15);
+                result.SendTimeout = TimeSpan.FromMinutes(15);
+                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
 
                 return result;
             }
@@ -256,10 +256,10 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexNamedPipeBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(10);
-                result.CloseTimeout = TimeSpan.FromMinutes(10);
-                result.SendTimeout = TimeSpan.FromMinutes(10);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(10);
+                result.OpenTimeout = TimeSpan.FromMinutes(15);
+                result.CloseTimeout = TimeSpan.FromMinutes(15);
+                result.SendTimeout = TimeSpan.FromMinutes(15);
+                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
 
                 return result;
             }

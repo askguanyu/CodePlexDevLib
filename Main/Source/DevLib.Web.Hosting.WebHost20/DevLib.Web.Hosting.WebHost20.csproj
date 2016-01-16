@@ -54,6 +54,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="InternalLogger.cs" />
+    <Compile Include="ManagedPipelineMode.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MimeMapping.cs" />
     <Compile Include="NativeAPI\NativeMethods.cs" />

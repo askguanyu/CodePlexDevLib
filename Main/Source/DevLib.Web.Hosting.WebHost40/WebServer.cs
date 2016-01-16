@@ -55,9 +55,9 @@ namespace DevLib.Web.Hosting.WebHost40
         private const string ApplicationPoolsNodeName = @"configuration/system.applicationHost/applicationPools";
 
         /// <summary>
-        /// The site node name.
+        /// The sites node name.
         /// </summary>
-        private const string SiteNodeName = @"configuration/system.applicationHost/sites/site";
+        private const string SitesNodeName = @"configuration/system.applicationHost/sites";
 
         /// <summary>
         /// The directory browse node name.
@@ -172,7 +172,7 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
         public WebServer(int siteId, int port = 80, bool useIIS = false, bool startNow = false)
-            : this(siteId, Path.GetDirectoryName(Path.GetFullPath(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath)), null, port, null, false, false, useIIS, startNow)
+            : this(siteId, Path.GetDirectoryName(Path.GetFullPath(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath)), null, port, null, false, false, useIIS, ManagedPipelineMode.Integrated, startNow)
         {
         }
 
@@ -185,7 +185,7 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
         public WebServer(int siteId, string physicalPath, int port = 80, bool useIIS = false, bool startNow = false)
-            : this(siteId, physicalPath, null, port, null, false, false, useIIS, startNow)
+            : this(siteId, physicalPath, null, port, null, false, false, useIIS, ManagedPipelineMode.Integrated, startNow)
         {
         }
 
@@ -199,7 +199,7 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
         public WebServer(int siteId, string physicalPath, string virtualPath = null, int port = 80, bool useIIS = false, bool startNow = false)
-            : this(siteId, physicalPath, virtualPath, port, null, false, false, useIIS, startNow)
+            : this(siteId, physicalPath, virtualPath, port, null, false, false, useIIS, ManagedPipelineMode.Integrated, startNow)
         {
         }
 
@@ -214,7 +214,7 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
         public WebServer(int siteId, string physicalPath, string virtualPath, int port, bool requireAuthentication, bool useIIS = false, bool startNow = false)
-            : this(siteId, physicalPath, virtualPath, port, null, requireAuthentication, false, useIIS, startNow)
+            : this(siteId, physicalPath, virtualPath, port, null, requireAuthentication, false, useIIS, ManagedPipelineMode.Integrated, startNow)
         {
         }
 
@@ -229,8 +229,9 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <param name="requireAuthentication">true if require authentication; otherwise, false.</param>
         /// <param name="enableDirectoryBrowse">true to enable directory browsing; otherwise, false.</param>
         /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
+        /// <param name="managedPipelineMode">The managed pipeline mode.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
-        public WebServer(int siteId, string physicalPath, string virtualPath, int port, string siteName, bool requireAuthentication, bool enableDirectoryBrowse, bool useIIS, bool startNow)
+        public WebServer(int siteId, string physicalPath, string virtualPath, int port, string siteName, bool requireAuthentication, bool enableDirectoryBrowse, bool useIIS, ManagedPipelineMode managedPipelineMode, bool startNow)
         {
             this.SiteId = siteId;
             this.PhysicalPath = Path.GetFullPath(string.IsNullOrWhiteSpace(physicalPath) ? "." : physicalPath).TrimEnd('\\') + "\\";
@@ -240,6 +241,7 @@ namespace DevLib.Web.Hosting.WebHost40
             this.RequireAuthentication = requireAuthentication;
             this.EnableDirectoryBrowse = enableDirectoryBrowse;
             this.IsUsingIIS = useIIS;
+            this.ManagedPipelineMode = managedPipelineMode;
 
             if (this.IsUsingIIS)
             {
@@ -355,6 +357,15 @@ namespace DevLib.Web.Hosting.WebHost40
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value that indicates the request-processing pipeline mode of managed applications in the application pool.
+        /// </summary>
+        public ManagedPipelineMode ManagedPipelineMode
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -908,7 +919,8 @@ namespace DevLib.Web.Hosting.WebHost40
                     .Replace("$[VirtualPath]", this.VirtualPath)
                     .Replace("$[PhysicalPath]", this.PhysicalPath)
                     .Replace("$[AppPool]", string.Format("{0}_{1}_{2}", this.SiteName, this.SiteId.ToString(), this.Port.ToString()))
-                    .Replace("$[DirectoryBrowse]", this.EnableDirectoryBrowse.ToString());
+                    .Replace("$[DirectoryBrowse]", this.EnableDirectoryBrowse.ToString())
+                    .Replace("$[ManagedPipelineMode]", this.ManagedPipelineMode.ToString());
 
                 XmlDocument configContentXml = new XmlDocument();
                 configContentXml.LoadXml(configContent);
@@ -930,18 +942,18 @@ namespace DevLib.Web.Hosting.WebHost40
                     XmlNode applicationPoolsNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(ApplicationPoolsNodeName), true);
                     applicationHostNode.AppendChild(applicationPoolsNode);
 
-                    XmlNodeList siteNodes = appHostConfigXml.SelectNodes(SiteNodeName);
+                    XmlNodeList sitesNodes = appHostConfigXml.SelectNodes(SitesNodeName);
 
-                    if (siteNodes != null && siteNodes.Count > 0)
+                    if (sitesNodes != null && sitesNodes.Count > 0)
                     {
-                        foreach (XmlNode item in siteNodes)
+                        foreach (XmlNode item in sitesNodes)
                         {
                             applicationHostNode.RemoveChild(item);
                         }
                     }
 
-                    XmlNode siteNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(SiteNodeName), true);
-                    applicationHostNode.AppendChild(siteNode);
+                    XmlNode sitesNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(SitesNodeName), true);
+                    applicationHostNode.AppendChild(sitesNode);
                 }
                 else
                 {

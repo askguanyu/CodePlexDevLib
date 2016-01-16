@@ -164,7 +164,7 @@ namespace DevLib.TerminalServices
             this._clientProtocolType = new LazyLoadedProperty<ClientProtocolType>(this.GetClientProtocolType);
             this._clientName = new LazyLoadedProperty<string>(this.GetClientName);
 
-            var loader = IsVistaSp1OrHigher ? (GroupPropertyLoader)this.LoadWtsInfoProperties : this.LoadWinStationInformationProperties;
+            GroupPropertyLoader loader = IsVistaSp1OrHigher ? (GroupPropertyLoader)this.LoadWtsInfoProperties : this.LoadWinStationInformationProperties;
             this._windowStationName = new GroupLazyLoadedProperty<string>(loader);
             this._connectState = new GroupLazyLoadedProperty<ConnectState>(loader);
             this._connectTime = new GroupLazyLoadedProperty<DateTime?>(loader);
@@ -599,9 +599,9 @@ namespace DevLib.TerminalServices
         {
             timeoutSeconds = timeoutSeconds < 0 ? 0 : timeoutSeconds;
 
-            var style = (int)buttons | (int)icon | (int)defaultButton | (int)options;
+            int style = (int)buttons | (int)icon | (int)defaultButton | (int)options;
 
-            var result = NativeMethodsHelper.SendMessage(
+            RemoteMessageBoxResult result = NativeMethodsHelper.SendMessage(
                 this._server.Handle,
                 this._sessionId,
                 caption,
@@ -619,9 +619,9 @@ namespace DevLib.TerminalServices
         /// <returns>A list of processes.</returns>
         public List<TerminalServicesProcess> GetProcesses()
         {
-            var allProcesses = this._server.GetProcesses();
+            List<TerminalServicesProcess> allProcesses = this._server.GetProcesses();
 
-            var results = new List<TerminalServicesProcess>();
+            List<TerminalServicesProcess> results = new List<TerminalServicesProcess>();
 
             foreach (TerminalServicesProcess process in allProcesses)
             {
@@ -700,7 +700,7 @@ namespace DevLib.TerminalServices
         /// </summary>
         private void LoadWinStationInformationProperties()
         {
-            var winStationInfo = NativeMethodsHelper.GetWinStationInformation(this._server.Handle, this._sessionId);
+            WINSTATIONINFORMATIONW winStationInfo = NativeMethodsHelper.GetWinStationInformation(this._server.Handle, this._sessionId);
             this._windowStationName.Value = winStationInfo.WinStationName;
             this._connectState.Value = winStationInfo.ConnectState;
             this._connectTime.Value = NativeMethodsHelper.FileTimeToDateTime(winStationInfo.ConnectTime);
@@ -719,7 +719,7 @@ namespace DevLib.TerminalServices
         /// </summary>
         private void LoadWtsInfoProperties()
         {
-            var info = NativeMethodsHelper.QuerySessionInformationForStruct<WTSINFO>(this._server.Handle, this._sessionId, WTS_INFO_CLASS.WTSSessionInfo);
+            WTSINFO info = NativeMethodsHelper.QuerySessionInformationForStruct<WTSINFO>(this._server.Handle, this._sessionId, WTS_INFO_CLASS.WTSSessionInfo);
             this._connectState.Value = info.ConnectState;
             this._incomingStatistics.Value = new ProtocolStatistics(info.IncomingBytes, info.IncomingFrames, info.IncomingCompressedBytes);
             this._outgoingStatistics.Value = new ProtocolStatistics(info.OutgoingBytes, info.OutgoingFrames, info.OutgoingCompressedBytes);
@@ -820,7 +820,7 @@ namespace DevLib.TerminalServices
         /// <returns>Client display.</returns>
         private ClientDisplay GetClientDisplay()
         {
-            var clientDisplay = NativeMethodsHelper.QuerySessionInformationForStruct<WTS_CLIENT_DISPLAY>(this._server.Handle, this._sessionId, WTS_INFO_CLASS.WTSClientDisplay);
+            WTS_CLIENT_DISPLAY clientDisplay = NativeMethodsHelper.QuerySessionInformationForStruct<WTS_CLIENT_DISPLAY>(this._server.Handle, this._sessionId, WTS_INFO_CLASS.WTSClientDisplay);
 
             return new ClientDisplay(clientDisplay);
         }
@@ -831,7 +831,7 @@ namespace DevLib.TerminalServices
         /// <returns>Client IPAddress.</returns>
         private IPAddress GetClientIPAddress()
         {
-            var clientAddress = NativeMethodsHelper.QuerySessionInformationForStruct<WTS_CLIENT_ADDRESS>(this._server.Handle, this._sessionId, WTS_INFO_CLASS.WTSClientAddress);
+            WTS_CLIENT_ADDRESS clientAddress = NativeMethodsHelper.QuerySessionInformationForStruct<WTS_CLIENT_ADDRESS>(this._server.Handle, this._sessionId, WTS_INFO_CLASS.WTSClientAddress);
 
             return NativeMethodsHelper.ExtractIPAddress(clientAddress.AddressFamily, clientAddress.Address);
         }

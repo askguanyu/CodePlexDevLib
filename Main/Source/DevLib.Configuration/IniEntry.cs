@@ -160,7 +160,7 @@ namespace DevLib.Configuration
 
                 if (properties != null && properties.Count > 0)
                 {
-                    foreach (var item in properties)
+                    foreach (KeyValuePair<string, string> item in properties)
                     {
                         this._sections[section][item.Key] = item.Value;
                     }
@@ -464,7 +464,7 @@ namespace DevLib.Configuration
             {
                 List<string> result = new List<string>();
 
-                foreach (var section in this._sections)
+                foreach (KeyValuePair<string, Dictionary<string, string>> section in this._sections)
                 {
                     if (section.Value.ContainsKey(key))
                     {
@@ -645,7 +645,7 @@ namespace DevLib.Configuration
             {
                 streamWriter = new StreamWriter(fullPath);
 
-                foreach (var section in this._sections)
+                foreach (KeyValuePair<string, Dictionary<string, string>> section in this._sections)
                 {
                     string sectionCommentKey = string.Format(CommentKeyStringFormat, section, string.Empty);
                     string sectionComment;
@@ -667,7 +667,7 @@ namespace DevLib.Configuration
 
                     streamWriter.WriteLine("[{0}]", section.Key);
 
-                    foreach (var key in section.Value)
+                    foreach (KeyValuePair<string, string> key in section.Value)
                     {
                         string valueCommentKey = string.Format(CommentKeyStringFormat, section, key);
                         string valueComment;

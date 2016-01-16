@@ -961,7 +961,7 @@ namespace DevLib.ModernUI.Forms
                 int val = 2;
                 DwmApi.DwmSetWindowAttribute(this.Handle, 2, ref val, 4);
 
-                var m = new DwmApi.MARGINS
+                DwmApi.MARGINS m = new DwmApi.MARGINS
                 {
                     cyBottomHeight = 1,
                     cxLeftWidth = 0,
@@ -1302,11 +1302,11 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void OnControlBoxClick(object sender, EventArgs e)
         {
-            var modernControlBox = sender as ModernControlBox;
+            ModernControlBox modernControlBox = sender as ModernControlBox;
 
             if (modernControlBox != null)
             {
-                var controlBoxFlag = (FormControlBox)modernControlBox.Tag;
+                FormControlBox controlBoxFlag = (FormControlBox)modernControlBox.Tag;
 
                 if (controlBoxFlag == FormControlBox.Close)
                 {

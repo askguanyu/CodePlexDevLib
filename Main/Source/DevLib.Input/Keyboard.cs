@@ -233,7 +233,7 @@ namespace DevLib.Input
         /// <param name="interval">The interval time, in milliseconds, between two keys.</param>
         public static void Press(Key key, int interval = 100)
         {
-            var keySpec = GetKeySpecFromKey(key);
+            KeySpec keySpec = GetKeySpecFromKey(key);
             SendKeyboardKey(keySpec.KeyCode, true, keySpec.IsExtended, false, interval);
         }
 
@@ -244,7 +244,7 @@ namespace DevLib.Input
         /// <param name="interval">The interval time, in milliseconds, between two keys.</param>
         public static void Release(Key key, int interval = 100)
         {
-            var keySpec = GetKeySpecFromKey(key);
+            KeySpec keySpec = GetKeySpecFromKey(key);
             SendKeyboardKey(keySpec.KeyCode, false, keySpec.IsExtended, false, interval);
         }
 
@@ -341,7 +341,7 @@ namespace DevLib.Input
         [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
         private static void SendKeyboardKey(ushort key, bool isKeyDown, bool isExtended, bool isUnicode, int interval)
         {
-            var input = new INPUT();
+            INPUT input = new INPUT();
             input.Type = NativeMethods.INPUT_KEYBOARD;
 
             if (!isKeyDown)
@@ -398,8 +398,8 @@ namespace DevLib.Input
         /// <returns>KeyStates instance.</returns>
         private static KeyStates GetKeyState(Key key)
         {
-            var keyStates = KeyStates.None;
-            var nativeKeyState = NativeMethods.GetKeyState((int)key);
+            KeyStates keyStates = KeyStates.None;
+            short nativeKeyState = NativeMethods.GetKeyState((int)key);
 
             if ((nativeKeyState & 0x00008000) == 0x00008000)
             {

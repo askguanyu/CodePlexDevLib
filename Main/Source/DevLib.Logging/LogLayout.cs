@@ -60,7 +60,7 @@ namespace DevLib.Logging
             {
                 if (useBracket)
                 {
-                    foreach (var item in objs)
+                    foreach (object item in objs)
                     {
                         result.Append(" [");
                         result.Append(item == null ? string.Empty : item.ToString());
@@ -69,7 +69,7 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    foreach (var item in objs)
+                    foreach (object item in objs)
                     {
                         result.Append(" ");
                         result.Append(item == null ? string.Empty : item.ToString());

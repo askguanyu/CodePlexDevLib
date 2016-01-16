@@ -1099,7 +1099,7 @@ namespace DevLib.Web.Hosting.WebHost40
         /// <returns>true if succeeded; otherwise, false.</returns>
         private bool TryReadAllHeaders()
         {
-            byte[] array = this._connection.ReadRequestBytes(32768);
+            byte[] array = this._connection.ReadRequestBytes(MaxHeaderBytes);
 
             if (array == null || array.Length == 0)
             {
@@ -1110,7 +1110,7 @@ namespace DevLib.Web.Hosting.WebHost40
             {
                 int num = array.Length + this._headerBytes.Length;
 
-                if (num > 32768)
+                if (num > MaxHeaderBytes)
                 {
                     return false;
                 }
@@ -1183,7 +1183,7 @@ namespace DevLib.Web.Hosting.WebHost40
         {
             ByteString byteString = this._headerByteStrings[0];
 
-            var byteStringList = byteString.Split(' ');
+            List<ByteString> byteStringList = byteString.Split(' ');
 
             if (byteStringList == null || byteStringList.Count < 2 || byteStringList.Count > 3)
             {
@@ -1504,7 +1504,7 @@ namespace DevLib.Web.Hosting.WebHost40
                 return false;
             }
 
-            if (this._host.DisableDirectoryListing)
+            if (!this._host.EnableDirectoryBrowse)
             {
                 return false;
             }
@@ -1588,7 +1588,7 @@ namespace DevLib.Web.Hosting.WebHost40
                 fileStream.Seek(offset, SeekOrigin.Begin);
             }
 
-            if (length <= 65536L)
+            if (length <= (long)MaxChunkLength)
             {
                 byte[] array = new byte[(int)length];
                 int length3 = fileStream.Read(array, 0, (int)length);
@@ -1597,12 +1597,12 @@ namespace DevLib.Web.Hosting.WebHost40
                 return;
             }
 
-            byte[] array2 = new byte[65536];
+            byte[] array2 = new byte[MaxChunkLength];
             int i = (int)length;
 
             while (i > 0)
             {
-                int count = (i < 65536) ? i : 65536;
+                int count = (i < MaxChunkLength) ? i : MaxChunkLength;
                 int num = fileStream.Read(array2, 0, count);
                 this.SendResponseFromMemory(array2, num);
                 i -= num;

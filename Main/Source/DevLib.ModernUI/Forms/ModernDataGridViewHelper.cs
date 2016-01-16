@@ -57,7 +57,7 @@ namespace DevLib.ModernUI.Forms
             this._dataGridView = dataGridView;
             this._isVertical = isVertical;
 
-            foreach (var item in this._dataGridView.Controls)
+            foreach (object item in this._dataGridView.Controls)
             {
                 if (item.GetType() == typeof(VScrollBar))
                 {

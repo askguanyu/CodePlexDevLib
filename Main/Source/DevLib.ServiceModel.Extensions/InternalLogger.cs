@@ -175,7 +175,7 @@ internal static class InternalLogger
 
         if (objs != null && objs.Length > 0)
         {
-            foreach (var item in objs)
+            foreach (object item in objs)
             {
                 result.Append(" [");
                 result.Append(item == null ? string.Empty : item.ToString());

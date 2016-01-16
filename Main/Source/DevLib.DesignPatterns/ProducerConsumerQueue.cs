@@ -48,7 +48,7 @@ namespace DevLib.DesignPatterns
 
             if (items != null)
             {
-                foreach (var item in items)
+                foreach (object item in items)
                 {
                     this._queue.Enqueue(item);
                     result++;
@@ -145,7 +145,7 @@ namespace DevLib.DesignPatterns
 
             if (items != null)
             {
-                foreach (var item in items)
+                foreach (T item in items)
                 {
                     this._queue.Enqueue(item);
                     result++;
@@ -166,7 +166,7 @@ namespace DevLib.DesignPatterns
 
             if (items != null)
             {
-                foreach (var item in items)
+                foreach (object item in items)
                 {
                     this._queue.Enqueue((T)item);
                     result++;

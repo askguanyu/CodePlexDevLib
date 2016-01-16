@@ -29,7 +29,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
         /// <returns>A <see cref="T:System.ComponentModel.Design.CollectionEditor.CollectionForm" /> to provide as the user interface for editing the collection.</returns>
         protected override CollectionForm CreateCollectionForm()
         {
-            var baseForm = base.CreateCollectionForm();
+            CollectionForm baseForm = base.CreateCollectionForm();
             baseForm.Text = "ModernTabPage Collection Editor";
             return baseForm;
         }

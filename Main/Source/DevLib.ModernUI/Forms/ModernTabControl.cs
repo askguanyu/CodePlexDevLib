@@ -305,7 +305,7 @@ namespace DevLib.ModernUI.Forms
             [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
             get
             {
-                var cp = base.CreateParams;
+                CreateParams cp = base.CreateParams;
 
                 if (this.TabRightToLeft)
                 {

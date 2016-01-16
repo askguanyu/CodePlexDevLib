@@ -134,7 +134,7 @@ namespace DevLib.Parameters
         {
             T result = new T();
 
-            var parameters = ArgumentParser.Parse(arguments);
+            Dictionary<string, string> parameters = ArgumentParser.Parse(arguments);
 
             foreach (PropertyInfo property in typeof(T).GetProperties())
             {
@@ -162,7 +162,7 @@ namespace DevLib.Parameters
                             alias.AddRange(optionAttribute.Alias);
                         }
 
-                        foreach (var key in alias)
+                        foreach (string key in alias)
                         {
                             if (parameters.ContainsKey(key))
                             {
@@ -302,7 +302,7 @@ namespace DevLib.Parameters
                     return source;
                 }
 
-                var converter = TypeDescriptor.GetConverter(source);
+                TypeConverter converter = TypeDescriptor.GetConverter(source);
 
                 if (converter != null && converter.CanConvertTo(targetType))
                 {

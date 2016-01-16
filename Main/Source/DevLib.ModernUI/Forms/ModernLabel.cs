@@ -317,7 +317,7 @@ namespace DevLib.ModernUI.Forms
             Size preferredSize;
             base.GetPreferredSize(proposedSize);
 
-            using (var g = this.CreateGraphics())
+            using (Graphics g = this.CreateGraphics())
             {
                 proposedSize = new Size(int.MaxValue, int.MaxValue);
                 preferredSize = TextRenderer.MeasureText(g, this.Text ?? string.Empty, ModernFonts.Label(this.FontSize, this.FontWeight), proposedSize, ModernPaint.GetTextFormatFlags(this.TextAlign));

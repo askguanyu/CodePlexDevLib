@@ -361,7 +361,7 @@ namespace DevLib.ModernUI.Forms
             Size preferredSize;
             base.GetPreferredSize(proposedSize);
 
-            using (var g = this.CreateGraphics())
+            using (Graphics g = this.CreateGraphics())
             {
                 string measureText = this.Text.Length > 0 ? this.Text : "MeasureText";
                 proposedSize = new Size(int.MaxValue, int.MaxValue);

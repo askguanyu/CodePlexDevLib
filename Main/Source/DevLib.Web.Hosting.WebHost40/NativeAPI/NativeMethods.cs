@@ -34,34 +34,49 @@ namespace DevLib.Web.Hosting.WebHost40.NativeAPI
         public const int ISC_REQ_ALLOCATE_MEMORY = 256;
         public const int ISC_REQ_STANDARD_FLAGS = 20;
 
-        [DllImport("ADVAPI32.DLL", SetLastError = true)]
+        [DllImport("advapi32.dll", SetLastError = true)]
         public static extern bool ImpersonateSelf(int level);
 
-        [DllImport("ADVAPI32.DLL", SetLastError = true)]
+        [DllImport("advapi32.dll", SetLastError = true)]
         public static extern int RevertToSelf();
 
-        [DllImport("KERNEL32.DLL", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr GetCurrentThread();
 
-        [DllImport("ADVAPI32.DLL", SetLastError = true)]
+        [DllImport("advapi32.dll", SetLastError = true)]
         public static extern int OpenThreadToken(IntPtr thread, int access, bool openAsSelf, ref IntPtr hToken);
 
-        [DllImport("SECUR32.DLL", CharSet = CharSet.Unicode)]
+        [DllImport("secur32.dll", CharSet = CharSet.Unicode)]
         public static extern int AcquireCredentialsHandle(string pszPrincipal, string pszPackage, uint fCredentialUse, IntPtr pvLogonID, IntPtr pAuthData, IntPtr pGetKeyFn, IntPtr pvGetKeyArgument, ref SecHandle phCredential, ref long ptsExpiry);
 
-        [DllImport("SECUR32.DLL", CharSet = CharSet.Unicode)]
+        [DllImport("secur32.dll", CharSet = CharSet.Unicode)]
         public static extern int FreeCredentialsHandle(ref SecHandle phCredential);
 
-        [DllImport("SECUR32.DLL", CharSet = CharSet.Unicode)]
+        [DllImport("secur32.dll", CharSet = CharSet.Unicode)]
         public static extern int AcceptSecurityContext(ref SecHandle phCredential, IntPtr phContext, ref SecBufferDesc pInput, uint fContextReq, uint targetDataRep, ref SecHandle phNewContext, ref SecBufferDesc pOutput, ref uint pfContextAttr, ref long ptsTimeStamp);
 
-        [DllImport("SECUR32.DLL", CharSet = CharSet.Unicode)]
+        [DllImport("secur32.dll", CharSet = CharSet.Unicode)]
         public static extern int DeleteSecurityContext(ref SecHandle phContext);
 
-        [DllImport("SECUR32.DLL", CharSet = CharSet.Unicode)]
+        [DllImport("secur32.dll", CharSet = CharSet.Unicode)]
         public static extern int QuerySecurityContextToken(ref SecHandle phContext, ref IntPtr phToken);
 
-        [DllImport("KERNEL32.DLL", CharSet = CharSet.Unicode)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern int CloseHandle(IntPtr phToken);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool SetDllDirectory(string lpPathName);
+
+        [DllImport("hwebcore.dll", CharSet = CharSet.Unicode)]
+        public static extern int WebCoreActivate(
+            [In, MarshalAs(UnmanagedType.LPWStr)]
+            string appHostConfigPath,
+            [In, MarshalAs(UnmanagedType.LPWStr)]
+            string rootWebConfigPath,
+            [In, MarshalAs(UnmanagedType.LPWStr)]
+            string instanceName);
+
+        [DllImport("hwebcore.dll", CharSet = CharSet.Unicode)]
+        public static extern int WebCoreShutdown(bool immediate);
     }
 }

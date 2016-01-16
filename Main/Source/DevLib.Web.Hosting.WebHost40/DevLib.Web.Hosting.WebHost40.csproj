@@ -40,7 +40,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
@@ -51,6 +53,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Host.cs" />
+    <Compile Include="InternalLogger.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MimeMapping.cs" />
     <Compile Include="NativeAPI\NativeMethods.cs" />
@@ -59,9 +62,28 @@
     <Compile Include="NativeAPI\SecHandle.cs" />
     <Compile Include="NtlmAuth.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Request.cs" />
     <Compile Include="Sponsor.cs" />
     <Compile Include="WebServer.cs" />
+    <Compile Include="WebServerManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AppHostTemplate.config" />
+    <None Include="ApplicationHost.config">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

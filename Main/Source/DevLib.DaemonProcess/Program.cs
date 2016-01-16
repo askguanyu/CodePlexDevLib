@@ -129,7 +129,7 @@ args[5] = args                       : protected process args");
 
                         bool serviceExists = false;
 
-                        foreach (var item in services)
+                        foreach (ServiceController item in services)
                         {
                             try
                             {

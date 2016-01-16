@@ -396,7 +396,7 @@ namespace DevLib.Web.Services
                 serviceDescriptionImporter.CodeGenerationOptions |= CodeGenerationOptions.GenerateNewAsync | CodeGenerationOptions.GenerateOldAsync;
             }
 
-            foreach (var serviceDescription in this.Metadata)
+            foreach (ServiceDescription serviceDescription in this.Metadata)
             {
                 serviceDescriptionImporter.AddServiceDescription(serviceDescription, null, null);
             }

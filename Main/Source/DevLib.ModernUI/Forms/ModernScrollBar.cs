@@ -959,7 +959,7 @@ namespace DevLib.ModernUI.Forms
 
             if (e.Button == MouseButtons.Left)
             {
-                var mouseLocation = e.Location;
+                Point mouseLocation = e.Location;
 
                 if (this._thumbRectangle.Contains(mouseLocation))
                 {
@@ -1193,8 +1193,8 @@ namespace DevLib.ModernUI.Forms
         [UIPermission(SecurityAction.LinkDemand, Window = UIPermissionWindow.AllWindows)]
         protected override bool ProcessDialogKey(Keys keyData)
         {
-            var keyUp = Keys.Up;
-            var keyDown = Keys.Down;
+            Keys keyUp = Keys.Up;
+            Keys keyDown = Keys.Down;
 
             if (this.Orientation == ModernScrollBarOrientation.Horizontal)
             {
@@ -1327,19 +1327,19 @@ namespace DevLib.ModernUI.Forms
         {
             if (this.UseBarColor)
             {
-                using (var brush = new SolidBrush(barColor))
+                using (SolidBrush brush = new SolidBrush(barColor))
                 {
                     g.FillRectangle(brush, this.ClientRectangle);
                 }
             }
 
-            using (var brush = new SolidBrush(backColor))
+            using (SolidBrush brush = new SolidBrush(backColor))
             {
                 var thumbRect = new Rectangle(this._thumbRectangle.X - 1, this._thumbRectangle.Y - 1, this._thumbRectangle.Width + 2, this._thumbRectangle.Height + 2);
                 g.FillRectangle(brush, thumbRect);
             }
 
-            using (var brush = new SolidBrush(thumbColor))
+            using (SolidBrush brush = new SolidBrush(thumbColor))
             {
                 g.FillRectangle(brush, this._thumbRectangle);
             }
@@ -1544,7 +1544,7 @@ namespace DevLib.ModernUI.Forms
         private void ProgressThumb(bool enableTimer)
         {
             int scrollOldValue = this._currentValue;
-            var type = ScrollEventType.First;
+            ScrollEventType type = ScrollEventType.First;
             int thumbSize;
             int thumbPos;
 

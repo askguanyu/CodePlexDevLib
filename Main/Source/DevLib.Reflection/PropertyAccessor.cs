@@ -70,7 +70,7 @@ namespace DevLib.Reflection
 
             this._setActionDictionary = new Dictionary<string, SetAction<object, object>>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
 
-            foreach (var item in this.TargetType.GetProperties())
+            foreach (PropertyInfo item in this.TargetType.GetProperties())
             {
                 if (item.GetIndexParameters().Length == 0)
                 {

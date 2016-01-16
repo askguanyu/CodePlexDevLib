@@ -41,8 +41,8 @@ namespace DevLib.ModernUI.ComponentModel.Design
         /// </summary>
         public ModernTabControlDesigner()
         {
-            var verb1 = new DesignerVerb("Add Tab", this.OnAddPage);
-            var verb2 = new DesignerVerb("Remove Tab", this.OnRemovePage);
+            DesignerVerb verb1 = new DesignerVerb("Add Tab", this.OnAddPage);
+            DesignerVerb verb2 = new DesignerVerb("Remove Tab", this.OnRemovePage);
             this._designerVerbCollection.AddRange(new[] { verb1, verb2 });
         }
 
@@ -66,7 +66,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
             {
                 if (this._designerVerbCollection.Count == 2)
                 {
-                    var control = (ModernTabControl)this.Control;
+                    ModernTabControl control = (ModernTabControl)this.Control;
                     this._designerVerbCollection[1].Enabled = control.TabCount != 0;
                 }
 
@@ -126,19 +126,19 @@ namespace DevLib.ModernUI.ComponentModel.Design
         {
             if (this.SelectionService.PrimarySelection == this.Control)
             {
-                var hti = new WinApi.TCHITTESTINFO
+                WinApi.TCHITTESTINFO hti = new WinApi.TCHITTESTINFO
                 {
                     pt = this.Control.PointToClient(point),
                     flags = 0
                 };
 
-                var m = new Message
+                Message m = new Message
                 {
                     HWnd = this.Control.Handle,
                     Msg = WinApi.TCM_HITTEST
                 };
 
-                var lparam = Marshal.AllocHGlobal(Marshal.SizeOf(hti));
+                IntPtr lparam = Marshal.AllocHGlobal(Marshal.SizeOf(hti));
                 Marshal.StructureToPtr(hti, lparam, false);
                 m.LParam = lparam;
 
@@ -191,17 +191,17 @@ namespace DevLib.ModernUI.ComponentModel.Design
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void OnAddPage(object sender, EventArgs e)
         {
-            var parentControl = (ModernTabControl)this.Control;
-            var oldTabs = parentControl.Controls;
+            ModernTabControl parentControl = (ModernTabControl)this.Control;
+            Control.ControlCollection oldTabs = parentControl.Controls;
 
             this.RaiseComponentChanging(TypeDescriptor.GetProperties(parentControl)["TabPages"]);
 
-            var p = (ModernTabPage)this.DesignerHost.CreateComponent(typeof(ModernTabPage));
-            p.Text = p.Name;
-            parentControl.TabPages.Add(p);
+            ModernTabPage page = (ModernTabPage)this.DesignerHost.CreateComponent(typeof(ModernTabPage));
+            page.Text = page.Name;
+            parentControl.TabPages.Add(page);
 
             this.RaiseComponentChanged(TypeDescriptor.GetProperties(parentControl)["TabPages"], oldTabs, parentControl.TabPages);
-            parentControl.SelectedTab = p;
+            parentControl.SelectedTab = page;
 
             this.SetVerbs();
         }
@@ -213,8 +213,8 @@ namespace DevLib.ModernUI.ComponentModel.Design
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void OnRemovePage(object sender, EventArgs e)
         {
-            var parentControl = (ModernTabControl)Control;
-            var oldTabs = parentControl.Controls;
+            ModernTabControl parentControl = (ModernTabControl)Control;
+            Control.ControlCollection oldTabs = parentControl.Controls;
 
             if (parentControl.SelectedIndex < 0)
             {
@@ -237,7 +237,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
         /// </summary>
         private void SetVerbs()
         {
-            var parentControl = (ModernTabControl)Control;
+            ModernTabControl parentControl = (ModernTabControl)Control;
 
             switch (parentControl.TabPages.Count)
             {

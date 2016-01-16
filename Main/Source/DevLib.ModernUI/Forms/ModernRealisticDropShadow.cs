@@ -161,13 +161,13 @@ namespace DevLib.ModernUI.Forms
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-            var currentBlur = 0;
+            int currentBlur = 0;
 
             do
             {
-                var transparency = (rOuter.Height - rInner.Height) / (double)((blur * 2) + (spread * 2));
-                var shadowColor = Color.FromArgb((int)(200 * transparency * transparency), color);
-                var rOutput = rInner;
+                double transparency = (rOuter.Height - rInner.Height) / (double)((blur * 2) + (spread * 2));
+                Color shadowColor = Color.FromArgb((int)(200 * transparency * transparency), color);
+                Rectangle rOutput = rInner;
                 rOutput.Offset(-originalOuter.Left, -originalOuter.Top);
 
                 this.DrawRoundedRectangle(g, rOutput, currentBlur, Pens.Transparent, shadowColor);

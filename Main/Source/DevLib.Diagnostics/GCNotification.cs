@@ -99,7 +99,7 @@ namespace DevLib.Diagnostics
             /// <returns>The reference to T that was read. This reference is the latest written by any processor in the computer, regardless of the number of processors or the state of processor cache. </returns>
             private static T VolatileRead<T>(ref T location) where T : class
             {
-                var value = location;
+                T value = location;
                 Thread.MemoryBarrier();
                 return value;
             }

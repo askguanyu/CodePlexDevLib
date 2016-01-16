@@ -55,9 +55,9 @@ namespace DevLib.Web.Hosting.WebHost40
         private const string ApplicationPoolsNodeName = @"configuration/system.applicationHost/applicationPools";
 
         /// <summary>
-        /// The sites node name.
+        /// The site node name.
         /// </summary>
-        private const string SitesNodeName = @"configuration/system.applicationHost/sites";
+        private const string SiteNodeName = @"configuration/system.applicationHost/sites/site";
 
         /// <summary>
         /// The directory browse node name.
@@ -930,18 +930,18 @@ namespace DevLib.Web.Hosting.WebHost40
                     XmlNode applicationPoolsNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(ApplicationPoolsNodeName), true);
                     applicationHostNode.AppendChild(applicationPoolsNode);
 
-                    XmlNodeList sitesNodes = appHostConfigXml.SelectNodes(SitesNodeName);
+                    XmlNodeList siteNodes = appHostConfigXml.SelectNodes(SiteNodeName);
 
-                    if (sitesNodes != null && sitesNodes.Count > 0)
+                    if (siteNodes != null && siteNodes.Count > 0)
                     {
-                        foreach (XmlNode item in sitesNodes)
+                        foreach (XmlNode item in siteNodes)
                         {
                             applicationHostNode.RemoveChild(item);
                         }
                     }
 
-                    XmlNode sitesNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(SitesNodeName), true);
-                    applicationHostNode.AppendChild(sitesNode);
+                    XmlNode siteNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(SiteNodeName), true);
+                    applicationHostNode.AppendChild(siteNode);
                 }
                 else
                 {

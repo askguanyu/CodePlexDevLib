@@ -71,6 +71,8 @@ namespace DevLib.Samples
     using DevLib.Text;
     using DevLib.Timers;
     using DevLib.Web;
+    using DevLib.Web.Hosting.WebHost20;
+    using DevLib.Web.Hosting.WebHost40;
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
@@ -192,6 +194,11 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
+                    //TestDevLibWebHosting();
+                });
+
+                Benchmark.Run(delegate
+                {
                     //TestDevLibConfiguration();
                 });
 
@@ -210,6 +217,13 @@ namespace DevLib.Samples
             }, "DevLib.Samples", 1);
 
             InternalLogger.Log("End");
+        }
+
+        private static void TestDevLibWebHosting()
+        {
+            DevLib.Web.Hosting.WebHost20.WebServer ws = new Web.Hosting.WebHost20.WebServer(1, "test", 80, true);
+
+            ws.Start();
         }
 
         private static void TestData()

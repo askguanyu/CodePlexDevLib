@@ -12,12 +12,15 @@ namespace DevLib.Web.Hosting.WebHost20
     using System.Net;
     using System.Net.Sockets;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using System.Security;
     using System.Security.Permissions;
     using System.Security.Principal;
     using System.Threading;
     using System.Web.Hosting;
+    using System.Xml;
     using DevLib.Web.Hosting.WebHost20.NativeAPI;
+    using DevLib.Web.Hosting.WebHost20.Properties;
 
     /// <summary>
     /// Web service or Asp.net hosting.
@@ -31,24 +34,34 @@ namespace DevLib.Web.Hosting.WebHost20
         private const int TOKEN_ALL_ACCESS = 983551;
 
         /// <summary>
-        /// Field TOKEN_EXECUTE.
-        /// </summary>
-        private const int TOKEN_EXECUTE = 131072;
-
-        /// <summary>
-        /// Field TOKEN_READ.
-        /// </summary>
-        private const int TOKEN_READ = 131080;
-
-        /// <summary>
-        /// Field TOKEN_IMPERSONATE.
-        /// </summary>
-        private const int TOKEN_IMPERSONATE = 4;
-
-        /// <summary>
         /// Field SecurityImpersonation.
         /// </summary>
         private const int SecurityImpersonation = 2;
+
+        /// <summary>
+        /// The application host node name.
+        /// </summary>
+        private const string ApplicationHostNodeName = @"configuration/system.applicationHost";
+
+        /// <summary>
+        /// The web server node name.
+        /// </summary>
+        private const string WebServerNodeName = @"configuration/system.webServer";
+
+        /// <summary>
+        /// The application pools node name.
+        /// </summary>
+        private const string ApplicationPoolsNodeName = @"configuration/system.applicationHost/applicationPools";
+
+        /// <summary>
+        /// The sites node name.
+        /// </summary>
+        private const string SitesNodeName = @"configuration/system.applicationHost/sites";
+
+        /// <summary>
+        /// The directory browse node name.
+        /// </summary>
+        private const string DirectoryBrowseNodeName = @"configuration/system.webServer/directoryBrowse";
 
         /// <summary>
         /// Field CurrentAssemblyFullPath.
@@ -61,19 +74,24 @@ namespace DevLib.Web.Hosting.WebHost20
         private static readonly string CurrentAssemblyFilename = Path.GetFileName(CurrentAssemblyFullPath);
 
         /// <summary>
+        /// The root web configuration path.
+        /// </summary>
+        private static readonly string RootWebConfigPath = Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.Net\Framework\v2.0.50727\config\web.config");
+
+        /// <summary>
+        /// Field HostedWebCoreDllDirectory.
+        /// </summary>
+        private static readonly string HostedWebCoreDllDirectory = Environment.ExpandEnvironmentVariables(@"%windir%\system32\inetsrv");
+
+        /// <summary>
+        /// The local application host configuration file.
+        /// </summary>
+        private static readonly string LocalAppHostConfigFile = Path.Combine(Path.GetFullPath(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath), "applicationHost.config");
+
+        /// <summary>
         /// Field _syncRoot.
         /// </summary>
         private readonly object _syncRoot = new object();
-
-        /// <summary>
-        /// Field _requireAuthentication.
-        /// </summary>
-        private bool _requireAuthentication;
-
-        /// <summary>
-        /// Field _disableDirectoryListing.
-        /// </summary>
-        private bool _disableDirectoryListing;
 
         /// <summary>
         /// Field _onStart.
@@ -136,78 +154,105 @@ namespace DevLib.Web.Hosting.WebHost20
         private string _binFolderReferenceFile;
 
         /// <summary>
+        /// Field _appHostConfigFile.
+        /// </summary>
+        private string _appHostConfigFile;
+
+        /// <summary>
         /// Field _disposed.
         /// </summary>
         private bool _disposed = false;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServer"/> class.
+        /// Initializes a new instance of the <see cref="WebServer" /> class.
         /// </summary>
+        /// <param name="siteId">The site id.</param>
         /// <param name="port">The port.</param>
+        /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
-        public WebServer(int port, bool startNow = false)
-            : this(port, string.Empty, Path.GetDirectoryName(Path.GetFullPath(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath)), false, false, startNow)
+        public WebServer(int siteId, int port = 80, bool useIIS = false, bool startNow = false)
+            : this(siteId, Path.GetDirectoryName(Path.GetFullPath(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath)), null, port, null, false, false, useIIS, startNow)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServer"/> class.
+        /// Initializes a new instance of the <see cref="WebServer" /> class.
         /// </summary>
-        /// <param name="port">The port.</param>
-        /// <param name="virtualPath">The virtual path.</param>
-        /// <param name="startNow">true if immediately start service; otherwise, false.</param>
-        public WebServer(int port, string virtualPath, bool startNow = false)
-            : this(port, virtualPath, Path.GetDirectoryName(Path.GetFullPath(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath)), false, false, startNow)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebServer"/> class.
-        /// </summary>
-        /// <param name="port">The port.</param>
-        /// <param name="virtualPath">The virtual path.</param>
+        /// <param name="siteId">The site id.</param>
         /// <param name="physicalPath">The physical path.</param>
+        /// <param name="port">The port.</param>
+        /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
-        public WebServer(int port, string virtualPath, string physicalPath, bool startNow = false)
-            : this(port, virtualPath, physicalPath, false, false, startNow)
+        public WebServer(int siteId, string physicalPath, int port = 80, bool useIIS = false, bool startNow = false)
+            : this(siteId, physicalPath, null, port, null, false, false, useIIS, startNow)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServer"/> class.
+        /// Initializes a new instance of the <see cref="WebServer" /> class.
         /// </summary>
-        /// <param name="port">The port.</param>
-        /// <param name="virtualPath">The virtual path.</param>
+        /// <param name="siteId">The site id.</param>
         /// <param name="physicalPath">The physical path.</param>
+        /// <param name="virtualPath">The virtual path.</param>
+        /// <param name="port">The port.</param>
+        /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
+        /// <param name="startNow">true if immediately start service; otherwise, false.</param>
+        public WebServer(int siteId, string physicalPath, string virtualPath = null, int port = 80, bool useIIS = false, bool startNow = false)
+            : this(siteId, physicalPath, virtualPath, port, null, false, false, useIIS, startNow)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebServer" /> class.
+        /// </summary>
+        /// <param name="siteId">The site id.</param>
+        /// <param name="physicalPath">The physical path.</param>
+        /// <param name="virtualPath">The virtual path.</param>
+        /// <param name="port">The port.</param>
         /// <param name="requireAuthentication">true if require authentication; otherwise, false.</param>
+        /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
-        public WebServer(int port, string virtualPath, string physicalPath, bool requireAuthentication, bool startNow)
-            : this(port, virtualPath, physicalPath, requireAuthentication, false, startNow)
+        public WebServer(int siteId, string physicalPath, string virtualPath, int port, bool requireAuthentication, bool useIIS = false, bool startNow = false)
+            : this(siteId, physicalPath, virtualPath, port, null, requireAuthentication, false, useIIS, startNow)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebServer"/> class.
+        /// Initializes a new instance of the <see cref="WebServer" /> class.
         /// </summary>
-        /// <param name="port">The port.</param>
-        /// <param name="virtualPath">The virtual path.</param>
+        /// <param name="siteId">The site id.</param>
         /// <param name="physicalPath">The physical path.</param>
+        /// <param name="virtualPath">The virtual path.</param>
+        /// <param name="port">The port.</param>
+        /// <param name="siteName">The site name.</param>
         /// <param name="requireAuthentication">true if require authentication; otherwise, false.</param>
-        /// <param name="disableDirectoryListing">true if disable directory listing; otherwise, false.</param>
+        /// <param name="enableDirectoryBrowse">true to enable directory browsing; otherwise, false.</param>
+        /// <param name="useIIS">true to use IIS Hosted Web Core hosting; false to use managed code web server hosting.</param>
         /// <param name="startNow">true if immediately start service; otherwise, false.</param>
-        public WebServer(int port, string virtualPath, string physicalPath, bool requireAuthentication, bool disableDirectoryListing, bool startNow)
+        public WebServer(int siteId, string physicalPath, string virtualPath, int port, string siteName, bool requireAuthentication, bool enableDirectoryBrowse, bool useIIS, bool startNow)
         {
-            this.Port = port;
-            this.VirtualPath = this.IsNullOrWhiteSpace(virtualPath) ? "/" : "/" + virtualPath.Trim('/');
+            this.SiteId = siteId;
             this.PhysicalPath = Path.GetFullPath(this.IsNullOrWhiteSpace(physicalPath) ? "." : physicalPath).TrimEnd('\\') + "\\";
-            this._binFolder = Path.Combine(this.PhysicalPath, "bin");
-            this._binFolderReferenceFile = Path.Combine(this._binFolder, CurrentAssemblyFilename);
-            this._requireAuthentication = requireAuthentication;
-            this._disableDirectoryListing = disableDirectoryListing;
-            this._onSocketAccept = new WaitCallback(this.OnSocketAccept);
-            this._onStart = new WaitCallback(this.OnStart);
-            this._appManager = ApplicationManager.GetApplicationManager();
-            this.ObtainProcessToken();
+            this.VirtualPath = this.IsNullOrWhiteSpace(virtualPath) ? "/" : "/" + virtualPath.Trim('/');
+            this.Port = port;
+            this.SiteName = siteName ?? Guid.NewGuid().ToString();
+            this.RequireAuthentication = requireAuthentication;
+            this.EnableDirectoryBrowse = enableDirectoryBrowse;
+            this.IsUsingIIS = useIIS;
+
+            if (this.IsUsingIIS)
+            {
+                this._appHostConfigFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName().Replace(".", string.Empty) + ".config");
+            }
+            else
+            {
+                this._binFolder = Path.Combine(this.PhysicalPath, "bin");
+                this._binFolderReferenceFile = Path.Combine(this._binFolder, CurrentAssemblyFilename);
+                this._onSocketAccept = new WaitCallback(this.OnSocketAccept);
+                this._onStart = new WaitCallback(this.OnStart);
+                this._appManager = ApplicationManager.GetApplicationManager();
+                this.ObtainProcessToken();
+            }
 
             if (startNow)
             {
@@ -221,6 +266,33 @@ namespace DevLib.Web.Hosting.WebHost20
         ~WebServer()
         {
             this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Gets the site name.
+        /// </summary>
+        public string SiteName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the site id.
+        /// </summary>
+        public int SiteId
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the port.
+        /// </summary>
+        public int Port
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -242,9 +314,18 @@ namespace DevLib.Web.Hosting.WebHost20
         }
 
         /// <summary>
-        /// Gets the port.
+        /// Gets a value indicating whether require authentication.
         /// </summary>
-        public int Port
+        public bool RequireAuthentication
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether directory browsing is enabled or disabled on the Web server.
+        /// </summary>
+        public bool EnableDirectoryBrowse
         {
             get;
             private set;
@@ -267,20 +348,65 @@ namespace DevLib.Web.Hosting.WebHost20
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WebServer" /> class.
+        /// Gets a value indicating whether use IIS hosting.
         /// </summary>
-        public void Close()
+        public bool IsUsingIIS
         {
-            this.Dispose();
+            get;
+            private set;
         }
 
         /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WebServer" /> class.
+        /// Gets a value indicating whether this web server is running.
         /// </summary>
-        public void Dispose()
+        public bool IsRunning
         {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Starts web server.
+        /// </summary>
+        public void Start()
+        {
+            this.CheckDisposed();
+
+            if (!this.IsRunning)
+            {
+                if (this.IsUsingIIS)
+                {
+                    this.StartHostedWebCore();
+                }
+                else
+                {
+                    this.StartManagedCodeWebServer();
+                }
+
+                this.IsRunning = true;
+            }
+        }
+
+        /// <summary>
+        /// Stops web server.
+        /// </summary>
+        public void Stop()
+        {
+            this.CheckDisposed();
+
+            if (this.IsRunning)
+            {
+                if (this.IsUsingIIS)
+                {
+                    this.StopHostedWebCore();
+                }
+                else
+                {
+                    this.StopManagedCodeWebServer();
+                }
+
+                this.IsRunning = false;
+            }
         }
 
         /// <summary>
@@ -316,15 +442,107 @@ namespace DevLib.Web.Hosting.WebHost20
         }
 
         /// <summary>
-        /// Starts the server.
+        /// Releases all resources used by the current instance of the <see cref="WebServer" /> class.
         /// </summary>
-        public void Start()
+        public void Dispose()
         {
-            this.CheckDisposed();
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            bool flag = false;
+        /// <summary>
+        /// Stopped host.
+        /// </summary>
+        internal void HostStopped()
+        {
+            this._host = null;
+        }
 
-            flag = Socket.SupportsIPv4;
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="WebServer" /> class.
+        /// protected virtual for non-sealed class; private for sealed class.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this._disposed)
+            {
+                return;
+            }
+
+            this._disposed = true;
+
+            if (disposing)
+            {
+                // dispose managed resources
+                ////if (managedResource != null)
+                ////{
+                ////    managedResource.Dispose();
+                ////    managedResource = null;
+                ////}
+
+                if (this.IsUsingIIS)
+                {
+                    this.RemoveAppHostConfigFile();
+                }
+                else
+                {
+                    this._shutdownInProgress = true;
+
+                    try
+                    {
+                        if (this._socketIPv4 != null)
+                        {
+                            this._socketIPv4.Close();
+                        }
+
+                        if (this._socketIPv6 != null)
+                        {
+                            this._socketIPv6.Close();
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        this._socketIPv4 = null;
+                        this._socketIPv6 = null;
+                    }
+
+                    try
+                    {
+                        if (this._host != null)
+                        {
+                            this._host.Shutdown();
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        this._host = null;
+                    }
+
+                    this.RemoveReferenceFile();
+                }
+            }
+
+            // free native resources
+            ////if (nativeResource != IntPtr.Zero)
+            ////{
+            ////    Marshal.FreeHGlobal(nativeResource);
+            ////    nativeResource = IntPtr.Zero;
+            ////}
+        }
+
+        /// <summary>
+        /// Starts web server with managed code approach.
+        /// </summary>
+        private void StartManagedCodeWebServer()
+        {
+            bool isSupportsIPv4 = Socket.SupportsIPv4;
 
             if (Socket.OSSupportsIPv6)
             {
@@ -334,14 +552,14 @@ namespace DevLib.Web.Hosting.WebHost20
                 }
                 catch (SocketException e)
                 {
-                    if (e.SocketErrorCode == SocketError.AddressAlreadyInUse || !flag)
+                    if (e.SocketErrorCode == SocketError.AddressAlreadyInUse || !isSupportsIPv4)
                     {
                         throw;
                     }
                 }
             }
 
-            if (flag)
+            if (isSupportsIPv4)
             {
                 try
                 {
@@ -370,12 +588,27 @@ namespace DevLib.Web.Hosting.WebHost20
         }
 
         /// <summary>
-        /// Stops the server.
+        /// Starts web server with IIS approach.
         /// </summary>
-        public void Stop()
+        private void StartHostedWebCore()
         {
-            this.CheckDisposed();
+            this.CreateAppHostConfigFile();
 
+            NativeMethods.SetDllDirectory(HostedWebCoreDllDirectory);
+
+            int result = NativeMethods.WebCoreActivate(this._appHostConfigFile, RootWebConfigPath, Guid.NewGuid().ToString());
+
+            if (result != 0)
+            {
+                Marshal.ThrowExceptionForHR(result);
+            }
+        }
+
+        /// <summary>
+        /// Stops web server with managed code approach.
+        /// </summary>
+        private void StopManagedCodeWebServer()
+        {
             this._shutdownInProgress = true;
 
             try
@@ -423,93 +656,17 @@ namespace DevLib.Web.Hosting.WebHost20
         }
 
         /// <summary>
-        /// Stopped host.
+        /// Stops web server with IIS approach.
         /// </summary>
-        internal void HostStopped()
+        private void StopHostedWebCore()
         {
-            this._host = null;
-        }
+            int result = NativeMethods.WebCoreShutdown(false);
 
-        /// <summary>
-        /// Releases all resources used by the current instance of the <see cref="WebServer" /> class.
-        /// protected virtual for non-sealed class; private for sealed class.
-        /// </summary>
-        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (this._disposed)
+            this.RemoveAppHostConfigFile();
+
+            if (result != 0)
             {
-                return;
-            }
-
-            this._disposed = true;
-
-            if (disposing)
-            {
-                // dispose managed resources
-                ////if (managedResource != null)
-                ////{
-                ////    managedResource.Dispose();
-                ////    managedResource = null;
-                ////}
-
-                this._shutdownInProgress = true;
-
-                try
-                {
-                    if (this._socketIPv4 != null)
-                    {
-                        this._socketIPv4.Close();
-                    }
-
-                    if (this._socketIPv6 != null)
-                    {
-                        this._socketIPv6.Close();
-                    }
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    this._socketIPv4 = null;
-                    this._socketIPv6 = null;
-                }
-
-                try
-                {
-                    if (this._host != null)
-                    {
-                        this._host.Shutdown();
-                    }
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    this._host = null;
-                }
-
-                this.RemoveReferenceFile();
-            }
-
-            // free native resources
-            ////if (nativeResource != IntPtr.Zero)
-            ////{
-            ////    Marshal.FreeHGlobal(nativeResource);
-            ////    nativeResource = IntPtr.Zero;
-            ////}
-        }
-
-        /// <summary>
-        /// Method CheckDisposed.
-        /// </summary>
-        private void CheckDisposed()
-        {
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException("DevLib.Web.Hosting.WebHost20.WebServer");
+                Marshal.ThrowExceptionForHR(result);
             }
         }
 
@@ -518,9 +675,9 @@ namespace DevLib.Web.Hosting.WebHost20
         /// </summary>
         private void ObtainProcessToken()
         {
-            if (NativeMethods.ImpersonateSelf(2))
+            if (NativeMethods.ImpersonateSelf(SecurityImpersonation))
             {
-                NativeMethods.OpenThreadToken(NativeMethods.GetCurrentThread(), 983551, true, ref this._processToken);
+                NativeMethods.OpenThreadToken(NativeMethods.GetCurrentThread(), TOKEN_ALL_ACCESS, true, ref this._processToken);
                 NativeMethods.RevertToSelf();
                 this._processUser = WindowsIdentity.GetCurrent().Name;
             }
@@ -655,7 +812,7 @@ namespace DevLib.Web.Hosting.WebHost20
                         string appId = text.GetHashCode().ToString("x", CultureInfo.InvariantCulture);
 
                         this._host = (Host)this._appManager.CreateObject(appId, typeof(Host), this.VirtualPath, this.PhysicalPath, false);
-                        this._host.Configure(this, this.Port, this.VirtualPath, this.PhysicalPath, this._requireAuthentication, this._disableDirectoryListing);
+                        this._host.Configure(this, this.Port, this.VirtualPath, this.PhysicalPath, this.RequireAuthentication, this.EnableDirectoryBrowse);
 
                         host = this._host;
                     }
@@ -721,6 +878,120 @@ namespace DevLib.Web.Hosting.WebHost20
         }
 
         /// <summary>
+        /// Creates the application host configuration file.
+        /// </summary>
+        private void CreateAppHostConfigFile()
+        {
+            try
+            {
+                XmlDocument appHostConfigXml = new XmlDocument();
+
+                if (File.Exists(LocalAppHostConfigFile))
+                {
+                    appHostConfigXml.Load(LocalAppHostConfigFile);
+                }
+                else
+                {
+                    appHostConfigXml.LoadXml(Resources.ApplicationHost);
+                }
+
+                string appHostConfigTemplate = Resources.AppHostTemplate;
+
+                string configContent = appHostConfigTemplate
+                    .Replace("$[SiteName]", this.SiteName)
+                    .Replace("$[SiteId]", this.SiteId.ToString())
+                    .Replace("$[Port]", this.Port.ToString())
+                    .Replace("$[VirtualPath]", this.VirtualPath)
+                    .Replace("$[PhysicalPath]", this.PhysicalPath)
+                    .Replace("$[AppPool]", string.Format("{0}_{1}_{2}", this.SiteName, this.SiteId.ToString(), this.Port.ToString()))
+                    .Replace("$[DirectoryBrowse]", this.EnableDirectoryBrowse.ToString());
+
+                XmlDocument configContentXml = new XmlDocument();
+                configContentXml.LoadXml(configContent);
+
+                XmlNode applicationHostNode = appHostConfigXml.SelectSingleNode(ApplicationHostNodeName);
+
+                if (applicationHostNode != null)
+                {
+                    XmlNodeList applicationPoolsNodes = appHostConfigXml.SelectNodes(ApplicationPoolsNodeName);
+
+                    if (applicationPoolsNodes != null && applicationPoolsNodes.Count > 0)
+                    {
+                        foreach (XmlNode item in applicationPoolsNodes)
+                        {
+                            applicationHostNode.RemoveChild(item);
+                        }
+                    }
+
+                    XmlNode applicationPoolsNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(ApplicationPoolsNodeName), true);
+                    applicationHostNode.AppendChild(applicationPoolsNode);
+
+                    XmlNodeList sitesNodes = appHostConfigXml.SelectNodes(SitesNodeName);
+
+                    if (sitesNodes != null && sitesNodes.Count > 0)
+                    {
+                        foreach (XmlNode item in sitesNodes)
+                        {
+                            applicationHostNode.RemoveChild(item);
+                        }
+                    }
+
+                    XmlNode sitesNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(SitesNodeName), true);
+                    applicationHostNode.AppendChild(sitesNode);
+                }
+                else
+                {
+                    applicationHostNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(ApplicationHostNodeName), true);
+                    appHostConfigXml.DocumentElement.AppendChild(applicationHostNode);
+                }
+
+                XmlNode webServerNode = appHostConfigXml.SelectSingleNode(WebServerNodeName);
+
+                if (webServerNode != null)
+                {
+                    XmlNodeList directoryBrowseNodeNameNodes = appHostConfigXml.SelectNodes(DirectoryBrowseNodeName);
+
+                    if (directoryBrowseNodeNameNodes != null && directoryBrowseNodeNameNodes.Count > 0)
+                    {
+                        foreach (XmlNode item in directoryBrowseNodeNameNodes)
+                        {
+                            webServerNode.RemoveChild(item);
+                        }
+                    }
+
+                    XmlNode directoryBrowseNodeNameNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(DirectoryBrowseNodeName), true);
+                    webServerNode.AppendChild(directoryBrowseNodeNameNode);
+                }
+                else
+                {
+                    webServerNode = appHostConfigXml.ImportNode(configContentXml.SelectSingleNode(WebServerNodeName), true);
+                    appHostConfigXml.DocumentElement.AppendChild(webServerNode);
+                }
+
+                appHostConfigXml.Save(this._appHostConfigFile);
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Removes the application host configuration file.
+        /// </summary>
+        private void RemoveAppHostConfigFile()
+        {
+            try
+            {
+                File.Delete(this._appHostConfigFile);
+            }
+            catch
+            {
+            }
+        }
+
+        /// <summary>
         /// Determines whether the specified path is empty directory.
         /// </summary>
         /// <param name="sourcePath">The path to check.</param>
@@ -760,6 +1031,17 @@ namespace DevLib.Web.Hosting.WebHost20
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Method CheckDisposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.Web.Hosting.WebHost20.WebServer");
+            }
         }
     }
 }

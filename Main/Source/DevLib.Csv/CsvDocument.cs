@@ -526,7 +526,7 @@ namespace DevLib.Csv
 
             DataTable result = new DataTable();
 
-            foreach (var item in this.HeaderColumns)
+            foreach (string item in this.HeaderColumns)
             {
                 result.Columns.Add(item);
             }
@@ -535,7 +535,7 @@ namespace DevLib.Csv
 
             for (int i = startIndex; i < count; i++)
             {
-                var row = this.Table[i];
+                List<string> row = this.Table[i];
 
                 if (row.Count > currentColumnCount)
                 {
@@ -790,7 +790,7 @@ namespace DevLib.Csv
                 writer.Write(newLine);
             }
 
-            foreach (var row in this.Table)
+            foreach (List<string> row in this.Table)
             {
                 string firstColumn = row[0];
 

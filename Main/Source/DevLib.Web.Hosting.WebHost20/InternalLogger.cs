@@ -3,7 +3,7 @@
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Timers
+namespace DevLib.Web.Hosting.WebHost20
 {
     using System;
     using System.Diagnostics;

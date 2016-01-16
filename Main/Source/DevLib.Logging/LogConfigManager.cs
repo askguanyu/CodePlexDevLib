@@ -173,7 +173,7 @@ namespace DevLib.Logging
                 return Path.GetFullPath(filename);
             }
 
-            var parts = filename.Split(Path.DirectorySeparatorChar);
+            string[] parts = filename.Split(Path.DirectorySeparatorChar);
 
             for (int i = 0; i < parts.Length; i++)
             {

@@ -108,9 +108,9 @@ namespace DevLib.TerminalServices
         {
             this.CheckDisposed();
 
-            var results = new List<TerminalServicesSession>();
+            List<TerminalServicesSession> results = new List<TerminalServicesSession>();
 
-            var sessionInfos = NativeMethodsHelper.GetSessionInfos(this.Handle);
+            List<WTS_SESSION_INFO> sessionInfos = NativeMethodsHelper.GetSessionInfos(this.Handle);
 
             foreach (WTS_SESSION_INFO sessionInfo in sessionInfos)
             {
@@ -161,7 +161,7 @@ namespace DevLib.TerminalServices
         {
             this.CheckDisposed();
 
-            var processes = new List<TerminalServicesProcess>();
+            List<TerminalServicesProcess> processes = new List<TerminalServicesProcess>();
 
             NativeMethodsHelper.ForEachProcessInfo(
                 this.Handle,

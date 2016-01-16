@@ -166,7 +166,7 @@ namespace DevLib.ExtensionProperties
 
             List<string> result = new List<string>();
 
-            foreach (var key in this._extensionProperties.Keys)
+            foreach (string key in this._extensionProperties.Keys)
             {
                 result.Add(key);
             }
@@ -264,9 +264,9 @@ namespace DevLib.ExtensionProperties
                     }
                 }
 
-                foreach (var item in this._extensionProperties)
+                foreach (object item in this._extensionProperties.Values)
                 {
-                    IDisposable disposable = item.Value as IDisposable;
+                    IDisposable disposable = item as IDisposable;
 
                     if (disposable != null)
                     {

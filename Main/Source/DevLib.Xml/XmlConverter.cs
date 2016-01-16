@@ -192,9 +192,9 @@ namespace DevLib.Xml
                             return Enum.Parse(targetType, value);
                         }
 
-                        var enumType = Enum.GetUnderlyingType(targetType);
+                        Type enumType = Enum.GetUnderlyingType(targetType);
 
-                        var rawValue = ToObject(value, enumType);
+                        object rawValue = ToObject(value, enumType);
 
                         return Enum.ToObject(targetType, rawValue);
                     }

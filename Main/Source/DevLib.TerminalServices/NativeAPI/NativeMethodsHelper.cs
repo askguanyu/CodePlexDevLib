@@ -76,9 +76,9 @@ namespace DevLib.TerminalServices.NativeAPI
         /// <returns>WINSTATIONINFORMATIONW instance.</returns>
         public static WINSTATIONINFORMATIONW GetWinStationInformation(ITerminalServerHandle server, int sessionId)
         {
-            var retLen = 0;
+            int retLen = 0;
 
-            var wsInfo = new WINSTATIONINFORMATIONW();
+            WINSTATIONINFORMATIONW wsInfo = new WINSTATIONINFORMATIONW();
 
             if (NativeMethods.WinStationQueryInformation(
                 server.Handle,
@@ -101,7 +101,7 @@ namespace DevLib.TerminalServices.NativeAPI
         /// <returns>DateTime instance.</returns>
         public static DateTime? FileTimeToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME fileTime)
         {
-            var sysTime = new SYSTEMTIME();
+            SYSTEMTIME sysTime = new SYSTEMTIME();
 
             if (NativeMethods.FileTimeToSystemTime(ref fileTime, ref sysTime) == 0)
             {
@@ -267,7 +267,7 @@ namespace DevLib.TerminalServices.NativeAPI
 
             try
             {
-                var processInfos = PtrToStructureList<WTS_PROCESS_INFO>(ppProcessInfo, count);
+                List<WTS_PROCESS_INFO> processInfos = PtrToStructureList<WTS_PROCESS_INFO>(ppProcessInfo, count);
 
                 foreach (WTS_PROCESS_INFO processInfo in processInfos)
                 {
@@ -364,11 +364,11 @@ namespace DevLib.TerminalServices.NativeAPI
             switch (family)
             {
                 case AddressFamily.InterNetwork:
-                    var v4Address = new byte[4];
+                    byte[] v4Address = new byte[4];
                     Array.Copy(rawAddress, 2, v4Address, 0, 4);
                     return new IPAddress(v4Address);
                 case AddressFamily.InterNetworkV6:
-                    var v6Address = new byte[16];
+                    byte[] v6Address = new byte[16];
                     Array.Copy(rawAddress, 2, v6Address, 0, 16);
                     return new IPAddress(v6Address);
             }
@@ -386,7 +386,7 @@ namespace DevLib.TerminalServices.NativeAPI
         {
             int retLen;
 
-            var remoteAddress = new WINSTATIONREMOTEADDRESS();
+            WINSTATIONREMOTEADDRESS remoteAddress = new WINSTATIONREMOTEADDRESS();
 
             if (NativeMethods.WinStationQueryInformationRemoteAddress(
                 server.Handle,
@@ -396,7 +396,7 @@ namespace DevLib.TerminalServices.NativeAPI
                 Marshal.SizeOf(typeof(WINSTATIONREMOTEADDRESS)),
                 out retLen) != 0)
             {
-                var ipAddress = ExtractIPAddress(remoteAddress.Family, remoteAddress.Address);
+                IPAddress ipAddress = ExtractIPAddress(remoteAddress.Family, remoteAddress.Address);
 
                 int port = NativeMethods.ntohs((ushort)remoteAddress.Port);
 
@@ -508,7 +508,7 @@ namespace DevLib.TerminalServices.NativeAPI
         /// <returns>Session identifier.</returns>
         public static int? GetActiveConsoleSessionId()
         {
-            var sessionId = NativeMethods.WTSGetActiveConsoleSessionId();
+            int sessionId = NativeMethods.WTSGetActiveConsoleSessionId();
 
             return sessionId == -1 ? (int?)null : sessionId;
         }
@@ -612,15 +612,15 @@ namespace DevLib.TerminalServices.NativeAPI
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
         private static List<T> PtrToStructureList<T>(IntPtr ppList, int count) where T : struct
         {
-            var result = new List<T>();
+            List<T> result = new List<T>();
 
-            var pointer = ppList.ToInt64();
+            long pointer = ppList.ToInt64();
 
-            var sizeOf = Marshal.SizeOf(typeof(T));
+            int sizeOf = Marshal.SizeOf(typeof(T));
 
-            for (var index = 0; index < count; index++)
+            for (int index = 0; index < count; index++)
             {
-                var item = (T)Marshal.PtrToStructure(new IntPtr(pointer), typeof(T));
+                T item = (T)Marshal.PtrToStructure(new IntPtr(pointer), typeof(T));
 
                 result.Add(item);
 

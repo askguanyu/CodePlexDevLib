@@ -164,7 +164,7 @@ namespace DevLib.ModernUI.ComponentModel.Design
         /// <param name="newValue">New value.</param>
         private void ResetProperty(Control control, string propertyName, object newValue)
         {
-            var typeDescriptor = TypeDescriptor.GetProperties(control)[propertyName];
+            PropertyDescriptor typeDescriptor = TypeDescriptor.GetProperties(control)[propertyName];
 
             if (typeDescriptor == null)
             {

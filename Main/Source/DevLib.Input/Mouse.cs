@@ -51,7 +51,7 @@ namespace DevLib.Input
         public static void Down(MouseButton mouseButton)
         {
             int additionalData;
-            var inputFlags = GetInputFlags(mouseButton, false, out additionalData);
+            SendMouseInputFlags inputFlags = GetInputFlags(mouseButton, false, out additionalData);
             SendMouseInput(0, 0, additionalData, inputFlags);
         }
 
@@ -62,7 +62,7 @@ namespace DevLib.Input
         public static void Up(MouseButton mouseButton)
         {
             int additionalData;
-            var inputFlags = GetInputFlags(mouseButton, true, out additionalData);
+            SendMouseInputFlags inputFlags = GetInputFlags(mouseButton, true, out additionalData);
             SendMouseInput(0, 0, additionalData, inputFlags);
         }
 
@@ -153,7 +153,7 @@ namespace DevLib.Input
                 intflags |= NativeMethods.MouseeventfVirtualdesk;
             }
 
-            var mouseInput = new INPUT();
+            INPUT mouseInput = new INPUT();
             mouseInput.Type = NativeMethods.INPUT_MOUSE;
             mouseInput.Data.Mouse.dx = x;
             mouseInput.Data.Mouse.dy = y;
@@ -275,7 +275,7 @@ namespace DevLib.Input
         /// <returns>MouseButtonState instance.</returns>
         private static MouseButtonState GetButtonState(MouseButton mouseButton)
         {
-            var mouseButtonState = MouseButtonState.Released;
+            MouseButtonState mouseButtonState = MouseButtonState.Released;
 
             int virtualKeyCode = 0;
 

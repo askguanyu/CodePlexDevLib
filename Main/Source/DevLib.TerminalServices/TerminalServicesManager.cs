@@ -35,7 +35,7 @@ namespace DevLib.TerminalServices
         {
             get
             {
-                var sessionId = NativeMethodsHelper.GetActiveConsoleSessionId();
+                int? sessionId = NativeMethodsHelper.GetActiveConsoleSessionId();
 
                 return sessionId == null ? null : new TerminalServicesSession(GetLocalServer(), sessionId.Value);
             }
@@ -70,7 +70,7 @@ namespace DevLib.TerminalServices
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
         public static List<TerminalServer> GetServers(string domainName)
         {
-            var servers = new List<TerminalServer>();
+            List<TerminalServer> servers = new List<TerminalServer>();
 
             foreach (WTS_SERVER_INFO serverInfo in NativeMethodsHelper.EnumerateServers(domainName))
             {

@@ -92,7 +92,7 @@ namespace DevLib.Ioc
             {
                 int result = 0;
 
-                foreach (var item in this._registrations.Values)
+                foreach (OrderedDictionary item in this._registrations.Values)
                 {
                     if (item != null)
                     {
@@ -399,9 +399,9 @@ namespace DevLib.Ioc
                     {
                         List<IocRegistrationBuilder> builders = new List<IocRegistrationBuilder>(valueDictionary.Count);
 
-                        foreach (var item in valueDictionary.Values)
+                        foreach (IocRegistrationBuilder item in valueDictionary.Values)
                         {
-                            builders.Add((IocRegistrationBuilder)item);
+                            builders.Add(item);
                         }
 
                         IocRegistrationBuilder builder = builders.FindLast(b => b.HasInstance || !b.IsEvaluated);
@@ -422,11 +422,11 @@ namespace DevLib.Ioc
 
                 if (result == null)
                 {
-                    foreach (var resolveProvider in this._resolvers)
+                    foreach (IResolver resolver in this._resolvers)
                     {
                         try
                         {
-                            result = resolveProvider.Resolve(type);
+                            result = resolver.Resolve(type);
                         }
                         catch (Exception e)
                         {
@@ -512,11 +512,11 @@ namespace DevLib.Ioc
 
                 if (result == null)
                 {
-                    foreach (var resolveProvider in this._resolvers)
+                    foreach (IResolver resolver in this._resolvers)
                     {
                         try
                         {
-                            result = resolveProvider.Resolve(type, name);
+                            result = resolver.Resolve(type, name);
                         }
                         catch (Exception e)
                         {
@@ -598,7 +598,7 @@ namespace DevLib.Ioc
                         }
                     }
 
-                    foreach (var item in result)
+                    foreach (DictionaryEntry item in result)
                     {
                         IDisposable disposable = item.Value as IDisposable;
 
@@ -707,7 +707,7 @@ namespace DevLib.Ioc
 
             lock (((ICollection)this._registrations).SyncRoot)
             {
-                foreach (var item in this._registrations.Values)
+                foreach (OrderedDictionary item in this._registrations.Values)
                 {
                     foreach (IDisposable registrationBuilder in item.Values)
                     {
@@ -917,9 +917,9 @@ namespace DevLib.Ioc
 
                 if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
                 {
-                    foreach (var item in value.Values)
+                    foreach (IocRegistrationBuilder item in value.Values)
                     {
-                        result.Add(((IocRegistrationBuilder)item).GetValue(this));
+                        result.Add(item.GetValue(this));
                     }
                 }
             }
@@ -946,9 +946,9 @@ namespace DevLib.Ioc
 
                 if (this._registrations.TryGetValue(serviceType, out value) && value != null && value.Count > 0)
                 {
-                    foreach (var item in value.Values)
+                    foreach (IocRegistrationBuilder item in value.Values)
                     {
-                        result.Add((TService)((IocRegistrationBuilder)item).GetValue(this));
+                        result.Add((TService)item.GetValue(this));
                     }
                 }
             }
@@ -986,7 +986,7 @@ namespace DevLib.Ioc
 
                 lock (((ICollection)this._registrations).SyncRoot)
                 {
-                    foreach (var item in this._registrations.Values)
+                    foreach (OrderedDictionary item in this._registrations.Values)
                     {
                         foreach (IDisposable registrationBuilder in item.Values)
                         {

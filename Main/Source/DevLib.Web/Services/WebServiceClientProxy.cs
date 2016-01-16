@@ -132,7 +132,7 @@ namespace DevLib.Web.Services
                 {
                     List<MethodInfo> result = new List<MethodInfo>();
 
-                    foreach (var item in this.ObjectType.GetMethods())
+                    foreach (MethodInfo item in this.ObjectType.GetMethods())
                     {
                         if (item.DeclaringType == this.ProxyType)
                         {

@@ -114,9 +114,9 @@ namespace DevLib.Web.Hosting.WebHost20
         }
 
         /// <summary>
-        /// Gets a value indicating whether disable directory listing.
+        /// Gets a value indicating whether directory browsing is enabled or disabled on the Web server.
         /// </summary>
-        public bool DisableDirectoryListing
+        public bool EnableDirectoryBrowse
         {
             get;
             private set;
@@ -141,7 +141,7 @@ namespace DevLib.Web.Hosting.WebHost20
         /// <param name="requireAuthentication">true if require authentication; otherwise, false.</param>
         public void Configure(WebServer server, int port, string virtualPath, string physicalPath, bool requireAuthentication)
         {
-            this.Configure(server, port, virtualPath, physicalPath, requireAuthentication, false);
+            this.Configure(server, port, virtualPath, physicalPath, requireAuthentication, true);
         }
 
         /// <summary>
@@ -152,15 +152,15 @@ namespace DevLib.Web.Hosting.WebHost20
         /// <param name="virtualPath">The virtual path.</param>
         /// <param name="physicalPath">The physical path.</param>
         /// <param name="requireAuthentication">true if require authentication; otherwise, false.</param>
-        /// <param name="disableDirectoryListing">true if disable directory listing; otherwise, false.</param>
-        public void Configure(WebServer server, int port, string virtualPath, string physicalPath, bool requireAuthentication, bool disableDirectoryListing)
+        /// <param name="enableDirectoryBrowse">true to enable directory browsing; otherwise, false.</param>
+        public void Configure(WebServer server, int port, string virtualPath, string physicalPath, bool requireAuthentication, bool enableDirectoryBrowse)
         {
             this._server = server;
             this.Port = port;
             this.InstallPath = null;
             this.VirtualPath = virtualPath;
             this.RequireAuthentication = requireAuthentication;
-            this.DisableDirectoryListing = disableDirectoryListing;
+            this.EnableDirectoryBrowse = enableDirectoryBrowse;
             this._lowerCasedVirtualPath = this.VirtualPath.ToLowerInvariant();
             this.NormalizedVirtualPath = (virtualPath.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? virtualPath : (virtualPath + "/")).ToLowerInvariant();
             this.PhysicalPath = physicalPath;

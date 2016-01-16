@@ -186,7 +186,7 @@ namespace DevLib.Serialization
 
                 string rootNodeName = xmlDocument.LocalName;
 
-                foreach (var item in knownTypes)
+                foreach (Type item in knownTypes)
                 {
                     if (item.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -276,7 +276,7 @@ namespace DevLib.Serialization
 
             string rootNodeName = xmlDocument.LocalName;
 
-            foreach (var item in knownTypes)
+            foreach (Type item in knownTypes)
             {
                 if (item.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase))
                 {

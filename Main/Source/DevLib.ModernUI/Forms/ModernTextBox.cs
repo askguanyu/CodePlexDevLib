@@ -1072,21 +1072,16 @@ namespace DevLib.ModernUI.Forms
             private const int WM_PAINT = 15;
 
             /// <summary>
-            /// Field _drawPrompt.
-            /// </summary>
-            private bool _drawPrompt;
-
-            /// <summary>
             /// Field _promptText.
             /// </summary>
             private string _promptText = string.Empty;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="PromptedTextBox" /> class.
+            /// Initializes a new instance of the <see cref="PromptedTextBox"/> class.
             /// </summary>
             public PromptedTextBox()
             {
-                this._drawPrompt = this.IsNullOrWhiteSpace(this.Text);
+                this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.OptimizedDoubleBuffer, true);
             }
 
             /// <summary>
@@ -1110,6 +1105,17 @@ namespace DevLib.ModernUI.Forms
             }
 
             /// <summary>
+            /// Gets a value indicating whether draw prompt text.
+            /// </summary>
+            public bool IsDrawPrompt
+            {
+                get
+                {
+                    return string.IsNullOrEmpty(this.Text);
+                }
+            }
+
+            /// <summary>
             /// OnPaint method.
             /// </summary>
             /// <param name="e">PaintEventArgs instance.</param>
@@ -1117,7 +1123,7 @@ namespace DevLib.ModernUI.Forms
             {
                 base.OnPaint(e);
 
-                if (this._drawPrompt)
+                if (this.IsDrawPrompt)
                 {
                     this.DrawTextPrompt(e.Graphics);
                 }
@@ -1134,27 +1140,17 @@ namespace DevLib.ModernUI.Forms
             }
 
             /// <summary>
-            /// OnTextChanged method.
-            /// </summary>
-            /// <param name="e">EventArgs instance.</param>
-            protected override void OnTextChanged(EventArgs e)
-            {
-                base.OnTextChanged(e);
-                this._drawPrompt = this.IsNullOrWhiteSpace(this.Text);
-            }
-
-            /// <summary>
             /// WndProc method.
             /// </summary>
             /// <param name="m">A Windows Message object.</param>
             protected override void WndProc(ref Message m)
             {
-                if (((m.Msg == WM_PAINT) || (m.Msg == OCM_COMMAND)) && (this._drawPrompt && !this.GetStyle(ControlStyles.UserPaint)))
+                base.WndProc(ref m);
+
+                if (((m.Msg == WM_PAINT) || (m.Msg == OCM_COMMAND)) && this.IsDrawPrompt && !this.GetStyle(ControlStyles.UserPaint))
                 {
                     this.DrawTextPrompt();
                 }
-
-                base.WndProc(ref m);
             }
 
             /// <summary>
@@ -1174,8 +1170,13 @@ namespace DevLib.ModernUI.Forms
             /// <param name="g">Graphics instance.</param>
             private void DrawTextPrompt(Graphics g)
             {
+                if (this.IsNullOrWhiteSpace(this.PromptText) && this.IsDrawPrompt)
+                {
+                    return;
+                }
+
                 TextFormatFlags flags = TextFormatFlags.NoPadding | TextFormatFlags.EndEllipsis;
-                Rectangle clientRectangle = ClientRectangle;
+                Rectangle clientRectangle = this.ClientRectangle;
 
                 switch (this.TextAlign)
                 {

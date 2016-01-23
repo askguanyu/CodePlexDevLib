@@ -75,6 +75,7 @@ namespace DevLib.ModernUI.Forms
             this.Size = new Size(400, 200);
             this.ShowStatusStrip = false;
             this.ShowBorder = false;
+            base.TopBarHeight = 0;
             this.TopBarHeight = 2;
         }
 
@@ -142,17 +143,10 @@ namespace DevLib.ModernUI.Forms
         [Browsable(true)]
         [DefaultValue(2)]
         [Category(ModernConstants.PropertyCategoryName)]
-        public new int TopBarHeight
+        public new uint TopBarHeight
         {
-            get
-            {
-                return base.TopBarHeight;
-            }
-
-            set
-            {
-                base.TopBarHeight = value;
-            }
+            get;
+            set;
         }
 
         /// <summary>
@@ -390,10 +384,10 @@ namespace DevLib.ModernUI.Forms
         {
             base.OnPaint(e);
 
-            using (SolidBrush brush = new SolidBrush(ModernPaint.GetStyleColor(this.ColorStyle)))
+            using (SolidBrush brush = ModernPaint.GetStyleBrush(this.ColorStyle))
             {
                 e.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
-                e.Graphics.FillRectangle(brush, new Rectangle(0, 0, this._progressWidth, this.TopBarHeight));
+                e.Graphics.FillRectangle(brush, new Rectangle(0, 0, this._progressWidth, (int)this.TopBarHeight));
             }
         }
 
@@ -425,7 +419,7 @@ namespace DevLib.ModernUI.Forms
 
             double percent = this._elapsedTime / this._closeTime;
             this._progressWidth = (int)((double)this.Width * percent);
-            this.Invalidate(new Rectangle(0, 0, this.Width, this.TopBarHeight));
+            this.Invalidate(new Rectangle(0, 0, this.Width, (int)this.TopBarHeight));
 
             if (this._elapsedTime >= this._thresholdTime && this.Opacity > 0.05d)
             {

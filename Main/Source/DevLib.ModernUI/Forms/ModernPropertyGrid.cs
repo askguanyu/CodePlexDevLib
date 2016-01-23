@@ -423,6 +423,8 @@ namespace DevLib.ModernUI.Forms
         [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
         {
+            base.WndProc(ref m);
+
             switch (m.Msg)
             {
                 case WM_SETFOCUS:
@@ -436,8 +438,6 @@ namespace DevLib.ModernUI.Forms
                 default:
                     break;
             }
-
-            base.WndProc(ref m);
         }
 
         /// <summary>

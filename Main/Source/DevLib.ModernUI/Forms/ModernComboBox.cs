@@ -55,11 +55,6 @@ namespace DevLib.ModernUI.Forms
         private string _promptText = string.Empty;
 
         /// <summary>
-        /// Field _drawPrompt.
-        /// </summary>
-        private bool _drawPrompt = false;
-
-        /// <summary>
         /// Field _isHovered.
         /// </summary>
         private bool _isHovered = false;
@@ -83,8 +78,6 @@ namespace DevLib.ModernUI.Forms
 
             base.DrawMode = DrawMode.OwnerDrawFixed;
             base.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            this._drawPrompt = this.SelectedIndex == -1;
 
             this.FontSize = ModernFontSize.Medium;
             this.FontWeight = ModernFontWeight.Regular;
@@ -352,6 +345,17 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets a value indicating whether draw prompt text.
+        /// </summary>
+        public bool IsDrawPrompt
+        {
+            get
+            {
+                return this.SelectedIndex == -1;
+            }
+        }
+
+        /// <summary>
         /// Get preferred size.
         /// </summary>
         /// <param name="proposedSize">Proposed size.</param>
@@ -514,7 +518,7 @@ namespace DevLib.ModernUI.Forms
                 ControlPaint.DrawFocusRectangle(e.Graphics, this.ClientRectangle);
             }
 
-            if (this._drawPrompt)
+            if (this.IsDrawPrompt)
             {
                 this.DrawTextPrompt(e.Graphics);
             }
@@ -701,17 +705,6 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Raises the SelectedIndexChanged event.
-        /// </summary>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        protected override void OnSelectedIndexChanged(EventArgs e)
-        {
-            base.OnSelectedIndexChanged(e);
-            this._drawPrompt = this.SelectedIndex == -1;
-            this.Invalidate();
-        }
-
-        /// <summary>
         /// WndProc method.
         /// </summary>
         /// <param name="m">A Windows Message object.</param>
@@ -720,7 +713,7 @@ namespace DevLib.ModernUI.Forms
         {
             base.WndProc(ref m);
 
-            if (((m.Msg == WM_PAINT) || (m.Msg == OCM_COMMAND)) && this._drawPrompt)
+            if (((m.Msg == WM_PAINT) || (m.Msg == OCM_COMMAND)) && this.IsDrawPrompt)
             {
                 this.DrawTextPrompt();
             }

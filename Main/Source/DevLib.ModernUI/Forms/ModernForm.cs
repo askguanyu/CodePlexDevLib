@@ -101,7 +101,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Field _shadowForm.
         /// </summary>
-        private Form _shadowForm;
+        private ModernShadowBase _shadowForm;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernForm"/> class.
@@ -125,6 +125,9 @@ namespace DevLib.ModernUI.Forms
             this.UseCloseBox = true;
             this.FontSize = 24f;
             this.Controls.Add(this.StatusStrip);
+            this.ShowStatusStrip = false;
+            this.ShowHeader = true;
+            this.MaximumSize = new Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
         }
 
         /// <summary>
@@ -596,7 +599,7 @@ namespace DevLib.ModernUI.Forms
         /// Gets or sets a value indicating whether show status strip.
         /// </summary>
         [Browsable(true)]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         [Category(ModernConstants.PropertyCategoryName)]
         public bool ShowStatusStrip
         {
@@ -626,7 +629,10 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the height of the top bar.
         /// </summary>
-        protected int TopBarHeight
+        [Browsable(true)]
+        [DefaultValue(0)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public uint TopBarHeight
         {
             get;
             set;
@@ -780,6 +786,14 @@ namespace DevLib.ModernUI.Forms
                 Rectangle bounds = new Rectangle(20, 20, this.ClientRectangle.Width - (2 * 20), 40);
                 TextFormatFlags flags = TextFormatFlags.EndEllipsis | this.GetTextFormatFlags();
                 TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.GetDefaultFont(this.FontSize, this.FontWeight), bounds, foreColor, flags);
+            }
+
+            if (this.TopBarHeight > 0)
+            {
+                using (SolidBrush brush = ModernPaint.GetStyleBrush(this.ColorStyle))
+                {
+                    e.Graphics.FillRectangle(brush, new Rectangle(0, 0, this.Width, (int)this.TopBarHeight + (this.ShowBorder ? 1 : 0)));
+                }
             }
 
             if (this.BackImage != null && this.BackImageMaxSize != 0)
@@ -1092,6 +1106,8 @@ namespace DevLib.ModernUI.Forms
                 return;
             }
 
+            base.WndProc(ref m);
+
             switch (m.Msg)
             {
                 case (int)WinApi.Messages.WM_SYSCOMMAND:
@@ -1143,8 +1159,6 @@ namespace DevLib.ModernUI.Forms
                 case (int)WinApi.Messages.WM_DWMCOMPOSITIONCHANGED:
                     break;
             }
-
-            base.WndProc(ref m);
         }
 
         /// <summary>
@@ -1327,7 +1341,6 @@ namespace DevLib.ModernUI.Forms
                 {
                     if (this.WindowState == FormWindowState.Normal)
                     {
-                        this.MaximumSize = new Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
                         this.WindowState = FormWindowState.Maximized;
                     }
                     else
@@ -1369,11 +1382,11 @@ namespace DevLib.ModernUI.Forms
 
             if (this.ShowBorder)
             {
-                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25 - 1, 1 + this.TopBarHeight);
+                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25 - 1, (int)this.TopBarHeight + 1);
             }
             else
             {
-                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25, 0 + this.TopBarHeight);
+                firstControlBoxLocation = new Point(this.ClientRectangle.Width - 25, (int)this.TopBarHeight);
             }
 
             int lastDrawedControlBoxPosition = firstControlBoxLocation.X - 25;
@@ -1405,7 +1418,7 @@ namespace DevLib.ModernUI.Forms
                         continue;
                     }
 
-                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, this.TopBarHeight + (this.ShowBorder ? 1 : 0));
+                    this._controlBoxDictionary[item.Value].Location = new Point(lastDrawedControlBoxPosition, (int)this.TopBarHeight + (this.ShowBorder ? 1 : 0));
                     lastDrawedControlBoxPosition = lastDrawedControlBoxPosition - 25;
                 }
             }
@@ -1441,7 +1454,7 @@ namespace DevLib.ModernUI.Forms
             }
 
             this._shadowForm.Visible = false;
-            this.Owner = this._shadowForm.Owner;
+            this.Owner = this._shadowForm.TargetFormOwner;
             this._shadowForm.Owner = null;
             this._shadowForm.Dispose();
             this._shadowForm = null;

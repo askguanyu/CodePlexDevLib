@@ -80,11 +80,7 @@ namespace DevLib.ModernUI.Forms
             this.TargetForm.Move += this.OnTargetFormMove;
             this.TargetForm.Resize += this.OnTargetFormResize;
 
-            if (this.TargetForm.Owner != null)
-            {
-                this.Owner = this.TargetForm.Owner;
-            }
-
+            this.TargetFormOwner = this.TargetForm.Owner;
             this.TargetForm.Owner = this;
 
             this.MaximizeBox = false;
@@ -94,6 +90,15 @@ namespace DevLib.ModernUI.Forms
             this.FormBorderStyle = FormBorderStyle.None;
 
             this.Bounds = this.GetShadowBounds();
+        }
+
+        /// <summary>
+        /// Gets the target form owner.
+        /// </summary>
+        public Form TargetFormOwner
+        {
+            get;
+            private set;
         }
 
         /// <summary>

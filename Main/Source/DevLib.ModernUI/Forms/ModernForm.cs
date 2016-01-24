@@ -39,6 +39,11 @@ namespace DevLib.ModernUI.Forms
         private const int WS_MINIMIZEBOX = 0x20000;
 
         /// <summary>
+        /// Field ResizeMargin.
+        /// </summary>
+        private const int ResizeMargin = 4;
+
+        /// <summary>
         /// Field _modernColorStyle.
         /// </summary>
         private ModernColorStyle _modernColorStyle = ModernColorStyle.Blue;
@@ -1018,14 +1023,14 @@ namespace DevLib.ModernUI.Forms
                 {
                     if (this.Width - 1 > e.Location.X && e.Location.X > 1 && e.Location.Y > 1 + this.TopBarHeight)
                     {
-                        this.MoveControl();
+                        this.MoveForm();
                     }
                 }
                 else
                 {
                     if (this.Width > e.Location.X && e.Location.X > 0 && e.Location.Y > 0 + this.TopBarHeight)
                     {
-                        this.MoveControl();
+                        this.MoveForm();
                     }
                 }
             }
@@ -1209,7 +1214,7 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// HitTestNCA method.
+        /// Checks cursor point.
         /// </summary>
         /// <param name="hwnd">The hwnd IntPtr.</param>
         /// <param name="wparam">The wparam IntPtr.</param>
@@ -1217,18 +1222,56 @@ namespace DevLib.ModernUI.Forms
         /// <returns>HitTest result.</returns>
         private WinApi.HitTest HitTestNCA(IntPtr hwnd, IntPtr wparam, IntPtr lparam)
         {
-            Point vPoint = new Point((short)lparam, (short)((int)lparam >> 16));
-            int vPadding = Math.Max(this.Padding.Right, this.Padding.Bottom);
+            Point cursorPoint = new Point((short)lparam, (short)((int)lparam >> 16));
 
-            if (this.Resizable)
+            if (this.Resizable && this.WindowState == FormWindowState.Normal)
             {
-                if (this.RectangleToScreen(new Rectangle(this.ClientRectangle.Width - vPadding, this.ClientRectangle.Height - vPadding, vPadding, vPadding)).Contains(vPoint))
+                int padding = Math.Max(this.Padding.Right, this.Padding.Bottom);
+                Point pointToClient = this.PointToClient(cursorPoint);
+                Size clientSize = this.ClientSize;
+
+                if (pointToClient.X >= clientSize.Width - padding && pointToClient.Y >= clientSize.Height - padding && clientSize.Height >= padding)
                 {
-                    return WinApi.HitTest.HTBOTTOMRIGHT;
+                    return this.IsMirrored ? WinApi.HitTest.HTBOTTOMLEFT : WinApi.HitTest.HTBOTTOMRIGHT;
+                }
+
+                if (pointToClient.X <= ResizeMargin && pointToClient.Y >= clientSize.Height - ResizeMargin && clientSize.Height >= ResizeMargin)
+                {
+                    return this.IsMirrored ? WinApi.HitTest.HTBOTTOMRIGHT : WinApi.HitTest.HTBOTTOMLEFT;
+                }
+
+                if (pointToClient.X <= ResizeMargin && pointToClient.Y <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                {
+                    return this.IsMirrored ? WinApi.HitTest.HTTOPRIGHT : WinApi.HitTest.HTTOPLEFT;
+                }
+
+                if (pointToClient.X >= clientSize.Width - ResizeMargin && pointToClient.Y <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                {
+                    return this.IsMirrored ? WinApi.HitTest.HTTOPLEFT : WinApi.HitTest.HTTOPRIGHT;
+                }
+
+                if (pointToClient.Y <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                {
+                    return WinApi.HitTest.HTTOP;
+                }
+
+                if (pointToClient.Y >= clientSize.Height - ResizeMargin && clientSize.Height >= ResizeMargin)
+                {
+                    return WinApi.HitTest.HTBOTTOM;
+                }
+
+                if (pointToClient.X <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                {
+                    return WinApi.HitTest.HTLEFT;
+                }
+
+                if (pointToClient.X >= clientSize.Width - ResizeMargin && clientSize.Height >= ResizeMargin)
+                {
+                    return WinApi.HitTest.HTRIGHT;
                 }
             }
 
-            if (this.RectangleToScreen(new Rectangle(0, 0, this.ClientRectangle.Width, 50)).Contains(vPoint))
+            if (this.RectangleToScreen(new Rectangle(0, 0, this.ClientRectangle.Width, 50)).Contains(cursorPoint))
             {
                 return WinApi.HitTest.HTCAPTION;
             }
@@ -1237,10 +1280,10 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Moves the control.
+        /// Moves the current winform.
         /// </summary>
         [SecuritySafeCritical]
-        private void MoveControl()
+        private void MoveForm()
         {
             WinApi.ReleaseCapture();
             WinApi.SendMessage(this.Handle, (int)WinApi.Messages.WM_NCLBUTTONDOWN, (int)WinApi.HitTest.HTCAPTION, 0);

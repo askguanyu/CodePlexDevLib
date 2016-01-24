@@ -26,7 +26,7 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Field StatusStrip.
         /// </summary>
-        protected readonly Panel StatusStrip = new Panel() { Height = 20, BackColor = Color.Transparent, ForeColor = Color.WhiteSmoke, Visible = true };
+        protected readonly Panel StatusStrip = new Panel() { Height = 20, BackColor = Color.Transparent, ForeColor = Color.WhiteSmoke, Visible = false };
 
         /// <summary>
         /// Field CS_DROPSHADOW.
@@ -127,6 +127,7 @@ namespace DevLib.ModernUI.Forms
             this.Controls.Add(this.StatusStrip);
             this.ShowStatusStrip = false;
             this.ShowHeader = true;
+            this.TopBarHeight = 4;
             this.MaximumSize = new Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
         }
 

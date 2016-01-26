@@ -232,6 +232,17 @@ namespace DevLib.ModernUI.Drawing
         }
 
         /// <summary>
+        /// Gets Font of GroupBox.
+        /// </summary>
+        /// <param name="size">Modern Font size.</param>
+        /// <param name="weight">Modern Font weight.</param>
+        /// <returns>Font instance.</returns>
+        public static Font GroupBox(ModernFontSize size, ModernFontWeight weight)
+        {
+            return GetDefaultFont(size, weight);
+        }
+
+        /// <summary>
         /// Gets Font of Button.
         /// </summary>
         /// <param name="size">Modern Font size.</param>

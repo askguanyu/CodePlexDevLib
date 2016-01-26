@@ -864,7 +864,7 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            if (this.ShowBorder && this.WindowState != FormWindowState.Maximized)
+            if (this.ShowBorder && this.WindowState == FormWindowState.Normal)
             {
                 Color borderColor = ModernPaint.GetStyleColor(this.ColorStyle);
 
@@ -875,8 +875,8 @@ namespace DevLib.ModernUI.Forms
                         new[]
                         {
                             new Point(0, 0),
-                            new Point(0, this.Height),
-                            new Point(this.Width - 1, this.Height),
+                            new Point(0, this.Height - 1),
+                            new Point(this.Width - 1, this.Height - 1),
                             new Point(this.Width - 1, 0),
                             new Point(0, 0)
                         });

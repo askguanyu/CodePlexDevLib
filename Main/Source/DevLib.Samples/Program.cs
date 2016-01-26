@@ -2180,11 +2180,11 @@ namespace DevLib.Samples
 
             WcfClientUtilities.SaveGeneratedAssemblyFile = true;
 
-            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new[] { typeof(IWcfTest), typeof(IWcfAnotherTest) }, WcfBinding.BasicHttp, "http://127.0.0.1:6001/WcfTest", true);
+            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new[] { typeof(IWcfTest), typeof(IWcfAnotherTest) }, WcfBinding.BasicHttp, 6001,"WcfTest", true);
 
             var client0 = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "client0.dll", true).GetPerSessionThrowableProxy();
 
-            //var client0 = WcfClientProxy<IWcfTest>.GetPerCallThrowableInstance("http://127.0.0.1:6001/WcfTest");
+            //var client0 = WcfClientProxy<IWcfTest>.GetPerCallThrowableInstance(WcfBinding.BasicHttp, "127.0.0.1", 6001, "WcfTest");
 
             client0.AsIWcfClientBase().SendingRequest += (s, e) =>
             {

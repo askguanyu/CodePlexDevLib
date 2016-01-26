@@ -83,6 +83,9 @@ namespace DevLib.Samples
             this.modernTreeView1 = new DevLib.ModernUI.Forms.ModernTreeView();
             this.modernPropertyGrid1 = new DevLib.ModernUI.Forms.ModernPropertyGrid();
             this.modernTabPage5 = new DevLib.ModernUI.Forms.ModernTabPage();
+            this.modernGroupBox1 = new DevLib.ModernUI.Forms.ModernGroupBox();
+            this.modernLabel3 = new DevLib.ModernUI.Forms.ModernLabel();
+            this.modernLabel2 = new DevLib.ModernUI.Forms.ModernLabel();
             this.modernTextBox2 = new DevLib.ModernUI.Forms.ModernTextBox();
             this.modernProgressSpinner1 = new DevLib.ModernUI.Forms.ModernProgressSpinner();
             this.modernLabel1 = new DevLib.ModernUI.Forms.ModernLabel();
@@ -102,6 +105,7 @@ namespace DevLib.Samples
             this.splitContainer1.SuspendLayout();
             this.modernTabPage4.SuspendLayout();
             this.modernTabPage5.SuspendLayout();
+            this.modernGroupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // StatusStrip
@@ -625,6 +629,7 @@ namespace DevLib.Samples
             // 
             // modernTabPage5
             // 
+            this.modernTabPage5.Controls.Add(this.modernGroupBox1);
             this.modernTabPage5.Controls.Add(this.modernTextBox2);
             this.modernTabPage5.HorizontalScrollBarSize = 10;
             this.modernTabPage5.Location = new System.Drawing.Point(4, 38);
@@ -637,10 +642,48 @@ namespace DevLib.Samples
             this.modernTabPage5.UseVerticalBarColor = true;
             this.modernTabPage5.VerticalScrollBarSize = 10;
             // 
+            // modernGroupBox1
+            // 
+            this.modernGroupBox1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.modernGroupBox1.Controls.Add(this.modernLabel3);
+            this.modernGroupBox1.Controls.Add(this.modernLabel2);
+            this.modernGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.modernGroupBox1.FontSize = DevLib.ModernUI.Drawing.ModernFontSize.Small;
+            this.modernGroupBox1.FontWeight = DevLib.ModernUI.Drawing.ModernFontWeight.Bold;
+            this.modernGroupBox1.HeaderHeight = ((uint)(22u));
+            this.modernGroupBox1.Location = new System.Drawing.Point(335, 24);
+            this.modernGroupBox1.Name = "modernGroupBox1";
+            this.modernGroupBox1.Padding = new System.Windows.Forms.Padding(0, 23, 0, 1);
+            this.modernGroupBox1.Size = new System.Drawing.Size(249, 245);
+            this.modernGroupBox1.TabIndex = 3;
+            this.modernGroupBox1.TabStop = false;
+            this.modernGroupBox1.Text = "modernGroupBox1";
+            this.modernGroupBox1.UseStyleColors = false;
+            // 
+            // modernLabel3
+            // 
+            this.modernLabel3.AutoSize = true;
+            this.modernLabel3.Location = new System.Drawing.Point(116, 113);
+            this.modernLabel3.Name = "modernLabel3";
+            this.modernLabel3.Size = new System.Drawing.Size(94, 19);
+            this.modernLabel3.TabIndex = 1;
+            this.modernLabel3.Text = "modernLabel3";
+            this.modernLabel3.UseStyleColors = false;
+            // 
+            // modernLabel2
+            // 
+            this.modernLabel2.AutoSize = true;
+            this.modernLabel2.Location = new System.Drawing.Point(82, 62);
+            this.modernLabel2.Name = "modernLabel2";
+            this.modernLabel2.Size = new System.Drawing.Size(94, 19);
+            this.modernLabel2.TabIndex = 0;
+            this.modernLabel2.Text = "modernLabel2";
+            this.modernLabel2.UseStyleColors = false;
+            // 
             // modernTextBox2
             // 
             this.modernTextBox2.Lines = new string[0];
-            this.modernTextBox2.Location = new System.Drawing.Point(120, 99);
+            this.modernTextBox2.Location = new System.Drawing.Point(56, 24);
             this.modernTextBox2.MaxLength = 2147483647;
             this.modernTextBox2.Name = "modernTextBox2";
             this.modernTextBox2.PasswordChar = '\0';
@@ -732,6 +775,7 @@ namespace DevLib.Samples
             this.Controls.Add(this.modernButton1);
             this.Controls.Add(this.modernToggle1);
             this.Name = "DemoForm";
+            this.ShowStatusStrip = true;
             this.StyleManager = this.modernStyleManager1;
             this.Text = "DemoForm";
             this.Controls.SetChildIndex(this.modernToggle1, 0);
@@ -757,6 +801,8 @@ namespace DevLib.Samples
             this.modernTabPage4.ResumeLayout(false);
             this.modernTabPage4.PerformLayout();
             this.modernTabPage5.ResumeLayout(false);
+            this.modernGroupBox1.ResumeLayout(false);
+            this.modernGroupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -802,5 +848,8 @@ namespace DevLib.Samples
         private WinForms.PerformanceChart performanceChart1;
         private ModernTabPage modernTabPage5;
         private ModernTextBox modernTextBox2;
+        private ModernGroupBox modernGroupBox1;
+        private ModernLabel modernLabel3;
+        private ModernLabel modernLabel2;
     }
 }

@@ -100,13 +100,14 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, SyncRootClientBase, remoteUri, fromCaching);
         }
@@ -131,13 +132,14 @@ namespace DevLib.ServiceModel
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(string endpointConfigurationName, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, SyncRootClientBase, endpointConfigurationName, remoteUri, fromCaching);
         }
@@ -161,13 +163,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(Binding binding, string remoteHost, int remotePort)
+        public static TChannel GetClientBaseInstance(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             CheckBindingInstance(binding);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(binding, remoteUri);
         }
@@ -193,14 +196,15 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetClientBaseInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetClientBaseInstance(Type bindingType, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckBindingType(bindingType);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientClientBaseClassBuilder<TChannel>>(ClientBaseInstanceDictionary, SyncRootClientBase, bindingType, remoteUri, fromCaching);
         }
@@ -233,13 +237,14 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, SyncRootPerCallThrowable, remoteUri, fromCaching);
         }
@@ -264,13 +269,14 @@ namespace DevLib.ServiceModel
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, SyncRootPerCallThrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
@@ -295,13 +301,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(Binding binding, string remoteHost, int remotePort)
+        public static TChannel GetPerCallThrowableInstance(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             CheckBindingInstance(binding);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
@@ -327,14 +334,15 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallThrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallThrowableInstance(Type bindingType, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckBindingType(bindingType);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallThrowableClassBuilder<TChannel>>(PerCallThrowableInstanceDictionary, SyncRootPerCallThrowable, bindingType, remoteUri, fromCaching);
         }
@@ -367,13 +375,14 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, SyncRootPerCallUnthrowable, remoteUri, fromCaching);
         }
@@ -398,13 +407,14 @@ namespace DevLib.ServiceModel
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, SyncRootPerCallUnthrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
@@ -429,13 +439,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(Binding binding, string remoteHost, int remotePort)
+        public static TChannel GetPerCallUnthrowableInstance(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             CheckBindingInstance(binding);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
@@ -461,14 +472,15 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerCallUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerCallUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckBindingType(bindingType);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerCallUnthrowableClassBuilder<TChannel>>(PerCallUnthrowableInstanceDictionary, SyncRootPerCallUnthrowable, bindingType, remoteUri, fromCaching);
         }
@@ -501,13 +513,14 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, SyncRootPerSessionThrowable, remoteUri, fromCaching);
         }
@@ -532,13 +545,14 @@ namespace DevLib.ServiceModel
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, SyncRootPerSessionThrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
@@ -563,13 +577,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteHost, int remotePort)
+        public static TChannel GetPerSessionThrowableInstance(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             CheckBindingInstance(binding);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
@@ -595,14 +610,15 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionThrowableInstance(Type bindingType, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckBindingType(bindingType);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionThrowableClassBuilder<TChannel>>(PerSessionThrowableInstanceDictionary, SyncRootPerSessionThrowable, bindingType, remoteUri, fromCaching);
         }
@@ -635,13 +651,14 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, SyncRootPerSessionUnthrowable, remoteUri, fromCaching);
         }
@@ -666,13 +683,14 @@ namespace DevLib.ServiceModel
         /// <param name="endpointConfigurationName">The name of the endpoint in the application configuration file.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(string endpointConfigurationName, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, SyncRootPerSessionUnthrowable, endpointConfigurationName, remoteUri, fromCaching);
         }
@@ -697,13 +715,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteHost, int remotePort)
+        public static TChannel GetPerSessionUnthrowableInstance(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             CheckBindingInstance(binding);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(binding, remoteUri);
         }
@@ -729,14 +748,15 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <param name="fromCaching">Whether get instance from caching or not.</param>
         /// <returns>Instance of a ClientBase derived class.</returns>
-        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, bool fromCaching = true)
+        public static TChannel GetPerSessionUnthrowableInstance(Type bindingType, string remoteHost, int remotePort, string path = null, bool fromCaching = true)
         {
             CheckBindingType(bindingType);
             CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, typeof(TChannel).FullName).ToString();
+            string remoteUri = BuildUri<TChannel>(remoteHost, remotePort, path);
 
             return GetInstance<WcfClientPerSessionUnthrowableClassBuilder<TChannel>>(PerSessionUnthrowableInstanceDictionary, SyncRootPerSessionUnthrowable, bindingType, remoteUri, fromCaching);
         }
@@ -910,6 +930,42 @@ namespace DevLib.ServiceModel
             Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
             return (TChannel)Activator.CreateInstance(type, binding, new EndpointAddress(remoteUri));
+        }
+
+        /// <summary>
+        /// Builds the URI.
+        /// </summary>
+        /// <typeparam name="T">The type of the channel.</typeparam>
+        /// <param name="host">The host.</param>
+        /// <param name="port">The port.</param>
+        /// <param name="path">The path.</param>
+        /// <returns>Uri string.</returns>
+        private static string BuildUri<T>(string host, int port, string path)
+        {
+            return new UriBuilder(Uri.UriSchemeHttp, host, port, typeof(T).FullName + (IsNullOrWhiteSpace(path) ? null : "/" + path.Trim('/'))).ToString();
+        }
+
+        /// <summary>
+        /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        /// <returns>true if the value parameter is null or String.Empty, or if value consists exclusively of white-space characters.</returns>
+        private static bool IsNullOrWhiteSpace(string value)
+        {
+            if (value == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (!char.IsWhiteSpace(value[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

@@ -127,17 +127,18 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(string assemblyFile, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(string assemblyFile, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(assemblyFile, port);
+            this.Initialize(assemblyFile, port, path);
 
             if (openNow)
             {
@@ -168,10 +169,11 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(string assemblyFile, string configFile, int port, bool openNow = false)
+        public WcfServiceHost(string assemblyFile, string configFile, int port, string path = null, bool openNow = false)
         {
-            this.Initialize(assemblyFile, configFile, port);
+            this.Initialize(assemblyFile, configFile, port, path);
 
             if (openNow)
             {
@@ -209,17 +211,18 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(string assemblyFile, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(string assemblyFile, Type bindingType, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(assemblyFile, bindingType, port);
+            this.Initialize(assemblyFile, bindingType, port, path);
 
             if (openNow)
             {
@@ -257,17 +260,18 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(string assemblyFile, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(string assemblyFile, Binding binding, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(assemblyFile, binding, port);
+            this.Initialize(assemblyFile, binding, port, path);
 
             if (openNow)
             {
@@ -307,17 +311,18 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(string assemblyFile, Type[] contractTypes, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(string assemblyFile, Type[] contractTypes, Type bindingType, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(assemblyFile, contractTypes, bindingType, port);
+            this.Initialize(assemblyFile, contractTypes, bindingType, port, path);
 
             if (openNow)
             {
@@ -357,17 +362,18 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(string assemblyFile, Type[] contractTypes, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(string assemblyFile, Type[] contractTypes, Binding binding, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(assemblyFile, contractTypes, binding, port);
+            this.Initialize(assemblyFile, contractTypes, binding, port, path);
 
             if (openNow)
             {
@@ -403,17 +409,18 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(Type serviceType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(Type serviceType, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(serviceType, port);
+            this.Initialize(serviceType, port, path);
 
             if (openNow)
             {
@@ -444,10 +451,11 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(Type serviceType, string configFile, int port, bool openNow = false)
+        public WcfServiceHost(Type serviceType, string configFile, int port, string path = null, bool openNow = false)
         {
-            this.Initialize(serviceType, configFile, port);
+            this.Initialize(serviceType, configFile, port, path);
 
             if (openNow)
             {
@@ -485,17 +493,18 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(Type serviceType, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(Type serviceType, Type bindingType, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(serviceType, bindingType, port);
+            this.Initialize(serviceType, bindingType, port, path);
 
             if (openNow)
             {
@@ -533,17 +542,18 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(Type serviceType, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(Type serviceType, Binding binding, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(serviceType, binding, port);
+            this.Initialize(serviceType, binding, port, path);
 
             if (openNow)
             {
@@ -583,17 +593,18 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(Type serviceType, Type[] contractTypes, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(Type serviceType, Type[] contractTypes, Type bindingType, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(serviceType, contractTypes, bindingType, port);
+            this.Initialize(serviceType, contractTypes, bindingType, port, path);
 
             if (openNow)
             {
@@ -633,17 +644,18 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(Type serviceType, Type[] contractTypes, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(Type serviceType, Type[] contractTypes, Binding binding, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(serviceType, contractTypes, binding, port);
+            this.Initialize(serviceType, contractTypes, binding, port, path);
 
             if (openNow)
             {
@@ -679,17 +691,18 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(object singletonInstance, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(object singletonInstance, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(singletonInstance, port);
+            this.Initialize(singletonInstance, port, path);
 
             if (openNow)
             {
@@ -720,10 +733,11 @@ namespace DevLib.ServiceModel
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
-        public WcfServiceHost(object singletonInstance, string configFile, int port, bool openNow = false)
+        public WcfServiceHost(object singletonInstance, string configFile, int port, string path = null, bool openNow = false)
         {
-            this.Initialize(singletonInstance, configFile, port);
+            this.Initialize(singletonInstance, configFile, port, path);
 
             if (openNow)
             {
@@ -761,17 +775,18 @@ namespace DevLib.ServiceModel
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(object singletonInstance, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(object singletonInstance, Type bindingType, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(singletonInstance, bindingType, port);
+            this.Initialize(singletonInstance, bindingType, port, path);
 
             if (openNow)
             {
@@ -809,17 +824,18 @@ namespace DevLib.ServiceModel
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(object singletonInstance, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(object singletonInstance, Binding binding, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(singletonInstance, binding, port);
+            this.Initialize(singletonInstance, binding, port, path);
 
             if (openNow)
             {
@@ -859,17 +875,18 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(object singletonInstance, Type[] contractTypes, Type bindingType, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(object singletonInstance, Type[] contractTypes, Type bindingType, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(singletonInstance, contractTypes, bindingType, port);
+            this.Initialize(singletonInstance, contractTypes, bindingType, port, path);
 
             if (openNow)
             {
@@ -909,17 +926,18 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
+        /// <param name="path">The BaseAddress Uri path.</param>
         /// <param name="openNow">true if immediately open wcf service; otherwise, false.</param>
         /// <param name="setBindingAction">A delegate to configure Binding.</param>
         /// <param name="setServiceCredentialsAction">A delegate to configure ServiceCredentials.</param>
         /// <param name="setDataContractResolverAction">A delegate to configure DataContractResolverAction.</param>
-        public WcfServiceHost(object singletonInstance, Type[] contractTypes, Binding binding, int port, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
+        public WcfServiceHost(object singletonInstance, Type[] contractTypes, Binding binding, int port, string path = null, bool openNow = false, Action<Binding> setBindingAction = null, Action<ServiceCredentials> setServiceCredentialsAction = null, Action<DataContractSerializerOperationBehavior> setDataContractResolverAction = null)
         {
             this.SetBindingAction = setBindingAction;
             this.SetServiceCredentialsAction = setServiceCredentialsAction;
             this.SetDataContractResolverAction = setDataContractResolverAction;
 
-            this.Initialize(singletonInstance, contractTypes, binding, port);
+            this.Initialize(singletonInstance, contractTypes, binding, port, path);
 
             if (openNow)
             {
@@ -1062,7 +1080,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(string assemblyFile, int port, string path)
         {
             this.CheckAssemblyFile(assemblyFile);
             this.CheckPort(port);
@@ -1080,7 +1099,7 @@ namespace DevLib.ServiceModel
 
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._bindingType = typeof(BasicHttpBinding);
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
 
             this._isInitialized = true;
         }
@@ -1111,7 +1130,8 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, string configFile, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(string assemblyFile, string configFile, int port, string path)
         {
             this.CheckAssemblyFile(assemblyFile);
             this.CheckConfigFile(configFile);
@@ -1130,7 +1150,7 @@ namespace DevLib.ServiceModel
 
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._configFile = Path.GetFullPath(configFile);
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
             this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
 
             this._isInitialized = true;
@@ -1161,7 +1181,8 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, Type bindingType, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(string assemblyFile, Type bindingType, int port, string path)
         {
             this.CheckAssemblyFile(assemblyFile);
             this.CheckBindingType(bindingType);
@@ -1180,7 +1201,7 @@ namespace DevLib.ServiceModel
 
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._bindingType = bindingType;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
 
             this._isInitialized = true;
         }
@@ -1210,7 +1231,8 @@ namespace DevLib.ServiceModel
         /// <param name="assemblyFile">Wcf service assembly file.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, Binding binding, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(string assemblyFile, Binding binding, int port, string path)
         {
             this.CheckAssemblyFile(assemblyFile);
             this.CheckBindingInstance(binding);
@@ -1229,7 +1251,7 @@ namespace DevLib.ServiceModel
 
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._binding = binding;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
 
             this._isInitialized = true;
         }
@@ -1263,7 +1285,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, Type[] contractTypes, Type bindingType, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(string assemblyFile, Type[] contractTypes, Type bindingType, int port, string path)
         {
             this.CheckAssemblyFile(assemblyFile);
             this.CheckBindingType(bindingType);
@@ -1273,7 +1296,7 @@ namespace DevLib.ServiceModel
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._contractTypes = contractTypes;
             this._bindingType = bindingType;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractTypes[0].FullName).ToString();
+            this._baseAddress = this.BuildUri(port, contractTypes[0].FullName, path);
 
             this._isInitialized = true;
         }
@@ -1307,7 +1330,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(string assemblyFile, Type[] contractTypes, Binding binding, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(string assemblyFile, Type[] contractTypes, Binding binding, int port, string path)
         {
             this.CheckAssemblyFile(assemblyFile);
             this.CheckContractTypes(contractTypes);
@@ -1317,7 +1341,7 @@ namespace DevLib.ServiceModel
             this._assemblyFile = Path.GetFullPath(assemblyFile);
             this._contractTypes = contractTypes;
             this._binding = binding;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractTypes[0].FullName).ToString();
+            this._baseAddress = this.BuildUri(port, contractTypes[0].FullName, path);
 
             this._isInitialized = true;
         }
@@ -1344,7 +1368,8 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(Type serviceType, int port, string path)
         {
             this.CheckServiceType(serviceType);
             this.CheckPort(port);
@@ -1362,7 +1387,7 @@ namespace DevLib.ServiceModel
 
             this._serviceType = serviceType;
             this._bindingType = typeof(BasicHttpBinding);
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
 
             this._isInitialized = true;
         }
@@ -1393,7 +1418,8 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, string configFile, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(Type serviceType, string configFile, int port, string path)
         {
             this.CheckServiceType(serviceType);
             this.CheckConfigFile(configFile);
@@ -1412,7 +1438,7 @@ namespace DevLib.ServiceModel
 
             this._serviceType = serviceType;
             this._configFile = Path.GetFullPath(configFile);
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
             this._tempConfigFile = this.GetTempWcfConfigFile(this._configFile, this._baseAddress);
 
             this._isInitialized = true;
@@ -1443,7 +1469,8 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, Type bindingType, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(Type serviceType, Type bindingType, int port, string path)
         {
             this.CheckServiceType(serviceType);
             this.CheckBindingType(bindingType);
@@ -1462,7 +1489,7 @@ namespace DevLib.ServiceModel
 
             this._serviceType = serviceType;
             this._bindingType = bindingType;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
 
             this._isInitialized = true;
         }
@@ -1492,7 +1519,8 @@ namespace DevLib.ServiceModel
         /// <param name="serviceType">Wcf service type.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, Binding binding, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(Type serviceType, Binding binding, int port, string path)
         {
             this.CheckServiceType(serviceType);
             this.CheckBindingInstance(binding);
@@ -1511,7 +1539,7 @@ namespace DevLib.ServiceModel
 
             this._serviceType = serviceType;
             this._binding = binding;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName).ToString();
+            this._baseAddress = this.BuildUri(port, contractName, path);
 
             this._isInitialized = true;
         }
@@ -1545,7 +1573,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, Type[] contractTypes, Type bindingType, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(Type serviceType, Type[] contractTypes, Type bindingType, int port, string path)
         {
             this.CheckServiceType(serviceType);
             this.CheckContractTypes(contractTypes);
@@ -1555,7 +1584,7 @@ namespace DevLib.ServiceModel
             this._serviceType = serviceType;
             this._contractTypes = contractTypes;
             this._bindingType = bindingType;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractTypes[0].FullName).ToString();
+            this._baseAddress = this.BuildUri(port, contractTypes[0].FullName, path);
 
             this._isInitialized = true;
         }
@@ -1589,7 +1618,8 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(Type serviceType, Type[] contractTypes, Binding binding, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(Type serviceType, Type[] contractTypes, Binding binding, int port, string path)
         {
             this.CheckServiceType(serviceType);
             this.CheckContractTypes(contractTypes);
@@ -1599,7 +1629,7 @@ namespace DevLib.ServiceModel
             this._serviceType = serviceType;
             this._contractTypes = contractTypes;
             this._binding = binding;
-            this._baseAddress = new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractTypes[0].FullName).ToString();
+            this._baseAddress = this.BuildUri(port, contractTypes[0].FullName, path);
 
             this._isInitialized = true;
         }
@@ -1623,13 +1653,14 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(object singletonInstance, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(object singletonInstance, int port, string path)
         {
             this.CheckServiceInstance(singletonInstance);
 
             this._serviceInstance = singletonInstance;
 
-            this.Initialize(singletonInstance.GetType(), port);
+            this.Initialize(singletonInstance.GetType(), port, path);
         }
 
         /// <summary>
@@ -1653,13 +1684,14 @@ namespace DevLib.ServiceModel
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="configFile">Wcf service config file.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(object singletonInstance, string configFile, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(object singletonInstance, string configFile, int port, string path)
         {
             this.CheckServiceInstance(singletonInstance);
 
             this._serviceInstance = singletonInstance;
 
-            this.Initialize(singletonInstance.GetType(), configFile, port);
+            this.Initialize(singletonInstance.GetType(), configFile, port, path);
         }
 
         /// <summary>
@@ -1683,13 +1715,14 @@ namespace DevLib.ServiceModel
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(object singletonInstance, Type bindingType, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(object singletonInstance, Type bindingType, int port, string path)
         {
             this.CheckServiceInstance(singletonInstance);
 
             this._serviceInstance = singletonInstance;
 
-            this.Initialize(singletonInstance.GetType(), bindingType, port);
+            this.Initialize(singletonInstance.GetType(), bindingType, port, path);
         }
 
         /// <summary>
@@ -1713,13 +1746,14 @@ namespace DevLib.ServiceModel
         /// <param name="singletonInstance">The instance of the hosted service.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(object singletonInstance, Binding binding, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(object singletonInstance, Binding binding, int port, string path)
         {
             this.CheckServiceInstance(singletonInstance);
 
             this._serviceInstance = singletonInstance;
 
-            this.Initialize(singletonInstance.GetType(), binding, port);
+            this.Initialize(singletonInstance.GetType(), binding, port, path);
         }
 
         /// <summary>
@@ -1745,13 +1779,14 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(object singletonInstance, Type[] contractTypes, Type bindingType, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(object singletonInstance, Type[] contractTypes, Type bindingType, int port, string path)
         {
             this.CheckServiceInstance(singletonInstance);
 
             this._serviceInstance = singletonInstance;
 
-            this.Initialize(singletonInstance.GetType(), contractTypes, bindingType, port);
+            this.Initialize(singletonInstance.GetType(), contractTypes, bindingType, port, path);
         }
 
         /// <summary>
@@ -1777,13 +1812,14 @@ namespace DevLib.ServiceModel
         /// <param name="contractTypes">The contract types.</param>
         /// <param name="binding">The <see cref="T:System.ServiceModel.Channels.Binding" /> for the endpoint.</param>
         /// <param name="port">Wcf service address port.</param>
-        public void Initialize(object singletonInstance, Type[] contractTypes, Binding binding, int port)
+        /// <param name="path">The BaseAddress Uri path.</param>
+        public void Initialize(object singletonInstance, Type[] contractTypes, Binding binding, int port, string path)
         {
             this.CheckServiceInstance(singletonInstance);
 
             this._serviceInstance = singletonInstance;
 
-            this.Initialize(singletonInstance.GetType(), contractTypes, binding, port);
+            this.Initialize(singletonInstance.GetType(), contractTypes, binding, port, path);
         }
 
         /// <summary>
@@ -2438,6 +2474,18 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Builds the URI.
+        /// </summary>
+        /// <param name="port">The port.</param>
+        /// <param name="contractName">Name of the contract.</param>
+        /// <param name="path">The path.</param>
+        /// <returns>Uri string.</returns>
+        private string BuildUri(int port, string contractName, string path)
+        {
+            return new UriBuilder(Uri.UriSchemeHttp, "localhost", port, contractName + (this.IsNullOrWhiteSpace(path) ? null : "/" + path.Trim('/'))).ToString();
+        }
+
+        /// <summary>
         /// Clean up temp wcf config file.
         /// </summary>
         private void CleanTempWcfConfigFile()
@@ -2608,6 +2656,29 @@ namespace DevLib.ServiceModel
             {
                 throw new InvalidOperationException("WcfServiceHost is not initialized.");
             }
+        }
+
+        /// <summary>
+        /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        /// <returns>true if the value parameter is null or String.Empty, or if value consists exclusively of white-space characters.</returns>
+        private bool IsNullOrWhiteSpace(string value)
+        {
+            if (value == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (!char.IsWhiteSpace(value[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

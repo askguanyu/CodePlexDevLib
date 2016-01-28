@@ -910,6 +910,9 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            string astring = "PO:\t{0}\nDate:\t{1}";
+            var bs = string.Format(astring, "a", "b");
+
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
             var privateKey = rsa.ExportParameters(true);
             var publicKey = rsa.ExportParameters(false);

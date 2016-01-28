@@ -7,8 +7,10 @@ namespace DevLib.ExtensionMethods
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// String Extensions.
@@ -16,14 +18,36 @@ namespace DevLib.ExtensionMethods
     public static class StringExtensions
     {
         /// <summary>
-        /// Formats the value with the parameters using string.Format.
+        /// Replaces the format item in a specified string with the string representation of a corresponding object in a specified array.
         /// </summary>
-        /// <param name = "source">The input string.</param>
-        /// <param name = "parameters">The parameters.</param>
-        /// <returns>The formatted string.</returns>
-        public static string FormatWith(this string source, params object[] parameters)
+        /// <param name = "source">A composite format string.</param>
+        /// <param name = "args">An object array that contains zero or more objects to format.</param>
+        /// <returns>A copy of format in which the format items have been replaced by the string representation of the corresponding objects in args.</returns>
+        public static string FormatWith(this string source, params object[] args)
         {
-            return string.Format(source, parameters);
+            return string.Format(source, args);
+        }
+
+        /// <summary>
+        /// Replaces the format item in a specified string with the string representation of a corresponding object in a specified array.
+        /// </summary>
+        /// <param name = "source">A composite format string.</param>
+        /// <param name = "args">An object array that contains zero or more objects to format.</param>
+        /// <returns>A copy of format in which the format items have been replaced by the string representation of the corresponding objects in args.</returns>
+        public static string FormatInvariantCultureWith(this string source, params object[] args)
+        {
+            return string.Format(CultureInfo.InvariantCulture, source, args);
+        }
+
+        /// <summary>
+        /// Replaces the format item in a specified string with the string representation of a corresponding object in a specified array.
+        /// </summary>
+        /// <param name = "source">A composite format string.</param>
+        /// <param name = "args">An object array that contains zero or more objects to format.</param>
+        /// <returns>A copy of format in which the format items have been replaced by the string representation of the corresponding objects in args.</returns>
+        public static string FormatCurrentCultureWith(this string source, params object[] args)
+        {
+            return string.Format(CultureInfo.CurrentCulture, source, args);
         }
 
         /// <summary>
@@ -964,6 +988,26 @@ namespace DevLib.ExtensionMethods
 
                 return result.ToString();
             }
+        }
+
+        /// <summary>
+        /// Escapes a minimal set of characters (\, *, +, ?, |, {, [, (,), ^, $,., #, and white space) by replacing them with their escape codes. This instructs the regular expression engine to interpret these characters literally rather than as metacharacters.
+        /// </summary>
+        /// <param name="source">The input string that contains the text to convert.</param>
+        /// <returns>A string of characters with metacharacters converted to their escaped form.</returns>
+        public static string Escape(this string source)
+        {
+            return Regex.Escape(source);
+        }
+
+        /// <summary>
+        /// Converts any escaped characters in the source string.
+        /// </summary>
+        /// <param name="source">The input string containing the text to convert.</param>
+        /// <returns>A string of characters with any escaped characters converted to their unescaped form.</returns>
+        public static string Unescape(this string source)
+        {
+            return Regex.Unescape(source);
         }
     }
 }

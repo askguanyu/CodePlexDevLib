@@ -34,6 +34,43 @@ namespace DevLib.ExtensionMethods
         public const BindingFlags AllLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         /// <summary>
+        /// Check whether the source type inherits from baseType.
+        /// </summary>
+        /// <param name="source">The source type.</param>
+        /// <param name="baseType">The base type.</param>
+        /// <returns>true if the source type inherits from baseType; otherwise, false.</returns>
+        public static bool IsInheritFrom(this Type source, Type baseType)
+        {
+            if (source.Equals(baseType)
+                || ((source.AssemblyQualifiedName != null || baseType.AssemblyQualifiedName != null) && source.AssemblyQualifiedName == baseType.AssemblyQualifiedName))
+            {
+                return true;
+            }
+
+            if (!baseType.IsGenericType || !source.IsGenericType)
+            {
+                if (baseType.IsAssignableFrom(source))
+                {
+                    return true;
+                }
+            }
+            else if (source.GetGenericTypeDefinition().Equals(baseType.GetGenericTypeDefinition()))
+            {
+                return true;
+            }
+
+            foreach (Type item in source.GetInterfaces())
+            {
+                if (item.IsInheritFrom(baseType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Check whether the Type is nullable type.
         /// </summary>
         /// <param name="source">The type to check.</param>

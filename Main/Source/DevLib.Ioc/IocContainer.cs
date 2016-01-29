@@ -358,13 +358,13 @@ namespace DevLib.Ioc
             {
                 string filename = Path.GetFullPath(item);
 
-                if (File.Exists(filename))
+                try
                 {
-                    Assembly assembly = Assembly.LoadFrom(filename);
-
-                    Type[] types = assembly.GetTypes();
-
-                    this.InnerRegister(type, types, typeArguments);
+                    this.InnerRegister(type, filename, typeArguments);
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e, filename);
                 }
             }
         }
@@ -425,24 +425,15 @@ namespace DevLib.Ioc
                 {
                     foreach (string file in Directory.GetFiles(item, "*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                     {
-                        Assembly assembly = null;
-
                         string filename = Path.GetFullPath(file);
 
                         try
                         {
-                            assembly = Assembly.LoadFrom(filename);
+                            this.InnerRegister(type, filename, typeArguments);
                         }
                         catch (Exception e)
                         {
                             InternalLogger.Log(e, filename);
-                        }
-
-                        if (assembly != null)
-                        {
-                            Type[] types = assembly.GetTypes();
-
-                            this.InnerRegister(type, types, typeArguments);
                         }
                     }
                 }
@@ -1083,6 +1074,37 @@ namespace DevLib.Ioc
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// InnerRegister method.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="filename">The file to scan.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        protected virtual void InnerRegister(Type type, string filename, Type[] typeArguments)
+        {
+            string assemblyFullName = AssemblyName.GetAssemblyName(filename).FullName;
+
+            Assembly assembly = null;
+
+            foreach (var item in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assemblyFullName.Equals(item.FullName, StringComparison.OrdinalIgnoreCase))
+                {
+                    assembly = item;
+                    break;
+                }
+            }
+
+            if (assembly == null)
+            {
+                assembly = Assembly.Load(File.ReadAllBytes(filename));
+            }
+
+            Type[] types = assembly.GetTypes();
+
+            this.InnerRegister(type, types, typeArguments);
         }
 
         /// <summary>

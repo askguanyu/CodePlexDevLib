@@ -154,7 +154,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    TestDevLibIoc();
+                    //TestDevLibIoc();
                 });
 
                 Benchmark.Run(delegate
@@ -494,13 +494,23 @@ namespace DevLib.Samples
 
             IocContainer container = new IocContainer();
 
-            container.RegisterAssembly<IFoo>(new[] { typeof(Person) }, AppDomain.CurrentDomain.GetAssemblies());
+            //container.RegisterAssembly<IFoo>(Assembly.GetEntryAssembly());
 
-            container.RegisterFile<IFoo>(new[] { typeof(Person) }, "DevLib.Samples.exe");
+            //container.RegisterFile<IFoo>(new[] { typeof(Person) }, "DevLib.Samples.exe");
+
+            container.RegisterFile<IFoo>("DevLib.Samples.exe");
+            
+            container.RegisterFile<IFoo>("AClassLibrary1.dll");
+
+            container.RegisterFile<IFoo>("AClassLibrary1.dll");
 
             container.RegisterDirectory<IFoo>(new[] { typeof(Person) }, false, ".");
 
             container.RegisterAssembly<IFoo>(new[] { typeof(Person) }, Assembly.GetExecutingAssembly());
+
+            List<object> list1 = container.GetAllInstances(typeof(IFoo)) as List<object>;
+
+            var listi0 = (IFoo)list1[0];
 
             var list = container.GetAllInstances<IFoo>();
 

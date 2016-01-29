@@ -12,6 +12,10 @@ namespace DevLib.Ioc
     using System.Collections.Specialized;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using System.Reflection;
+    using System.Runtime.Serialization;
+    using System.Security.Permissions;
     using System.Threading;
 
     /// <summary>
@@ -146,6 +150,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(type);
+
             return this.InnerRegister(type, new IocRegistrationBuilder(type, container => builder(container)));
         }
 
@@ -176,6 +182,8 @@ namespace DevLib.Ioc
         public virtual IocRegistration Register(Type type, Converter<IocContainer, object> builder, string name)
         {
             this.CheckDisposed();
+
+            this.CheckType(type);
 
             return this.InnerRegister(type, new IocRegistrationBuilder(type, container => builder(container), name), name);
         }
@@ -208,6 +216,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(type);
+
             return this.InnerRegister(type, new IocRegistrationBuilder(type, instance));
         }
 
@@ -239,6 +249,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(type);
+
             return this.InnerRegister(type, new IocRegistrationBuilder(type, instance, name), name);
         }
 
@@ -257,6 +269,207 @@ namespace DevLib.Ioc
             Type type = typeof(T);
 
             return this.InnerRegister(type, new IocRegistrationBuilder(type, instance, name), name);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the assemblies.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="assemblies">The assemblies to scan.</param>
+        public virtual void RegisterAssembly(Type type, params Assembly[] assemblies)
+        {
+            this.RegisterAssembly(type, null, assemblies);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the assemblies.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="assemblies">The assemblies to scan.</param>
+        public virtual void RegisterAssembly(Type type, Type[] typeArguments, params Assembly[] assemblies)
+        {
+            this.CheckDisposed();
+
+            this.CheckType(type);
+
+            if (assemblies == null)
+            {
+                throw new ArgumentNullException("assemblies");
+            }
+
+            foreach (Assembly assembly in assemblies)
+            {
+                Type[] types = assembly.GetTypes();
+
+                this.InnerRegister(type, types, typeArguments);
+            }
+        }
+
+        /// <summary>
+        /// Registers the specified type with the assemblies.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="assemblies">The assemblies to scan.</param>
+        public virtual void RegisterAssembly<T>(params Assembly[] assemblies)
+        {
+            this.RegisterAssembly(typeof(T), assemblies);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the assemblies.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="assemblies">The assemblies to scan.</param>
+        public virtual void RegisterAssembly<T>(Type[] typeArguments, params Assembly[] assemblies)
+        {
+            this.RegisterAssembly(typeof(T), typeArguments, assemblies);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the files.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="filenames">The files to scan.</param>
+        public virtual void RegisterFile(Type type, params string[] filenames)
+        {
+            this.RegisterFile(type, null, filenames);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the files.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="filenames">The files to scan.</param>
+        public virtual void RegisterFile(Type type, Type[] typeArguments, params string[] filenames)
+        {
+            this.CheckDisposed();
+
+            this.CheckType(type);
+
+            if (filenames == null)
+            {
+                throw new ArgumentNullException("filenames");
+            }
+
+            foreach (string item in filenames)
+            {
+                string filename = Path.GetFullPath(item);
+
+                if (File.Exists(filename))
+                {
+                    Assembly assembly = Assembly.LoadFrom(filename);
+
+                    Type[] types = assembly.GetTypes();
+
+                    this.InnerRegister(type, types, typeArguments);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Registers the specified type with the files.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="filenames">The files to scan.</param>
+        public virtual void RegisterFile<T>(params string[] filenames)
+        {
+            this.RegisterFile(typeof(T), filenames);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the files.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="filenames">The files to scan.</param>
+        public virtual void RegisterFile<T>(Type[] typeArguments, params string[] filenames)
+        {
+            this.RegisterFile(typeof(T), typeArguments, filenames);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the directories.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="recursive">true to scan all files from the directories and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="paths">The paths to scan.</param>
+        public virtual void RegisterDirectory(Type type, bool recursive, params string[] paths)
+        {
+            this.RegisterDirectory(type, null, recursive, paths);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the directories.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="recursive">true to scan all files from the directory and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="paths">The paths to scan.</param>
+        public virtual void RegisterDirectory(Type type, Type[] typeArguments, bool recursive, params string[] paths)
+        {
+            this.CheckDisposed();
+
+            this.CheckType(type);
+
+            if (paths == null)
+            {
+                throw new ArgumentNullException("paths");
+            }
+
+            foreach (string item in paths)
+            {
+                if (Directory.Exists(item))
+                {
+                    foreach (string file in Directory.GetFiles(item, "*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+                    {
+                        Assembly assembly = null;
+
+                        string filename = Path.GetFullPath(file);
+
+                        try
+                        {
+                            assembly = Assembly.LoadFrom(filename);
+                        }
+                        catch (Exception e)
+                        {
+                            InternalLogger.Log(e, filename);
+                        }
+
+                        if (assembly != null)
+                        {
+                            Type[] types = assembly.GetTypes();
+
+                            this.InnerRegister(type, types, typeArguments);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Registers the specified type with the directories.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="recursive">true to scan all files from the directory and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="paths">The paths to scan.</param>
+        public virtual void RegisterDirectory<T>(bool recursive, params string[] paths)
+        {
+            this.RegisterDirectory(typeof(T), recursive, paths);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the directories.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="recursive">true to scan all files from the directory and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="paths">The paths to scan.</param>
+        public virtual void RegisterDirectory<T>(Type[] typeArguments, bool recursive, params string[] paths)
+        {
+            this.RegisterDirectory(typeof(T), typeArguments, recursive, paths);
         }
 
         /// <summary>
@@ -310,6 +523,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(type);
+
             lock (((ICollection)this._registrations).SyncRoot)
             {
                 OrderedDictionary value;
@@ -337,6 +552,8 @@ namespace DevLib.Ioc
         public virtual bool CanResolve(Type type, string name)
         {
             this.CheckDisposed();
+
+            this.CheckType(type);
 
             lock (((ICollection)this._registrations).SyncRoot)
             {
@@ -370,6 +587,8 @@ namespace DevLib.Ioc
         public virtual bool TryResolve(Type type, out object value)
         {
             this.CheckDisposed();
+
+            this.CheckType(type);
 
             lock (((ICollection)this._registrations).SyncRoot)
             {
@@ -479,6 +698,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(type);
+
             if (name == null)
             {
                 name = NullStringKey;
@@ -578,6 +799,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(type);
+
             lock (((ICollection)this._registrations).SyncRoot)
             {
                 OrderedDictionary value;
@@ -631,6 +854,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(type);
+
             lock (((ICollection)this._registrations).SyncRoot)
             {
                 OrderedDictionary value;
@@ -670,6 +895,8 @@ namespace DevLib.Ioc
         public virtual void Destroy(Type type)
         {
             this.CheckDisposed();
+
+            this.CheckType(type);
 
             lock (((ICollection)this._registrations).SyncRoot)
             {
@@ -743,23 +970,6 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
-        /// Thread safety raise event.
-        /// </summary>
-        /// <param name="source">Source EventHandler.</param>
-        /// <param name="sender">The sender of the event.</param>
-        /// <param name="e">A System.EventArgs that contains the event data.</param>
-        public void RaiseEvent(EventHandler source, object sender, EventArgs e = null)
-        {
-            // Copy a reference to the delegate field now into a temporary field for thread safety.
-            EventHandler safeHandler = Interlocked.CompareExchange(ref source, null, null);
-
-            if (safeHandler != null)
-            {
-                safeHandler(sender, e);
-            }
-        }
-
-        /// <summary>
         /// InnerRegister method.
         /// </summary>
         /// <param name="type">The type to register.</param>
@@ -830,15 +1040,15 @@ namespace DevLib.Ioc
                 }
 
                 return new IocRegistration(
-                registration =>
-                {
-                    lock (((ICollection)this._registrations).SyncRoot)
+                    registration =>
                     {
-                        this._registrations[type].Remove(registration.Name);
-                    }
+                        lock (((ICollection)this._registrations).SyncRoot)
+                        {
+                            this._registrations[type].Remove(registration.Name);
+                        }
 
-                    builder.Dispose();
-                },
+                        builder.Dispose();
+                    },
                     id);
             }
             catch (Exception e)
@@ -852,13 +1062,66 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
-        /// Called when parent disposed.
+        /// InnerRegister method.
         /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnParentDisposed(object sender, EventArgs e)
+        /// <param name="type">The type to register.</param>
+        /// <param name="types">The types to scan.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        protected virtual void InnerRegister(Type type, Type[] types, Type[] typeArguments)
         {
-            this.Dispose();
+            bool checkGeneric = typeArguments != null && typeArguments.Length > 0;
+
+            foreach (Type item in types)
+            {
+                if (!item.IsAbstract && (checkGeneric ? item.IsGenericType : !item.IsGenericType) && this.IsInheritFrom(item, type))
+                {
+                    object instance = this.CreateInstance(item, typeArguments);
+
+                    if (instance != null)
+                    {
+                        this.Register(type, instance, item.AssemblyQualifiedName);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified type using the constructor that best matches the specified parameters.
+        /// </summary>
+        /// <param name="type">The type of object to create.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <returns>A reference to the newly created object.</returns>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+        protected virtual object CreateInstance(Type type, Type[] typeArguments)
+        {
+            if (type == typeof(string))
+            {
+                return string.Empty;
+            }
+
+            object result = null;
+
+            if (typeArguments != null && typeArguments.Length > 0)
+            {
+                type = type.MakeGenericType(typeArguments);
+            }
+
+            try
+            {
+                result = Activator.CreateInstance(type);
+            }
+            catch
+            {
+                try
+                {
+                    result = FormatterServices.GetUninitializedObject(type);
+                }
+                catch
+                {
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -869,6 +1132,8 @@ namespace DevLib.Ioc
         protected override object DoGetInstance(Type serviceType)
         {
             this.CheckDisposed();
+
+            this.CheckType(serviceType);
 
             object result;
 
@@ -890,6 +1155,8 @@ namespace DevLib.Ioc
         {
             this.CheckDisposed();
 
+            this.CheckType(serviceType);
+
             object result;
 
             if (!this.TryResolve(serviceType, key, out result) || result == null)
@@ -908,6 +1175,8 @@ namespace DevLib.Ioc
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
         {
             this.CheckDisposed();
+
+            this.CheckType(serviceType);
 
             List<object> result = new List<object>();
 
@@ -954,6 +1223,16 @@ namespace DevLib.Ioc
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Called when parent disposed.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected virtual void OnParentDisposed(object sender, EventArgs e)
+        {
+            this.Dispose();
         }
 
         /// <summary>
@@ -1010,6 +1289,72 @@ namespace DevLib.Ioc
             ////    Marshal.FreeHGlobal(nativeResource);
             ////    nativeResource = IntPtr.Zero;
             ////}
+        }
+
+        /// <summary>
+        /// Check whether the source type inherits from baseType.
+        /// </summary>
+        /// <param name="subType">The sub type.</param>
+        /// <param name="baseType">The base type.</param>
+        /// <returns>true if the sub type inherits from baseType; otherwise, false.</returns>
+        private bool IsInheritFrom(Type subType, Type baseType)
+        {
+            if (subType.Equals(baseType)
+            || ((subType.AssemblyQualifiedName != null || baseType.AssemblyQualifiedName != null) && subType.AssemblyQualifiedName == baseType.AssemblyQualifiedName))
+            {
+                return true;
+            }
+
+            if (!baseType.IsGenericType || !subType.IsGenericType)
+            {
+                if (baseType.IsAssignableFrom(subType))
+                {
+                    return true;
+                }
+            }
+            else if (subType.GetGenericTypeDefinition().Equals(baseType.GetGenericTypeDefinition()))
+            {
+                return true;
+            }
+
+            foreach (Type item in subType.GetInterfaces())
+            {
+                if (this.IsInheritFrom(item, baseType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Thread safety raise event.
+        /// </summary>
+        /// <param name="source">Source EventHandler.</param>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">A System.EventArgs that contains the event data.</param>
+        private void RaiseEvent(EventHandler source, object sender, EventArgs e = null)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
+            EventHandler safeHandler = Interlocked.CompareExchange(ref source, null, null);
+
+            if (safeHandler != null)
+            {
+                safeHandler(sender, e);
+            }
+        }
+
+        /// <summary>
+        /// Checks the type is not null.
+        /// </summary>
+        /// <param name="type">The type to check.</param>
+        private void CheckType(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
         }
 
         /// <summary>

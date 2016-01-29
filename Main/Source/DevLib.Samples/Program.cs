@@ -154,7 +154,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibIoc();
+                    TestDevLibIoc();
                 });
 
                 Benchmark.Run(delegate
@@ -494,6 +494,20 @@ namespace DevLib.Samples
 
             IocContainer container = new IocContainer();
 
+            container.RegisterAssembly<IFoo>(new[] { typeof(Person) }, AppDomain.CurrentDomain.GetAssemblies());
+
+            container.RegisterFile<IFoo>(new[] { typeof(Person) }, "DevLib.Samples.exe");
+
+            container.RegisterDirectory<IFoo>(new[] { typeof(Person) }, false, ".");
+
+            container.RegisterAssembly<IFoo>(new[] { typeof(Person) }, Assembly.GetExecutingAssembly());
+
+            var list = container.GetAllInstances<IFoo>();
+
+            //container.RegisterAssembly<IFoo>(Assembly.GetExecutingAssembly(), typeof(Person));
+
+            //container.RegisterAssembly<IFoo>(Assembly.GetExecutingAssembly());
+
             //container.Register<IPerson>(new Person("aaaa", "bbbb", 0));
 
             var iocReg = container.Register<IPerson>(new Person("aaaa", "bbbb", 1));
@@ -515,12 +529,12 @@ namespace DevLib.Samples
 
             Console.WriteLine(container.Resolve<IPerson>());
 
-            container.Unregister<IPerson>();
+            //container.Unregister<IPerson>();
 
             Console.WriteLine(container.Resolve<IPerson>());
             Console.WriteLine(container.Resolve<IPerson>());
 
-            var list = container.GetAllInstances<IPerson>();
+            //var list = container.GetAllInstances<IPerson>();
 
             Console.WriteLine(container.Resolve<IPerson>());
             Console.WriteLine(container.Resolve<IPerson>());
@@ -2638,6 +2652,28 @@ namespace DevLib.Samples
         {
             return a + b;
         }
+    }
+
+    public interface IFoo<T>
+    {
+        [DataMember]
+        string Name { get; set; }
+    }
+
+    public interface IFoo
+    {
+        [DataMember]
+        string Name { get; set; }
+    }
+
+    public class Bar<T> : IFoo
+    {
+        public string Name { get; set; }
+    }
+
+    public class Bar1 : IFoo
+    {
+        public string Name { get; set; }
     }
 
     public interface IPerson

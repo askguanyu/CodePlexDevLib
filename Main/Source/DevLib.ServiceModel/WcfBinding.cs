@@ -202,10 +202,7 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexHttpBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(15);
-                result.CloseTimeout = TimeSpan.FromMinutes(15);
-                result.SendTimeout = TimeSpan.FromMinutes(15);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
+                result.SetTimeout(TimeSpan.FromMinutes(15));
 
                 return result;
             }
@@ -220,10 +217,7 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexHttpsBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(15);
-                result.CloseTimeout = TimeSpan.FromMinutes(15);
-                result.SendTimeout = TimeSpan.FromMinutes(15);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
+                result.SetTimeout(TimeSpan.FromMinutes(15));
 
                 return result;
             }
@@ -238,10 +232,7 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexTcpBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(15);
-                result.CloseTimeout = TimeSpan.FromMinutes(15);
-                result.SendTimeout = TimeSpan.FromMinutes(15);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
+                result.SetTimeout(TimeSpan.FromMinutes(15));
 
                 return result;
             }
@@ -256,13 +247,235 @@ namespace DevLib.ServiceModel
             {
                 Binding result = MetadataExchangeBindings.CreateMexNamedPipeBinding();
 
-                result.OpenTimeout = TimeSpan.FromMinutes(15);
-                result.CloseTimeout = TimeSpan.FromMinutes(15);
-                result.SendTimeout = TimeSpan.FromMinutes(15);
-                result.ReceiveTimeout = TimeSpan.FromMinutes(15);
+                result.SetTimeout(TimeSpan.FromMinutes(15));
 
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Gets the Binding instance according to a Binding type.
+        /// </summary>
+        /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <returns>Instance of Binding.</returns>
+        public static Binding GetBinding(Type bindingType)
+        {
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                return (Binding)null;
+            }
+
+            return GetBinding(bindingType.Name);
+        }
+
+        /// <summary>
+        /// Gets the Binding instance according to a Binding type name.
+        /// </summary>
+        /// <param name="bindingTypeName">The name of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
+        /// <returns>Instance of Binding.</returns>
+        public static Binding GetBinding(string bindingTypeName)
+        {
+            if (bindingTypeName.Equals("BasicHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.BasicHttp;
+            }
+
+            if (bindingTypeName.Equals("WSHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.WSHttp;
+            }
+
+            if (bindingTypeName.Equals("WSDualHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.WSDualHttp;
+            }
+
+            if (bindingTypeName.Equals("WSFederationHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.WSFederationHttp;
+            }
+
+            if (bindingTypeName.Equals("WS2007HttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.WS2007Http;
+            }
+
+            if (bindingTypeName.Equals("WS2007FederationHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.WS2007FederationHttp;
+            }
+
+            if (bindingTypeName.Equals("NetTcpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.NetTcp;
+            }
+
+            if (bindingTypeName.Equals("NetNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.NetNamedPipe;
+            }
+
+            if (bindingTypeName.Equals("NetMsmqBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.NetMsmq;
+            }
+
+            if (bindingTypeName.Equals("NetPeerTcpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.NetPeerTcp;
+            }
+
+            if (bindingTypeName.Equals("MsmqIntegrationBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.MsmqIntegration;
+            }
+
+            if (bindingTypeName.Equals("WebHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.WebHttp;
+            }
+
+            if (bindingTypeName.Equals("CustomBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.Custom;
+            }
+#if !__MonoCS__
+            if (bindingTypeName.Equals("BasicHttpContextBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.BasicHttpContext;
+            }
+
+            if (bindingTypeName.Equals("NetTcpContextBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.NetTcpContext;
+            }
+
+            if (bindingTypeName.Equals("WSHttpContextBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.WSHttpContext;
+            }
+#endif
+            if (bindingTypeName.Equals("mexHttpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.MexHttp;
+            }
+
+            if (bindingTypeName.Equals("mexHttpsBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.MexHttps;
+            }
+
+            if (bindingTypeName.Equals("mexTcpBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.MexTcp;
+            }
+
+            if (bindingTypeName.Equals("mexNamedPipeBinding", StringComparison.OrdinalIgnoreCase))
+            {
+                return WcfBinding.MexNamedPipe;
+            }
+
+            try
+            {
+                Binding result = (Binding)Activator.CreateInstance(Type.GetType(bindingTypeName, true, true));
+
+                result.SetTimeout(TimeSpan.FromMinutes(15));
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the Binding instance according to a Binding type.
+        /// </summary>
+        /// <param name="bindingType">Type of the binding.</param>
+        /// <returns>Instance of Binding.</returns>
+        public static Binding GetBinding(WcfBindingType bindingType)
+        {
+            switch (bindingType)
+            {
+                case WcfBindingType.BasicHttp:
+                    return WcfBinding.BasicHttp;
+                case WcfBindingType.WSHttp:
+                    return WcfBinding.WSHttp;
+                case WcfBindingType.WSDualHttp:
+                    return WcfBinding.WSDualHttp;
+                case WcfBindingType.WSFederationHttp:
+                    return WcfBinding.WSFederationHttp;
+                case WcfBindingType.WS2007Http:
+                    return WcfBinding.WS2007Http;
+                case WcfBindingType.WS2007FederationHttp:
+                    return WcfBinding.WS2007FederationHttp;
+                case WcfBindingType.NetTcp:
+                    return WcfBinding.NetTcp;
+                case WcfBindingType.NetNamedPipe:
+                    return WcfBinding.NetNamedPipe;
+                case WcfBindingType.NetMsmq:
+                    return WcfBinding.NetMsmq;
+                case WcfBindingType.NetPeerTcp:
+                    return WcfBinding.NetPeerTcp;
+                case WcfBindingType.MsmqIntegration:
+                    return WcfBinding.MsmqIntegration;
+                case WcfBindingType.WebHttp:
+                    return WcfBinding.WebHttp;
+                case WcfBindingType.Custom:
+                    return WcfBinding.Custom;
+#if !__MonoCS__
+                case WcfBindingType.BasicHttpContext:
+                    return WcfBinding.BasicHttpContext;
+                case WcfBindingType.NetTcpContext:
+                    return WcfBinding.NetTcpContext;
+                case WcfBindingType.WSHttpContext:
+                    return WcfBinding.WSHttpContext;
+#endif
+                case WcfBindingType.MexHttp:
+                    return WcfBinding.MexHttp;
+                case WcfBindingType.MexHttps:
+                    return WcfBinding.MexHttps;
+                case WcfBindingType.MexTcp:
+                    return WcfBinding.MexTcp;
+                case WcfBindingType.MexNamedPipe:
+                    return WcfBinding.MexNamedPipe;
+                default:
+                    try
+                    {
+                        Binding result = (Binding)Activator.CreateInstance(Type.GetType(bindingType.ToString() + "Binding", true, true));
+
+                        result.SetTimeout(TimeSpan.FromMinutes(15));
+
+                        return result;
+                    }
+                    catch (Exception e)
+                    {
+                        InternalLogger.Log(e);
+                        return null;
+                    }
+            }
+        }
+
+        /// <summary>
+        /// Sets binding Open/Close/Send/Receive timeout.
+        /// </summary>
+        /// <param name="source">The binding instance.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <returns>The source binding instance.</returns>
+        public static Binding SetTimeout(this Binding source, TimeSpan timeout)
+        {
+            if (source != null)
+            {
+                source.OpenTimeout = timeout;
+                source.CloseTimeout = timeout;
+                source.SendTimeout = timeout;
+                source.ReceiveTimeout = timeout;
+            }
+
+            return source;
         }
     }
 }

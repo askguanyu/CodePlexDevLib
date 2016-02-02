@@ -902,7 +902,7 @@ namespace DevLib.ServiceModel
                     {
                         Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
-                        TChannel result = (TChannel)Activator.CreateInstance(type, WcfServiceUtilities.GetBinding(bindingType), new EndpointAddress(remoteUri));
+                        TChannel result = (TChannel)Activator.CreateInstance(type, WcfBinding.GetBinding(bindingType), new EndpointAddress(remoteUri));
 
                         caching.Add(key, result);
 
@@ -914,7 +914,7 @@ namespace DevLib.ServiceModel
             {
                 Type type = WcfClientUtilities.BuildType<TChannel, TTypeBuilder>();
 
-                return (TChannel)Activator.CreateInstance(type, WcfServiceUtilities.GetBinding(bindingType), new EndpointAddress(remoteUri));
+                return (TChannel)Activator.CreateInstance(type, WcfBinding.GetBinding(bindingType), new EndpointAddress(remoteUri));
             }
         }
 

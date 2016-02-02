@@ -726,7 +726,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Type bindingType, string remoteUri)
         {
-            return this.GetClientBaseProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteUri);
+            return this.GetClientBaseProxy(contractType, WcfBinding.GetBinding(bindingType), remoteUri);
         }
 
         /// <summary>
@@ -740,7 +740,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetClientBaseProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
+            return this.GetClientBaseProxy(contractType, WcfBinding.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1118,7 +1118,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
-            return this.GetPerCallThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteUri);
+            return this.GetPerCallThrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteUri);
         }
 
         /// <summary>
@@ -1132,7 +1132,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
+            return this.GetPerCallThrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1510,7 +1510,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
-            return this.GetPerCallUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteUri);
+            return this.GetPerCallUnthrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteUri);
         }
 
         /// <summary>
@@ -1524,7 +1524,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
+            return this.GetPerCallUnthrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1902,7 +1902,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
-            return this.GetPerSessionThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteUri);
+            return this.GetPerSessionThrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteUri);
         }
 
         /// <summary>
@@ -1916,7 +1916,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
+            return this.GetPerSessionThrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -2294,7 +2294,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteUri)
         {
-            return this.GetPerSessionUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteUri);
+            return this.GetPerSessionUnthrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteUri);
         }
 
         /// <summary>
@@ -2308,7 +2308,7 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
+            return this.GetPerSessionUnthrowableProxy(contractType, WcfBinding.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>

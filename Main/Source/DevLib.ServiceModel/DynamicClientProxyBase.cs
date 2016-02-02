@@ -97,7 +97,7 @@ namespace DevLib.ServiceModel
             paramTypes[1] = typeof(EndpointAddress);
 
             object[] paramValues = new object[2];
-            paramValues[0] = WcfServiceUtilities.GetBinding(bindingType);
+            paramValues[0] = WcfBinding.GetBinding(bindingType);
             paramValues[1] = new EndpointAddress(remoteUri);
 
             this.ParamTypes = paramTypes;

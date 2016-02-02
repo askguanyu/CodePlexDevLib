@@ -2343,7 +2343,7 @@ namespace DevLib.ServiceModel
 
                 Uri baseAddressUri = new Uri(this._baseAddress);
 
-                Binding binding = this._binding ?? WcfServiceUtilities.GetBinding(this._bindingType);
+                Binding binding = this._binding ?? WcfBinding.GetBinding(this._bindingType);
 
                 if (this.SetBindingAction != null)
                 {

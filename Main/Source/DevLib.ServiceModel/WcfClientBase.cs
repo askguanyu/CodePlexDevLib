@@ -161,6 +161,24 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether ignore message inspection.
+        /// </summary>
+        public bool IgnoreMessageInspect
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore message validation.
+        /// </summary>
+        public bool IgnoreMessageValidate
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the client credentials used to call an operation.
         /// </summary>
         public virtual ClientCredentials ClientCredentials
@@ -468,6 +486,9 @@ namespace DevLib.ServiceModel
             if (wcfMessageInspectorEndpointBehavior == null)
             {
                 wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(clientBase.ClientCredentials);
+
+                wcfMessageInspectorEndpointBehavior.IgnoreMessageInspect = this.IgnoreMessageInspect;
+                wcfMessageInspectorEndpointBehavior.IgnoreMessageValidate = this.IgnoreMessageValidate;
 
                 wcfMessageInspectorEndpointBehavior.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, clientBase, endpoint, clientBase.ClientCredentials, e);
                 wcfMessageInspectorEndpointBehavior.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, clientBase, endpoint, clientBase.ClientCredentials, e);

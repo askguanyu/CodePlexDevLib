@@ -511,16 +511,17 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetClientBaseProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
+                return this.GetClientBaseProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetClientBaseProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
+                return this.GetClientBaseProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort, path);
             }
         }
 
@@ -548,16 +549,17 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetClientBaseProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
+                return this.GetClientBaseProxy(this.ContractTypes[0], binding, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetClientBaseProxy(this.Endpoints[0], binding, remoteHost, remotePort);
+                return this.GetClientBaseProxy(this.Endpoints[0], binding, remoteHost, remotePort, path);
             }
         }
 
@@ -585,16 +587,17 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetClientBaseProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
+                return this.GetClientBaseProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetClientBaseProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
+                return this.GetClientBaseProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, path);
             }
         }
 
@@ -617,10 +620,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetClientBaseProxy(contractName, null, bindingType, remoteHost, remotePort);
+            return this.GetClientBaseProxy(contractName, null, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -642,10 +646,11 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetClientBaseProxy(contractName, null, binding, remoteHost, remotePort);
+            return this.GetClientBaseProxy(contractName, null, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -671,12 +676,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetClientBaseProxy(endpoint, bindingType, remoteHost, remotePort);
+            return this.GetClientBaseProxy(endpoint, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -702,12 +708,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetClientBaseProxy(endpoint, binding, remoteHost, remotePort);
+            return this.GetClientBaseProxy(endpoint, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -729,10 +736,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetClientBaseProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort);
+            return this.GetClientBaseProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -744,6 +752,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
@@ -758,15 +768,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(Type contractType, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return this.GetClientBaseProxy(contractType, binding, remoteUri);
         }
@@ -780,6 +789,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
+            this.CheckBindingType(bindingType);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -796,19 +807,18 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingType(bindingType);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientProxy(proxyType, bindingType, remoteUri);
         }
@@ -822,6 +832,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -838,19 +850,18 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetClientBaseProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientProxy(proxyType, binding, remoteUri);
         }
@@ -892,16 +903,17 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerCallThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort, path);
             }
         }
 
@@ -929,16 +941,17 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, path);
             }
         }
 
@@ -966,16 +979,17 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
+                return this.GetPerCallThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
+                return this.GetPerCallThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, path);
             }
         }
 
@@ -998,10 +1012,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallThrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
+            return this.GetPerCallThrowableProxy(contractName, null, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1023,10 +1038,11 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallThrowableProxy(contractName, null, binding, remoteHost, remotePort);
+            return this.GetPerCallThrowableProxy(contractName, null, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1052,12 +1068,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallThrowableProxy(endpoint, bindingType, remoteHost, remotePort);
+            return this.GetPerCallThrowableProxy(endpoint, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1083,12 +1100,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallThrowableProxy(endpoint, binding, remoteHost, remotePort);
+            return this.GetPerCallThrowableProxy(endpoint, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1110,10 +1128,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort);
+            return this.GetPerCallThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1125,6 +1144,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
@@ -1139,15 +1160,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return this.GetPerCallThrowableProxy(contractType, binding, remoteUri);
         }
@@ -1161,6 +1181,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
+            this.CheckBindingType(bindingType);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -1177,19 +1199,18 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingType(bindingType);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerCallThrowableProxy(proxyType, bindingType, remoteUri);
         }
@@ -1203,6 +1224,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -1219,19 +1242,18 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerCallThrowableProxy(proxyType, binding, remoteUri);
         }
@@ -1273,16 +1295,17 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort, path);
             }
         }
 
@@ -1310,16 +1333,17 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, path);
             }
         }
 
@@ -1347,16 +1371,17 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
+                return this.GetPerCallUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
+                return this.GetPerCallUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, path);
             }
         }
 
@@ -1379,10 +1404,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
+            return this.GetPerCallUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1404,10 +1430,11 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallUnthrowableProxy(contractName, null, binding, remoteHost, remotePort);
+            return this.GetPerCallUnthrowableProxy(contractName, null, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1433,12 +1460,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort);
+            return this.GetPerCallUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1464,12 +1492,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerCallUnthrowableProxy(endpoint, binding, remoteHost, remotePort);
+            return this.GetPerCallUnthrowableProxy(endpoint, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1491,10 +1520,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerCallUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort);
+            return this.GetPerCallUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1506,6 +1536,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
@@ -1520,15 +1552,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return this.GetPerCallUnthrowableProxy(contractType, binding, remoteUri);
         }
@@ -1542,6 +1573,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
+            this.CheckBindingType(bindingType);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -1558,19 +1591,18 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingType(bindingType);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerCallUnthrowableProxy(proxyType, bindingType, remoteUri);
         }
@@ -1584,6 +1616,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -1600,19 +1634,18 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerCallUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerCallUnthrowableProxy(proxyType, binding, remoteUri);
         }
@@ -1654,16 +1687,17 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerSessionThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort, path);
             }
         }
 
@@ -1691,16 +1725,17 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, path);
             }
         }
 
@@ -1728,16 +1763,17 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
+                return this.GetPerSessionThrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
+                return this.GetPerSessionThrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, path);
             }
         }
 
@@ -1760,10 +1796,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionThrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
+            return this.GetPerSessionThrowableProxy(contractName, null, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1785,10 +1822,11 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionThrowableProxy(contractName, null, binding, remoteHost, remotePort);
+            return this.GetPerSessionThrowableProxy(contractName, null, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1814,12 +1852,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionThrowableProxy(endpoint, bindingType, remoteHost, remotePort);
+            return this.GetPerSessionThrowableProxy(endpoint, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1845,12 +1884,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionThrowableProxy(endpoint, binding, remoteHost, remotePort);
+            return this.GetPerSessionThrowableProxy(endpoint, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1872,10 +1912,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort);
+            return this.GetPerSessionThrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -1887,6 +1928,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
@@ -1901,15 +1944,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return this.GetPerSessionThrowableProxy(contractType, binding, remoteUri);
         }
@@ -1923,6 +1965,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
+            this.CheckBindingType(bindingType);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -1939,19 +1983,18 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingType(bindingType);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerSessionThrowableProxy(proxyType, bindingType, remoteUri);
         }
@@ -1965,6 +2008,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -1981,19 +2026,18 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionThrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerSessionThrowableProxy(proxyType, binding, remoteUri);
         }
@@ -2035,16 +2079,17 @@ namespace DevLib.ServiceModel
         /// </summary>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], typeof(BasicHttpBinding), remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], this.Endpoints[0].Binding, remoteHost, remotePort, path);
             }
         }
 
@@ -2072,16 +2117,17 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Binding binding, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], binding, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], binding, remoteHost, remotePort, path);
             }
         }
 
@@ -2109,16 +2155,17 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             if (this._loadFromFile)
             {
-                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort);
+                return this.GetPerSessionUnthrowableProxy(this.ContractTypes[0], bindingType, remoteHost, remotePort, path);
             }
             else
             {
-                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort);
+                return this.GetPerSessionUnthrowableProxy(this.Endpoints[0], bindingType, remoteHost, remotePort, path);
             }
         }
 
@@ -2141,10 +2188,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort);
+            return this.GetPerSessionUnthrowableProxy(contractName, null, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -2166,10 +2214,11 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionUnthrowableProxy(contractName, null, binding, remoteHost, remotePort);
+            return this.GetPerSessionUnthrowableProxy(contractName, null, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -2195,12 +2244,13 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort);
+            return this.GetPerSessionUnthrowableProxy(endpoint, bindingType, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -2226,12 +2276,13 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(string contractName, string contractNamespace, Binding binding, string remoteHost, int remotePort, string path = null)
         {
             ServiceEndpoint endpoint = this.GetEndpoint(contractName, contractNamespace);
 
-            return this.GetPerSessionUnthrowableProxy(endpoint, binding, remoteHost, remotePort);
+            return this.GetPerSessionUnthrowableProxy(endpoint, binding, remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -2253,10 +2304,11 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            return this.GetPerSessionUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort);
+            return this.GetPerSessionUnthrowableProxy(contractType, WcfServiceUtilities.GetBinding(bindingType), remoteHost, remotePort, path);
         }
 
         /// <summary>
@@ -2268,6 +2320,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type proxyType = this.GetProxyType(contractType);
 
             string address = string.IsNullOrEmpty(remoteUri) ? this.GetEndpoint(contractType.Name, null).Address.ToString() : remoteUri;
@@ -2282,15 +2336,14 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(Type contractType, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return this.GetPerSessionUnthrowableProxy(contractType, binding, remoteUri);
         }
@@ -2304,6 +2357,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteUri)
         {
+            this.CheckBindingType(bindingType);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -2320,19 +2375,18 @@ namespace DevLib.ServiceModel
         /// <param name="bindingType">The type of <see cref="T:System.ServiceModel.Channels.Binding" /> for the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Type bindingType, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingType(bindingType);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerSessionUnthrowableProxy(proxyType, bindingType, remoteUri);
         }
@@ -2346,6 +2400,8 @@ namespace DevLib.ServiceModel
         /// <returns>Instance of DynamicClientProxyBase.</returns>
         public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteUri)
         {
+            this.CheckBindingInstance(binding);
+
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
@@ -2362,19 +2418,18 @@ namespace DevLib.ServiceModel
         /// <param name="binding">The binding with which to make calls to the service.</param>
         /// <param name="remoteHost">The host address of the service endpoint.</param>
         /// <param name="remotePort">The port number of the service endpoint.</param>
+        /// <param name="path">The Uri path.</param>
         /// <returns>Instance of DynamicClientProxyBase.</returns>
-        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort)
+        public DynamicClientProxyBase GetPerSessionUnthrowableProxy(ServiceEndpoint endpoint, Binding binding, string remoteHost, int remotePort, string path = null)
         {
-            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
-            {
-                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
-            }
+            this.CheckBindingInstance(binding);
+            this.CheckPort(remotePort);
 
             Type contractType = this.GetContractType(endpoint.Contract.Name, endpoint.Contract.Namespace);
 
             Type proxyType = this.GetProxyType(contractType);
 
-            string remoteUri = new UriBuilder(Uri.UriSchemeHttp, remoteHost, remotePort, contractType.FullName).ToString();
+            string remoteUri = this.BuildUri(remoteHost, remotePort, contractType.FullName, path);
 
             return new DynamicClientPerSessionUnthrowableProxy(proxyType, binding, remoteUri);
         }
@@ -2866,6 +2921,83 @@ namespace DevLib.ServiceModel
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Builds the URI.
+        /// </summary>
+        /// <param name="host">The host.</param>
+        /// <param name="port">The port.</param>
+        /// <param name="contractName">Name of the contract.</param>
+        /// <param name="path">The Uri path.</param>
+        /// <returns>Uri string.</returns>
+        private string BuildUri(string host, int port, string contractName, string path)
+        {
+            return new UriBuilder(Uri.UriSchemeHttp, host, port, contractName + (this.IsNullOrWhiteSpace(path) ? null : "/" + path.Trim('/'))).ToString();
+        }
+
+        /// <summary>
+        /// Checks the port.
+        /// </summary>
+        /// <param name="remotePort">The port to check.</param>
+        private void CheckPort(int remotePort)
+        {
+            if (remotePort < IPEndPoint.MinPort || remotePort > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException("remotePort", remotePort, "Port number is less than System.Net.IPEndPoint.MinPort.-or- Port number is greater than System.Net.IPEndPoint.MaxPort.");
+            }
+        }
+
+        /// <summary>
+        /// Checks the type of the binding.
+        /// </summary>
+        /// <param name="bindingType">Type of the binding to check.</param>
+        private void CheckBindingType(Type bindingType)
+        {
+            if (bindingType == null)
+            {
+                throw new ArgumentNullException("bindingType");
+            }
+
+            if (!bindingType.IsSubclassOf(typeof(Binding)))
+            {
+                throw new ArgumentException(string.Format("The parameter bindingType {0} is not a System.ServiceModel.Channels.Binding type.", bindingType.FullName), "bindingType");
+            }
+        }
+
+        /// <summary>
+        /// Checks the binding instance.
+        /// </summary>
+        /// <param name="binding">The binding to check.</param>
+        private void CheckBindingInstance(Binding binding)
+        {
+            if (binding == null)
+            {
+                throw new ArgumentNullException("binding");
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether a specified string is null, empty, or consists only of white-space characters.
+        /// </summary>
+        /// <param name="value">The string to test.</param>
+        /// <returns>true if the value parameter is null or String.Empty, or if value consists exclusively of white-space characters.</returns>
+        private bool IsNullOrWhiteSpace(string value)
+        {
+            if (value == null)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (!char.IsWhiteSpace(value[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

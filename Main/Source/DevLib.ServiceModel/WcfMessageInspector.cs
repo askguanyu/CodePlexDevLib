@@ -179,6 +179,24 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfErrorEventArgs> ErrorOccurred;
 
         /// <summary>
+        /// Gets or sets a value indicating whether ignore message inspection.
+        /// </summary>
+        public bool IgnoreMessageInspect
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore message validation.
+        /// </summary>
+        public bool IgnoreMessageValidate
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Enables inspection or modification of a message after a reply message is received but prior to passing it back to the client application.
         /// </summary>
         /// <param name="reply">The message to be transformed into types and handed back to the client application.</param>
@@ -197,12 +215,12 @@ namespace DevLib.ServiceModel
 
             Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.AfterReceiveReply: " + messageId.ToString());
 
-            if (reply != null)
-            {
-                Debug.WriteLine(reply.ToString());
-            }
+            string validationError = this.ValidateMessage(reply, messageId);
 
-            this.RaiseEvent(this.ReceivingReply, reply, messageId, false, this.ValidateMessage(reply, messageId));
+            if (!this.IgnoreMessageInspect)
+            {
+                this.RaiseEvent(this.ReceivingReply, reply, messageId, false, validationError);
+            }
         }
 
         /// <summary>
@@ -215,9 +233,11 @@ namespace DevLib.ServiceModel
         {
             Guid messageId = Guid.NewGuid();
 
-            bool isOneWay = false;
-
             Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.BeforeSendRequest: " + messageId.ToString());
+
+            string validationError = this.ValidateMessage(request, messageId);
+
+            bool isOneWay = false;
 
             if (request != null)
             {
@@ -225,19 +245,21 @@ namespace DevLib.ServiceModel
                 {
                     isOneWay = this._oneWayActions.Contains(request.Headers.Action);
                 }
-
-                Debug.WriteLine(request.ToString());
             }
-
-            string validationError = this.ValidateMessage(request, messageId);
-
-            this.RaiseEvent(this.SendingRequest, request, messageId, isOneWay, validationError);
 
             if (isOneWay)
             {
                 Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.AfterReceiveReply(simulate reply for OneWay): " + messageId.ToString());
+            }
 
-                this.RaiseEvent(this.ReceivingReply, request, messageId, isOneWay, validationError);
+            if (!this.IgnoreMessageInspect)
+            {
+                this.RaiseEvent(this.SendingRequest, request, messageId, isOneWay, validationError);
+
+                if (isOneWay)
+                {
+                    this.RaiseEvent(this.ReceivingReply, request, messageId, isOneWay, validationError);
+                }
             }
 
             return messageId;
@@ -254,9 +276,11 @@ namespace DevLib.ServiceModel
         {
             Guid messageId = Guid.NewGuid();
 
-            bool isOneWay = false;
-
             Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.AfterReceiveRequest: " + messageId.ToString());
+
+            string validationError = this.ValidateMessage(request, messageId);
+
+            bool isOneWay = false;
 
             if (request != null)
             {
@@ -264,11 +288,12 @@ namespace DevLib.ServiceModel
                 {
                     isOneWay = this._oneWayActions.Contains(request.Headers.Action);
                 }
-
-                Debug.WriteLine(request.ToString());
             }
 
-            this.RaiseEvent(this.ReceivingRequest, request, messageId, isOneWay, this.ValidateMessage(request, messageId));
+            if (!this.IgnoreMessageInspect)
+            {
+                this.RaiseEvent(this.ReceivingRequest, request, messageId, isOneWay, validationError);
+            }
 
             return new CorrelationState(messageId, isOneWay);
         }
@@ -294,16 +319,17 @@ namespace DevLib.ServiceModel
 
             Debug.WriteLine("DevLib.ServiceModel.WcfMessageInspector.BeforeSendReply: " + messageId.ToString());
 
-            if (reply != null)
-            {
-                Debug.WriteLine(reply.ToString());
-            }
-            else
+            string validationError = this.ValidateMessage(reply, messageId);
+
+            if (reply == null)
             {
                 isOneWay = true;
             }
 
-            this.RaiseEvent(this.SendingReply, reply, messageId, isOneWay, this.ValidateMessage(reply, messageId));
+            if (!this.IgnoreMessageInspect)
+            {
+                this.RaiseEvent(this.SendingReply, reply, messageId, isOneWay, validationError);
+            }
         }
 
         /// <summary>
@@ -314,7 +340,7 @@ namespace DevLib.ServiceModel
         /// <returns>The validation error.</returns>
         private string ValidateMessage(Message message, Guid messageId)
         {
-            if (message == null || message.IsFault || message.IsEmpty)
+            if (this.IgnoreMessageValidate || message == null || message.IsFault || message.IsEmpty)
             {
                 return null;
             }

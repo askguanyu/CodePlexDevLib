@@ -58,6 +58,24 @@ namespace DevLib.ServiceModel
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether ignore message inspection.
+        /// </summary>
+        bool IgnoreMessageInspect
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore message validation.
+        /// </summary>
+        bool IgnoreMessageValidate
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets a <see cref="T:System.ServiceModel.Description.ClientCredentials" /> that represents the proof of identity presented by the client.
         /// </summary>
         ClientCredentials ClientCredentials

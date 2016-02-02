@@ -2207,11 +2207,16 @@ namespace DevLib.Samples
 
             WcfClientUtilities.SaveGeneratedAssemblyFile = true;
 
-            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new[] { typeof(IWcfTest), typeof(IWcfAnotherTest) }, WcfBinding.BasicHttp, 6001,"WcfTest", true);
+            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new[] { typeof(IWcfTest), typeof(IWcfAnotherTest) }, WcfBinding.BasicHttp, 6001,"WcfTest");
 
-            var client0 = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "client0.dll", true).GetPerSessionThrowableProxy();
+            testsrv0.Open();
 
-            //var client0 = WcfClientProxy<IWcfTest>.GetPerCallThrowableInstance(WcfBinding.BasicHttp, "127.0.0.1", 6001, "WcfTest");
+            testsrv0.IgnoreMessageInspect = true;
+
+            testsrv0.Restart();
+            //var client0 = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "client0.dll", true).GetPerSessionThrowableProxy();
+
+            var client0 = WcfClientProxy<IWcfTest>.GetPerCallThrowableInstance(WcfBinding.BasicHttp, "127.0.0.1", 6001, "WcfTest");
 
             client0.AsIWcfClientBase().SendingRequest += (s, e) =>
             {
@@ -2233,8 +2238,8 @@ namespace DevLib.Samples
 
             try
             {
-                //client0.MyOperation1("", 1);
-                client0.Call("GetCityForecastByZIP", "33133");
+                client0.MyOperation1("", 1);
+                //client0.Call("GetCityForecastByZIP", "33133");
             }
             catch (Exception e)
             {
@@ -2251,8 +2256,8 @@ namespace DevLib.Samples
 
             try
             {
-                //client0.MyOperation1("", 1);
-                client0.Call(client0.Methods[1], "33133");
+                client0.MyOperation1("", 1);
+                //client0.Call(client0.Methods[1], "33133");
             }
             catch (Exception e)
             {

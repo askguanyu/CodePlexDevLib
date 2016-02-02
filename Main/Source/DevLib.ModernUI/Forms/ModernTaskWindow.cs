@@ -75,7 +75,7 @@ namespace DevLib.ModernUI.Forms
             this.Size = new Size(400, 200);
             this.ShowStatusStrip = false;
             this.ShowBorder = false;
-            base.TopBarHeight = 0;
+            this.ShowTopBar = false;
             this.TopBarHeight = 2;
         }
 
@@ -135,18 +135,6 @@ namespace DevLib.ModernUI.Forms
                 this._lastUpdateTime = DateTime.Now;
                 this._thresholdTime = this._closeTime / 1.5d;
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the height of the top bar.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(2)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public new uint TopBarHeight
-        {
-            get;
-            set;
         }
 
         /// <summary>

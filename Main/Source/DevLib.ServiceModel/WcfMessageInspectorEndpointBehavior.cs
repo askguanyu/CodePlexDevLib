@@ -92,6 +92,24 @@ namespace DevLib.ServiceModel
         public event EventHandler<WcfErrorEventArgs> ErrorOccurred;
 
         /// <summary>
+        /// Gets or sets a value indicating whether ignore message inspection.
+        /// </summary>
+        public bool IgnoreMessageInspect
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore message validation.
+        /// </summary>
+        public bool IgnoreMessageValidate
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Implement to pass data at runtime to bindings to support custom behavior.
         /// </summary>
         /// <param name="endpoint">The endpoint to modify.</param>
@@ -109,6 +127,9 @@ namespace DevLib.ServiceModel
         {
             WcfMessageInspector inspector = new WcfMessageInspector(endpoint, this._clientCredentials);
 
+            inspector.IgnoreMessageInspect = this.IgnoreMessageInspect;
+            inspector.IgnoreMessageValidate = this.IgnoreMessageValidate;
+
             inspector.SendingRequest += (s, e) => this.RaiseEvent(this.SendingRequest, endpoint, e);
             inspector.ReceivingReply += (s, e) => this.RaiseEvent(this.ReceivingReply, endpoint, e);
             inspector.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, e);
@@ -124,6 +145,9 @@ namespace DevLib.ServiceModel
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
             WcfMessageInspector inspector = new WcfMessageInspector(endpoint, this._serviceHostBase);
+
+            inspector.IgnoreMessageInspect = this.IgnoreMessageInspect;
+            inspector.IgnoreMessageValidate = this.IgnoreMessageValidate;
 
             inspector.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, endpoint, e);
             inspector.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, endpoint, e);

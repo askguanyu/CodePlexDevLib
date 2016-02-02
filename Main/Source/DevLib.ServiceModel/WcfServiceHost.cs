@@ -10,6 +10,7 @@ namespace DevLib.ServiceModel
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq.Expressions;
     using System.Net;
     using System.Security.Permissions;
     using System.ServiceModel;
@@ -1012,6 +1013,24 @@ namespace DevLib.ServiceModel
         /// Occurs when has error.
         /// </summary>
         public event EventHandler<WcfErrorEventArgs> ErrorOccurred;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore message inspection.
+        /// </summary>
+        public bool IgnoreMessageInspect
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether ignore message validation.
+        /// </summary>
+        public bool IgnoreMessageValidate
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets a value indicating whether service host is opened or not.
@@ -2286,6 +2305,9 @@ namespace DevLib.ServiceModel
                                 {
                                     wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(serviceHost);
 
+                                    wcfMessageInspectorEndpointBehavior.IgnoreMessageInspect = this.IgnoreMessageInspect;
+                                    wcfMessageInspectorEndpointBehavior.IgnoreMessageValidate = this.IgnoreMessageValidate;
+
                                     wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, endpoint, serviceHost, e);
                                     wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, endpoint, serviceHost, e);
                                     wcfMessageInspectorEndpointBehavior.ErrorOccurred += (s, e) => this.RaiseEvent(this.ErrorOccurred, e);
@@ -2448,6 +2470,9 @@ namespace DevLib.ServiceModel
                                 if (wcfMessageInspectorEndpointBehavior == null)
                                 {
                                     wcfMessageInspectorEndpointBehavior = new WcfMessageInspectorEndpointBehavior(serviceHost);
+
+                                    wcfMessageInspectorEndpointBehavior.IgnoreMessageInspect = this.IgnoreMessageInspect;
+                                    wcfMessageInspectorEndpointBehavior.IgnoreMessageValidate = this.IgnoreMessageValidate;
 
                                     wcfMessageInspectorEndpointBehavior.ReceivingRequest += (s, e) => this.RaiseEvent(this.ReceivingRequest, endpoint, serviceHost, e);
                                     wcfMessageInspectorEndpointBehavior.SendingReply += (s, e) => this.RaiseEvent(this.SendingReply, endpoint, serviceHost, e);

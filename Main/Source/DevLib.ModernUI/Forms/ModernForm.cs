@@ -132,6 +132,7 @@ namespace DevLib.ModernUI.Forms
             this.Controls.Add(this.StatusStrip);
             this.ShowStatusStrip = false;
             this.ShowHeader = true;
+            this.ShowTopBar = true;
             this.TopBarHeight = 4;
             this.MaximumSize = new Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
         }
@@ -645,6 +646,15 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether show top bar.
+        /// </summary>
+        protected bool ShowTopBar
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the internal spacing, in pixels, of the contents of a control.
         /// </summary>
         protected override Padding DefaultPadding
@@ -794,7 +804,7 @@ namespace DevLib.ModernUI.Forms
                 TextRenderer.DrawText(e.Graphics, this.Text, ModernFonts.GetDefaultFont(this.FontSize, this.FontWeight), bounds, foreColor, flags);
             }
 
-            if (this.TopBarHeight > 0)
+            if (this.TopBarHeight > 0 && this.ShowTopBar)
             {
                 using (SolidBrush brush = ModernPaint.GetStyleBrush(this.ColorStyle))
                 {

@@ -203,7 +203,7 @@ namespace DevLib.Samples
             this.modernTabControl1.Location = new System.Drawing.Point(35, 148);
             this.modernTabControl1.Multiline = true;
             this.modernTabControl1.Name = "modernTabControl1";
-            this.modernTabControl1.SelectedIndex = 4;
+            this.modernTabControl1.SelectedIndex = 0;
             this.modernTabControl1.Size = new System.Drawing.Size(606, 438);
             this.modernTabControl1.TabIndex = 11;
             this.modernTabControl1.UseSelectable = true;
@@ -250,11 +250,12 @@ namespace DevLib.Samples
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.modernDataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
-            this.modernDataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.modernDataGridView1.EnableHeadersVisualStyles = false;
             this.modernDataGridView1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.modernDataGridView1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.modernDataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.modernDataGridView1.HighlightPercentage = 0.5F;
+            this.modernDataGridView1.HorizontalScrollBarSize = 40;
+            this.modernDataGridView1.Location = new System.Drawing.Point(55, 43);
             this.modernDataGridView1.Name = "modernDataGridView1";
             this.modernDataGridView1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -271,7 +272,7 @@ namespace DevLib.Samples
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
             this.modernDataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.modernDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.modernDataGridView1.Size = new System.Drawing.Size(598, 396);
+            this.modernDataGridView1.Size = new System.Drawing.Size(248, 92);
             this.modernDataGridView1.TabIndex = 2;
             // 
             // Column4

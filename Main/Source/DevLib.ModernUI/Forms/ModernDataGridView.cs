@@ -41,12 +41,12 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Field _verticalScrollBar.
         /// </summary>
-        private ModernScrollBar _verticalScrollBar;
+        private ModernScrollBar _verticalScrollBar = new ModernScrollBar();
 
         /// <summary>
         /// Field _horizontalScrollBar.
         /// </summary>
-        private ModernScrollBar _horizontalScrollBar;
+        private ModernScrollBar _horizontalScrollBar = new ModernScrollBar();
 
         /// <summary>
         /// Field _verticalScrollBarHelper.
@@ -245,11 +245,50 @@ namespace DevLib.ModernUI.Forms
         /// <summary>
         /// Gets or sets the highlight percentage.
         /// </summary>
+        [Category("Modern Behaviour")]
         [DefaultValue(0.2F)]
         public float HighlightPercentage
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Gets or sets the size of the vertical scroll bar.
+        /// </summary>
+        [Category("Modern Behaviour")]
+        [DefaultValue(20)]
+        public int VerticalScrollBarSize
+        {
+            get
+            {
+                return this._verticalScrollBar.ScrollbarSize;
+            }
+
+            set
+            {
+                this._verticalScrollBar.ScrollbarSize = value;
+                this.RefreshScrollBarHelper();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the size of the horizontal scroll bar.
+        /// </summary>
+        [Category("Modern Behaviour")]
+        [DefaultValue(20)]
+        public int HorizontalScrollBarSize
+        {
+            get
+            {
+                return this._horizontalScrollBar.ScrollbarSize;
+            }
+
+            set
+            {
+                this._horizontalScrollBar.ScrollbarSize = value;
+                this.RefreshScrollBarHelper();
+            }
         }
 
         /// <summary>
@@ -380,9 +419,6 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this._horizontalScrollBar = new ModernScrollBar();
-            this._verticalScrollBar = new ModernScrollBar();
-
             ((ISupportInitialize)this).BeginInit();
             this.SuspendLayout();
 
@@ -394,9 +430,9 @@ namespace DevLib.ModernUI.Forms
             this._horizontalScrollBar.Name = "_horizontalScrollBar";
             this._horizontalScrollBar.Orientation = ModernScrollBarOrientation.Horizontal;
             this._horizontalScrollBar.ScrollbarSize = 50;
-            this._horizontalScrollBar.Size = new Size(200, 50);
             this._horizontalScrollBar.TabIndex = 0;
             this._horizontalScrollBar.UseSelectable = true;
+            this._horizontalScrollBar.ScrollbarSize = 20;
 
             this._verticalScrollBar.LargeChange = 10;
             this._verticalScrollBar.Location = new Point(0, 0);
@@ -406,9 +442,9 @@ namespace DevLib.ModernUI.Forms
             this._verticalScrollBar.Name = "_verticalScrollBar";
             this._verticalScrollBar.Orientation = ModernScrollBarOrientation.Vertical;
             this._verticalScrollBar.ScrollbarSize = 50;
-            this._verticalScrollBar.Size = new Size(50, 200);
             this._verticalScrollBar.TabIndex = 0;
             this._verticalScrollBar.UseSelectable = true;
+            this._verticalScrollBar.ScrollbarSize = 20;
 
             ((ISupportInitialize)this).EndInit();
             this.ResumeLayout(false);

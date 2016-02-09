@@ -50,7 +50,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="scrollBar">The ModernScrollBar.</param>
         /// <param name="dataGridView">The DataGridView.</param>
         /// <param name="isVertical">Whether use vertical.</param>
-        public ModernDataGridViewHelper(ModernScrollBar scrollBar, DataGridView dataGridView, bool isVertical = true)
+        public ModernDataGridViewHelper(ModernScrollBar scrollBar, DataGridView dataGridView, bool isVertical)
         {
             this._scrollBar = scrollBar;
             this._scrollBar.UseBarColor = true;
@@ -70,14 +70,18 @@ namespace DevLib.ModernUI.Forms
                 }
             }
 
-            this._dataGridView.RowsAdded += this.OnDataGridViewRowsAdded;
-            this._dataGridView.UserDeletedRow += this.OnDataGridViewUserDeletedRow;
-            this._dataGridView.Scroll += this.OnDataGridViewScroll;
-            this._dataGridView.Resize += this.OnDataGridViewResize;
             this._scrollBar.Scroll += this.OnScrollBarScroll;
-            this._scrollBar.ScrollbarSize = 17;
 
             this.UpdateScrollBar();
+        }
+
+        /// <summary>
+        /// Gets or sets the size of the corner.
+        /// </summary>
+        public int CornerSize
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -97,7 +101,7 @@ namespace DevLib.ModernUI.Forms
                     this._scrollBar.LargeChange = Math.Max(1, this.GetVisibleRows() - 1);
                     this._scrollBar.Value = this._dataGridView.FirstDisplayedScrollingRowIndex;
                     this._scrollBar.Location = new Point(this._dataGridView.Width - this._scrollBar.ScrollbarSize, 0);
-                    this._scrollBar.Height = this._dataGridView.Height - (this._hScrollBar.Visible ? this._scrollBar.ScrollbarSize : 0);
+                    this._scrollBar.Height = this._dataGridView.Height - (this._hScrollBar.Visible ? this.CornerSize : 0);
                     this._scrollBar.Visible = this._vScrollBar.Visible;
                     this._scrollBar.BringToFront();
                 }
@@ -109,7 +113,7 @@ namespace DevLib.ModernUI.Forms
                     this._scrollBar.LargeChange = this._hScrollBar.LargeChange;
                     this._scrollBar.Value = this._hScrollBar.Value == 0 ? 1 : this._hScrollBar.Value;
                     this._scrollBar.Location = new Point(0, this._dataGridView.Height - this._scrollBar.ScrollbarSize);
-                    this._scrollBar.Width = this._dataGridView.Width - (this._vScrollBar.Visible ? this._scrollBar.ScrollbarSize : 0);
+                    this._scrollBar.Width = this._dataGridView.Width - (this._vScrollBar.Visible ? this.CornerSize : 0);
                     this._scrollBar.Visible = this._hScrollBar.Visible;
                     this._scrollBar.BringToFront();
                 }
@@ -150,36 +154,6 @@ namespace DevLib.ModernUI.Forms
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Handles the Scroll event.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="ScrollEventArgs"/> instance containing the event data.</param>
-        private void OnDataGridViewScroll(object sender, ScrollEventArgs e)
-        {
-            this.UpdateScrollBar();
-        }
-
-        /// <summary>
-        /// Handles the UserDeletedRow event.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="DataGridViewRowEventArgs"/> instance containing the event data.</param>
-        private void OnDataGridViewUserDeletedRow(object sender, DataGridViewRowEventArgs e)
-        {
-            this.UpdateScrollBar();
-        }
-
-        /// <summary>
-        /// Handles the RowsAdded event.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="DataGridViewRowsAddedEventArgs"/> instance containing the event data.</param>
-        private void OnDataGridViewRowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            this.UpdateScrollBar();
         }
 
         /// <summary>
@@ -269,16 +243,6 @@ namespace DevLib.ModernUI.Forms
         private int GetVisibleColumns()
         {
             return this._dataGridView.DisplayedColumnCount(true);
-        }
-
-        /// <summary>
-        /// Handles the Resize event.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void OnDataGridViewResize(object sender, EventArgs e)
-        {
-            this.UpdateScrollBar();
         }
     }
 }

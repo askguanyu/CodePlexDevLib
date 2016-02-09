@@ -79,6 +79,12 @@ namespace DevLib.ModernUI.Forms
             this._verticalScrollBarHelper = new ModernDataGridViewHelper(this._verticalScrollBar, this, true);
             this._horizontalScrollBarHelper = new ModernDataGridViewHelper(this._horizontalScrollBar, this, false);
 
+            this.HorizontalScrollBarSize = 20;
+            this.VerticalScrollBarSize = 20;
+
+            this.HorizontalScrollBar.MaximumSize = new Size(1, 0);
+            this.VerticalScrollBar.MaximumSize = new Size(0, 1);
+
             this.ApplyModernStyle();
         }
 
@@ -268,6 +274,7 @@ namespace DevLib.ModernUI.Forms
             set
             {
                 this._verticalScrollBar.ScrollbarSize = value;
+                this._horizontalScrollBarHelper.CornerSize = value;
                 this.RefreshScrollBarHelper();
             }
         }
@@ -287,6 +294,7 @@ namespace DevLib.ModernUI.Forms
             set
             {
                 this._horizontalScrollBar.ScrollbarSize = value;
+                this._verticalScrollBarHelper.CornerSize = value;
                 this.RefreshScrollBarHelper();
             }
         }
@@ -299,20 +307,6 @@ namespace DevLib.ModernUI.Forms
             base.Refresh();
 
             this.RefreshScrollBarHelper();
-        }
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (this._components != null))
-            {
-                this._components.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -415,6 +409,62 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Raises the <see cref="E:Paint" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="PaintEventArgs"/> instance containing the event data.</param>
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            if (this.HorizontalScrollBar.Visible || this.VerticalScrollBar.Visible)
+            {
+                Color backColor = this.BackColor;
+
+                if (!this.UseCustomBackColor)
+                {
+                    backColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+                }
+
+                using (SolidBrush brush = new SolidBrush(backColor))
+                {
+                    if (this.HorizontalScrollBar.Visible)
+                    {
+                        e.Graphics.FillRectangle(brush, 0, this.Height - this.HorizontalScrollBar.Height, this.Width, this.HorizontalScrollBar.Height);
+                    }
+
+                    if (this.VerticalScrollBar.Visible)
+                    {
+                        e.Graphics.FillRectangle(brush, this.Width - this.VerticalScrollBar.Width, 0, this.VerticalScrollBar.Width, this.Height);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (this._components != null))
+            {
+                this._components.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Called to update scroll bar.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void OnUpdateScrollBar(object sender, EventArgs e)
+        {
+            this.RefreshScrollBarHelper();
+        }
+
+        /// <summary>
         /// Required method for Designer support - do not modify the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -432,7 +482,6 @@ namespace DevLib.ModernUI.Forms
             this._horizontalScrollBar.ScrollbarSize = 50;
             this._horizontalScrollBar.TabIndex = 0;
             this._horizontalScrollBar.UseSelectable = true;
-            this._horizontalScrollBar.ScrollbarSize = 20;
 
             this._verticalScrollBar.LargeChange = 10;
             this._verticalScrollBar.Location = new Point(0, 0);
@@ -444,10 +493,21 @@ namespace DevLib.ModernUI.Forms
             this._verticalScrollBar.ScrollbarSize = 50;
             this._verticalScrollBar.TabIndex = 0;
             this._verticalScrollBar.UseSelectable = true;
-            this._verticalScrollBar.ScrollbarSize = 20;
 
             ((ISupportInitialize)this).EndInit();
             this.ResumeLayout(false);
+
+            this.RowsAdded += this.OnUpdateScrollBar;
+            this.UserDeletedRow += this.OnUpdateScrollBar;
+            this.RowHeightChanged += this.OnUpdateScrollBar;
+            this.ColumnAdded += this.OnUpdateScrollBar;
+            this.ColumnRemoved += this.OnUpdateScrollBar;
+            this.ColumnWidthChanged += this.OnUpdateScrollBar;
+            this.Scroll += this.OnUpdateScrollBar;
+            this.Resize += this.OnUpdateScrollBar;
+            this.HorizontalScrollBar.VisibleChanged += this.OnUpdateScrollBar;
+            this.VerticalScrollBar.VisibleChanged += this.OnUpdateScrollBar;
+            this.Layout += this.OnUpdateScrollBar;
         }
 
         /// <summary>
@@ -459,37 +519,38 @@ namespace DevLib.ModernUI.Forms
             this.CellBorderStyle = DataGridViewCellBorderStyle.None;
             this.EnableHeadersVisualStyles = false;
             this.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            this.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
-            this.BackgroundColor = ModernPaint.BackColor.Form(this.ThemeStyle);
-            this.GridColor = ModernPaint.BackColor.Form(this.ThemeStyle);
-            this.ForeColor = ModernPaint.ForeColor.Button.Disabled(this.ThemeStyle);
             this.Font = new Font("Segoe UI", 11f, FontStyle.Regular, GraphicsUnit.Pixel);
-
             this.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.AllowUserToResizeRows = false;
             this.AllowUserToResizeColumns = true;
-
             this.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            this.ColumnHeadersDefaultCellStyle.BackColor = ModernPaint.GetStyleColor(this.ColorStyle);
-            this.ColumnHeadersDefaultCellStyle.ForeColor = ModernPaint.ForeColor.Button.Press(this.ThemeStyle);
-
             this.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            this.RowHeadersDefaultCellStyle.BackColor = ModernPaint.GetStyleColor(this.ColorStyle);
-            this.RowHeadersDefaultCellStyle.ForeColor = ModernPaint.ForeColor.Button.Press(this.ThemeStyle);
 
-            this.DefaultCellStyle.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
-            this.DefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
-            this.DefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+            if (!this.UseCustomBackColor)
+            {
+                this.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+                this.BackgroundColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+                this.GridColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+                this.ColumnHeadersDefaultCellStyle.BackColor = ModernPaint.GetStyleColor(this.ColorStyle);
+                this.RowHeadersDefaultCellStyle.BackColor = ModernPaint.GetStyleColor(this.ColorStyle);
+                this.DefaultCellStyle.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+                this.DefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
+                this.RowsDefaultCellStyle.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
+                this.RowsDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
+                this.RowHeadersDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
+                this.ColumnHeadersDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
+            }
 
-            this.RowsDefaultCellStyle.BackColor = ModernPaint.BackColor.Form(this.ThemeStyle);
-            this.RowsDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
-            this.RowsDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
-
-            this.RowHeadersDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
-            this.RowHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
-
-            this.ColumnHeadersDefaultCellStyle.SelectionBackColor = ControlPaint.Light(ModernPaint.GetStyleColor(this.ColorStyle), this.HighlightPercentage);
-            this.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+            if (!this.UseCustomForeColor)
+            {
+                this.ForeColor = ModernPaint.ForeColor.Button.Disabled(this.ThemeStyle);
+                this.ColumnHeadersDefaultCellStyle.ForeColor = ModernPaint.ForeColor.Button.Press(this.ThemeStyle);
+                this.RowHeadersDefaultCellStyle.ForeColor = ModernPaint.ForeColor.Button.Press(this.ThemeStyle);
+                this.DefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+                this.RowsDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+                this.RowHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+                this.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.FromArgb(17, 17, 17);
+            }
         }
 
         /// <summary>
@@ -497,8 +558,15 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         private void RefreshScrollBarHelper()
         {
-            this._verticalScrollBarHelper.UpdateScrollBar();
-            this._horizontalScrollBarHelper.UpdateScrollBar();
+            if (this._verticalScrollBarHelper != null)
+            {
+                this._verticalScrollBarHelper.UpdateScrollBar();
+            }
+
+            if (this._horizontalScrollBarHelper != null)
+            {
+                this._horizontalScrollBarHelper.UpdateScrollBar();
+            }
         }
     }
 }

@@ -349,7 +349,9 @@ namespace DevLib.ServiceModel
 
             try
             {
-                XDocument xDocument = XDocument.Parse(message.ToString());
+                string messageString = message.ToString();
+
+                XDocument xDocument = XDocument.Parse(messageString);
 
                 stringBuilder = new StringBuilder();
 
@@ -359,7 +361,7 @@ namespace DevLib.ServiceModel
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    this.RaiseEvent(this.ErrorOccurred, new XmlSchemaValidationException(result, new Exception(message.ToString())) { Source = messageId.ToString() }, messageId.ToString());
+                    this.RaiseEvent(this.ErrorOccurred, new XmlSchemaValidationException(result, new Exception(messageString)) { Source = messageId.ToString() }, messageId.ToString());
                 }
 
                 return result;

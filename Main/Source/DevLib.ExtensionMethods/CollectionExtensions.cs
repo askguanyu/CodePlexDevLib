@@ -137,6 +137,28 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Gets the value associated with the specified key, if the key is found; otherwise, create a value, add it to the source and return it.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="builder">The function to create a value.</param>
+        /// <returns>The value associated with the specified key, if the key is found; otherwise, the new value created.</returns>
+        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key, Func<TValue> builder)
+        {
+            TValue result;
+
+            if (!source.TryGetValue(key, out result))
+            {
+                result = builder();
+                source.Add(key, result);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Determines whether a sequence is null or empty.
         /// </summary>
         /// <typeparam name="T">The type of the elements of source.</typeparam>

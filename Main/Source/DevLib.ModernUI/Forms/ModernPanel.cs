@@ -34,14 +34,14 @@ namespace DevLib.ModernUI.Forms
         private ModernThemeStyle _modernThemeStyle = ModernThemeStyle.Default;
 
         /// <summary>
-        /// Field _verticalScrollbar.
+        /// Field _verticalScrollBar.
         /// </summary>
-        private ModernScrollBar _verticalScrollbar = new ModernScrollBar(ModernScrollBarOrientation.Vertical);
+        private ModernScrollBar _verticalScrollBar = new ModernScrollBar(ModernScrollBarOrientation.Vertical);
 
         /// <summary>
-        /// Field _horizontalScrollbar.
+        /// Field _horizontalScrollBar.
         /// </summary>
-        private ModernScrollBar _horizontalScrollbar = new ModernScrollBar(ModernScrollBarOrientation.Horizontal);
+        private ModernScrollBar _horizontalScrollBar = new ModernScrollBar(ModernScrollBarOrientation.Horizontal);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModernPanel"/> class.
@@ -50,17 +50,17 @@ namespace DevLib.ModernUI.Forms
         {
             this.SetStyle(ControlStyles.SupportsTransparentBackColor | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
 
-            this.Controls.Add(this._verticalScrollbar);
-            this.Controls.Add(this._horizontalScrollbar);
+            this.Controls.Add(this._verticalScrollBar);
+            this.Controls.Add(this._horizontalScrollBar);
 
-            this._verticalScrollbar.UseBarColor = true;
-            this._horizontalScrollbar.UseBarColor = true;
+            this._verticalScrollBar.UseBarColor = true;
+            this._horizontalScrollBar.UseBarColor = true;
 
-            this._verticalScrollbar.Visible = false;
-            this._horizontalScrollbar.Visible = false;
+            this._verticalScrollBar.Visible = false;
+            this._horizontalScrollBar.Visible = false;
 
-            this._verticalScrollbar.Scroll += this.VerticalScrollbarScroll;
-            this._horizontalScrollbar.Scroll += this.HorizontalScrollbarScroll;
+            this._verticalScrollBar.Scroll += this.VerticalScrollbarScroll;
+            this._horizontalScrollBar.Scroll += this.HorizontalScrollbarScroll;
         }
 
         /// <summary>
@@ -236,12 +236,12 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._horizontalScrollbar.ScrollbarSize;
+                return this._horizontalScrollBar.ScrollbarSize;
             }
 
             set
             {
-                this._horizontalScrollbar.ScrollbarSize = value;
+                this._horizontalScrollBar.ScrollbarSize = value;
             }
         }
 
@@ -255,12 +255,12 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._horizontalScrollbar.UseBarColor;
+                return this._horizontalScrollBar.UseBarColor;
             }
 
             set
             {
-                this._horizontalScrollbar.UseBarColor = value;
+                this._horizontalScrollBar.UseBarColor = value;
             }
         }
 
@@ -274,12 +274,12 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._horizontalScrollbar.HighlightOnWheel;
+                return this._horizontalScrollBar.HighlightOnWheel;
             }
 
             set
             {
-                this._horizontalScrollbar.HighlightOnWheel = value;
+                this._horizontalScrollBar.HighlightOnWheel = value;
             }
         }
 
@@ -304,12 +304,12 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._verticalScrollbar.ScrollbarSize;
+                return this._verticalScrollBar.ScrollbarSize;
             }
 
             set
             {
-                this._verticalScrollbar.ScrollbarSize = value;
+                this._verticalScrollBar.ScrollbarSize = value;
             }
         }
 
@@ -323,12 +323,12 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._verticalScrollbar.UseBarColor;
+                return this._verticalScrollBar.UseBarColor;
             }
 
             set
             {
-                this._verticalScrollbar.UseBarColor = value;
+                this._verticalScrollBar.UseBarColor = value;
             }
         }
 
@@ -342,12 +342,12 @@ namespace DevLib.ModernUI.Forms
         {
             get
             {
-                return this._verticalScrollbar.HighlightOnWheel;
+                return this._verticalScrollBar.HighlightOnWheel;
             }
 
             set
             {
-                this._verticalScrollbar.HighlightOnWheel = value;
+                this._verticalScrollBar.HighlightOnWheel = value;
             }
         }
 
@@ -366,8 +366,11 @@ namespace DevLib.ModernUI.Forms
 
             set
             {
-                this.ShowHorizontalScrollBar = value;
-                this.ShowVerticalScrollBar = value;
+                if (!value)
+                {
+                    this.ShowHorizontalScrollBar = value;
+                    this.ShowVerticalScrollBar = value;
+                }
 
                 base.AutoScroll = value;
             }
@@ -468,40 +471,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="PaintEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPaintForeground(PaintEventArgs e)
         {
-            if (this.DesignMode)
-            {
-                this._horizontalScrollbar.Visible = false;
-                this._verticalScrollbar.Visible = false;
-                return;
-            }
-
             this.UpdateScrollBarPositions();
-
-            if (this.ShowHorizontalScrollBar)
-            {
-                this._horizontalScrollbar.Visible = this.HorizontalScroll.Visible;
-            }
-
-            if (this.HorizontalScroll.Visible)
-            {
-                this._horizontalScrollbar.Minimum = this.HorizontalScroll.Minimum;
-                this._horizontalScrollbar.Maximum = this.HorizontalScroll.Maximum;
-                this._horizontalScrollbar.SmallChange = this.HorizontalScroll.SmallChange;
-                this._horizontalScrollbar.LargeChange = this.HorizontalScroll.LargeChange;
-            }
-
-            if (this.ShowVerticalScrollBar)
-            {
-                this._verticalScrollbar.Visible = VerticalScroll.Visible;
-            }
-
-            if (this.VerticalScroll.Visible)
-            {
-                this._verticalScrollbar.Minimum = this.VerticalScroll.Minimum;
-                this._verticalScrollbar.Maximum = this.VerticalScroll.Maximum;
-                this._verticalScrollbar.SmallChange = this.VerticalScroll.SmallChange;
-                this._verticalScrollbar.LargeChange = this.VerticalScroll.LargeChange;
-            }
 
             this.OnCustomPaintForeground(new ModernPaintEventArgs(Color.Empty, Color.Empty, e.Graphics));
         }
@@ -514,8 +484,8 @@ namespace DevLib.ModernUI.Forms
         {
             base.OnMouseWheel(e);
 
-            this._verticalScrollbar.Value = Math.Abs(this.VerticalScroll.Value);
-            this._horizontalScrollbar.Value = Math.Abs(this.HorizontalScroll.Value);
+            this._verticalScrollBar.Value = Math.Abs(this.VerticalScroll.Value);
+            this._horizontalScrollBar.Value = Math.Abs(this.HorizontalScroll.Value);
         }
 
         /// <summary>
@@ -543,7 +513,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="ScrollEventArgs"/> instance containing the event data.</param>
         private void HorizontalScrollbarScroll(object sender, ScrollEventArgs e)
         {
-            this.AutoScrollPosition = new Point(e.NewValue, this._verticalScrollbar.Value);
+            this.AutoScrollPosition = new Point(e.NewValue, this._verticalScrollBar.Value);
             this.UpdateScrollBarPositions();
         }
 
@@ -554,7 +524,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="e">The <see cref="ScrollEventArgs"/> instance containing the event data.</param>
         private void VerticalScrollbarScroll(object sender, ScrollEventArgs e)
         {
-            this.AutoScrollPosition = new Point(this._horizontalScrollbar.Value, e.NewValue);
+            this.AutoScrollPosition = new Point(this._horizontalScrollBar.Value, e.NewValue);
             this.UpdateScrollBarPositions();
         }
 
@@ -565,26 +535,26 @@ namespace DevLib.ModernUI.Forms
         {
             if (!this.AutoScroll)
             {
-                this._verticalScrollbar.Visible = false;
-                this._horizontalScrollbar.Visible = false;
+                this._verticalScrollBar.Visible = false;
+                this._horizontalScrollBar.Visible = false;
                 return;
             }
 
-            this._verticalScrollbar.Location = new Point(this.ClientRectangle.Width - this._verticalScrollbar.Width, this.ClientRectangle.Y);
-            this._verticalScrollbar.Height = this.ClientRectangle.Height - this._horizontalScrollbar.Height;
+            this._horizontalScrollBar.Visible = this.ShowHorizontalScrollBar & this.HorizontalScroll.Visible;
+            this._horizontalScrollBar.Minimum = this.HorizontalScroll.Minimum;
+            this._horizontalScrollBar.Maximum = this.HorizontalScroll.Maximum;
+            this._horizontalScrollBar.SmallChange = this.HorizontalScroll.SmallChange;
+            this._horizontalScrollBar.LargeChange = this.HorizontalScroll.LargeChange;
+            this._horizontalScrollBar.Location = new Point(this.ClientRectangle.X, this.ClientRectangle.Height - this._horizontalScrollBar.Height);
+            this._horizontalScrollBar.Width = this.ClientRectangle.Width - (this._verticalScrollBar.Visible ? this._verticalScrollBar.Width : 0);
 
-            if (!this.ShowVerticalScrollBar)
-            {
-                this._verticalScrollbar.Visible = false;
-            }
-
-            this._horizontalScrollbar.Location = new Point(this.ClientRectangle.X, this.ClientRectangle.Height - this._horizontalScrollbar.Height);
-            this._horizontalScrollbar.Width = this.ClientRectangle.Width - this._verticalScrollbar.Width;
-
-            if (!this.ShowHorizontalScrollBar)
-            {
-                this._horizontalScrollbar.Visible = false;
-            }
+            this._verticalScrollBar.Visible = this.ShowVerticalScrollBar & this.VerticalScroll.Visible;
+            this._verticalScrollBar.Minimum = this.VerticalScroll.Minimum;
+            this._verticalScrollBar.Maximum = this.VerticalScroll.Maximum;
+            this._verticalScrollBar.SmallChange = this.VerticalScroll.SmallChange;
+            this._verticalScrollBar.LargeChange = this.VerticalScroll.LargeChange;
+            this._verticalScrollBar.Location = new Point(this.ClientRectangle.Width - this._verticalScrollBar.Width, this.ClientRectangle.Y);
+            this._verticalScrollBar.Height = this.ClientRectangle.Height - (this._horizontalScrollBar.Visible ? this._horizontalScrollBar.Height : 0);
         }
     }
 }

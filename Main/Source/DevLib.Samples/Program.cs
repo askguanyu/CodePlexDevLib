@@ -2211,7 +2211,7 @@ namespace DevLib.Samples
 
             testsrv0.Open();
 
-            testsrv0.IgnoreMessageInspect = true;
+            testsrv0.IgnoreMessageInspect = false;
 
             testsrv0.Restart();
             //var client0 = new DynamicClientProxyFactory("http://wsf.cdyne.com/WeatherWS/Weather.asmx", "client0.dll", true).GetPerSessionThrowableProxy();

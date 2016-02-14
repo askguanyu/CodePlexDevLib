@@ -202,6 +202,20 @@ namespace DevLib.ModernUI.NativeAPI
             public uint Mask;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NCCALCSIZE_PARAMS
+        {
+            public RECT rgrc0, rgrc1, rgrc2;
+            public WINDOWPOS lppos;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPOS
+        {
+            public IntPtr hWnd, hWndInsertAfter;
+            public int x, y, cx, cy, flags;
+        }
+
         public enum DWM_SOURCE_FRAME_SAMPLING
         {
             DWM_SOURCE_FRAME_SAMPLING_POINT,

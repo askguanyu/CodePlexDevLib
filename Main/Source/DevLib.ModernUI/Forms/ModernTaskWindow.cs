@@ -245,8 +245,6 @@ namespace DevLib.ModernUI.Forms
 
             SingletonWindow = new ModernTaskWindow(autoCloseTime, userControl);
             SingletonWindow.Text = text;
-            SingletonWindow.Resizable = false;
-            SingletonWindow.Movable = true;
             SingletonWindow.StartPosition = FormStartPosition.Manual;
             SingletonWindow.Location = new Point(Screen.PrimaryScreen.Bounds.Width - 400 - 5, Screen.PrimaryScreen.Bounds.Height - 200 - 5);
 

@@ -10,6 +10,7 @@ namespace DevLib.ModernUI.Forms
     using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
+    using System.Runtime.InteropServices;
     using System.Security;
     using System.Security.Permissions;
     using System.Windows.Forms;
@@ -27,16 +28,6 @@ namespace DevLib.ModernUI.Forms
         /// Field StatusStrip.
         /// </summary>
         protected readonly Panel StatusStrip = new Panel() { Height = 20, BackColor = Color.Transparent, ForeColor = Color.WhiteSmoke, Visible = false };
-
-        /// <summary>
-        /// Field CS_DROPSHADOW.
-        /// </summary>
-        private const int CS_DROPSHADOW = 0x20000;
-
-        /// <summary>
-        /// Field WS_MINIMIZEBOX.
-        /// </summary>
-        private const int WS_MINIMIZEBOX = 0x20000;
 
         /// <summary>
         /// Field ResizeMargin.
@@ -109,6 +100,16 @@ namespace DevLib.ModernUI.Forms
         private ModernShadowBase _shadowForm;
 
         /// <summary>
+        /// Field _aeroSnap.
+        /// </summary>
+        private bool _aeroSnap = true;
+
+        /// <summary>
+        /// Field _resizable.
+        /// </summary>
+        private bool _resizable = true;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ModernForm"/> class.
         /// </summary>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
@@ -120,7 +121,6 @@ namespace DevLib.ModernUI.Forms
             this.StartPosition = FormStartPosition.CenterScreen;
             this.TransparencyKey = Color.Lavender;
             this.Movable = true;
-            this.Resizable = true;
             this.ShowBorder = true;
             this.TextAlign = ModernFormTextAlign.Left;
             this.BackImageAlign = ModernFormBackImageAlign.TopLeft;
@@ -134,7 +134,7 @@ namespace DevLib.ModernUI.Forms
             this.ShowHeader = true;
             this.ShowTopBar = true;
             this.TopBarHeight = 4;
-            this.MaximumSize = new Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
+            this.MaximizedBounds = Screen.GetWorkingArea(this);
         }
 
         /// <summary>
@@ -371,18 +371,6 @@ namespace DevLib.ModernUI.Forms
 
                 this._showHeader = value;
             }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is resizable.
-        /// </summary>
-        [Browsable(true)]
-        [DefaultValue(true)]
-        [Category(ModernConstants.PropertyCategoryName)]
-        public bool Resizable
-        {
-            get;
-            set;
         }
 
         /// <summary>
@@ -646,6 +634,46 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="ModernForm"/> uses aero snap.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool AeroSnap
+        {
+            get
+            {
+                return this._aeroSnap;
+            }
+
+            set
+            {
+                this._aeroSnap = value;
+                this.Invalidate(true);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="ModernForm"/> is resizable.
+        /// </summary>
+        [Browsable(true)]
+        [DefaultValue(true)]
+        [Category(ModernConstants.PropertyCategoryName)]
+        public bool Resizable
+        {
+            get
+            {
+                return this._resizable;
+            }
+
+            set
+            {
+                this._resizable = value;
+                this.Invalidate(true);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether show top bar.
         /// </summary>
         protected bool ShowTopBar
@@ -674,11 +702,17 @@ namespace DevLib.ModernUI.Forms
             get
             {
                 CreateParams cp = base.CreateParams;
-                cp.Style |= WS_MINIMIZEBOX;
+
+                cp.Style |= WinApi.WS_MINIMIZEBOX;
+
+                if (this.AeroSnap && this.Resizable)
+                {
+                    cp.Style |= WinApi.WS_SIZEBOX;
+                }
 
                 if (this.ShadowType == ModernFormShadowType.SystemShadow)
                 {
-                    cp.ClassStyle |= CS_DROPSHADOW;
+                    cp.ClassStyle |= WinApi.CS_DROPSHADOW;
                 }
 
                 return cp;
@@ -843,13 +877,13 @@ namespace DevLib.ModernUI.Forms
 
             if (this.ShowStatusStrip)
             {
+                this.StatusStrip.Height = 20;
+                this.StatusStrip.Width = this.Width - 20 - 1;
+                this.StatusStrip.Location = new Point(1, this.Height - 20 - 1);
+
                 using (SolidBrush brush = ModernPaint.GetStyleBrush(this.ColorStyle))
                 {
-                    this.StatusStrip.Height = 20;
-                    this.StatusStrip.Width = this.Width - 20;
-                    this.StatusStrip.Location = new Point(0, this.Height - 20);
-
-                    Rectangle bottomRectangle = new Rectangle(0, this.Height - 20, this.Width, 20);
+                    Rectangle bottomRectangle = new Rectangle(0, this.Height - 20 - 1, this.Width, 20 + 1);
                     e.Graphics.FillRectangle(brush, bottomRectangle);
                 }
             }
@@ -1126,6 +1160,28 @@ namespace DevLib.ModernUI.Forms
 
             switch (m.Msg)
             {
+                case (int)WinApi.Messages.WM_NCCALCSIZE:
+
+                    if (this.AeroSnap && this.Resizable && m.WParam != IntPtr.Zero)
+                    {
+                        DwmApi.NCCALCSIZE_PARAMS csp = (DwmApi.NCCALCSIZE_PARAMS)m.GetLParam(typeof(DwmApi.NCCALCSIZE_PARAMS));
+                        Rectangle normalRect = csp.rgrc0.ToRectangle();
+                        //// Inflate the form to overwrite the empty title bar.
+                        normalRect.Inflate(7, 7);
+                        csp.rgrc0 = new DwmApi.RECT(normalRect);
+                        Marshal.StructureToPtr(csp, m.LParam, true);
+
+                        m.Result = IntPtr.Zero;
+                    }
+
+                    break;
+
+                case (int)WinApi.Messages.WM_NCACTIVATE:
+
+                    //// If the form is focused, redraw the form and its children controls.
+                    this.Invalidate(true);
+                    break;
+
                 case (int)WinApi.Messages.WM_SYSCOMMAND:
 
                     int sc = m.WParam.ToInt32() & 0xFFF0;
@@ -1240,42 +1296,42 @@ namespace DevLib.ModernUI.Forms
                 Point pointToClient = this.PointToClient(cursorPoint);
                 Size clientSize = this.ClientSize;
 
-                if (pointToClient.X >= clientSize.Width - padding && pointToClient.Y >= clientSize.Height - padding && clientSize.Height >= padding)
+                if (pointToClient.X >= clientSize.Width - padding && pointToClient.Y >= clientSize.Height - padding)
                 {
                     return this.IsMirrored ? WinApi.HitTest.HTBOTTOMLEFT : WinApi.HitTest.HTBOTTOMRIGHT;
                 }
 
-                if (pointToClient.X <= ResizeMargin && pointToClient.Y >= clientSize.Height - ResizeMargin && clientSize.Height >= ResizeMargin)
+                if (pointToClient.X <= ResizeMargin && pointToClient.Y >= clientSize.Height - ResizeMargin)
                 {
                     return this.IsMirrored ? WinApi.HitTest.HTBOTTOMRIGHT : WinApi.HitTest.HTBOTTOMLEFT;
                 }
 
-                if (pointToClient.X <= ResizeMargin && pointToClient.Y <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                if (pointToClient.X <= ResizeMargin && pointToClient.Y <= ResizeMargin)
                 {
                     return this.IsMirrored ? WinApi.HitTest.HTTOPRIGHT : WinApi.HitTest.HTTOPLEFT;
                 }
 
-                if (pointToClient.X >= clientSize.Width - ResizeMargin && pointToClient.Y <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                if (pointToClient.X >= clientSize.Width - ResizeMargin && pointToClient.Y <= ResizeMargin)
                 {
                     return this.IsMirrored ? WinApi.HitTest.HTTOPLEFT : WinApi.HitTest.HTTOPRIGHT;
                 }
 
-                if (pointToClient.Y <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                if (pointToClient.Y <= ResizeMargin)
                 {
                     return WinApi.HitTest.HTTOP;
                 }
 
-                if (pointToClient.Y >= clientSize.Height - ResizeMargin && clientSize.Height >= ResizeMargin)
+                if (pointToClient.Y >= clientSize.Height - ResizeMargin)
                 {
                     return WinApi.HitTest.HTBOTTOM;
                 }
 
-                if (pointToClient.X <= ResizeMargin && clientSize.Height >= ResizeMargin)
+                if (pointToClient.X <= ResizeMargin)
                 {
                     return WinApi.HitTest.HTLEFT;
                 }
 
-                if (pointToClient.X >= clientSize.Width - ResizeMargin && clientSize.Height >= ResizeMargin)
+                if (pointToClient.X >= clientSize.Width - ResizeMargin)
                 {
                     return WinApi.HitTest.HTRIGHT;
                 }
@@ -1290,7 +1346,7 @@ namespace DevLib.ModernUI.Forms
         }
 
         /// <summary>
-        /// Moves the current winform.
+        /// Moves the current form.
         /// </summary>
         [SecuritySafeCritical]
         private void MoveForm()

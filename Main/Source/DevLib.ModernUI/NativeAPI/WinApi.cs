@@ -412,6 +412,10 @@ namespace DevLib.ModernUI.NativeAPI
             True
         };
 
+        public const int CS_DROPSHADOW = 0x20000;
+        public const int WS_MINIMIZEBOX = 0x20000;
+        public const int WS_SIZEBOX = 0x40000;
+
         public const int Autohide = 0x0000001;
         public const int AlwaysOnTop = 0x0000002;
 

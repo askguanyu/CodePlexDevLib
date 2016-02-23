@@ -494,25 +494,27 @@ namespace DevLib.Samples
 
             IocContainer container = new IocContainer();
 
-            //container.RegisterAssembly<IFoo>(Assembly.GetEntryAssembly());
+            container.RegisterAssembly<IFoo>(Assembly.GetEntryAssembly());
 
-            //container.RegisterFile<IFoo>(new[] { typeof(Person) }, "DevLib.Samples.exe");
+            container.RegisterFile<IFoo>(new[] { typeof(Person) }, "DevLib.Samples.exe");
 
-            container.RegisterFile<IFoo>("DevLib.Samples.exe");
-            
-            container.RegisterFile<IFoo>("AClassLibrary1.dll");
+            //container.RegisterFile<IFoo>("DevLib.Samples.exe");
 
-            container.RegisterFile<IFoo>("AClassLibrary1.dll");
+            //container.RegisterFile<IFoo>("AClassLibrary1.dll");
 
-            container.RegisterDirectory<IFoo>(new[] { typeof(Person) }, false, ".");
+            //container.RegisterFile<IFoo>("AClassLibrary1.dll");
 
-            container.RegisterAssembly<IFoo>(new[] { typeof(Person) }, Assembly.GetExecutingAssembly());
+            //container.RegisterDirectory<IFoo>(new[] { typeof(Person) }, false, ".");
 
-            List<object> list1 = container.GetAllInstances(typeof(IFoo)) as List<object>;
+            //container.RegisterAssembly<IFoo>(new[] { typeof(Person) }, Assembly.GetExecutingAssembly());
 
-            var listi0 = (IFoo)list1[0];
+            //List<object> list1 = container.GetAllInstances(typeof(IFoo)) as List<object>;
 
-            var list = container.GetAllInstances<IFoo>();
+            //list1 = container.GetAllInstances(typeof(IFoo)) as List<object>;
+
+            //var listi0 = (IFoo)list1[0];
+
+            //var list = container.GetAllInstances<IFoo>();
 
             //container.RegisterAssembly<IFoo>(Assembly.GetExecutingAssembly(), typeof(Person));
 
@@ -520,18 +522,22 @@ namespace DevLib.Samples
 
             //container.Register<IPerson>(new Person("aaaa", "bbbb", 0));
 
-            var iocReg = container.Register<IPerson>(new Person("aaaa", "bbbb", 1));
-            //container.Register<IPerson>(new Person("aaaa", "bbbb", 2), "A");
+            var iocReg = container.Register<IPerson>(c => new Person("aaaa", "bbbb", 1));
 
-            //container.Register<IPerson>(new Person("ccccc", "ddddd", 3));
+            //var aPerson = container.GetInstance<IPerson>();
+            //aPerson = container.GetInstance<IPerson>();
 
-            //container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().LastName, c.Resolve<IPerson>().FirstName, 4));
+            container.Register<IPerson>(new Person("aaaa", "bbbb", 2), "A");
+
+            container.Register<IPerson>(new Person("ccccc", "ddddd", 3));
+
+            container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().LastName, c.Resolve<IPerson>().FirstName, 4));
             container.Register<IPerson>(c => new Person(c.Resolve<IPerson>().FirstName, c.Resolve<IPerson>().FirstName, 5));
-            container.Register<IPerson>(c => new Person("eeeee", "fffff", 6));
+            //container.Register<IPerson>(c => new Person("eeeee", "fffff", 6));
 
             //container.Register<Person>(new Person("e", "f", 3));
 
-            //var list = container.GetAllInstances<Person>();
+            var list = container.GetAllInstances<IPerson>();
 
             Console.WriteLine(container.Resolve<IPerson>());
 
@@ -544,7 +550,7 @@ namespace DevLib.Samples
             Console.WriteLine(container.Resolve<IPerson>());
             Console.WriteLine(container.Resolve<IPerson>());
 
-            //var list = container.GetAllInstances<IPerson>();
+            list = container.GetAllInstances<IPerson>();
 
             Console.WriteLine(container.Resolve<IPerson>());
             Console.WriteLine(container.Resolve<IPerson>());
@@ -2207,7 +2213,7 @@ namespace DevLib.Samples
 
             WcfClientUtilities.SaveGeneratedAssemblyFile = true;
 
-            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new[] { typeof(IWcfTest), typeof(IWcfAnotherTest) }, WcfBinding.BasicHttp, 6001,"WcfTest");
+            var testsrv0 = new WcfServiceHost(typeof(WcfTest), new[] { typeof(IWcfTest), typeof(IWcfAnotherTest) }, WcfBinding.BasicHttp, 6001, "WcfTest");
 
             testsrv0.Open();
 
@@ -2226,7 +2232,7 @@ namespace DevLib.Samples
                 }
                 catch
                 {
-                    
+
                 }
                 Console.WriteLine(e.ClientCredentials.UserName.UserName);
             };
@@ -2261,7 +2267,7 @@ namespace DevLib.Samples
             }
             catch (Exception e)
             {
-                
+
             }
 
             //client0.CallMethod("GetCityForecastByZIP", "");

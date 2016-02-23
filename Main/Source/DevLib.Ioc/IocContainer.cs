@@ -300,6 +300,8 @@ namespace DevLib.Ioc
 
             foreach (Assembly assembly in assemblies)
             {
+                InternalLogger.Log("Register Assembly", assembly.FullName);
+
                 Type[] types = assembly.GetTypes();
 
                 this.InnerRegister(type, types, typeArguments);
@@ -593,7 +595,7 @@ namespace DevLib.Ioc
                     {
                         IocRegistrationBuilder builder = valueDictionary[0] as IocRegistrationBuilder;
 
-                        if (builder != null && !builder.IsEvaluated)
+                        if (builder != null)
                         {
                             try
                             {
@@ -1085,6 +1087,8 @@ namespace DevLib.Ioc
         protected virtual void InnerRegister(Type type, string filename, Type[] typeArguments)
         {
             string assemblyFullName = AssemblyName.GetAssemblyName(filename).FullName;
+
+            InternalLogger.Log("Register File", filename, assemblyFullName);
 
             Assembly assembly = null;
 

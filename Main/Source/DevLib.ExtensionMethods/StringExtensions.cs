@@ -1009,5 +1009,45 @@ namespace DevLib.ExtensionMethods
         {
             return Regex.Unescape(source);
         }
+
+        /// <summary>
+        /// Gets empty string if string is null or empty.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <returns>Empty string if source string is null or empty; otherwise, source string.</returns>
+        public static string EmptyIfNullOrEmpty(this string source)
+        {
+            return string.IsNullOrEmpty(source) ? string.Empty : source;
+        }
+
+        /// <summary>
+        /// Gets empty string if string is null or white space.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <returns>Empty string if source string is null or white space; otherwise, source string.</returns>
+        public static string EmptyIfNullOrWhiteSpace(this string source)
+        {
+            return source.IsNullOrWhiteSpace() ? string.Empty : source;
+        }
+
+        /// <summary>
+        /// Gets null if string is null or empty.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <returns>Null if source string is null or empty; otherwise, source string.</returns>
+        public static string NullIfNullOrEmpty(this string source)
+        {
+            return string.IsNullOrEmpty(source) ? null : source;
+        }
+
+        /// <summary>
+        /// Gets null if string is null or white space.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <returns>Null if source string is null or white space; otherwise, source string.</returns>
+        public static string NullIfNullOrWhiteSpace(this string source)
+        {
+            return source.IsNullOrWhiteSpace() ? null : source;
+        }
     }
 }

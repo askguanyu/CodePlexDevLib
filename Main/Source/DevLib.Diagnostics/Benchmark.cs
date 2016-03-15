@@ -60,7 +60,7 @@ namespace DevLib.Diagnostics
                 outputAction = Console.WriteLine;
             }
 
-            string titleName = name.PadRight(53, '-');
+            string titleName = string.Format("{0} x {1}", name, iteration.ToString()).PadRight(53, '-');
 
             // Backup current thread priority
             ProcessPriorityClass originalPriorityClass = Process.GetCurrentProcess().PriorityClass;
@@ -165,7 +165,7 @@ namespace DevLib.Diagnostics
 
             Console.WriteLine();
 
-            BenchmarkResult result = new BenchmarkResult(stopwatch.ElapsedMilliseconds, threadTime / 10000L, cpuCycles, gcCountArray);
+            BenchmarkResult result = new BenchmarkResult(stopwatch.ElapsedMilliseconds, threadTime / 10000L, cpuCycles, gcCountArray, name, iteration);
             return result;
         }
 
@@ -254,12 +254,16 @@ namespace DevLib.Diagnostics
         /// <param name="threadTimeElapsedMilliseconds">ThreadTime timespan in milliseconds.</param>
         /// <param name="cpuCycles">CPU cycles.</param>
         /// <param name="gcCountArray">GC Count Array.</param>
-        public BenchmarkResult(long stopwatchElapsedMilliseconds, long threadTimeElapsedMilliseconds, ulong cpuCycles, int[] gcCountArray)
+        /// <param name="name">The name of current benchmark.</param>
+        /// <param name="iteration">Repeat times.</param>
+        public BenchmarkResult(long stopwatchElapsedMilliseconds, long threadTimeElapsedMilliseconds, ulong cpuCycles, int[] gcCountArray, string name = null, int iteration = 1)
         {
             this.StopwatchElapsedMilliseconds = stopwatchElapsedMilliseconds;
             this.ThreadTimeElapsedMilliseconds = threadTimeElapsedMilliseconds;
             this.CPUCycles = cpuCycles;
             this.GCCountArray = gcCountArray;
+            this.Name = name;
+            this.Iteration = iteration;
         }
 
         /// <summary>
@@ -293,6 +297,24 @@ namespace DevLib.Diagnostics
         /// Gets or sets GC Count Array.
         /// </summary>
         public int[] GCCountArray
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the name of current benchmark.
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets repeat times of current benchmark.
+        /// </summary>
+        public int Iteration
         {
             get;
             set;

@@ -76,6 +76,7 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
+    using DevLib.Data;
 
     public class Program
     {
@@ -232,6 +233,14 @@ namespace DevLib.Samples
 
             //data.Add(new FooBar());
             //data.Add(new FooBar() { bar = 2 });
+
+            Benchmark.Run(i => IdGenerator.NewGuidSequentialAtEnd(), "NewGuidSequentialAtEnd", 10);
+
+            var a = IdGenerator.NewGuidSequentialString();
+            var b = IdGenerator.NewGuidSequentialAtEnd();
+
+            var c = IdGenerator.GetTimestampFromGuidSequentialString(a);
+            var d = IdGenerator.GetTimestampFromGuidSequentialAtEnd(b);
 
             Console.ReadLine();
         }

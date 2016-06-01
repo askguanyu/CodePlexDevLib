@@ -35,7 +35,10 @@ namespace DevLib.ServiceProcess
             }
             else
             {
-                ServiceBase.Run(new WindowsServiceConcrete(windowsService, serviceArgs));
+                WindowsServiceConcrete windowsServiceConcrete = new WindowsServiceConcrete(windowsService, serviceArgs);
+                windowsService.CurrentServiceBase = windowsServiceConcrete;
+
+                ServiceBase.Run(windowsServiceConcrete);
             }
         }
 

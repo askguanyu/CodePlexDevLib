@@ -24,6 +24,7 @@ namespace DevLib.Samples
 
         public void OnStop()
         {
+            this.CurrentServiceBase.RequestAdditionalTime(10000);
             Console.WriteLine("OnStop");
         }
 
@@ -59,6 +60,12 @@ namespace DevLib.Samples
         }
 
         public WindowsServiceSetup ServiceSetupInfo
+        {
+            get;
+            set;
+        }
+
+        public ServiceBase CurrentServiceBase
         {
             get;
             set;

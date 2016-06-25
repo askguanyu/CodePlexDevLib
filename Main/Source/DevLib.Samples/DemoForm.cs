@@ -10,6 +10,7 @@ using DevLib.ModernUI.Forms;
 using DevLib.ModernUI.ComponentModel;
 using DevLib.ExtensionMethods;
 using DevLib.Web;
+using System.Threading;
 
 namespace DevLib.Samples
 {
@@ -138,6 +139,15 @@ namespace DevLib.Samples
         private void button3_Click(object sender, EventArgs e)
         {
             this.performanceChart1.AddValue(new Random().Next(0, 100));
+        }
+
+        private void modernButton4_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+
+            Thread.Sleep(3000);
+
+            ModernMessageBox.Show("Test", "Title", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Asterisk);
         }
     }
 }

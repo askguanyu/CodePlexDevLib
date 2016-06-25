@@ -29,7 +29,7 @@ namespace DevLib.Data
         private enum SequentialGuidType
         {
             /// <summary>
-            /// The GUID should be sequential when formatted using the <see cref="Guid.ToString" /> method.
+            /// The GUID should be sequential when formatted using the <see cref="Guid.ToString()" /> method.
             /// </summary>
             SequentialAsString,
 

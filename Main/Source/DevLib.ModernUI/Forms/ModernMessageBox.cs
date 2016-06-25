@@ -6,9 +6,11 @@
 namespace DevLib.ModernUI.Forms
 {
     using System;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
     using System.Media;
+    using System.Security.Permissions;
     using System.Threading;
     using System.Windows.Forms;
 
@@ -22,6 +24,7 @@ namespace DevLib.ModernUI.Forms
         /// </summary>
         /// <param name="text">The text to display in the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(string text)
         {
             return Show(null, text, "Notification");
@@ -33,6 +36,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="owner">An implementation of System.Windows.Forms.IWin32Window that will own the modal dialog box.</param>
         /// <param name="text">The text to display in the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(IWin32Window owner, string text)
         {
             return Show(owner, text, "Notification");
@@ -44,6 +48,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="text">The text to display in the message box.</param>
         /// <param name="caption">The text to display in the title bar of the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(string text, string caption)
         {
             return Show(null, text, caption, MessageBoxButtons.OK);
@@ -56,6 +61,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="text">The text to display in the message box.</param>
         /// <param name="caption">The text to display in the title bar of the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(IWin32Window owner, string text, string caption)
         {
             return Show(owner, text, caption, MessageBoxButtons.OK);
@@ -68,6 +74,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="caption">The text to display in the title bar of the message box.</param>
         /// <param name="buttons">One of the System.Windows.Forms.MessageBoxButtons values that specifies which buttons to display in the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(string text, string caption, MessageBoxButtons buttons)
         {
             return Show(null, text, caption, buttons, MessageBoxIcon.None);
@@ -81,6 +88,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="caption">The text to display in the title bar of the message box.</param>
         /// <param name="buttons">One of the System.Windows.Forms.MessageBoxButtons values that specifies which buttons to display in the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons)
         {
             return Show(owner, text, caption, buttons, MessageBoxIcon.None);
@@ -94,6 +102,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="buttons">One of the System.Windows.Forms.MessageBoxButtons values that specifies which buttons to display in the message box.</param>
         /// <param name="icon">One of the System.Windows.Forms.MessageBoxIcon values that specifies which icon to display in the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
             return Show(null, text, caption, buttons, icon, MessageBoxDefaultButton.Button1);
@@ -108,6 +117,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="buttons">One of the System.Windows.Forms.MessageBoxButtons values that specifies which buttons to display in the message box.</param>
         /// <param name="icon">One of the System.Windows.Forms.MessageBoxIcon values that specifies which icon to display in the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
             return Show(owner, text, caption, buttons, icon, MessageBoxDefaultButton.Button1);
@@ -122,6 +132,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="icon">One of the System.Windows.Forms.MessageBoxIcon values that specifies which icon to display in the message box.</param>
         /// <param name="defaultbutton">One of the System.Windows.Forms.MessageBoxDefaultButton values that specifies the default button for the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultbutton)
         {
             return Show(null, text, caption, buttons, icon, defaultbutton);
@@ -138,6 +149,7 @@ namespace DevLib.ModernUI.Forms
         /// <param name="defaultbutton">One of the System.Windows.Forms.MessageBoxDefaultButton values that specifies the default button for the message box.</param>
         /// <returns>One of the System.Windows.Forms.DialogResult values.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
+        [SecurityPermission(SecurityAction.LinkDemand)]
         public static DialogResult Show(IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultbutton)
         {
             DialogResult result = DialogResult.None;
@@ -148,14 +160,9 @@ namespace DevLib.ModernUI.Forms
             {
                 ownerForm = (Form)owner;
             }
-            else
+            else if (Form.ActiveForm != null)
             {
                 ownerForm = Form.ActiveForm;
-            }
-
-            if (ownerForm == null)
-            {
-                return result;
             }
 
             switch (icon)
@@ -179,7 +186,21 @@ namespace DevLib.ModernUI.Forms
 
             ModernMessageBoxForm modernMessageBoxControl = new ModernMessageBoxForm();
 
-            modernMessageBoxControl.BackColor = ownerForm.BackColor;
+            if (ownerForm != null && ownerForm.WindowState != FormWindowState.Minimized)
+            {
+                modernMessageBoxControl.BackColor = ownerForm.BackColor;
+                modernMessageBoxControl.Size = new Size(ownerForm.Size.Width, modernMessageBoxControl.Height);
+                modernMessageBoxControl.Location = new Point(ownerForm.Location.X, ownerForm.Location.Y + ((ownerForm.Height - modernMessageBoxControl.Height) / 2));
+            }
+            else
+            {
+                IntPtr currentProcessHandle = Process.GetCurrentProcess().MainWindowHandle;
+                Screen currentProcessScreen = Screen.FromHandle(currentProcessHandle);
+
+                modernMessageBoxControl.Size = new Size(currentProcessScreen.WorkingArea.Width, (currentProcessScreen.WorkingArea.Height - modernMessageBoxControl.Height) / 2);
+                modernMessageBoxControl.StartPosition = FormStartPosition.CenterScreen;
+            }
+
             modernMessageBoxControl.Properties.Buttons = buttons;
             modernMessageBoxControl.Properties.DefaultButton = defaultbutton;
             modernMessageBoxControl.Properties.Icon = icon;
@@ -188,8 +209,6 @@ namespace DevLib.ModernUI.Forms
             modernMessageBoxControl.Padding = new Padding(0, 0, 0, 0);
             modernMessageBoxControl.ControlBox = false;
             modernMessageBoxControl.ShowInTaskbar = false;
-            modernMessageBoxControl.Size = new Size(ownerForm.Size.Width, modernMessageBoxControl.Height);
-            modernMessageBoxControl.Location = new Point(ownerForm.Location.X, ownerForm.Location.Y + ((ownerForm.Height - modernMessageBoxControl.Height) / 2));
             modernMessageBoxControl.ArrangeAppearance();
             modernMessageBoxControl.TopLevel = true;
             modernMessageBoxControl.TopMost = true;

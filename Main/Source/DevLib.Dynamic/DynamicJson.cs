@@ -870,7 +870,9 @@ namespace DevLib.Dynamic
         /// <returns>Instance of object.</returns>
         private object Deserialize(XElement xElement, Type targetType)
         {
-            return this.IsEnumerable(targetType) ? this.DeserializeEnumerable(xElement, targetType) : this.DeserializeObject(xElement, targetType);
+            return this.IsEnumerable(targetType)
+                ? this.DeserializeEnumerable(xElement, targetType)
+                : this.DeserializeObject(xElement, targetType);
         }
 
         /// <summary>
@@ -1040,7 +1042,9 @@ namespace DevLib.Dynamic
         /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
         private bool IsEnumerable(Type source)
         {
-            return source != this.GetType() && source != typeof(string) && source.GetInterface("IEnumerable") != null;
+            return source != this.GetType()
+                && source != typeof(string)
+                && source.GetInterface("IEnumerable") != null;
         }
 
         /// <summary>

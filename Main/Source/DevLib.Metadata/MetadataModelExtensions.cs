@@ -422,9 +422,9 @@ namespace DevLib.Metadata
         /// <returns>The list of the property name and type.</returns>
         public static List<KeyValuePair<string, Type>> GetPropertyNames(this Type source, Func<PropertyInfo, bool> propertyAccess, string propertyName = null)
         {
-            if (source == typeof(void) ||
-                XmlConverter.CanConvert(source) ||
-                source == typeof(XmlElement))
+            if (source == typeof(void)
+                || XmlConverter.CanConvert(source)
+                || source == typeof(XmlElement))
             {
                 return GetPropertyNamesInternal(source, propertyAccess, propertyName);
             }
@@ -502,9 +502,9 @@ namespace DevLib.Metadata
         {
             List<KeyValuePair<string, Type>> result = new List<KeyValuePair<string, Type>>();
 
-            if (source == typeof(void) ||
-                XmlConverter.CanConvert(source) ||
-                source == typeof(XmlElement))
+            if (source == typeof(void)
+                || XmlConverter.CanConvert(source)
+                || source == typeof(XmlElement))
             {
                 if (!string.IsNullOrWhiteSpace(propertyName))
                 {

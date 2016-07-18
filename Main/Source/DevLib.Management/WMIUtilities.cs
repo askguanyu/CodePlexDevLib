@@ -161,10 +161,10 @@ namespace DevLib.Management
 
                 foreach (ManagementObject managementObject in managementObjectCollection)
                 {
-                    if (managementObject != null &&
-                        managementObject.Properties != null &&
-                        managementObject.Properties[classPropertyName] != null &&
-                        managementObject.Properties[classPropertyName].Value != null)
+                    if (managementObject != null
+                        && managementObject.Properties != null
+                        && managementObject.Properties[classPropertyName] != null
+                        && managementObject.Properties[classPropertyName].Value != null)
                     {
                         //// Note: Also can use managementObject.GetPropertyValue(classProperty)
                         result.Add(managementObject.Properties[classPropertyName].Value.ToString());

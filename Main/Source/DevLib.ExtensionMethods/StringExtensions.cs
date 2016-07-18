@@ -722,12 +722,14 @@ namespace DevLib.ExtensionMethods
                 return source;
             }
 
-            return new string(source.Where(p =>
-                (p >= 0x0020 && p <= 0xD7FF) ||
-                (p >= 0xE000 && p <= 0xFFFD) ||
-                p == 0x0009 ||
-                p == 0x000A ||
-                p == 0x000D).ToArray());
+            return new string(
+                source.Where(p =>
+                        (p >= 0x0020 && p <= 0xD7FF)
+                        || (p >= 0xE000 && p <= 0xFFFD)
+                        || p == 0x0009
+                        || p == 0x000A
+                        || p == 0x000D)
+                      .ToArray());
         }
 
         /// <summary>

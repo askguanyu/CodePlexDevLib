@@ -22,7 +22,8 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
         public static bool IsEnumerable(this Type source)
         {
-            return source != typeof(string) && source.GetInterface("IEnumerable") != null;
+            return source != typeof(string)
+                && source.GetInterface("IEnumerable") != null;
         }
 
         /// <summary>

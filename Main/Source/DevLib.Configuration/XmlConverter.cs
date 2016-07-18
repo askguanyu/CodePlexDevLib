@@ -21,12 +21,12 @@ namespace DevLib.Configuration
         /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
         public static bool CanConvert(Type sourceType)
         {
-            if (Type.GetTypeCode(sourceType) == TypeCode.Object &&
-                !sourceType.IsEnum &&
-                sourceType != typeof(Guid) &&
-                sourceType != typeof(TimeSpan) &&
-                sourceType != typeof(DateTimeOffset) &&
-                !IsNullableCanConvert(sourceType))
+            if (Type.GetTypeCode(sourceType) == TypeCode.Object
+                && !sourceType.IsEnum
+                && sourceType != typeof(Guid)
+                && sourceType != typeof(TimeSpan)
+                && sourceType != typeof(DateTimeOffset)
+                && !IsNullableCanConvert(sourceType))
             {
                 return false;
             }

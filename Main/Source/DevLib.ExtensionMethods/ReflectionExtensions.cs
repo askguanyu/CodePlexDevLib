@@ -87,12 +87,12 @@ namespace DevLib.ExtensionMethods
         /// <returns>true if can perform the conversion; otherwise, false.</returns>
         public static bool CanConvert(this Type source)
         {
-            if (Type.GetTypeCode(source) == TypeCode.Object &&
-                !source.IsEnum &&
-                source != typeof(Guid) &&
-                source != typeof(TimeSpan) &&
-                source != typeof(DateTimeOffset) &&
-                !source.IsNullableCanConvert())
+            if (Type.GetTypeCode(source) == TypeCode.Object
+                && !source.IsEnum
+                && source != typeof(Guid)
+                && source != typeof(TimeSpan)
+                && source != typeof(DateTimeOffset)
+                && !source.IsNullableCanConvert())
             {
                 return false;
             }

@@ -105,12 +105,12 @@ namespace DevLib.Configuration
         /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
         internal static bool CanConvert(Type type)
         {
-            if (Type.GetTypeCode(type) == TypeCode.Object &&
-                !type.IsEnum &&
-                type != typeof(Guid) &&
-                type != typeof(TimeSpan) &&
-                type != typeof(DateTimeOffset) &&
-                !IsNullableCanConvert(type))
+            if (Type.GetTypeCode(type) == TypeCode.Object
+                && !type.IsEnum
+                && type != typeof(Guid)
+                && type != typeof(TimeSpan)
+                && type != typeof(DateTimeOffset)
+                && !IsNullableCanConvert(type))
             {
                 return false;
             }

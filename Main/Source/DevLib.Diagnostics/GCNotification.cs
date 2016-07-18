@@ -76,9 +76,9 @@ namespace DevLib.Diagnostics
                     }
                 }
 
-                if (_gcDone != null &&
-                   !AppDomain.CurrentDomain.IsFinalizingForUnload() &&
-                   !Environment.HasShutdownStarted)
+                if (_gcDone != null
+                    && !AppDomain.CurrentDomain.IsFinalizingForUnload()
+                    && !Environment.HasShutdownStarted)
                 {
                     if (this._generation == 0)
                     {

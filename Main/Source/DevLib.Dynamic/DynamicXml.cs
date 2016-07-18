@@ -186,8 +186,8 @@ namespace DevLib.Dynamic
         /// <returns>true if the current DynamicXml has specified attribute name; otherwise, false.</returns>
         public bool HasAttribute(string name)
         {
-            return (this._xAttribute != null && this._xAttribute.Name.LocalName.Equals(name, StringComparison.Ordinal)) ||
-                (this._xElement != null && this._xElement.Attribute(name) != null);
+            return (this._xAttribute != null && this._xAttribute.Name.LocalName.Equals(name, StringComparison.Ordinal))
+                || (this._xElement != null && this._xElement.Attribute(name) != null);
         }
 
         /// <summary>
@@ -197,8 +197,8 @@ namespace DevLib.Dynamic
         /// <returns>true if the current DynamicXml has specified attribute index; otherwise, false.</returns>
         public bool HasAttribute(int index)
         {
-            return (this._xAttribute != null && index == 0) ||
-                (this._xElement != null && this._xElement.Attributes().ElementAtOrDefault(index) != null);
+            return (this._xAttribute != null && index == 0)
+                || (this._xElement != null && this._xElement.Attributes().ElementAtOrDefault(index) != null);
         }
 
         /// <summary>
@@ -1077,7 +1077,9 @@ namespace DevLib.Dynamic
         /// <returns>Instance of object.</returns>
         private object Deserialize(XElement xElement, Type targetType)
         {
-            return this.IsEnumerable(targetType) ? this.DeserializeEnumerable(xElement, targetType) : this.DeserializeObject(xElement, targetType);
+            return this.IsEnumerable(targetType)
+                ? this.DeserializeEnumerable(xElement, targetType)
+                : this.DeserializeObject(xElement, targetType);
         }
 
         /// <summary>
@@ -1242,7 +1244,9 @@ namespace DevLib.Dynamic
         /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
         private bool IsEnumerable(Type source)
         {
-            return source != this.GetType() && source != typeof(string) && source.GetInterface("IEnumerable") != null;
+            return source != this.GetType()
+                && source != typeof(string)
+                && source.GetInterface("IEnumerable") != null;
         }
 
         /// <summary>

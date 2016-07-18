@@ -1096,10 +1096,10 @@ namespace DevLib.ModernUI.Forms
         {
             base.OnKeyDown(e);
 
-            if ((e.Modifiers == Keys.Control && e.KeyCode == Keys.V) ||
-                (e.Control && e.KeyCode == Keys.V) ||
-                (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Insert) ||
-                (e.Shift && e.KeyCode == Keys.Insert))
+            if ((e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+                || (e.Control && e.KeyCode == Keys.V)
+                || (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Insert)
+                || (e.Shift && e.KeyCode == Keys.Insert))
             {
                 if (this.Pasted != null)
                 {
@@ -1118,10 +1118,10 @@ namespace DevLib.ModernUI.Forms
         {
             base.OnKeyUp(e);
 
-            if ((e.Modifiers == Keys.Control && e.KeyCode == Keys.V) ||
-                (e.Control && e.KeyCode == Keys.V) ||
-                (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Insert) ||
-                (e.Shift && e.KeyCode == Keys.Insert))
+            if ((e.Modifiers == Keys.Control && e.KeyCode == Keys.V)
+                || (e.Control && e.KeyCode == Keys.V)
+                || (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Insert)
+                || (e.Shift && e.KeyCode == Keys.Insert))
             {
                 this.UpdateXmlSyntaxHighlight(true);
             }

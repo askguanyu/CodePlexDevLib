@@ -9,7 +9,7 @@ using System.Reflection;
 [assembly: AssemblyDescription("DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns. It provides a comprehensive set of features that save development time, minimize costs, reduce the use of precious test resources, and decrease the overall maintenance effort.")]
 [assembly: AssemblyCompany("Yu Guan")]
 [assembly: AssemblyProduct("DevLib")]
-[assembly: AssemblyCopyright("Copyright © 2007-2016 Yu Guan")]
+[assembly: AssemblyCopyright("Copyright © 2007-2017 Yu Guan")]
 [assembly: AssemblyTrademark("DevLib")]
 [assembly: AssemblyCulture("")]
 #if DEBUG
@@ -28,5 +28,5 @@ using System.Reflection;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.7.15.*")]
+[assembly: AssemblyVersion("2.7.16.*")]
 ////[assembly: AssemblyFileVersion("1.0.0.0")]

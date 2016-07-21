@@ -10,6 +10,9 @@ namespace DevLib.ServiceProcess
     /// <summary>
     /// Class WindowsServiceConcrete.
     /// </summary>
+    [System.ComponentModel.ToolboxItem(false)]
+    [System.ComponentModel.DesignTimeVisible(false)]
+    [System.ComponentModel.DesignerCategory("Code")]
     internal class WindowsServiceConcrete : ServiceBase
     {
         /// <summary>

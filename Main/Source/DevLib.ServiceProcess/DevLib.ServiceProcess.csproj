@@ -49,13 +49,9 @@
     <Compile Include="IWindowsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindowsServiceBase.cs" />
-    <Compile Include="WindowsServiceConcrete.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="WindowsServiceConcrete.cs" />
     <Compile Include="WindowsServiceConsole.cs" />
-    <Compile Include="WindowsServiceInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="WindowsServiceInstaller.cs" />
     <Compile Include="WindowsServiceSetup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

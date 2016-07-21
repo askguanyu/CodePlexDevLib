@@ -263,10 +263,28 @@ namespace DevLib.ServiceProcess
         private void InitializeSetupInfo()
         {
             this.ServiceAssemblyPath = string.Empty;
-            this.WorkingDirectory = Path.GetDirectoryName(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath);
             this.ServiceName = "DefaultServiceName";
             this.DisplayName = this.ServiceName;
             this.Description = string.Format("Installed on {0}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
+            this.StartType = ServiceStartMode.Automatic;
+            this.StartAfterInstall = true;
+            this.RestartOnFailure = true;
+            this.AutoLog = true;
+            this.CanHandlePowerEvent = true;
+            this.CanHandleSessionChangeEvent = true;
+            this.CanPauseAndContinue = true;
+            this.CanShutdown = true;
+            this.CanStop = true;
+            this.Account = ServiceAccount.LocalSystem;
+
+            try
+            {
+                this.WorkingDirectory = Path.GetDirectoryName(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath);
+            }
+            catch (Exception e)
+            {
+                InternalLogger.Log(e);
+            }
 
             try
             {
@@ -288,17 +306,6 @@ namespace DevLib.ServiceProcess
             {
                 InternalLogger.Log(e);
             }
-
-            this.StartType = ServiceStartMode.Automatic;
-            this.StartAfterInstall = true;
-            this.RestartOnFailure = true;
-            this.AutoLog = true;
-            this.CanHandlePowerEvent = true;
-            this.CanHandleSessionChangeEvent = true;
-            this.CanPauseAndContinue = true;
-            this.CanShutdown = true;
-            this.CanStop = true;
-            this.Account = ServiceAccount.LocalSystem;
         }
     }
 }

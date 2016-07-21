@@ -24,7 +24,11 @@ namespace DevLib.Samples
 
         public void OnStop()
         {
-            this.CurrentServiceBase.RequestAdditionalTime(10000);
+            if (this.CurrentServiceBase!=null)
+            {
+                this.CurrentServiceBase.RequestAdditionalTime(10000);
+            }
+
             Console.WriteLine("OnStop");
         }
 

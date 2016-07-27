@@ -137,7 +137,7 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(logConfig);
+                    Logger result = new Logger(logConfig, configFile);
 
                     LoggerDictionary.Add(key, result);
 
@@ -171,7 +171,7 @@ namespace DevLib.Logging
                 }
                 else
                 {
-                    Logger result = new Logger(logConfig);
+                    Logger result = new Logger(logConfig, configFile);
 
                     LoggerDictionary.Add(key, result);
 

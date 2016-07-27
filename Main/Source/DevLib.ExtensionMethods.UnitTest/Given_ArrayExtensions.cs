@@ -35,8 +35,8 @@
             var subArray1 = new[] { "b", "c" };
             var subArray2 = new[] { "d", "f" };
 
-            Assert.AreEqual(1, sourceArray.FindArray(subArray1));
-            Assert.AreEqual(-1, sourceArray.FindArray(subArray2));
+            Assert.AreEqual(1, sourceArray.FindArrayIndex(subArray1));
+            Assert.AreEqual(-1, sourceArray.FindArrayIndex(subArray2));
         }
     }
 }

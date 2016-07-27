@@ -2666,7 +2666,7 @@ namespace DevLib.ServiceModel
         /// <param name="baseAddress">The base address to check.</param>
         private void CheckUri(string baseAddress)
         {
-            if (string.IsNullOrEmpty(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
+            if (this.IsNullOrWhiteSpace(baseAddress) || !Uri.IsWellFormedUriString(baseAddress, UriKind.Absolute))
             {
                 throw new UriFormatException(baseAddress ?? string.Empty);
             }

@@ -401,10 +401,10 @@ namespace DevLib.Samples
                 {
                     for (int i = 0; i < 100000; i++)
                     {
-                        //Thread.Sleep(25);
-                        LogManager.Open("d:\\Work\\temp\\000.log").Log(i, "一二三");
+                        Thread.Sleep(500);
+                        LogManager.Open("000.log", "testlogconfig.xml").Log(i, "一二三");
 
-                        LogManager.Open("d:\\Work\\temp\\000.log").Log(i, "The quick brown fox jumps over the lazy dog.");
+                        LogManager.Open("000.log", "testlogconfig.xml").Log(i, "The quick brown fox jumps over the lazy dog.");
                     }
                 });
             }
@@ -1760,7 +1760,7 @@ namespace DevLib.Samples
             appendValueTypeArray.ForEach((p) => { p.ConsoleOutput(); });
             "".ConsoleOutput();
             sourceValueTypeArray[1] = 3;
-            appendValueTypeArray.FindArray(sourceValueTypeArray).ConsoleOutput();
+            appendValueTypeArray.FindArrayIndex(sourceValueTypeArray).ConsoleOutput();
 
             "End: ArrayExtensions".ConsoleOutput();
             #endregion

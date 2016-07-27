@@ -1015,9 +1015,9 @@ namespace DevLib.ServiceModel
         /// <param name="remoteUri">The remote URI to check.</param>
         private static void CheckUri(string remoteUri)
         {
-            if (!string.IsNullOrEmpty(remoteUri) && !Uri.IsWellFormedUriString(remoteUri, UriKind.Absolute))
+            if (IsNullOrWhiteSpace(remoteUri) || !Uri.IsWellFormedUriString(remoteUri, UriKind.Absolute))
             {
-                throw new UriFormatException(remoteUri);
+                throw new UriFormatException(remoteUri ?? string.Empty);
             }
         }
     }

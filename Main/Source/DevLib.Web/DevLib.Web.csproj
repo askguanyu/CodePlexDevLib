@@ -58,7 +58,7 @@
     <Compile Include="Services\WebServiceClientProxyFactorySetup.cs" />
     <Compile Include="SoapClient.cs" />
     <Compile Include="SoapResponse.cs" />
-    <Compile Include="UriFactory.cs" />
+    <Compile Include="UrlBuilder.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -949,6 +949,11 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            var request = "\x0081";
+
+            var requestE = request.ToByteArray(TextExtensions.CP1252);
+
+
             string astring = "PO:\t{0}\nDate:\t{1}";
             var bs = string.Format(astring, "a", "b");
 

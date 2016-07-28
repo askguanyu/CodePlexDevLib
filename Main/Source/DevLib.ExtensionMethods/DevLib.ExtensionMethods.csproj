@@ -66,6 +66,7 @@
     <Compile Include="SecurityExtensions.cs" />
     <Compile Include="SerializationExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="TextExtensions.cs" />
     <Compile Include="ValidationExtensions.cs" />
     <Compile Include="WebExtensions.cs" />
     <Compile Include="XmlExtensions.cs" />

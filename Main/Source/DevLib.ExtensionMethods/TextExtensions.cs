@@ -40,7 +40,7 @@ namespace DevLib.ExtensionMethods
         /// <returns>Encoding instance for the CP1252 (Windows-1252) character set.</returns>
         public static Encoding GetCP1252Encoding(this object source)
         {
-            return Encoding.GetEncoding(1252);
+            return TextExtensions.CP1252;
         }
     }
 }

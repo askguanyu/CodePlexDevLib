@@ -285,22 +285,22 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <remarks>The source and target objects must be of the same type.</remarks>
         /// <param name="source">The source object.</param>
-        /// <param name="target">The target object.</param>
+        /// <param name="copySource">The object to copy from.</param>
         /// <param name="ignoreProperties">An array of property names to ignore.</param>
         /// <returns>The original object.</returns>
-        public static object CopyPropertiesFrom(this object source, object target, params string[] ignoreProperties)
+        public static object CopyPropertiesFrom(this object source, object copySource, params string[] ignoreProperties)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (target == null)
+            if (copySource == null)
             {
                 throw new ArgumentNullException("target");
             }
 
-            Type type = target.GetType();
+            Type type = copySource.GetType();
 
             if (source.GetType() != type)
             {
@@ -324,7 +324,7 @@ namespace DevLib.ExtensionMethods
             {
                 if (property.CanWrite && property.CanRead && !ignoreList.Contains(property.Name))
                 {
-                    object value = property.GetValue(target, null);
+                    object value = property.GetValue(copySource, null);
                     property.SetValue(source, value, null);
                 }
             }
@@ -337,17 +337,17 @@ namespace DevLib.ExtensionMethods
         /// optionally allows for the ignoring of any number of properties.
         /// </summary>
         /// <param name="source">The source object.</param>
-        /// <param name="target">The target dictionary.</param>
+        /// <param name="copySource">The dictionary to copy from.</param>
         /// <param name="ignoreProperties">An array of property names to ignore.</param>
         /// <returns>The original object.</returns>
-        public static object CopyPropertiesFromDictionary(this object source, Dictionary<string, object> target, params string[] ignoreProperties)
+        public static object CopyPropertiesFromDictionary(this object source, Dictionary<string, object> copySource, params string[] ignoreProperties)
         {
             if (source == null)
             {
                 throw new ArgumentNullException("source");
             }
 
-            if (target == null)
+            if (copySource == null)
             {
                 throw new ArgumentNullException("target");
             }
@@ -369,9 +369,55 @@ namespace DevLib.ExtensionMethods
 
             foreach (PropertyInfo property in type.GetProperties())
             {
-                if (property.CanWrite && !ignoreList.Contains(property.Name) && target.ContainsKey(property.Name))
+                if (property.CanWrite && !ignoreList.Contains(property.Name) && copySource.ContainsKey(property.Name))
                 {
-                    property.SetValue(source, target[property.Name], null);
+                    property.SetValue(source, copySource[property.Name], null);
+                }
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Copies the property values from the dictionary to the source and
+        /// optionally allows for the ignoring of any number of properties.
+        /// </summary>
+        /// <param name="source">The dictionary to copy from.</param>
+        /// <param name="target">The object to copy to.</param>
+        /// <param name="ignoreProperties">An array of property names to ignore.</param>
+        /// <returns>The original object.</returns>
+        public static object CopyPropertiesTo(this Dictionary<string, object> source, object target, params string[] ignoreProperties)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
+
+            Type type = target.GetType();
+
+            List<string> ignoreList = new List<string>();
+
+            if (ignoreProperties != null && ignoreProperties.Length > 0)
+            {
+                foreach (string item in ignoreProperties)
+                {
+                    if (!item.IsNullOrWhiteSpace() && !ignoreList.Contains(item))
+                    {
+                        ignoreList.Add(item);
+                    }
+                }
+            }
+
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                if (property.CanWrite && !ignoreList.Contains(property.Name) && source.ContainsKey(property.Name))
+                {
+                    property.SetValue(source, source[property.Name], null);
                 }
             }
 

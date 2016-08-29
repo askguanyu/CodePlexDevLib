@@ -432,7 +432,7 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The type to check.</param>
         /// <returns>true if the type is Nullable{} type; otherwise, false.</returns>
-        private static bool IsNullableCanConvert(this Type source)
+        public static bool IsNullableCanConvert(this Type source)
         {
             return source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>) && Nullable.GetUnderlyingType(source).CanConvert();
         }

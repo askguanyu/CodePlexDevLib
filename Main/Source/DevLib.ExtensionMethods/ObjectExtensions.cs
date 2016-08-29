@@ -280,17 +280,6 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Copies the readable and writable public property values from the target object to the source.
-        /// </summary>
-        /// <remarks>The source and target objects must be of the same type.</remarks>
-        /// <param name="source">The source object.</param>
-        /// <param name="target">The target object.</param>
-        public static void CopyPropertiesFrom(this object source, object target)
-        {
-            source.CopyPropertiesFrom(target, string.Empty);
-        }
-
-        /// <summary>
         /// Copies the readable and writable public property values from the target object to the source and
         /// optionally allows for the ignoring of any number of properties.
         /// </summary>
@@ -298,7 +287,8 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The source object.</param>
         /// <param name="target">The target object.</param>
         /// <param name="ignoreProperties">An array of property names to ignore.</param>
-        public static void CopyPropertiesFrom(this object source, object target, params string[] ignoreProperties)
+        /// <returns>The original object.</returns>
+        public static object CopyPropertiesFrom(this object source, object target, params string[] ignoreProperties)
         {
             if (source == null)
             {
@@ -319,11 +309,14 @@ namespace DevLib.ExtensionMethods
 
             List<string> ignoreList = new List<string>();
 
-            foreach (string item in ignoreProperties)
+            if (ignoreProperties != null && ignoreProperties.Length > 0)
             {
-                if (!string.IsNullOrEmpty(item) && !ignoreList.Contains(item))
+                foreach (string item in ignoreProperties)
                 {
-                    ignoreList.Add(item);
+                    if (!item.IsNullOrWhiteSpace() && !ignoreList.Contains(item))
+                    {
+                        ignoreList.Add(item);
+                    }
                 }
             }
 
@@ -335,6 +328,141 @@ namespace DevLib.ExtensionMethods
                     property.SetValue(source, value, null);
                 }
             }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Copies the property values from the dictionary to the source and
+        /// optionally allows for the ignoring of any number of properties.
+        /// </summary>
+        /// <param name="source">The source object.</param>
+        /// <param name="target">The target dictionary.</param>
+        /// <param name="ignoreProperties">An array of property names to ignore.</param>
+        /// <returns>The original object.</returns>
+        public static object CopyPropertiesFromDictionary(this object source, Dictionary<string, object> target, params string[] ignoreProperties)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (target == null)
+            {
+                throw new ArgumentNullException("target");
+            }
+
+            Type type = source.GetType();
+
+            List<string> ignoreList = new List<string>();
+
+            if (ignoreProperties != null && ignoreProperties.Length > 0)
+            {
+                foreach (string item in ignoreProperties)
+                {
+                    if (!item.IsNullOrWhiteSpace() && !ignoreList.Contains(item))
+                    {
+                        ignoreList.Add(item);
+                    }
+                }
+            }
+
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                if (property.CanWrite && !ignoreList.Contains(property.Name) && target.ContainsKey(property.Name))
+                {
+                    property.SetValue(source, target[property.Name], null);
+                }
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Creates a new object and copies the property values from the dictionary and
+        /// optionally allows for the ignoring of any number of properties.
+        /// </summary>
+        /// <param name="source">The dictionary.</param>
+        /// <param name="type">The result object type.</param>
+        /// <param name="ignoreProperties">An array of property names to ignore.</param>
+        /// <returns>The result object.</returns>
+        public static object ToObject(this Dictionary<string, object> source, Type type, params string[] ignoreProperties)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            object result = type.CreateInstance();
+
+            List<string> ignoreList = new List<string>();
+
+            if (ignoreProperties != null && ignoreProperties.Length > 0)
+            {
+                foreach (string item in ignoreProperties)
+                {
+                    if (!item.IsNullOrWhiteSpace() && !ignoreList.Contains(item))
+                    {
+                        ignoreList.Add(item);
+                    }
+                }
+            }
+
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                if (property.CanWrite && !ignoreList.Contains(property.Name) && source.ContainsKey(property.Name))
+                {
+                    property.SetValue(result, source[property.Name], null);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a new object and copies the property values from the dictionary and
+        /// optionally allows for the ignoring of any number of properties.
+        /// </summary>
+        /// <typeparam name="T">The result object type.</typeparam>
+        /// <param name="source">The dictionary.</param>
+        /// <param name="ignoreProperties">An array of property names to ignore.</param>
+        /// <returns>The result object.</returns>
+        public static T ToObject<T>(this Dictionary<string, object> source, params string[] ignoreProperties) where T : class
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            T result = (T)typeof(T).CreateInstance();
+
+            List<string> ignoreList = new List<string>();
+
+            if (ignoreProperties != null && ignoreProperties.Length > 0)
+            {
+                foreach (string item in ignoreProperties)
+                {
+                    if (!item.IsNullOrWhiteSpace() && !ignoreList.Contains(item))
+                    {
+                        ignoreList.Add(item);
+                    }
+                }
+            }
+
+            foreach (PropertyInfo property in typeof(T).GetProperties())
+            {
+                if (property.CanWrite && !ignoreList.Contains(property.Name) && source.ContainsKey(property.Name))
+                {
+                    property.SetValue(result, source[property.Name], null);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

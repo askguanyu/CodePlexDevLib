@@ -7,6 +7,7 @@ namespace DevLib.ExtensionMethods
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Security.Permissions;
@@ -698,15 +699,18 @@ namespace DevLib.ExtensionMethods
         /// Execute a command line.
         /// </summary>
         /// <param name="sourceCmd">A command line to execute.</param>
+        /// <param name="onExited">Occurs when the associated process exits.</param>
         /// <param name="runasAdmin">true to run as Administrator; false to run as current user.</param>
         /// <param name="hidden">true if want to hide window; otherwise, false.</param>
         /// <param name="milliseconds">
-        /// The amount of time, in milliseconds, to wait for the command to exit.
+        /// The amount of time, in milliseconds, to wait for the associated process to exit.
+        /// If value is null, will not wait.
+        /// If value is less then zero, will wait indefinitely for the associated process to exit.
         /// The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.
-        /// Less than or equal to Zero if do not wait for the command to exit.
         /// </param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed")]
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public static void ExecuteCmdLine(this string sourceCmd, bool runasAdmin = true, bool hidden = true, int milliseconds = 0)
+        public static void ExecuteCmdLine(this string sourceCmd, Action onExited = null, bool runasAdmin = true, bool hidden = true, int? milliseconds = null)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
             startInfo.Arguments = string.Format(" /C {0}", sourceCmd);
@@ -720,13 +724,90 @@ namespace DevLib.ExtensionMethods
                 startInfo.Verb = "runas";
             }
 
-            Process process = Process.Start(startInfo);
-
-            if (milliseconds > 0)
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.EnableRaisingEvents = true;
+            process.Exited += (s, e) =>
             {
-                if (process.WaitForExit(milliseconds))
+                if (onExited != null)
                 {
-                    process.Dispose();
+                    onExited();
+                }
+            };
+
+            process.Start();
+
+            if (milliseconds.HasValue)
+            {
+                if (milliseconds >= 0)
+                {
+                    if (process.WaitForExit(milliseconds.Value))
+                    {
+                        process.Dispose();
+                    }
+                }
+                else
+                {
+                    process.WaitForExit();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Execute a file with arguments.
+        /// </summary>
+        /// <param name="sourceFile">A file to execute.</param>
+        /// <param name="arguments">Command-line arguments to use when starting the application.</param>
+        /// <param name="onExited">Occurs when the associated process exits.</param>
+        /// <param name="runasAdmin">true to run as Administrator; false to run as current user.</param>
+        /// <param name="hidden">true if want to hide window; otherwise, false.</param>
+        /// <param name="milliseconds">
+        /// The amount of time, in milliseconds, to wait for the associated process to exit.
+        /// If value is null, will not wait.
+        /// If value is less then zero, will wait indefinitely for the associated process to exit.
+        /// The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.
+        /// </param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed")]
+        [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+        public static void Execute(this string sourceFile, string arguments = null, Action onExited = null, bool runasAdmin = true, bool hidden = true, int? milliseconds = null)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo(sourceFile);
+            startInfo.Arguments = arguments;
+            startInfo.CreateNoWindow = hidden;
+            startInfo.ErrorDialog = true;
+            startInfo.UseShellExecute = true;
+            startInfo.WindowStyle = hidden ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal;
+
+            if (runasAdmin)
+            {
+                startInfo.Verb = "runas";
+            }
+
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.EnableRaisingEvents = true;
+            process.Exited += (s, e) =>
+            {
+                if (onExited != null)
+                {
+                    onExited();
+                }
+            };
+
+            process.Start();
+
+            if (milliseconds.HasValue)
+            {
+                if (milliseconds >= 0)
+                {
+                    if (process.WaitForExit(milliseconds.Value))
+                    {
+                        process.Dispose();
+                    }
+                }
+                else
+                {
+                    process.WaitForExit();
                 }
             }
         }

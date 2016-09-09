@@ -17,10 +17,16 @@ namespace DevLib.ExtensionMethods
         /// Downloads data from a url.
         /// </summary>
         /// <param name="url">Url to retrieve the data.</param>
+        /// <param name="useSystemWebProxy">true to use "IE Proxy" based on the currently impersonated user's proxy settings; false to not use proxy.</param>
         /// <returns>Byte array of data from the url.</returns>
-        public static byte[] DownloadData(this string url)
+        public static byte[] DownloadData(this string url, bool useSystemWebProxy = false)
         {
             WebRequest webRequest = WebRequest.Create(url);
+
+            if (useSystemWebProxy)
+            {
+                webRequest.Proxy = WebRequest.GetSystemWebProxy();
+            }
 
             using (WebResponse webResponse = webRequest.GetResponse())
             {

@@ -17,6 +17,7 @@ namespace DevLib.Dynamic
     using System.Xml;
     using System.Xml.Linq;
     using System.Xml.Serialization;
+    using System.Text;
 
     /// <summary>
     /// Provides a class for specifying dynamic Xml behavior at run time.
@@ -328,6 +329,15 @@ namespace DevLib.Dynamic
         }
 
         /// <summary>
+        /// Gets the name of this element.
+        /// </summary>
+        /// <returns>An System.Xml.Linq.XName that contains the name of this element.</returns>
+        public XName GetName()
+        {
+            return this._xElement != null ? this._xElement.Name : null;
+        }
+
+        /// <summary>
         /// Returns a list of the child elements of this element or document, in document order.
         /// </summary>
         /// <returns>A list of the child elements of this instance.</returns>
@@ -336,6 +346,29 @@ namespace DevLib.Dynamic
             if (this._xElement != null)
             {
                 return this._xElement.Elements().Select(i => (dynamic)new DynamicXml(i)).ToList();
+            }
+            else
+            {
+                return new List<dynamic>();
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of the child elements of this element or document, in document order, with the element name.
+        /// </summary>
+        /// <param name="localName">The element name.</param>
+        /// <param name="ignoreCase">true to ignore case when comparing the string to seek; otherwise, false.</param>
+        /// <returns>A list of the child elements of this instance.</returns>
+        public List<dynamic> Elements(string localName, bool ignoreCase = true)
+        {
+            if (this._xElement != null)
+            {
+                return this
+                    ._xElement
+                    .Elements()
+                    .Where(i => i.Name.LocalName.Equals(localName, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
+                    .Select(i => (dynamic)new DynamicXml(i))
+                    .ToList();
             }
             else
             {
@@ -357,6 +390,46 @@ namespace DevLib.Dynamic
             {
                 return new List<dynamic> { (dynamic)new DynamicXml(this._xAttribute) };
             }
+        }
+
+        /// <summary>
+        /// Creates a new file, writes the specified string to the file using the specified encoding, and then closes the file.
+        /// </summary>
+        /// <param name="filename">The file to write to.</param>
+        /// <param name="overwrite">Whether overwrite exists file.</param>
+        /// <param name="encoding">The encoding to apply to the string.</param>
+        /// <returns>Full path of the file name if write file succeeded.</returns>
+        public string SaveToFile(string filename, bool overwrite = false, Encoding encoding = null)
+        {
+            if (string.IsNullOrEmpty(filename))
+            {
+                throw new ArgumentNullException("filename");
+            }
+
+            string fullPath = Path.GetFullPath(filename);
+
+            string fullDirectoryPath = Path.GetDirectoryName(fullPath);
+
+            if (!overwrite && File.Exists(fullPath))
+            {
+                throw new ArgumentException("The specified file already exists.", fullPath);
+            }
+
+            if (!Directory.Exists(fullDirectoryPath))
+            {
+                Directory.CreateDirectory(fullDirectoryPath);
+            }
+
+            if (encoding == null)
+            {
+                File.WriteAllText(fullPath, this.ToString());
+            }
+            else
+            {
+                File.WriteAllText(fullPath, this.ToString(), encoding);
+            }
+
+            return fullPath;
         }
 
         /// <summary>

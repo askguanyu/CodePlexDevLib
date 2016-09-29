@@ -14,10 +14,10 @@ namespace DevLib.Dynamic
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Serialization;
+    using System.Text;
     using System.Xml;
     using System.Xml.Linq;
     using System.Xml.Serialization;
-    using System.Text;
 
     /// <summary>
     /// Provides a class for specifying dynamic Xml behavior at run time.

@@ -332,7 +332,7 @@ namespace DevLib.Dynamic
         /// Gets the name of this element.
         /// </summary>
         /// <returns>An System.Xml.Linq.XName that contains the name of this element.</returns>
-        public XName GetName()
+        public XName Name()
         {
             return this._xElement != null ? this._xElement.Name : null;
         }
@@ -374,6 +374,16 @@ namespace DevLib.Dynamic
             {
                 return new List<dynamic>();
             }
+        }
+
+        /// <summary>
+        /// Adds or updates the specified content as children of current element.
+        /// </summary>
+        /// <param name="name">Element name to add.</param>
+        /// <param name="value">Element value.</param>
+        public void Add(string name, object value)
+        {
+            this.SetMemberInternal(name, value);
         }
 
         /// <summary>
@@ -554,23 +564,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            if (this._xElement != null)
-            {
-                XElement element = this._xElement.Element(XName.Get(binder.Name, this._xElement.GetDefaultNamespace().NamespaceName));
-
-                if (element != null)
-                {
-                    element.ReplaceNodes(this.CreateXContent(value));
-                }
-                else
-                {
-                    this._xElement.Add(new XElement(binder.Name, this.CreateXContent(value)));
-                }
-
-                return true;
-            }
-
-            return false;
+            return this.SetMemberInternal(binder.Name, value);
         }
 
         /// <summary>
@@ -844,6 +838,33 @@ namespace DevLib.Dynamic
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Adds or updates the specified content as children of current element.
+        /// </summary>
+        /// <param name="name">Element name to add.</param>
+        /// <param name="value">Element value.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        private bool SetMemberInternal(string name, object value)
+        {
+            if (this._xElement != null)
+            {
+                XElement element = this._xElement.Element(XName.Get(name, this._xElement.GetDefaultNamespace().NamespaceName));
+
+                if (element != null)
+                {
+                    element.ReplaceNodes(this.CreateXContent(value));
+                }
+                else
+                {
+                    this._xElement.Add(new XElement(name, this.CreateXContent(value)));
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

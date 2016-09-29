@@ -258,7 +258,7 @@ namespace DevLib.Dynamic
         /// Gets the name of this element.
         /// </summary>
         /// <returns>An System.Xml.Linq.XName that contains the name of this element.</returns>
-        public XName GetName()
+        public XName Name()
         {
             return this._xElement != null ? this._xElement.Name : null;
         }
@@ -284,6 +284,16 @@ namespace DevLib.Dynamic
             {
                 return new List<dynamic>();
             }
+        }
+
+        /// <summary>
+        /// Adds or updates the specified content as children of current property.
+        /// </summary>
+        /// <param name="name">Property name to add.</param>
+        /// <param name="value">Property value.</param>
+        public void Add(string name, object value)
+        {
+            this.SetMemberInternal(name, value);
         }
 
         /// <summary>
@@ -519,31 +529,7 @@ namespace DevLib.Dynamic
         /// <returns>true if the operation is successful; otherwise, false.</returns>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            if (this.IsArray)
-            {
-                return false;
-            }
-
-            var jsonType = this.GetJsonType(value);
-
-            var element = this._xElement.Element(binder.Name);
-
-            if (element == null)
-            {
-                this._jsonType = JsonType.@object;
-
-                this._xElement.Attribute("type").Value = JsonType.@object.ToString();
-
-                this._xElement.Add(new XElement(binder.Name, this.CreateTypeAttribute(jsonType), this.CreateXContent(value)));
-            }
-            else
-            {
-                element.Attribute("type").Value = jsonType.ToString();
-
-                element.ReplaceNodes(this.CreateXContent(value));
-            }
-
-            return true;
+            return this.SetMemberInternal(binder.Name, value);
         }
 
         /// <summary>
@@ -716,6 +702,41 @@ namespace DevLib.Dynamic
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Adds or updates the specified content as children of current property.
+        /// </summary>
+        /// <param name="name">Property name to add.</param>
+        /// <param name="value">Property value.</param>
+        /// <returns>true if the operation is successful; otherwise, false.</returns>
+        private bool SetMemberInternal(string name, object value)
+        {
+            if (this.IsArray)
+            {
+                return false;
+            }
+
+            var jsonType = this.GetJsonType(value);
+
+            var element = this._xElement.Element(name);
+
+            if (element == null)
+            {
+                this._jsonType = JsonType.@object;
+
+                this._xElement.Attribute("type").Value = JsonType.@object.ToString();
+
+                this._xElement.Add(new XElement(name, this.CreateTypeAttribute(jsonType), this.CreateXContent(value)));
+            }
+            else
+            {
+                element.Attribute("type").Value = jsonType.ToString();
+
+                element.ReplaceNodes(this.CreateXContent(value));
+            }
+
+            return true;
         }
 
         /// <summary>

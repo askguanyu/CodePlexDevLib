@@ -116,9 +116,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ServiceProcessTestService.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ServiceProcessTestService.cs" />
     <Compile Include="SyncDictionary.cs" />
     <Compile Include="TestConfigEditorPlugin.cs" />
     <Compile Include="WcfTest.cs" />
@@ -204,6 +202,10 @@
       <Project>{0B4C0DE4-3CFA-4762-A77D-AC523D960DE2}</Project>
       <Name>DevLib.Management</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Metadata\DevLib.Metadata.csproj">
+      <Project>{D6D64E43-19D8-4A3B-988B-2A8B5DC659CE}</Project>
+      <Name>DevLib.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.ModernUI\DevLib.ModernUI.csproj">
       <Project>{9532160E-CC80-4B59-B7E6-B7202ED3742A}</Project>
       <Name>DevLib.ModernUI</Name>
@@ -227,6 +229,10 @@
     <ProjectReference Include="..\DevLib.Serialization\DevLib.Serialization.csproj">
       <Project>{E263E10B-9DF6-44F8-9E58-34338316F08E}</Project>
       <Name>DevLib.Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceBus\DevLib.ServiceBus.csproj">
+      <Project>{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}</Project>
+      <Name>DevLib.ServiceBus</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.ServiceModel.Extensions\DevLib.ServiceModel.Extensions.csproj">
       <Project>{78F68CF9-8C7A-4E4A-8ACF-897AF942CD3B}</Project>

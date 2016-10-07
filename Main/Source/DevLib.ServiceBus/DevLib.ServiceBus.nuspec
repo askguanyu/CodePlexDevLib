@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <authors>$author$</authors>
+        <copyright>$copyright$</copyright>
+        <projectUrl>https://devlib.codeplex.com/</projectUrl>
+        <licenseUrl>https://devlib.codeplex.com/license</licenseUrl>
+        <summary>https://devlib.codeplex.com/
+
+DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns. It provides a comprehensive set of features that save development time, minimize costs, reduce the use of precious test resources, and decrease the overall maintenance effort.
+
+It is time to boost your productivity.
+        </summary>
+        <description>https://devlib.codeplex.com/
+
+Service Bus
+
+DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns. It provides a comprehensive set of features that save development time, minimize costs, reduce the use of precious test resources, and decrease the overall maintenance effort.
+
+It is time to boost your productivity.
+        </description>
+        <tags>ServiceBus EventBus</tags>
+    </metadata>
+</package>

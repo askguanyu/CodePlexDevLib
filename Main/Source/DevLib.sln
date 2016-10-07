@@ -115,9 +115,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.ExtensionProperties"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Web.UnitTest", "DevLib.Web.UnitTest\DevLib.Web.UnitTest.csproj", "{34655001-2A97-40EB-93D9-C9C68E9CD038}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.ServiceBus", "DevLib.ServiceBus\DevLib.ServiceBus.csproj", "{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 49
+		SccNumberOfProjects = 50
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -272,6 +274,9 @@ Global
 		SccProjectTopLevelParentUniqueName48 = DevLib.sln
 		SccProjectName48 = DevLib.Web.UnitTest
 		SccLocalPath48 = DevLib.Web.UnitTest
+		SccProjectUniqueName49 = DevLib.ServiceBus\\DevLib.ServiceBus.csproj
+		SccProjectName49 = DevLib.ServiceBus
+		SccLocalPath49 = DevLib.ServiceBus
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = DevLib.vsmdi
@@ -772,6 +777,16 @@ Global
 		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{34655001-2A97-40EB-93D9-C9C68E9CD038}.Release|x86.ActiveCfg = Release|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

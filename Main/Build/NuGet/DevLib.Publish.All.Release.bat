@@ -27,6 +27,7 @@ echo y | DevLib.Parameters.Publish.Release.bat
 echo y | DevLib.Reflection.Publish.Release.bat
 echo y | DevLib.Remoting.Publish.Release.bat
 echo y | DevLib.Serialization.Publish.Release.bat
+echo y | DevLib.ServiceBus.Publish.Release.bat
 echo y | DevLib.ServiceModel.Publish.Release.bat
 echo y | DevLib.ServiceModel.Extensions.Publish.Release.bat
 echo y | DevLib.ServiceProcess.Publish.Release.bat

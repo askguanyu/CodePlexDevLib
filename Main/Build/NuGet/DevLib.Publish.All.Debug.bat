@@ -27,6 +27,7 @@ echo y | DevLib.Parameters.Publish.Debug.bat
 echo y | DevLib.Reflection.Publish.Debug.bat
 echo y | DevLib.Remoting.Publish.Debug.bat
 echo y | DevLib.Serialization.Publish.Debug.bat
+echo y | DevLib.ServiceBus.Publish.Debug.bat
 echo y | DevLib.ServiceModel.Publish.Debug.bat
 echo y | DevLib.ServiceModel.Extensions.Publish.Debug.bat
 echo y | DevLib.ServiceProcess.Publish.Debug.bat

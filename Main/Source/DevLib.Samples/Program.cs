@@ -44,6 +44,7 @@ namespace DevLib.Samples
     using DevLib.Configuration;
     using DevLib.Csv;
     using DevLib.DaemonProcess;
+    using DevLib.Data;
     using DevLib.Data.Repository;
     using DevLib.DesignPatterns;
     using DevLib.Diagnostics;
@@ -64,6 +65,7 @@ namespace DevLib.Samples
     using DevLib.Reflection;
     using DevLib.Remoting;
     using DevLib.Serialization;
+    using DevLib.ServiceBus;
     using DevLib.ServiceModel;
     using DevLib.ServiceModel.Extensions;
     using DevLib.ServiceProcess;
@@ -76,7 +78,6 @@ namespace DevLib.Samples
     using DevLib.Web.Services;
     using DevLib.WinForms;
     using DevLib.Xml;
-    using DevLib.Data;
 
     public class Program
     {
@@ -175,6 +176,11 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
+                    TestDevLibServiceBus();
+                });
+
+                Benchmark.Run(delegate
+                {
                     //TestDevLibServiceModel();
                 });
 
@@ -218,6 +224,26 @@ namespace DevLib.Samples
             }, "DevLib.Samples", 1);
 
             InternalLogger.Log("End");
+        }
+
+        private static void TestDevLibServiceBus()
+        {
+            var t1 = ServiceBusManager.GetOrCreateTopic("t1");
+            var pub1 = ServiceBusManager.GetOrCreatePublisher("pub1");
+            var sub1 = ServiceBusManager.GetOrCreateSubscription("sub1");
+
+            t1.AddPublisher("pub1").AddSubscription("sub1");
+
+            sub1.OnMessage(msg =>
+            {
+                Console.WriteLine(msg);
+                if (!msg.IsReturned) msg.Return();
+            });
+
+            pub1.Send(new BrokeredMessage("Hello1"));
+            pub1.Send(new BrokeredMessage("Hello2"));
+
+            Console.ReadLine();
         }
 
         private static void TestDevLibWebHosting()

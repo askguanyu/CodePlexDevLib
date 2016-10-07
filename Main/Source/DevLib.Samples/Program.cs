@@ -176,7 +176,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    TestDevLibServiceBus();
+                    //TestDevLibServiceBus();
                 });
 
                 Benchmark.Run(delegate

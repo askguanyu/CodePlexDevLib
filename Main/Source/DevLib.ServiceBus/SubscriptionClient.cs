@@ -37,7 +37,7 @@ namespace DevLib.ServiceBus
         /// Initializes a new instance of the <see cref="SubscriptionClient"/> class.
         /// </summary>
         /// <param name="subscriptionName">Name of the subscription.</param>
-        public SubscriptionClient(string subscriptionName)
+        internal SubscriptionClient(string subscriptionName)
         {
             this.Name = subscriptionName;
             this.CreatedAt = DateTime.Now;
@@ -253,10 +253,12 @@ namespace DevLib.ServiceBus
         {
             this.CheckDisposed();
 
-            message.ReceivedAt = DateTime.Now;
-            message.DestSubscription = this.Name;
+            BrokeredMessage messageClone = message.Clone();
 
-            this._producerConsumer.Enqueue(message);
+            messageClone.ReceivedAt = DateTime.Now;
+            messageClone.DestSubscription = this.Name;
+
+            this._producerConsumer.Enqueue(messageClone);
         }
 
         /// <summary>
@@ -333,17 +335,6 @@ namespace DevLib.ServiceBus
         }
 
         /// <summary>
-        /// Checks whether this instance is disposed.
-        /// </summary>
-        private void CheckDisposed()
-        {
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException("DevLib.ServiceBus.SubscriptionClient");
-            }
-        }
-
-        /// <summary>
         /// Consumes the message.
         /// </summary>
         /// <param name="message">The message.</param>
@@ -357,6 +348,17 @@ namespace DevLib.ServiceBus
             }
 
             this.AccessedAt = DateTime.Now;
+        }
+
+        /// <summary>
+        /// Checks whether this instance is disposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.ServiceBus.SubscriptionClient");
+            }
         }
     }
 }

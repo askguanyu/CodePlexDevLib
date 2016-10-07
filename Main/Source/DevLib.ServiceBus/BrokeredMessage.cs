@@ -47,6 +47,8 @@ namespace DevLib.ServiceBus
             this.SentAt = originalMessage.SentAt;
             this.ArrivedAt = originalMessage.ArrivedAt;
             this.ReceivedAt = originalMessage.ReceivedAt;
+            this.FirstPublisher = originalMessage.FirstPublisher;
+            this.FirstTopic = originalMessage.FirstTopic;
             this.LastPublisher = originalMessage.LastPublisher;
             this.LastTopic = originalMessage.LastTopic;
             this.DestSubscription = originalMessage.DestSubscription;

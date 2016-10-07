@@ -301,7 +301,6 @@ namespace DevLib.ServiceBus
             this.CheckDisposed();
 
             message.SentAt = DateTime.Now;
-            message.SourcePublisher = null;
             message.ArrivedAt = DateTime.Now;
             message.SourceTopic = this.Name;
 
@@ -325,7 +324,6 @@ namespace DevLib.ServiceBus
             foreach (var message in messages)
             {
                 message.SentAt = sentAt;
-                message.SourcePublisher = null;
                 message.ArrivedAt = sentAt;
                 message.SourceTopic = this.Name;
             }

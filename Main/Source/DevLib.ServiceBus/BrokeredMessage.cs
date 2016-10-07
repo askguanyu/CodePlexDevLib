@@ -174,12 +174,13 @@ namespace DevLib.ServiceBus
         /// <summary>
         /// Sends back the specified message to its source publisher or source topic.
         /// </summary>
-        public void Return()
+        /// <param name="returnToTopic">true to return message to its source topic; otherwise, to its source publisher if possible.</param>
+        public void Return(bool returnToTopic = false)
         {
             var returnMessage = this.Clone();
             returnMessage.IsReturned = true;
 
-            if (Utilities.IsNullOrWhiteSpace(returnMessage.SourcePublisher))
+            if (returnToTopic || Utilities.IsNullOrWhiteSpace(returnMessage.SourcePublisher))
             {
                 if (!Utilities.IsNullOrWhiteSpace(returnMessage.SourceTopic))
                 {

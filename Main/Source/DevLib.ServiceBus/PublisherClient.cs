@@ -186,10 +186,17 @@ namespace DevLib.ServiceBus
         {
             this.CheckDisposed();
 
-            message.SentAt = DateTime.Now;
-            message.SourcePublisher = this.Name;
+            BrokeredMessage messageClone = message.Clone();
 
-            this._producerConsumer.Enqueue(message);
+            messageClone.SentAt = DateTime.Now;
+            messageClone.LastPublisher = this.Name;
+
+            if (Utilities.IsNullOrWhiteSpace(messageClone.FirstPublisher))
+            {
+                messageClone.FirstPublisher = this.Name;
+            }
+
+            this._producerConsumer.Enqueue(messageClone);
 
             this.AccessedAt = DateTime.Now;
 
@@ -206,13 +213,21 @@ namespace DevLib.ServiceBus
             this.CheckDisposed();
 
             DateTime sentAt = DateTime.Now;
+
             foreach (var message in messages)
             {
-                message.SentAt = sentAt;
-                message.SourcePublisher = this.Name;
-            }
+                BrokeredMessage messageClone = message.Clone();
 
-            this._producerConsumer.Enqueue(messages);
+                messageClone.SentAt = sentAt;
+                messageClone.LastPublisher = this.Name;
+
+                if (Utilities.IsNullOrWhiteSpace(messageClone.FirstPublisher))
+                {
+                    messageClone.FirstPublisher = this.Name;
+                }
+
+                this._producerConsumer.Enqueue(messageClone);
+            }
 
             this.AccessedAt = DateTime.Now;
 
@@ -293,17 +308,6 @@ namespace DevLib.ServiceBus
         }
 
         /// <summary>
-        /// Checks whether this instance is disposed.
-        /// </summary>
-        private void CheckDisposed()
-        {
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException("DevLib.ServiceBus.PublisherClient");
-            }
-        }
-
-        /// <summary>
         /// Dispatches the message to topics.
         /// </summary>
         /// <param name="message">The message.</param>
@@ -313,7 +317,18 @@ namespace DevLib.ServiceBus
 
             foreach (var item in this._topics.Values)
             {
-                item.Accept(message.Clone());
+                item.Accept(message);
+            }
+        }
+
+        /// <summary>
+        /// Checks whether this instance is disposed.
+        /// </summary>
+        private void CheckDisposed()
+        {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException("DevLib.ServiceBus.PublisherClient");
             }
         }
     }

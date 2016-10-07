@@ -47,8 +47,8 @@ namespace DevLib.ServiceBus
             this.SentAt = originalMessage.SentAt;
             this.ArrivedAt = originalMessage.ArrivedAt;
             this.ReceivedAt = originalMessage.ReceivedAt;
-            this.SourcePublisher = originalMessage.SourcePublisher;
-            this.SourceTopic = originalMessage.SourceTopic;
+            this.LastPublisher = originalMessage.LastPublisher;
+            this.LastTopic = originalMessage.LastTopic;
             this.DestSubscription = originalMessage.DestSubscription;
             this.IsReturned = originalMessage.IsReturned;
             this._bodyObject = originalMessage._bodyObject;
@@ -117,18 +117,36 @@ namespace DevLib.ServiceBus
         }
 
         /// <summary>
-        /// Gets the source publisher.
+        /// Gets the first access publisher.
         /// </summary>
-        public string SourcePublisher
+        public string FirstPublisher
         {
             get;
             internal set;
         }
 
         /// <summary>
-        /// Gets the source topic.
+        /// Gets the first access topic.
         /// </summary>
-        public string SourceTopic
+        public string FirstTopic
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Gets the last access publisher.
+        /// </summary>
+        public string LastPublisher
+        {
+            get;
+            internal set;
+        }
+
+        /// <summary>
+        /// Gets the last access topic.
+        /// </summary>
+        public string LastTopic
         {
             get;
             internal set;
@@ -180,11 +198,11 @@ namespace DevLib.ServiceBus
             var returnMessage = this.Clone();
             returnMessage.IsReturned = true;
 
-            if (returnToTopic || Utilities.IsNullOrWhiteSpace(returnMessage.SourcePublisher))
+            if (returnToTopic || Utilities.IsNullOrWhiteSpace(returnMessage.LastPublisher))
             {
-                if (!Utilities.IsNullOrWhiteSpace(returnMessage.SourceTopic))
+                if (!Utilities.IsNullOrWhiteSpace(returnMessage.LastTopic))
                 {
-                    Topic topic = ServiceBusManager.GetTopic(returnMessage.SourceTopic);
+                    Topic topic = ServiceBusManager.GetTopic(returnMessage.LastTopic);
 
                     if (topic != null)
                     {
@@ -194,7 +212,7 @@ namespace DevLib.ServiceBus
             }
             else
             {
-                PublisherClient publisher = ServiceBusManager.GetPublisher(returnMessage.SourcePublisher);
+                PublisherClient publisher = ServiceBusManager.GetPublisher(returnMessage.LastPublisher);
 
                 if (publisher != null)
                 {
@@ -225,8 +243,8 @@ namespace DevLib.ServiceBus
                 this.SentAt.ToString(Utilities.DateTimeFormat, CultureInfo.InvariantCulture),
                 this.ArrivedAt.ToString(Utilities.DateTimeFormat, CultureInfo.InvariantCulture),
                 this.ReceivedAt.ToString(Utilities.DateTimeFormat, CultureInfo.InvariantCulture),
-                this.SourcePublisher ?? string.Empty,
-                this.SourceTopic ?? string.Empty,
+                this.LastPublisher ?? string.Empty,
+                this.LastTopic ?? string.Empty,
                 this.DestSubscription ?? string.Empty,
                 this.IsReturned,
                 (this.GetBody() ?? string.Empty).ToString());

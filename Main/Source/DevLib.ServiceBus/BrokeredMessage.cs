@@ -13,17 +13,27 @@ namespace DevLib.ServiceBus
     /// <summary>
     /// Represents the unit of communication between ServiceBus clients.
     /// </summary>
+    [Serializable]
     public class BrokeredMessage
     {
         /// <summary>
         /// Field _bodyObject.
         /// </summary>
-        private readonly byte[] _bodyObject;
+        private byte[] _bodyObject;
 
         /// <summary>
         /// Field _properties.
         /// </summary>
         private Dictionary<string, object> _properties;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BrokeredMessage" /> class.
+        /// </summary>
+        public BrokeredMessage()
+        {
+            this.Id = Utilities.NewSequentialGuid();
+            this.CreatedAt = DateTime.Now;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BrokeredMessage"/> class.
@@ -33,7 +43,7 @@ namespace DevLib.ServiceBus
         {
             this.Id = Utilities.NewSequentialGuid();
             this.CreatedAt = DateTime.Now;
-            this._bodyObject = Utilities.Serialize(serializableObject);
+            this._bodyObject = Utilities.SerializeXmlBinary(serializableObject);
         }
 
         /// <summary>
@@ -179,16 +189,28 @@ namespace DevLib.ServiceBus
         /// <returns>The deserialized object or graph.</returns>
         public T GetBody<T>()
         {
-            return Utilities.Deserialize<T>(this._bodyObject);
+            return Utilities.DeserializeXmlBinary<T>(this._bodyObject);
         }
 
         /// <summary>
-        /// Deserializes the brokered message body into an object.
+        /// Deserializes the brokered message body into a Xml string.
         /// </summary>
-        /// <returns>The deserialized object or graph.</returns>
-        public object GetBody()
+        /// <returns>The deserialized object or graph Xml string.</returns>
+        public string GetBody()
         {
-            return Utilities.Deserialize(this._bodyObject);
+            return Utilities.DeserializeXmlBinaryString(this._bodyObject);
+        }
+
+        /// <summary>
+        /// Serializes the object into brokered message body.
+        /// </summary>
+        /// <param name="serializableObject">The serializable object.</param>
+        /// <returns>Current BrokeredMessage.</returns>
+        public BrokeredMessage SetBody(object serializableObject)
+        {
+            this._bodyObject = Utilities.SerializeXmlBinary(serializableObject);
+
+            return this;
         }
 
         /// <summary>
@@ -239,17 +261,19 @@ namespace DevLib.ServiceBus
         public override string ToString()
         {
             return string.Format(
-                "BrokeredMessageId={0}, CreatedAt={1}, SentAt={2}, ArrivedAt={3}, ReceivedAt={4}, SourcePublisher={5}, SourceTopic={6}, DestSubscription={7}, IsReturned={8}, Body={9}",
+                "BrokeredMessageId={0}, CreatedAt={1}, SentAt={2}, ArrivedAt={3}, ReceivedAt={4}, FirstPublisher={5}, FirstTopic={6}, LastPublisher={7}, LastTopic={8}, DestSubscription={9}, IsReturned={10}, Body={11}",
                 this.Id.ToString(),
                 this.CreatedAt.ToString(Utilities.DateTimeFormat, CultureInfo.InvariantCulture),
                 this.SentAt.ToString(Utilities.DateTimeFormat, CultureInfo.InvariantCulture),
                 this.ArrivedAt.ToString(Utilities.DateTimeFormat, CultureInfo.InvariantCulture),
                 this.ReceivedAt.ToString(Utilities.DateTimeFormat, CultureInfo.InvariantCulture),
+                this.FirstPublisher ?? string.Empty,
+                this.FirstTopic ?? string.Empty,
                 this.LastPublisher ?? string.Empty,
                 this.LastTopic ?? string.Empty,
                 this.DestSubscription ?? string.Empty,
                 this.IsReturned,
-                (this.GetBody() ?? string.Empty).ToString());
+                this.GetBody() ?? string.Empty);
         }
     }
 }

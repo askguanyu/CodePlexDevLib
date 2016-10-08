@@ -226,8 +226,19 @@ namespace DevLib.Samples
             InternalLogger.Log("End");
         }
 
+        //[Serializable]
+        public class BrokeredMessageTest
+        {
+            public int MyProperty { get; set; }
+
+            public string MyProperty2 { get; set; }
+        }
+
         private static void TestDevLibServiceBus()
         {
+            
+            var m1 = new BrokeredMessage(new BrokeredMessageTest());
+
             var t1 = ServiceBusManager.GetOrCreateTopic("t1");
             var pub1 = ServiceBusManager.GetOrCreatePublisher("pub1");
             var sub1 = ServiceBusManager.GetOrCreateSubscription("sub1");
@@ -237,11 +248,14 @@ namespace DevLib.Samples
             sub1.OnMessage(msg =>
             {
                 Console.WriteLine(msg);
+                Console.WriteLine(msg.GetBody());
+                //Console.WriteLine(msg.GetBody<string>());
+                Console.WriteLine(msg.GetBody<BrokeredMessageTest>());
                 if (!msg.IsReturned) msg.Return();
             });
 
-            pub1.Send(new BrokeredMessage("Hello1"));
-            pub1.Send(new BrokeredMessage("Hello2"));
+            //pub1.Send(new BrokeredMessage("Hello1"));
+            pub1.Send(new BrokeredMessage(new BrokeredMessageTest { MyProperty = 2, MyProperty2="aa" }));
 
             Console.ReadLine();
         }
@@ -1739,11 +1753,11 @@ namespace DevLib.Samples
 
             Person person = new Person("foo", "好的", 1);
             person.WriteXml("1.xml", true);
-            person.SerializeXml().DeserializeXml(new Type[] { typeof(Person) });
+            person.SerializeXmlString().DeserializeXmlString(new Type[] { typeof(Person) });
             Console.ReadLine();
             //person.SerializeJson().ConsoleOutput().DeserializeJson<Person>();
             //var aperson = person.SerializeJson(Encoding.UTF8).ConsoleOutput().DeserializeJson<Person>(Encoding.UTF8);
-            var aperson = person.SerializeXml().DeserializeXml<Person>().LastName.ConsoleOutput();
+            var aperson = person.SerializeXmlString().DeserializeXmlString<Person>().LastName.ConsoleOutput();
 
             Console.ReadKey();
 

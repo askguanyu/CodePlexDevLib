@@ -1,22 +1,24 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="XmlSerialization.cs" company="YuGuan Corporation">
+// <copyright file="SerializationExtensions.XmlSerializer.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Serialization
+namespace DevLib.ExtensionMethods
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
     using System.Runtime.Serialization;
     using System.Text;
     using System.Xml;
+    using System.Xml.Linq;
     using System.Xml.Serialization;
 
     /// <summary>
-    /// Serializes and deserializes objects into and from XML documents.
+    /// Serialization Extensions.
     /// </summary>
-    public static class XmlSerialization
+    public static partial class SerializationExtensions
     {
         /// <summary>
         /// Serializes object to Xml string.
@@ -31,7 +33,7 @@ namespace DevLib.Serialization
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>An Xml encoded string representation of the source object.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
-        public static string SerializeString(object source, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
+        public static string SerializeXmlString(this object source, bool indent = false, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
             {
@@ -57,6 +59,7 @@ namespace DevLib.Serialization
 
                 xmlWriter.Flush();
                 memoryStream.Position = 0;
+
                 return streamReader.ReadToEnd();
             }
         }
@@ -75,7 +78,7 @@ namespace DevLib.Serialization
         /// <param name="removeDefaultNamespace">Whether to write default namespace.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>File full path.</returns>
-        public static string Write(object source, string filename, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
+        public static string WriteXml(this object source, string filename, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, bool removeDefaultNamespace = true, Type[] extraTypes = null)
         {
             if (source == null)
             {
@@ -123,6 +126,7 @@ namespace DevLib.Serialization
                 }
 
                 xmlWriter.Flush();
+
                 return fullPath;
             }
         }
@@ -130,13 +134,13 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Xml string to object.
         /// </summary>
-        /// <param name="xmlString">The Xml string to deserialize.</param>
+        /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="type">Type of object.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeString(string xmlString, Type type, Type[] extraTypes = null)
+        public static object DeserializeXmlString(this string source, Type type, Type[] extraTypes = null)
         {
-            if (string.IsNullOrEmpty(xmlString))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
@@ -148,7 +152,7 @@ namespace DevLib.Serialization
 
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(type) : new XmlSerializer(type, extraTypes);
 
-            using (StringReader stringReader = new StringReader(xmlString))
+            using (StringReader stringReader = new StringReader(source))
             {
                 return xmlSerializer.Deserialize(stringReader);
             }
@@ -157,12 +161,12 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Xml string to object.
         /// </summary>
-        /// <param name="xmlString">The Xml string to deserialize.</param>
+        /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeString(string xmlString, Type[] knownTypes)
+        public static object DeserializeXmlString(this string source, Type[] knownTypes)
         {
-            if (string.IsNullOrEmpty(xmlString))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
@@ -174,20 +178,11 @@ namespace DevLib.Serialization
 
             Type sourceType = null;
 
-            using (StringReader stringReader = new StringReader(xmlString))
+            using (StringReader stringReader = new StringReader(source))
             {
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.Load(stringReader);
-                string rootNodeName = xmlDocument.LocalName;
+                string rootNodeName = XElement.Load(stringReader).Name.LocalName;
 
-                foreach (Type item in knownTypes)
-                {
-                    if (item.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        sourceType = item;
-                        break;
-                    }
-                }
+                sourceType = knownTypes.FirstOrDefault(p => p.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase));
 
                 if (sourceType == null)
                 {
@@ -197,7 +192,7 @@ namespace DevLib.Serialization
 
             XmlSerializer xmlSerializer = new XmlSerializer(sourceType, knownTypes);
 
-            using (StringReader stringReader = new StringReader(xmlString))
+            using (StringReader stringReader = new StringReader(source))
             {
                 return xmlSerializer.Deserialize(stringReader);
             }
@@ -207,19 +202,19 @@ namespace DevLib.Serialization
         /// Deserializes Xml string to object.
         /// </summary>
         /// <typeparam name="T">Type of the returns object.</typeparam>
-        /// <param name="xmlString">The Xml string to deserialize.</param>
+        /// <param name="source">The Xml string to deserialize.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
-        public static T DeserializeString<T>(string xmlString, Type[] extraTypes = null)
+        public static T DeserializeXmlString<T>(this string source, Type[] extraTypes = null)
         {
-            if (string.IsNullOrEmpty(xmlString))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
             XmlSerializer xmlSerializer = (extraTypes == null || extraTypes.Length == 0) ? new XmlSerializer(typeof(T)) : new XmlSerializer(typeof(T), extraTypes);
 
-            using (StringReader stringReader = new StringReader(xmlString))
+            using (StringReader stringReader = new StringReader(source))
             {
                 return (T)xmlSerializer.Deserialize(stringReader);
             }
@@ -228,13 +223,13 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Xml string to object, read from file.
         /// </summary>
-        /// <param name="filename">File name.</param>
+        /// <param name="source">File name.</param>
         /// <param name="type">Type of object.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object Read(string filename, Type type, Type[] extraTypes = null)
+        public static object ReadXml(this string source, Type type, Type[] extraTypes = null)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
@@ -244,7 +239,7 @@ namespace DevLib.Serialization
                 throw new ArgumentNullException("type");
             }
 
-            string fullPath = Path.GetFullPath(filename);
+            string fullPath = Path.GetFullPath(source);
 
             if (!File.Exists(fullPath))
             {
@@ -262,12 +257,12 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Xml string to object, read from file.
         /// </summary>
-        /// <param name="filename">File name.</param>
+        /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object Read(string filename, Type[] knownTypes)
+        public static object ReadXml(this string source, Type[] knownTypes)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
@@ -277,7 +272,7 @@ namespace DevLib.Serialization
                 throw new ArgumentException("knownTypes is null or empty.", "knownTypes");
             }
 
-            string fullPath = Path.GetFullPath(filename);
+            string fullPath = Path.GetFullPath(source);
 
             if (!File.Exists(fullPath))
             {
@@ -285,18 +280,10 @@ namespace DevLib.Serialization
             }
 
             Type sourceType = null;
-            XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.Load(filename);
-            string rootNodeName = xmlDocument.LocalName;
 
-            foreach (Type item in knownTypes)
-            {
-                if (item.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase))
-                {
-                    sourceType = item;
-                    break;
-                }
-            }
+            string rootNodeName = XElement.Load(fullPath).Name.LocalName;
+
+            sourceType = knownTypes.FirstOrDefault(p => p.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase));
 
             if (sourceType == null)
             {
@@ -315,17 +302,17 @@ namespace DevLib.Serialization
         /// Deserializes Xml string to object, read from file.
         /// </summary>
         /// <typeparam name="T">Type of the returns object.</typeparam>
-        /// <param name="filename">File name.</param>
+        /// <param name="source">File name.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of T.</returns>
-        public static T Read<T>(string filename, Type[] extraTypes = null)
+        public static T ReadXml<T>(this string source, Type[] extraTypes = null)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(filename);
+            string fullPath = Path.GetFullPath(source);
 
             if (!File.Exists(fullPath))
             {
@@ -346,7 +333,7 @@ namespace DevLib.Serialization
         /// <param name="source">The object to serialize.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Bytes representation of the source object.</returns>
-        public static byte[] SerializeBinary(object source, Type[] extraTypes = null)
+        public static byte[] SerializeXmlBinary(this object source, Type[] extraTypes = null)
         {
             if (source == null)
             {
@@ -370,7 +357,7 @@ namespace DevLib.Serialization
         /// <param name="type">Type of Xml object.</param>
         /// <param name="extraTypes">A <see cref="T:System.Type" /> array of additional object types to serialize.</param>
         /// <returns>Instance of Xml object.</returns>
-        public static object DeserializeBinary(byte[] source, Type type, Type[] extraTypes = null)
+        public static object DeserializeXmlBinary(this byte[] source, Type type, Type[] extraTypes = null)
         {
             if (source == null)
             {
@@ -396,7 +383,8 @@ namespace DevLib.Serialization
         /// <param name="source">The bytes to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of Xml object.</returns>
-        public static object DeserializeBinary(byte[] source, Type[] knownTypes = null)
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
+        public static object DeserializeXmlBinary(this byte[] source, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -416,14 +404,7 @@ namespace DevLib.Serialization
                 xmlDocument.Load(memoryStream);
                 string rootNodeName = xmlDocument.LocalName;
 
-                foreach (Type item in knownTypes)
-                {
-                    if (item.Name.Equals(rootNodeName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        sourceType = item;
-                        break;
-                    }
-                }
+                sourceType = knownTypes.FirstOrDefault(p => p.Name == rootNodeName);
 
                 if (sourceType == null)
                 {
@@ -431,7 +412,9 @@ namespace DevLib.Serialization
                 }
 
                 memoryStream.Position = 0;
+
                 XmlSerializer xmlSerializer = new XmlSerializer(sourceType, knownTypes);
+
                 return xmlSerializer.Deserialize(memoryStream);
             }
         }
@@ -443,7 +426,7 @@ namespace DevLib.Serialization
         /// <param name="source">The bytes to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of Xml object.</returns>
-        public static T DeserializeBinary<T>(byte[] source, Type[] knownTypes = null)
+        public static T DeserializeXmlBinary<T>(this byte[] source, Type[] knownTypes = null)
         {
             if (source == null)
             {

@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SoapSerialization.cs" company="YuGuan Corporation">
+// <copyright file="SerializationExtensions.SoapFormatter.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Serialization
+namespace DevLib.ExtensionMethods
 {
     using System;
     using System.IO;
@@ -11,16 +11,16 @@ namespace DevLib.Serialization
     using System.Xml;
 
     /// <summary>
-    /// Serializes and deserializes an object, or an entire graph of connected objects, in SOAP format.
+    /// Serialization Extensions.
     /// </summary>
-    public static class SoapSerialization
+    public static partial class SerializationExtensions
     {
         /// <summary>
         /// Serializes object to Soap string.
         /// </summary>
         /// <param name="source">The object to serialize.</param>
         /// <returns>Soap string.</returns>
-        public static string SerializeString(object source)
+        public static string SerializeSoapString(this object source)
         {
             if (source == null)
             {
@@ -46,7 +46,7 @@ namespace DevLib.Serialization
         /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>File full path.</returns>
-        public static string Write(object source, string filename, bool overwrite = false)
+        public static string WriteSoap(this object source, string filename, bool overwrite = false)
         {
             if (source == null)
             {
@@ -87,7 +87,7 @@ namespace DevLib.Serialization
         /// </summary>
         /// <param name="source">The Soap string to deserialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeString(string source)
+        public static object DeserializeSoapString(this string source)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -96,6 +96,7 @@ namespace DevLib.Serialization
 
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(source);
+
             SoapFormatter soapFormatter = new SoapFormatter();
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -112,7 +113,7 @@ namespace DevLib.Serialization
         /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The Soap string to deserialize.</param>
         /// <returns>Instance of T.</returns>
-        public static T DeserializeString<T>(string source)
+        public static T DeserializeSoapString<T>(this string source)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -121,6 +122,7 @@ namespace DevLib.Serialization
 
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.LoadXml(source);
+
             SoapFormatter soapFormatter = new SoapFormatter();
 
             using (MemoryStream memoryStream = new MemoryStream())
@@ -134,16 +136,16 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes Soap string to object, read from file.
         /// </summary>
-        /// <param name="filename">File name.</param>
+        /// <param name="source">File name.</param>
         /// <returns>Instance of object.</returns>
-        public static object Read(string filename)
+        public static object ReadSoap(this string source)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(filename);
+            string fullPath = Path.GetFullPath(source);
 
             if (!File.Exists(fullPath))
             {
@@ -162,16 +164,16 @@ namespace DevLib.Serialization
         /// Deserializes Soap string to object, read from file.
         /// </summary>
         /// <typeparam name="T">Type of the returns object.</typeparam>
-        /// <param name="filename">File name.</param>
+        /// <param name="source">File name.</param>
         /// <returns>Instance of T.</returns>
-        public static T Read<T>(string filename)
+        public static T ReadSoap<T>(this string source)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(filename);
+            string fullPath = Path.GetFullPath(source);
 
             if (!File.Exists(fullPath))
             {
@@ -191,7 +193,7 @@ namespace DevLib.Serialization
         /// </summary>
         /// <param name="source">The object to serialize.</param>
         /// <returns>Bytes representation of the source object.</returns>
-        public static byte[] SerializeBinary(object source)
+        public static byte[] SerializeSoapBinary(this object source)
         {
             if (source == null)
             {
@@ -213,7 +215,7 @@ namespace DevLib.Serialization
         /// </summary>
         /// <param name="source">The bytes to deserialize.</param>
         /// <returns>Instance of Soap object.</returns>
-        public static object DeserializeBinary(byte[] source)
+        public static object DeserializeSoapBinary(this byte[] source)
         {
             if (source == null)
             {
@@ -235,7 +237,7 @@ namespace DevLib.Serialization
         /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">The bytes to deserialize.</param>
         /// <returns>Instance of Soap object.</returns>
-        public static T DeserializeBinary<T>(byte[] source)
+        public static T DeserializeSoapBinary<T>(this byte[] source)
         {
             if (source == null)
             {

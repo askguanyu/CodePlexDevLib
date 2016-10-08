@@ -272,7 +272,7 @@ namespace DevLib.ServiceBus
                 this.LastPublisher ?? string.Empty,
                 this.LastTopic ?? string.Empty,
                 this.DestSubscription ?? string.Empty,
-                this.IsReturned,
+                this.IsReturned.ToString(),
                 this.GetBody() ?? string.Empty);
         }
     }

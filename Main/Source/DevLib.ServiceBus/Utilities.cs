@@ -7,9 +7,11 @@ namespace DevLib.ServiceBus
 {
     using System;
     using System.Collections;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Security.Cryptography;
+    using System.Xml;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Class Utilities.
@@ -32,67 +34,70 @@ namespace DevLib.ServiceBus
         private static readonly RNGCryptoServiceProvider RandomGenerator = new RNGCryptoServiceProvider();
 
         /// <summary>
-        /// Serializes object to bytes.
+        /// Serializes object to Xml bytes.
         /// </summary>
-        /// <param name="source">Source object.</param>
-        /// <returns>Byte array.</returns>
-        public static byte[] Serialize(object source)
+        /// <param name="source">The object to serialize.</param>
+        /// <returns>Bytes representation of the source object.</returns>
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
+        public static byte[] SerializeXmlBinary(object source)
         {
             if (source == null)
             {
                 return null;
             }
 
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            XmlSerializer xmlSerializer = new XmlSerializer(source.GetType());
 
             using (MemoryStream memoryStream = new MemoryStream())
+            using (StreamReader streamReader = new StreamReader(memoryStream))
+            using (XmlWriter xmlWriter = XmlWriter.Create(memoryStream, new XmlWriterSettings() { OmitXmlDeclaration = true, CloseOutput = true }))
             {
-                binaryFormatter.Serialize(memoryStream, source);
+                XmlSerializerNamespaces xmlns = new XmlSerializerNamespaces();
+                xmlns.Add(string.Empty, string.Empty);
+                xmlSerializer.Serialize(xmlWriter, source, xmlns);
                 memoryStream.Position = 0;
                 return memoryStream.ToArray();
             }
         }
 
         /// <summary>
-        /// Deserializes bytes to object.
+        /// Deserializes Xml bytes to object.
         /// </summary>
-        /// <param name="source">Byte array.</param>
-        /// <returns>Instance object.</returns>
-        public static object Deserialize(byte[] source)
+        /// <typeparam name="T">Type of the returns object.</typeparam>
+        /// <param name="source">The bytes to deserialize.</param>
+        /// <returns>Instance of Xml object.</returns>
+        public static T DeserializeXmlBinary<T>(byte[] source)
         {
-            if (source == null || source.Length == 0)
-            {
-                return null;
-            }
-
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-            using (MemoryStream memoryStream = new MemoryStream(source))
-            {
-                memoryStream.Position = 0;
-                return binaryFormatter.Deserialize(memoryStream);
-            }
-        }
-
-        /// <summary>
-        /// Deserializes bytes to object.
-        /// </summary>
-        /// <typeparam name="T">The type of returns object.</typeparam>
-        /// <param name="source">Byte array.</param>
-        /// <returns>Instance of T.</returns>
-        public static T Deserialize<T>(byte[] source)
-        {
-            if (source == null || source.Length == 0)
+            if (source == null)
             {
                 return default(T);
             }
 
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
 
             using (MemoryStream memoryStream = new MemoryStream(source))
             {
-                memoryStream.Position = 0;
-                return (T)binaryFormatter.Deserialize(memoryStream);
+                return (T)xmlSerializer.Deserialize(memoryStream);
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the XML binary to string.
+        /// </summary>
+        /// <param name="source">The bytes to deserialize.</param>
+        /// <returns>Xml string.</returns>
+        public static string DeserializeXmlBinaryString(byte[] source)
+        {
+            if (source == null)
+            {
+                return string.Empty;
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream(source))
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.Load(memoryStream);
+                return xmlDocument.InnerXml;
             }
         }
 

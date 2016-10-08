@@ -1,25 +1,25 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="BinarySerialization.cs" company="YuGuan Corporation">
+// <copyright file="SerializationExtensions.BinaryFormatter.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.Serialization
+namespace DevLib.ExtensionMethods
 {
     using System;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
 
     /// <summary>
-    /// Serializes and deserializes an object, or an entire graph of connected objects, in binary format.
+    /// Serialization Extensions.
     /// </summary>
-    public static class BinarySerialization
+    public static partial class SerializationExtensions
     {
         /// <summary>
         /// Serializes object to bytes.
         /// </summary>
         /// <param name="source">Source object.</param>
         /// <returns>Byte array.</returns>
-        public static byte[] Serialize(object source)
+        public static byte[] SerializeBinary(this object source)
         {
             if (source == null)
             {
@@ -43,7 +43,7 @@ namespace DevLib.Serialization
         /// <param name="filename">File name.</param>
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <returns>File full path.</returns>
-        public static string Write(object source, string filename, bool overwrite = false)
+        public static string WriteBinary(this object source, string filename, bool overwrite = false)
         {
             if (source == null)
             {
@@ -89,7 +89,7 @@ namespace DevLib.Serialization
         /// </summary>
         /// <param name="source">Byte array.</param>
         /// <returns>Instance object.</returns>
-        public static object Deserialize(byte[] source)
+        public static object DeserializeBinary(this byte[] source)
         {
             if (source == null)
             {
@@ -111,12 +111,39 @@ namespace DevLib.Serialization
         }
 
         /// <summary>
+        /// Deserializes bytes to object, read from file.
+        /// </summary>
+        /// <param name="source">File name.</param>
+        /// <returns>Instance object.</returns>
+        public static object ReadBinary(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            string fullPath = Path.GetFullPath(source);
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException("The specified file does not exist.", fullPath);
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+            using (FileStream fileStream = File.OpenRead(fullPath))
+            {
+                return binaryFormatter.Deserialize(fileStream);
+            }
+        }
+
+        /// <summary>
         /// Deserializes bytes to object.
         /// </summary>
         /// <typeparam name="T">The type of returns object.</typeparam>
         /// <param name="source">Byte array.</param>
         /// <returns>Instance of T.</returns>
-        public static T Deserialize<T>(byte[] source)
+        public static T DeserializeBinary<T>(this byte[] source)
         {
             if (source == null)
             {
@@ -140,44 +167,17 @@ namespace DevLib.Serialization
         /// <summary>
         /// Deserializes bytes to object, read from file.
         /// </summary>
-        /// <param name="filename">File name.</param>
-        /// <returns>Instance object.</returns>
-        public static object Read(string filename)
-        {
-            if (string.IsNullOrEmpty(filename))
-            {
-                throw new ArgumentNullException("source");
-            }
-
-            string fullPath = Path.GetFullPath(filename);
-
-            if (!File.Exists(fullPath))
-            {
-                throw new FileNotFoundException("The specified file does not exist.", fullPath);
-            }
-
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-            using (FileStream fileStream = File.OpenRead(fullPath))
-            {
-                return binaryFormatter.Deserialize(fileStream);
-            }
-        }
-
-        /// <summary>
-        /// Deserializes bytes to object, read from file.
-        /// </summary>
         /// <typeparam name="T">The type of returns object.</typeparam>
-        /// <param name="filename">File name.</param>
+        /// <param name="source">File name.</param>
         /// <returns>Instance of T.</returns>
-        public static T Read<T>(string filename)
+        public static T ReadBinary<T>(this string source)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(source))
             {
                 throw new ArgumentNullException("source");
             }
 
-            string fullPath = Path.GetFullPath(filename);
+            string fullPath = Path.GetFullPath(source);
 
             if (!File.Exists(fullPath))
             {

@@ -1,30 +1,25 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ProducerConsumer.cs" company="YuGuan Corporation">
+// <copyright file="DeferQueue.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace DevLib.ServiceBus
+namespace DevLib.DesignPatterns
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
 
     /// <summary>
     /// Producer Consumer Pattern.
     /// </summary>
     /// <typeparam name="T">The type of item to be produced and consumed.</typeparam>
-    internal class ProducerConsumer<T> : IDisposable
+    /// <seealso cref="System.IDisposable" />
+    public class DeferQueue<T> : IDisposable
     {
         /// <summary>
         /// The <see cref="Action{T}" /> that is executed in the consumer thread.
         /// </summary>
-        private readonly Action<T> _consumerAction;
-
-        /// <summary>
-        /// Consumer thread list.
-        /// </summary>
-        private readonly Thread _consumerThread;
+        private readonly Action<T[]> _consumerAction;
 
         /// <summary>
         /// Prevents more than one thread from modifying <see cref="IsRunning" /> at a time.
@@ -42,14 +37,9 @@ namespace DevLib.ServiceBus
         private readonly Queue<T> _queue;
 
         /// <summary>
-        /// Allows the consumer thread to block when no items are available in the <see cref="_queue" />.
+        /// The maximum backlogs.
         /// </summary>
-        private readonly EventWaitHandle _queueWaitHandle = new AutoResetEvent(false);
-
-        /// <summary>
-        /// Allows the consumer thread to block when <see cref="IsRunning" /> is false.
-        /// </summary>
-        private readonly EventWaitHandle _isRunningWaitHandle = new ManualResetEvent(false);
+        private readonly int _maxBacklogs;
 
         /// <summary>
         /// Field _disposed.
@@ -82,11 +72,24 @@ namespace DevLib.ServiceBus
         private volatile bool _isRunning;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProducerConsumer{T}" /> class.
+        /// The defer timer.
+        /// </summary>
+        private System.Timers.Timer _deferTimer;
+
+        /// <summary>
+        /// The queue timer.
+        /// </summary>
+        private System.Timers.Timer _queueTimer;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeferQueue{T}" /> class.
         /// </summary>
         /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
+        /// <param name="deferTimeout">The defer timeout.</param>
+        /// <param name="queueTimeout">The queue timeout.</param>
+        /// <param name="maxBacklogs">The maximum backlogs.</param>
         /// <param name="startNow">Whether to start the consumer thread immediately.</param>
-        public ProducerConsumer(Action<T> consumerAction, bool startNow = true)
+        public DeferQueue(Action<T[]> consumerAction, int deferTimeout, int queueTimeout, int maxBacklogs, bool startNow = true)
         {
             if (consumerAction == null)
             {
@@ -95,16 +98,31 @@ namespace DevLib.ServiceBus
 
             this._queue = new Queue<T>();
             this._consumerAction = consumerAction;
+            this._maxBacklogs = maxBacklogs;
+
+            if (deferTimeout > 0)
+            {
+                this._deferTimer = new System.Timers.Timer(deferTimeout);
+                this._deferTimer.Elapsed += (s, e) => this.OnThreshold(e.SignalTime);
+                this._deferTimer.AutoReset = false;
+                this._deferTimer.Stop();
+            }
+
+            if (queueTimeout > 0)
+            {
+                this._queueTimer = new System.Timers.Timer(queueTimeout);
+                this._queueTimer.Elapsed += (s, e) => this.OnThreshold(e.SignalTime);
+                this._queueTimer.AutoReset = false;
+                this._queueTimer.Stop();
+            }
+
             this.IsRunning = startNow;
-            this._consumerThread = new Thread(this.ConsumerThread);
-            this._consumerThread.IsBackground = true;
-            this._consumerThread.Start();
         }
 
         /// <summary>
-        /// Finalizes an instance of the <see cref="ProducerConsumer{T}" /> class.
+        /// Finalizes an instance of the <see cref="DeferQueue{T}" /> class.
         /// </summary>
-        ~ProducerConsumer()
+        ~DeferQueue()
         {
             this.Dispose(false);
         }
@@ -112,6 +130,7 @@ namespace DevLib.ServiceBus
         /// <summary>
         /// Gets the current number of items contained in the queue.
         /// </summary>
+        /// <value>The queue count.</value>
         public long QueueCount
         {
             get
@@ -126,6 +145,7 @@ namespace DevLib.ServiceBus
         /// <summary>
         /// Gets the accumulation count of produced items.
         /// </summary>
+        /// <value>The produce accumulation.</value>
         public long ProduceAccumulation
         {
             get
@@ -137,6 +157,7 @@ namespace DevLib.ServiceBus
         /// <summary>
         /// Gets the accumulation count of consumed items.
         /// </summary>
+        /// <value>The consume accumulation.</value>
         public long ConsumeAccumulation
         {
             get
@@ -146,41 +167,9 @@ namespace DevLib.ServiceBus
         }
 
         /// <summary>
-        /// Gets a value indicating whether all consumer threads are idle or not. Only when queue is empty and all threads are running and idle return true; otherwise, false.
-        /// </summary>
-        public bool IsIdle
-        {
-            get
-            {
-                this.CheckDisposed();
-
-                if (!this.IsRunning)
-                {
-                    return false;
-                }
-
-                lock (this._queueSyncRoot)
-                {
-                    if (this._queue.Count < 1)
-                    {
-                        if ((this._consumerThread.ThreadState & ThreadState.WaitSleepJoin) != ThreadState.WaitSleepJoin)
-                        {
-                            return false;
-                        }
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets a value indicating whether the consumer thread is running.
         /// </summary>
+        /// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
         public bool IsRunning
         {
             get
@@ -199,19 +188,27 @@ namespace DevLib.ServiceBus
 
                     if (value)
                     {
-                        this._queueWaitHandle.Reset();
+                        if (this._deferTimer != null)
+                        {
+                            this._deferTimer.Stop();
+                            this._deferTimer.Start();
+                        }
 
                         this._isRunning = true;
-
-                        this._isRunningWaitHandle.Set();
                     }
                     else
                     {
-                        this._isRunningWaitHandle.Reset();
-
                         this._isRunning = false;
 
-                        this._queueWaitHandle.Set();
+                        if (this._deferTimer != null)
+                        {
+                            this._deferTimer.Stop();
+                        }
+
+                        if (this._clearQueueOnStop)
+                        {
+                            this.Clear();
+                        }
                     }
                 }
             }
@@ -237,7 +234,6 @@ namespace DevLib.ServiceBus
             this.CheckDisposed();
 
             this._enableQueueWhenStopped = enableQueue;
-
             this._clearQueueOnStop = clearQueue;
 
             this.IsRunning = false;
@@ -262,13 +258,20 @@ namespace DevLib.ServiceBus
         {
             this.CheckDisposed();
 
+            this.ResetQueueTimer();
+
             lock (this._queueSyncRoot)
             {
                 if (this.IsRunning || this._enableQueueWhenStopped)
                 {
                     this._queue.Enqueue(item);
                     Interlocked.Increment(ref this._produceAccumulation);
-                    this._queueWaitHandle.Set();
+                    this.ResetDeferTimer();
+
+                    if (this.IsReachedMaxBacklogs())
+                    {
+                        this.OnThreshold(DateTime.Now);
+                    }
                 }
             }
         }
@@ -281,6 +284,8 @@ namespace DevLib.ServiceBus
         {
             this.CheckDisposed();
 
+            this.ResetQueueTimer();
+
             lock (this._queueSyncRoot)
             {
                 if (this.IsRunning || this._enableQueueWhenStopped)
@@ -291,7 +296,12 @@ namespace DevLib.ServiceBus
                         Interlocked.Increment(ref this._produceAccumulation);
                     }
 
-                    this._queueWaitHandle.Set();
+                    this.ResetDeferTimer();
+
+                    if (this.IsReachedMaxBacklogs())
+                    {
+                        this.OnThreshold(DateTime.Now);
+                    }
                 }
             }
         }
@@ -328,17 +338,21 @@ namespace DevLib.ServiceBus
                 ////    managedResource = null;
                 ////}
 
-                try
+                if (this._deferTimer != null)
                 {
-                    this._consumerThread.Abort();
-                }
-                catch
-                {
+                    this._deferTimer.Stop();
+                    this._deferTimer.Dispose();
+                    this._deferTimer = null;
                 }
 
-                this._queueWaitHandle.Close();
+                if (this._queueTimer != null)
+                {
+                    this._queueTimer.Stop();
+                    this._queueTimer.Dispose();
+                    this._queueTimer = null;
+                }
 
-                this._isRunningWaitHandle.Close();
+                this._queue.Clear();
 
                 this._isRunning = false;
             }
@@ -352,55 +366,76 @@ namespace DevLib.ServiceBus
         }
 
         /// <summary>
-        /// The consumer thread.
+        /// Called when reached timeout or backlogs threshold.
         /// </summary>
-        private void ConsumerThread()
+        /// <param name="signalTime">The signal time.</param>
+        private void OnThreshold(DateTime signalTime)
         {
-            while (!this._disposed)
+            T[] nextItems = null;
+
+            bool itemExists;
+
+            lock (this._queueSyncRoot)
             {
-                if (this.IsRunning)
+                itemExists = this._queue.Count > 0;
+
+                if (itemExists)
                 {
-                    T nextItem = default(T);
-
-                    bool itemExists;
-
-                    lock (this._queueSyncRoot)
-                    {
-                        itemExists = this._queue.Count > 0;
-
-                        if (itemExists)
-                        {
-                            nextItem = this._queue.Dequeue();
-                        }
-                    }
-
-                    if (itemExists)
-                    {
-                        try
-                        {
-                            Interlocked.Increment(ref this._consumeAccumulation);
-                            this._consumerAction(nextItem);
-                        }
-                        catch (Exception e)
-                        {
-                            InternalLogger.Log(e);
-                        }
-                    }
-                    else
-                    {
-                        this._queueWaitHandle.WaitOne();
-                    }
-                }
-                else
-                {
-                    if (this._clearQueueOnStop)
-                    {
-                        this.Clear();
-                    }
-
-                    this._isRunningWaitHandle.WaitOne();
+                    nextItems = this._queue.ToArray();
+                    this._queue.Clear();
                 }
             }
+
+            if (itemExists && nextItems != null && nextItems.Length > 0)
+            {
+                try
+                {
+                    Interlocked.Add(ref this._consumeAccumulation, nextItems.LongLength);
+                    this._consumerAction(nextItems);
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets the defer timer.
+        /// </summary>
+        private void ResetDeferTimer()
+        {
+            if (this.IsRunning && this._deferTimer != null)
+            {
+                this._deferTimer.Stop();
+                this._deferTimer.Start();
+            }
+        }
+
+        /// <summary>
+        /// Resets the queue timer.
+        /// </summary>
+        private void ResetQueueTimer()
+        {
+            if (this.IsRunning && this._queueTimer != null && !this._queueTimer.Enabled)
+            {
+                this._queueTimer.Stop();
+                this._queueTimer.Start();
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the queue is reached maximum backlogs.
+        /// </summary>
+        /// <returns>true if the queue is reached maximum backlogs; otherwise, false.</returns>
+        private bool IsReachedMaxBacklogs()
+        {
+            if (this._maxBacklogs > 0)
+            {
+                return this._queue.Count >= this._maxBacklogs;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -410,7 +445,7 @@ namespace DevLib.ServiceBus
         {
             if (this._disposed)
             {
-                throw new ObjectDisposedException("DevLib.ServiceBus.ProducerConsumer{T}");
+                throw new ObjectDisposedException("DevLib.DesignPatterns.DeferQueue{T}");
             }
         }
     }

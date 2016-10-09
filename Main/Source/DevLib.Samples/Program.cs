@@ -136,7 +136,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    //TestDevLibDesignPatterns();
+                    TestDevLibDesignPatterns();
                 });
 
                 Benchmark.Run(delegate
@@ -787,6 +787,29 @@ namespace DevLib.Samples
         private static void TestDevLibDesignPatterns()
         {
             PrintMethodName("Test DevLib.DesignPatterns");
+
+
+            var deferQueue = new DeferQueue<string>(items =>
+            {
+                Console.WriteLine(items.Length);
+            }, 1000, 10000, 0);
+
+            for (int i = 0; i < 100; i++)
+            {
+                deferQueue.Enqueue("");
+                Thread.Sleep(100);
+            }
+
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    deferQueue.Enqueue("");
+            //    Thread.Sleep(1500);
+            //}
+
+
+
+
+            Console.ReadLine();
 
             TestClass a = Singleton<TestClass>.Instance;
 

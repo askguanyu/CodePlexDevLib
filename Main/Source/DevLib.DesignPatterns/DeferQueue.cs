@@ -85,9 +85,9 @@ namespace DevLib.DesignPatterns
         /// Initializes a new instance of the <see cref="DeferQueue{T}" /> class.
         /// </summary>
         /// <param name="consumerAction">The <see cref="Action{T}" /> that will be executed when the consumer thread processes a data item.</param>
-        /// <param name="deferTimeout">The defer timeout.</param>
-        /// <param name="queueTimeout">The queue timeout.</param>
-        /// <param name="maxBacklogs">The maximum backlogs.</param>
+        /// <param name="deferTimeout">The defer timeout in milliseconds. If the value less than or equal to zero, there is no defer timeout.</param>
+        /// <param name="queueTimeout">The queue timeout in milliseconds. If the value less than or equal to zero, there is no queue timeout.</param>
+        /// <param name="maxBacklogs">The threshold of maximum items in the queue. If the value less than or equal to zero, do not check maximum items.</param>
         /// <param name="startNow">Whether to start the consumer thread immediately.</param>
         public DeferQueue(Action<T[]> consumerAction, int deferTimeout, int queueTimeout, int maxBacklogs, bool startNow = true)
         {
@@ -103,7 +103,7 @@ namespace DevLib.DesignPatterns
             if (deferTimeout > 0)
             {
                 this._deferTimer = new System.Timers.Timer(deferTimeout);
-                this._deferTimer.Elapsed += (s, e) => this.OnThreshold(e.SignalTime);
+                this._deferTimer.Elapsed += (s, e) => this.OnThreshold();
                 this._deferTimer.AutoReset = false;
                 this._deferTimer.Stop();
             }
@@ -111,7 +111,7 @@ namespace DevLib.DesignPatterns
             if (queueTimeout > 0)
             {
                 this._queueTimer = new System.Timers.Timer(queueTimeout);
-                this._queueTimer.Elapsed += (s, e) => this.OnThreshold(e.SignalTime);
+                this._queueTimer.Elapsed += (s, e) => this.OnThreshold();
                 this._queueTimer.AutoReset = false;
                 this._queueTimer.Stop();
             }
@@ -181,28 +181,23 @@ namespace DevLib.DesignPatterns
             {
                 lock (this._isRunningSyncRoot)
                 {
-                    if (value == this._isRunning)
+                    if (this._isRunning == value)
                     {
                         return;
                     }
 
-                    if (value)
+                    this._isRunning = value;
+
+                    if (!this._isRunning)
                     {
                         if (this._deferTimer != null)
                         {
                             this._deferTimer.Stop();
-                            this._deferTimer.Start();
                         }
 
-                        this._isRunning = true;
-                    }
-                    else
-                    {
-                        this._isRunning = false;
-
-                        if (this._deferTimer != null)
+                        if (this._queueTimer != null)
                         {
-                            this._deferTimer.Stop();
+                            this._queueTimer.Stop();
                         }
 
                         if (this._clearQueueOnStop)
@@ -267,11 +262,7 @@ namespace DevLib.DesignPatterns
                     this._queue.Enqueue(item);
                     Interlocked.Increment(ref this._produceAccumulation);
                     this.ResetDeferTimer();
-
-                    if (this.IsReachedMaxBacklogs())
-                    {
-                        this.OnThreshold(DateTime.Now);
-                    }
+                    this.OnReachMaxBacklogs();
                 }
             }
         }
@@ -297,11 +288,7 @@ namespace DevLib.DesignPatterns
                     }
 
                     this.ResetDeferTimer();
-
-                    if (this.IsReachedMaxBacklogs())
-                    {
-                        this.OnThreshold(DateTime.Now);
-                    }
+                    this.OnReachMaxBacklogs();
                 }
             }
         }
@@ -368,8 +355,7 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Called when reached timeout or backlogs threshold.
         /// </summary>
-        /// <param name="signalTime">The signal time.</param>
-        private void OnThreshold(DateTime signalTime)
+        private void OnThreshold()
         {
             T[] nextItems = null;
 
@@ -386,12 +372,12 @@ namespace DevLib.DesignPatterns
                 }
             }
 
-            if (itemExists && nextItems != null && nextItems.Length > 0)
+            if (itemExists && nextItems != null)
             {
                 try
                 {
-                    Interlocked.Add(ref this._consumeAccumulation, nextItems.LongLength);
                     this._consumerAction(nextItems);
+                    Interlocked.Add(ref this._consumeAccumulation, nextItems.LongLength);
                 }
                 catch (Exception e)
                 {
@@ -425,17 +411,14 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
-        /// Determines whether the queue is reached maximum backlogs.
+        /// Called when the queue is reached maximum backlogs.
         /// </summary>
-        /// <returns>true if the queue is reached maximum backlogs; otherwise, false.</returns>
-        private bool IsReachedMaxBacklogs()
+        private void OnReachMaxBacklogs()
         {
-            if (this._maxBacklogs > 0)
+            if (this.IsRunning && this._maxBacklogs > 0 && this._queue.Count >= this._maxBacklogs)
             {
-                return this._queue.Count >= this._maxBacklogs;
+                this.OnThreshold();
             }
-
-            return false;
         }
 
         /// <summary>

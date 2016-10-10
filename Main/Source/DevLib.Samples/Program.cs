@@ -136,7 +136,7 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
-                    TestDevLibDesignPatterns();
+                    //TestDevLibDesignPatterns();
                 });
 
                 Benchmark.Run(delegate
@@ -792,22 +792,21 @@ namespace DevLib.Samples
             var deferQueue = new DeferQueue<string>(items =>
             {
                 Console.WriteLine(items.Length);
-            }, 1000, 10000, 0);
+            }, 250, 3000, 0);
 
             for (int i = 0; i < 100; i++)
             {
                 deferQueue.Enqueue("");
-                Thread.Sleep(100);
+                Thread.Sleep(10);
             }
+
+            Console.WriteLine("--");
 
             //for (int i = 0; i < 10; i++)
             //{
             //    deferQueue.Enqueue("");
             //    Thread.Sleep(1500);
             //}
-
-
-
 
             Console.ReadLine();
 

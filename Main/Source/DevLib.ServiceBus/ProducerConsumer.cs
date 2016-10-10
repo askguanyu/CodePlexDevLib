@@ -37,7 +37,7 @@ namespace DevLib.ServiceBus
         private readonly object _queueSyncRoot = new object();
 
         /// <summary>
-        /// The <see cref="IProducerConsumerQueue{T}" /> that contains the data items.
+        /// Field _queue.
         /// </summary>
         private readonly Queue<T> _queue;
 

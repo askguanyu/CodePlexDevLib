@@ -37,6 +37,16 @@ namespace DevLib.Logging
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="LogConfig"/> class.
+        /// </summary>
+        /// <param name="logConfig">The log configuration.</param>
+        private LogConfig(LogConfig logConfig)
+        {
+            this.LogFile = logConfig.LogFile;
+            this.LoggerSetup = logConfig.LoggerSetup.Clone();
+        }
+
+        /// <summary>
         /// Gets or sets log file.
         /// </summary>
         public string LogFile
@@ -52,6 +62,15 @@ namespace DevLib.Logging
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns>Cloned LogConfig instance.</returns>
+        public LogConfig Clone()
+        {
+            return new LogConfig(this);
         }
 
         /// <summary>

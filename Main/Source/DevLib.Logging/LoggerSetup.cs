@@ -47,6 +47,23 @@ namespace DevLib.Logging
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="LoggerSetup"/> class.
+        /// </summary>
+        /// <param name="loggerSetup">The logger setup.</param>
+        private LoggerSetup(LoggerSetup loggerSetup)
+        {
+            this.DateTimeFormat = loggerSetup.DateTimeFormat;
+            this.Level = loggerSetup.Level;
+            this.WriteToConsole = loggerSetup.WriteToConsole;
+            this.WriteToFile = loggerSetup.WriteToFile;
+            this.UseBracket = loggerSetup.UseBracket;
+            this.EnableStackInfo = loggerSetup.EnableStackInfo;
+            this.RollingFileSizeMBLimit = loggerSetup.RollingFileSizeMBLimit;
+            this.RollingFileCountLimit = loggerSetup.RollingFileCountLimit;
+            this.RollingByDate = loggerSetup.RollingByDate;
+        }
+
+        /// <summary>
         /// Gets or sets the standard or custom date and time format string.
         /// </summary>
         public string DateTimeFormat
@@ -160,6 +177,15 @@ namespace DevLib.Logging
             {
                 return this._rollingFileSizeLimit;
             }
+        }
+
+        /// <summary>
+        /// Clones this instance.
+        /// </summary>
+        /// <returns>Cloned LoggerSetup instance.</returns>
+        public LoggerSetup Clone()
+        {
+            return new LoggerSetup(this);
         }
     }
 }

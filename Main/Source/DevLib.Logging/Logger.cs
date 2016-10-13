@@ -91,12 +91,20 @@ namespace DevLib.Logging
             {
                 this._configFile = LogConfigManager.GetFileFullPath(configFile);
 
-                this._configFileWatcher = new FileSystemWatcher(Path.GetDirectoryName(this._configFile), Path.GetFileName(this._configFile));
-                this._configFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-                this._configFileWatcher.Changed += (s, e) => this._isConfigFileChanged = true;
-                this._configFileWatcher.Created += (s, e) => this._isConfigFileChanged = true;
-                this._configFileWatcher.Deleted += (s, e) => this._isConfigFileChanged = true;
-                this._configFileWatcher.Renamed += (s, e) => this._isConfigFileChanged = true;
+                try
+                {
+                    this._configFileWatcher = new FileSystemWatcher(Path.GetDirectoryName(this._configFile), Path.GetFileName(this._configFile));
+                    this._configFileWatcher.EnableRaisingEvents = true;
+                    this._configFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
+                    this._configFileWatcher.Changed += (s, e) => this._isConfigFileChanged = true;
+                    this._configFileWatcher.Created += (s, e) => this._isConfigFileChanged = true;
+                    this._configFileWatcher.Deleted += (s, e) => this._isConfigFileChanged = true;
+                    this._configFileWatcher.Renamed += (s, e) => this._isConfigFileChanged = true;
+                }
+                catch (Exception e)
+                {
+                    InternalLogger.Log(e);
+                }
             }
 
             this.InitFileAppender();

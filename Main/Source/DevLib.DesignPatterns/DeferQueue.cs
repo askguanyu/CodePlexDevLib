@@ -89,7 +89,7 @@ namespace DevLib.DesignPatterns
         /// <param name="queueTimeout">The queue timeout in milliseconds. If the value less than or equal to zero, there is no queue timeout.</param>
         /// <param name="maxBacklogs">The threshold of maximum items in the queue. If the value less than or equal to zero, do not check maximum items.</param>
         /// <param name="startNow">Whether to start the consumer thread immediately.</param>
-        public DeferQueue(Action<T[]> consumerAction, int deferTimeout, int queueTimeout, int maxBacklogs, bool startNow = true)
+        public DeferQueue(Action<T[]> consumerAction, int deferTimeout, int queueTimeout, int maxBacklogs = 0, bool startNow = true)
         {
             if (consumerAction == null)
             {

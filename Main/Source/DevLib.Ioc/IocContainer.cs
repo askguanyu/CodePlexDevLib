@@ -418,7 +418,7 @@ namespace DevLib.Ioc
 
             if (paths == null || paths.Length < 1)
             {
-                paths = new[] { Path.GetDirectoryName(new Uri(Assembly.GetCallingAssembly().CodeBase).LocalPath) };
+                paths = new[] { Path.GetDirectoryName(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath) };
             }
 
             foreach (string item in paths)

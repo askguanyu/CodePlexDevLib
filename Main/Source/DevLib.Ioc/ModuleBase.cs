@@ -16,7 +16,7 @@ namespace DevLib.Ioc
         /// <summary>
         /// Field ModuleContainer.
         /// </summary>
-        private static readonly IocContainer ModuleContainer = new IocContainer(new Guid().ToString());
+        private static readonly IocContainer ModuleContainer;
 
         /// <summary>
         /// Field _disposed.
@@ -24,13 +24,20 @@ namespace DevLib.Ioc
         private bool _disposed = false;
 
         /// <summary>
+        /// Initializes static members of the <see cref="ModuleBase"/> class.
+        /// </summary>
+        static ModuleBase()
+        {
+            ModuleContainer = new IocContainer(Guid.NewGuid().ToString());
+            ServiceLocator.SetLocatorProvider(() => ModuleContainer);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ModuleBase"/> class.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "Reviewed.")]
         public ModuleBase()
         {
-            ServiceLocator.SetLocatorProvider(() => ModuleContainer);
-
             this.RegisterModule(ModuleContainer);
         }
 
@@ -40,6 +47,18 @@ namespace DevLib.Ioc
         ~ModuleBase()
         {
             this.Dispose(false);
+        }
+
+        /// <summary>
+        /// Gets the module container.
+        /// </summary>
+        /// <value>The module container.</value>
+        public static IocContainer Container
+        {
+            get
+            {
+                return ModuleContainer;
+            }
         }
 
         /// <summary>

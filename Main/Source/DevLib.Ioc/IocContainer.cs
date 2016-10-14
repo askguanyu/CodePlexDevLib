@@ -416,9 +416,9 @@ namespace DevLib.Ioc
 
             this.CheckType(type);
 
-            if (paths == null)
+            if (paths == null || paths.Length < 1)
             {
-                throw new ArgumentNullException("paths");
+                paths = new[] { Path.GetDirectoryName(new Uri(Assembly.GetCallingAssembly().CodeBase).LocalPath) };
             }
 
             foreach (string item in paths)

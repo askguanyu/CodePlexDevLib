@@ -275,10 +275,11 @@ namespace DevLib.Ioc
         /// Registers the specified type with the assemblies.
         /// </summary>
         /// <param name="type">The type to register.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="assemblies">The assemblies to scan.</param>
-        public virtual void RegisterAssembly(Type type, params Assembly[] assemblies)
+        public virtual void RegisterAssembly(Type type, bool withTypeName, params Assembly[] assemblies)
         {
-            this.RegisterAssembly(type, null, assemblies);
+            this.RegisterAssembly(type, null, withTypeName, assemblies);
         }
 
         /// <summary>
@@ -286,8 +287,9 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="type">The type to register.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="assemblies">The assemblies to scan.</param>
-        public virtual void RegisterAssembly(Type type, Type[] typeArguments, params Assembly[] assemblies)
+        public virtual void RegisterAssembly(Type type, Type[] typeArguments, bool withTypeName, params Assembly[] assemblies)
         {
             this.CheckDisposed();
 
@@ -304,7 +306,7 @@ namespace DevLib.Ioc
 
                 Type[] types = assembly.GetTypes();
 
-                this.InnerRegister(type, types, typeArguments);
+                this.InnerRegister(type, types, typeArguments, withTypeName);
             }
         }
 
@@ -312,10 +314,11 @@ namespace DevLib.Ioc
         /// Registers the specified type with the assemblies.
         /// </summary>
         /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="assemblies">The assemblies to scan.</param>
-        public virtual void RegisterAssembly<T>(params Assembly[] assemblies)
+        public virtual void RegisterAssembly<T>(bool withTypeName, params Assembly[] assemblies)
         {
-            this.RegisterAssembly(typeof(T), assemblies);
+            this.RegisterAssembly(typeof(T), withTypeName, assemblies);
         }
 
         /// <summary>
@@ -323,20 +326,22 @@ namespace DevLib.Ioc
         /// </summary>
         /// <typeparam name="T">The type to register.</typeparam>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="assemblies">The assemblies to scan.</param>
-        public virtual void RegisterAssembly<T>(Type[] typeArguments, params Assembly[] assemblies)
+        public virtual void RegisterAssembly<T>(Type[] typeArguments, bool withTypeName, params Assembly[] assemblies)
         {
-            this.RegisterAssembly(typeof(T), typeArguments, assemblies);
+            this.RegisterAssembly(typeof(T), typeArguments, withTypeName, assemblies);
         }
 
         /// <summary>
         /// Registers the specified type with the files.
         /// </summary>
         /// <param name="type">The type to register.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="filenames">The files to scan.</param>
-        public virtual void RegisterFile(Type type, params string[] filenames)
+        public virtual void RegisterFile(Type type, bool withTypeName, params string[] filenames)
         {
-            this.RegisterFile(type, null, filenames);
+            this.RegisterFile(type, null, withTypeName, filenames);
         }
 
         /// <summary>
@@ -344,8 +349,9 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="type">The type to register.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="filenames">The files to scan.</param>
-        public virtual void RegisterFile(Type type, Type[] typeArguments, params string[] filenames)
+        public virtual void RegisterFile(Type type, Type[] typeArguments, bool withTypeName, params string[] filenames)
         {
             this.CheckDisposed();
 
@@ -362,7 +368,7 @@ namespace DevLib.Ioc
 
                 try
                 {
-                    this.InnerRegister(type, filename, typeArguments);
+                    this.InnerRegister(type, filename, typeArguments, withTypeName);
                 }
                 catch (Exception e)
                 {
@@ -375,10 +381,11 @@ namespace DevLib.Ioc
         /// Registers the specified type with the files.
         /// </summary>
         /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="filenames">The files to scan.</param>
-        public virtual void RegisterFile<T>(params string[] filenames)
+        public virtual void RegisterFile<T>(bool withTypeName, params string[] filenames)
         {
-            this.RegisterFile(typeof(T), filenames);
+            this.RegisterFile(typeof(T), withTypeName, filenames);
         }
 
         /// <summary>
@@ -386,10 +393,11 @@ namespace DevLib.Ioc
         /// </summary>
         /// <typeparam name="T">The type to register.</typeparam>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="filenames">The files to scan.</param>
-        public virtual void RegisterFile<T>(Type[] typeArguments, params string[] filenames)
+        public virtual void RegisterFile<T>(Type[] typeArguments, bool withTypeName, params string[] filenames)
         {
-            this.RegisterFile(typeof(T), typeArguments, filenames);
+            this.RegisterFile(typeof(T), typeArguments, withTypeName, filenames);
         }
 
         /// <summary>
@@ -397,10 +405,11 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="type">The type to register.</param>
         /// <param name="recursive">true to scan all files from the directories and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="paths">The paths to scan.</param>
-        public virtual void RegisterDirectory(Type type, bool recursive, params string[] paths)
+        public virtual void RegisterDirectory(Type type, bool recursive, bool withTypeName, params string[] paths)
         {
-            this.RegisterDirectory(type, null, recursive, paths);
+            this.RegisterDirectory(type, null, recursive, withTypeName, paths);
         }
 
         /// <summary>
@@ -409,8 +418,9 @@ namespace DevLib.Ioc
         /// <param name="type">The type to register.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
         /// <param name="recursive">true to scan all files from the directory and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="paths">The paths to scan.</param>
-        public virtual void RegisterDirectory(Type type, Type[] typeArguments, bool recursive, params string[] paths)
+        public virtual void RegisterDirectory(Type type, Type[] typeArguments, bool recursive, bool withTypeName, params string[] paths)
         {
             this.CheckDisposed();
 
@@ -431,7 +441,7 @@ namespace DevLib.Ioc
 
                         try
                         {
-                            this.InnerRegister(type, filename, typeArguments);
+                            this.InnerRegister(type, filename, typeArguments, withTypeName);
                         }
                         catch (Exception e)
                         {
@@ -447,10 +457,11 @@ namespace DevLib.Ioc
         /// </summary>
         /// <typeparam name="T">The type to register.</typeparam>
         /// <param name="recursive">true to scan all files from the directory and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="paths">The paths to scan.</param>
-        public virtual void RegisterDirectory<T>(bool recursive, params string[] paths)
+        public virtual void RegisterDirectory<T>(bool recursive, bool withTypeName, params string[] paths)
         {
-            this.RegisterDirectory(typeof(T), recursive, paths);
+            this.RegisterDirectory(typeof(T), recursive, withTypeName, paths);
         }
 
         /// <summary>
@@ -459,10 +470,11 @@ namespace DevLib.Ioc
         /// <typeparam name="T">The type to register.</typeparam>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
         /// <param name="recursive">true to scan all files from the directory and all subdirectories; otherwise, only scan files from the directory.</param>
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
         /// <param name="paths">The paths to scan.</param>
-        public virtual void RegisterDirectory<T>(Type[] typeArguments, bool recursive, params string[] paths)
+        public virtual void RegisterDirectory<T>(Type[] typeArguments, bool recursive, bool withTypeName, params string[] paths)
         {
-            this.RegisterDirectory(typeof(T), typeArguments, recursive, paths);
+            this.RegisterDirectory(typeof(T), typeArguments, recursive, withTypeName, paths);
         }
 
         /// <summary>
@@ -1060,7 +1072,8 @@ namespace DevLib.Ioc
         /// <param name="type">The type to register.</param>
         /// <param name="types">The types to scan.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
-        protected virtual void InnerRegister(Type type, Type[] types, Type[] typeArguments)
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
+        protected virtual void InnerRegister(Type type, Type[] types, Type[] typeArguments, bool withTypeName)
         {
             bool checkGeneric = typeArguments != null && typeArguments.Length > 0;
 
@@ -1072,7 +1085,7 @@ namespace DevLib.Ioc
 
                     if (instance != null)
                     {
-                        this.Register(type, instance, item.AssemblyQualifiedName);
+                        this.Register(type, instance, withTypeName ? item.FullName : item.AssemblyQualifiedName);
                     }
                 }
             }
@@ -1084,7 +1097,8 @@ namespace DevLib.Ioc
         /// <param name="type">The type to register.</param>
         /// <param name="filename">The file to scan.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
-        protected virtual void InnerRegister(Type type, string filename, Type[] typeArguments)
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
+        protected virtual void InnerRegister(Type type, string filename, Type[] typeArguments, bool withTypeName)
         {
             string assemblyFullName = AssemblyName.GetAssemblyName(filename).FullName;
 
@@ -1108,7 +1122,7 @@ namespace DevLib.Ioc
 
             Type[] types = assembly.GetTypes();
 
-            this.InnerRegister(type, types, typeArguments);
+            this.InnerRegister(type, types, typeArguments, withTypeName);
         }
 
         /// <summary>

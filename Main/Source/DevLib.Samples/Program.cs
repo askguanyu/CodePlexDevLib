@@ -236,7 +236,7 @@ namespace DevLib.Samples
 
         private static void TestDevLibServiceBus()
         {
-            
+
             var m1 = new BrokeredMessage(new BrokeredMessageTest());
 
             var t1 = ServiceBusManager.GetOrCreateTopic("t1");
@@ -255,7 +255,7 @@ namespace DevLib.Samples
             });
 
             //pub1.Send(new BrokeredMessage("Hello1"));
-            pub1.Send(new BrokeredMessage(new BrokeredMessageTest { MyProperty = 2, MyProperty2="aa" }));
+            pub1.Send(new BrokeredMessage(new BrokeredMessageTest { MyProperty = 2, MyProperty2 = "aa" }));
 
             Console.ReadLine();
         }
@@ -543,9 +543,9 @@ namespace DevLib.Samples
 
             IocContainer container = new IocContainer();
 
-            container.RegisterAssembly<IFoo>(Assembly.GetEntryAssembly());
+            container.RegisterAssembly<IFoo>(false, Assembly.GetEntryAssembly());
 
-            container.RegisterFile<IFoo>(new[] { typeof(Person) }, "DevLib.Samples.exe");
+            container.RegisterFile<IFoo>(new[] { typeof(Person) }, false, "DevLib.Samples.exe");
 
             //container.RegisterFile<IFoo>("DevLib.Samples.exe");
 

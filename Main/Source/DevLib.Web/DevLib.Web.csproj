@@ -47,6 +47,7 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="HttpMethods.cs" />
     <Compile Include="HttpWebClient.cs" />
     <Compile Include="InternalLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="Services\WebServiceClientProxyFactory.cs" />
     <Compile Include="Services\WebServiceClientProxyFactorySetup.cs" />
     <Compile Include="SoapClient.cs" />
-    <Compile Include="SoapResponse.cs" />
+    <Compile Include="WebResponseMessage.cs" />
     <Compile Include="UrlBuilder.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -75,7 +75,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public static SoapResponse SendRequestFile(string uri, string filename, string username = null, string password = null)
+        public static WebResponseMessage SendRequestFile(string uri, string filename, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -103,11 +103,11 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public static SoapResponse SendRequestString(string uri, string soapEnvelope, string username = null, string password = null)
+        public static WebResponseMessage SendRequestString(string uri, string soapEnvelope, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(soapEnvelope))
             {
-                return new SoapResponse { ErrorMessage = "Value cannot be null or empty. Parameter name: soapEnvelope." };
+                return new WebResponseMessage { ErrorMessage = "Value cannot be null or empty. Parameter name: soapEnvelope." };
             }
 
             XmlDocument soapEnvelopeXml = new XmlDocument();
@@ -123,7 +123,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public SoapResponse SendSoapRequestFile(string filename, string username = null, string password = null)
+        public WebResponseMessage SendSoapRequestFile(string filename, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(filename))
             {
@@ -150,11 +150,11 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        public SoapResponse SendSoapRequestString(string soapEnvelope, string username = null, string password = null)
+        public WebResponseMessage SendSoapRequestString(string soapEnvelope, string username = null, string password = null)
         {
             if (string.IsNullOrEmpty(soapEnvelope))
             {
-                return new SoapResponse { ErrorMessage = "Value cannot be null or empty. Parameter name: soapEnvelope." };
+                return new WebResponseMessage { ErrorMessage = "Value cannot be null or empty. Parameter name: soapEnvelope." };
             }
 
             XmlDocument soapEnvelopeXml = new XmlDocument();
@@ -171,7 +171,7 @@ namespace DevLib.Web
         /// <param name="username">The user name.</param>
         /// <param name="password">The password.</param>
         /// <returns>SOAP response.</returns>
-        private static SoapResponse SendRequest(string uri, XmlDocument soapEnvelopeXml, string username, string password)
+        private static WebResponseMessage SendRequest(string uri, XmlDocument soapEnvelopeXml, string username, string password)
         {
             string soapAction = null;
 
@@ -232,7 +232,7 @@ namespace DevLib.Web
             {
                 response = (HttpWebResponse)request.GetResponse();
 
-                SoapResponse result = new SoapResponse(response);
+                WebResponseMessage result = new WebResponseMessage(response);
 
                 using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
                 {
@@ -252,9 +252,10 @@ namespace DevLib.Web
 
                     if (innerResponse != null)
                     {
-                        SoapResponse result = new SoapResponse(innerResponse);
+                        WebResponseMessage result = new WebResponseMessage(innerResponse);
 
                         result.ErrorMessage = webException.ToString();
+                        result.Succeeded = false;
 
                         StreamReader streamReader = null;
 

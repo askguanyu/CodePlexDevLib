@@ -13,10 +13,11 @@ namespace DevLib.Web
     using System.Text;
 
     /// <summary>
-    /// Represents the method that defines a set of criteria and determines whether meets those criteria.
+    /// Represents the method that evaluates or calculates result.
     /// </summary>
-    /// <returns>true if meets the criteria defined within the method represented by this delegate; otherwise, false.</returns>
-    public delegate bool Predicate();
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <returns>Result value.</returns>
+    public delegate TResult Evaluate<TResult>();
 
     /// <summary>
     /// Url builder.
@@ -340,15 +341,14 @@ namespace DevLib.Web
         /// Sets the URL.
         /// </summary>
         /// <param name="url">The URL to set.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetUrl(string url, Predicate canProceed = null)
+        public UrlBuilder SetUrl(Evaluate<string> url, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (url != null && (canProceed == null || canProceed()))
             {
-                this.CheckNullOrWhiteSpace("url", url);
-
-                this.Initialize(url);
+                this.CheckNullOrWhiteSpace("url", url());
+                this.Initialize(url());
             }
 
             return this;
@@ -358,18 +358,18 @@ namespace DevLib.Web
         /// Sets the URL.
         /// </summary>
         /// <param name="uri">The URI.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetUrl(Uri uri, Predicate canProceed = null)
+        public UrlBuilder SetUrl(Evaluate<Uri> uri, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (uri != null && (canProceed == null || canProceed()))
             {
-                if (uri == null)
+                if (uri() == null)
                 {
                     throw new ArgumentNullException("uri");
                 }
 
-                this.Initialize(uri.ToString());
+                this.Initialize(uri().ToString());
             }
 
             return this;
@@ -379,18 +379,18 @@ namespace DevLib.Web
         /// Sets the URL.
         /// </summary>
         /// <param name="urlBuilder">The UrlBuilder instance.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetUrl(UrlBuilder urlBuilder, Predicate canProceed = null)
+        public UrlBuilder SetUrl(Evaluate<UrlBuilder> urlBuilder, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (urlBuilder != null && (canProceed == null || canProceed()))
             {
-                if (urlBuilder == null)
+                if (urlBuilder() == null)
                 {
                     throw new ArgumentNullException("urlBuilder");
                 }
 
-                this.Initialize(urlBuilder.ToString());
+                this.Initialize(urlBuilder().ToString());
             }
 
             return this;
@@ -409,16 +409,14 @@ namespace DevLib.Web
         /// Sets the scheme name of the UrlBuilder.
         /// </summary>
         /// <param name="scheme">The scheme.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetScheme(string scheme, Predicate canProceed = null)
+        public UrlBuilder SetScheme(Evaluate<string> scheme, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (scheme != null && (canProceed == null || canProceed()))
             {
-                var trimScheme = (scheme ?? string.Empty).Trim(' ', '/', '\\', '\r', '\n');
-
+                var trimScheme = (scheme() ?? string.Empty).Trim(' ', '/', '\\', '\r', '\n');
                 this.CheckNullOrWhiteSpace("scheme", trimScheme);
-
                 this._scheme = trimScheme.ToLowerInvariant();
             }
 
@@ -429,19 +427,19 @@ namespace DevLib.Web
         /// Sets the scheme name of the UrlBuilder.
         /// </summary>
         /// <param name="scheme">The scheme.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetScheme(Scheme scheme, Predicate canProceed = null)
+        public UrlBuilder SetScheme(Evaluate<Scheme> scheme, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (scheme != null && (canProceed == null || canProceed()))
             {
-                if (scheme == null)
+                if (scheme() == null)
                 {
                     throw new ArgumentNullException("scheme");
                 }
 
-                this._scheme = scheme.Name;
-                this._port = scheme.DefaultPort;
+                this._scheme = scheme().Name;
+                this._port = scheme().DefaultPort;
             }
 
             return this;
@@ -450,9 +448,9 @@ namespace DevLib.Web
         /// <summary>
         /// Removes the scheme.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveScheme(Predicate canProceed = null)
+        public UrlBuilder RemoveScheme(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -484,15 +482,14 @@ namespace DevLib.Web
         /// Sets the port number of the UrlBuilder.
         /// </summary>
         /// <param name="port">The port.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetPort(int port, Predicate canProceed = null)
+        public UrlBuilder SetPort(Evaluate<int> port, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (port != null && (canProceed == null || canProceed()))
             {
-                this.CheckIsValidPort(port);
-
-                this._port = port;
+                this.CheckIsValidPort(port());
+                this._port = port();
             }
 
             return this;
@@ -501,9 +498,9 @@ namespace DevLib.Web
         /// <summary>
         /// Removes the port.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemovePort(Predicate canProceed = null)
+        public UrlBuilder RemovePort(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -536,16 +533,15 @@ namespace DevLib.Web
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="password">The password.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetAuthority(string user, string password, Predicate canProceed = null)
+        public UrlBuilder SetAuthority(Evaluate<string> user, Evaluate<string> password, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (user != null && password != null && (canProceed == null || canProceed()))
             {
-                this.CheckNullOrWhiteSpace("user", user);
-
-                this._user = user;
-                this._password = password;
+                this.CheckNullOrWhiteSpace("user", user());
+                this._user = user();
+                this._password = password();
             }
 
             return this;
@@ -554,9 +550,9 @@ namespace DevLib.Web
         /// <summary>
         /// Removes the authority.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveAuthority(Predicate canProceed = null)
+        public UrlBuilder RemoveAuthority(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -598,16 +594,14 @@ namespace DevLib.Web
         /// Sets the Domain Name System (DNS) host name or IP address.
         /// </summary>
         /// <param name="host">The host.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetHost(string host, Predicate canProceed = null)
+        public UrlBuilder SetHost(Evaluate<string> host, Evaluate<bool> canProceed = null)
         {
-            if (canProceed == null || canProceed())
+            if (host != null && (canProceed == null || canProceed()))
             {
-                var trimHost = (host ?? string.Empty).Trim(' ', '\r', '\n');
-
+                var trimHost = (host() ?? string.Empty).Trim(' ', '\r', '\n');
                 this.CheckNullOrWhiteSpace("host", trimHost);
-
                 this._host = trimHost;
             }
 
@@ -617,9 +611,9 @@ namespace DevLib.Web
         /// <summary>
         /// Removes the host.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveHost(Predicate canProceed = null)
+        public UrlBuilder RemoveHost(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -654,16 +648,24 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder SetPath(params string[] paths)
         {
-            return this.SetPath(() => true, paths);
+            if (paths == null || paths.Length < 1)
+            {
+                throw new ArgumentException("paths cannot be null or empty.", "paths");
+            }
+
+            this._path.Clear();
+            this.DoAppendPath(paths);
+
+            return this;
         }
 
         /// <summary>
         /// Sets the paths of the UrlBuilder.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="paths">The paths.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetPath(Predicate canProceed, params string[] paths)
+        public UrlBuilder SetPath(Evaluate<bool> canProceed, params Evaluate<string>[] paths)
         {
             if (canProceed == null || canProceed())
             {
@@ -673,8 +675,7 @@ namespace DevLib.Web
                 }
 
                 this._path.Clear();
-
-                return this.DoAppendPath(paths);
+                this.DoAppendPath(paths);
             }
 
             return this;
@@ -687,16 +688,22 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder AppendPath(params string[] paths)
         {
-            return this.AppendPath(() => true, paths);
+            if (paths == null || paths.Length < 1)
+            {
+                throw new ArgumentException("paths cannot be null or empty.", "paths");
+            }
+
+            this.DoAppendPath(paths);
+            return this;
         }
 
         /// <summary>
         /// Appends the paths of the UrlBuilder.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="paths">The paths.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder AppendPath(Predicate canProceed, params string[] paths)
+        public UrlBuilder AppendPath(Evaluate<bool> canProceed, params Evaluate<string>[] paths)
         {
             if (canProceed == null || canProceed())
             {
@@ -705,7 +712,7 @@ namespace DevLib.Web
                     throw new ArgumentException("paths cannot be null or empty.", "paths");
                 }
 
-                return this.DoAppendPath(paths);
+                this.DoAppendPath(paths);
             }
 
             return this;
@@ -718,16 +725,36 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder InsertPath(params string[] paths)
         {
-            return this.InsertPath(() => true, paths);
+            if (paths == null || paths.Length < 1)
+            {
+                throw new ArgumentException("paths cannot be null or empty.", "paths");
+            }
+
+            var segments = this.GetPathSegments(paths);
+
+            int index = 0;
+
+            foreach (var item in segments)
+            {
+                var cleanSegment = CleanSegment(item);
+
+                if (!IsNullOrWhiteSpace(cleanSegment))
+                {
+                    this._path.Insert(index, cleanSegment);
+                    index++;
+                }
+            }
+
+            return this;
         }
 
         /// <summary>
         /// Inserts the paths of the UrlBuilder at first index.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="paths">The paths.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder InsertPath(Predicate canProceed, params string[] paths)
+        public UrlBuilder InsertPath(Evaluate<bool> canProceed, params Evaluate<string>[] paths)
         {
             if (canProceed == null || canProceed())
             {
@@ -758,9 +785,9 @@ namespace DevLib.Web
         /// <summary>
         /// Removes all path.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemovePath(Predicate canProceed = null)
+        public UrlBuilder RemovePath(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -777,20 +804,21 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder RemoveFirstPath(params string[] paths)
         {
-            return this.DoRemovePath(true, paths);
+            this.DoRemovePath(true, paths);
+            return this;
         }
 
         /// <summary>
         /// Removes the first occurrence of path segments.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="paths">The paths.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveFirstPath(Predicate canProceed, params string[] paths)
+        public UrlBuilder RemoveFirstPath(Evaluate<bool> canProceed, params Evaluate<string>[] paths)
         {
             if (canProceed == null || canProceed())
             {
-                return this.DoRemovePath(true, paths);
+                this.DoRemovePath(true, paths);
             }
 
             return this;
@@ -803,20 +831,21 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder RemoveLastPath(params string[] paths)
         {
-            return this.DoRemovePath(false, paths);
+            this.DoRemovePath(false, paths);
+            return this;
         }
 
         /// <summary>
         /// Removes the last occurrence of path segments.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="paths">The paths.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveLastPath(Predicate canProceed, params string[] paths)
+        public UrlBuilder RemoveLastPath(Evaluate<bool> canProceed, params Evaluate<string>[] paths)
         {
             if (canProceed == null || canProceed())
             {
-                return this.DoRemovePath(false, paths);
+                this.DoRemovePath(false, paths);
             }
 
             return this;
@@ -873,18 +902,26 @@ namespace DevLib.Web
         /// <exception cref="ArgumentException">values cannot be null or empty. - values</exception>
         public UrlBuilder AppendQuery(string name, params object[] values)
         {
-            return this.AppendQuery(name, () => true, values);
+            this.CheckNullOrWhiteSpace("name", name);
+
+            if (values == null || values.Length < 1)
+            {
+                throw new ArgumentException("values cannot be null or empty.", "values");
+            }
+
+            this.DoAppendQuery(name, values);
+            return this;
         }
 
         /// <summary>
         /// Appends the query.
         /// </summary>
         /// <param name="name">The query name.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="values">The query values.</param>
         /// <returns>The current UrlBuilder instance.</returns>
         /// <exception cref="ArgumentException">values cannot be null or empty. - values</exception>
-        public UrlBuilder AppendQuery(string name, Predicate canProceed, params object[] values)
+        public UrlBuilder AppendQuery(string name, Evaluate<bool> canProceed, params Evaluate<object>[] values)
         {
             if (canProceed == null || canProceed())
             {
@@ -895,7 +932,7 @@ namespace DevLib.Web
                     throw new ArgumentException("values cannot be null or empty.", "values");
                 }
 
-                return this.DoAppendQuery(name, values);
+                this.DoAppendQuery(name, values);
             }
 
             return this;
@@ -908,16 +945,22 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder AppendQuery(params KeyValuePair<string, object>[] values)
         {
-            return this.AppendQuery(() => true, values);
+            if (values == null || values.Length < 1)
+            {
+                throw new ArgumentException("values cannot be null or empty.", "values");
+            }
+
+            this.DoAppendQuery(values);
+            return this;
         }
 
         /// <summary>
         /// Appends the query.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="values">The query key value pairs.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder AppendQuery(Predicate canProceed, params KeyValuePair<string, object>[] values)
+        public UrlBuilder AppendQuery(Evaluate<bool> canProceed, params KeyValuePair<string, Evaluate<object>>[] values)
         {
             if (canProceed == null || canProceed())
             {
@@ -926,7 +969,7 @@ namespace DevLib.Web
                     throw new ArgumentException("values cannot be null or empty.", "values");
                 }
 
-                return this.DoAppendQuery(values);
+                this.DoAppendQuery(values);
             }
 
             return this;
@@ -939,16 +982,22 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder AppendQuery(params KeyValuePair<string, object[]>[] values)
         {
-            return this.AppendQuery(() => true, values);
+            if (values == null || values.Length < 1)
+            {
+                throw new ArgumentException("values cannot be null or empty.", "values");
+            }
+
+            this.DoAppendQuery(values);
+            return this;
         }
 
         /// <summary>
         /// Appends the query.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="values">The query key value pairs.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder AppendQuery(Predicate canProceed, params KeyValuePair<string, object[]>[] values)
+        public UrlBuilder AppendQuery(Evaluate<bool> canProceed, params KeyValuePair<string, Evaluate<object>[]>[] values)
         {
             if (canProceed == null || canProceed())
             {
@@ -957,7 +1006,7 @@ namespace DevLib.Web
                     throw new ArgumentException("values cannot be null or empty.", "values");
                 }
 
-                return this.DoAppendQuery(values);
+                this.DoAppendQuery(values);
             }
 
             return this;
@@ -970,16 +1019,22 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder AppendQueryString(params string[] queryStrings)
         {
-            return this.AppendQueryString(() => true, queryStrings);
+            if (queryStrings == null || queryStrings.Length < 1)
+            {
+                throw new ArgumentException("queryStrings cannot be null or empty.", "queryStrings");
+            }
+
+            this.DoAppendQueryString(queryStrings);
+            return this;
         }
 
         /// <summary>
         /// Appends the query string.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="queryStrings">The query strings.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder AppendQueryString(Predicate canProceed, params string[] queryStrings)
+        public UrlBuilder AppendQueryString(Evaluate<bool> canProceed, params Evaluate<string>[] queryStrings)
         {
             if (canProceed == null || canProceed())
             {
@@ -988,7 +1043,7 @@ namespace DevLib.Web
                     throw new ArgumentException("queryStrings cannot be null or empty.", "queryStrings");
                 }
 
-                return this.DoAppendQueryString(queryStrings);
+                this.DoAppendQueryString(queryStrings);
             }
 
             return this;
@@ -1003,7 +1058,24 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder SetQuery(bool ignoreCase, string name, params object[] values)
         {
-            return this.SetQuery(ignoreCase, name, () => true, values);
+            this.CheckNullOrWhiteSpace("name", name);
+
+            if (values == null || values.Length < 1)
+            {
+                throw new ArgumentException("values cannot be null or empty.", "values");
+            }
+
+            if (ignoreCase)
+            {
+                this._query.RemoveAll(item => item.Key.Equals(name, StringComparison.OrdinalIgnoreCase));
+            }
+            else
+            {
+                this._query.RemoveAll(item => item.Key.Equals(name));
+            }
+
+            this.DoAppendQuery(name, values);
+            return this;
         }
 
         /// <summary>
@@ -1011,10 +1083,10 @@ namespace DevLib.Web
         /// </summary>
         /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
         /// <param name="name">The name of query string parameter.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="values">The query values.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetQuery(bool ignoreCase, string name, Predicate canProceed, params object[] values)
+        public UrlBuilder SetQuery(bool ignoreCase, string name, Evaluate<bool> canProceed, params Evaluate<object>[] values)
         {
             if (canProceed == null || canProceed())
             {
@@ -1034,7 +1106,7 @@ namespace DevLib.Web
                     this._query.RemoveAll(item => item.Key.Equals(name));
                 }
 
-                return this.DoAppendQuery(name, values);
+                this.DoAppendQuery(name, values);
             }
 
             return this;
@@ -1048,17 +1120,36 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder SetQuery(bool ignoreCase, params KeyValuePair<string, object>[] values)
         {
-            return this.SetQuery(ignoreCase, () => true, values);
+            if (values == null || values.Length < 1)
+            {
+                throw new ArgumentException("values cannot be null or empty.", "values");
+            }
+
+            StringComparison stringComparison =
+                ignoreCase
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            foreach (var pair in values)
+            {
+                if (IsNullOrWhiteSpace(pair.Key))
+                {
+                    this._query.RemoveAll(item => item.Key.Equals(pair.Key, stringComparison));
+                }
+            }
+
+            this.DoAppendQuery(values);
+            return this;
         }
 
         /// <summary>
         /// Sets the query, overwriting the value if name exists.
         /// </summary>
         /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="values">The query key value pairs.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetQuery(bool ignoreCase, Predicate canProceed, params KeyValuePair<string, object>[] values)
+        public UrlBuilder SetQuery(bool ignoreCase, Evaluate<bool> canProceed, params KeyValuePair<string, Evaluate<object>>[] values)
         {
             if (canProceed == null || canProceed())
             {
@@ -1080,7 +1171,7 @@ namespace DevLib.Web
                     }
                 }
 
-                return this.DoAppendQuery(values);
+                this.DoAppendQuery(values);
             }
 
             return this;
@@ -1094,17 +1185,36 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder SetQuery(bool ignoreCase, params KeyValuePair<string, object[]>[] values)
         {
-            return this.SetQuery(ignoreCase, () => true, values);
+            if (values == null || values.Length < 1)
+            {
+                throw new ArgumentException("values cannot be null or empty.", "values");
+            }
+
+            StringComparison stringComparison =
+                ignoreCase
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            foreach (var pair in values)
+            {
+                if (IsNullOrWhiteSpace(pair.Key))
+                {
+                    this._query.RemoveAll(item => item.Key.Equals(pair.Key, stringComparison));
+                }
+            }
+
+            this.DoAppendQuery(values);
+            return this;
         }
 
         /// <summary>
         /// Sets the query, overwriting the value if name exists.
         /// </summary>
         /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="values">The query key value pairs.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetQuery(bool ignoreCase, Predicate canProceed, params KeyValuePair<string, object[]>[] values)
+        public UrlBuilder SetQuery(bool ignoreCase, Evaluate<bool> canProceed, params KeyValuePair<string, Evaluate<object>[]>[] values)
         {
             if (canProceed == null || canProceed())
             {
@@ -1126,7 +1236,7 @@ namespace DevLib.Web
                     }
                 }
 
-                return this.DoAppendQuery(values);
+                this.DoAppendQuery(values);
             }
 
             return this;
@@ -1139,16 +1249,24 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder SetQueryString(params string[] queryStrings)
         {
-            return this.SetQueryString(() => true, queryStrings);
+            if (queryStrings == null || queryStrings.Length < 1)
+            {
+                throw new ArgumentException("queryStrings cannot be null or empty.", "queryStrings");
+            }
+
+            this._query.Clear();
+
+            this.DoAppendQueryString(queryStrings);
+            return this;
         }
 
         /// <summary>
         /// Sets the query string, overwriting all values.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="queryStrings">The query strings.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetQueryString(Predicate canProceed, params string[] queryStrings)
+        public UrlBuilder SetQueryString(Evaluate<bool> canProceed, params Evaluate<string>[] queryStrings)
         {
             if (canProceed == null || canProceed())
             {
@@ -1159,7 +1277,7 @@ namespace DevLib.Web
 
                 this._query.Clear();
 
-                return this.DoAppendQueryString(queryStrings);
+                this.DoAppendQueryString(queryStrings);
             }
 
             return this;
@@ -1173,17 +1291,35 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder RemoveQuery(bool ignoreCase, params string[] names)
         {
-            return this.RemoveQuery(ignoreCase, () => true, names);
+            if (names == null || names.Length < 1)
+            {
+                throw new ArgumentException("names cannot be null or empty.", "names");
+            }
+
+            StringComparison stringComparison =
+                ignoreCase
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            foreach (var name in names)
+            {
+                if (IsNullOrWhiteSpace(name))
+                {
+                    this._query.RemoveAll(item => item.Key.Equals(name, stringComparison));
+                }
+            }
+
+            return this;
         }
 
         /// <summary>
         /// Removes the query.
         /// </summary>
         /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <param name="names">The query names.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveQuery(bool ignoreCase, Predicate canProceed, params string[] names)
+        public UrlBuilder RemoveQuery(bool ignoreCase, Evaluate<bool> canProceed, params Evaluate<string>[] names)
         {
             if (canProceed == null || canProceed())
             {
@@ -1199,9 +1335,9 @@ namespace DevLib.Web
 
                 foreach (var name in names)
                 {
-                    if (IsNullOrWhiteSpace(name))
+                    if (IsNullOrWhiteSpace(name()))
                     {
-                        this._query.RemoveAll(item => item.Key.Equals(name, stringComparison));
+                        this._query.RemoveAll(item => item.Key.Equals(name(), stringComparison));
                     }
                 }
             }
@@ -1212,9 +1348,9 @@ namespace DevLib.Web
         /// <summary>
         /// Removes all querys.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveQuery(Predicate canProceed = null)
+        public UrlBuilder RemoveQuery(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -1319,13 +1455,13 @@ namespace DevLib.Web
         /// Set the URL fragment.
         /// </summary>
         /// <param name="fragment">The part of the URL after #.</param>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder SetFragment(string fragment, Predicate canProceed = null)
+        public UrlBuilder SetFragment(Evaluate<string> fragment, Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
-                var trimFragment = (fragment ?? string.Empty).Trim(' ', '#', '/', '\\', '\r', '\n');
+                var trimFragment = (fragment() ?? string.Empty).Trim(' ', '#', '/', '\\', '\r', '\n');
 
                 this.CheckNullOrWhiteSpace("fragment", trimFragment);
 
@@ -1338,9 +1474,9 @@ namespace DevLib.Web
         /// <summary>
         /// Removes the URL fragment including the #.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder RemoveFragment(Predicate canProceed = null)
+        public UrlBuilder RemoveFragment(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -1371,9 +1507,9 @@ namespace DevLib.Web
         /// <summary>
         /// Resets to the root URL of the current UrlBuilder instance, will keep the scheme, any user info, host, and port (if specified).
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder ResetToRoot(Predicate canProceed = null)
+        public UrlBuilder ResetToRoot(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -1389,9 +1525,9 @@ namespace DevLib.Web
         /// <summary>
         /// Resets the current UrlBuilder instance to empty URL.
         /// </summary>
-        /// <param name="canProceed">The delegate predicate to check if can proceed or not.</param>
+        /// <param name="canProceed">The delegate to check if can proceed or not.</param>
         /// <returns>The current UrlBuilder instance.</returns>
-        public UrlBuilder Reset(Predicate canProceed = null)
+        public UrlBuilder Reset(Evaluate<bool> canProceed = null)
         {
             if (canProceed == null || canProceed())
             {
@@ -1581,11 +1717,27 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Gets the path segments.
+        /// </summary>
+        /// <param name="paths">The paths.</param>
+        /// <returns>The list of path segments.</returns>
+        private List<string> GetPathSegments(Evaluate<string>[] paths)
+        {
+            var result = new List<string>();
+
+            foreach (var path in paths)
+            {
+                result.AddRange(path().Trim().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            return CleanSegment(result);
+        }
+
+        /// <summary>
         /// Appends path.
         /// </summary>
         /// <param name="paths">The paths.</param>
-        /// <returns>The current UrlBuilder instance.</returns>
-        private UrlBuilder DoAppendPath(params string[] paths)
+        private void DoAppendPath(params string[] paths)
         {
             foreach (var path in paths)
             {
@@ -1603,8 +1755,30 @@ namespace DevLib.Web
 
                 this._hasTrailingSlash = path.EndsWith("/");
             }
+        }
 
-            return this;
+        /// <summary>
+        /// Appends path.
+        /// </summary>
+        /// <param name="paths">The paths.</param>
+        private void DoAppendPath(params Evaluate<string>[] paths)
+        {
+            foreach (var path in paths)
+            {
+                var segments = path().Trim().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var item in segments)
+                {
+                    var cleanSegment = CleanSegment(item);
+
+                    if (!IsNullOrWhiteSpace(cleanSegment))
+                    {
+                        this._path.Add(cleanSegment);
+                    }
+                }
+
+                this._hasTrailingSlash = path().EndsWith("/");
+            }
         }
 
         /// <summary>
@@ -1612,8 +1786,7 @@ namespace DevLib.Web
         /// </summary>
         /// <param name="firstToLast">true to start with the first occurrence; false to start with the last occurrence.</param>
         /// <param name="paths">The paths.</param>
-        /// <returns>The current UrlBuilder instance.</returns>
-        private UrlBuilder DoRemovePath(bool firstToLast, params string[] paths)
+        private void DoRemovePath(bool firstToLast, params string[] paths)
         {
             if (paths == null || paths.Length < 1)
             {
@@ -1630,8 +1803,30 @@ namespace DevLib.Web
             {
                 this._path.RemoveRange(index, segments.Count);
             }
+        }
 
-            return this;
+        /// <summary>
+        /// Removes path.
+        /// </summary>
+        /// <param name="firstToLast">true to start with the first occurrence; false to start with the last occurrence.</param>
+        /// <param name="paths">The paths.</param>
+        private void DoRemovePath(bool firstToLast, params Evaluate<string>[] paths)
+        {
+            if (paths == null || paths.Length < 1)
+            {
+                throw new ArgumentException("paths cannot be null or empty.", "paths");
+            }
+
+            var segments = this.GetPathSegments(paths);
+
+            int index = firstToLast
+                ? this.FindArrayIndex(this._path.ToArray(), segments.ToArray())
+                : this.FindArrayLastIndex(this._path.ToArray(), segments.ToArray());
+
+            if (index > -1)
+            {
+                this._path.RemoveRange(index, segments.Count);
+            }
         }
 
         /// <summary>
@@ -1639,55 +1834,84 @@ namespace DevLib.Web
         /// </summary>
         /// <param name="name">The query name.</param>
         /// <param name="values">The query values.</param>
-        /// <returns>The current UrlBuilder instance.</returns>
-        private UrlBuilder DoAppendQuery(string name, object[] values)
+        private void DoAppendQuery(string name, object[] values)
         {
             foreach (var item in values)
             {
                 this._query.Add(new KeyValuePair<string, object>(name, item));
             }
+        }
 
-            return this;
+        /// <summary>
+        /// Appends query.
+        /// </summary>
+        /// <param name="name">The query name.</param>
+        /// <param name="values">The query values.</param>
+        private void DoAppendQuery(string name, Evaluate<object>[] values)
+        {
+            foreach (var item in values)
+            {
+                this._query.Add(new KeyValuePair<string, object>(name, item()));
+            }
         }
 
         /// <summary>
         /// Appends query.
         /// </summary>
         /// <param name="values">The query key value pairs.</param>
-        /// <returns>The current UrlBuilder instance.</returns>
-        private UrlBuilder DoAppendQuery(KeyValuePair<string, object>[] values)
+        private void DoAppendQuery(KeyValuePair<string, object>[] values)
         {
             foreach (var item in values)
             {
                 this.CheckNullOrWhiteSpace("Query parameter name", item.Key);
                 this._query.Add(new KeyValuePair<string, object>(item.Key, item.Value));
             }
-
-            return this;
         }
 
         /// <summary>
         /// Appends query.
         /// </summary>
         /// <param name="values">The query key value pairs.</param>
-        /// <returns>The current UrlBuilder instance.</returns>
-        private UrlBuilder DoAppendQuery(KeyValuePair<string, object[]>[] values)
+        private void DoAppendQuery(KeyValuePair<string, Evaluate<object>>[] values)
+        {
+            foreach (var item in values)
+            {
+                this.CheckNullOrWhiteSpace("Query parameter name", item.Key);
+                this._query.Add(new KeyValuePair<string, object>(item.Key, item.Value()));
+            }
+        }
+
+        /// <summary>
+        /// Appends query.
+        /// </summary>
+        /// <param name="values">The query key value pairs.</param>
+        private void DoAppendQuery(KeyValuePair<string, object[]>[] values)
         {
             foreach (var item in values)
             {
                 this.CheckNullOrWhiteSpace("Query parameter name", item.Key);
                 this.DoAppendQuery(item.Key, item.Value);
             }
+        }
 
-            return this;
+        /// <summary>
+        /// Appends query.
+        /// </summary>
+        /// <param name="values">The query key value pairs.</param>
+        private void DoAppendQuery(KeyValuePair<string, Evaluate<object>[]>[] values)
+        {
+            foreach (var item in values)
+            {
+                this.CheckNullOrWhiteSpace("Query parameter name", item.Key);
+                this.DoAppendQuery(item.Key, item.Value);
+            }
         }
 
         /// <summary>
         /// Appends query string.
         /// </summary>
         /// <param name="queryStrings">The query strings.</param>
-        /// <returns>The current UrlBuilder instance.</returns>
-        private UrlBuilder DoAppendQueryString(params string[] queryStrings)
+        private void DoAppendQueryString(params string[] queryStrings)
         {
             foreach (var item in queryStrings)
             {
@@ -1706,8 +1930,31 @@ namespace DevLib.Web
                     }
                 }
             }
+        }
 
-            return this;
+        /// <summary>
+        /// Appends query string.
+        /// </summary>
+        /// <param name="queryStrings">The query strings.</param>
+        private void DoAppendQueryString(params Evaluate<string>[] queryStrings)
+        {
+            foreach (var item in queryStrings)
+            {
+                var querySegments = (item() ?? string.Empty).Trim(' ', '?').Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var query in querySegments)
+                {
+                    var pair = query.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (pair.Length > 0)
+                    {
+                        var key = pair[0];
+                        var value = pair.Length >= 2 ? DecodeQueryParamValue(pair[1]) : string.Empty;
+
+                        this._query.Add(new KeyValuePair<string, object>(key, value));
+                    }
+                }
+            }
         }
 
         /// <summary>

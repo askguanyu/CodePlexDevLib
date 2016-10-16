@@ -75,14 +75,14 @@
             UrlBuilder target = new UrlBuilder();
 
             target
-                .SetScheme("abc")
-                .SetAuthority("username", "password")
-                .SetHost("example.com")
-                .SetPort(123)
+                .SetScheme(() => "abc")
+                .SetAuthority(() => "username", () => "password")
+                .SetHost(() => "example.com")
+                .SetPort(() => 123)
                 .AppendPath("path", "data")
                 .AppendQuery("key", "value")
                 .AppendQuery("key2", "value2")
-                .SetFragment("fragid1");
+                .SetFragment(() => "fragid1");
 
             actual = target.ToString();
 

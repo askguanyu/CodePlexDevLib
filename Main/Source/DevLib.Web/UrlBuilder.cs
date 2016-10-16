@@ -1247,7 +1247,7 @@ namespace DevLib.Web
         /// <summary>
         /// Gets query values by name.
         /// </summary>
-        /// <param name="name">The name of query param.</param>
+        /// <param name="name">The name of query parameter.</param>
         /// <param name="ignoreCase">true to ignore case; otherwise, false.</param>
         /// <returns>The query values.</returns>
         public List<object> GetQueryValues(string name, bool ignoreCase = false)

@@ -201,6 +201,11 @@ namespace DevLib.Samples
 
                 Benchmark.Run(delegate
                 {
+                    //TestDevLibWeb();
+                });
+
+                Benchmark.Run(delegate
+                {
                     //TestDevLibWebHosting();
                 });
 
@@ -224,6 +229,12 @@ namespace DevLib.Samples
             }, "DevLib.Samples", 1);
 
             InternalLogger.Log("End");
+        }
+
+        private static void TestDevLibWeb()
+        {
+            HttpWebClient client = new HttpWebClient("http://www.codeplex.com");
+            var msg = client.SendRequest();
         }
 
         //[Serializable]

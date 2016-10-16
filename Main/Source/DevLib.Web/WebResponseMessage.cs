@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SoapResponse.cs" company="YuGuan Corporation">
+// <copyright file="WebResponseMessage.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -9,23 +9,23 @@ namespace DevLib.Web
     using System.Net;
 
     /// <summary>
-    /// Soap Response.
+    /// Represents a HTTP response message including the status code and data.
     /// </summary>
     [Serializable]
-    public class SoapResponse : MarshalByRefObject
+    public class WebResponseMessage : MarshalByRefObject
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SoapResponse" /> class.
+        /// Initializes a new instance of the <see cref="WebResponseMessage" /> class.
         /// </summary>
-        public SoapResponse()
+        public WebResponseMessage()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SoapResponse" /> class.
+        /// Initializes a new instance of the <see cref="WebResponseMessage" /> class.
         /// </summary>
         /// <param name="webResponse">The web response.</param>
-        public SoapResponse(WebResponse webResponse)
+        public WebResponseMessage(WebResponse webResponse)
         {
             HttpWebResponse httpWebResponse = webResponse as HttpWebResponse;
 
@@ -203,7 +203,7 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="SoapResponse"/> is succeeded.
+        /// Gets or sets a value indicating whether this <see cref="WebResponseMessage"/> is succeeded.
         /// </summary>
         public bool Succeeded
         {

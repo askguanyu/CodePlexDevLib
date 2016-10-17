@@ -14,8 +14,6 @@ namespace DevLib.Ioc
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Reflection;
-    using System.Runtime.Serialization;
-    using System.Security.Permissions;
     using System.Threading;
 
     /// <summary>
@@ -203,6 +201,76 @@ namespace DevLib.Ioc
             Type type = typeof(T);
 
             return this.InnerRegister(type, new IocRegistrationBuilder(type, container => (T)builder(container), name), name);
+        }
+
+        /// <summary>
+        /// Registers the specified type with builder function.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="instanceType">Type of the instance.</param>
+        /// <param name="instanceTypeArguments">The instance type arguments.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register(Type type, Type instanceType, Type[] instanceTypeArguments)
+        {
+            this.CheckDisposed();
+
+            this.CheckType(type);
+
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instanceType, instanceTypeArguments));
+        }
+
+        /// <summary>
+        /// Registers the specified type with builder function.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="instanceType">Type of the instance.</param>
+        /// <param name="instanceTypeArguments">The instance type arguments.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register<T>(Type instanceType, Type[] instanceTypeArguments)
+        {
+            this.CheckDisposed();
+
+            Type type = typeof(T);
+
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instanceType, instanceTypeArguments));
+        }
+
+        /// <summary>
+        /// Registers the specified type with the specified name.
+        /// </summary>
+        /// <param name="type">The type to register.</param>
+        /// <param name="instanceType">Type of the instance.</param>
+        /// <param name="instanceTypeArguments">The instance type arguments.</param>
+        /// <param name="name">The name of registration to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register(Type type, Type instanceType, Type[] instanceTypeArguments, string name)
+        {
+            this.CheckDisposed();
+
+            this.CheckType(type);
+
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instanceType, instanceTypeArguments, name), name);
+        }
+
+        /// <summary>
+        /// Registers the specified type with the specified name.
+        /// </summary>
+        /// <typeparam name="T">The type to register.</typeparam>
+        /// <param name="instanceType">Type of the instance.</param>
+        /// <param name="instanceTypeArguments">The instance type arguments.</param>
+        /// <param name="name">The name of registration to register.</param>
+        /// <returns>IocRegistration instance.</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "reviewed")]
+        public virtual IocRegistration Register<T>(Type instanceType, Type[] instanceTypeArguments, string name)
+        {
+            this.CheckDisposed();
+
+            Type type = typeof(T);
+
+            return this.InnerRegister(type, new IocRegistrationBuilder(type, instanceType, instanceTypeArguments, name), name);
         }
 
         /// <summary>
@@ -1054,15 +1122,15 @@ namespace DevLib.Ioc
                 }
 
                 return new IocRegistration(
-                    registration =>
+                registration =>
+                {
+                    lock (((ICollection)this._registrations).SyncRoot)
                     {
-                        lock (((ICollection)this._registrations).SyncRoot)
-                        {
-                            this._registrations[type].Remove(registration.Name);
-                        }
+                        this._registrations[type].Remove(registration.Name);
+                    }
 
-                        builder.Dispose();
-                    },
+                    builder.Dispose();
+                },
                     id);
             }
             catch (Exception e)
@@ -1072,26 +1140,6 @@ namespace DevLib.Ioc
                 InternalLogger.Log(invalidOperationException);
 
                 throw invalidOperationException;
-            }
-        }
-
-        /// <summary>
-        /// InnerRegister method.
-        /// </summary>
-        /// <param name="type">The type to register.</param>
-        /// <param name="types">The types to scan.</param>
-        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
-        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
-        protected virtual void InnerRegister(Type type, Type[] types, Type[] typeArguments, bool withTypeName)
-        {
-            bool checkGeneric = typeArguments != null && typeArguments.Length > 0;
-
-            foreach (Type item in types)
-            {
-                if (!item.IsAbstract && (checkGeneric ? item.IsGenericType : !item.IsGenericType) && this.IsInheritFrom(item, type))
-                {
-                    this.Register(type, container => container.CreateInstance(item, typeArguments), withTypeName ? item.FullName : item.AssemblyQualifiedName);
-                }
             }
         }
 
@@ -1130,42 +1178,23 @@ namespace DevLib.Ioc
         }
 
         /// <summary>
-        /// Creates an instance of the specified type using the constructor that best matches the specified parameters.
+        /// InnerRegister method.
         /// </summary>
-        /// <param name="type">The type of object to create.</param>
+        /// <param name="type">The type to register.</param>
+        /// <param name="types">The types to scan.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
-        /// <returns>A reference to the newly created object.</returns>
-        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        protected virtual object CreateInstance(Type type, Type[] typeArguments)
+        /// <param name="withTypeName">true to use type full name; false to use AssemblyQualifiedName.</param>
+        protected virtual void InnerRegister(Type type, Type[] types, Type[] typeArguments, bool withTypeName)
         {
-            if (type == typeof(string))
-            {
-                return string.Empty;
-            }
+            bool checkGeneric = typeArguments != null && typeArguments.Length > 0;
 
-            object result = null;
-
-            if (typeArguments != null && typeArguments.Length > 0)
+            foreach (Type item in types)
             {
-                type = type.MakeGenericType(typeArguments);
-            }
-
-            try
-            {
-                result = Activator.CreateInstance(type);
-            }
-            catch
-            {
-                try
+                if (!item.IsAbstract && (checkGeneric ? item.IsGenericType : !item.IsGenericType) && this.IsInheritFrom(item, type))
                 {
-                    result = FormatterServices.GetUninitializedObject(type);
-                }
-                catch
-                {
+                    this.Register(type, item, typeArguments, withTypeName ? item.FullName : item.AssemblyQualifiedName);
                 }
             }
-
-            return result;
         }
 
         /// <summary>

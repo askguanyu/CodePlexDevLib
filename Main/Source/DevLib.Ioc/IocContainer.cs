@@ -481,20 +481,22 @@ namespace DevLib.Ioc
         /// Resolves the specified type with the specified name.
         /// </summary>
         /// <param name="type">The type to resolve.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>The registered instance.</returns>
-        public virtual object Resolve(Type type)
+        public virtual object Resolve(Type type, bool createNew = false)
         {
-            return this.DoGetInstance(type);
+            return this.DoGetInstance(type, createNew);
         }
 
         /// <summary>
         /// Resolves the specified type.
         /// </summary>
         /// <typeparam name="T">The type to resolve.</typeparam>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>The registered instance.</returns>
-        public virtual T Resolve<T>()
+        public virtual T Resolve<T>(bool createNew = false)
         {
-            return (T)this.Resolve(typeof(T));
+            return (T)this.Resolve(typeof(T), createNew);
         }
 
         /// <summary>
@@ -502,10 +504,11 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="type">The type to resolve.</param>
         /// <param name="name">The name of registration to resolve.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>The registered instance.</returns>
-        public virtual object Resolve(Type type, string name)
+        public virtual object Resolve(Type type, string name, bool createNew = false)
         {
-            return this.DoGetInstance(type, name);
+            return this.DoGetInstance(type, name, createNew);
         }
 
         /// <summary>
@@ -513,10 +516,11 @@ namespace DevLib.Ioc
         /// </summary>
         /// <typeparam name="T">The type to resolve.</typeparam>
         /// <param name="name">The name of registration to resolve.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>The registered instance.</returns>
-        public virtual T Resolve<T>(string name)
+        public virtual T Resolve<T>(string name, bool createNew = false)
         {
-            return (T)this.Resolve(typeof(T), name);
+            return (T)this.Resolve(typeof(T), name, createNew);
         }
 
         /// <summary>
@@ -588,8 +592,9 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="type">The type to resolve.</param>
         /// <param name="value">The registered instance.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>true if resolve succeeded; otherwise, false.</returns>
-        public virtual bool TryResolve(Type type, out object value)
+        public virtual bool TryResolve(Type type, out object value, bool createNew = false)
         {
             this.CheckDisposed();
 
@@ -611,7 +616,7 @@ namespace DevLib.Ioc
                         {
                             try
                             {
-                                result = builder.GetValue(this);
+                                result = builder.GetValue(this, createNew);
                             }
                             catch (Exception e)
                             {
@@ -634,7 +639,7 @@ namespace DevLib.Ioc
                         {
                             try
                             {
-                                result = builder.GetValue(this);
+                                result = builder.GetValue(this, createNew);
                             }
                             catch (Exception e)
                             {
@@ -650,7 +655,7 @@ namespace DevLib.Ioc
                     {
                         try
                         {
-                            result = resolver.Resolve(type);
+                            result = resolver.Resolve(type, createNew);
                         }
                         catch (Exception e)
                         {
@@ -666,7 +671,7 @@ namespace DevLib.Ioc
 
                 if (result == null && this._parent != null)
                 {
-                    this._parent.TryResolve(type, out result);
+                    this._parent.TryResolve(type, out result, createNew);
                 }
 
                 value = result;
@@ -680,12 +685,13 @@ namespace DevLib.Ioc
         /// </summary>
         /// <typeparam name="T">The type to resolve.</typeparam>
         /// <param name="value">The registered instance.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>true if resolve succeeded; otherwise, false.</returns>
-        public virtual bool TryResolve<T>(out T value)
+        public virtual bool TryResolve<T>(out T value, bool createNew = false)
         {
             object outValue;
 
-            bool result = this.TryResolve(typeof(T), out outValue);
+            bool result = this.TryResolve(typeof(T), out outValue, createNew);
 
             value = (T)outValue;
 
@@ -698,8 +704,9 @@ namespace DevLib.Ioc
         /// <param name="type">The type to resolve.</param>
         /// <param name="name">The name of registration to resolve.</param>
         /// <param name="value">The registered instance.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>true if resolve succeeded; otherwise, false.</returns>
-        public virtual bool TryResolve(Type type, string name, out object value)
+        public virtual bool TryResolve(Type type, string name, out object value, bool createNew = false)
         {
             this.CheckDisposed();
 
@@ -727,7 +734,7 @@ namespace DevLib.Ioc
                     {
                         try
                         {
-                            result = builder.GetValue(this);
+                            result = builder.GetValue(this, createNew);
                         }
                         catch (Exception e)
                         {
@@ -742,7 +749,7 @@ namespace DevLib.Ioc
                     {
                         try
                         {
-                            result = resolver.Resolve(type, name);
+                            result = resolver.Resolve(type, name, createNew);
                         }
                         catch (Exception e)
                         {
@@ -758,7 +765,7 @@ namespace DevLib.Ioc
 
                 if (result == null && this._parent != null)
                 {
-                    this._parent.TryResolve(type, name, out result);
+                    this._parent.TryResolve(type, name, out result, createNew);
                 }
 
                 value = result;
@@ -773,12 +780,13 @@ namespace DevLib.Ioc
         /// <typeparam name="T">The type to resolve.</typeparam>
         /// <param name="name">The name of registration to resolve.</param>
         /// <param name="value">The registered instance.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>true if resolve succeeded; otherwise, false. </returns>
-        public virtual bool TryResolve<T>(string name, out T value)
+        public virtual bool TryResolve<T>(string name, out T value, bool createNew = false)
         {
             object outValue;
 
-            bool result = this.TryResolve(typeof(T), name, out outValue);
+            bool result = this.TryResolve(typeof(T), name, out outValue, createNew);
 
             value = (T)outValue;
 
@@ -790,10 +798,11 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="serviceType">An object that specifies the type of service object to get.</param>
         /// <param name="name">The name of registration to resolve.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>A service object of type <paramref name="serviceType" />.-or- null if there is no service object of type <paramref name="serviceType" />.</returns>
-        public virtual object GetService(Type serviceType, string name)
+        public virtual object GetService(Type serviceType, string name, bool createNew = false)
         {
-            return this.Resolve(serviceType, name);
+            return this.Resolve(serviceType, name, createNew);
         }
 
         /// <summary>
@@ -1081,12 +1090,7 @@ namespace DevLib.Ioc
             {
                 if (!item.IsAbstract && (checkGeneric ? item.IsGenericType : !item.IsGenericType) && this.IsInheritFrom(item, type))
                 {
-                    object instance = this.CreateInstance(item, typeArguments);
-
-                    if (instance != null)
-                    {
-                        this.Register(type, instance, withTypeName ? item.FullName : item.AssemblyQualifiedName);
-                    }
+                    this.Register(type, container => container.CreateInstance(item, typeArguments), withTypeName ? item.FullName : item.AssemblyQualifiedName);
                 }
             }
         }
@@ -1168,8 +1172,9 @@ namespace DevLib.Ioc
         /// When implemented by inheriting classes, this method will do the actual work of resolving the requested service instance.
         /// </summary>
         /// <param name="serviceType">Type of instance requested.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>The requested service instance.</returns>
-        protected override object DoGetInstance(Type serviceType)
+        protected override object DoGetInstance(Type serviceType, bool createNew = false)
         {
             this.CheckDisposed();
 
@@ -1177,7 +1182,7 @@ namespace DevLib.Ioc
 
             object result;
 
-            if (!this.TryResolve(serviceType, out result) || result == null)
+            if (!this.TryResolve(serviceType, out result, createNew) || result == null)
             {
                 throw new InvalidOperationException(string.Format("The registration [{0}] does not exist.", serviceType.FullName));
             }
@@ -1190,8 +1195,9 @@ namespace DevLib.Ioc
         /// </summary>
         /// <param name="serviceType">Type of instance requested.</param>
         /// <param name="key">Name of registered service you want. May be null.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>The requested service instance.</returns>
-        protected override object DoGetInstance(Type serviceType, string key)
+        protected override object DoGetInstance(Type serviceType, string key, bool createNew = false)
         {
             this.CheckDisposed();
 
@@ -1199,7 +1205,7 @@ namespace DevLib.Ioc
 
             object result;
 
-            if (!this.TryResolve(serviceType, key, out result) || result == null)
+            if (!this.TryResolve(serviceType, key, out result, createNew) || result == null)
             {
                 throw new InvalidOperationException(string.Format("The registration [{0} with name {1}] does not exist.", serviceType.FullName, key));
             }
@@ -1211,8 +1217,9 @@ namespace DevLib.Ioc
         /// When implemented by inheriting classes, this method will do the actual work of resolving all the requested service instances.
         /// </summary>
         /// <param name="serviceType">Type of service requested.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>Sequence of service instance objects.</returns>
-        protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
+        protected override IEnumerable<object> DoGetAllInstances(Type serviceType, bool createNew = false)
         {
             this.CheckDisposed();
 
@@ -1228,7 +1235,7 @@ namespace DevLib.Ioc
                 {
                     foreach (IocRegistrationBuilder item in value.Values)
                     {
-                        result.Add(item.GetValue(this));
+                        result.Add(item.GetValue(this, createNew));
                     }
                 }
             }
@@ -1240,8 +1247,9 @@ namespace DevLib.Ioc
         /// When implemented by inheriting classes, this method will do the actual work of resolving all the requested service instances.
         /// </summary>
         /// <typeparam name="TService">Type of object requested.</typeparam>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>Sequence of service instance objects.</returns>
-        protected override IEnumerable<TService> DoGetAllInstances<TService>()
+        protected override IEnumerable<TService> DoGetAllInstances<TService>(bool createNew = false)
         {
             this.CheckDisposed();
 
@@ -1257,7 +1265,7 @@ namespace DevLib.Ioc
                 {
                     foreach (IocRegistrationBuilder item in value.Values)
                     {
-                        result.Add((TService)item.GetValue(this));
+                        result.Add((TService)item.GetValue(this, createNew));
                     }
                 }
             }

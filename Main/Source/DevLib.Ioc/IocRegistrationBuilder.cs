@@ -132,12 +132,27 @@ namespace DevLib.Ioc
         /// Gets the registration value.
         /// </summary>
         /// <param name="container">The container to use.</param>
+        /// <param name="createNew">true to create new instance if possible every time; otherwise, get the same instance every time.</param>
         /// <returns>The registration value.</returns>
-        public object GetValue(IocContainer container)
+        public object GetValue(IocContainer container, bool createNew = false)
         {
             this.CheckDisposed();
 
-            return this._cachedRegistrationValue ?? (this._cachedRegistrationValue = this.CreateService(container));
+            if (createNew)
+            {
+                var result = this.CreateService(container);
+
+                if (this._cachedRegistrationValue == null)
+                {
+                    this._cachedRegistrationValue = result;
+                }
+
+                return result;
+            }
+            else
+            {
+                return this._cachedRegistrationValue ?? (this._cachedRegistrationValue = this.CreateService(container));
+            }
         }
 
         /// <summary>
@@ -171,7 +186,7 @@ namespace DevLib.Ioc
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-                
+
                 this._registrationBuilder = null;
 
                 IDisposable disposable = this._cachedRegistrationValue as IDisposable;

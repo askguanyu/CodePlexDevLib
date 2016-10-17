@@ -11,6 +11,7 @@ namespace DevLib.ExtensionMethods
     using System.IO;
     using System.Reflection;
     using System.Runtime.Serialization.Formatters.Binary;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Object Extensions.
@@ -153,16 +154,30 @@ namespace DevLib.ExtensionMethods
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                return default(T);
             }
 
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-
-            using (MemoryStream memoryStream = new MemoryStream())
+            try
             {
-                binaryFormatter.Serialize(memoryStream, source);
-                memoryStream.Position = 0;
-                return (T)binaryFormatter.Deserialize(memoryStream);
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    binaryFormatter.Serialize(memoryStream, source);
+                    memoryStream.Position = 0;
+                    return (T)binaryFormatter.Deserialize(memoryStream);
+                }
+            }
+            catch
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    xmlSerializer.Serialize(memoryStream, source);
+                    memoryStream.Position = 0;
+                    return (T)xmlSerializer.Deserialize(memoryStream);
+                }
             }
         }
 

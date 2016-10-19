@@ -33,7 +33,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Json string.</returns>
-        public static string SerializeJsonString(this object source, bool omitTypeInfo = false, Encoding encoding = null, Type[] knownTypes = null)
+        public static string SerializeDataContractJsonString(this object source, bool omitTypeInfo = false, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -67,7 +67,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="overwrite">Whether overwrite exists file.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>File full path.</returns>
-        public static string WriteJson(this object source, string filename, bool overwrite = false, Type[] knownTypes = null)
+        public static string WriteDataContractJson(this object source, string filename, bool overwrite = false, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -116,7 +116,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeJsonString(this string source, Type type, Encoding encoding = null, Type[] knownTypes = null)
+        public static object DeserializeDataContractJsonString(this string source, Type type, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -144,7 +144,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeJsonString(this string source, Type[] knownTypes, Encoding encoding = null)
+        public static object DeserializeDataContractJsonString(this string source, Type[] knownTypes, Encoding encoding = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -181,12 +181,12 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Json string to object.
         /// </summary>
-        /// <typeparam name="T">Type of the returns objet.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">Json string object.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static T DeserializeJsonString<T>(this string source, Encoding encoding = null, Type[] knownTypes = null)
+        public static T DeserializeDataContractJsonString<T>(this string source, Encoding encoding = null, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -209,7 +209,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="type">Type of object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static object ReadJson(this string source, Type type, Type[] knownTypes = null)
+        public static object ReadDataContractJson(this string source, Type type, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -242,7 +242,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of object.</returns>
-        public static object ReadJson(this string source, Type[] knownTypes = null)
+        public static object ReadDataContractJson(this string source, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -281,11 +281,11 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Json string to object, read from file.
         /// </summary>
-        /// <typeparam name="T">Type of the returns objet.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static T ReadJson<T>(this string source, Type[] knownTypes = null)
+        public static T ReadDataContractJson<T>(this string source, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -313,7 +313,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Object to serialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Json bytes.</returns>
-        public static byte[] SerializeJsonBinary(this object source, Type[] knownTypes = null)
+        public static byte[] SerializeDataContractJsonBinary(this object source, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -337,7 +337,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="type">Type of object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static object DeserializeJsonBinary(this byte[] source, Type type, Type[] knownTypes = null)
+        public static object DeserializeDataContractJsonBinary(this byte[] source, Type type, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -365,7 +365,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of object.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
-        public static object DeserializeJsonBinary(this byte[] source, Type[] knownTypes)
+        public static object DeserializeDataContractJsonBinary(this byte[] source, Type[] knownTypes)
         {
             if (source == null)
             {
@@ -399,11 +399,11 @@ namespace DevLib.ExtensionMethods
         /// <summary>
         /// Deserializes Json bytes to object.
         /// </summary>
-        /// <typeparam name="T">Type of the returns objet.</typeparam>
+        /// <typeparam name="T">Type of the returns object.</typeparam>
         /// <param name="source">Json string object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of object.</returns>
-        public static T DeserializeJsonBinary<T>(this byte[] source, Type[] knownTypes = null)
+        public static T DeserializeDataContractJsonBinary<T>(this byte[] source, Type[] knownTypes = null)
         {
             if (source == null)
             {

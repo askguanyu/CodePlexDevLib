@@ -1791,6 +1791,7 @@ namespace DevLib.Samples
             //person.SerializeJson().ConsoleOutput().DeserializeJson<Person>();
             //var aperson = person.SerializeJson(Encoding.UTF8).ConsoleOutput().DeserializeJson<Person>(Encoding.UTF8);
             var aperson = person.SerializeXmlString().DeserializeXmlString<Person>().LastName.ConsoleOutput();
+            var bperson = person.SerializeJsonString();
 
             Console.ReadKey();
 

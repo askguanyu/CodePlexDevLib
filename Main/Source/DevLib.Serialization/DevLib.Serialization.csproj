@@ -46,6 +46,8 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BinarySerialization.cs" />
+    <Compile Include="JsonSerialization.cs" />
+    <Compile Include="JsonSerializer.cs" />
     <Compile Include="SoapSerialization.cs" />
     <Compile Include="XmlSerialization.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

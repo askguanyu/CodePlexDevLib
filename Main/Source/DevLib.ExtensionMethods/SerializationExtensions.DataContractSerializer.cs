@@ -28,7 +28,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>An Xml encoded string representation of the source DataContract object.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
-        public static string SerializeDataContractXml(this object source, bool indent = false, bool omitXmlDeclaration = true, Type[] knownTypes = null)
+        public static string SerializeDataContractXmlString(this object source, bool indent = false, bool omitXmlDeclaration = true, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -58,7 +58,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="omitXmlDeclaration">Whether to write an Xml declaration.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>File full path.</returns>
-        public static string WriteDataContract(this object source, string filename, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, Type[] knownTypes = null)
+        public static string WriteDataContractXml(this object source, string filename, bool overwrite = false, bool indent = true, bool omitXmlDeclaration = true, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -108,7 +108,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static object DeserializeDataContractXml(this string source, Type type, Type[] knownTypes = null)
+        public static object DeserializeDataContractXmlString(this string source, Type type, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -135,7 +135,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of DataContract object.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static object DeserializeDataContractXml(this string source, Type[] knownTypes)
+        public static object DeserializeDataContractXmlString(this string source, Type[] knownTypes)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -176,7 +176,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of T.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed.")]
-        public static T DeserializeDataContractXml<T>(this string source, Type[] knownTypes = null)
+        public static T DeserializeDataContractXmlString<T>(this string source, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -198,7 +198,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="type">Type of DataContract object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
-        public static object ReadDataContract(this string source, Type type, Type[] knownTypes = null)
+        public static object ReadDataContractXml(this string source, Type type, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -231,7 +231,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of DataContract object.</returns>
-        public static object ReadDataContract(this string source, Type[] knownTypes)
+        public static object ReadDataContractXml(this string source, Type[] knownTypes)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -274,7 +274,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">File name.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of T.</returns>
-        public static T ReadDataContract<T>(this string source, Type[] knownTypes = null)
+        public static T ReadDataContractXml<T>(this string source, Type[] knownTypes = null)
         {
             if (string.IsNullOrEmpty(source))
             {
@@ -302,7 +302,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The DataContract object to serialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Bytes representation of the source DataContract object.</returns>
-        public static byte[] SerializeDataContractBinary(this object source, Type[] knownTypes = null)
+        public static byte[] SerializeDataContractXmlBinary(this object source, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -326,7 +326,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="type">Type of DataContract object.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
-        public static object DeserializeDataContractBinary(this byte[] source, Type type, Type[] knownTypes = null)
+        public static object DeserializeDataContractXmlBinary(this byte[] source, Type type, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -354,7 +354,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array of object types to serialize.</param>
         /// <returns>Instance of DataContract object.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed.")]
-        public static object DeserializeDataContractBinary(this byte[] source, Type[] knownTypes = null)
+        public static object DeserializeDataContractXmlBinary(this byte[] source, Type[] knownTypes = null)
         {
             if (source == null)
             {
@@ -392,7 +392,7 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">The bytes to deserialize.</param>
         /// <param name="knownTypes">A <see cref="T:System.Type" /> array that may be present in the object graph.</param>
         /// <returns>Instance of DataContract object.</returns>
-        public static T DeserializeDataContractBinary<T>(this byte[] source, Type[] knownTypes = null)
+        public static T DeserializeDataContractXmlBinary<T>(this byte[] source, Type[] knownTypes = null)
         {
             if (source == null)
             {

@@ -708,9 +708,10 @@ namespace DevLib.ExtensionMethods
         /// If value is less then zero, will wait indefinitely for the associated process to exit.
         /// The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.
         /// </param>
+        /// <returns>The system-generated unique identifier of the process that is referenced by this System.Diagnostics.Process instance.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed")]
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public static void ExecuteCmdLine(this string sourceCmd, Action onExited = null, bool runasAdmin = true, bool hidden = true, int? milliseconds = null)
+        public static int ExecuteCmdLine(this string sourceCmd, Action onExited = null, bool runasAdmin = true, bool hidden = true, int? milliseconds = null)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
             startInfo.Arguments = string.Format(" /C {0}", sourceCmd);
@@ -737,6 +738,16 @@ namespace DevLib.ExtensionMethods
 
             process.Start();
 
+            int result = -1;
+
+            try
+            {
+                result = process.Id;
+            }
+            catch
+            {
+            }
+
             if (milliseconds.HasValue)
             {
                 if (milliseconds >= 0)
@@ -751,6 +762,8 @@ namespace DevLib.ExtensionMethods
                     process.WaitForExit();
                 }
             }
+
+            return result;
         }
 
         /// <summary>
@@ -767,9 +780,10 @@ namespace DevLib.ExtensionMethods
         /// If value is less then zero, will wait indefinitely for the associated process to exit.
         /// The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.
         /// </param>
+        /// <returns>The system-generated unique identifier of the process that is referenced by this System.Diagnostics.Process instance.</returns>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Reviewed")]
         [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
-        public static void Execute(this string sourceFile, string arguments = null, Action onExited = null, bool runasAdmin = true, bool hidden = true, int? milliseconds = null)
+        public static int Execute(this string sourceFile, string arguments = null, Action onExited = null, bool runasAdmin = true, bool hidden = true, int? milliseconds = null)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo(sourceFile);
             startInfo.Arguments = arguments;
@@ -796,6 +810,16 @@ namespace DevLib.ExtensionMethods
 
             process.Start();
 
+            int result = -1;
+
+            try
+            {
+                result = process.Id;
+            }
+            catch
+            {
+            }
+
             if (milliseconds.HasValue)
             {
                 if (milliseconds >= 0)
@@ -810,6 +834,8 @@ namespace DevLib.ExtensionMethods
                     process.WaitForExit();
                 }
             }
+
+            return result;
         }
 
         /// <summary>

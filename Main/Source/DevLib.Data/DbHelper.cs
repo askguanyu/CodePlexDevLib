@@ -690,9 +690,10 @@ namespace DevLib.Data
         /// <typeparam name="TResult">The type of return value.</typeparam>
         /// <param name="prepareCommandFunc">The prepare command function.</param>
         /// <param name="executeCommandFunc">The execute command function.</param>
-        /// <param name="disposeCommand">true to dispose command when finished, otherwise, false.</param>
+        /// <param name="disposeCommand">true to dispose command when finished; otherwise, false.</param>
+        /// <param name="disposeConnection">true to dispose connection when finished; otherwise, false.</param>
         /// <returns>Result of the function.</returns>
-        public TResult FuncOnDb<TResult>(Converter<DbConnection, DbCommand> prepareCommandFunc, Converter<DbCommand, TResult> executeCommandFunc, bool disposeCommand = true)
+        public TResult FuncOnDb<TResult>(Converter<DbConnection, DbCommand> prepareCommandFunc, Converter<DbCommand, TResult> executeCommandFunc, bool disposeCommand = true, bool disposeConnection = true)
         {
             DbConnection dbConnection = null;
             DbCommand dbCommand = null;
@@ -717,7 +718,10 @@ namespace DevLib.Data
                     this.DisposeCommand(dbCommand);
                 }
 
-                this.CloseConnection(dbConnection);
+                if (disposeConnection)
+                {
+                    this.CloseConnection(dbConnection);
+                }
             }
         }
 
@@ -1635,7 +1639,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1672,7 +1678,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1744,7 +1752,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1780,7 +1790,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1822,7 +1834,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1863,7 +1877,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1905,7 +1921,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1946,7 +1964,9 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false,
+                false);
         }
 
         /// <summary>
@@ -1986,7 +2006,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2025,7 +2046,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2102,7 +2124,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2140,7 +2163,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2184,7 +2208,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2227,7 +2252,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2271,7 +2297,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2314,7 +2341,8 @@ namespace DevLib.Data
                     }
 
                     return dbDataReader;
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2354,7 +2382,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2393,7 +2422,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2470,7 +2500,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2508,7 +2539,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2552,7 +2584,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2595,7 +2628,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2639,7 +2673,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2682,7 +2717,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2723,7 +2759,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2804,7 +2841,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2849,7 +2887,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2894,7 +2933,8 @@ namespace DevLib.Data
 
                         return ToList<T>(dbDataReader);
                     }
-                }, false);
+                },
+                false);
         }
 
         /// <summary>
@@ -2912,7 +2952,9 @@ namespace DevLib.Data
             {
                 return this.FuncOnDb<XmlReader>(
                     connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
-                    command => this.GetXmlReaderFunc(command));
+                    command => this.GetXmlReaderFunc(command),
+                    false,
+                    false);
             }
             else
             {
@@ -2969,7 +3011,9 @@ namespace DevLib.Data
             {
                 return this.FuncOnDb<XmlReader>(
                     connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
-                    command => this.GetXmlReaderFunc(command));
+                    command => this.GetXmlReaderFunc(command),
+                    false,
+                    false);
             }
             else
             {
@@ -2996,7 +3040,9 @@ namespace DevLib.Data
             {
                 return this.FuncOnDb<XmlReader>(
                     connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
-                    command => this.GetXmlReaderFunc(command));
+                    command => this.GetXmlReaderFunc(command),
+                    false,
+                    false);
             }
             else
             {
@@ -3023,7 +3069,9 @@ namespace DevLib.Data
             {
                 return this.FuncOnDb<XmlReader>(
                     connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
-                    command => this.GetXmlReaderFunc(command));
+                    command => this.GetXmlReaderFunc(command),
+                    false,
+                    false);
             }
             else
             {

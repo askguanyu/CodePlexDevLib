@@ -1625,28 +1625,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false,
                 false);
         }
@@ -1664,28 +1643,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommand(null, connection, commandType, commandText, commandParameters),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false,
                 false);
         }
@@ -1738,28 +1696,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false,
                 false);
         }
@@ -1776,28 +1713,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommandSp(null, connection, spName, parameterValues),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false,
                 false);
         }
@@ -1820,28 +1736,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false,
                 false);
         }
@@ -1863,28 +1758,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommandSpDataRowParams(null, connection, spName, dataRow),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false,
                 false);
         }
@@ -1907,28 +1781,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false,
                 false);
         }
@@ -1950,28 +1803,7 @@ namespace DevLib.Data
 
             return this.FuncOnDb<DbDataReader>(
                 connection => this.PrepareCommandSpObjectParams(null, connection, spName, data),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false,
                 false);
         }
@@ -1992,28 +1824,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false);
         }
 
@@ -2032,28 +1843,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommand(transaction, connection, commandType, commandText, commandParameters),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false);
         }
 
@@ -2110,28 +1900,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false);
         }
 
@@ -2149,28 +1918,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommandSp(transaction, connection, spName, parameterValues),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false);
         }
 
@@ -2194,28 +1942,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false);
         }
 
@@ -2238,28 +1965,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommandSpDataRowParams(transaction, connection, spName, dataRow),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false);
         }
 
@@ -2283,28 +1989,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader(commandBehavior);
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(commandBehavior),
                 false);
         }
 
@@ -2327,28 +2012,7 @@ namespace DevLib.Data
             return this.FuncOnDbTransaction<DbDataReader>(
                 transaction,
                 connection => this.PrepareCommandSpObjectParams(transaction, connection, spName, data),
-                command =>
-                {
-                    DbDataReader dbDataReader = command.ExecuteReader();
-
-                    bool canClear = true;
-
-                    foreach (DbParameter commandParameter in command.Parameters)
-                    {
-                        if (commandParameter.Direction != ParameterDirection.Input)
-                        {
-                            canClear = false;
-                            break;
-                        }
-                    }
-
-                    if (canClear)
-                    {
-                        this.DisposeCommand(command);
-                    }
-
-                    return dbDataReader;
-                },
+                command => command.ExecuteReader(),
                 false);
         }
 
@@ -2371,22 +2035,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader(commandBehavior))
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2411,22 +2059,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2489,22 +2121,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader(commandBehavior))
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2528,22 +2144,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2573,22 +2173,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader(commandBehavior))
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2617,22 +2201,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2662,22 +2230,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader(commandBehavior))
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2706,22 +2258,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2748,22 +2284,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2830,22 +2350,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2876,22 +2380,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },
@@ -2922,22 +2410,6 @@ namespace DevLib.Data
                 {
                     using (DbDataReader dbDataReader = command.ExecuteReader())
                     {
-                        bool canClear = true;
-
-                        foreach (DbParameter commandParameter in command.Parameters)
-                        {
-                            if (commandParameter.Direction != ParameterDirection.Input)
-                            {
-                                canClear = false;
-                                break;
-                            }
-                        }
-
-                        if (canClear)
-                        {
-                            this.DisposeCommand(command);
-                        }
-
                         return ToList<T>(dbDataReader);
                     }
                 },

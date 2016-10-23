@@ -709,6 +709,10 @@ namespace DevLib.Data
             catch (Exception e)
             {
                 InternalLogger.Log(e);
+
+                this.DisposeCommand(dbCommand);
+                this.CloseConnection(dbConnection);
+
                 throw;
             }
             finally
@@ -747,6 +751,9 @@ namespace DevLib.Data
             catch (Exception e)
             {
                 InternalLogger.Log(e);
+
+                this.DisposeCommand(dbCommand);
+
                 throw;
             }
             finally

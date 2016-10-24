@@ -256,7 +256,14 @@ namespace DevLib.Data
                 }
                 finally
                 {
-                    dbConnection.Dispose();
+                    try
+                    {
+                        dbConnection.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        InternalLogger.Log(e);
+                    }
                 }
             }
         }

@@ -1778,6 +1778,8 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ExtensionMethods");
 
+            var t1 = "int32".GetType(false, true);
+
             var name1 = "1.txt".RenameFile();
 
             var aa = "abcd".Remove(null, true);

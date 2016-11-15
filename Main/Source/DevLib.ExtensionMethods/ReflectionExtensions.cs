@@ -436,5 +436,49 @@ namespace DevLib.ExtensionMethods
         {
             return source.IsGenericType && source.GetGenericTypeDefinition() == typeof(Nullable<>) && Nullable.GetUnderlyingType(source).CanConvert();
         }
+
+        /// <summary>
+        /// Gets the System.Type with the specified name, specifying whether to perform a case-sensitive search and whether to throw an exception if the type is not found.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="throwOnError">true to throw an exception if the type cannot be found; false to return null.</param>
+        /// <param name="ignoreCase">true to perform a case-insensitive search for typeName, false to perform a case-sensitive search for typeName.</param>
+        /// <returns>The type with the specified name. If the type is not found, the throwOnError parameter specifies whether null is returned or an exception is thrown.</returns>
+        public static Type GetType(this string source, bool throwOnError, bool ignoreCase)
+        {
+            Type result = null;
+
+            try
+            {
+                result = Type.GetType(source, false, ignoreCase);
+            }
+            catch
+            {
+            }
+
+            if (result == null)
+            {
+                var stringComparison = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+
+                try
+                {
+                    result = AppDomain
+                        .CurrentDomain
+                        .GetAssemblies()
+                        .SelectMany(i => i.GetTypes())
+                        .FirstOrDefault(i => i.Name.Equals(source, stringComparison));
+                }
+                catch
+                {
+                }
+            }
+
+            if (result == null && throwOnError)
+            {
+                throw new TypeLoadException();
+            }
+
+            return result;
+        }
     }
 }

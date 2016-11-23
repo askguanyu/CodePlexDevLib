@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <user>
+    <username>orca</username>
+    <realname>Mark S. Rasmussen</realname>
+    <description>hello</description>
+    <articles>
+      <article id="25" name="aa">Handling DBNulls</article>
+      <article id="26">Accessing my privates</article>
+    </articles>
+    <hobbies>
+      <hobby>Fishing</hobby>
+      <hobby>Photography</hobby>
+      <hobby>Work</hobby>
+    </hobbies>
+  </user>
+</root>

@@ -116,6 +116,11 @@ namespace DevLib.Samples
 
                 Benchmark.Run(i =>
                 {
+                    //TestXml();
+                });
+
+                Benchmark.Run(i =>
+                {
                     //TestReflection();
                 });
 
@@ -229,6 +234,13 @@ namespace DevLib.Samples
             }, "DevLib.Samples", 1);
 
             InternalLogger.Log("End");
+        }
+
+        private static void TestXml()
+        {
+            var fluentXml = FluentXml.Load("TestData.xml");
+
+            var a = fluentXml.NodePathValue<bool>("A.B.C[D]");
         }
 
         private static void TestDevLibWeb()
@@ -773,9 +785,13 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test DevLib.ServiceProcess");
 
+            Argument argument = new Argument("-s");
+
             ServiceProcessTestService testService = new ServiceProcessTestService();
 
-            WindowsServiceBase.Run(testService, args);
+            WindowsServiceBase.Run(testService, null, new string[] { "s" });
+
+            //WindowsServiceBase.Run(testService, args);
         }
 
         private static void PrintStartInfo()

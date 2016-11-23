@@ -316,7 +316,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LoggingConfig.xml" />
+    <Content Include="LoggingConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\VS_logo.png" />
   </ItemGroup>
   <ItemGroup>

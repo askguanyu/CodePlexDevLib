@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CD3C498D-DE94-453B-A67A-F2C8BC738C61}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DevLib.Legacy</RootNamespace>
+    <AssemblyName>DevLib.Legacy</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System.Collections.Concurrent.Partitioners\EnumerablePartitioner.cs" />
+    <Compile Include="System.Collections.Concurrent.Partitioners\ListPartitioner.cs" />
+    <Compile Include="System.Collections.Concurrent.Partitioners\UserRangePartitioner.cs" />
+    <Compile Include="System.Collections.Concurrent\BlockingCollection.cs" />
+    <Compile Include="System.Collections.Concurrent\ConcurrentBag.cs" />
+    <Compile Include="System.Collections.Concurrent\ConcurrentDictionary.cs" />
+    <Compile Include="System.Collections.Concurrent\ConcurrentOrderedList.cs" />
+    <Compile Include="System.Collections.Concurrent\ConcurrentQueue.cs" />
+    <Compile Include="System.Collections.Concurrent\ConcurrentStack.cs" />
+    <Compile Include="System.Collections.Concurrent\IProducerConsumerCollection.cs" />
+    <Compile Include="System.Collections.Concurrent\OrderablePartitioner.cs" />
+    <Compile Include="System.Collections.Concurrent\Partitioner.cs" />
+    <Compile Include="System.Collections.Concurrent\SplitOrderedList.cs" />
+    <Compile Include="System.Collections.Generic\CollectionDebuggerView.cs" />
+    <Compile Include="System.Collections.Generic\DefaultEqualityComparer.cs" />
+    <Compile Include="System.Collections.Generic\GenericEqualityComparer.cs" />
+    <Compile Include="System.Collections\IStructuralComparable.cs" />
+    <Compile Include="System.Collections\IStructuralEquatable.cs" />
+    <Compile Include="System.IO\StreamExtensions.cs" />
+    <Compile Include="System.Runtime.CompilerServices\AsyncStateMachineAttribute.cs" />
+    <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilder.cs" />
+    <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilder_T.cs" />
+    <Compile Include="System.Runtime.CompilerServices\AsyncVoidMethodBuilder.cs" />
+    <Compile Include="System.Runtime.CompilerServices\ConfiguredTaskAwaitable.cs" />
+    <Compile Include="System.Runtime.CompilerServices\ConfiguredTaskAwaitable_T.cs" />
+    <Compile Include="System.Runtime.CompilerServices\IAsyncStateMachine.cs" />
+    <Compile Include="System.Runtime.CompilerServices\ICriticalNotifyCompletion.cs" />
+    <Compile Include="System.Runtime.CompilerServices\INotifyCompletion.cs" />
+    <Compile Include="System.Runtime.CompilerServices\StateMachineAttribute.cs" />
+    <Compile Include="System.Runtime.CompilerServices\TaskAwaiter.cs" />
+    <Compile Include="System.Runtime.CompilerServices\TaskAwaiter_T.cs" />
+    <Compile Include="System.Runtime.CompilerServices\YieldAwaitable.cs" />
+    <Compile Include="System.Runtime.ExceptionServices\ExceptionDispatchInfo.cs" />
+    <Compile Include="System.Threading.Tasks\CyclicDeque.cs" />
+    <Compile Include="System.Threading.Tasks\IConcurrentDeque.cs" />
+    <Compile Include="System.Threading.Tasks\PopResult.cs" />
+    <Compile Include="System.Threading.Tasks\SynchronizationContextScheduler.cs" />
+    <Compile Include="System.Threading.Tasks\Task.cs" />
+    <Compile Include="System.Threading.Tasks\TaskActionInvoker.cs" />
+    <Compile Include="System.Threading.Tasks\TaskCanceledException.cs" />
+    <Compile Include="System.Threading.Tasks\TaskCompletionQueue.cs" />
+    <Compile Include="System.Threading.Tasks\TaskCompletionSource.cs" />
+    <Compile Include="System.Threading.Tasks\TaskConstants.cs" />
+    <Compile Include="System.Threading.Tasks\TaskConstants_T.cs" />
+    <Compile Include="System.Threading.Tasks\TaskContinuation.cs" />
+    <Compile Include="System.Threading.Tasks\TaskContinuationOptions.cs" />
+    <Compile Include="System.Threading.Tasks\TaskCreationOptions.cs" />
+    <Compile Include="System.Threading.Tasks\TaskDebuggerView.cs" />
+    <Compile Include="System.Threading.Tasks\TaskExceptionSlot.cs" />
+    <Compile Include="System.Threading.Tasks\TaskExtensions.cs" />
+    <Compile Include="System.Threading.Tasks\TaskExtensionsImpl.cs" />
+    <Compile Include="System.Threading.Tasks\TaskFactory.cs" />
+    <Compile Include="System.Threading.Tasks\TaskFactory_T.cs" />
+    <Compile Include="System.Threading.Tasks\TaskScheduler.cs" />
+    <Compile Include="System.Threading.Tasks\TaskSchedulerException.cs" />
+    <Compile Include="System.Threading.Tasks\TaskStatus.cs" />
+    <Compile Include="System.Threading.Tasks\Task_T.cs" />
+    <Compile Include="System.Threading.Tasks\TpScheduler.cs" />
+    <Compile Include="System.Threading.Tasks\UnobservedTaskExceptionEventArgs.cs" />
+    <Compile Include="System.Threading\AtomicBoolean.cs" />
+    <Compile Include="System.Threading\CancellationToken.cs" />
+    <Compile Include="System.Threading\CancellationTokenRegistration.cs" />
+    <Compile Include="System.Threading\CancellationTokenSource.cs" />
+    <Compile Include="System.Threading\CountdownEvent.cs" />
+    <Compile Include="System.Threading\ManualResetEventSlim.cs" />
+    <Compile Include="System.Threading\SpinWait.cs" />
+    <Compile Include="System.Threading\Watch.cs" />
+    <Compile Include="System\AggregateException.cs" />
+    <Compile Include="System\Funcs.cs" />
+    <Compile Include="System\Lazy.cs" />
+    <Compile Include="System\LazyThreadSafetyMode.cs" />
+    <Compile Include="System\OperationCanceledException.cs" />
+    <Compile Include="System\Tuple.cs" />
+    <Compile Include="System\Tuples.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

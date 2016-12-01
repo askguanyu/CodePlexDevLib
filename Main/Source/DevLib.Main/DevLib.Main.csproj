@@ -117,6 +117,10 @@
       <Project>{BB64005D-AA1A-4F60-B1B0-7295D56750A8}</Project>
       <Name>DevLib.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Legacy\DevLib.Legacy.csproj">
+      <Project>{CD3C498D-DE94-453B-A67A-F2C8BC738C61}</Project>
+      <Name>DevLib.Legacy</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Logging.Viewer\DevLib.Logging.Viewer.csproj">
       <Project>{CDD22D14-B977-4F3E-A5DB-CD00D88398F0}</Project>
       <Name>DevLib.Logging.Viewer</Name>
@@ -156,6 +160,10 @@
     <ProjectReference Include="..\DevLib.Serialization\DevLib.Serialization.csproj">
       <Project>{E263E10B-9DF6-44F8-9E58-34338316F08E}</Project>
       <Name>DevLib.Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.ServiceBus\DevLib.ServiceBus.csproj">
+      <Project>{E78F8FCB-15CC-4C28-9614-FE1D3BAA27D3}</Project>
+      <Name>DevLib.ServiceBus</Name>
     </ProjectReference>
     <ProjectReference Include="..\DevLib.ServiceModel.Extensions\DevLib.ServiceModel.Extensions.csproj">
       <Project>{78F68CF9-8C7A-4E4A-8ACF-897AF942CD3B}</Project>

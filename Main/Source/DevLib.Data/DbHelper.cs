@@ -62,22 +62,22 @@ namespace DevLib.Data
 
             if (this.ProviderFactory is SqlClientFactory)
             {
-                this.DiscoverParametersAction = command => SqlCommandBuilder.DeriveParameters((SqlCommand)command);
-                this.GetXmlReaderFunc = command => ((SqlCommand)command).ExecuteXmlReader();
+                this.DiscoverParametersAction = this.DiscoverParametersSql;
+                this.GetXmlReaderFunc = this.GetXmlReaderSql;
             }
             else if (this.ProviderFactory is OleDbFactory)
             {
-                this.DiscoverParametersAction = command => OleDbCommandBuilder.DeriveParameters((OleDbCommand)command);
+                this.DiscoverParametersAction = this.DiscoverParametersOle;
                 this.GetXmlReaderFunc = null;
             }
             else if (this.ProviderFactory is OdbcFactory)
             {
-                this.DiscoverParametersAction = command => OdbcCommandBuilder.DeriveParameters((OdbcCommand)command);
+                this.DiscoverParametersAction = this.DiscoverParametersOdbc;
                 this.GetXmlReaderFunc = null;
             }
             else if (this.ProviderFactory is OracleClientFactory)
             {
-                this.DiscoverParametersAction = command => OracleCommandBuilder.DeriveParameters((OracleCommand)command);
+                this.DiscoverParametersAction = this.DiscoverParametersOracle;
                 this.GetXmlReaderFunc = null;
             }
             else
@@ -102,19 +102,19 @@ namespace DevLib.Data
             switch (provider)
             {
                 case DbProvider.SqlServer:
-                    this.DiscoverParametersAction = command => SqlCommandBuilder.DeriveParameters((SqlCommand)command);
-                    this.GetXmlReaderFunc = command => ((SqlCommand)command).ExecuteXmlReader();
+                    this.DiscoverParametersAction = this.DiscoverParametersSql;
+                    this.GetXmlReaderFunc = this.GetXmlReaderSql;
                     break;
                 case DbProvider.OleDB:
-                    this.DiscoverParametersAction = command => OleDbCommandBuilder.DeriveParameters((OleDbCommand)command);
+                    this.DiscoverParametersAction = this.DiscoverParametersOle;
                     this.GetXmlReaderFunc = null;
                     break;
                 case DbProvider.ODBC:
-                    this.DiscoverParametersAction = command => OdbcCommandBuilder.DeriveParameters((OdbcCommand)command);
+                    this.DiscoverParametersAction = this.DiscoverParametersOdbc;
                     this.GetXmlReaderFunc = null;
                     break;
                 case DbProvider.Oracle:
-                    this.DiscoverParametersAction = command => OracleCommandBuilder.DeriveParameters((OracleCommand)command);
+                    this.DiscoverParametersAction = this.DiscoverParametersOracle;
                     this.GetXmlReaderFunc = null;
                     break;
                 default:
@@ -192,6 +192,52 @@ namespace DevLib.Data
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Retrieves parameter information from the stored procedure specified in the System.Data.SqlClient.SqlCommand and populates the System.Data.SqlClient.SqlCommand.Parameters collection of the specified System.Data.SqlClient.SqlCommand object.
+        /// </summary>
+        /// <param name="command">The System.Data.SqlClient.SqlCommand referencing the stored procedure from which the parameter information is to be derived. The derived parameters are added to the System.Data.SqlClient.SqlCommand.Parameters collection of the System.Data.SqlClient.SqlCommand.</param>
+        public void DiscoverParametersSql(DbCommand command)
+        {
+            SqlCommandBuilder.DeriveParameters((SqlCommand)command);
+        }
+
+        /// <summary>
+        /// Retrieves parameter information from the stored procedure specified in the System.Data.OleDb.OleDbCommand and populates the System.Data.OleDb.OleDbCommand.Parameters collection of the specified System.Data.OleDb.OleDbCommand object.
+        /// </summary>
+        /// <param name="command">The System.Data.OleDb.OleDbCommand referencing the stored procedure from which the parameter information is to be derived. The derived parameters are added to the System.Data.OleDb.OleDbCommand.Parameters collection of the System.Data.OleDb.OleDbCommand.</param>
+        public void DiscoverParametersOle(DbCommand command)
+        {
+            OleDbCommandBuilder.DeriveParameters((OleDbCommand)command);
+        }
+
+        /// <summary>
+        /// Retrieves parameter information from the stored procedure specified in the System.Data.Odbc.OdbcCommand and populates the System.Data.Odbc.OdbcCommand.Parameters collection of the specified System.Data.Odbc.OdbcCommand object.
+        /// </summary>
+        /// <param name="command">The System.Data.Odbc.OdbcCommand referencing the stored procedure from which the parameter information is to be derived. The derived parameters are added to the System.Data.Odbc.OdbcCommand.Parameters collection of the System.Data.Odbc.OdbcCommand.</param>
+        public void DiscoverParametersOdbc(DbCommand command)
+        {
+            OdbcCommandBuilder.DeriveParameters((OdbcCommand)command);
+        }
+
+        /// <summary>
+        /// Retrieves parameter information from the stored procedure specified in the System.Data.OracleClient.OracleCommand and populates the System.Data.OracleClient.OracleCommand.Parameters collection of the specified System.Data.OracleClient.OracleCommand object.
+        /// </summary>
+        /// <param name="command">The System.Data.OracleClient.OracleCommand referencing the stored procedure from which the parameter information is to be derived. The derived parameters are added to the System.Data.OracleClient.OracleCommand.Parameters collection of the System.Data.OracleClient.OracleCommand.</param>
+        public void DiscoverParametersOracle(DbCommand command)
+        {
+            OracleCommandBuilder.DeriveParameters((OracleCommand)command);
+        }
+
+        /// <summary>
+        /// Sends the System.Data.SqlClient.SqlCommand.CommandText to the System.Data.SqlClient.SqlCommand.Connection and builds an System.Xml.XmlReader object.
+        /// </summary>
+        /// <param name="command">The Sql command.</param>
+        /// <returns>An System.Xml.XmlReader object.</returns>
+        public XmlReader GetXmlReaderSql(DbCommand command)
+        {
+            return ((SqlCommand)command).ExecuteXmlReader();
         }
 
         /// <summary>

@@ -1924,6 +1924,48 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.Net");
 
+            // rangeA.Begin is "192.168.0.0", and rangeA.End is "192.168.0.255".
+            var rangeA = IPAddressRange.Parse("192.168.0.0/255.255.255.0");
+            var a1=rangeA.Contains(IPAddress.Parse("192.168.0.34")); // is True.
+            var a2 = rangeA.Contains(IPAddress.Parse("192.168.10.1")); // is False.
+            var a3 = rangeA.ToCidrString(); // is 192.168.0.0/24
+
+            // rangeB.Begin is "192.168.0.10", and rangeB.End is "192.168.10.20".
+            var rangeB = IPAddressRange.Parse("192.168.0.10 - 192.168.10.20");
+            var a4 = rangeB.Contains(IPAddress.Parse("192.168.3.45")); // is True.
+            var a5 = rangeB.Contains(IPAddress.Parse("192.168.0.9")); // is False.
+
+            var rangeC = IPAddressRange.Parse("fe80::/10"); // Support CIDR expression and IPv6.
+            var a6 = rangeC.Contains(IPAddress.Parse("fe80::d503:4ee:3882:c586%3")); // is True.
+            var a7 = rangeC.Contains(IPAddress.Parse("::1")); // is False.
+
+            // "Contains()" method also support IPAddressRange argument.
+            var rangeD1 = IPAddressRange.Parse("192.168.0.0/16");
+            var rangeD2 = IPAddressRange.Parse("192.168.10.0/24");
+            var a8 = rangeD1.Contains(rangeD2); // is True.
+
+            // IEnumerable<IPAddress> support, it's lazy evaluation.
+            //foreach (var ip in IPAddressRange.Parse("192.168.0.1/23"))
+            //{
+            //    Console.WriteLine(ip);
+            //}
+
+            // Constructors from IPAddress objects.
+            var ipBegin = IPAddress.Parse("192.168.0.1");
+            var ipEnd = IPAddress.Parse("192.168.0.128");
+            var ipSubnet = IPAddress.Parse("255.255.255.0");
+
+            var rangeE = new IPAddressRange(); // This means "0.0.0.0/0".
+            var rangeF = new IPAddressRange(ipBegin, ipEnd);
+            var rangeG = new IPAddressRange(ipBegin, maskLength: 24);
+            var rangeH = new IPAddressRange(ipBegin, IPAddressRange.GetSubnetMaskLength(ipSubnet));
+
+            // Calculates Cidr subnets
+            var rangeI = IPAddressRange.Parse("192.168.0.0-192.168.0.255");
+            var rangeJ = IPAddressRange.Parse("192.168.0.0/24");
+
+            var a9 = rangeI.ToCidrString();  // is 192.168.0.0/24
+
             #region AsyncSocket
 
             try

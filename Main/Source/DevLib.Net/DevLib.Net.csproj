@@ -45,6 +45,8 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Bitwise.cs" />
+    <Compile Include="IPAddressRange.cs" />
     <Compile Include="NativeAPI\NativeMethods.cs">
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </Compile>

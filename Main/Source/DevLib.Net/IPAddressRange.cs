@@ -300,6 +300,32 @@ namespace DevLib.Net
         }
 
         /// <summary>
+        /// Determines whether the current IPAddressRange contains the specified ip address.
+        /// </summary>
+        /// <param name="ipAddressString">The ip address.</param>
+        /// <returns>true if the current IPAddressRange contains the specified ip address; otherwise, false.</returns>
+        public bool Contains(string ipAddressString)
+        {
+            if (string.IsNullOrEmpty(ipAddressString))
+            {
+                throw new ArgumentNullException("ipAddressString");
+            }
+
+            var ipAddress = IPAddress.Parse(ipAddressString);
+
+            if (ipAddress.AddressFamily != this.Begin.AddressFamily)
+            {
+                return false;
+            }
+
+            var adrBytes = ipAddress.GetAddressBytes();
+
+            return
+                Bitwise.GreaterEqual(this.Begin.GetAddressBytes(), adrBytes)
+                && Bitwise.LessEqual(this.End.GetAddressBytes(), adrBytes);
+        }
+
+        /// <summary>
         /// Determines whether the current IPAddressRange contains the specified ip address range.
         /// </summary>
         /// <param name="ipAddressRange">The ip address range.</param>

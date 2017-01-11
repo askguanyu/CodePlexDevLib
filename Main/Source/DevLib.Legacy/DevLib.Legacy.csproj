@@ -119,17 +119,7 @@
     <Compile Include="System\Tuple.cs" />
     <Compile Include="System\Tuples.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="System.Collections.Concurrent.Partitioners\" />
-    <Folder Include="System.Collections.Concurrent\" />
-    <Folder Include="System.Collections.Generic\" />
-    <Folder Include="System.Collections\" />
-    <Folder Include="System.IO\" />
-    <Folder Include="System.Runtime.CompilerServices\" />
-    <Folder Include="System.Runtime.ExceptionServices\" />
-    <Folder Include="System.Threading.Tasks\" />
-    <Folder Include="System.Threading\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

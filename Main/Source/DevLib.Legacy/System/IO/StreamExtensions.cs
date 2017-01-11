@@ -1,5 +1,4 @@
-﻿#if NET35
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Net;
@@ -108,13 +107,15 @@ namespace System.IO
 
 #else
 
-        private static async Task CopyToAsync(Stream stream, Stream destination, byte[] buffer, CancellationToken cancellationToken)
+        private static Task CopyToAsync(Stream stream, Stream destination, byte[] buffer, CancellationToken cancellationToken)
         {
             int bytesRead;
-            while ((bytesRead = await ReadAsync(stream, buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) != 0)
+            while ((bytesRead = ReadAsync(stream, buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult()) != 0)
             {
-                await destination.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+                destination.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
             }
+
+            return Task.FromResult(0);
         }
 
 #endif
@@ -221,4 +222,3 @@ namespace System.IO
         }
     }
 }
-#endif

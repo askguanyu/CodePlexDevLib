@@ -17,6 +17,9 @@ echo y | DevLib.ExtensionProperties.Publish.Debug.bat
 echo y | DevLib.Input.Publish.Debug.bat
 echo y | DevLib.IO.Publish.Debug.bat
 echo y | DevLib.Ioc.Publish.Debug.bat
+echo y | DevLib.Legacy.Publish.Debug.bat
+echo y | DevLib.Legacy.Async.Publish.Debug.bat
+echo y | DevLib.Legacy.Linq.Publish.Debug.bat
 echo y | DevLib.Logging.Publish.Debug.bat
 echo y | DevLib.Logging.Viewer.Publish.Debug.bat
 echo y | DevLib.Management.Publish.Debug.bat

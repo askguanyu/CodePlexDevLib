@@ -15,12 +15,12 @@ It is time to boost your productivity.
         </summary>
         <description>https://devlib.codeplex.com/
 
-.NET 4.0 features for .NET 2.0
+Async Await for .NET 4.0
 
 DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns. It provides a comprehensive set of features that save development time, minimize costs, reduce the use of precious test resources, and decrease the overall maintenance effort.
 
 It is time to boost your productivity.
         </description>
-        <tags>legacy .net Action Func Tuple System.Collections.Concurrent await async Task</tags>
+        <tags>legacy .net await async Task</tags>
     </metadata>
 </package>

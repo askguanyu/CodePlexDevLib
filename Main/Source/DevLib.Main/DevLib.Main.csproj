@@ -117,6 +117,14 @@
       <Project>{BB64005D-AA1A-4F60-B1B0-7295D56750A8}</Project>
       <Name>DevLib.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.Legacy.Async\DevLib.Legacy.Async.csproj">
+      <Project>{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}</Project>
+      <Name>DevLib.Legacy.Async</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DevLib.Legacy.Linq\DevLib.Legacy.Linq.csproj">
+      <Project>{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}</Project>
+      <Name>DevLib.Legacy.Linq</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.Legacy\DevLib.Legacy.csproj">
       <Project>{CD3C498D-DE94-453B-A67A-F2C8BC738C61}</Project>
       <Name>DevLib.Legacy</Name>

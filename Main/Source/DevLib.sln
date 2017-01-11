@@ -119,9 +119,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.ServiceBus", "DevLib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Legacy", "DevLib.Legacy\DevLib.Legacy.csproj", "{CD3C498D-DE94-453B-A67A-F2C8BC738C61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Legacy.Linq", "DevLib.Legacy.Linq\DevLib.Legacy.Linq.csproj", "{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLib.Legacy.Async", "DevLib.Legacy.Async\DevLib.Legacy.Async.csproj", "{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 51
+		SccNumberOfProjects = 53
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
@@ -282,6 +286,12 @@ Global
 		SccProjectUniqueName50 = DevLib.Legacy\\DevLib.Legacy.csproj
 		SccProjectName50 = DevLib.Legacy
 		SccLocalPath50 = DevLib.Legacy
+		SccProjectUniqueName51 = DevLib.Legacy.Linq\\DevLib.Legacy.Linq.csproj
+		SccProjectName51 = DevLib.Legacy.Linq
+		SccLocalPath51 = DevLib.Legacy.Linq
+		SccProjectUniqueName52 = DevLib.Legacy.Async\\DevLib.Legacy.Async.csproj
+		SccProjectName52 = DevLib.Legacy.Async
+		SccLocalPath52 = DevLib.Legacy.Async
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = DevLib.vsmdi
@@ -802,6 +812,26 @@ Global
 		{CD3C498D-DE94-453B-A67A-F2C8BC738C61}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{CD3C498D-DE94-453B-A67A-F2C8BC738C61}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CD3C498D-DE94-453B-A67A-F2C8BC738C61}.Release|x86.ActiveCfg = Release|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C48D92E2-0224-4D04-94EC-A0989ACAF0E2}.Release|x86.ActiveCfg = Release|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CDCA8BBD-082F-48B1-A9C1-F8AFF0107769}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

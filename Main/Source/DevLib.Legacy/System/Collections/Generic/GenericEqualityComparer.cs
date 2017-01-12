@@ -1,4 +1,4 @@
-﻿namespace System.Collections.Generic.Couchbase
+﻿namespace System.Collections.Generic.DevLib
 {
     [Serializable]
     public sealed class GenericEqualityComparer<T> : IEqualityComparer, IEqualityComparer<T> where T : IEquatable<T>

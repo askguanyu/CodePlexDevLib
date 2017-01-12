@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace System.Threading.Tasks
 {
     [Serializable]
-    public class TaskCanceledException : System.Couchbase.OperationCanceledException
+    public class TaskCanceledException : System.DevLib.OperationCanceledException
     {
         private readonly Task task;
 

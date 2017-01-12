@@ -111,7 +111,7 @@ namespace System.Threading
         public void ThrowIfCancellationRequested()
         {
             if (source != null && source.IsCancellationRequested)
-                throw new System.Couchbase.OperationCanceledException(this);
+                throw new System.DevLib.OperationCanceledException(this);
         }
     }
 }

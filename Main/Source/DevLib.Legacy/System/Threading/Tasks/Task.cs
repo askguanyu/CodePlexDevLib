@@ -390,7 +390,7 @@ namespace System.Threading.Tasks
                 {
                     InnerInvoke();
                 }
-                catch (System.Couchbase.OperationCanceledException oce)
+                catch (System.DevLib.OperationCanceledException oce)
                 {
                     if (token != CancellationToken.None && oce.CancellationToken == token)
                         CancelReal();

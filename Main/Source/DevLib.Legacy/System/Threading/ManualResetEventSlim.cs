@@ -160,7 +160,7 @@ namespace System.Threading
                 {
                     var result = WaitHandle.WaitAny(new[] { handle, cancellationToken.WaitHandle }, millisecondsTimeout, false);
                     if (result == 1)
-                        throw new System.Couchbase.OperationCanceledException(cancellationToken);
+                        throw new System.DevLib.OperationCanceledException(cancellationToken);
                     if (result == WaitHandle.WaitTimeout)
                         return false;
                 }

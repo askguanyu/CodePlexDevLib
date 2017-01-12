@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Threading;
 
-namespace System.Couchbase
+namespace System.DevLib
 {
     [Serializable]
     [ComVisible(true)]

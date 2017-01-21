@@ -106,24 +106,21 @@ namespace DevLib.ExtensionMethods
         /// <param name="source">Source Type which inherit IEnumerable interface.</param>
         /// <param name="lengths">An array of 32-bit integers that represent the size of each dimension of the list to create.</param>
         /// <returns>A reference to the newly created IList object.</returns>
-        public static IList CreateIList(this Type source, params int[] lengths)
+        public static IList CreateIList(this Type source, params object[] lengths)
         {
-            if (source != typeof(string) && source.GetInterface("IEnumerable") != null && source.GetInterface("IDictionary") == null)
+            if (source.IsEnumerable() && !source.IsDictionary())
             {
                 if (source.IsArray)
                 {
-                    return Array.CreateInstance(source.GetElementType(), lengths);
+                    return lengths.IsNullOrEmpty()
+                        ? Array.CreateInstance(source.GetElementType(), 0)
+                        : Array.CreateInstance(source.GetElementType(), lengths.Select(i => (long)i).ToArray());
                 }
                 else
                 {
-                    if (lengths == null || lengths.Length == 0)
-                    {
-                        return (IList)Activator.CreateInstance(source);
-                    }
-                    else
-                    {
-                        return (IList)Activator.CreateInstance(source, lengths[0]);
-                    }
+                    return lengths.IsNullOrEmpty()
+                        ? (IList)Activator.CreateInstance(source)
+                        : (IList)Activator.CreateInstance(source, lengths[0]);
                 }
             }
 

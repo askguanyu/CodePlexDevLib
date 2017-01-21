@@ -158,12 +158,12 @@
         }
 
         [TestMethod()]
-        public void When_IsNotEmpty()
+        public void When_IsNotNullNorEmpty()
         {
             List<string> source = null;
             bool expected = false;
             bool actual;
-            actual = CollectionExtensions.IsNotEmpty(source);
+            actual = CollectionExtensions.IsNotNullNorEmpty(source);
 
             Assert.AreEqual(expected, actual);
         }

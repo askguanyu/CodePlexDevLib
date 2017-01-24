@@ -18,23 +18,22 @@ namespace DevLib.Web
     /// </summary>
     internal static class JsonSerializer
     {
-        private const int TOKEN_NONE = 0;
-        private const int TOKEN_CURLY_OPEN = 1;
-        private const int TOKEN_CURLY_CLOSE = 2;
-        private const int TOKEN_SQUARED_OPEN = 3;
-        private const int TOKEN_SQUARED_CLOSE = 4;
+        private const int BUILDER_CAPACITY = 2000;
         private const int TOKEN_COLON = 5;
         private const int TOKEN_COMMA = 6;
-        private const int TOKEN_STRING = 7;
-        private const int TOKEN_NUMBER = 8;
-        private const int TOKEN_TRUE = 9;
+        private const int TOKEN_CURLY_CLOSE = 2;
+        private const int TOKEN_CURLY_OPEN = 1;
         private const int TOKEN_FALSE = 10;
+        private const int TOKEN_NONE = 0;
         private const int TOKEN_NULL = 11;
-        private const int BUILDER_CAPACITY = 2000;
-
-        private static readonly char[] EscapeTable;
+        private const int TOKEN_NUMBER = 8;
+        private const int TOKEN_SQUARED_CLOSE = 4;
+        private const int TOKEN_SQUARED_OPEN = 3;
+        private const int TOKEN_STRING = 7;
+        private const int TOKEN_TRUE = 9;
         private static readonly char[] EscapeCharacters = new char[] { '"', '\\', '\b', '\f', '\n', '\r', '\t' };
         private static readonly string EscapeCharactersString = new string(EscapeCharacters);
+        private static readonly char[] EscapeTable;
         private static PocoJsonSerializerStrategy CurrentJsonSerializerStrategy = new PocoJsonSerializerStrategy();
 
         /// <summary>
@@ -53,18 +52,6 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Serializes the object.
-        /// </summary>
-        /// <param name="json">The JSON string.</param>
-        /// <returns>A JSON encoded string, or null if object 'json' is not serializable.</returns>
-        public static string Serialize(object json)
-        {
-            StringBuilder builder = new StringBuilder(BUILDER_CAPACITY);
-            bool success = SerializeValue(CurrentJsonSerializerStrategy, json, builder);
-            return success ? builder.ToString() : null;
-        }
-
-        /// <summary>
         /// Deserializes the specified json.
         /// </summary>
         /// <param name="json">The json.</param>
@@ -79,30 +66,6 @@ namespace DevLib.Web
             }
 
             throw new SerializationException("Invalid JSON string");
-        }
-
-        /// <summary>
-        /// Try to deserialize the specified json.
-        /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="obj">The object.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        public static bool TryDeserialize(string json, out object obj)
-        {
-            bool success = true;
-
-            if (json != null)
-            {
-                char[] charArray = json.ToCharArray();
-                int index = 0;
-                obj = ParseValue(charArray, ref index, ref success);
-            }
-            else
-            {
-                obj = null;
-            }
-
-            return success;
         }
 
         /// <summary>
@@ -199,6 +162,296 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Serializes the object.
+        /// </summary>
+        /// <param name="json">The JSON string.</param>
+        /// <returns>A JSON encoded string, or null if object 'json' is not serializable.</returns>
+        public static string Serialize(object json)
+        {
+            StringBuilder builder = new StringBuilder(BUILDER_CAPACITY);
+            bool success = SerializeValue(CurrentJsonSerializerStrategy, json, builder);
+            return success ? builder.ToString() : null;
+        }
+
+        /// <summary>
+        /// Try to deserialize the specified json.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="obj">The object.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        public static bool TryDeserialize(string json, out object obj)
+        {
+            bool success = true;
+
+            if (json != null)
+            {
+                char[] charArray = json.ToCharArray();
+                int index = 0;
+                obj = ParseValue(charArray, ref index, ref success);
+            }
+            else
+            {
+                obj = null;
+            }
+
+            return success;
+        }
+
+        /// <summary>
+        /// Converts from utf32.
+        /// </summary>
+        /// <param name="utf32">The utf32.</param>
+        /// <returns>The System.String.</returns>
+        private static string ConvertFromUtf32(int utf32)
+        {
+            if (utf32 < 0 || utf32 > 0x10FFFF)
+            {
+                throw new ArgumentOutOfRangeException("utf32", "The argument must be from 0 to 0x10FFFF.");
+            }
+
+            if (utf32 >= 0xD800 && utf32 <= 0xDFFF)
+            {
+                throw new ArgumentOutOfRangeException("utf32", "The argument must not be in surrogate pair range.");
+            }
+
+            if (utf32 < 0x10000)
+            {
+                return new string((char)utf32, 1);
+            }
+
+            utf32 -= 0x10000;
+            return new string(new char[] { (char)((utf32 >> 10) + 0xD800), (char)((utf32 % 0x0400) + 0xDC00) });
+        }
+
+        /// <summary>
+        /// Gets the last index of number.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="index">The index.</param>
+        /// <returns>The System.Int32.</returns>
+        private static int GetLastIndexOfNumber(char[] json, int index)
+        {
+            int lastIndex;
+
+            for (lastIndex = index; lastIndex < json.Length; lastIndex++)
+            {
+                if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1)
+                {
+                    break;
+                }
+            }
+
+            return lastIndex - 1;
+        }
+
+        /// <summary>
+        /// Determines if a given object is numeric in any way (can be integer, double, null, etc).
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private static bool IsNumeric(object value)
+        {
+            if (value is sbyte
+                || value is byte
+                || value is short
+                || value is ushort
+                || value is int
+                || value is uint
+                || value is long
+                || value is ulong
+                || value is float
+                || value is float
+                || value is double
+                || value is decimal)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Looks the ahead.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="index">The index.</param>
+        /// <returns>The System.Int32.</returns>
+        private static int LookAhead(char[] json, int index)
+        {
+            int saveIndex = index;
+            return NextToken(json, ref saveIndex);
+        }
+
+        /// <summary>
+        /// Next token.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="index">The index.</param>
+        /// <returns>The System.Int32.</returns>
+        private static int NextToken(char[] json, ref int index)
+        {
+            RemoveWhitespace(json, ref index);
+
+            if (index == json.Length)
+            {
+                return TOKEN_NONE;
+            }
+
+            char c = json[index];
+            index++;
+
+            switch (c)
+            {
+                case '{':
+                    return TOKEN_CURLY_OPEN;
+
+                case '}':
+                    return TOKEN_CURLY_CLOSE;
+
+                case '[':
+                    return TOKEN_SQUARED_OPEN;
+
+                case ']':
+                    return TOKEN_SQUARED_CLOSE;
+
+                case ',':
+                    return TOKEN_COMMA;
+
+                case '"':
+                    return TOKEN_STRING;
+
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '-':
+                    return TOKEN_NUMBER;
+
+                case ':':
+                    return TOKEN_COLON;
+            }
+
+            index--;
+            int remainingLength = json.Length - index;
+
+            if (remainingLength >= 5)
+            {
+                if (json[index] == 'f' && json[index + 1] == 'a' && json[index + 2] == 'l' && json[index + 3] == 's' && json[index + 4] == 'e')
+                {
+                    index += 5;
+                    return TOKEN_FALSE;
+                }
+            }
+
+            if (remainingLength >= 4)
+            {
+                if (json[index] == 't' && json[index + 1] == 'r' && json[index + 2] == 'u' && json[index + 3] == 'e')
+                {
+                    index += 4;
+                    return TOKEN_TRUE;
+                }
+            }
+
+            if (remainingLength >= 4)
+            {
+                if (json[index] == 'n' && json[index + 1] == 'u' && json[index + 2] == 'l' && json[index + 3] == 'l')
+                {
+                    index += 4;
+                    return TOKEN_NULL;
+                }
+            }
+
+            return TOKEN_NONE;
+        }
+
+        /// <summary>
+        /// Parses the array.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="index">The index.</param>
+        /// <param name="success">true if succeeded; otherwise, false.</param>
+        /// <returns>The JsonArray.</returns>
+        private static JsonArray ParseArray(char[] json, ref int index, ref bool success)
+        {
+            JsonArray array = new JsonArray();
+
+            NextToken(json, ref index);
+
+            bool done = false;
+
+            while (!done)
+            {
+                int token = LookAhead(json, index);
+
+                if (token == TOKEN_NONE)
+                {
+                    success = false;
+                    return null;
+                }
+                else if (token == TOKEN_COMMA)
+                {
+                    NextToken(json, ref index);
+                }
+                else if (token == TOKEN_SQUARED_CLOSE)
+                {
+                    NextToken(json, ref index);
+                    break;
+                }
+                else
+                {
+                    object value = ParseValue(json, ref index, ref success);
+
+                    if (!success)
+                    {
+                        return null;
+                    }
+
+                    array.Add(value);
+                }
+            }
+
+            return array;
+        }
+
+        /// <summary>
+        /// Parses the number.
+        /// </summary>
+        /// <param name="json">The json.</param>
+        /// <param name="index">The index.</param>
+        /// <param name="success">true if succeeded; otherwise, false.</param>
+        /// <returns>The System.Object.</returns>
+        private static object ParseNumber(char[] json, ref int index, ref bool success)
+        {
+            RemoveWhitespace(json, ref index);
+            int lastIndex = GetLastIndexOfNumber(json, index);
+            int charLength = (lastIndex - index) + 1;
+            object returnNumber;
+            string newString = new string(json, index, charLength);
+
+            if (newString.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1 || newString.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
+            {
+                double number;
+                success = double.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+                returnNumber = number;
+            }
+            else
+            {
+                long number;
+                success = long.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+                returnNumber = number;
+            }
+
+            index = lastIndex + 1;
+            return returnNumber;
+        }
+
+        /// <summary>
         /// Parses the object.
         /// </summary>
         /// <param name="json">The json.</param>
@@ -207,7 +460,8 @@ namespace DevLib.Web
         /// <returns>The IDictionary.</returns>
         private static IDictionary<string, object> ParseObject(char[] json, ref int index, ref bool success)
         {
-            IDictionary<string, object> table = new JsonObject();
+            IDictionary<string, object> table = new JsonObject(StringComparer.OrdinalIgnoreCase);
+
             int token;
 
             NextToken(json, ref index);
@@ -263,91 +517,6 @@ namespace DevLib.Web
             }
 
             return table;
-        }
-
-        /// <summary>
-        /// Parses the array.
-        /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="index">The index.</param>
-        /// <param name="success">true if succeeded; otherwise, false.</param>
-        /// <returns>The JsonArray.</returns>
-        private static JsonArray ParseArray(char[] json, ref int index, ref bool success)
-        {
-            JsonArray array = new JsonArray();
-
-            NextToken(json, ref index);
-
-            bool done = false;
-
-            while (!done)
-            {
-                int token = LookAhead(json, index);
-
-                if (token == TOKEN_NONE)
-                {
-                    success = false;
-                    return null;
-                }
-                else if (token == TOKEN_COMMA)
-                {
-                    NextToken(json, ref index);
-                }
-                else if (token == TOKEN_SQUARED_CLOSE)
-                {
-                    NextToken(json, ref index);
-                    break;
-                }
-                else
-                {
-                    object value = ParseValue(json, ref index, ref success);
-
-                    if (!success)
-                    {
-                        return null;
-                    }
-
-                    array.Add(value);
-                }
-            }
-
-            return array;
-        }
-
-        /// <summary>
-        /// Parses the value.
-        /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="index">The index.</param>
-        /// <param name="success">true if succeeded; otherwise, false.</param>
-        /// <returns>The System.Object.</returns>
-        private static object ParseValue(char[] json, ref int index, ref bool success)
-        {
-            switch (LookAhead(json, index))
-            {
-                case TOKEN_STRING:
-                    return ParseString(json, ref index, ref success);
-                case TOKEN_NUMBER:
-                    return ParseNumber(json, ref index, ref success);
-                case TOKEN_CURLY_OPEN:
-                    return ParseObject(json, ref index, ref success);
-                case TOKEN_SQUARED_OPEN:
-                    return ParseArray(json, ref index, ref success);
-                case TOKEN_TRUE:
-                    NextToken(json, ref index);
-                    return true;
-                case TOKEN_FALSE:
-                    NextToken(json, ref index);
-                    return false;
-                case TOKEN_NULL:
-                    NextToken(json, ref index);
-                    return null;
-                case TOKEN_NONE:
-                    break;
-            }
-
-            success = false;
-            return null;
         }
 
         /// <summary>
@@ -485,82 +654,46 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Converts from utf32.
-        /// </summary>
-        /// <param name="utf32">The utf32.</param>
-        /// <returns>The System.String.</returns>
-        private static string ConvertFromUtf32(int utf32)
-        {
-            if (utf32 < 0 || utf32 > 0x10FFFF)
-            {
-                throw new ArgumentOutOfRangeException("utf32", "The argument must be from 0 to 0x10FFFF.");
-            }
-
-            if (utf32 >= 0xD800 && utf32 <= 0xDFFF)
-            {
-                throw new ArgumentOutOfRangeException("utf32", "The argument must not be in surrogate pair range.");
-            }
-
-            if (utf32 < 0x10000)
-            {
-                return new string((char)utf32, 1);
-            }
-
-            utf32 -= 0x10000;
-            return new string(new char[] { (char)((utf32 >> 10) + 0xD800), (char)((utf32 % 0x0400) + 0xDC00) });
-        }
-
-        /// <summary>
-        /// Parses the number.
+        /// Parses the value.
         /// </summary>
         /// <param name="json">The json.</param>
         /// <param name="index">The index.</param>
         /// <param name="success">true if succeeded; otherwise, false.</param>
         /// <returns>The System.Object.</returns>
-        private static object ParseNumber(char[] json, ref int index, ref bool success)
+        private static object ParseValue(char[] json, ref int index, ref bool success)
         {
-            RemoveWhitespace(json, ref index);
-            int lastIndex = GetLastIndexOfNumber(json, index);
-            int charLength = (lastIndex - index) + 1;
-            object returnNumber;
-            string newString = new string(json, index, charLength);
-
-            if (newString.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1 || newString.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
+            switch (LookAhead(json, index))
             {
-                double number;
-                success = double.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
-                returnNumber = number;
-            }
-            else
-            {
-                long number;
-                success = long.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
-                returnNumber = number;
-            }
+                case TOKEN_STRING:
+                    return ParseString(json, ref index, ref success);
 
-            index = lastIndex + 1;
-            return returnNumber;
-        }
+                case TOKEN_NUMBER:
+                    return ParseNumber(json, ref index, ref success);
 
-        /// <summary>
-        /// Gets the last index of number.
-        /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="index">The index.</param>
-        /// <returns>The System.Int32.</returns>
-        private static int GetLastIndexOfNumber(char[] json, int index)
-        {
-            int lastIndex;
+                case TOKEN_CURLY_OPEN:
+                    return ParseObject(json, ref index, ref success);
 
-            for (lastIndex = index; lastIndex < json.Length; lastIndex++)
-            {
-                if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1)
-                {
+                case TOKEN_SQUARED_OPEN:
+                    return ParseArray(json, ref index, ref success);
+
+                case TOKEN_TRUE:
+                    NextToken(json, ref index);
+                    return true;
+
+                case TOKEN_FALSE:
+                    NextToken(json, ref index);
+                    return false;
+
+                case TOKEN_NULL:
+                    NextToken(json, ref index);
+                    return null;
+
+                case TOKEN_NONE:
                     break;
-                }
             }
 
-            return lastIndex - 1;
+            success = false;
+            return null;
         }
 
         /// <summary>
@@ -580,96 +713,175 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Looks the ahead.
+        /// Serializes the array.
         /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="index">The index.</param>
-        /// <returns>The System.Int32.</returns>
-        private static int LookAhead(char[] json, int index)
+        /// <param name="jsonSerializerStrategy">The json serializer strategy.</param>
+        /// <param name="sourceArray">An array.</param>
+        /// <param name="builder">The builder.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private static bool SerializeArray(PocoJsonSerializerStrategy jsonSerializerStrategy, IEnumerable sourceArray, StringBuilder builder)
         {
-            int saveIndex = index;
-            return NextToken(json, ref saveIndex);
+            builder.Append("[");
+            bool first = true;
+
+            foreach (object value in sourceArray)
+            {
+                if (!first)
+                {
+                    builder.Append(",");
+                }
+
+                if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                {
+                    return false;
+                }
+
+                first = false;
+            }
+
+            builder.Append("]");
+            return true;
         }
 
         /// <summary>
-        /// Next token.
+        /// Serializes the number.
         /// </summary>
-        /// <param name="json">The json.</param>
-        /// <param name="index">The index.</param>
-        /// <returns>The System.Int32.</returns>
-        private static int NextToken(char[] json, ref int index)
+        /// <param name="number">The number.</param>
+        /// <param name="builder">The builder.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private static bool SerializeNumber(object number, StringBuilder builder)
         {
-            RemoveWhitespace(json, ref index);
-
-            if (index == json.Length)
+            if (number is long)
             {
-                return TOKEN_NONE;
+                builder.Append(((long)number).ToString(CultureInfo.InvariantCulture));
+            }
+            else if (number is ulong)
+            {
+                builder.Append(((ulong)number).ToString(CultureInfo.InvariantCulture));
+            }
+            else if (number is int)
+            {
+                builder.Append(((int)number).ToString(CultureInfo.InvariantCulture));
+            }
+            else if (number is uint)
+            {
+                builder.Append(((uint)number).ToString(CultureInfo.InvariantCulture));
+            }
+            else if (number is decimal)
+            {
+                builder.Append(((decimal)number).ToString(CultureInfo.InvariantCulture));
+            }
+            else if (number is float)
+            {
+                builder.Append(((float)number).ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                builder.Append(Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
             }
 
-            char c = json[index];
-            index++;
+            return true;
+        }
 
-            switch (c)
+        /// <summary>
+        /// Serializes the object.
+        /// </summary>
+        /// <param name="jsonSerializerStrategy">The json serializer strategy.</param>
+        /// <param name="keys">The keys.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="builder">The builder.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private static bool SerializeObject(PocoJsonSerializerStrategy jsonSerializerStrategy, IEnumerable keys, IEnumerable values, StringBuilder builder)
+        {
+            builder.Append("{");
+            IEnumerator ke = keys.GetEnumerator();
+            IEnumerator ve = values.GetEnumerator();
+            bool first = true;
+
+            while (ke.MoveNext() && ve.MoveNext())
             {
-                case '{':
-                    return TOKEN_CURLY_OPEN;
-                case '}':
-                    return TOKEN_CURLY_CLOSE;
-                case '[':
-                    return TOKEN_SQUARED_OPEN;
-                case ']':
-                    return TOKEN_SQUARED_CLOSE;
-                case ',':
-                    return TOKEN_COMMA;
-                case '"':
-                    return TOKEN_STRING;
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                case '-':
-                    return TOKEN_NUMBER;
-                case ':':
-                    return TOKEN_COLON;
-            }
+                object key = ke.Current;
+                object value = ve.Current;
 
-            index--;
-            int remainingLength = json.Length - index;
-
-            if (remainingLength >= 5)
-            {
-                if (json[index] == 'f' && json[index + 1] == 'a' && json[index + 2] == 'l' && json[index + 3] == 's' && json[index + 4] == 'e')
+                if (!first)
                 {
-                    index += 5;
-                    return TOKEN_FALSE;
+                    builder.Append(",");
+                }
+
+                string stringKey = key as string;
+
+                if (stringKey != null)
+                {
+                    SerializeString(stringKey, builder);
+                }
+                else if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                {
+                    return false;
+                }
+
+                builder.Append(":");
+
+                if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                {
+                    return false;
+                }
+
+                first = false;
+            }
+
+            builder.Append("}");
+            return true;
+        }
+
+        /// <summary>
+        /// Serializes the string.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <param name="builder">The builder.</param>
+        /// <returns>true if succeeded; otherwise, false.</returns>
+        private static bool SerializeString(string source, StringBuilder builder)
+        {
+            if (source.IndexOfAny(EscapeCharacters) == -1)
+            {
+                builder.Append('"');
+                builder.Append(source);
+                builder.Append('"');
+
+                return true;
+            }
+
+            builder.Append('"');
+            int safeCharacterCount = 0;
+            char[] charArray = source.ToCharArray();
+
+            for (int i = 0; i < charArray.Length; i++)
+            {
+                char c = charArray[i];
+
+                if (c >= EscapeTable.Length || EscapeTable[c] == default(char))
+                {
+                    safeCharacterCount++;
+                }
+                else
+                {
+                    if (safeCharacterCount > 0)
+                    {
+                        builder.Append(charArray, i - safeCharacterCount, safeCharacterCount);
+                        safeCharacterCount = 0;
+                    }
+
+                    builder.Append('\\');
+                    builder.Append(EscapeTable[c]);
                 }
             }
 
-            if (remainingLength >= 4)
+            if (safeCharacterCount > 0)
             {
-                if (json[index] == 't' && json[index + 1] == 'r' && json[index + 2] == 'u' && json[index + 3] == 'e')
-                {
-                    index += 4;
-                    return TOKEN_TRUE;
-                }
+                builder.Append(charArray, charArray.Length - safeCharacterCount, safeCharacterCount);
             }
 
-            if (remainingLength >= 4)
-            {
-                if (json[index] == 'n' && json[index + 1] == 'u' && json[index + 2] == 'l' && json[index + 3] == 'l')
-                {
-                    index += 4;
-                    return TOKEN_NULL;
-                }
-            }
-
-            return TOKEN_NONE;
+            builder.Append('"');
+            return true;
         }
 
         /// <summary>
@@ -740,204 +952,6 @@ namespace DevLib.Web
 
             return success;
         }
-
-        /// <summary>
-        /// Serializes the object.
-        /// </summary>
-        /// <param name="jsonSerializerStrategy">The json serializer strategy.</param>
-        /// <param name="keys">The keys.</param>
-        /// <param name="values">The values.</param>
-        /// <param name="builder">The builder.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private static bool SerializeObject(PocoJsonSerializerStrategy jsonSerializerStrategy, IEnumerable keys, IEnumerable values, StringBuilder builder)
-        {
-            builder.Append("{");
-            IEnumerator ke = keys.GetEnumerator();
-            IEnumerator ve = values.GetEnumerator();
-            bool first = true;
-
-            while (ke.MoveNext() && ve.MoveNext())
-            {
-                object key = ke.Current;
-                object value = ve.Current;
-
-                if (!first)
-                {
-                    builder.Append(",");
-                }
-
-                string stringKey = key as string;
-
-                if (stringKey != null)
-                {
-                    SerializeString(stringKey, builder);
-                }
-                else if (!SerializeValue(jsonSerializerStrategy, value, builder))
-                {
-                    return false;
-                }
-
-                builder.Append(":");
-
-                if (!SerializeValue(jsonSerializerStrategy, value, builder))
-                {
-                    return false;
-                }
-
-                first = false;
-            }
-
-            builder.Append("}");
-            return true;
-        }
-
-        /// <summary>
-        /// Serializes the array.
-        /// </summary>
-        /// <param name="jsonSerializerStrategy">The json serializer strategy.</param>
-        /// <param name="sourceArray">An array.</param>
-        /// <param name="builder">The builder.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private static bool SerializeArray(PocoJsonSerializerStrategy jsonSerializerStrategy, IEnumerable sourceArray, StringBuilder builder)
-        {
-            builder.Append("[");
-            bool first = true;
-
-            foreach (object value in sourceArray)
-            {
-                if (!first)
-                {
-                    builder.Append(",");
-                }
-
-                if (!SerializeValue(jsonSerializerStrategy, value, builder))
-                {
-                    return false;
-                }
-
-                first = false;
-            }
-
-            builder.Append("]");
-            return true;
-        }
-
-        /// <summary>
-        /// Serializes the string.
-        /// </summary>
-        /// <param name="source">The source string.</param>
-        /// <param name="builder">The builder.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private static bool SerializeString(string source, StringBuilder builder)
-        {
-            if (source.IndexOfAny(EscapeCharacters) == -1)
-            {
-                builder.Append('"');
-                builder.Append(source);
-                builder.Append('"');
-
-                return true;
-            }
-
-            builder.Append('"');
-            int safeCharacterCount = 0;
-            char[] charArray = source.ToCharArray();
-
-            for (int i = 0; i < charArray.Length; i++)
-            {
-                char c = charArray[i];
-
-                if (c >= EscapeTable.Length || EscapeTable[c] == default(char))
-                {
-                    safeCharacterCount++;
-                }
-                else
-                {
-                    if (safeCharacterCount > 0)
-                    {
-                        builder.Append(charArray, i - safeCharacterCount, safeCharacterCount);
-                        safeCharacterCount = 0;
-                    }
-
-                    builder.Append('\\');
-                    builder.Append(EscapeTable[c]);
-                }
-            }
-
-            if (safeCharacterCount > 0)
-            {
-                builder.Append(charArray, charArray.Length - safeCharacterCount, safeCharacterCount);
-            }
-
-            builder.Append('"');
-            return true;
-        }
-
-        /// <summary>
-        /// Serializes the number.
-        /// </summary>
-        /// <param name="number">The number.</param>
-        /// <param name="builder">The builder.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private static bool SerializeNumber(object number, StringBuilder builder)
-        {
-            if (number is long)
-            {
-                builder.Append(((long)number).ToString(CultureInfo.InvariantCulture));
-            }
-            else if (number is ulong)
-            {
-                builder.Append(((ulong)number).ToString(CultureInfo.InvariantCulture));
-            }
-            else if (number is int)
-            {
-                builder.Append(((int)number).ToString(CultureInfo.InvariantCulture));
-            }
-            else if (number is uint)
-            {
-                builder.Append(((uint)number).ToString(CultureInfo.InvariantCulture));
-            }
-            else if (number is decimal)
-            {
-                builder.Append(((decimal)number).ToString(CultureInfo.InvariantCulture));
-            }
-            else if (number is float)
-            {
-                builder.Append(((float)number).ToString(CultureInfo.InvariantCulture));
-            }
-            else
-            {
-                builder.Append(Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Determines if a given object is numeric in any way (can be integer, double, null, etc).
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>true if succeeded; otherwise, false.</returns>
-        private static bool IsNumeric(object value)
-        {
-            if (value is sbyte
-                || value is byte
-                || value is short
-                || value is ushort
-                || value is int
-                || value is uint
-                || value is long
-                || value is ulong
-                || value is float
-                || value is float
-                || value is double
-                || value is decimal)
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 
     /// <summary>
@@ -999,30 +1013,6 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Gets the keys.
-        /// </summary>
-        /// <value>The keys.</value>
-        public ICollection<string> Keys
-        {
-            get
-            {
-                return this._members.Keys;
-            }
-        }
-
-        /// <summary>
-        /// Gets the values.
-        /// </summary>
-        /// <value>The values.</value>
-        public ICollection<object> Values
-        {
-            get
-            {
-                return this._members.Values;
-            }
-        }
-
-        /// <summary>
         /// Gets the count.
         /// </summary>
         /// <value>The count.</value>
@@ -1043,6 +1033,30 @@ namespace DevLib.Web
             get
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the keys.
+        /// </summary>
+        /// <value>The keys.</value>
+        public ICollection<string> Keys
+        {
+            get
+            {
+                return this._members.Keys;
+            }
+        }
+
+        /// <summary>
+        /// Gets the values.
+        /// </summary>
+        /// <value>The values.</value>
+        public ICollection<object> Values
+        {
+            get
+            {
+                return this._members.Values;
             }
         }
 
@@ -1088,37 +1102,6 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Determines whether the specified key contains key.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <returns><c>true</c> if the specified key contains key; otherwise, <c>false</c>.</returns>
-        public bool ContainsKey(string key)
-        {
-            return this._members.ContainsKey(key);
-        }
-
-        /// <summary>
-        /// Removes the specified key.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <returns>true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key" /> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
-        public bool Remove(string key)
-        {
-            return this._members.Remove(key);
-        }
-
-        /// <summary>
-        /// Tries the get value.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns>true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key; otherwise, false.</returns>
-        public bool TryGetValue(string key, out object value)
-        {
-            return this._members.TryGetValue(key, out value);
-        }
-
-        /// <summary>
         /// Adds the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
@@ -1143,6 +1126,16 @@ namespace DevLib.Web
         public bool Contains(KeyValuePair<string, object> item)
         {
             return this._members.ContainsKey(item.Key) && this._members[item.Key] == item.Value;
+        }
+
+        /// <summary>
+        /// Determines whether the specified key contains key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns><c>true</c> if the specified key contains key; otherwise, <c>false</c>.</returns>
+        public bool ContainsKey(string key)
+        {
+            return this._members.ContainsKey(key);
         }
 
         /// <summary>
@@ -1171,6 +1164,34 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Gets the enumerator.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            return this._members.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this._members.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Removes the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key" /> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
+        public bool Remove(string key)
+        {
+            return this._members.Remove(key);
+        }
+
+        /// <summary>
         /// Removes the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
@@ -1178,15 +1199,6 @@ namespace DevLib.Web
         public bool Remove(KeyValuePair<string, object> item)
         {
             return this._members.Remove(item.Key);
-        }
-
-        /// <summary>
-        /// Gets the enumerator.
-        /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-        {
-            return this._members.GetEnumerator();
         }
 
         /// <summary>
@@ -1199,12 +1211,14 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through a collection.
+        /// Tries the get value.
         /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator()
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns>true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key; otherwise, false.</returns>
+        public bool TryGetValue(string key, out object value)
         {
-            return this._members.GetEnumerator();
+            return this._members.TryGetValue(key, out value);
         }
 
         /// <summary>
@@ -1245,14 +1259,14 @@ namespace DevLib.Web
     internal class PocoJsonSerializerStrategy
     {
         /// <summary>
-        /// Field EmptyTypes.
-        /// </summary>
-        internal static readonly Type[] EmptyTypes = new Type[0];
-
-        /// <summary>
         /// Field ArrayConstructorParameterTypes.
         /// </summary>
         internal static readonly Type[] ArrayConstructorParameterTypes = new Type[] { typeof(int) };
+
+        /// <summary>
+        /// Field EmptyTypes.
+        /// </summary>
+        internal static readonly Type[] EmptyTypes = new Type[0];
 
         /// <summary>
         /// Field Iso8601Format.
@@ -1287,17 +1301,6 @@ namespace DevLib.Web
             this.ConstructorCache = new ReflectionUtilities.ThreadSafeDictionary<Type, ReflectionUtilities.ConstructorDelegate>(this.ConstructorDelegateFactory);
             this.GetCache = new ReflectionUtilities.ThreadSafeDictionary<Type, IDictionary<string, ReflectionUtilities.GetDelegate>>(this.GetterValueFactory);
             this.SetCache = new ReflectionUtilities.ThreadSafeDictionary<Type, IDictionary<string, KeyValuePair<Type, ReflectionUtilities.SetDelegate>>>(this.SetterValueFactory);
-        }
-
-        /// <summary>
-        /// Try to serialize non primitive object.
-        /// </summary>
-        /// <param name="input">The input.</param>
-        /// <param name="output">The output.</param>
-        /// <returns>true if serialize succeeded; otherwise, false.</returns>
-        public virtual bool TrySerializeNonPrimitiveObject(object input, out object output)
-        {
-            return this.TrySerializeKnownTypes(input, out output) || this.TrySerializeUnknownTypes(input, out output);
         }
 
         /// <summary>
@@ -1499,6 +1502,17 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Try to serialize non primitive object.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="output">The output.</param>
+        /// <returns>true if serialize succeeded; otherwise, false.</returns>
+        public virtual bool TrySerializeNonPrimitiveObject(object input, out object output)
+        {
+            return this.TrySerializeKnownTypes(input, out output) || this.TrySerializeUnknownTypes(input, out output);
+        }
+
+        /// <summary>
         /// Constructor delegate.
         /// </summary>
         /// <param name="key">The key.</param>
@@ -1668,7 +1682,7 @@ namespace DevLib.Web
                 return false;
             }
 
-            IDictionary<string, object> obj = new JsonObject();
+            IDictionary<string, object> obj = new JsonObject(StringComparer.OrdinalIgnoreCase);
             IDictionary<string, ReflectionUtilities.GetDelegate> getters = this.GetCache[type];
 
             foreach (KeyValuePair<string, ReflectionUtilities.GetDelegate> getter in getters)
@@ -1696,6 +1710,13 @@ namespace DevLib.Web
         private static readonly object[] EmptyObjects = new object[] { };
 
         /// <summary>
+        /// Delegate ConstructorDelegate
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        /// <returns>The System.Object.</returns>
+        public delegate object ConstructorDelegate(params object[] args);
+
+        /// <summary>
         /// Delegate GetDelegate
         /// </summary>
         /// <param name="source">The source.</param>
@@ -1708,13 +1729,6 @@ namespace DevLib.Web
         /// <param name="source">The source.</param>
         /// <param name="value">The value.</param>
         public delegate void SetDelegate(object source, object value);
-
-        /// <summary>
-        /// Delegate ConstructorDelegate
-        /// </summary>
-        /// <param name="args">The arguments.</param>
-        /// <returns>The System.Object.</returns>
-        public delegate object ConstructorDelegate(params object[] args);
 
         /// <summary>
         /// Delegate ThreadSafeDictionaryValueFactory
@@ -1742,26 +1756,6 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Gets the type of the generic list element.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The Type.</returns>
-        public static Type GetGenericListElementType(Type type)
-        {
-            IEnumerable<Type> interfaces = type.GetInterfaces();
-
-            foreach (Type implementedInterface in interfaces)
-            {
-                if (IsTypeGeneric(implementedInterface) && implementedInterface.GetGenericTypeDefinition() == typeof(IList<>))
-                {
-                    return GetGenericTypeArguments(implementedInterface)[0];
-                }
-            }
-
-            return GetGenericTypeArguments(type)[0];
-        }
-
-        /// <summary>
         /// Gets the attribute.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
@@ -1778,116 +1772,53 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Gets the generic type arguments.
+        /// Gets the constructor.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The Type[].</returns>
-        public static Type[] GetGenericTypeArguments(Type type)
+        /// <param name="constructorInfo">The constructor information.</param>
+        /// <returns>The ConstructorDelegate.</returns>
+        public static ConstructorDelegate GetConstructor(ConstructorInfo constructorInfo)
         {
-            return type.GetGenericArguments();
+            return GetConstructorByReflection(constructorInfo);
         }
 
         /// <summary>
-        /// Determines whether the specified type is generic.
+        /// Gets the constructor.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <returns>true if the specified type is generic type; otherwise, false.</returns>
-        public static bool IsTypeGeneric(Type type)
+        /// <param name="argsType">Type of the arguments.</param>
+        /// <returns>The ConstructorDelegate.</returns>
+        public static ConstructorDelegate GetConstructor(Type type, params Type[] argsType)
         {
-            return type.IsGenericType;
+            return GetConstructorByReflection(type, argsType);
         }
 
         /// <summary>
-        /// Determines whether the specified type is generic collection.
+        /// Gets the constructor by reflection.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>true if the specified type is generic collection; otherwise, false.</returns>
-        public static bool IsTypeGenericCollectionInterface(Type type)
+        /// <param name="constructorInfo">The constructor information.</param>
+        /// <returns>The ConstructorDelegate.</returns>
+        public static ConstructorDelegate GetConstructorByReflection(ConstructorInfo constructorInfo)
         {
-            if (!IsTypeGeneric(type))
+            if (IsEnumerable(constructorInfo.DeclaringType))
             {
-                return false;
+                return delegate(object[] args) { return CreateIList(constructorInfo.DeclaringType, args); };
             }
-
-            Type genericDefinition = type.GetGenericTypeDefinition();
-
-            return genericDefinition == typeof(IList<>)
-                || genericDefinition == typeof(ICollection<>)
-                || genericDefinition == typeof(IEnumerable<>);
-        }
-
-        /// <summary>
-        /// Determines whether the type1 is assignable from the type2.
-        /// </summary>
-        /// <param name="type1">The type1.</param>
-        /// <param name="type2">The type2.</param>
-        /// <returns>true if the type1 is assignable from type2; otherwise, false.</returns>
-        public static bool IsAssignableFrom(Type type1, Type type2)
-        {
-            return type1.IsAssignableFrom(type2);
-        }
-
-        /// <summary>
-        /// Determines whether the specified type is dictionary.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>true if the specified type is dictionary]; otherwise, false.</returns>
-        public static bool IsTypeDictionary(Type type)
-        {
-            if (typeof(System.Collections.IDictionary).IsAssignableFrom(type))
+            else
             {
-                return true;
+                return delegate(object[] args) { return constructorInfo.Invoke(args); };
             }
-
-            if (!type.IsGenericType)
-            {
-                return false;
-            }
-
-            Type genericDefinition = type.GetGenericTypeDefinition();
-
-            return genericDefinition == typeof(IDictionary<,>);
         }
 
         /// <summary>
-        /// Determines whether the specified type is nullable type.
+        /// Gets the constructor by reflection.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <returns>true if the specified type is nullable type; otherwise, false.</returns>
-        public static bool IsNullableType(Type type)
+        /// <param name="argsType">Type of the arguments.</param>
+        /// <returns>The ConstructorDelegate.</returns>
+        public static ConstructorDelegate GetConstructorByReflection(Type type, params Type[] argsType)
         {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
-
-        /// <summary>
-        /// Converts to nullable.
-        /// </summary>
-        /// <param name="obj">The object.</param>
-        /// <param name="nullableType">Type of the nullable.</param>
-        /// <returns>The System.Object.</returns>
-        public static object ToNullableType(object obj, Type nullableType)
-        {
-            return obj == null ? null : Convert.ChangeType(obj, Nullable.GetUnderlyingType(nullableType), CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>
-        /// Determines whether the specified type is value type.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>true if the specified type is value type; otherwise, false.</returns>
-        public static bool IsValueType(Type type)
-        {
-            return type.IsValueType;
-        }
-
-        /// <summary>
-        /// Gets the constructors.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The IEnumerable.</returns>
-        public static IEnumerable<ConstructorInfo> GetConstructors(Type type)
-        {
-            return type.GetConstructors();
+            ConstructorInfo constructorInfo = GetConstructorInfo(type, argsType);
+            return constructorInfo == null ? null : GetConstructorByReflection(constructorInfo);
         }
 
         /// <summary>
@@ -1934,13 +1865,13 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Gets the properties.
+        /// Gets the constructors.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The IEnumerable.</returns>
-        public static IEnumerable<PropertyInfo> GetProperties(Type type)
+        public static IEnumerable<ConstructorInfo> GetConstructors(Type type)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            return type.GetConstructors();
         }
 
         /// <summary>
@@ -1954,66 +1885,33 @@ namespace DevLib.Web
         }
 
         /// <summary>
-        /// Gets the getter method information.
-        /// </summary>
-        /// <param name="propertyInfo">The property information.</param>
-        /// <returns>The MethodInfo.</returns>
-        public static MethodInfo GetGetterMethodInfo(PropertyInfo propertyInfo)
-        {
-            return propertyInfo.GetGetMethod(true);
-        }
-
-        /// <summary>
-        /// Gets the setter method information.
-        /// </summary>
-        /// <param name="propertyInfo">The property information.</param>
-        /// <returns>The MethodInfo.</returns>
-        public static MethodInfo GetSetterMethodInfo(PropertyInfo propertyInfo)
-        {
-            return propertyInfo.GetSetMethod(true);
-        }
-
-        /// <summary>
-        /// Gets the constructor.
-        /// </summary>
-        /// <param name="constructorInfo">The constructor information.</param>
-        /// <returns>The ConstructorDelegate.</returns>
-        public static ConstructorDelegate GetConstructor(ConstructorInfo constructorInfo)
-        {
-            return GetConstructorByReflection(constructorInfo);
-        }
-
-        /// <summary>
-        /// Gets the constructor.
+        /// Gets the type of the generic list element.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="argsType">Type of the arguments.</param>
-        /// <returns>The ConstructorDelegate.</returns>
-        public static ConstructorDelegate GetConstructor(Type type, params Type[] argsType)
+        /// <returns>The Type.</returns>
+        public static Type GetGenericListElementType(Type type)
         {
-            return GetConstructorByReflection(type, argsType);
+            IEnumerable<Type> interfaces = type.GetInterfaces();
+
+            foreach (Type implementedInterface in interfaces)
+            {
+                if (IsTypeGeneric(implementedInterface) && implementedInterface.GetGenericTypeDefinition() == typeof(IList<>))
+                {
+                    return GetGenericTypeArguments(implementedInterface)[0];
+                }
+            }
+
+            return GetGenericTypeArguments(type)[0];
         }
 
         /// <summary>
-        /// Gets the constructor by reflection.
-        /// </summary>
-        /// <param name="constructorInfo">The constructor information.</param>
-        /// <returns>The ConstructorDelegate.</returns>
-        public static ConstructorDelegate GetConstructorByReflection(ConstructorInfo constructorInfo)
-        {
-            return delegate(object[] args) { return constructorInfo.Invoke(args); };
-        }
-
-        /// <summary>
-        /// Gets the constructor by reflection.
+        /// Gets the generic type arguments.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="argsType">Type of the arguments.</param>
-        /// <returns>The ConstructorDelegate.</returns>
-        public static ConstructorDelegate GetConstructorByReflection(Type type, params Type[] argsType)
+        /// <returns>The Type[].</returns>
+        public static Type[] GetGenericTypeArguments(Type type)
         {
-            ConstructorInfo constructorInfo = GetConstructorInfo(type, argsType);
-            return constructorInfo == null ? null : GetConstructorByReflection(constructorInfo);
+            return type.GetGenericArguments();
         }
 
         /// <summary>
@@ -2058,6 +1956,26 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Gets the getter method information.
+        /// </summary>
+        /// <param name="propertyInfo">The property information.</param>
+        /// <returns>The MethodInfo.</returns>
+        public static MethodInfo GetGetterMethodInfo(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetGetMethod(true);
+        }
+
+        /// <summary>
+        /// Gets the properties.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>The IEnumerable.</returns>
+        public static IEnumerable<PropertyInfo> GetProperties(Type type)
+        {
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+        }
+
+        /// <summary>
         /// Gets the set method.
         /// </summary>
         /// <param name="propertyInfo">The property information.</param>
@@ -2099,6 +2017,179 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Gets the setter method information.
+        /// </summary>
+        /// <param name="propertyInfo">The property information.</param>
+        /// <returns>The MethodInfo.</returns>
+        public static MethodInfo GetSetterMethodInfo(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetSetMethod(true);
+        }
+
+        /// <summary>
+        /// Determines whether the type1 is assignable from the type2.
+        /// </summary>
+        /// <param name="type1">The type1.</param>
+        /// <param name="type2">The type2.</param>
+        /// <returns>true if the type1 is assignable from type2; otherwise, false.</returns>
+        public static bool IsAssignableFrom(Type type1, Type type2)
+        {
+            return type1.IsAssignableFrom(type2);
+        }
+
+        /// <summary>
+        /// Determines whether the specified type is nullable type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>true if the specified type is nullable type; otherwise, false.</returns>
+        public static bool IsNullableType(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        /// <summary>
+        /// Determines whether the specified type is dictionary.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>true if the specified type is dictionary]; otherwise, false.</returns>
+        public static bool IsTypeDictionary(Type type)
+        {
+            if (typeof(System.Collections.IDictionary).IsAssignableFrom(type))
+            {
+                return true;
+            }
+
+            if (!type.IsGenericType)
+            {
+                return false;
+            }
+
+            Type genericDefinition = type.GetGenericTypeDefinition();
+
+            return genericDefinition == typeof(IDictionary<,>);
+        }
+
+        /// <summary>
+        /// Determines whether the specified type is generic.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>true if the specified type is generic type; otherwise, false.</returns>
+        public static bool IsTypeGeneric(Type type)
+        {
+            return type.IsGenericType;
+        }
+
+        /// <summary>
+        /// Determines whether the specified type is generic collection.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>true if the specified type is generic collection; otherwise, false.</returns>
+        public static bool IsTypeGenericCollectionInterface(Type type)
+        {
+            if (!IsTypeGeneric(type))
+            {
+                return false;
+            }
+
+            Type genericDefinition = type.GetGenericTypeDefinition();
+
+            return genericDefinition == typeof(IList<>)
+                || genericDefinition == typeof(ICollection<>)
+                || genericDefinition == typeof(IEnumerable<>);
+        }
+
+        /// <summary>
+        /// Determines whether the specified type is value type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>true if the specified type is value type; otherwise, false.</returns>
+        public static bool IsValueType(Type type)
+        {
+            return type.IsValueType;
+        }
+
+        /// <summary>
+        /// Converts to nullable.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <param name="nullableType">Type of the nullable.</param>
+        /// <returns>The System.Object.</returns>
+        public static object ToNullableType(object obj, Type nullableType)
+        {
+            return obj == null ? null : Convert.ChangeType(obj, Nullable.GetUnderlyingType(nullableType), CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Creates an instance of IList by the specified type which inherit IEnumerable interface.
+        /// </summary>
+        /// <param name="source">Source Type which inherit IEnumerable interface.</param>
+        /// <param name="lengths">An array of 32-bit integers that represent the size of each dimension of the list to create.</param>
+        /// <returns>A reference to the newly created IList object.</returns>
+        private static IList CreateIList(Type source, params object[] lengths)
+        {
+            if (IsEnumerable(source) && !IsDictionary(source))
+            {
+                if (source.IsArray)
+                {
+                    if (IsNullOrEmpty(lengths))
+                    {
+                        return Array.CreateInstance(source.GetElementType(), 0);
+                    }
+                    else
+                    {
+                        long[] parameters = new long[lengths.Length];
+
+                        for (int i = 0; i < lengths.Length; i++)
+                        {
+                            parameters[i] = (long)lengths[i];
+                        }
+
+                        return Array.CreateInstance(source.GetElementType(), parameters);
+                    }
+                }
+                else
+                {
+                    return IsNullOrEmpty(lengths)
+                        ? (IList)Activator.CreateInstance(source)
+                        : (IList)Activator.CreateInstance(source, lengths[0]);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Check Type inherit IDictionary interface or not.
+        /// </summary>
+        /// <param name="source">Source Type.</param>
+        /// <returns>true if the source Type inherit IDictionary interface; otherwise, false.</returns>
+        private static bool IsDictionary(Type source)
+        {
+            return source.GetInterface("IDictionary") != null;
+        }
+
+        /// <summary>
+        /// Check Type inherit IEnumerable interface or not.
+        /// </summary>
+        /// <param name="source">Source Type.</param>
+        /// <returns>true if the source Type inherit IEnumerable interface; otherwise, false.</returns>
+        private static bool IsEnumerable(Type source)
+        {
+            return source != typeof(string)
+                && source.GetInterface("IEnumerable") != null;
+        }
+
+        /// <summary>
+        /// Determines whether a sequence is null or empty.
+        /// </summary>
+        /// <param name="source">Source IEnumerable.</param>
+        /// <returns>true if the source sequence is empty; otherwise, false.</returns>
+        private static bool IsNullOrEmpty(Array source)
+        {
+            return source == null || source.Length == 0;
+        }
+
+        /// <summary>
         /// Class ThreadSafeDictionary. This class cannot be inherited.
         /// </summary>
         /// <typeparam name="TKey">The type of the t key.</typeparam>
@@ -2130,30 +2221,6 @@ namespace DevLib.Web
             }
 
             /// <summary>
-            /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the keys of the <see cref="T:System.Collections.Generic.IDictionary`2" />.
-            /// </summary>
-            /// <value>The keys.</value>
-            public ICollection<TKey> Keys
-            {
-                get
-                {
-                    return this._dictionary.Keys;
-                }
-            }
-
-            /// <summary>
-            /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the values in the <see cref="T:System.Collections.Generic.IDictionary`2" />.
-            /// </summary>
-            /// <value>The values.</value>
-            public ICollection<TValue> Values
-            {
-                get
-                {
-                    return this._dictionary.Values;
-                }
-            }
-
-            /// <summary>
             /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
             /// </summary>
             /// <value>The count.</value>
@@ -2178,6 +2245,30 @@ namespace DevLib.Web
             }
 
             /// <summary>
+            /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the keys of the <see cref="T:System.Collections.Generic.IDictionary`2" />.
+            /// </summary>
+            /// <value>The keys.</value>
+            public ICollection<TKey> Keys
+            {
+                get
+                {
+                    return this._dictionary.Keys;
+                }
+            }
+
+            /// <summary>
+            /// Gets an <see cref="T:System.Collections.Generic.ICollection`1" /> containing the values in the <see cref="T:System.Collections.Generic.IDictionary`2" />.
+            /// </summary>
+            /// <value>The values.</value>
+            public ICollection<TValue> Values
+            {
+                get
+                {
+                    return this._dictionary.Values;
+                }
+            }
+
+            /// <summary>
             /// Gets or sets the element with the specified key.
             /// </summary>
             /// <param name="key">The key.</param>
@@ -2196,25 +2287,6 @@ namespace DevLib.Web
             }
 
             /// <summary>
-            /// Determines whether the <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key.
-            /// </summary>
-            /// <param name="key">The key to locate in the <see cref="T:System.Collections.Generic.IDictionary`2" />.</param>
-            /// <returns>true if the <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the key; otherwise, false.</returns>
-            public bool ContainsKey(TKey key)
-            {
-                return this._dictionary.ContainsKey(key);
-            }
-
-            /// <summary>
-            /// Returns an enumerator that iterates through the collection.
-            /// </summary>
-            /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-            public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-            {
-                return this._dictionary.GetEnumerator();
-            }
-
-            /// <summary>
             /// Adds an element with the provided key and value to the <see cref="T:System.Collections.Generic.IDictionary`2" />.
             /// </summary>
             /// <param name="key">The object to use as the key of the element to add.</param>
@@ -2222,28 +2294,6 @@ namespace DevLib.Web
             public void Add(TKey key, TValue value)
             {
                 throw new NotSupportedException();
-            }
-
-            /// <summary>
-            /// Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" />.
-            /// </summary>
-            /// <param name="key">The key of the element to remove.</param>
-            /// <returns>true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key" /> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
-            public bool Remove(TKey key)
-            {
-                throw new NotSupportedException();
-            }
-
-            /// <summary>
-            /// Gets the value associated with the specified key.
-            /// </summary>
-            /// <param name="key">The key whose value to get.</param>
-            /// <param name="value">When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.</param>
-            /// <returns>true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key; otherwise, false.</returns>
-            public bool TryGetValue(TKey key, out TValue value)
-            {
-                value = this[key];
-                return true;
             }
 
             /// <summary>
@@ -2274,11 +2324,49 @@ namespace DevLib.Web
             }
 
             /// <summary>
+            /// Determines whether the <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key.
+            /// </summary>
+            /// <param name="key">The key to locate in the <see cref="T:System.Collections.Generic.IDictionary`2" />.</param>
+            /// <returns>true if the <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the key; otherwise, false.</returns>
+            public bool ContainsKey(TKey key)
+            {
+                return this._dictionary.ContainsKey(key);
+            }
+
+            /// <summary>
             /// Copies to.
             /// </summary>
             /// <param name="array">The array.</param>
             /// <param name="arrayIndex">Index of the array.</param>
             public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+            {
+                throw new NotSupportedException();
+            }
+
+            /// <summary>
+            /// Returns an enumerator that iterates through the collection.
+            /// </summary>
+            /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+            public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+            {
+                return this._dictionary.GetEnumerator();
+            }
+
+            /// <summary>
+            /// Returns an enumerator that iterates through a collection.
+            /// </summary>
+            /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return this._dictionary.GetEnumerator();
+            }
+
+            /// <summary>
+            /// Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" />.
+            /// </summary>
+            /// <param name="key">The key of the element to remove.</param>
+            /// <returns>true if the element is successfully removed; otherwise, false.  This method also returns false if <paramref name="key" /> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2" />.</returns>
+            public bool Remove(TKey key)
             {
                 throw new NotSupportedException();
             }
@@ -2294,34 +2382,15 @@ namespace DevLib.Web
             }
 
             /// <summary>
-            /// Returns an enumerator that iterates through a collection.
+            /// Gets the value associated with the specified key.
             /// </summary>
-            /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            /// <param name="key">The key whose value to get.</param>
+            /// <param name="value">When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.</param>
+            /// <returns>true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key; otherwise, false.</returns>
+            public bool TryGetValue(TKey key, out TValue value)
             {
-                return this._dictionary.GetEnumerator();
-            }
-
-            /// <summary>
-            /// Gets the specified key.
-            /// </summary>
-            /// <param name="key">The key.</param>
-            /// <returns>The Value.</returns>
-            private TValue Get(TKey key)
-            {
-                if (this._dictionary == null)
-                {
-                    return this.AddValue(key);
-                }
-
-                TValue value;
-
-                if (!this._dictionary.TryGetValue(key, out value))
-                {
-                    return this.AddValue(key);
-                }
-
-                return value;
+                value = this[key];
+                return true;
             }
 
             /// <summary>
@@ -2356,6 +2425,28 @@ namespace DevLib.Web
                 }
 
                 return result;
+            }
+
+            /// <summary>
+            /// Gets the specified key.
+            /// </summary>
+            /// <param name="key">The key.</param>
+            /// <returns>The Value.</returns>
+            private TValue Get(TKey key)
+            {
+                if (this._dictionary == null)
+                {
+                    return this.AddValue(key);
+                }
+
+                TValue value;
+
+                if (!this._dictionary.TryGetValue(key, out value))
+                {
+                    return this.AddValue(key);
+                }
+
+                return value;
             }
         }
     }

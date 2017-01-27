@@ -58,7 +58,29 @@ namespace DevLib.Text
         }
 
         /// <summary>
+        /// Returns a random numeric string of the desired size.
+        /// From 0123456789
+        /// </summary>
+        /// <param name="size">Size of the random string to return.</param>
+        /// <returns>The result string.</returns>
+        public static string GetRandomNumericString(int size)
+        {
+            return GetRandomString("0123456789", size);
+        }
+
+        /// <summary>
+        /// Returns a random natural number string of the desired size.
+        /// </summary>
+        /// <param name="size">Size of the random string to return.</param>
+        /// <returns>The result string.</returns>
+        public static string GetRandomNaturalNumberString(int size)
+        {
+            return GetRandomString("123456789", size > 0 ? 1 : 0) + GetRandomString("0123456789", size - 1);
+        }
+
+        /// <summary>
         /// Returns a random alphabet and numeric string of the desired size.
+        /// From 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
         /// </summary>
         /// <param name="size">Size of the random string to return.</param>
         /// <returns>The result string.</returns>
@@ -70,7 +92,7 @@ namespace DevLib.Text
         /// <summary>
         /// Returns a random string of the desired size with desired charset.
         /// </summary>
-        /// <param name="charset">charset of the random.</param>
+        /// <param name="charset">Chars set of the random.</param>
         /// <param name="size">Size of the random string to return.</param>
         /// <returns>The result string.</returns>
         public static string GetRandomString(string charset, int size)

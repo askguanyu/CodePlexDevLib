@@ -454,7 +454,8 @@ namespace DevLib.ExtensionMethods
                 result.Add(source.Skip(skipCount).Take(batchSize).ToList());
                 skipCount += batchSize;
                 restCount -= batchSize;
-            } while (restCount > 0);
+            }
+            while (restCount > 0);
 
             return result;
         }
@@ -491,7 +492,8 @@ namespace DevLib.ExtensionMethods
                 result.Add(sourceItems.Skip(skipCount).Take(batchSize).ToList());
                 skipCount += batchSize;
                 restCount -= batchSize;
-            } while (restCount > 0);
+            }
+            while (restCount > 0);
 
             return result;
         }

@@ -2344,6 +2344,7 @@ namespace DevLib.Samples
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new DemoForm());
+            Application.Run(new NormalForm());
         }
 
         private static void TestDevLibUtilities()

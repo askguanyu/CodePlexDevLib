@@ -422,5 +422,78 @@ namespace DevLib.ExtensionMethods
 
             return result;
         }
+
+        /// <summary>
+        /// Returns a list of IEnumerable{T} that contains the sub collection of source that are split by fix size.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <param name="source">Source IEnumerable{T}.</param>
+        /// <param name="batchSize">The size of each group item.</param>
+        /// <returns>A list of IEnumerable{T} that contains the sub collection of source.</returns>
+        public static List<List<T>> GroupBatch<T>(this IEnumerable<T> source, int batchSize)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            List<List<T>> result = new List<List<T>>();
+
+            int restCount = source.Count();
+
+            if (batchSize < 1 || restCount < 1)
+            {
+                result.Add(source.ToList());
+                return result;
+            }
+
+            int skipCount = 0;
+
+            do
+            {
+                result.Add(source.Skip(skipCount).Take(batchSize).ToList());
+                skipCount += batchSize;
+                restCount -= batchSize;
+            } while (restCount > 0);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns a list of IEnumerable that contains the sub collection of source that are split by fix size.
+        /// </summary>
+        /// <param name="source">Source IEnumerable.</param>
+        /// <param name="batchSize">The size of each group item.</param>
+        /// <returns>A list of IEnumerable that contains the sub collection of source.</returns>
+        public static List<List<object>> GroupBatch(this IEnumerable source, int batchSize)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            List<List<object>> result = new List<List<object>>();
+
+            var sourceItems = source.Cast<object>();
+
+            int restCount = sourceItems.Count();
+
+            if (batchSize < 1 || restCount < 1)
+            {
+                result.Add(sourceItems.ToList());
+                return result;
+            }
+
+            int skipCount = 0;
+
+            do
+            {
+                result.Add(sourceItems.Skip(skipCount).Take(batchSize).ToList());
+                skipCount += batchSize;
+                restCount -= batchSize;
+            } while (restCount > 0);
+
+            return result;
+        }
     }
 }

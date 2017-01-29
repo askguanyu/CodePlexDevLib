@@ -20,8 +20,12 @@ namespace DevLib.Samples
         {
             InitializeComponent();
 
+            this.SizeChanged += new EventHandler(DemoForm_SizeChanged);
+
             modernPropertyGrid1.SelectedObject = new List<Person> {  new Person()  };
         }
+
+
 
         private void modernToggle1_CheckedChanged(object sender, EventArgs e)
         {
@@ -52,11 +56,6 @@ namespace DevLib.Samples
                 default:
                     break;
             }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            modernRichTextBox1.Text = @"d:\a.txt".ReadTextFile();
         }
 
         private void modernButton2_Click(object sender, EventArgs e)
@@ -148,6 +147,22 @@ namespace DevLib.Samples
             Thread.Sleep(3000);
 
             ModernMessageBox.Show("Test", "Title", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Asterisk);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //modernRichTextBox1.Text = @"d:\a.txt".ReadTextFile();
+            this.ShowInTaskbar = true;
+        }
+
+        private void modernButton5_Click(object sender, EventArgs e)
+        {
+            this.ShowInTaskbar = false;
+        }
+
+        void DemoForm_SizeChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

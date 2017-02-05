@@ -510,6 +510,21 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Indicates whether a specified string has value.
+        /// </summary>
+        /// <param name="source">The string to test.</param>
+        /// <returns>true if the <paramref name="source" /> parameter length greater then zero. </returns>
+        public static bool HasValue(this string source)
+        {
+            if (source == null)
+            {
+                return false;
+            }
+
+            return source.Length > 0;
+        }
+
+        /// <summary>
         /// Extracts all digits from a string.
         /// </summary>
         /// <param name="source">String containing digits to extract.</param>

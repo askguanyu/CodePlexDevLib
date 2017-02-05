@@ -441,7 +441,12 @@ namespace DevLib.ExtensionMethods
 
             int restCount = source.Count();
 
-            if (batchSize < 1 || restCount < 1)
+            if (restCount < 1)
+            {
+                return result;
+            }
+
+            if (batchSize < 1)
             {
                 result.Add(source.ToList());
                 return result;
@@ -479,7 +484,12 @@ namespace DevLib.ExtensionMethods
 
             int restCount = sourceItems.Count();
 
-            if (batchSize < 1 || restCount < 1)
+            if (restCount < 1)
+            {
+                return result;
+            }
+
+            if (batchSize < 1)
             {
                 result.Add(sourceItems.ToList());
                 return result;

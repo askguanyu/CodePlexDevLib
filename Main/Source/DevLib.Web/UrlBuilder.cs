@@ -511,6 +511,20 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Removes the default port.
+        /// </summary>
+        /// <returns>The current UrlBuilder instance.</returns>
+        public UrlBuilder RemoveDefaultPort()
+        {
+            if (this.ToUri().IsDefaultPort)
+            {
+                this._port = null;
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Gets the port number of the UrlBuilder.
         /// </summary>
         /// <returns>The port number.</returns>

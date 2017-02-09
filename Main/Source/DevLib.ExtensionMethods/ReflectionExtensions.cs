@@ -380,8 +380,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The source object.</param>
         /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
+        /// <param name="declaredOnly">Specifies that only members declared at the level of the supplied type's hierarchy should be considered. Inherited members are not considered.</param>
         /// <returns>Instance of Dictionary{string, object}.</returns>
-        public static Dictionary<string, object> RetrieveProperties(this object source, bool isPublicOnly = true)
+        public static Dictionary<string, object> RetrieveProperties(this object source, bool isPublicOnly = true, bool declaredOnly = false)
         {
             if (source == null)
             {
@@ -390,7 +391,14 @@ namespace DevLib.ExtensionMethods
 
             Dictionary<string, object> result = new Dictionary<string, object>();
 
-            foreach (PropertyInfo property in source.GetType().GetProperties(isPublicOnly ? PublicOnlyLookup : AllLookup))
+            BindingFlags lookup = isPublicOnly ? PublicOnlyLookup : AllLookup;
+
+            if (declaredOnly)
+            {
+                lookup |= BindingFlags.DeclaredOnly;
+            }
+
+            foreach (PropertyInfo property in source.GetType().GetProperties(lookup))
             {
                 if (property.CanRead)
                 {
@@ -406,8 +414,9 @@ namespace DevLib.ExtensionMethods
         /// </summary>
         /// <param name="source">The source object.</param>
         /// <param name="isPublicOnly">true to only get public; false to get public and non public.</param>
+        /// <param name="declaredOnly">Specifies that only members declared at the level of the supplied type's hierarchy should be considered. Inherited members are not considered.</param>
         /// <returns>Instance of Dictionary{string, Func{object}}.</returns>
-        public static Dictionary<string, Func<object>> RetrievePropertiesLazy(this object source, bool isPublicOnly = true)
+        public static Dictionary<string, Func<object>> RetrievePropertiesLazy(this object source, bool isPublicOnly = true, bool declaredOnly = false)
         {
             if (source == null)
             {
@@ -416,12 +425,38 @@ namespace DevLib.ExtensionMethods
 
             Dictionary<string, Func<object>> result = new Dictionary<string, Func<object>>();
 
-            foreach (PropertyInfo property in source.GetType().GetProperties(isPublicOnly ? PublicOnlyLookup : AllLookup))
+            BindingFlags lookup = isPublicOnly ? PublicOnlyLookup : AllLookup;
+
+            if (declaredOnly)
+            {
+                lookup |= BindingFlags.DeclaredOnly;
+            }
+
+            foreach (PropertyInfo property in source.GetType().GetProperties(lookup))
             {
                 result.Add(property.Name, () => property.GetValue(source, null));
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the public get set properties.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="declaredOnly">Specifies that only members declared at the level of the supplied type's hierarchy should be considered. Inherited members are not considered.</param>
+        /// <returns>Array of PropertyInfo.</returns>
+        public static PropertyInfo[] GetPublicGetSetProperties(this Type source, bool declaredOnly = false)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            return source
+                .GetProperties(declaredOnly ? (PublicOnlyLookup | BindingFlags.DeclaredOnly) : PublicOnlyLookup)
+                .Where(i => i.CanRead && i.CanWrite && i.GetGetMethod(true).IsPublic && i.GetSetMethod(true).IsPublic)
+                .ToArray();
         }
 
         /// <summary>

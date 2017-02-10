@@ -69,7 +69,7 @@ namespace DevLib.DesignPatterns
                 throw new ArgumentNullException("filter", "IPipeFilter instance cannot be null.");
             }
 
-            lock (((ICollection)this._filterChain).SyncRoot)
+            lock (Utilities.GetSyncRoot(this._filterChain))
             {
                 this._filterChain.Add(filter);
             }
@@ -95,7 +95,7 @@ namespace DevLib.DesignPatterns
                 throw new ArgumentOutOfRangeException("filterIndex", "Index is less than 0.");
             }
 
-            lock (((ICollection)this._filterChain).SyncRoot)
+            lock (Utilities.GetSyncRoot(this._filterChain))
             {
                 if (filterIndex > this._filterChain.Count)
                 {
@@ -117,7 +117,7 @@ namespace DevLib.DesignPatterns
         {
             if (filter != null && this._filterChain.Contains(filter))
             {
-                lock (((ICollection)this._filterChain).SyncRoot)
+                lock (Utilities.GetSyncRoot(this._filterChain))
                 {
                     this._filterChain.Remove(filter);
                 }
@@ -135,7 +135,7 @@ namespace DevLib.DesignPatterns
         {
             if (filterIndex >= 0)
             {
-                lock (((ICollection)this._filterChain).SyncRoot)
+                lock (Utilities.GetSyncRoot(this._filterChain))
                 {
                     if (filterIndex >= this._filterChain.Count)
                     {
@@ -155,7 +155,7 @@ namespace DevLib.DesignPatterns
         /// <returns>Current Pipeline instance.</returns>
         public Pipeline Clear()
         {
-            lock (((ICollection)this._filterChain).SyncRoot)
+            lock (Utilities.GetSyncRoot(this._filterChain))
             {
                 this._filterChain.Clear();
             }
@@ -177,7 +177,7 @@ namespace DevLib.DesignPatterns
             nextInput.LastPipeline = this.Name;
             nextInput.LastFilter = null;
 
-            lock (((ICollection)this._filterChain).SyncRoot)
+            lock (Utilities.GetSyncRoot(this._filterChain))
             {
                 try
                 {

@@ -186,13 +186,18 @@ namespace DevLib.DesignPatterns
                         try
                         {
                             var receivedAt = DateTime.Now;
+                            nextInput.ReceivedAt = receivedAt;
+                            nextInput.LastPipeline = this.Name;
+
+                            this.BeforeFilterProcessing(filter, nextInput);
 
                             var output = filter.Process(nextInput);
-
-                            output.SentAt = DateTime.Now;
                             output.ReceivedAt = receivedAt;
+                            output.SentAt = DateTime.Now;
                             output.LastPipeline = this.Name;
                             output.LastFilter = filter.Name;
+
+                            this.AfterFilterProcessed(filter, output);
 
                             nextInput = output.Clone();
                         }
@@ -211,6 +216,24 @@ namespace DevLib.DesignPatterns
             }
 
             return nextInput;
+        }
+
+        /// <summary>
+        /// Occurs before the filter processing message.
+        /// </summary>
+        /// <param name="filter">The filter going to process message.</param>
+        /// <param name="message">The input message.</param>
+        public virtual void BeforeFilterProcessing(IPipeFilter filter, PipeMessage message)
+        {
+        }
+
+        /// <summary>
+        /// Occurs after the filter processed message.
+        /// </summary>
+        /// <param name="filter">The filter done processed message.</param>
+        /// <param name="message">The output message.</param>
+        public virtual void AfterFilterProcessed(IPipeFilter filter, PipeMessage message)
+        {
         }
     }
 }

@@ -46,6 +46,7 @@
     </Compile>
     <Compile Include="DeferQueue.cs" />
     <Compile Include="DisposePattern.cs" />
+    <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="InterceptPipeFilter.cs" />
     <Compile Include="InternalLogger.cs" />
     <Compile Include="IPipeFilter.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="PassthroughPipeFilter.cs" />
     <Compile Include="Pipeline.cs" />
     <Compile Include="PipeMessage.cs" />
+    <Compile Include="PipeMessageExtensions.cs" />
     <Compile Include="ProducerConsumer.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

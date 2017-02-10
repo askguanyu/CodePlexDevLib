@@ -38,6 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
@@ -45,7 +46,9 @@
     </Compile>
     <Compile Include="DeferQueue.cs" />
     <Compile Include="DisposePattern.cs" />
+    <Compile Include="InterceptPipeFilter.cs" />
     <Compile Include="InternalLogger.cs" />
+    <Compile Include="IPipeFilter.cs" />
     <Compile Include="IProducerConsumerQueue.cs" />
     <Compile Include="ObjectPool.cs">
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
@@ -53,10 +56,14 @@
     <Compile Include="ObjectPoolLoadingMode.cs" />
     <Compile Include="ObjectPoolRegistration.cs" />
     <Compile Include="ObjectPoolStoreMode.cs" />
+    <Compile Include="PassthroughPipeFilter.cs" />
+    <Compile Include="Pipeline.cs" />
+    <Compile Include="PipeMessage.cs" />
     <Compile Include="ProducerConsumer.cs" />
     <Compile Include="ProducerConsumerQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Singleton.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

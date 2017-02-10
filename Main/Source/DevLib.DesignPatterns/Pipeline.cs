@@ -223,7 +223,7 @@ namespace DevLib.DesignPatterns
         /// </summary>
         /// <param name="filter">The filter going to process message.</param>
         /// <param name="message">The input message.</param>
-        public virtual void BeforeFilterProcessing(IPipeFilter filter, PipeMessage message)
+        protected virtual void BeforeFilterProcessing(IPipeFilter filter, PipeMessage message)
         {
         }
 
@@ -232,7 +232,7 @@ namespace DevLib.DesignPatterns
         /// </summary>
         /// <param name="filter">The filter done processed message.</param>
         /// <param name="message">The output message.</param>
-        public virtual void AfterFilterProcessed(IPipeFilter filter, PipeMessage message)
+        protected virtual void AfterFilterProcessed(IPipeFilter filter, PipeMessage message)
         {
         }
     }

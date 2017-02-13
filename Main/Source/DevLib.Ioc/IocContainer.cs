@@ -363,9 +363,9 @@ namespace DevLib.Ioc
 
             this.CheckType(type);
 
-            if (assemblies == null)
+            if (assemblies == null || assemblies.Length == 0)
             {
-                throw new ArgumentNullException("assemblies");
+                assemblies = new[] { Assembly.GetCallingAssembly(), Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() };
             }
 
             foreach (Assembly assembly in assemblies)
@@ -425,9 +425,13 @@ namespace DevLib.Ioc
 
             this.CheckType(type);
 
-            if (filenames == null)
+            if (filenames == null || filenames.Length == 0)
             {
-                throw new ArgumentNullException("filenames");
+                var files = new List<string>();
+                var currentDirectory = Path.GetDirectoryName(new Uri(Assembly.GetEntryAssembly().CodeBase).LocalPath);
+                files.AddRange(Directory.GetFiles(currentDirectory, "*.exe", SearchOption.AllDirectories));
+                files.AddRange(Directory.GetFiles(currentDirectory, "*.dll", SearchOption.AllDirectories));
+                filenames = files.ToArray();
             }
 
             foreach (string item in filenames)

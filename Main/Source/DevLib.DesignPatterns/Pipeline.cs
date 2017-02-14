@@ -203,7 +203,7 @@ namespace DevLib.DesignPatterns
             nextInput.LastFilter = null;
 
             this.RaiseEvent(this.PipelinePumping, nextInput, null);
-            this.BeforePipelinePumping(this, nextInput);
+            this.BeforePipelinePumping(nextInput);
 
             lock (Utilities.GetSyncRoot(this._filterChain))
             {
@@ -248,7 +248,7 @@ namespace DevLib.DesignPatterns
                 }
             }
 
-            this.AfterPipelinePumped(this, nextInput);
+            this.AfterPipelinePumped(nextInput);
 
             var result = nextInput.Clone();
 
@@ -260,18 +260,16 @@ namespace DevLib.DesignPatterns
         /// <summary>
         /// Occurs before the pipeline processing message.
         /// </summary>
-        /// <param name="pipeline">The pipeline going to process message.</param>
         /// <param name="message">The input message.</param>
-        protected virtual void BeforePipelinePumping(Pipeline pipeline, PipeMessage message)
+        protected virtual void BeforePipelinePumping(PipeMessage message)
         {
         }
 
         /// <summary>
         /// Occurs after the pipeline processed message.
         /// </summary>
-        /// <param name="pipeline">The pipeline done processed message.</param>
         /// <param name="message">The output message.</param>
-        protected virtual void AfterPipelinePumped(Pipeline pipeline, PipeMessage message)
+        protected virtual void AfterPipelinePumped(PipeMessage message)
         {
         }
 

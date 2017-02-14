@@ -6,9 +6,9 @@
 namespace DevLib.DesignPatterns
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Threading;
 
     /// <summary>
     /// Pipes and Filters Pattern.
@@ -36,6 +36,31 @@ namespace DevLib.DesignPatterns
         {
             this.Name = name;
         }
+
+        /// <summary>
+        /// Occurs before pipeline pumping.
+        /// </summary>
+        public event EventHandler<PipelineEventArgs> PipelinePumping;
+
+        /// <summary>
+        /// Occurs after pipeline pumped.
+        /// </summary>
+        public event EventHandler<PipelineEventArgs> PipelinePumped;
+
+        /// <summary>
+        /// Occurs before filter processing.
+        /// </summary>
+        public event EventHandler<PipelineEventArgs> FilterProcessing;
+
+        /// <summary>
+        /// Occurs after filter processed.
+        /// </summary>
+        public event EventHandler<PipelineEventArgs> FilterProcessed;
+
+        /// <summary>
+        /// Occurs when has error.
+        /// </summary>
+        public event EventHandler<PipelineEventArgs> ErrorOccurred;
 
         /// <summary>
         /// Gets or sets the pipeline name.
@@ -177,6 +202,9 @@ namespace DevLib.DesignPatterns
             nextInput.LastPipeline = this.Name;
             nextInput.LastFilter = null;
 
+            this.RaiseEvent(this.PipelinePumping, nextInput, null);
+            this.BeforePipelinePumping(this, nextInput);
+
             lock (Utilities.GetSyncRoot(this._filterChain))
             {
                 try
@@ -189,6 +217,7 @@ namespace DevLib.DesignPatterns
                             nextInput.ReceivedAt = receivedAt;
                             nextInput.LastPipeline = this.Name;
 
+                            this.RaiseEvent(this.FilterProcessing, nextInput, filter);
                             this.BeforeFilterProcessing(filter, nextInput);
 
                             var output = filter.Process(nextInput);
@@ -200,10 +229,13 @@ namespace DevLib.DesignPatterns
                             this.AfterFilterProcessed(filter, output);
 
                             nextInput = output.Clone();
+
+                            this.RaiseEvent(this.FilterProcessed, output, filter);
                         }
                         catch (Exception e)
                         {
                             InternalLogger.Log(e);
+                            this.RaiseEvent(this.ErrorOccurred, nextInput, filter, e);
                             throw;
                         }
                     }
@@ -211,11 +243,36 @@ namespace DevLib.DesignPatterns
                 catch (Exception e)
                 {
                     InternalLogger.Log(e);
+                    this.RaiseEvent(this.ErrorOccurred, nextInput, null, e);
                     throw;
                 }
             }
 
-            return nextInput;
+            this.AfterPipelinePumped(this, nextInput);
+
+            var result = nextInput.Clone();
+
+            this.RaiseEvent(this.PipelinePumped, nextInput, null);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Occurs before the pipeline processing message.
+        /// </summary>
+        /// <param name="pipeline">The pipeline going to process message.</param>
+        /// <param name="message">The input message.</param>
+        protected virtual void BeforePipelinePumping(Pipeline pipeline, PipeMessage message)
+        {
+        }
+
+        /// <summary>
+        /// Occurs after the pipeline processed message.
+        /// </summary>
+        /// <param name="pipeline">The pipeline done processed message.</param>
+        /// <param name="message">The output message.</param>
+        protected virtual void AfterPipelinePumped(Pipeline pipeline, PipeMessage message)
+        {
         }
 
         /// <summary>
@@ -234,6 +291,24 @@ namespace DevLib.DesignPatterns
         /// <param name="message">The output message.</param>
         protected virtual void AfterFilterProcessed(IPipeFilter filter, PipeMessage message)
         {
+        }
+
+        /// <summary>
+        /// Method RaiseEvent.
+        /// </summary>
+        /// <param name="eventHandler">Instance of EventHandler.</param>
+        /// <param name="message">The pipe message.</param>
+        /// <param name="pipeFilter">The pipe filter.</param>
+        /// <param name="exception">The exception.</param>
+        private void RaiseEvent(EventHandler<PipelineEventArgs> eventHandler, PipeMessage message, IPipeFilter pipeFilter, Exception exception = null)
+        {
+            // Copy a reference to the delegate field now into a temporary field for thread safety.
+            EventHandler<PipelineEventArgs> temp = Interlocked.CompareExchange(ref eventHandler, null, null);
+
+            if (temp != null)
+            {
+                temp(this, new PipelineEventArgs(message, this, pipeFilter, exception));
+            }
         }
     }
 }

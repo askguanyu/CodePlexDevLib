@@ -59,6 +59,7 @@
     <Compile Include="ObjectPoolStoreMode.cs" />
     <Compile Include="PassthroughPipeFilter.cs" />
     <Compile Include="Pipeline.cs" />
+    <Compile Include="PipelineEventArgs.cs" />
     <Compile Include="PipeMessage.cs" />
     <Compile Include="PipeMessageExtensions.cs" />
     <Compile Include="ProducerConsumer.cs" />

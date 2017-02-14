@@ -58,8 +58,18 @@ namespace DevLib.DesignPatterns
             this.ReceivedAt = originalMessage.ReceivedAt;
             this.LastPipeline = originalMessage.LastPipeline;
             this.LastFilter = originalMessage.LastFilter;
+            this.Value = originalMessage.Value;
             this._bodyObject = originalMessage._bodyObject;
             this._properties = originalMessage._properties;
+        }
+
+        /// <summary>
+        /// Gets or sets the non-serializable value.
+        /// </summary>
+        public object Value
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -130,6 +140,24 @@ namespace DevLib.DesignPatterns
         {
             get;
             internal set;
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="System.Object" /> with the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>The object.</returns>
+        public object this[string key]
+        {
+            get
+            {
+                return this.Properties[key];
+            }
+
+            set
+            {
+                this.Properties[key] = value;
+            }
         }
 
         /// <summary>

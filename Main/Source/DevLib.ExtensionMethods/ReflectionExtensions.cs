@@ -512,5 +512,30 @@ namespace DevLib.ExtensionMethods
 
             return result;
         }
+
+        /// <summary>
+        /// Creates an instance of the specified type using the constructor that best matches the specified parameters.
+        /// </summary>
+        /// <param name="source">The type full name of object to create.</param>
+        /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
+        /// <returns>A reference to the newly created object.</returns>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+        public static object CreateInstance(this string source, params object[] args)
+        {
+            return source.GetType(false, true).CreateInstance(args);
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified type using the generic constructor that best matches the specified parameters.
+        /// </summary>
+        /// <param name="source">The type full name of object to create.</param>
+        /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
+        /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
+        /// <returns>A reference to the newly created object.</returns>
+        [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
+        public static object CreateInstanceGeneric(this string source, Type[] typeArguments, params object[] args)
+        {
+            return source.GetType(false, true).CreateInstance(typeArguments, args);
+        }
     }
 }

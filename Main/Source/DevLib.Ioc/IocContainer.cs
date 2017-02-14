@@ -365,7 +365,7 @@ namespace DevLib.Ioc
 
             if (assemblies == null || assemblies.Length == 0)
             {
-                assemblies = new[] { Assembly.GetCallingAssembly(), Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() };
+                assemblies = AppDomain.CurrentDomain.GetAssemblies();
             }
 
             foreach (Assembly assembly in assemblies)

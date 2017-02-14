@@ -473,19 +473,23 @@ namespace DevLib.ExtensionMethods
         /// Gets the System.Type with the specified name, specifying whether to perform a case-sensitive search and whether to throw an exception if the type is not found.
         /// </summary>
         /// <param name="source">The source.</param>
+        /// <param name="isFullName">true if type name is full name; otherwise, false.</param>
         /// <param name="throwOnError">true to throw an exception if the type cannot be found; false to return null.</param>
         /// <param name="ignoreCase">true to perform a case-insensitive search for typeName, false to perform a case-sensitive search for typeName.</param>
         /// <returns>The type with the specified name. If the type is not found, the throwOnError parameter specifies whether null is returned or an exception is thrown.</returns>
-        public static Type GetType(this string source, bool throwOnError, bool ignoreCase)
+        public static Type GetType(this string source, bool isFullName, bool throwOnError, bool ignoreCase)
         {
             Type result = null;
 
+            Exception exception = null;
+
             try
             {
-                result = Type.GetType(source, false, ignoreCase);
+                result = Type.GetType(source, true, ignoreCase);
             }
-            catch
+            catch (Exception e)
             {
+                exception = e;
             }
 
             if (result == null)
@@ -494,20 +498,32 @@ namespace DevLib.ExtensionMethods
 
                 try
                 {
-                    result = AppDomain
-                        .CurrentDomain
-                        .GetAssemblies()
-                        .SelectMany(i => i.GetTypes())
-                        .FirstOrDefault(i => i.Name.Equals(source, stringComparison));
+                    if (isFullName)
+                    {
+                        result = AppDomain
+                            .CurrentDomain
+                            .GetAssemblies()
+                            .SelectMany(i => i.GetTypes())
+                            .FirstOrDefault(i => i.FullName.Equals(source, stringComparison));
+                    }
+                    else
+                    {
+                        result = AppDomain
+                            .CurrentDomain
+                            .GetAssemblies()
+                            .SelectMany(i => i.GetTypes())
+                            .FirstOrDefault(i => i.Name.Equals(source, stringComparison));
+                    }
                 }
-                catch
+                catch (Exception e)
                 {
+                    exception.Data.Add("InnerException", e);
                 }
             }
 
             if (result == null && throwOnError)
             {
-                throw new TypeLoadException();
+                throw exception ?? new TypeLoadException();
             }
 
             return result;
@@ -517,25 +533,27 @@ namespace DevLib.ExtensionMethods
         /// Creates an instance of the specified type using the constructor that best matches the specified parameters.
         /// </summary>
         /// <param name="source">The type full name of object to create.</param>
+        /// <param name="isFullName">true if type name is full name; otherwise, false.</param>
         /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
         /// <returns>A reference to the newly created object.</returns>
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        public static object CreateInstance(this string source, params object[] args)
+        public static object CreateInstance(this string source, bool isFullName, params object[] args)
         {
-            return source.GetType(false, true).CreateInstance(args);
+            return source.GetType(isFullName, true, true).CreateInstance(args);
         }
 
         /// <summary>
         /// Creates an instance of the specified type using the generic constructor that best matches the specified parameters.
         /// </summary>
         /// <param name="source">The type full name of object to create.</param>
+        /// <param name="isFullName">true if type name is full name; otherwise, false.</param>
         /// <param name="typeArguments">An array of types to be substituted for the type parameters of the current generic method definition.</param>
         /// <param name="args">An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="args" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
         /// <returns>A reference to the newly created object.</returns>
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
-        public static object CreateInstanceGeneric(this string source, Type[] typeArguments, params object[] args)
+        public static object CreateInstanceGeneric(this string source, bool isFullName, Type[] typeArguments, params object[] args)
         {
-            return source.GetType(false, true).CreateInstance(typeArguments, args);
+            return source.GetType(isFullName, true, true).CreateInstance(typeArguments, args);
         }
     }
 }

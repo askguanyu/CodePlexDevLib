@@ -1794,7 +1794,7 @@ namespace DevLib.Samples
         {
             PrintMethodName("Test Dev.Lib.ExtensionMethods");
 
-            var t1 = "int32".GetType(false, true);
+            var t1 = "int32".GetType(false, false, true);
 
             var name1 = "1.txt".RenameFile();
 

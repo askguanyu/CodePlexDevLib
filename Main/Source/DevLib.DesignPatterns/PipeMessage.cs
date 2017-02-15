@@ -161,6 +161,16 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
+        /// Gets the brokered message value.
+        /// </summary>
+        /// <typeparam name="T">The type of the message value.</typeparam>
+        /// <returns>The message value.</returns>
+        public T GetValue<T>()
+        {
+            return (T)this.Value;
+        }
+
+        /// <summary>
         /// Deserializes the brokered message body into an object of the specified type.
         /// </summary>
         /// <typeparam name="T">The type to which the message body will be deserialized.</typeparam>

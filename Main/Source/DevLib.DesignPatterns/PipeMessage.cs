@@ -161,13 +161,24 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
-        /// Gets the brokered message value.
+        /// Gets the message value.
         /// </summary>
         /// <typeparam name="T">The type of the message value.</typeparam>
         /// <returns>The message value.</returns>
         public T GetValue<T>()
         {
             return (T)this.Value;
+        }
+
+        /// <summary>
+        /// Sets the message value.
+        /// </summary>
+        /// <param name="value">The message value.</param>
+        /// <returns>The current message instance.</returns>
+        public PipeMessage SetValue(object value)
+        {
+            this.Value = value;
+            return this;
         }
 
         /// <summary>

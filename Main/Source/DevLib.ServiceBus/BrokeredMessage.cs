@@ -221,6 +221,17 @@ namespace DevLib.ServiceBus
         }
 
         /// <summary>
+        /// Sets the message value.
+        /// </summary>
+        /// <param name="value">The message value.</param>
+        /// <returns>The current message instance.</returns>
+        public BrokeredMessage SetValue(object value)
+        {
+            this.Value = value;
+            return this;
+        }
+
+        /// <summary>
         /// Deserializes the brokered message body into an object of the specified type.
         /// </summary>
         /// <typeparam name="T">The type to which the message body will be deserialized.</typeparam>

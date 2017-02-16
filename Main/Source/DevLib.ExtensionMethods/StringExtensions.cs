@@ -510,18 +510,23 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Indicates whether a specified string has value.
+        /// Indicates whether the specified string is neither null nor an System.String.Empty string.
         /// </summary>
         /// <param name="source">The string to test.</param>
-        /// <returns>true if the <paramref name="source" /> parameter length greater then zero. </returns>
-        public static bool HasValue(this string source)
+        /// <returns>true if the value parameter is neither null nor an empty string (""); otherwise, false.</returns>
+        public static bool IsNotNullNorEmpty(this string source)
         {
-            if (source == null)
-            {
-                return false;
-            }
+            return !string.IsNullOrEmpty(source);
+        }
 
-            return source.Length > 0;
+        /// <summary>
+        /// Indicates whether a specified string is neither null, empty, nor consists only of white-space characters.
+        /// </summary>
+        /// <param name="source">The string to test.</param>
+        /// <returns>true if the <paramref name="source" /> parameter is neither null nor <see cref="F:System.String.Empty" />, or if <paramref name="source" /> consists exclusively of white-space characters. </returns>
+        public static bool IsNotNullNorWhiteSpace(this string source)
+        {
+            return !source.IsNullOrWhiteSpace();
         }
 
         /// <summary>

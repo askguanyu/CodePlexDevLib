@@ -46,8 +46,9 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AutoIncrementId.cs" />
     <Compile Include="DbProvider.cs" />
-    <Compile Include="IdGenerator.cs" />
+    <Compile Include="GuidGenerator.cs" />
     <Compile Include="InternalLogger.cs" />
     <Compile Include="Repository\BinaryFileRepository.cs" />
     <Compile Include="Repository\FileBaseRepository.cs" />

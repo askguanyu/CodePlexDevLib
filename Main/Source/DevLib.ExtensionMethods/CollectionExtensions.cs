@@ -507,5 +507,29 @@ namespace DevLib.ExtensionMethods
 
             return result;
         }
+
+        /// <summary>
+        /// Determines whether the source collection is a subset of the specified superset.
+        /// </summary>
+        /// <typeparam name="T">The type of the item in collection.</typeparam>
+        /// <param name="source">The source collection.</param>
+        /// <param name="superset">The superset collection.</param>
+        /// <returns>true if the source collection is a subset of the specified superset; otherwise, false.</returns>
+        public static bool IsSubsetOf<T>(this IEnumerable<T> source, IEnumerable<T> superset)
+        {
+            return source.All(subsetItem => superset.Any(supersetItem => supersetItem.Equals(subsetItem)));
+        }
+
+        /// <summary>
+        /// Determines whether the source collection is superset of the specified subset.
+        /// </summary>
+        /// <typeparam name="T">The type of the item in collection.</typeparam>
+        /// <param name="source">The source collection.</param>
+        /// <param name="subset">The subset collection.</param>
+        /// <returns>true if the source collection is superset of the specified subset; otherwise, false.</returns>
+        public static bool IsSupersetOf<T>(this IEnumerable<T> source, IEnumerable<T> subset)
+        {
+            return subset.All(subsetItem => source.Any(supersetItem => supersetItem.Equals(subsetItem)));
+        }
     }
 }

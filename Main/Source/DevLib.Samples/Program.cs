@@ -297,13 +297,13 @@ namespace DevLib.Samples
             //data.Add(new FooBar());
             //data.Add(new FooBar() { bar = 2 });
 
-            Benchmark.Run(i => IdGenerator.NewGuidSequentialAtEnd(), "NewGuidSequentialAtEnd", 10);
+            Benchmark.Run(i => GuidGenerator.NewGuidSequentialAtEnd(), "NewGuidSequentialAtEnd", 10);
 
-            var a = IdGenerator.NewGuidSequentialString();
-            var b = IdGenerator.NewGuidSequentialAtEnd();
+            var a = GuidGenerator.NewGuidSequentialString();
+            var b = GuidGenerator.NewGuidSequentialAtEnd();
 
-            var c = IdGenerator.GetTimestampFromGuidSequentialString(a);
-            var d = IdGenerator.GetTimestampFromGuidSequentialAtEnd(b);
+            var c = GuidGenerator.GetTimestampFromGuidSequentialString(a);
+            var d = GuidGenerator.GetTimestampFromGuidSequentialAtEnd(b);
 
             Console.ReadLine();
         }

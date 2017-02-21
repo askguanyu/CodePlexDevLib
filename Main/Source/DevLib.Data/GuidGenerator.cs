@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IdGenerator.cs" company="YuGuan Corporation">
+// <copyright file="GuidGenerator.cs" company="YuGuan Corporation">
 //     Copyright (c) YuGuan Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -11,7 +11,7 @@ namespace DevLib.Data
     /// <summary>
     /// The utility class that generates unique identifiers.
     /// </summary>
-    public static class IdGenerator
+    public static class GuidGenerator
     {
         /// <summary>
         /// The ticks factor.

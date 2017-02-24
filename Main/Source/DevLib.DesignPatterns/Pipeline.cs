@@ -72,6 +72,15 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
+        /// Gets or sets the tag.
+        /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the filter chain.
         /// </summary>
         public ReadOnlyCollection<IPipeFilter> FilterChain

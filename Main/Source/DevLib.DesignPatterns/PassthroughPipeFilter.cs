@@ -28,6 +28,15 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
+        /// Gets or sets the tag.
+        /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Processes the specified input PipeMessage.
         /// </summary>
         /// <param name="input">The input PipeMessage.</param>

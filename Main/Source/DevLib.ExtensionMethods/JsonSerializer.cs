@@ -2141,7 +2141,16 @@ namespace DevLib.ExtensionMethods
 
                         for (int i = 0; i < lengths.Length; i++)
                         {
-                            parameters[i] = (long)lengths[i];
+                            var length = lengths[i];
+
+                            try
+                            {
+                                parameters[i] = (long)length;
+                            }
+                            catch
+                            {
+                                parameters[i] = (long)(int)length;
+                            }
                         }
 
                         return Array.CreateInstance(source.GetElementType(), parameters);

@@ -477,6 +477,16 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
+        /// Returns an empty string if source is null; otherwise, return source itself.
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <returns>An empty string if source is null; otherwise, source itself.</returns>
+        public static string EmptyIfNull(this string source)
+        {
+            return source ?? string.Empty;
+        }
+
+        /// <summary>
         /// Indicates whether the specified string is null or an System.String.Empty string.
         /// </summary>
         /// <param name="source">The string to test.</param>

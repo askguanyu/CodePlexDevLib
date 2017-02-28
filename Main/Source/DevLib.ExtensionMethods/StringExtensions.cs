@@ -1081,5 +1081,27 @@ namespace DevLib.ExtensionMethods
         {
             return source.IsNullOrWhiteSpace() ? null : source;
         }
+
+        /// <summary>
+        /// Retrieves a substring from the left.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <param name="length">The number of characters in the substring.</param>
+        /// <returns>The sub string.</returns>
+        public static string SubstringLeft(this string source, int length)
+        {
+            return source.Substring(0, length);
+        }
+
+        /// <summary>
+        /// Retrieves a substring from the right.
+        /// </summary>
+        /// <param name="source">The source string.</param>
+        /// <param name="length">The number of characters in the substring.</param>
+        /// <returns>The sub string.</returns>
+        public static string SubstringRight(this string source, int length)
+        {
+            return source.Substring(source.Length - length);
+        }
     }
 }

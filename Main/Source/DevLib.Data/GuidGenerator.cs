@@ -7,6 +7,7 @@ namespace DevLib.Data
 {
     using System;
     using System.Security.Cryptography;
+    using System.Text;
 
     /// <summary>
     /// The utility class that generates unique identifiers.
@@ -42,6 +43,19 @@ namespace DevLib.Data
             /// The sequential portion of the GUID should be located at the end of the Data4 block.
             /// </summary>
             SequentialAtEnd
+        }
+
+        /// <summary>
+        /// Generates a new GUID value from given string MD5 hash.
+        /// </summary>
+        /// <param name="value">The given string.</param>
+        /// <returns>Deterministic Guid instance.</returns>
+        public static Guid Md5HashGuid(string value)
+        {
+            var inputBytes = Encoding.UTF8.GetBytes(value ?? string.Empty);
+            MD5 md5 = MD5.Create();
+            byte[] hashBytes = md5.ComputeHash(inputBytes);
+            return new Guid(hashBytes);
         }
 
         /// <summary>

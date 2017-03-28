@@ -617,30 +617,6 @@ namespace DevLib.ExtensionMethods
         }
 
         /// <summary>
-        /// Base64 decodes a string.
-        /// </summary>
-        /// <param name="source">A base64 encoded string.</param>
-        /// <returns>Decoded string.</returns>
-        public static string Base64Decode(this string source)
-        {
-            byte[] buffer = Convert.FromBase64String(source);
-
-            return Encoding.UTF8.GetString(buffer);
-        }
-
-        /// <summary>
-        /// Base64 encodes a string.
-        /// </summary>
-        /// <param name="source">String to encode.</param>
-        /// <returns>A base64 encoded string.</returns>
-        public static string Base64Encode(this string source)
-        {
-            byte[] buffer = Encoding.UTF8.GetBytes(source);
-
-            return Convert.ToBase64String(buffer);
-        }
-
-        /// <summary>
         /// Retrieves left part substring from this instance. The substring ends at the first occurrence of the specified string position. If the specified string is not found, the return value is <see cref="F:System.String.Empty" />.
         /// </summary>
         /// <param name="source">Source string.</param>

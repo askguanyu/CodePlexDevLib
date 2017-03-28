@@ -1038,6 +1038,9 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            var r1 = 1234.Base62Encode();
+            var r2 = r1.Base62Decode();
+
             var request = "\x0081";
 
             var requestE = request.ToByteArray(TextExtensions.CP1252);

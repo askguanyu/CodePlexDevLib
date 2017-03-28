@@ -8,6 +8,7 @@ namespace DevLib.Text
     using System;
     using System.Text;
     using System.Web.Security;
+    using System.Collections.Generic;
 
     /// <summary>
     /// String Utilities.
@@ -18,22 +19,6 @@ namespace DevLib.Text
         /// Static Field _random.
         /// </summary>
         private static readonly Random RandomObj = new Random();
-
-        /// <summary>
-        /// The alphabet and numeric chars.
-        /// </summary>
-        private static readonly string[] AlphaNumericChars = new string[]
-        {
-            "a", "b", "c", "d", "e", "f", "g",
-            "h", "i", "j", "k", "l", "m", "n",
-            "o", "p", "q", "r", "s", "t",
-            "u", "v", "w", "x", "y", "z",
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-            "A", "B", "C", "D", "E", "F", "G",
-            "H", "I", "J", "K", "L", "M", "N",
-            "O", "P", "Q", "R", "S", "T",
-            "U", "V", "W", "X", "Y", "Z"
-        };
 
         /// <summary>
         /// Returns a random alphabet string of the desired size.
@@ -111,41 +96,6 @@ namespace DevLib.Text
             }
 
             return stringBuilder.ToString();
-        }
-
-        /// <summary>
-        /// Shortens the specified source string.
-        /// </summary>
-        /// <param name="source">The source.</param>
-        /// <returns>4 shorten string candidates in string array.</returns>
-        public static string[] Shorten(string source)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return new[] { source, source, source, source };
-            }
-
-            string hex = FormsAuthentication.HashPasswordForStoringInConfigFile(source, "md5");
-
-            string[] result = new string[4];
-
-            for (int i = 0; i < 4; i++)
-            {
-                int hexInt = 0x3FFFFFFF & Convert.ToInt32("0x" + hex.Substring(i * 8, 8), 16);
-
-                string outChars = string.Empty;
-
-                for (int j = 0; j < 6; j++)
-                {
-                    int index = 0x0000003D & hexInt;
-                    outChars += AlphaNumericChars[index];
-                    hexInt = hexInt >> 5;
-                }
-
-                result[i] = outChars;
-            }
-
-            return result;
         }
     }
 }

@@ -6,6 +6,7 @@
 namespace DevLib.ExtensionMethods
 {
     using System;
+    using System.Collections.Generic;
     using System.Text;
     using System.Web.Security;
 
@@ -14,6 +15,18 @@ namespace DevLib.ExtensionMethods
     /// </summary>
     public static class TextExtensions
     {
+        /// <summary>
+        /// The Base 15 chars set.
+        /// 123456789ABCDEF
+        /// </summary>
+        public const string Base15Chars = "123456789ABCDEF";
+
+        /// <summary>
+        /// The Base 26 chars set.
+        /// 0123456789ABCDEF
+        /// </summary>
+        public const string Base16Chars = "0123456789ABCDEF";
+
         /// <summary>
         /// The Base 26 chars set.
         /// ABCDEFGHIJKLMNOPQRSTUVWXYZ
@@ -154,6 +167,66 @@ namespace DevLib.ExtensionMethods
             byte[] buffer = Encoding.UTF8.GetBytes(source);
 
             return Convert.ToBase64String(buffer);
+        }
+
+        /// <summary>
+        /// Encodes to 123456789ABCDEF chars set.
+        /// </summary>
+        /// <param name="source">The source number.</param>
+        /// <returns>A Based encoded string.</returns>
+        public static string Base15Encode(this int source)
+        {
+            return ((long)source).Base15Encode();
+        }
+
+        /// <summary>
+        /// Encodes to 123456789ABCDEF chars set.
+        /// </summary>
+        /// <param name="source">The source number.</param>
+        /// <returns>A Based encoded string.</returns>
+        public static string Base15Encode(this long source)
+        {
+            return source.BaseEncode(Base15Chars);
+        }
+
+        /// <summary>
+        /// Decodes 123456789ABCDEF Based string to number.
+        /// </summary>
+        /// <param name="source">The source Based string.</param>
+        /// <returns>The decoded number.</returns>
+        public static long Base15Decode(this string source)
+        {
+            return source.BaseDecode(Base15Chars);
+        }
+
+        /// <summary>
+        /// Encodes to 0123456789ABCDEF chars set.
+        /// </summary>
+        /// <param name="source">The source number.</param>
+        /// <returns>A Based encoded string.</returns>
+        public static string Base16Encode(this int source)
+        {
+            return ((long)source).Base16Encode();
+        }
+
+        /// <summary>
+        /// Encodes to 0123456789ABCDEF chars set.
+        /// </summary>
+        /// <param name="source">The source number.</param>
+        /// <returns>A Based encoded string.</returns>
+        public static string Base16Encode(this long source)
+        {
+            return source.BaseEncode(Base16Chars);
+        }
+
+        /// <summary>
+        /// Decodes 0123456789ABCDEF Based string to number.
+        /// </summary>
+        /// <param name="source">The source Based string.</param>
+        /// <returns>The decoded number.</returns>
+        public static long Base16Decode(this string source)
+        {
+            return source.BaseDecode(Base16Chars);
         }
 
         /// <summary>
@@ -355,20 +428,29 @@ namespace DevLib.ExtensionMethods
         /// <returns>A Based encoded string.</returns>
         public static string BaseEncode(this long source, string baseChars)
         {
-            long targetBase = baseChars.Length;
+            decimal input = (decimal)source;
 
-            char[] result = new char[Math.Max((int)Math.Ceiling(Math.Log(source + 1, targetBase)), 1)];
+            bool negative = input < 0;
 
-            var i = result.Length;
+            if (negative)
+            {
+                input = (decimal)ulong.MaxValue + input;
+            }
+
+            long targetBaseLength = baseChars.Length;
+
+            var result = new Stack<char>();
 
             do
             {
-                result[--i] = baseChars[(int)(source % targetBase)];
-                source = source / targetBase;
+                result.Push(baseChars[(int)(input % targetBaseLength)]);
+                input = (long)(input / targetBaseLength);
             }
-            while (source > 0);
+            while (input != 0);
 
-            return new string(result);
+            var resultString = new string(result.ToArray());
+
+            return negative ? ("-" + resultString) : resultString;
         }
 
         /// <summary>
@@ -379,19 +461,23 @@ namespace DevLib.ExtensionMethods
         /// <returns>The decoded number.</returns>
         public static long BaseDecode(this string source, string baseChars)
         {
-            char[] sourceChars = source.ToCharArray();
-            int index = sourceChars.Length - 1;
-            int targetBase = baseChars.Length;
-            int x = 0;
-            long result = 0;
+            bool negative = source.StartsWith("-") && source.Length > 1;
 
-            for (int i = 0; i < sourceChars.Length; i++)
+            if (negative)
             {
-                x = baseChars.IndexOf(sourceChars[i]);
-                result += x * (long)Math.Pow(targetBase, index--);
+                source = source.Substring(1);
             }
 
-            return result;
+            int targetBaseLength = baseChars.Length;
+
+            decimal result = 0;
+
+            foreach (char position in source)
+            {
+                result = (result * targetBaseLength) + baseChars.IndexOf(position);
+            }
+
+            return (long)(negative ? (result - (decimal)ulong.MaxValue) : result);
         }
     }
 }

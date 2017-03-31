@@ -543,6 +543,15 @@ namespace DevLib.Web
         }
 
         /// <summary>
+        /// Gets whether the port value of the URI is the default for this scheme.
+        /// </summary>
+        /// <returns>true if the port is the default port for this scheme; otherwise, false.</returns>
+        public bool IsDefaultPort()
+        {
+            return this.ToUri().IsDefaultPort;
+        }
+
+        /// <summary>
         /// Sets the authority.
         /// </summary>
         /// <param name="user">The user.</param>
@@ -896,6 +905,15 @@ namespace DevLib.Web
             }
 
             return path;
+        }
+
+        /// <summary>
+        /// Gets the path segments array.
+        /// </summary>
+        /// <returns>The path segments array.</returns>
+        public string[] GetPathSegments()
+        {
+            return this._path.ToArray();
         }
 
         /// <summary>
@@ -1635,6 +1653,74 @@ namespace DevLib.Web
             }
 
             if (this.HasPort())
+            {
+                result.Append(":");
+                result.Append(this._port.Value.ToString(CultureInfo.InvariantCulture));
+            }
+
+            if (this.HasPath())
+            {
+                var path = this.GetPath();
+                result.Append("/");
+                result.Append((this.HasQuery() || this.HasFragment()) ? path.Trim('/') : path);
+            }
+
+            if (this.HasQuery())
+            {
+                result.Append("?");
+                result.Append(this.GetQueryString());
+            }
+
+            if (this.HasFragment())
+            {
+                result.Append("#");
+                result.Append(this._fragment);
+            }
+
+            var resultUrl = result.ToString();
+
+            result.Length = 0;
+
+            return resultUrl;
+        }
+
+        /// <summary>
+        /// Returns a URL string that represents this instance.
+        /// </summary>
+        /// <param name="includePort">true to include port if has port; false to not include port.</param>
+        /// <returns>A URL string that represents this instance.</returns>
+        public string ToString(bool includePort)
+        {
+            //// scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
+            //// abc://username:password@example.com:123/path/data?key=value&key2=value2#fragid1
+
+            StringBuilder result = new StringBuilder();
+
+            if (this.HasScheme())
+            {
+                result.Append(this._scheme);
+                result.Append(SchemeDelimiter);
+            }
+
+            if (this.HasAuthority())
+            {
+                result.Append(this._user);
+
+                if (!IsNullOrWhiteSpace(this._password))
+                {
+                    result.Append(":");
+                    result.Append(this._password);
+                }
+
+                result.Append("@");
+            }
+
+            if (this.HasHost())
+            {
+                result.Append(this._host);
+            }
+
+            if (includePort && this.HasPort())
             {
                 result.Append(":");
                 result.Append(this._port.Value.ToString(CultureInfo.InvariantCulture));

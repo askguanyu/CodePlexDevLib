@@ -516,7 +516,7 @@ namespace DevLib.Web
         /// <returns>The current UrlBuilder instance.</returns>
         public UrlBuilder RemovePortIfDefault()
         {
-            if (this.ToUri().IsDefaultPort)
+            if (this.IsDefaultPort())
             {
                 this._port = null;
             }
@@ -1687,9 +1687,9 @@ namespace DevLib.Web
         /// <summary>
         /// Returns a URL string that represents this instance.
         /// </summary>
-        /// <param name="includePort">true to include port if has port; false to not include port.</param>
+        /// <param name="includePort">true to not use port if the port is default; false to use port if has one.</param>
         /// <returns>A URL string that represents this instance.</returns>
-        public string ToString(bool includePort)
+        public string ToString(bool notUsePortIfDefault)
         {
             //// scheme:[//[user:password@]host[:port]][/]path[?query][#fragment]
             //// abc://username:password@example.com:123/path/data?key=value&key2=value2#fragid1
@@ -1720,7 +1720,7 @@ namespace DevLib.Web
                 result.Append(this._host);
             }
 
-            if (includePort && this.HasPort())
+            if (this.HasPort() && !(notUsePortIfDefault && this.IsDefaultPort()))
             {
                 result.Append(":");
                 result.Append(this._port.Value.ToString(CultureInfo.InvariantCulture));

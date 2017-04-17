@@ -53,6 +53,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ArrayExtensions.cs" />
+    <Compile Include="BitStream.cs" />
     <Compile Include="BoolExtensions.cs" />
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="CollectionExtensions.cs" />

@@ -7,6 +7,7 @@ namespace DevLib.Text
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Text;
     using System.Web.Security;
 
@@ -397,6 +398,110 @@ namespace DevLib.Text
         public static long Base62Decode(string source)
         {
             return BaseDecode(source, Base62Chars);
+        }
+
+        /// <summary>
+        /// Encodes to 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz chars set.
+        /// </summary>
+        /// <param name="source">The source bytes.</param>
+        /// <returns>A Based encoded string.</returns>
+        public static string Base62EncodeBytes(byte[] source)
+        {
+            StringBuilder result = new StringBuilder();
+            BitStream stream = new BitStream(source);
+            byte[] read = new byte[1];
+
+            while (true)
+            {
+                read[0] = 0;
+                int length = stream.Read(read, 0, 6);
+
+                if (length == 6)
+                {
+                    if ((int)(read[0] >> 3) == 0x1f)
+                    {
+                        result.Append(Base62Chars[61]);
+                        stream.Seek(-1, SeekOrigin.Current);
+                    }
+                    else if ((int)(read[0] >> 3) == 0x1e)
+                    {
+                        result.Append(Base62Chars[60]);
+                        stream.Seek(-1, SeekOrigin.Current);
+                    }
+                    else
+                    {
+                        result.Append(Base62Chars[(int)(read[0] >> 2)]);
+                    }
+                }
+                else if (length == 0)
+                {
+                    break;
+                }
+                else
+                {
+                    result.Append(Base62Chars[(int)(read[0] >> (int)(8 - length))]);
+                    break;
+                }
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// Decodes 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz Based string to number.
+        /// </summary>
+        /// <param name="source">The source Based string.</param>
+        /// <returns>The decoded bytes.</returns>
+        public static byte[] Base62DecodeBytes(string source)
+        {
+            int count = 0;
+
+            BitStream stream = new BitStream(source.Length * 6 / 8);
+
+            foreach (char c in source)
+            {
+                int index = Base62Chars.IndexOf(c);
+
+                if (count == source.Length - 1)
+                {
+                    int mod = (int)(stream.Position % 8);
+
+                    if (mod == 0)
+                    {
+                        throw new InvalidDataException("An extra character was found");
+                    }
+
+                    if ((index >> (8 - mod)) > 0)
+                    {
+                        throw new InvalidDataException("Invalid ending character was found");
+                    }
+
+                    stream.Write(new byte[] { (byte)(index << mod) }, 0, 8 - mod);
+                }
+                else
+                {
+                    if (index == 60)
+                    {
+                        stream.Write(new byte[] { 0xf0 }, 0, 5);
+                    }
+                    else if (index == 61)
+                    {
+                        stream.Write(new byte[] { 0xf8 }, 0, 5);
+                    }
+                    else
+                    {
+                        stream.Write(new byte[] { (byte)index }, 2, 6);
+                    }
+                }
+
+                count++;
+            }
+
+            byte[] result = new byte[stream.Position / 8];
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(result, 0, result.Length * 8);
+
+            return result;
         }
 
         /// <summary>

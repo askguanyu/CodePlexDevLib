@@ -62,9 +62,9 @@ namespace DevLib.Threading
         }
 
         /// <summary>
-        /// Exits the code block.
+        /// Breaks the current code block.
         /// </summary>
-        public virtual void Exit()
+        public virtual void Break()
         {
             this._signal.Set();
         }

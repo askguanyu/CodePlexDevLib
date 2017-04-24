@@ -161,6 +161,18 @@ namespace DevLib.DesignPatterns
         }
 
         /// <summary>
+        /// Adds or updates the property.
+        /// </summary>
+        /// <param name="key">The name of property.</param>
+        /// <param name="value">The property value.</param>
+        /// <returns>The current message instance.</returns>
+        public PipeMessage AddOrUpdateProperty(string key, object value)
+        {
+            this.Properties[key] = value;
+            return this;
+        }
+
+        /// <summary>
         /// Gets the message value.
         /// </summary>
         /// <typeparam name="T">The type of the message value.</typeparam>

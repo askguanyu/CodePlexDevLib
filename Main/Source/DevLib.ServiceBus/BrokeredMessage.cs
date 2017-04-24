@@ -211,6 +211,18 @@ namespace DevLib.ServiceBus
         }
 
         /// <summary>
+        /// Adds or updates the property.
+        /// </summary>
+        /// <param name="key">The name of property.</param>
+        /// <param name="value">The property value.</param>
+        /// <returns>The current message instance.</returns>
+        public BrokeredMessage AddOrUpdateProperty(string key, object value)
+        {
+            this.Properties[key] = value;
+            return this;
+        }
+
+        /// <summary>
         /// Gets the brokered message value.
         /// </summary>
         /// <typeparam name="T">The type of the message value.</typeparam>

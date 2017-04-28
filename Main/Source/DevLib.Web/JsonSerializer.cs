@@ -1316,6 +1316,18 @@ namespace DevLib.Web
                 throw new ArgumentNullException("type");
             }
 
+            if (type.IsEnum)
+            {
+                if (value == null)
+                {
+                    return ((IList)Enum.GetValues(type))[0];
+                }
+                else
+                {
+                    return Enum.ToObject(type, value);
+                }
+            }
+
             string valueAsString = value as string;
 
             if (type == typeof(Guid) && string.IsNullOrEmpty(valueAsString))

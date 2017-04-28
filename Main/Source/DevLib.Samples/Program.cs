@@ -1036,8 +1036,20 @@ namespace DevLib.Samples
             public object MyProperty1 { get; set; }
         }
 
+        public class TestJsonClass
+        {
+            public string MyProperty1 { get; set; }
+            public int MyProperty2 { get; set; }
+            public Day MyProperty3 { get; set; }
+        }
+
         private static void TestCodeSnippets()
         {
+            var testJson = new TestJsonClass { MyProperty1 = "a", MyProperty2 = 1, MyProperty3 = Day.Friday };
+            var testjs = testJson.SerializeJsonString();
+            var testjso = testjs.DeserializeJsonString<TestJsonClass>();
+
+
             var r1 = 1234.Base62Encode();
             var r2 = r1.Base62Decode();
 

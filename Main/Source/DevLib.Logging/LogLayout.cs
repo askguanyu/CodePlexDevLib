@@ -32,7 +32,7 @@ namespace DevLib.Logging
 
             StringBuilder result = new StringBuilder();
 
-            result.Append(string.IsNullOrEmpty(format) ? timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture) : timestamp.ToString(format));
+            result.Append(string.IsNullOrEmpty(format) ? timestamp.ToString("o", CultureInfo.InvariantCulture) : timestamp.ToString(format));
             result.Append("|");
             result.Append(logLevel.ToString());
             result.Append("|");

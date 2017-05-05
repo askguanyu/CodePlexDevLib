@@ -265,7 +265,7 @@ namespace DevLib.ServiceProcess
             this.ServiceAssemblyPath = string.Empty;
             this.ServiceName = "DefaultServiceName";
             this.DisplayName = this.ServiceName;
-            this.Description = string.Format("Installed on {0}", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
+            this.Description = string.Format("Installed on {0}", DateTime.Now.ToString("o", CultureInfo.InvariantCulture));
             this.StartType = ServiceStartMode.Automatic;
             this.StartAfterInstall = true;
             this.RestartOnFailure = true;

@@ -717,7 +717,7 @@ namespace DevLib.Diagnostics
 
             XmlNode timestampNode = xmlDocument.CreateElement("Timestamp");
             XmlAttribute timestampAttribute = xmlDocument.CreateAttribute("Value");
-            timestampAttribute.InnerText = this.Timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture);
+            timestampAttribute.InnerText = this.Timestamp.ToString("o", CultureInfo.InvariantCulture);
             timestampNode.Attributes.Append(timestampAttribute);
             rootNode.AppendChild(timestampNode);
 

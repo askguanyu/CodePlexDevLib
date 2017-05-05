@@ -168,7 +168,7 @@ namespace DevLib.DesignPatterns
         {
             StringBuilder result = new StringBuilder();
 
-            result.Append(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffffffUzzz", CultureInfo.InvariantCulture));
+            result.Append(DateTime.Now.ToString("o", CultureInfo.InvariantCulture));
             result.Append("|INTL|");
             result.Append(Environment.UserName);
             result.Append("|");

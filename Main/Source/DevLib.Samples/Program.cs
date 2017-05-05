@@ -96,7 +96,7 @@ namespace DevLib.Samples
 
                 var result = Benchmark.Run(i =>
                 {
-                    //TestCodeSnippets();
+                    TestCodeSnippets();
                 });
 
                 Benchmark.Run(i =>
@@ -1045,6 +1045,26 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            //foreach (var item in TimeZoneInfo.GetSystemTimeZones())
+            //{
+            //    Console.WriteLine("/// <summary>");
+            //    Console.WriteLine("/// StandardName: " + item.StandardName);
+            //    Console.WriteLine("/// DisplayName: " + item.DisplayName);
+            //    Console.WriteLine("/// </summary>");
+            //    Console.WriteLine(@"public const string {0} = ""{1}"";".FormatInvariantCultureWith(item.Id.Replace(" ", "_").Replace(".", "_").Replace("+", "_Plus_").Replace("-", "_Minus_"), item.Id));
+            //    Console.WriteLine();
+
+            //}
+
+
+            DateTime localTime = DateTime.UtcNow;
+
+            var localTimeString = localTime.ToString("o");
+
+            var t1 = localTime.ToTimeZone(-4);
+
+            var t1String = t1.ToString("o");
+
             var testJson = new TestJsonClass { MyProperty1 = "a", MyProperty2 = 1, MyProperty3 = Day.Friday };
             var testjs = testJson.SerializeJsonString();
             var testjso = testjs.DeserializeJsonString<TestJsonClass>();

@@ -34,6 +34,7 @@ echo y | DevLib.ServiceBus.Publish.Debug.bat
 echo y | DevLib.ServiceModel.Publish.Debug.bat
 echo y | DevLib.ServiceModel.Extensions.Publish.Debug.bat
 echo y | DevLib.ServiceProcess.Publish.Debug.bat
+echo y | DevLib.System20.Publish.Debug.bat
 echo y | DevLib.TerminalServices.Publish.Debug.bat
 echo y | DevLib.Text.Publish.Debug.bat
 echo y | DevLib.Threading.Publish.Debug.bat

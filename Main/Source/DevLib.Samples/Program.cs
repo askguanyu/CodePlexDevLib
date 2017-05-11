@@ -96,7 +96,7 @@ namespace DevLib.Samples
 
                 var result = Benchmark.Run(i =>
                 {
-                    TestCodeSnippets();
+                    //TestCodeSnippets();
                 });
 
                 Benchmark.Run(i =>
@@ -1045,6 +1045,8 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            new List<Person>() { new Person() }.Distinct(GenericEqualityComparer<Person>.By(i => i.FirstName)).ToList();
+
             //foreach (var item in TimeZoneInfo.GetSystemTimeZones())
             //{
             //    Console.WriteLine("/// <summary>");

@@ -33,7 +33,7 @@ namespace System
         /// </summary>
         /// <param name="keySelectors">The key selectors.</param>
         /// <returns>GenericEqualityComparer instance.</returns>
-        public static GenericEqualityComparer<T> By(params Converter<T, object>[] keySelectors)
+        public static IEqualityComparer<T> By(params Converter<T, object>[] keySelectors)
         {
             return new GenericEqualityComparer<T>(keySelectors);
         }
@@ -51,7 +51,7 @@ namespace System
             {
                 foreach (var keySelector in this._keySelectors)
                 {
-                    result ^= keySelector((T)obj).GetHashCode();
+                    result ^= (keySelector((T)obj) ?? 0).GetHashCode();
                 }
             }
 
@@ -97,7 +97,7 @@ namespace System
             {
                 foreach (var keySelector in this._keySelectors)
                 {
-                    result ^= keySelector(obj).GetHashCode();
+                    result ^= (keySelector(obj) ?? 0).GetHashCode();
                 }
             }
 
@@ -147,6 +147,23 @@ namespace System
             }
 
             return true;
+        }
+    }
+
+    /// <summary>
+    /// Generic methods to support the comparison of objects for equality.
+    /// </summary>
+    /// <typeparam name="T">The type of objects to compare.</typeparam>
+    public static class GenericEqualityComparer
+    {
+        /// <summary>
+        /// Gets a new instance of the <see cref="GenericEqualityComparer{T}"/> class.
+        /// </summary>
+        /// <param name="keySelectors">The key selectors.</param>
+        /// <returns>GenericEqualityComparer instance.</returns>
+        public static IEqualityComparer<T> By<T>(params Converter<T, object>[] keySelectors)
+        {
+            return new GenericEqualityComparer<T>(keySelectors);
         }
     }
 }

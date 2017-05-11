@@ -252,6 +252,10 @@
       <Project>{40b2a751-81aa-4873-8477-3025c8ce2795}</Project>
       <Name>DevLib.ServiceProcess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DevLib.System20\DevLib.System20.csproj">
+      <Project>{DEDB3DD7-A0EA-4482-8425-D35F60441D6D}</Project>
+      <Name>DevLib.System20</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DevLib.TerminalServices\DevLib.TerminalServices.csproj">
       <Project>{254E792E-ECFC-4617-9286-77609816B773}</Project>
       <Name>DevLib.TerminalServices</Name>

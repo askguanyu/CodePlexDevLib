@@ -31,10 +31,10 @@ namespace DevLib.Timers
         /// <summary>
         /// Initializes a new instance of the <see cref="HeartbeatTimer" /> class.
         /// </summary>
-        /// <param name="timeout">The timeout in milliseconds.</param>
+        /// <param name="timeout">The timeout in milliseconds. The value must be greater than zero and less than or equal to System.Int32.MaxValue.</param>
         /// <param name="startNow">true if immediately start HeartbeatTimer; otherwise, false.</param>
         /// <param name="autoStop">Whether stop current HeartbeatTimer when TimeoutOccurred event raised.</param>
-        public HeartbeatTimer(int timeout, bool startNow = false, bool autoStop = true)
+        public HeartbeatTimer(double timeout, bool startNow = false, bool autoStop = true)
         {
             this.Timeout = timeout;
             this._autoStop = autoStop;
@@ -75,9 +75,9 @@ namespace DevLib.Timers
         }
 
         /// <summary>
-        /// Gets or sets the timeout in milliseconds.
+        /// Gets or sets the timeout in milliseconds. The value must be greater than zero and less than or equal to System.Int32.MaxValue.
         /// </summary>
-        public int Timeout
+        public double Timeout
         {
             get;
             set;

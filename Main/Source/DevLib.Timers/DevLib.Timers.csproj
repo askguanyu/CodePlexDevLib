@@ -43,6 +43,7 @@
     <Compile Include="..\DevLib.Main\Properties\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="HeartbeatTimer.cs" />
     <Compile Include="InternalLogger.cs" />
     <Compile Include="IdleTimer.cs" />
     <Compile Include="NativeAPI\LASTINPUTINFO.cs" />

@@ -162,7 +162,7 @@ namespace DevLib.Timers
         {
             this._timer.Stop();
             this.IsAlive = false;
-            this.OnTimeoutOccurred(sender, e);
+            this.OnTimeoutOccurred(e);
 
             if (!this._autoStop)
             {
@@ -176,14 +176,14 @@ namespace DevLib.Timers
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs"/> instance containing the event data.</param>
-        private void OnTimeoutOccurred(object sender, ElapsedEventArgs e)
+        private void OnTimeoutOccurred(ElapsedEventArgs e)
         {
             // Copy a reference to the delegate field now into a temporary field for thread safety.
             ElapsedEventHandler safeHandler = System.Threading.Interlocked.CompareExchange(ref this.TimeoutOccurred, null, null);
 
             if (safeHandler != null)
             {
-                safeHandler(sender, e);
+                safeHandler(this, e);
             }
         }
 

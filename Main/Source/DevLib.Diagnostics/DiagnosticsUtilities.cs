@@ -28,7 +28,7 @@ namespace DevLib.Diagnostics
             {
                 string message = string.Format(
                     "{0}|{1}|{2}|{3}| [{4}] |{5}",
-                    DateTime.Now.ToString("o", CultureInfo.InvariantCulture),
+                    DateTimeOffset.Now.ToString("o", CultureInfo.InvariantCulture),
                     "EXCP",
                     Environment.UserName,
                     Thread.CurrentThread.ManagedThreadId.ToString("000"),

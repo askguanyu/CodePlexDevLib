@@ -1687,7 +1687,7 @@ namespace DevLib.Web
         /// <summary>
         /// Returns a URL string that represents this instance.
         /// </summary>
-        /// <param name="includePort">true to not use port if the port is default; false to use port if has one.</param>
+        /// <param name="notUsePortIfDefault">true if not use port if default; otherwise, false.</param>
         /// <returns>A URL string that represents this instance.</returns>
         public string ToString(bool notUsePortIfDefault)
         {

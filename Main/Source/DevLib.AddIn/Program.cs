@@ -438,7 +438,7 @@ args[4] = Redirect output or not");
         {
             StringBuilder result = new StringBuilder();
 
-            result.Append(DateTime.Now.ToString("o", CultureInfo.InvariantCulture));
+            result.Append(DateTimeOffset.Now.ToString("o", CultureInfo.InvariantCulture));
             result.Append("|INTL|");
             result.Append(Environment.UserName);
             result.Append("|");

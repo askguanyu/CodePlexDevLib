@@ -1045,6 +1045,13 @@ namespace DevLib.Samples
 
         private static void TestCodeSnippets()
         {
+            RSACryptoServiceProvider rsa11 = new RSACryptoServiceProvider();
+            var privateKey11 = rsa11.ExportCspBlob(true).ToHexString();
+            var publicKey11 = rsa11.ExportCspBlob(false).ToHexString();
+
+
+
+
             new List<Person>() { new Person() }.Distinct(GenericEqualityComparer<Person>.By(i => i.FirstName)).ToList();
 
             //foreach (var item in TimeZoneInfo.GetSystemTimeZones())

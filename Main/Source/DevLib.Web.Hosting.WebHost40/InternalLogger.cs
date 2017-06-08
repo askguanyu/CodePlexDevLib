@@ -168,7 +168,7 @@ namespace DevLib.Web.Hosting.WebHost40
         {
             StringBuilder result = new StringBuilder();
 
-            result.Append(DateTime.Now.ToString("o", CultureInfo.InvariantCulture));
+            result.Append(DateTimeOffset.Now.ToString("o", CultureInfo.InvariantCulture));
             result.Append("|INTL|");
             result.Append(Environment.UserName);
             result.Append("|");

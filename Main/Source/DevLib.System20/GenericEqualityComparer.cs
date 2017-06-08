@@ -153,7 +153,6 @@ namespace System
     /// <summary>
     /// Generic methods to support the comparison of objects for equality.
     /// </summary>
-    /// <typeparam name="T">The type of objects to compare.</typeparam>
     public static class GenericEqualityComparer
     {
         /// <summary>

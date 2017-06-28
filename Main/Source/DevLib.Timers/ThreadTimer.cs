@@ -21,7 +21,7 @@ namespace DevLib.Timers
         /// <summary>
         /// Field _interval.
         /// </summary>
-        private long _interval = 0;
+        private double _interval = 0;
 
         /// <summary>
         /// Field _timer.
@@ -41,7 +41,7 @@ namespace DevLib.Timers
         /// </summary>
         /// <param name="interval">The time, in milliseconds, between events. If interval is less than or equal to zero (0), the event is raised once.</param>
         /// <param name="firstStartTime">The time to delay before event is raised. If less than or equal to DateTime.Now, the timer will start immediately.</param>
-        public ThreadTimer(long interval, DateTime firstStartTime = default(DateTime))
+        public ThreadTimer(double interval, DateTimeOffset firstStartTime = default(DateTimeOffset))
         {
             this.Interval = interval;
             this.FirstStartTime = firstStartTime;
@@ -62,9 +62,27 @@ namespace DevLib.Timers
         public event EventHandler Elapsed;
 
         /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the tag.
+        /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets the interval in milliseconds at which to raise the <see cref="E:Elapsed" /> event. If interval is less than or equal to zero (0), the event is raised once.
         /// </summary>
-        public long Interval
+        public double Interval
         {
             get
             {
@@ -80,7 +98,7 @@ namespace DevLib.Timers
         /// <summary>
         /// Gets or sets the time to delay before event is raised. If less than or equal to DateTime.Now, the timer will start immediately.
         /// </summary>
-        public DateTime FirstStartTime
+        public DateTimeOffset FirstStartTime
         {
             get;
             set;
@@ -106,23 +124,23 @@ namespace DevLib.Timers
             {
                 try
                 {
-                    double totalMilliseconds = (this.FirstStartTime - DateTime.Now).TotalMilliseconds;
+                    var totalMilliseconds = (this.FirstStartTime - DateTimeOffset.Now).TotalMilliseconds;
 
                     long dueTime = totalMilliseconds > 0 ? (long)totalMilliseconds : 0;
 
                     if (this._timer == null)
                     {
-                        this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, this.Interval);
+                        this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, (long)this.Interval);
                     }
                     else
                     {
-                        if (!this._timer.Change(dueTime, this.Interval))
+                        if (!this._timer.Change(dueTime, (long)this.Interval))
                         {
                             this._timer.Dispose();
 
                             this._timer = null;
 
-                            this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, this.Interval);
+                            this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, (long)this.Interval);
                         }
                     }
 
@@ -157,17 +175,17 @@ namespace DevLib.Timers
             {
                 if (this._timer == null)
                 {
-                    this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, 0, this.Interval);
+                    this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, 0, (long)this.Interval);
                 }
                 else
                 {
-                    if (!this._timer.Change(0, this.Interval))
+                    if (!this._timer.Change(0, (long)this.Interval))
                     {
                         this._timer.Dispose();
 
                         this._timer = null;
 
-                        this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, 0, this.Interval);
+                        this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, 0, (long)this.Interval);
                     }
                 }
 
@@ -199,23 +217,23 @@ namespace DevLib.Timers
 
             try
             {
-                double totalMilliseconds = (this.FirstStartTime - DateTime.Now).TotalMilliseconds;
+                var totalMilliseconds = (this.FirstStartTime - DateTime.Now).TotalMilliseconds;
 
                 long dueTime = totalMilliseconds > 0 ? (long)totalMilliseconds : 0;
 
                 if (this._timer == null)
                 {
-                    this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, this.Interval);
+                    this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, (long)this.Interval);
                 }
                 else
                 {
-                    if (!this._timer.Change(dueTime, this.Interval))
+                    if (!this._timer.Change(dueTime, (long)this.Interval))
                     {
                         this._timer.Dispose();
 
                         this._timer = null;
 
-                        this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, this.Interval);
+                        this._timer = new System.Threading.Timer(new TimerCallback(this.OnTimerElapsed), null, dueTime, (long)this.Interval);
                     }
                 }
 

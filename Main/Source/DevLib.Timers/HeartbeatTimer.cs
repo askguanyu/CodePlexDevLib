@@ -66,6 +66,24 @@ namespace DevLib.Timers
         public event EventHandler HeartbeatOccurred;
 
         /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the tag.
+        /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this HeartbeatTimer is alive.
         /// </summary>
         public bool IsAlive
@@ -137,7 +155,7 @@ namespace DevLib.Timers
                 ////    managedResource.Dispose();
                 ////    managedResource = null;
                 ////}
-
+                
                 if (this._timer != null)
                 {
                     this._timer.Dispose();
@@ -174,7 +192,6 @@ namespace DevLib.Timers
         /// <summary>
         /// Called when timeout occurred.
         /// </summary>
-        /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ElapsedEventArgs"/> instance containing the event data.</param>
         private void OnTimeoutOccurred(ElapsedEventArgs e)
         {

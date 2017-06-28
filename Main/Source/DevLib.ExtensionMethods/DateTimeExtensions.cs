@@ -81,6 +81,28 @@ namespace DevLib.ExtensionMethods
         {
             return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(source, destTimeZoneId);
         }
+
+        /// <summary>
+        /// Converts a time to the time in another time zone based on the time zone offset.
+        /// </summary>
+        /// <param name="source">The date and time to convert.</param>
+        /// <param name="destTimeZoneUtcOffset">The UTC offset of the destination time zone.</param>
+        /// <returns>A System.DateTime value that represents the date and time in the destination time zone.</returns>
+        public static DateTimeOffset ToTimeZone(this DateTimeOffset source, double destTimeZoneUtcOffset)
+        {
+            return source.ToOffset(TimeSpan.FromHours(destTimeZoneUtcOffset));
+        }
+
+        /// <summary>
+        /// Converts a time to the time in another time zone based on the time zone's identifier.
+        /// </summary>
+        /// <param name="source">The date and time to convert.</param>
+        /// <param name="destTimeZoneId">The identifier of the destination time zone.</param>
+        /// <returns>A System.DateTime value that represents the date and time in the destination time zone.</returns>
+        public static DateTimeOffset ToTimeZone(this DateTimeOffset source, string destTimeZoneId)
+        {
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(source, destTimeZoneId);
+        }
     }
 
     /// <summary>

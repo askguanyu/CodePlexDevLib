@@ -48,7 +48,7 @@ namespace DevLib.Timers
         /// <param name="idleTimeout">The timeout in milliseconds when user is idle state. IdleTimer is disabled if timeout is less than or equal to zero (0).</param>
         /// <param name="startNow">true if immediately start IdleTimer; otherwise, false.</param>
         /// <param name="autoStop">Whether stop current IdleTimer when IdleOccurred event raised.</param>
-        public IdleTimer(long idleTimeout, bool startNow = false, bool autoStop = true)
+        public IdleTimer(double idleTimeout, bool startNow = false, bool autoStop = true)
         {
             this.IdleTimeout = idleTimeout;
 
@@ -76,9 +76,27 @@ namespace DevLib.Timers
         public event EventHandler IdleOccurred;
 
         /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the tag.
+        /// </summary>
+        public object Tag
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets user idle state timeout in milliseconds.
         /// </summary>
-        public long IdleTimeout
+        public double IdleTimeout
         {
             get;
             set;

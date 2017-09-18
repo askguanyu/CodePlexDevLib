@@ -13,6 +13,27 @@ namespace DevLib.ExtensionMethods
     /// </summary>
     public static class DateTimeExtensions
     {
+        public const long TicksPerMillisecond = 10000;
+        public const long TicksPerSecond = TicksPerMillisecond * 1000;
+        public const long TicksPerMinute = TicksPerSecond * 60;
+        public const long TicksPerHour = TicksPerMinute * 60;
+        public const long TicksPerDay = TicksPerHour * 24;
+        public const int DaysPerYear = 365;
+        public const int DaysPer4Years = DaysPerYear * 4 + 1;       // 1461
+        public const int DaysPer100Years = DaysPer4Years * 25 - 1;  // 36524
+        public const int DaysPer400Years = DaysPer100Years * 4 + 1; // 146097
+        public const int DaysTo1970 = DaysPer400Years * 4 + DaysPer100Years * 3 + DaysPer4Years * 17 + DaysPerYear; // 719,162
+        public const int DaysTo10000 = DaysPer400Years * 25 - 366;  // 3652059
+        public const long UnixEpochTicks = TimeSpan.TicksPerDay * DaysTo1970; // 621,355,968,000,000,000
+        public const long UnixEpochSeconds = UnixEpochTicks / TimeSpan.TicksPerSecond; // 62,135,596,800
+        public const long UnixEpochMilliseconds = UnixEpochTicks / TimeSpan.TicksPerMillisecond; // 62,135,596,800,000
+        public const long MinTicks = 0;
+        public const long MaxTicks = DaysTo10000 * TicksPerDay - 1;
+        public const long MinSeconds = MinTicks / TimeSpan.TicksPerSecond - UnixEpochSeconds;
+        public const long MaxSeconds = MaxTicks / TimeSpan.TicksPerSecond - UnixEpochSeconds;
+        public const long MinMilliseconds = MinTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
+        public const long MaxMilliseconds = MaxTicks / TimeSpan.TicksPerMillisecond - UnixEpochMilliseconds;
+
         /// <summary>
         /// Gets the week number for a provided date time value based on the current culture settings.
         /// </summary>
@@ -102,6 +123,82 @@ namespace DevLib.ExtensionMethods
         public static DateTimeOffset ToTimeZone(this DateTimeOffset source, string destTimeZoneId)
         {
             return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(source, destTimeZoneId);
+        }
+
+        /// <summary>
+        /// Returns the number of seconds that have elapsed since 1970-01-01T00:00:00Z.
+        /// </summary>
+        /// <param name="source">The source DateTimeOffset.</param>
+        /// <returns>The number of seconds that have elapsed since 1970-01-01T00:00:00Z.</returns>
+        public static long ToUnixTimeSeconds(this DateTimeOffset source)
+        {
+            long seconds = source.Ticks / TimeSpan.TicksPerSecond;
+            return seconds - UnixEpochSeconds;
+        }
+
+        /// <summary>
+        /// Returns the number of milliseconds that have elapsed since 1970-01-01T00:00:00.000Z.
+        /// </summary>
+        /// <param name="source">The source DateTimeOffset.</param>
+        /// <returns>The number of milliseconds that have elapsed since 1970-01-01T00:00:00.000Z.</returns>
+        public static long ToUnixTimeMilliseconds(this DateTimeOffset source)
+        {
+            long milliseconds = source.Ticks / TimeSpan.TicksPerMillisecond;
+            return milliseconds - UnixEpochMilliseconds;
+        }
+
+        /// <summary>
+        /// Converts a Unix time expressed as the number of seconds that have elapsed since 1970-01-01T00:00:00Z to a DateTimeOffset value.
+        /// </summary>
+        /// <param name="source">A Unix time, expressed as the number of seconds that have elapsed since 1970-01-01T00:00:00Z (January 1, 1970, at 12:00 AM UTC). For Unix times before this date, its value is negative.</param>
+        /// <returns>A date and time value that represents the same moment in time as the Unix time.</returns>
+        public static DateTimeOffset FromUnixTimeSeconds(this long source)
+        {
+            if (source < MinSeconds || source > MaxSeconds)
+            {
+                throw new ArgumentOutOfRangeException("source");
+            }
+
+            long ticks = source * TimeSpan.TicksPerSecond + UnixEpochTicks;
+            return new DateTimeOffset(ticks, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// Converts a Unix time expressed as the number of milliseconds that have elapsed since 1970-01-01T00:00:00Z to a DateTimeOffset value.
+        /// </summary>
+        /// <param name="source">A Unix time, expressed as the number of milliseconds that have elapsed since 1970-01-01T00:00:00Z (January 1, 1970, at 12:00 AM UTC). For Unix times before this date, its value is negative.</param>
+        /// <returns>A date and time value that represents the same moment in time as the Unix time.</returns>
+        public static DateTimeOffset FromUnixTimeMilliseconds(this long source)
+        {
+            if (source < MinMilliseconds || source > MaxMilliseconds)
+            {
+                throw new ArgumentOutOfRangeException("source");
+            }
+
+            long ticks = source * TimeSpan.TicksPerMillisecond + UnixEpochTicks;
+            return new DateTimeOffset(ticks, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// Returns the number of seconds that have elapsed since 1970-01-01T00:00:00Z.
+        /// </summary>
+        /// <param name="source">The source DateTime.</param>
+        /// <returns>The number of seconds that have elapsed since 1970-01-01T00:00:00Z.</returns>
+        public static long ToUnixTimeSeconds(this DateTime source)
+        {
+            long seconds = source.Ticks / TimeSpan.TicksPerSecond;
+            return seconds - UnixEpochSeconds;
+        }
+
+        /// <summary>
+        /// Returns the number of milliseconds that have elapsed since 1970-01-01T00:00:00.000Z.
+        /// </summary>
+        /// <param name="source">The source DateTime.</param>
+        /// <returns>The number of milliseconds that have elapsed since 1970-01-01T00:00:00.000Z.</returns>
+        public static long ToUnixTimeMilliseconds(this DateTime source)
+        {
+            long milliseconds = source.Ticks / TimeSpan.TicksPerMillisecond;
+            return milliseconds - UnixEpochMilliseconds;
         }
     }
 

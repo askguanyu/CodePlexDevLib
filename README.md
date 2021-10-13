@@ -6,15 +6,6 @@ DevLib
 
 DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns.
 
-  
-
-___
-
-[home](#)[issues](#)[discussions](#)
-
-___
-
-# **MOVE TO [GitHub](https://github.com/askguanyu) [https://github.com/askguanyu](https://github.com/askguanyu)**
 
 **v.2.10.\***
 

@@ -4,7 +4,8 @@ DevLib
 
   
 
-DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns.
+DevLib is a collection of highly reusable .NET components and core functions to solve common crosscutting problems. It provides a comprehensive set of features that can save development time, minimize costs, decrease the use of valuable test resources, and reduce overall maintenance work.
+
 
 
 **v.2.10.\***
@@ -19,7 +20,8 @@ DevLib is a highly reusable collection of components and core functionalities ad
 **[DevLib@outlook.com](mailto:DevLib@outlook.com)
 
 **Project Description**  
-DevLib is a highly reusable collection of components and core functionalities addressing common crosscutting concerns. It provides a comprehensive set of features that save development time, minimize costs, reduce the use of precious test resources, and decrease the overall maintenance effort.  
+DevLib is a collection of highly reusable .NET components and core functions to solve common crosscutting problems. It provides a comprehensive set of features that can save development time, minimize costs, decrease the use of valuable test resources, and reduce overall maintenance work.
+
 It is time to boost your productivity.
 
 **Donation**  
